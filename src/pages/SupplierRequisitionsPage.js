@@ -63,7 +63,7 @@ export const SupplierRequisitions = ({
   onNewRequisition,
 }) => {
   // Custom hook to refresh data on this page when becoming the head of the stack again.
-  useNavigationFocus(refreshData, navigation);
+  useNavigationFocus(navigation, refreshData);
   useSyncListener(refreshData, 'Requisition');
 
   const onPressRow = useCallback(rowData => dispatch(gotoSupplierRequisition(rowData)), []);

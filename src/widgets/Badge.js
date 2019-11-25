@@ -1,8 +1,5 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react/require-default-props */
-/* Taken from https://github.com/react-native-training/react-native-elements
- * since we only need badge component. Tweaked the component class since we do not
- * need extra logic present in the code.
- */
 
 import React from 'react';
 
@@ -10,10 +7,10 @@ import PropTypes from 'prop-types';
 import { StyleSheet, Dimensions, Text, View, TouchableOpacity, ViewPropTypes } from 'react-native';
 import { SUSSOL_ORANGE } from '../globalStyles/index';
 
-const Badge = props => {
+const BadgeComponent = (props, ref) => {
   const {
-    containerStyle,
-    textStyle,
+    containerStyle = localStyles.badgeStyle,
+    textStyle = localStyles.textStyle,
     badgeStyle,
     onPress,
     Component = onPress ? TouchableOpacity : View,
@@ -22,26 +19,13 @@ const Badge = props => {
   } = props;
 
   return (
-    <View style={containerStyle}>
-      <Component {...attributes} style={badgeStyle} onPress={onPress}>
-        <Text style={textStyle}>{value}</Text>
-      </Component>
-    </View>
+    <Component {...attributes} ref={ref} style={containerStyle} onPress={onPress}>
+      <Text style={textStyle}>{value}</Text>
+    </Component>
   );
 };
 
-Badge.propTypes = {
-  containerStyle: ViewPropTypes.style,
-  badgeStyle: ViewPropTypes.style,
-  textStyle: Text.propTypes.style,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  onPress: PropTypes.func,
-  Component: PropTypes.elementType,
-};
-
-Badge.defaultProps = {
-  containerStyle: {},
-  textStyle: { fontSize: 16, color: '#FFF', paddingHorizontal: 4, fontWeight: 'bold' },
+const localStyles = StyleSheet.create({
   badgeStyle: {
     alignSelf: 'center',
     width: Dimensions.get('window').width / 25,
@@ -53,6 +37,18 @@ Badge.defaultProps = {
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: '#fff',
   },
+  textStyle: { fontSize: 16, color: '#FFF', paddingHorizontal: 4, fontWeight: 'bold' },
+});
+
+const Badge = React.forwardRef(BadgeComponent);
+
+Badge.propTypes = {
+  containerStyle: ViewPropTypes.style,
+  badgeStyle: ViewPropTypes.style,
+  textStyle: Text.propTypes.style,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  onPress: PropTypes.func,
+  Component: PropTypes.elementType,
 };
 
 export default Badge;

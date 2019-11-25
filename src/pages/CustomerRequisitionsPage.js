@@ -50,7 +50,7 @@ export const CustomerRequisitions = ({
   onSortColumn,
 }) => {
   // Custom hook to refresh data on this page when becoming the head of the stack again.
-  useNavigationFocus(refreshData, navigation);
+  useNavigationFocus(navigation, refreshData);
   useSyncListener(refreshData, 'Requisition');
 
   const onPressRow = useCallback(rowData => dispatch(gotoCustomerRequisition(rowData)), []);

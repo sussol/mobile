@@ -73,7 +73,7 @@ export const StocktakeEdit = ({
   // Listen to the stocktake become the top of the stack or being finalised,
   // as these events are side-effects. Refreshing makes the state consistent again.
   useRecordListener(refreshData, pageObject, 'Stocktake');
-  useNavigationFocus(refreshData, navigation);
+  useNavigationFocus(navigation, refreshData);
 
   // If the Stocktake is outdated, force a reset of the stocktake on mount.
   useEffect(() => {

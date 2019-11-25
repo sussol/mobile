@@ -1,8 +1,10 @@
 /* eslint-disable react/forbid-prop-types */
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { View, TouchableHighlight, Text } from 'react-native';
+
+import { View, Text } from 'react-native';
 import Popover from 'react-native-popover-view';
+import { withNavigation } from 'react-navigation';
 
 import { getBadgeData } from '../utilities/getBadgeData';
 import { usePopover } from '../hooks';
@@ -13,7 +15,7 @@ import { SUSSOL_ORANGE } from '../globalStyles';
 
 const animationConfig = { duration: 150 };
 
-export const InfoBadge = ({
+const InfoBadgeComponent = ({
   popoverBackgroundStyle,
   children,
   mainWrapperStyle,
@@ -22,9 +24,10 @@ export const InfoBadge = ({
   arrowStyle,
   popoverStyle,
   badgeTextStyle,
-  touchableContainerStyle,
+
+  navigation,
 }) => {
-  const [ref, visible, show, close] = usePopover();
+  const [ref, visible, show, close] = usePopover(navigation);
 
   // Get total of all the count variables in the info array. We want to show it on the badge
   const info = getBadgeData(routeName);
@@ -48,9 +51,7 @@ export const InfoBadge = ({
       {children}
       {pendingCount !== 0 && (
         <View style={mainWrapperStyle}>
-          <TouchableHighlight ref={ref} style={touchableContainerStyle} onPress={show}>
-            <Badge value={unfinalisedCountText} />
-          </TouchableHighlight>
+          <Badge ref={ref} value={unfinalisedCountText} onPress={show} />
           <Popover
             isVisible={visible}
             fromView={ref.current}
@@ -61,7 +62,7 @@ export const InfoBadge = ({
             placement={popoverPosition}
             animationConfig={animationConfig}
           >
-            <View>{info.map(popoverText)}</View>
+            {info.map(popoverText)}
           </Popover>
         </View>
       )}
@@ -69,9 +70,10 @@ export const InfoBadge = ({
   );
 };
 
-export default InfoBadge;
+export const InfoBadge = withNavigation(InfoBadgeComponent);
+export default withNavigation(InfoBadgeComponent);
 
-InfoBadge.propTypes = {
+InfoBadgeComponent.propTypes = {
   routeName: PropTypes.string.isRequired,
   children: PropTypes.element.isRequired,
   mainWrapperStyle: PropTypes.object,
@@ -80,10 +82,10 @@ InfoBadge.propTypes = {
   arrowStyle: PropTypes.object,
   popoverStyle: PropTypes.object,
   badgeTextStyle: PropTypes.object,
-  touchableContainerStyle: PropTypes.object,
+  navigation: PropTypes.object.isRequired,
 };
 
-InfoBadge.defaultProps = {
+InfoBadgeComponent.defaultProps = {
   arrowStyle: { backgroundColor: SUSSOL_ORANGE },
   popoverStyle: { padding: 10, backgroundColor: SUSSOL_ORANGE },
   badgeTextStyle: { color: '#FFF', fontSize: 14, fontWeight: 'bold' },
@@ -92,11 +94,7 @@ InfoBadge.defaultProps = {
     top: 0,
     right: 8,
   },
-  touchableContainerStyle: {
-    borderRadius: 15,
-    backgroundColor: '#FFF',
-    borderColor: '#FFF',
-  },
+
   popoverPosition: 'auto',
   popoverBackgroundStyle: { backgroundColor: 'transparent' },
 };
