@@ -62,6 +62,42 @@ const createInsurancePolicy = (
   return policy;
 };
 
+const createCashOut = (database, user, patient, amount) => {
+  const offsetInvoice = createOffsetCustomerInvoice(database, user, patient, amount);
+  const payment = createPayment(database, user, patient, amount);
+  const paymentLine = createPaymentLine(database, payment, offsetInvoice, amount);
+
+  return [offsetInvoice, payment, paymentLine];
+};
+
+const createCashIn = (database, user, patient, amount) => {
+  const customerCredit = createCustomerCredit(database, user, patient, -amount);
+  const receipt = createReceipt(database, user, patient, amount);
+  const receiptLine = createReceiptLine(database, receipt, customerCredit, amount);
+
+  return [customerCredit, receipt, receiptLine];
+};
+
+const createOffsetCustomerInvoice = (database, user, patient, amount) => {
+  const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+  const currentDate = new Date();
+  const invoice = database.create('Transaction', {
+    id: generateUUID(),
+    serialNumber: getNextNumber(database, CUSTOMER_INVOICE_NUMBER),
+    entryDate: currentDate,
+    confirmDate: currentDate,
+    type: 'customer_invoice',
+    status: 'finalised',
+    comment: '',
+    otherParty: patient,
+    total: amount,
+    outstanding: amount,
+    enteredBy: user,
+  });
+
+  return invoice;
+};
+
 const createReceipt = (database, user, patient, total) => {
   const currentDate = new Date();
   const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
@@ -142,21 +178,25 @@ const createCustomerCredit = (database, user, patient, total) => {
     otherParty: patient,
     enteredBy: user,
     total,
+    outstanding: total,
   });
 
   database.save('Transaction', customerCredit);
   return customerCredit;
 };
 
-const createCustomerCreditLine = (database, payment, total) => {
+const createCustomerCreditLine = (database, customerCredit, total) => {
   const receiptLine = database.create('TransactionBatch', {
     id: generateUUID(),
     total,
-    transaction: payment,
+    transaction: customerCredit,
     type: 'cash_in',
     note: 'credit',
   });
 
+  customerCredit.outstanding += total;
+
+  database.save('Transaction', customerCredit);
   database.save('TransactionBatch', receiptLine);
   return receiptLine;
 };
@@ -569,6 +609,12 @@ export const createRecord = (database, type, ...args) => {
       return createCustomerCreditLine(database, ...args);
     case 'InsurancePolicy':
       return createInsurancePolicy(database, ...args);
+    case 'CashIn':
+      return createCashIn(database, ...args);
+    case 'CashOut':
+      return createCashOut(database, ...args);
+    case 'OffsetCustomerInvoice':
+      return createOffsetCustomerInvoice(database, ...args);
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }

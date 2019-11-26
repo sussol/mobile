@@ -112,6 +112,10 @@ export class Transaction extends Realm.Object {
     return this.type === 'supplier_invoice';
   }
 
+  get isPrescription() {
+    return this.mode === 'dispensary' && this.type === 'customer_invoice';
+  }
+
   /**
    * Get if transaction is an external supplier invoice.
    *
