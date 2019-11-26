@@ -4,6 +4,7 @@ about: Report a bug!
 title: A brief description of the bug
 labels: ''
 assignees: ''
+
 ---
 
 ## Describe the bug
@@ -22,6 +23,10 @@ Steps to reproduce the behavior:
 ### Expected behaviour
 
 A clear and concise description of what you expected to happen.
+
+### Proposed Solution
+
+Leave if you don't know how to fix/implement. Edit this issue description and explain here if you know the best path of implementing the fix within the codebase.
 
 ### Version and device info
 
