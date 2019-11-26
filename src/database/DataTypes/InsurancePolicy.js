@@ -1,6 +1,10 @@
 import Realm from 'realm';
 
-export class InsurancePolicy extends Realm.Object {}
+export class InsurancePolicy extends Realm.Object {
+  get policyNumber() {
+    return `${this.policyNumberPerson} ${this.policyNumberFamily}`;
+  }
+}
 
 InsurancePolicy.schema = {
   name: 'InsurancePolicy',
@@ -12,10 +16,9 @@ InsurancePolicy.schema = {
     type: 'string',
     discountRate: 'float',
     expiryDate: 'date',
-    enteredBy: { type: 'User', optional: false },
+    enteredBy: { type: 'User', optional: true },
     patient: { type: 'Name', optional: false },
     insuranceProvider: { type: 'InsuranceProvider', optional: false },
-    patient: { type: 'Name', optional: false },
   },
 };
 
