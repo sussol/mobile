@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Dimensions } from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity } from 'react-native';
 import { PropTypes } from 'prop-types';
 
 import { SUSSOL_ORANGE, GREY, APP_FONT_FAMILY } from '../globalStyles';
@@ -37,17 +37,21 @@ const getLocalStyles = (step, numberOfSteps, currentStep) => {
       fontSize: 25,
       fontFamily: APP_FONT_FAMILY,
     },
+    container: { flexDirection: 'column', alignItems: 'center' },
   };
 };
 
-const StepNumber = ({ step, numberOfSteps, currentStep, title }) => {
-  const { stepContainer, stepText, stepSeperator, titleText } = getLocalStyles(
+const StepNumber = ({ step, numberOfSteps, currentStep, title, onPress }) => {
+  const { stepContainer, stepText, stepSeperator, titleText, container } = getLocalStyles(
     step,
     numberOfSteps,
     currentStep
   );
+  const enabledStep = currentStep >= step;
+  const Container = enabledStep ? TouchableOpacity : View;
+  const wrappedOnPress = () => onPress(step);
   return (
-    <View style={{ flexDirection: 'column', alignItems: 'center' }}>
+    <Container onPress={wrappedOnPress} style={container}>
       <Text style={titleText}>{step === currentStep ? title : ' '}</Text>
       <View style={{ flexDirection: 'row' }}>
         <View style={stepSeperator} />
@@ -56,7 +60,7 @@ const StepNumber = ({ step, numberOfSteps, currentStep, title }) => {
         </View>
         <View style={stepSeperator} />
       </View>
-    </View>
+    </Container>
   );
 };
 
@@ -65,12 +69,14 @@ StepNumber.propTypes = {
   numberOfSteps: PropTypes.number.isRequired,
   currentStep: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
+  onPress: PropTypes.func.isRequired,
 };
 
-export const StepsTracker = ({ numberOfSteps, currentStep, title }) => (
+export const StepsTracker = ({ numberOfSteps, currentStep, title, onPress }) => (
   <View style={{ flexDirection: 'row' }}>
     {Array.from({ length: numberOfSteps }).map((_, i) => (
       <StepNumber
+        onPress={onPress}
         step={i + 1}
         numberOfSteps={numberOfSteps}
         currentStep={currentStep}
@@ -84,4 +90,5 @@ StepsTracker.propTypes = {
   numberOfSteps: PropTypes.number.isRequired,
   currentStep: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
+  onPress: PropTypes.func.isRequired,
 };
