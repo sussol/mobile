@@ -16,7 +16,7 @@ import { DataTablePageModal } from '../widgets/modals';
 import { PageButton, PageInfo, DataTablePageView, SearchBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import { buttonStrings } from '../localization';
+import { buttonStrings } from '../localization/index';
 import globalStyles from '../globalStyles';
 import { useRecordListener, useNavigationFocus } from '../hooks/index';
 
@@ -216,10 +216,7 @@ const mapStateToProps = state => {
   return stocktakeEditor;
 };
 
-export const StocktakeEditPage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(StocktakeEdit);
+export const StocktakeEditPage = connect(mapStateToProps, mapDispatchToProps)(StocktakeEdit);
 
 StocktakeEdit.defaultProps = {
   modalValue: null,

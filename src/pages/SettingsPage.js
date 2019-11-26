@@ -23,7 +23,7 @@ import { DataTablePageView, PageInfo } from '../widgets/index';
 import { DataTablePageModal } from '../widgets/modals/index';
 
 import globalStyles from '../globalStyles';
-import { generalStrings, buttonStrings } from '../localization';
+import { generalStrings, buttonStrings } from '../localization/index';
 
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
@@ -164,10 +164,7 @@ const styles = {
   topRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' },
 };
 
-export const SettingsPage = connect(
-  mapStateToProps,
-  mapStateToDispatch
-)(Settings);
+export const SettingsPage = connect(mapStateToProps, mapStateToDispatch)(Settings);
 
 Settings.propTypes = {
   toRealmExplorer: PropTypes.func.isRequired,

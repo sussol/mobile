@@ -22,7 +22,7 @@ import { createSupplierRequisition, gotoSupplierRequisition } from '../navigatio
 import { getItemLayout, PageActions, getPageDispatchers } from './dataTableUtilities';
 
 import globalStyles from '../globalStyles';
-import { buttonStrings, modalStrings } from '../localization';
+import { buttonStrings, modalStrings } from '../localization/index';
 
 /**
  * Renders a mSupply mobile page with a list of supplier requisitions.

@@ -18,7 +18,7 @@ import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets'
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import { buttonStrings, modalStrings } from '../localization';
+import { buttonStrings, modalStrings } from '../localization/index';
 import globalStyles from '../globalStyles';
 import { ROUTES } from '../navigation/constants';
 
@@ -177,10 +177,7 @@ const mapStateToProps = state => {
   return supplierInvoices;
 };
 
-export const SupplierInvoicesPage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SupplierInvoices);
+export const SupplierInvoicesPage = connect(mapStateToProps, mapDispatchToProps)(SupplierInvoices);
 
 SupplierInvoices.defaultProps = {
   showFinalised: false,

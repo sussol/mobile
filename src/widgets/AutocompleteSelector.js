@@ -10,7 +10,7 @@ import { SearchBar } from 'react-native-ui-components';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { complement } from 'set-manipulator';
 import { APP_FONT_FAMILY } from '../globalStyles';
-import { generalStrings } from '../localization';
+import { generalStrings } from '../localization/index';
 import { withOnePress } from './withOnePress';
 
 /**

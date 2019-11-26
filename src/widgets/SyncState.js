@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { StyleSheet, Text, View, ViewPropTypes } from 'react-native';
 
 import { SyncIcon } from './SyncIcon';
-import { syncStrings } from '../localization';
+import { syncStrings } from '../localization/index';
 import { formatDate } from '../utilities';
 
 import globalStyles, { GREY, DARK_GREY } from '../globalStyles';

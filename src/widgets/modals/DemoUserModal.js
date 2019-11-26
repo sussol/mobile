@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { ConfirmModal } from './ConfirmModal';
 
 import { DemoSiteRequest } from '../../authentication';
-import { authStrings, generalStrings, demoUserModalStrings } from '../../localization';
+import { authStrings, generalStrings, demoUserModalStrings } from '../../localization/index';
 
 import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
 

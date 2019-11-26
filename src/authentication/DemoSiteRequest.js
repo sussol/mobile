@@ -5,7 +5,7 @@
 
 /* eslint-disable class-methods-use-this */
 
-import { validationStrings } from '../localization';
+import { validationStrings } from '../localization/index';
 
 const DEMO_SITE_URL = 'https://demo.msupply.org/api/v4/mobile/requestDemo';
 export class DemoSiteRequest {
@@ -30,27 +30,27 @@ export class DemoSiteRequest {
 
   validateFields(username, email, password, repeatPassword) {
     // Client side validation
-    if (email.length === 0) throw new Error(validationStrings.email.required);
+    if (email.length === 0) throw new Error(validationStrings.emailRequired);
     if (!this.validateEmail(email)) {
-      throw new Error(validationStrings.email.valid);
+      throw new Error(validationStrings.emailValid);
     }
     if (username.length === 0) {
-      throw new Error(validationStrings.username.required);
+      throw new Error(validationStrings.usernameRequired);
     }
     if (password.length === 0) {
-      throw new Error(validationStrings.password.required);
+      throw new Error(validationStrings.passwordRequired);
     }
     if (repeatPassword.length === 0) {
-      throw new Error(validationStrings.repeatPassword.required);
+      throw new Error(validationStrings.repeatPasswordRequired);
     }
     if (password !== repeatPassword) {
-      throw new Error(validationStrings.password.matchRepeat);
+      throw new Error(validationStrings.passwordMatchRepeat);
     }
     if (this.textLengthInvalid(password)) {
-      throw new Error(validationStrings.password.lengthInvalid);
+      throw new Error(validationStrings.passwordLengthInvalid);
     }
     if (this.textContainsSpaces(password)) {
-      throw new Error(validationStrings.password.containsSpaces);
+      throw new Error(validationStrings.passwordContainsSpaces);
     }
   }
 

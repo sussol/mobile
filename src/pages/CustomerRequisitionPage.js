@@ -20,7 +20,7 @@ import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtili
 import { useRecordListener } from '../hooks';
 
 import globalStyles from '../globalStyles';
-import { buttonStrings } from '../localization';
+import { buttonStrings } from '../localization/index';
 
 /**
  * Renders a mSupply mobile page with a customer requisition loaded for editing

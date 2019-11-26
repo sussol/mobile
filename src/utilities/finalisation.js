@@ -4,7 +4,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { modalStrings } from '../localization';
+import { modalStrings } from '../localization/index';
 import { formatErrorItemNames } from './formatters';
 
 /**

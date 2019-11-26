@@ -21,7 +21,7 @@ import { ROUTES } from '../navigation/constants';
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
 
-import { buttonStrings, modalStrings } from '../localization';
+import { buttonStrings, modalStrings } from '../localization/index';
 import globalStyles from '../globalStyles';
 
 import {
@@ -186,10 +186,7 @@ const mapStateToProps = state => {
   return stocktakes;
 };
 
-export const StocktakesPage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Stocktakes);
+export const StocktakesPage = connect(mapStateToProps, mapDispatchToProps)(Stocktakes);
 
 Stocktakes.defaultProps = {
   showFinalised: false,

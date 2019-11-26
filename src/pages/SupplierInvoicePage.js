@@ -17,7 +17,7 @@ import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { PageButton, PageInfo, SearchBar, DataTablePageView } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import { buttonStrings, modalStrings } from '../localization';
+import { buttonStrings, modalStrings } from '../localization/index';
 import globalStyles from '../globalStyles';
 
 import { ROUTES } from '../navigation/constants';
@@ -179,10 +179,7 @@ const mapStateToProps = state => {
   return supplierInvoice;
 };
 
-export const SupplierInvoicePage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SupplierInvoice);
+export const SupplierInvoicePage = connect(mapStateToProps, mapDispatchToProps)(SupplierInvoice);
 
 SupplierInvoice.defaultProps = {
   modalValue: null,

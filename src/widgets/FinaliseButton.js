@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import globalStyles from '../globalStyles';
-import { navStrings } from '../localization';
+import { navStrings } from '../localization/index';
 import { ConfirmIcon, LockIcon } from './icons';
 
 export const FinaliseButton = props => {

@@ -23,7 +23,7 @@ import { NewConfirmModal } from './NewConfirmModal';
 import { GenericChoiceList } from '../GenericChoiceList';
 import { StocktakeBatchModal } from './StocktakeBatchModal';
 
-import { modalStrings } from '../../localization';
+import { modalStrings } from '../../localization/index';
 
 /**
  * Wrapper around ModalContainer, containing common modals used in various

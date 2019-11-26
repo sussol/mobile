@@ -12,7 +12,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { CustomerImage, SupplierImage, StockImage, ModulesImage, InfoBadge } from '../widgets';
 
 import { ROUTES } from '../navigation/constants';
-import { navStrings } from '../localization';
+import { navStrings } from '../localization/index';
 
 import { SETTINGS_KEYS } from '../settings';
 import { UIDatabase } from '../database';
@@ -239,10 +239,7 @@ const mapStateToProps = state => {
   return { usingDispensary, usingModules: usingDispensary, isAdmin: currentUser?.isAdmin };
 };
 
-export const MenuPage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Menu);
+export const MenuPage = connect(mapStateToProps, mapDispatchToProps)(Menu);
 
 Menu.defaultProps = {
   isInAdminMode: false,

@@ -21,7 +21,7 @@ import { ROUTES } from '../navigation/constants';
 import { useRecordListener } from '../hooks';
 
 import globalStyles from '../globalStyles';
-import { buttonStrings, modalStrings, programStrings } from '../localization';
+import { buttonStrings, modalStrings, programStrings } from '../localization/index';
 import { UIDatabase } from '../database/index';
 import { SETTINGS_KEYS } from '../settings/index';
 

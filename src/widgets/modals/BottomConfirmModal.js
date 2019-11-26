@@ -10,7 +10,7 @@ import { Text, StyleSheet, ViewPropTypes } from 'react-native';
 
 import { OnePressButton } from '../OnePressButton';
 import { BottomModal } from './BottomModal';
-import { modalStrings } from '../../localization';
+import { modalStrings } from '../../localization/index';
 
 import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
 

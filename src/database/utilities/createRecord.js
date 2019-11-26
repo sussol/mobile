@@ -7,7 +7,7 @@ import { generateUUID } from 'react-native-database';
 
 import { formatDateAndTime } from '../../utilities';
 import { NUMBER_SEQUENCE_KEYS } from './constants';
-import { generalStrings } from '../../localization';
+import { generalStrings } from '../../localization/index';
 
 // Get the next highest number in an existing number sequence.
 export const getNextNumber = (database, sequenceKey) => {

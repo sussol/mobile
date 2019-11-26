@@ -17,7 +17,7 @@ import { gotoCustomerRequisition } from '../navigation/actions';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
 import globalStyles from '../globalStyles';
-import { buttonStrings } from '../localization';
+import { buttonStrings } from '../localization/index';
 
 import { ROUTES } from '../navigation/constants';
 

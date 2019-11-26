@@ -11,7 +11,7 @@ import { Button } from 'react-native-ui-components';
 
 import { TextInput } from './TextInput';
 
-import { buttonStrings } from '../localization';
+import { buttonStrings } from '../localization/index';
 import globalStyles from '../globalStyles';
 
 /**

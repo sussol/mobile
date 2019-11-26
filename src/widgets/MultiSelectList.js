@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 
 import { FlatList, StyleSheet, View } from 'react-native';
 import globalStyles, { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles';
-import { generalStrings, buttonStrings } from '../localization';
+import { generalStrings, buttonStrings } from '../localization/index';
 import { OnePressButton, SearchBar } from '.';
 import ResultRow from './ResultRow';
 import { WHITE } from '../globalStyles/colors';
