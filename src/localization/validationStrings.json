@@ -1,0 +1,16 @@
+{
+  "gb": {
+    "general": "",
+    "usernameRequired": "Enter the username",
+    "emailRequired": "Enter the E-mail",
+    "emailValid": "Enter a valid E-mail",
+    "passwordRequired": "Enter the password",
+    "passwordMatchRepeat": "Password & repeat password must match",
+    "passwordLengthInvalid": "Password must be 8-32 characters long",
+    "passwordContainsSpaces": "Password cannot contain spaces.",
+    "repeatPasswordRequired": "Enter the repeat password"
+  },
+  "fr": {},
+  "gil": {},
+  "tl": {}
+}
