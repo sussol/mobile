@@ -185,15 +185,18 @@ const createCustomerCredit = (database, user, patient, total) => {
   return customerCredit;
 };
 
-const createCustomerCreditLine = (database, payment, total) => {
+const createCustomerCreditLine = (database, customerCredit, total) => {
   const receiptLine = database.create('TransactionBatch', {
     id: generateUUID(),
     total,
-    transaction: payment,
+    transaction: customerCredit,
     type: 'cash_in',
     note: 'credit',
   });
 
+  customerCredit.outstanding += total;
+
+  database.save('Transaction', customerCredit);
   database.save('TransactionBatch', receiptLine);
   return receiptLine;
 };
