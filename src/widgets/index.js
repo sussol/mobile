@@ -14,6 +14,7 @@ export { IconCell } from './IconCell';
 // eslint-disable-next-line import/named
 export { NavigationBar } from './NavigationBar';
 export { OnePressButton } from './OnePressButton';
+export { PopoverDropDown } from './PopoverDropDown';
 export { PageButton } from './PageButton';
 export { PageInfo } from './PageInfo';
 export { Step } from './Step';
