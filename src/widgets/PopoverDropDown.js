@@ -92,6 +92,7 @@ const DropDown = ({ anchorRef, isVisible, options, onSelection, onClose, title }
  * left/right/bottom/top position which has the most free space.
  *
  * Usage:
+ * @prop {Object}      navigation The navigation object passed by withNavigation
  * @prop {React.Node}  BaseComponent Any component which will be wrapped in a Touchable.
  * @prop {Array}       options An array of strings, the options to choose.
  * @prop {Func}        onSelection The callback invoked when a selection is made.
