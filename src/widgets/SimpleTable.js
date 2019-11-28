@@ -94,6 +94,7 @@ export const SimpleTable = React.memo(({ data, columns, selectRow, extraData }) 
       renderItem={renderRow}
       stickyHeaderIndices={[0]}
       ListHeaderComponent={renderHeaders}
+      extraData={extraData}
     />
   );
 });
