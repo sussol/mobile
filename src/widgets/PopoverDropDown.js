@@ -87,7 +87,7 @@ const DropDown = ({ anchorRef, isVisible, options, onSelection, onClose, title }
 };
 
 export const PopoverDropDown = withNavigation(
-  ({ navigation, BaseComponent, options, onSelection }) => {
+  ({ navigation, BaseComponent, options, onSelection, title }) => {
     const [ref, visible, show, close] = usePopover(navigation);
     return (
       <>
@@ -100,7 +100,7 @@ export const PopoverDropDown = withNavigation(
           isVisible={visible}
           onSelection={onSelection}
           onClose={close}
-          title="Payment Types"
+          title={title}
         />
       </>
     );
