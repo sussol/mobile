@@ -35,7 +35,8 @@ export const TabNavigator = ({ tabs, currentTabIndex }) => {
     return getTabNavigator(tabsConfig, defaultNavigationConfig);
   }, []);
 
-  // When `currentTabIndex` changes, trigger navigation to the correct tab. Dispatching will
+  // When `currentTabIndex` changes, dispatch an action to trigger a switch on the
+  // base navigation component to the passed tab index.
   useEffect(() => {
     const navigationAction = NavigationActions.navigate({ routeName: String(currentTabIndex) });
     navigatorRef.current.dispatch(navigationAction);
