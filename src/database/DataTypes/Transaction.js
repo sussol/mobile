@@ -81,7 +81,7 @@ export class Transaction extends Realm.Object {
    * @return  {boolean}
    */
   get isIncoming() {
-    return this.type === 'supplier_invoice';
+    return this.type === 'supplier_invoice' || this.type === 'customer_credit';
   }
 
   /**
@@ -110,6 +110,10 @@ export class Transaction extends Realm.Object {
    */
   get isSupplierInvoice() {
     return this.type === 'supplier_invoice';
+  }
+
+  get isPrescription() {
+    return this.mode === 'dispensary' && this.type === 'customer_invoice';
   }
 
   /**
@@ -460,7 +464,12 @@ Transaction.schema = {
     theirRef: { type: 'string', optional: true },
     category: { type: 'TransactionCategory', optional: true },
     items: { type: 'list', objectType: 'TransactionItem' },
+    mode: { type: 'string', default: 'store' },
+    prescriber: { type: 'Prescriber', optional: true },
     linkedRequisition: { type: 'Requisition', optional: true },
+    total: { type: 'float', optional: true },
+    outstanding: { type: 'float', optional: true },
+    insurancePolicy: { type: 'InsurancePolicy', optional: true },
   },
 };
 

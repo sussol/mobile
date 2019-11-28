@@ -30,6 +30,62 @@ import { ROUTES } from './constants';
  *
  */
 
+export const gotoPatients = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.PATIENTS,
+    params: { title: 'Patients' },
+  });
+
+export const gotoPrescribers = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.PRESCRIBERS,
+    params: { title: 'Prescribers' },
+  });
+
+/**
+ * Action creator which first creates a prescription, and then navigates to it
+ * for editing.
+ *
+ * @param {Object} patient     The other party of the invoice (Customer)
+ * @param {Object} currentUser    The currently logged in user.
+ */
+export const createPrescription = (patient, currentUser) => dispatch => {
+  let newPrescription;
+  UIDatabase.write(() => {
+    newPrescription = createRecord(
+      UIDatabase,
+      'CustomerInvoice',
+      patient,
+      currentUser,
+      'dispensary'
+    );
+  });
+
+  dispatch(gotoPrescription(newPrescription));
+};
+
+export const gotoPrescription = prescription =>
+  NavigationActions.navigate({
+    routeName: ROUTES.PRESCRIPTION,
+    params: {
+      title: `Prescription ${prescription.serialNumber}`,
+      transaction: prescription,
+      pageObject: prescription,
+    },
+  });
+
+export const gotoPrescriptions = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.PRESCRIPTIONS,
+    params: { title: 'Prescriptions' },
+  });
+
+export const gotoDispensingPage = () =>
+  NavigationActions.navigate({
+    routeName: 'dispensing',
+    params: { title: 'Dispensing' },
+  });
+
 /**
  * Pushes the Settings page route onto the main navigation stack.
  */

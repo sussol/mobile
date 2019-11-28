@@ -40,7 +40,7 @@ export {
   WARMER_GREY,
 } from './colors';
 
-export { APP_FONT_FAMILY } from './fonts';
+export { APP_GENERAL_FONT_SIZE, APP_FONT_FAMILY } from './fonts';
 
 export { textStyles } from './textStyles';
 

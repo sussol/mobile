@@ -45,6 +45,7 @@ export const getPageDispatchers = (dispatch, props, dataType, route) => {
       dispatch(BasePageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey, route)),
     onNewCustomerInvoice: () =>
       dispatch(BasePageActions.openModal(MODAL_KEYS.SELECT_CUSTOMER, route)),
+    onNewPrescription: () => dispatch(BasePageActions.openModal(MODAL_KEYS.SELECT_PATIENT, route)),
     onCloseModal: () => dispatch(BasePageActions.closeModal(route)),
 
     // Modal callbacks

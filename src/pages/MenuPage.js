@@ -25,6 +25,7 @@ import {
   gotoStock,
   gotoStocktakes,
   gotoRealmExplorer,
+  gotoDispensingPage,
   gotoSettings,
 } from '../navigation/actions';
 
@@ -48,6 +49,7 @@ const Menu = ({
   toSupplierInvoices,
   toSupplierRequisitions,
   toRealmExplorer,
+  toDispensary,
   toSettings,
   usingDispensary,
   usingModules,
@@ -116,7 +118,7 @@ const Menu = ({
     () => (
       <View style={containerStyle}>
         <ModulesImage style={image} />
-        <View>{usingDispensary && <MenuButton text="Dispensary" />}</View>
+        <View>{usingDispensary && <MenuButton text="Dispensary" onPress={toDispensary} />}</View>
       </View>
     ),
     [usingDispensary, usingModules]
@@ -229,6 +231,7 @@ const mapDispatchToProps = dispatch => ({
   toSupplierRequisitions: () => dispatch(gotoSupplierRequisitions()),
   toRealmExplorer: () => dispatch(gotoRealmExplorer()),
   toSettings: () => dispatch(gotoSettings()),
+  toDispensary: () => dispatch(gotoDispensingPage()),
   logout: () => dispatch(UserActions.logout()),
 });
 
@@ -239,10 +242,7 @@ const mapStateToProps = state => {
   return { usingDispensary, usingModules: usingDispensary, isAdmin: currentUser?.isAdmin };
 };
 
-export const MenuPage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Menu);
+export const MenuPage = connect(mapStateToProps, mapDispatchToProps)(Menu);
 
 Menu.defaultProps = {
   isInAdminMode: false,
@@ -258,6 +258,7 @@ Menu.propTypes = {
   toSupplierInvoices: PropTypes.func.isRequired,
   toSupplierRequisitions: PropTypes.func.isRequired,
   toRealmExplorer: PropTypes.func.isRequired,
+  toDispensary: PropTypes.func.isRequired,
   toSettings: PropTypes.func.isRequired,
   isAdmin: PropTypes.bool.isRequired,
   usingDispensary: PropTypes.bool.isRequired,

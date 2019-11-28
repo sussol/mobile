@@ -14,6 +14,8 @@ export class TransactionCategory extends Realm.Object {}
 export class User extends Realm.Object {}
 
 export { Item } from './Item';
+export { InsurancePolicy } from './InsurancePolicy';
+export { InsuranceProvider } from './InsuranceProvider';
 export { ItemBatch } from './ItemBatch';
 export { ItemStoreJoin } from './ItemStoreJoin';
 export { MasterList } from './MasterList';
@@ -35,3 +37,4 @@ export { Transaction } from './Transaction';
 export { TransactionBatch } from './TransactionBatch';
 export { TransactionItem } from './TransactionItem';
 export { Unit } from './Unit';
+export { Prescriber } from './Prescriber';
