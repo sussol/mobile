@@ -72,6 +72,19 @@ const DataTablePageModalComponent = ({
       case MODAL_KEYS.THEIR_REF_EDIT:
       case MODAL_KEYS.STOCKTAKE_COMMENT_EDIT:
       case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
+      case MODAL_KEYS.REQUISITION_COMMENT_EDIT: {
+        const isPasswordEdit = !!(
+          modalKey === MODAL_KEYS.CONFIRM_USER_PASSWORD ||
+          modalKey === MODAL_KEYS.SYNC_PASSWORD_EDIT
+        );
+        return (
+          <TextEditor
+            text={currentValue}
+            onEndEditing={onSelect}
+            secureTextEntry={isPasswordEdit}
+          />
+        );
+      }
       case MODAL_KEYS.SELECT_PRESCRIBER:
         return (
           <AutocompleteSelector
@@ -96,19 +109,6 @@ const DataTablePageModalComponent = ({
             renderLeftText={({ firstName, lastName }) => `${firstName} ${lastName}`}
           />
         );
-      case MODAL_KEYS.REQUISITION_COMMENT_EDIT: {
-        const isPasswordEdit = !!(
-          modalKey === MODAL_KEYS.CONFIRM_USER_PASSWORD ||
-          modalKey === MODAL_KEYS.SYNC_PASSWORD_EDIT
-        );
-        return (
-          <TextEditor
-            text={currentValue}
-            onEndEditing={onSelect}
-            secureTextEntry={isPasswordEdit}
-          />
-        );
-      }
 
       case MODAL_KEYS.SELECT_CUSTOMER:
         return (
