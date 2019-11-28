@@ -33,61 +33,29 @@ See [http://msupply.org.nz/mobile](http://msupply.org.nz/mobile) for more detail
 - Setup local node environment as specified in `.nvmrc`: `nvm install && nvm use`.
 - Install/update app dependencies: `yarn install`.
 
-### Running mSupply mobile
-
-1. Connect a physical device or start an Android emulator. Check the device is running with `adb devices` (if the `adb` daemon is not running, start it with `adb start-server`).
-2. Run `react-native run-android` (`react-native run-android && react-native log-android` for logging)
-3. Done! For instructions on connecting to mSupply, see the instructions on the [setup page](https://github.com/sussol/mobile/wiki/Setup#setting-up-msupply-server).
-
-### Building from source
-
-- To build mSupply Mobile from source, you will need a signing key from a Sussol insider.
-- Copy or move the release key to the `./android/app` directory, e.g. `mv my-release-key.keystore ./android/app`.
-- Build the mSupply Mobile APK: `yarn install && ./android/gradlew assembleRelease`.
-- The mSupply Mobile APK file can be found at `android/app/build/outputs/apk/app-release.apk`.
-- For more information, see the official React Native documentation for generating signed APKs.
-
 ## Contributors
 
 We welcome contributions from external developers!
 
-### Prequisites
+### Prerequisites
 
-Before getting started, see the development environment instructions on the [setup page](https://github.com/openmsupply/mobile/wiki/Setup).
+- Follow the [Installation guide](https://github.com/openmsupply/mobile/wiki/Installation) to set up your development environment.
+- Familiarise yourself with our [Git workflow](https://github.com/openmsupply/mobile/wiki/Git-workflow) and [coding conventions](https://github.com/openmsupply/mobile/wiki/Code-conventions).
 
 ### How to contribute
 
-1. Find a bug or feature you'd like to work on from the [issues page](https://github.com/sussol/mobile/issues), or submit your own. If suggesting a feature, make sure to provide a general use case (functionality useful to only one or a few users is unlikely to be approved).
+1. Find a bug or feature you'd like to work on from the [issues page](https://github.com/sussol/mobile/issues), or submit your own. If suggesting a feature, make sure to provide a compelling use case (functionality useful to only one or a few users is unlikely to be approved).
 2. Comment on the issue to indicate you are interested in working on it.
 3. Be patient :). A Sussoler will respond with any additional information or questions, and assign you when the issue is ready to be worked on.
-4. Fork the repository.
+4. Fork your own copy of the repository.
 5. Code!
-6. Make a pull request to the appropriate branch.
+6. Open a pull request to the appropriate branch.
 7. A Sussoler will review your PR and provide comments or request changes.
-8. Sit back and enjoy the warm glow :-).
+8. Sit back and enjoy the warm glow of success :).
 
-### Git workflow
+### Checklist
 
-mSupply Mobile uses the [GitFlow](https://datasift.github.io/gitflow/IntroducingGitFlow.html) branching model.
-
-#### Branches
-
-- master: The latest stable release. PRs into this branch are reserved for release branches and hotfixes. Hotfixes are restricted to high priority bugs which must be addressed immediately.
-- development: The "bleeding edge". Branch off and PR into this branch if making new features.
-- release branches: Release branches, e.g. "2.1.0". Release branches represent "alpha" candidates for a particular version, and enable developers to "lock down" a release while continuing development work on new functionality. Release branches should always be branched from the development branch, and are considered "dirty" until they are thoroughly tested and bug fixed, at which point they are tagged and merged into master. All release candidates should be made from this branch (e.g. 2.1.0-rc10).
-
-### Useful stuff
-
-mSupply Mobile uses [Realm](https://realm.io/) for local storage of mSupply data. Realm Browser is a useful debugging tool for viewing and editing Realm databases.
-
-- Download Realm Browser [here](https://realm.io/products/realm-studio/#download-studio).
-- Run `chmod +x ./dev_scripts/get_db.sh && ./dev_scripts/get_db.sh`. A copy of the default.realm database should now be placed in the ./data directory.
-- Open `default.realm` in Realm Browser.
-
-### Tips and advice
-
-- Before making any changes to the code, make sure to familiarise yourself with our [coding conventions and design standards](https://github.com/sussol/mobile/wiki/Code-Design).
-- Before opening your pull request, go through the following checklist:
+- Ready to contribute? Before opening a PR, do a final check against the following list:
   - do all you changes adhered to the Sussol code conventions?
   - have you tested all changes you have made for bugs and regressions?
   - are your changes consistent with the mSupply Mobile mission statement (basic functionality with a focus on user-friendly and consistent design)?

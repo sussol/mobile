@@ -26,6 +26,7 @@
     "deploy": "./dev_scripts/deploy.sh",
     "export": "./dev_scripts/export.sh",
     "uninstall": "./dev_scripts/uninstall.sh",
+    "reset": "./dev_scripts/reset.sh",
     "clean-mac-cache": "./dev_scripts/clean.sh",
     "keygen": "./dev_scripts/keygen.sh",
     "upload-bugsnag": "./dev_scripts/upload.sh"
