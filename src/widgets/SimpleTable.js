@@ -6,6 +6,20 @@ import Cell from './DataTable/Cell';
 import { dataTableStyles } from '../globalStyles/index';
 import { HeaderCell, HeaderRow } from './DataTable/index';
 
+/**
+ * Simple table component for rendering a large list of un-changing data.
+ * Only offers a selection feature.
+ *
+ * Usage:
+ * Pass an array - data: [ { id, .. }, { id, .. }, .. ]
+ * Also an array - columns: [ { key, alignText, title } ] (example: getColumns.js)
+ * Such that each column.key is a field within an object in the data array.
+ *
+ * selectRow should be a function: (rowId) => { ... }
+ *
+ * extraData, an object with the shape: {rowId1: [bool], rowId2: [bool], ... } used
+ * to trigger styling effects on selected rows.
+ */
 const SimpleTable = React.memo(({ data, columns, selectRow, extraData }) => {
   const {
     cellText,
