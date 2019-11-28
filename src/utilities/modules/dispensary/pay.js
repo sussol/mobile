@@ -1,10 +1,10 @@
-import { createRecord } from '../../../database/utilities/index';
-import { UIDatabase } from '../../../database/index';
-
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
+
+import { createRecord } from '../../../database/utilities';
+import { UIDatabase } from '../../../database';
 
 /**
  * Helper method to pay off a prescription. Given a cash amount
