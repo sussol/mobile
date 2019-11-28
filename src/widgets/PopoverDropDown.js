@@ -86,6 +86,17 @@ const DropDown = ({ anchorRef, isVisible, options, onSelection, onClose, title }
   );
 };
 
+/**
+ * Component opening a popover list as a drop down menu. Opens
+ * relative to the component passed in `BaseComponent`, at the
+ * left/right/bottom/top position which has the most free space.
+ *
+ * Usage:
+ * @prop {React.Node}  BaseComponent Any component which will be wrapped in a Touchable.
+ * @prop {Array}       options An array of strings, the options to choose.
+ * @prop {Func}        onSelection The callback invoked when a selection is made.
+ * @prop {String}      title A title for the drop down.
+ */
 export const PopoverDropDown = withNavigation(
   ({ navigation, BaseComponent, options, onSelection, title }) => {
     const [ref, visible, show, close] = usePopover(navigation);
