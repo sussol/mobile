@@ -19,8 +19,8 @@ import { UIDatabase } from '../../../database';
  */
 export const refund = (currentUser, patient, batches) => {
   const forSamePatient = batches.every(({ transaction }) => {
-    const { otherPartyName } = transaction;
-    return patient.id === otherPartyName.id;
+    const { otherParty } = transaction;
+    return patient.id === otherParty?.id;
   });
 
   if (!batches.length) throw new Error('Trying to refund void');
