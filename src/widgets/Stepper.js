@@ -1,20 +1,28 @@
 import React from 'react';
-import { TextInput, View, Text, TouchableOpacity } from 'react-native';
+import PropTypes from 'prop-types';
 
-const Stepper = ({ value, onUpdate }) => {
+import { TextInput, View, TouchableOpacity } from 'react-native';
+
+const Stepper = ({ value, onUpdate, lowerLimit, upperLimit }) => {
   const currentValue = React.useRef(Number(value));
-  const currentIncrementAmount = React.useRef(1);
+  const currentAdjustmentAmount = React.useRef(1);
   const valueIncreaseInterval = React.useRef();
   const incrementIncreaseInterval = React.useRef();
 
-  const decrementValue = () => onUpdate(Number(value) - 1);
+  const decrementValue = () => {
+    if (lowerLimit >= currentValue.current) return;
+    currentValue.current -= currentAdjustmentAmount.current;
+    onUpdate(currentValue.current);
+  };
+
   const incrementValue = () => {
-    currentValue.current += currentIncrementAmount.current;
-    onUpdate(Number(currentValue.current) + currentIncrementAmount.current);
+    if (currentValue.current > upperLimit) return;
+    currentValue.current += currentAdjustmentAmount.current;
+    onUpdate(currentValue.current);
   };
 
   const inreaseIncrement = () => {
-    currentIncrementAmount.current *= 2;
+    currentAdjustmentAmount.current *= 2;
   };
 
   const onStartingLongPress = isIncrement => {
@@ -32,21 +40,37 @@ const Stepper = ({ value, onUpdate }) => {
 
   const onEndLongPress = () => {
     clearInterval(valueIncreaseInterval.current);
-    valueIncreaseInterval.current = null;
     clearInterval(incrementIncreaseInterval.current);
+
+    valueIncreaseInterval.current = null;
     incrementIncreaseInterval.current = null;
-    currentIncrementAmount.current = 1;
+    currentAdjustmentAmount.current = 1;
   };
 
   return (
     <View>
-      <TouchableOpacity onPressIn={onStartingLongPress} onPressOut={onEndLongPress}>
-        <View style={{ backgroundColor: 'red', width: 100, height: 10 }} />
+      <TouchableOpacity onPressIn={() => onStartingLongPress(true)} onPressOut={onEndLongPress}>
+        <View style={{ backgroundColor: 'red', width: 100, height: 100 }} />
       </TouchableOpacity>
 
       <TextInput onChangeText={onUpdate} value={String(currentValue.current)} />
+      <TouchableOpacity onPressIn={() => onStartingLongPress(false)} onPressOut={onEndLongPress}>
+        <View style={{ backgroundColor: 'blue', width: 100, height: 100 }} />
+      </TouchableOpacity>
     </View>
   );
+};
+
+Stepper.defaultProps = {
+  lowerLimit: 0,
+  upperLimit: 99999,
+};
+
+Stepper.propTypes = {
+  lowerLimit: PropTypes.number,
+  upperLimit: PropTypes.number,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  onUpdate: PropTypes.func.isRequired,
 };
 
 export const TestPage = () => {
