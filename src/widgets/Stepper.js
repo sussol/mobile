@@ -6,8 +6,8 @@ import { TextInput, View, TouchableOpacity } from 'react-native';
 const Stepper = ({ value, onUpdate, lowerLimit, upperLimit }) => {
   const currentValue = React.useRef(Number(value));
   const currentAdjustmentAmount = React.useRef(1);
-  const valueIncreaseInterval = React.useRef();
-  const incrementIncreaseInterval = React.useRef();
+  const valueAdjustmentInterval = React.useRef();
+  const adjustmentIncreaseInterval = React.useRef();
 
   const decrementValue = () => {
     if (lowerLimit >= currentValue.current) return;
@@ -26,24 +26,24 @@ const Stepper = ({ value, onUpdate, lowerLimit, upperLimit }) => {
   };
 
   const onStartingLongPress = isIncrement => {
-    if (!valueIncreaseInterval.current) {
-      valueIncreaseInterval.current = setInterval(
+    if (!valueAdjustmentInterval.current) {
+      valueAdjustmentInterval.current = setInterval(
         isIncrement ? incrementValue : decrementValue,
         50
       );
     }
 
-    if (!incrementIncreaseInterval.current) {
-      incrementIncreaseInterval.current = setInterval(inreaseIncrement, 500);
+    if (!adjustmentIncreaseInterval.current) {
+      adjustmentIncreaseInterval.current = setInterval(inreaseIncrement, 500);
     }
   };
 
   const onEndLongPress = () => {
-    clearInterval(valueIncreaseInterval.current);
-    clearInterval(incrementIncreaseInterval.current);
+    clearInterval(valueAdjustmentInterval.current);
+    clearInterval(adjustmentIncreaseInterval.current);
 
-    valueIncreaseInterval.current = null;
-    incrementIncreaseInterval.current = null;
+    valueAdjustmentInterval.current = null;
+    adjustmentIncreaseInterval.current = null;
     currentAdjustmentAmount.current = 1;
   };
 
