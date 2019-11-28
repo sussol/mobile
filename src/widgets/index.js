@@ -13,6 +13,7 @@ export { GenericChoiceList } from './GenericChoiceList';
 export { IconCell } from './IconCell';
 // eslint-disable-next-line import/named
 export { NavigationBar } from './NavigationBar';
+export { SimpleTable } from './SimpleTable';
 export { OnePressButton } from './OnePressButton';
 export { PageButton } from './PageButton';
 export { PageInfo } from './PageInfo';

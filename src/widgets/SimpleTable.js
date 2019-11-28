@@ -20,7 +20,7 @@ import { HeaderCell, HeaderRow } from './DataTable/index';
  * extraData, an object with the shape: {rowId1: [bool], rowId2: [bool], ... } used
  * to trigger styling effects on selected rows.
  */
-const SimpleTable = React.memo(({ data, columns, selectRow, extraData }) => {
+export const SimpleTable = React.memo(({ data, columns, selectRow, extraData }) => {
   const {
     cellText,
     cellContainer,
