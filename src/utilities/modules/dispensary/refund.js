@@ -9,7 +9,7 @@ import { UIDatabase } from '../../../database';
 /**
  * Utility to refund a collection of TransactionBatch records. Creates a
  * single CustomerCredit and for each TransactionBatch that should be
- * refund, a RefundLine record, which enters the batch back into stock
+ * refunded, a RefundLine record, which enters the batch back into stock
  * and adds credit for the patient.
  *
  *
