@@ -181,10 +181,7 @@ const mapStateToProps = state => {
   return prescription;
 };
 
-export const PrescriptionPage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Prescription);
+export const PrescriptionPage = connect(mapStateToProps, mapDispatchToProps)(Prescription);
 
 Prescription.defaultProps = {
   modalValue: null,

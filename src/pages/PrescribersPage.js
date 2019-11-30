@@ -86,10 +86,7 @@ const mapStateToProps = state => {
   return prescribers;
 };
 
-export const PrescribersPage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Prescribers);
+export const PrescribersPage = connect(mapStateToProps, mapDispatchToProps)(Prescribers);
 
 Prescribers.propTypes = {
   navigation: PropTypes.object.isRequired,

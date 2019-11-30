@@ -44,10 +44,7 @@ const mapDispatchToProps = dispatch => ({
   toPatients: () => dispatch(gotoPatients()),
 });
 
-export const DispensingPage = connect(
-  null,
-  mapDispatchToProps
-)(Dispensing);
+export const DispensingPage = connect(null, mapDispatchToProps)(Dispensing);
 
 Dispensing.propTypes = {
   toPrescriptions: PropTypes.func.isRequired,

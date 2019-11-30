@@ -174,10 +174,7 @@ const mapStateToProps = state => {
   return prescriptions;
 };
 
-export const PrescriptionsPage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Prescriptions);
+export const PrescriptionsPage = connect(mapStateToProps, mapDispatchToProps)(Prescriptions);
 
 Prescriptions.defaultProps = {
   showFinalised: false,
