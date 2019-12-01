@@ -49,14 +49,14 @@ const StepNumber = ({ step, numberOfSteps, currentStep, title, onPress }) => {
   );
   const enabledStep = currentStep >= step;
   const Container = enabledStep ? TouchableOpacity : View;
-  const wrappedOnPress = () => onPress(step);
+  const wrappedOnPress = () => onPress(step - 1);
   return (
     <Container onPress={wrappedOnPress} style={container}>
       <Text style={titleText}>{step === currentStep ? title : ' '}</Text>
       <View style={{ flexDirection: 'row' }}>
         <View style={stepSeperator} />
         <View style={stepContainer}>
-          <Text style={stepText}>{step}</Text>
+          <Text style={stepText}>{step + 1}</Text>
         </View>
         <View style={stepSeperator} />
       </View>
@@ -77,7 +77,7 @@ export const StepsTracker = ({ numberOfSteps, currentStep, title, onPress }) => 
     {Array.from({ length: numberOfSteps }).map((_, i) => (
       <StepNumber
         onPress={onPress}
-        step={i + 1}
+        step={i}
         numberOfSteps={numberOfSteps}
         currentStep={currentStep}
         title={title}
