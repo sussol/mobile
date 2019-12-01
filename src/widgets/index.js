@@ -30,6 +30,7 @@ export { ToggleSelector } from './ToggleSelector';
 export { ExpiryDateInput } from './ExpiryDateInput';
 export { SearchBar } from './SearchBar';
 export { DataTablePageView } from './DataTablePageView';
+export { Wizard } from './Wizard';
 export { Flag } from './Flag';
 export {
   SortAscIcon,

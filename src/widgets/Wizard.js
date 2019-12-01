@@ -12,7 +12,7 @@ import DataTablePageView from './DataTablePageView';
  * to completion for completion. See TabNavigator and StepsTracker
  * for individual component implementation.
  */
-const Wizard = ({ tabs, titles, onPress, currentTabIndex }) => (
+export const Wizard = ({ tabs, titles, onPress, currentTabIndex }) => (
   <DataTablePageView>
     <StepsTracker
       numberOfSteps={tabs.length}
