@@ -1,65 +1,73 @@
+/* eslint-disable react/forbid-prop-types */
+/* eslint-disable react/no-array-index-key */
 import React from 'react';
 import { View, Text, Dimensions, TouchableOpacity } from 'react-native';
 import { PropTypes } from 'prop-types';
 
-import { SUSSOL_ORANGE, GREY, APP_FONT_FAMILY } from '../globalStyles';
+import { WHITE, SUSSOL_ORANGE, GREY, APP_FONT_FAMILY } from '../globalStyles';
 
 const { height, width } = Dimensions.get('window');
 
-const getLocalStyles = (step, numberOfSteps, currentStep) => {
-  const denominator = numberOfSteps * 3;
-  return {
-    stepContainer: {
-      borderRadius: height / (numberOfSteps * 2),
-      borderWidth: 8,
-      borderColor: step > currentStep ? GREY : SUSSOL_ORANGE,
-      width: width / denominator,
-      height: height / (numberOfSteps * 2),
-      justifyContent: 'center',
-      alignItems: 'center',
-      [step === currentStep ? 'backgroundColor' : '']: SUSSOL_ORANGE,
-    },
-    stepText: {
-      color: step > currentStep ? GREY : (step === currentStep && 'white') || SUSSOL_ORANGE,
-      fontSize: 200 / numberOfSteps,
-      fontFamily: APP_FONT_FAMILY,
-    },
-    stepSeperator: {
-      borderColor: step > currentStep ? GREY : SUSSOL_ORANGE,
-      borderWidth: 4,
-      height: 0,
-      width: width / denominator,
-      alignSelf: 'center',
-      justifyContent: 'center',
-    },
-    titleText: {
-      color: GREY,
-      fontSize: 25,
-      fontFamily: APP_FONT_FAMILY,
-    },
-    container: { flexDirection: 'column', alignItems: 'center' },
-  };
-};
+const getLocalStyles = (step, numberOfSteps, currentStep) => ({
+  stepContainer: {
+    borderRadius: height / 20,
+    borderWidth: 2,
+
+    borderColor: step > currentStep ? GREY : SUSSOL_ORANGE,
+    width: width / 33,
+    height: height / 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: currentStep === step ? SUSSOL_ORANGE : WHITE,
+  },
+  stepNumber: {
+    color: step > currentStep ? GREY : (step === currentStep && 'white') || SUSSOL_ORANGE,
+    fontSize: 20,
+    fontFamily: APP_FONT_FAMILY,
+  },
+  stepText: {
+    color: step > currentStep ? GREY : SUSSOL_ORANGE,
+    fontSize: 20,
+    fontFamily: APP_FONT_FAMILY,
+    paddingLeft: 20,
+  },
+  stepSeperator: {
+    borderTopColor: step > currentStep ? GREY : SUSSOL_ORANGE,
+    borderTopWidth: 2,
+    marginHorizontal: 20,
+    flex: 1,
+  },
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: step === numberOfSteps - 1 ? 0 : 1,
+  },
+});
 
 const StepNumber = ({ step, numberOfSteps, currentStep, title, onPress }) => {
-  const { stepContainer, stepText, stepSeperator, titleText, container } = getLocalStyles(
+  const { stepContainer, stepNumber, stepText, stepSeperator, container } = getLocalStyles(
     step,
     numberOfSteps,
     currentStep
   );
-  const enabledStep = currentStep >= step;
-  const Container = enabledStep ? TouchableOpacity : View;
+
+  const lastStep = step === numberOfSteps - 1;
+  const completedStep = currentStep > step;
+  const Container = completedStep ? TouchableOpacity : View;
+
   const wrappedOnPress = () => onPress(step - 1);
+
   return (
     <Container onPress={wrappedOnPress} style={container}>
-      <Text style={titleText}>{step === currentStep ? title : ' '}</Text>
-      <View style={{ flexDirection: 'row' }}>
-        <View style={stepSeperator} />
-        <View style={stepContainer}>
-          <Text style={stepText}>{step + 1}</Text>
-        </View>
-        <View style={stepSeperator} />
+      <View style={stepContainer}>
+        <Text style={stepNumber}>{step + 1}</Text>
       </View>
+
+      <Text adjustsFontSizeToFit ellipsizeMode="tail" numberOfLines={1} style={stepText}>
+        {title}
+      </Text>
+
+      {lastStep && <View style={stepSeperator} />}
     </Container>
   );
 };
@@ -72,7 +80,7 @@ StepNumber.propTypes = {
   onPress: PropTypes.func.isRequired,
 };
 
-export const StepsTracker = ({ numberOfSteps, currentStep, title, onPress }) => (
+export const StepsTracker = ({ numberOfSteps, currentStep, titles, onPress }) => (
   <View style={{ flexDirection: 'row' }}>
     {Array.from({ length: numberOfSteps }).map((_, i) => (
       <StepNumber
@@ -80,7 +88,8 @@ export const StepsTracker = ({ numberOfSteps, currentStep, title, onPress }) => 
         step={i}
         numberOfSteps={numberOfSteps}
         currentStep={currentStep}
-        title={title}
+        title={titles[i]}
+        key={`${i}`}
       />
     ))}
   </View>
@@ -89,6 +98,6 @@ export const StepsTracker = ({ numberOfSteps, currentStep, title, onPress }) => 
 StepsTracker.propTypes = {
   numberOfSteps: PropTypes.number.isRequired,
   currentStep: PropTypes.number.isRequired,
-  title: PropTypes.string.isRequired,
+  titles: PropTypes.array.isRequired,
   onPress: PropTypes.func.isRequired,
 };
