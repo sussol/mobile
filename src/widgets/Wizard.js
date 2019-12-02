@@ -3,7 +3,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { StepsTracker } from './StepsTracker';
+import { Stepper } from './Stepper';
 import { TabNavigator } from './TabNavigator';
 import DataTablePageView from './DataTablePageView';
 
@@ -14,7 +14,7 @@ import DataTablePageView from './DataTablePageView';
  */
 export const Wizard = ({ tabs, titles, onPress, currentTabIndex }) => (
   <DataTablePageView>
-    <StepsTracker
+    <Stepper
       numberOfSteps={tabs.length}
       currentStep={currentTabIndex}
       onPress={onPress}
