@@ -18,7 +18,7 @@ export const Wizard = ({ tabs, titles, onPress, currentTabIndex }) => (
       numberOfSteps={tabs.length}
       currentStep={currentTabIndex}
       onPress={onPress}
-      title={titles[currentTabIndex]}
+      titles={titles}
     />
     <TabNavigator tabs={tabs} currentTabIndex={currentTabIndex} />
   </DataTablePageView>
