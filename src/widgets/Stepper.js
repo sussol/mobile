@@ -43,7 +43,7 @@ const getLocalStyles = (step, numberOfSteps, currentStep) => ({
   },
 });
 
-const StepNumber = ({ step, numberOfSteps, currentStep, title, onPress }) => {
+const StepperNumber = ({ step, numberOfSteps, currentStep, title, onPress }) => {
   const { stepContainer, stepNumber, stepText, stepSeperator, container } = getLocalStyles(
     step,
     numberOfSteps,
@@ -71,7 +71,7 @@ const StepNumber = ({ step, numberOfSteps, currentStep, title, onPress }) => {
   );
 };
 
-StepNumber.propTypes = {
+StepperNumber.propTypes = {
   step: PropTypes.number.isRequired,
   numberOfSteps: PropTypes.number.isRequired,
   currentStep: PropTypes.number.isRequired,
@@ -79,10 +79,10 @@ StepNumber.propTypes = {
   onPress: PropTypes.func.isRequired,
 };
 
-export const StepsTracker = ({ numberOfSteps, currentStep, titles, onPress }) => (
+export const Stepper = ({ numberOfSteps, currentStep, titles, onPress }) => (
   <View style={{ flexDirection: 'row' }}>
     {Array.from({ length: numberOfSteps }).map((_, i) => (
-      <StepNumber
+      <StepperNumber
         onPress={onPress}
         step={i}
         numberOfSteps={numberOfSteps}
@@ -94,7 +94,7 @@ export const StepsTracker = ({ numberOfSteps, currentStep, titles, onPress }) =>
   </View>
 );
 
-StepsTracker.propTypes = {
+Stepper.propTypes = {
   numberOfSteps: PropTypes.number.isRequired,
   currentStep: PropTypes.number.isRequired,
   titles: PropTypes.array.isRequired,

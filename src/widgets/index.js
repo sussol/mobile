@@ -24,7 +24,7 @@ export { SimpleTable } from './SimpleTable';
 export { Spinner } from './Spinner';
 export { Step } from './Step';
 export { StepperInput } from './StepperInput';
-export { StepsTracker } from './StepsTracker';
+export { Stepper } from './Stepper';
 export { SyncState } from './SyncState';
 export { TabNavigator } from './TabNavigator';
 export { TextEditor } from './TextEditor';
