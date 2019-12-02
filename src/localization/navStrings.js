@@ -16,7 +16,7 @@ export const navStrings = new LocalizedStrings({
     invoice: 'Invoice',
     language: 'LANGUAGE',
     log_out: 'LOG OUT',
-    manage_stocktake: 'Manage Stockake',
+    manage_stocktake: 'Manage Stocktake',
     new_stocktake: 'New Stocktake',
     requisition: 'Requisition',
     stocktakes: 'Stocktakes',
