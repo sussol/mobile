@@ -23,7 +23,7 @@ import { SUSSOL_ORANGE, APP_FONT_FAMILY } from '../globalStyles/index';
  * @prop {Object}        textInputStyle Style object for the underlying TextInput.
  *
  */
-const Stepper = ({
+export const StepperInput = ({
   value,
   onChangeText,
   lowerLimit,
@@ -107,7 +107,7 @@ const localStyles = StyleSheet.create({
   },
 });
 
-Stepper.defaultProps = {
+StepperInput.defaultProps = {
   lowerLimit: 0,
   upperLimit: 99999,
   iconSize: 45,
@@ -115,7 +115,7 @@ Stepper.defaultProps = {
   textInputStyle: localStyles.textInput,
 };
 
-Stepper.propTypes = {
+StepperInput.propTypes = {
   lowerLimit: PropTypes.number,
   upperLimit: PropTypes.number,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,

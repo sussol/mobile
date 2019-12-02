@@ -12,7 +12,6 @@ const getLocalStyles = (step, numberOfSteps, currentStep) => ({
   stepContainer: {
     borderRadius: height / 20,
     borderWidth: 2,
-
     borderColor: step > currentStep ? GREY : SUSSOL_ORANGE,
     width: width / 33,
     height: height / 20,

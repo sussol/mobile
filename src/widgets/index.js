@@ -23,6 +23,7 @@ export { SearchBar } from './SearchBar';
 export { SimpleTable } from './SimpleTable';
 export { Spinner } from './Spinner';
 export { Step } from './Step';
+export { StepperInput } from './StepperInput';
 export { StepsTracker } from './StepsTracker';
 export { SyncState } from './SyncState';
 export { TabNavigator } from './TabNavigator';
