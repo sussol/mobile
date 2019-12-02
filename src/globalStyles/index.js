@@ -38,6 +38,7 @@ export {
   SUSSOL_ORANGE,
   WARM_GREY,
   WARMER_GREY,
+  WHITE,
 } from './colors';
 
 export { APP_GENERAL_FONT_SIZE, APP_FONT_FAMILY } from './fonts';
