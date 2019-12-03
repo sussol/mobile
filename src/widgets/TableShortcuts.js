@@ -6,7 +6,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 import { APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from '../globalStyles';
 
-const TableShortcut = ({
+export const TableShortcut = ({
   children,
   onPress,
   shortcutKey,
@@ -31,7 +31,7 @@ const TableShortcut = ({
   );
 };
 
-const TableShortcuts = ({ children }) => {
+export const TableShortcuts = ({ children }) => {
   const { shortcutsContainer } = localStyles;
   return <View style={shortcutsContainer}>{children}</View>;
 };

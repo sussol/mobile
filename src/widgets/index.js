@@ -27,6 +27,7 @@ export { StepperInput } from './StepperInput';
 export { Stepper } from './Stepper';
 export { SyncState } from './SyncState';
 export { TabNavigator } from './TabNavigator';
+export { TableShortcuts } from './TableShortcuts';
 export { TextEditor } from './TextEditor';
 export { TextInput } from './TextInput';
 export { ToggleBar } from './ToggleBar';
