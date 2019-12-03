@@ -25,6 +25,7 @@ export { Spinner } from './Spinner';
 export { Step } from './Step';
 export { StepperInput } from './StepperInput';
 export { Stepper } from './Stepper';
+export { Slider } from './Slider';
 export { SyncState } from './SyncState';
 export { TabNavigator } from './TabNavigator';
 export { TableShortcuts } from './TableShortcuts';
