@@ -26,4 +26,4 @@ export {
   checkForCustomerRequisitionError,
 } from './finalisation';
 
-export { formatErrorItemNames } from './formatters';
+export { formatErrorItemNames, roundNumber } from './formatters';
