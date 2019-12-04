@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-import { APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from '../globalStyles';
+import { APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE, SHADOW_BORDER } from '../globalStyles';
 
 export const TableShortcut = ({
   children,
@@ -40,7 +40,7 @@ const localStyles = StyleSheet.create({
   container: {},
   shortcutContainer: {
     flex: 1,
-    borderBottomColor: 'black',
+    borderBottomColor: SHADOW_BORDER,
     borderBottomWidth: 1,
   },
   innerShortcutContainer: {
@@ -56,14 +56,13 @@ const localStyles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor: SHADOW_BORDER,
   },
 });
 
 TableShortcut.defaultProps = {
   onPress: null,
   shortcutKey: '',
-
   innerContainerStyle: localStyles.innerShortcutContainer,
   textStyle: localStyles.shortcutText,
   containerStyle: localStyles.shortcutContainer,
