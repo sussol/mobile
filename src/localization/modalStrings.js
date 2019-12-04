@@ -57,6 +57,8 @@ export const modalStrings = new LocalizedStrings({
     select_master_lists: 'Select master list',
     customer_no_masterlist_available: 'This customer has no master lists!',
     supplier_no_masterlist_available: 'Your store has no master lists!',
+    emergency_orders_can_only_have: 'Emergency orders can only have',
+    items_remove_some: 'items! Remove some before you can finalise',
   },
   fr: {
     add_at_least_one_item_before_finalising:
