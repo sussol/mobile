@@ -114,6 +114,8 @@ export const modalStrings = new LocalizedStrings({
        d'autres relevé d'inventaire). La quantité actuelle et celle de l'instantané seront \
        réinitialisées.",
     select_a_reason: 'Sélectionnez une raison',
+    emergency_orders_can_only_have: "Commandes urgentes peuvent n'avoir que",
+    items_remove_some: 'articles ! Enlevez-en quelques-uns avant de finaliser.',
   },
   gil: {
     // TODO: add |edit_the_stocktake_comment|, |edit_the_stocktake_name|, |stocktake_invalid_stock|
