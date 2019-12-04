@@ -214,7 +214,7 @@ export class Requisition extends Realm.Object {
    * @param  {Array.<string>}   selected masterlists from multiselect
    * @param  {Name}             thisStore
    */
-  addItemsFromMasterList(database, thisStore, selected) {
+  addItemsFromMasterList({ database, thisStore, selected }) {
     if (this.isFinalised) {
       throw new Error('Cannot add items to a finalised requisition');
     }
@@ -260,7 +260,7 @@ export class Requisition extends Realm.Object {
       throw new Error('Cannot add items to a finalised requisition');
     }
 
-    this.addItemsFromMasterList(database, thisStore);
+    this.addItemsFromMasterList({ database, thisStore });
     this.setRequestedToSuggested(database);
     this.pruneRedundantItems(database);
   }
