@@ -54,7 +54,11 @@ const modalProps = ({ dispatch, program, orderType }) => ({
 
       const mosText = `${maxMOS}: ${itemMOS}`;
       const thresholdText = `${threshMOS}: ${itemThreshMOS}`;
-      const emergencyText = `[${programStrings.emergency_order}]  Max Items: ${maxLinesForOrder}`;
+      const maxItemsText =
+        maxLinesForOrder && maxLinesForOrder !== Infinity
+          ? `${programStrings.max_items}: ${maxLinesForOrder}`
+          : '';
+      const emergencyText = `[${programStrings.emergency_order}]  ${maxItemsText}`;
       const maxOrdersText = isEmergency ? emergencyText : `${maxOPP}: ${maxOrders}`;
 
       return `${maxOrdersText} - ${mosText} - ${thresholdText}`;
