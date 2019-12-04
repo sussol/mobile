@@ -955,6 +955,11 @@
     wcwidth "^1.0.1"
     ws "^1.1.0"
 
+"@react-native-community/slider@^2.0.7":
+  version "2.0.7"
+  resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-2.0.7.tgz#5c2d474d6f5210193dd64d802254f45a8528a9a7"
+  integrity sha512-MepSA4XOQbMAE/vc47XsFPPUtWVB//l9ea+x9Bp7lKwaBbtwRUMC1miDFO045ud4YEQ7a0PrviczyxkoiSUFwQ==
+
 "@react-navigation/core@^3.5.1":
   version "3.5.1"
   resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-3.5.1.tgz#7a2339fca3496979305fb3a8ab88c2ca8d8c214d"
