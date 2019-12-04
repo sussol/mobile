@@ -7,7 +7,7 @@ import IonIcon from 'react-native-vector-icons/Ionicons';
 import { SUSSOL_ORANGE, APP_FONT_FAMILY } from '../globalStyles/index';
 
 /**
- * Stepper component to update a numerical value. The `value` passed will be
+ * Input component which will update a numerical value. The `value` passed will be
  * cast, so should return a valid number when cast to `Number`.
  *
  * Has increment and decrement buttons which increase the passed value by one.
