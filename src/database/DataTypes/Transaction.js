@@ -158,7 +158,6 @@ export class Transaction extends Realm.Object {
    * @param  {Name}  name
    */
   setOtherParty(name) {
-    name.addTransaction(this);
     this.otherParty = name;
   }
 
