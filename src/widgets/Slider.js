@@ -119,7 +119,7 @@ export const Slider = ({
   );
 };
 
-const localStyles = StyleSheet({
+const localStyles = StyleSheet.create({
   mainContainerStyle: { flexDirection: 'column', flex: 1 },
   rowStyle: { flexDirection: 'row' },
   sliderStyle: { flex: 19 },
