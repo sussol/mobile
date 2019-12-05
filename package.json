@@ -29,7 +29,9 @@
     "reset": "./dev_scripts/reset.sh",
     "clean-mac-cache": "./dev_scripts/clean.sh",
     "keygen": "./dev_scripts/keygen.sh",
-    "upload-bugsnag": "./dev_scripts/upload.sh"
+    "upload-bugsnag": "./dev_scripts/upload.sh",
+    "json-to-csv": "node ./src/utilities/exportJsonToCsv.js",
+    "csv-to-json": "node ./src/utilities/exportCsvToJson.js"
   },
   "jest": {
     "preset": "react-native"
