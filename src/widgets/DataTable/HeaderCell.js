@@ -13,9 +13,9 @@ import { getAdjustedStyle } from './utilities';
  * @param {String}       columnKey             The key for the column the cell heads.
  * @param {Func}         onPressAction         Action for dispatching on press
  * @param {Func}         dispatch              Dispatcher to backing reducer
- * @param {ReactElement} SortAscComponent      Icon component for ascending sorting
- * @param {ReactElement} SortDescComponent     Icon component for descending sorting
- * @param {ReactElement} SortNeutralComponent  Icon component for neutral state, no sort.
+ * @param {ReactElement} SortAscComponent      Component displayed when sorting is ascending.
+ * @param {ReactElement} SortDescComponent     Component displayed when sorting is descending.
+ * @param {ReactElement} SortNeutralComponent  Component displayed when no sorting is applied.
  * @param {Object}       containerStyle        Style object for the wrapping Touchable or View.
  * @param {Object}       textStyle             Style object for the inner Text component.
  * @param {Number}       width                 Optional flex property to inject into styles.
@@ -67,6 +67,17 @@ const HeaderCell = React.memo(
   }
 );
 
+HeaderCell.defaultProps = {
+  dispatch: null,
+  onPressAction: null,
+  sortDirection: null,
+  containerStyle: {},
+  textStyle: {},
+  sortable: false,
+  width: 0,
+  isLastCell: false,
+};
+
 HeaderCell.propTypes = {
   ...TouchableOpacityPropTypes,
   title: PropTypes.string.isRequired,
@@ -74,28 +85,14 @@ HeaderCell.propTypes = {
   onPressAction: PropTypes.func,
   dispatch: PropTypes.func,
   sortDirection: PropTypes.oneOf(['ASC', 'DESC']),
-  SortAscComponent: PropTypes.element,
-  SortDescComponent: PropTypes.element,
-  SortNeutralComponent: PropTypes.element,
+  SortAscComponent: PropTypes.func.isRequired,
+  SortDescComponent: PropTypes.func.isRequired,
+  SortNeutralComponent: PropTypes.func.isRequired,
   containerStyle: PropTypes.object,
   textStyle: PropTypes.object,
   width: PropTypes.number,
   sortable: PropTypes.bool,
   isLastCell: PropTypes.bool,
-};
-
-HeaderCell.defaultProps = {
-  dispatch: null,
-  onPressAction: null,
-  sortDirection: null,
-  SortAscComponent: null,
-  SortDescComponent: null,
-  SortNeutralComponent: null,
-  containerStyle: {},
-  textStyle: {},
-  sortable: false,
-  width: 0,
-  isLastCell: false,
 };
 
 export default HeaderCell;

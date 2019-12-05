@@ -15,9 +15,9 @@ import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { FINALISE_GREEN, SUSSOL_ORANGE, FINALISED_RED, dataTableColors } from '../globalStyles';
 
-export const SortAscIcon = <FAIcon name="sort-asc" size={15} style={{ marginRight: 10 }} />;
-export const SortNeutralIcon = <FAIcon name="sort" size={15} style={{ marginRight: 10 }} />;
-export const SortDescIcon = <FAIcon name="sort-desc" size={15} style={{ marginRight: 10 }} />;
+export const SortAscIcon = () => <FAIcon name="sort-asc" size={15} style={{ marginRight: 10 }} />;
+export const SortNeutralIcon = () => <FAIcon name="sort" size={15} style={{ marginRight: 10 }} />;
+export const SortDescIcon = () => <FAIcon name="sort-desc" size={15} style={{ marginRight: 10 }} />;
 
 export const CheckedComponent = () => (
   <IonIcon name="md-radio-button-on" size={15} color={dataTableColors.checkableCellChecked} />
