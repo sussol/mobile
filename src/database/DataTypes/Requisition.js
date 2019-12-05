@@ -214,22 +214,25 @@ export class Requisition extends Realm.Object {
    * @param  {Array.<string>}   selected masterlists from multiselect
    * @param  {Name}             thisStore
    */
-  addItemsFromMasterList(database, selected, thisStore) {
+  addItemsFromMasterList({ database, thisStore, selected }) {
     if (this.isFinalised) {
       throw new Error('Cannot add items to a finalised requisition');
     }
+
     // Filter through masterList ids that are on multiselect list
-    thisStore.masterLists
-      .filter(item => selected.indexOf(item.id) !== -1)
-      .forEach(masterList => {
-        const itemsToAdd = complement(masterList.items, this.items, item => item.itemId);
-        itemsToAdd.forEach(masterListItem => {
-          if (!masterListItem.item.crossReferenceItem) {
-            // Do not add cross reference items as causes unwanted duplicates.
-            createRecord(database, 'RequisitionItem', this, masterListItem.item);
-          }
-        });
+    const filteredMasterLists = selected
+      ? thisStore.masterLists.filter(item => selected.indexOf(item.id) !== -1)
+      : thisStore.masterLists;
+
+    filteredMasterLists.forEach(masterList => {
+      const itemsToAdd = complement(masterList.items, this.items, item => item.itemId);
+      itemsToAdd.forEach(masterListItem => {
+        if (!masterListItem.item.crossReferenceItem) {
+          // Do not add cross reference items as causes unwanted duplicates.
+          createRecord(database, 'RequisitionItem', this, masterListItem.item);
+        }
       });
+    });
   }
 
   /**
@@ -257,7 +260,7 @@ export class Requisition extends Realm.Object {
       throw new Error('Cannot add items to a finalised requisition');
     }
 
-    this.addItemsFromMasterList(database, thisStore);
+    this.addItemsFromMasterList({ database, thisStore });
     this.setRequestedToSuggested(database);
     this.pruneRedundantItems(database);
   }

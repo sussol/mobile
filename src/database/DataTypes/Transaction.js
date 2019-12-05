@@ -234,7 +234,7 @@ export class Transaction extends Realm.Object {
    * @param  {Realm}            database
    * @param  {Array.<string>}   selected masterlists from multiselect
    */
-  addItemsFromMasterList(database, selected) {
+  addItemsFromMasterList({ database, selected }) {
     if (!this.isCustomerInvoice) {
       throw new Error(`Cannot add master lists to ${this.type}`);
     }
