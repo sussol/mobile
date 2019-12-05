@@ -22,8 +22,6 @@ const syncStrings = require('../localization/syncStrings.json');
 const tableStrings = require('../localization/tableStrings.json');
 const validationStrings = require('../localization/validationStrings.json');
 
-const mainLanguage = 'gb';
-
 const localizationFiles = [
   authStrings,
   buttonStrings,
@@ -50,12 +48,18 @@ syncStrings.name = 'syncStrings';
 tableStrings.name = 'tableStrings';
 validationStrings.name = 'validationStrings';
 
+// mainLanguage is English
+const mainLanguage = 'gb';
+
+// get the third command line argument
 getSelectedLanguage = () => process.argv[2];
 
-const saveCsvFile = (mainLanguage, selectedLanguage) => {
+saveCsvFile = (mainLanguage, selectedLanguage) => {
   let valueFound = false;
+  // keeps all the data coming from the json files
   let csvFileData = '';
 
+  // go through all localization files
   for (localizationFile of localizationFiles) {
     const mainLanguageKeys = [];
     const mainLanguageValues = [];
@@ -65,7 +69,7 @@ const saveCsvFile = (mainLanguage, selectedLanguage) => {
     for (const [language, mainLanguageKey] of Object.entries(localizationFile)) {
       // iterates over the mainLanguage data
       if (language === mainLanguage) {
-        // save all the needed data in values
+        // save all the mainLanguage data in mainLanguageValues
         for (let [mainLanguageKeyAgain, mainLanguageValue] of Object.entries(mainLanguageKey)) {
           mainLanguageKeys.push(mainLanguageKeyAgain);
           mainLanguageValue = mainLanguageValue.replace(/\n/g, ' ');
@@ -74,26 +78,30 @@ const saveCsvFile = (mainLanguage, selectedLanguage) => {
       }
       // iterates over the selectedLanguage
       if (language === selectedLanguage) {
-        //
+        // use the mainLanguageKeys array to iterates over the selectedLanguage
         for (selectedLanguageKey of mainLanguageKeys) {
           valueFound = false;
 
+          // save all the selectedLanguage data in selectedLanguageValues
           for (let [selectedLanguageKeyAgain, selectedLanguageValue] of Object.entries(
             mainLanguageKey
           )) {
             if (selectedLanguageKey === selectedLanguageKeyAgain && valueFound === false) {
               selectedLanguageValue = selectedLanguageValue.replace(/\n/g, ' ');
               selectedLanguageValues.push(selectedLanguageValue);
+              // stops searching the selectedLanguageKey if it was found
               valueFound = true;
             }
           }
           if (valueFound === false) {
+            // selectedLanguage does not have a value for the key
             selectedLanguageValues.push('');
             valueFound = false;
           }
         }
       }
     }
+    // iterates over mainLanguageKeys to save the data of every localizationFile
     for (mainLanguageKey in mainLanguageKeys) {
       // eslint-disable-next-line no-undef
       csvFileData = `${csvFileData} ${localizationFile.name}:${mainLanguageKeys[mainLanguageKey]},"${mainLanguageValues[mainLanguageKey]}","${selectedLanguageValues[mainLanguageKey]}"\n`;
@@ -112,10 +120,10 @@ writeCsvFile = (selectedLanguage, csvFileData) => {
   });
 };
 
-executeApplication = () => {
+executeJsonToCsv = () => {
   const selectedLanguage = getSelectedLanguage();
   const csvFileData = saveCsvFile(mainLanguage, selectedLanguage);
   writeCsvFile(selectedLanguage, csvFileData);
 };
 
-executeApplication();
+executeJsonToCsv();
