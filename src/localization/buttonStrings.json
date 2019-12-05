@@ -6,6 +6,7 @@
     "create_automatic_order": "Create Automatic Order",
     "current": "Current",
     "done": "Done",
+    "export_data": "Export Data",
     "hide_stockouts": "Hide Stockouts",
     "manage_stocktake": "Manage Stocktake",
     "new_invoice": "New Invoice",
@@ -15,16 +16,14 @@
     "new_stocktake": "New Stocktake",
     "new_supplier_invoice": "New Supplier Invoice",
     "past": "Past",
-    "use_suggested_quantities": "Use Suggested Quantities",
+    "realm_explorer": "Realm Explorer",
     "use_requested_quantities": "Use Requested Quantities",
-    "view_regimen_data": "View Regimen Data",
-    "export_data": "Export Data",
-    "realm_explorer": "Realm Explorer"
+    "use_suggested_quantities": "Use Suggested Quantities",
+    "view_regimen_data": "View Regimen Data"
   },
   "fr": {
-    "view_regimen_data": "Données de régimes",
     "add_batch": "Ajouter un lot",
-    "add_master_list_items": "Ajouter à partir des\nlistes maîtres",
+    "add_master_list_items": "Ajouter à partir des listes maîtres",
     "all_items_selected": "Tout les articles sélectionnés",
     "create_automatic_order": "Créer une commande automatiquement",
     "current": "Actuel",
@@ -38,8 +37,9 @@
     "new_stocktake": "Nouvel inventaire",
     "new_supplier_invoice": "Nouvelle facture fournisseur",
     "past": "Archives",
+    "use_requested_quantities": "Utiliser les quantités demandées",
     "use_suggested_quantities": "Utiliser les quantités suggérées",
-    "use_requested_quantities": "Utiliser les quantités demandées"
+    "view_regimen_data": "Données de régimes"
   },
   "gil": {
     "add_master_list_items": "Rinea am list",
@@ -49,15 +49,15 @@
     "done": "E a tia",
     "hide_stockouts": "Tai kaoti ake a bane",
     "manage_stocktake": "Manage Stocktake",
-    "new_invoice": "Am karao-oota\nae boou",
-    "new_item": "Karina am bwai\nn aoraki ae boou",
-    "new_line": "Te bwain aoraki\nae kainnanoaki",
-    "new_requisition": "Am oota\nae karina",
+    "new_invoice": "Am karao-oota ae boou",
+    "new_item": "Karina am bwai n aoraki ae boou",
+    "new_line": "Te bwain aoraki ae kainnanoaki",
+    "new_requisition": "Am oota ae karina",
     "new_stocktake": "Warebwai ae boou",
-    "new_supplier_invoice": "Bebwan am oota\nman pharmacy",
+    "new_supplier_invoice": "Bebwan am oota man pharmacy",
     "past": "Are I mwaina",
-    "use_requested_quantities": "Kabongana maitina\nae kainnanoaki",
-    "use_suggested_quantities": "Kabongana te\nmwaiti are e katauaki"
+    "use_requested_quantities": "Kabongana maitina ae kainnanoaki",
+    "use_suggested_quantities": "Kabongana te mwaiti are e katauaki"
   },
   "tl": {
     "add_master_list_items": "Utiliza Lista Master",
@@ -74,8 +74,8 @@
     "new_stocktake": "Ajustamentu Foun",
     "new_supplier_invoice": "Distribuidor nia Invoice Foun",
     "past": "Pasadu",
-    "use_suggested_quantities": "Kuantidade Sujere",
-    "use_requested_quantities": "Kuantidade Ezije"
+    "use_requested_quantities": "Kuantidade Ezije",
+    "use_suggested_quantities": "Kuantidade Sujere"
   },
   "la": {
     "add_batch": "​ໃສ​່​ເລກ​ຊຸດ​ຜະ​ລິດ",
@@ -93,7 +93,7 @@
     "new_stocktake": "ເຮັດ​ການກວດ​ສາ​ສາງໃໝ່",
     "new_supplier_invoice": "ໃບ​ຮັບ​ສິນ​ຄ້າໃໝ່",
     "past": "ໃນທີ່​ຜ່ານ​ມາ",
-    "use_suggested_quantities": "ນຳໃຊ້ຈຳ​ນວນທີ່​ຖືກແນະ​ນຳ",
-    "use_requested_quantities": "ນຳໃຊ້ຈຳ​ນວນທີ່​ສະ​ເໜີ​ຂໍ"
+    "use_requested_quantities": "ນຳໃຊ້ຈຳ​ນວນທີ່​ສະ​ເໜີ​ຂໍ",
+    "use_suggested_quantities": "ນຳໃຊ້ຈຳ​ນວນທີ່​ຖືກແນະ​ນຳ"
   }
 }

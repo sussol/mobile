@@ -4,6 +4,7 @@
     "customer_invoices": "Customer Invoices",
     "customer_requisitions": "Customer Requisitions",
     "customers": "Customers",
+    "database_contents": "Database Contents",
     "finalise": "FINALISE",
     "finalised_cannot_be_edited": "FINALISED. CANNOT BE EDITED",
     "invoice": "Invoice",
@@ -12,12 +13,11 @@
     "manage_stocktake": "Manage Stockake",
     "new_stocktake": "New Stocktake",
     "requisition": "Requisition",
-    "stocktakes": "Stocktakes",
-    "stocktake": "Stocktake",
-    "supplier_invoices": "Supplier Invoices",
-    "supplier_requisitions": "Supplier Requisitions",
     "settings": "settings",
-    "database_contents": "Database Contents"
+    "stocktake": "Stocktake",
+    "stocktakes": "Stocktakes",
+    "supplier_invoices": "Supplier Invoices",
+    "supplier_requisitions": "Supplier Requisitions"
   },
   "fr": {
     "current_stock": "Stock actuel",
@@ -32,18 +32,18 @@
     "manage_stocktake": "Gérer les relevés d'inventaire",
     "new_stocktake": "Nouveau relevé d'inventaire",
     "requisition": "Réquisition",
-    "stocktakes": "Relevés d'inventaire",
     "stocktake": "Relevé d'inventaire",
+    "stocktakes": "Relevés d'inventaire",
     "supplier_invoices": "Factures fournisseurs",
     "supplier_requisitions": "Factures réquisitions"
   },
   "gil": {
-    "current_stock": "Mwaitin am bwai n\naoraki ke am supply",
-    "customer_invoices": "Ana invoice am\nkiriniki ke am aoraki",
+    "current_stock": "Mwaitin am bwai n aoraki ke am supply",
+    "customer_invoices": "Ana invoice am kiriniki ke am aoraki",
     "customer_requisitions": "Am oota n am clinic",
     "customers": "Kiriniki",
     "finalise": "FINALISE",
-    "finalised_cannot_be_edited": "FINALISED, E AKI KONA N MANGA BITAKI",
+    "finalised_cannot_be_edited": "E AKI KONA N MANGA BITAKI\"",
     "invoice": "Invoice",
     "language": "English ke Kiribati",
     "log_out": "KAINNA",
@@ -51,8 +51,8 @@
     "new_stocktake": "Am warebwai ae boou",
     "requisition": "Am oota ae karina",
     "stocktakes": "Warebwai",
-    "supplier_invoices": "Ana Invoice\nam Supplier",
-    "supplier_requisitions": "Am oota nakon\nte pharmacy"
+    "supplier_invoices": "Ana Invoice am Supplier",
+    "supplier_requisitions": "Am oota nakon te pharmacy"
   },
   "tl": {
     "current_stock": "Sasán Atuál",
@@ -69,7 +69,7 @@
     "requisition": "Rekuizisaun ida",
     "stocktakes": "Ajustamentu sira",
     "supplier_invoices": "Distribuidór nia Konta",
-    "supplier_requisitions": "Rekuizasaun\nba Distribuidor"
+    "supplier_requisitions": "Rekuizasaun ba Distribuidor"
   },
   "la": {
     "current_stock": "ສິນ​ຄ້າ​ທີ່​ມີ ປັດຈຸບັນ",
@@ -84,8 +84,8 @@
     "manage_stocktake": "ເຮັດ​ການ​ຈັດ​ການ ກວດ​ກາ​ສິນ​ຄ້າ​ໃນ​ສາງ",
     "new_stocktake": "ເຮັດ​ການກວດ​ສາ​ສາງໃໝ່",
     "requisition": "ການ​ເຮັດ​ການ​ຮ້ອງ​ຂໍ",
-    "stocktakes": "ການກວດກາສາງ",
     "stocktake": "ກວດ​ກາ​ສິນ​ຄ້າ​ໃນ​ສາງ",
+    "stocktakes": "ການກວດກາສາງ",
     "supplier_invoices": "ໃບນຳສົ່ງສິນຄ້າ",
     "supplier_requisitions": "ການ​ສະ​ເໜີ​ຂໍ ຫາຜູ້​ສະ​ໜອງ"
   }

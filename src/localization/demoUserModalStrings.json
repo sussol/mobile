@@ -1,9 +1,13 @@
 {
   "gb": {
-    "confirmModalBody": "One step closer to creating your Demo Store. Before generating your demo store, we first need to verify your email address. We have sent a verification link to the email you have provided. Please check your inbox and follow the verification link.",
-    "modalBodyText": "Request a demo store.\n Your email will be used for verification purposes and for notification when your demo store expires"
+    "confirmModalBody": "we first need to verify your email address. We have sent a verification link to the email you have provided. Please check your inbox and follow the verification link.\"",
+    "modalBodyText": "Request a demo store.  Your email will be used for verification purposes and for notification when your demo store expires"
   },
   "fr": {},
   "gil": {},
-  "tl": {}
+  "tl": {},
+  "la": {
+    "confirmModalBody": "undefined",
+    "modalBodyText": "undefined"
+  }
 }

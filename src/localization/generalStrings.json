@@ -1,42 +1,42 @@
 {
   "gb": {
-    "submit": "Submit",
-    "submitting": "Submitting...",
-    "submitted": "Submitted",
-    "stocktake": "Stocktake",
-    "start_typing_to_search": "Start typing to search",
-    "unfinalised": "Un-finalised",
-    "customerRequisitions": "Customer requisitions",
-    "supplierRequisitions": "Supplier requisitions",
-    "supplierInvoices": " Supplier invoices",
-    "customerInvoices": "Customer invoices",
-    "stocktakes": "Stocktakes",
-    "not_available": "N/A",
-    "new_details_saved": "New details have been saved",
-    "new_details_not_saved": "Password did not match. New details have not been saved.",
-    "exported_data": "Exported data file",
     "couldnt_export_data": "Couldn't export data",
+    "customerInvoices": "Customer invoices",
+    "customerRequisitions": "Customer requisitions",
+    "exported_data": "Exported data file",
+    "new_details_not_saved": "Password did not match. New details have not been saved.",
+    "new_details_saved": "New details have been saved",
+    "not_available": "N/A",
+    "start_typing_to_search": "Start typing to search",
+    "stocktake": "Stocktake",
+    "stocktakes": "Stocktakes",
+    "submit": "Submit",
+    "submitted": "Submitted",
+    "submitting": "Submitting...",
+    "supplierInvoices": "Supplier invoices",
+    "supplierRequisitions": "Supplier requisitions",
     "sync_password": "Sync password",
-    "sync_url": "Sync url"
+    "sync_url": "Sync url",
+    "unfinalised": "Un-finalised"
   },
   "fr": {
-    "stocktake": "Inventaire",
+    "not_available": "N/A",
     "start_typing_to_search": "Tapez pour rechercher",
-    "not_available": "N/A"
+    "stocktake": "Inventaire"
   },
   "gil": {
-    "stocktake": "Warebwai",
+    "not_available": "N/A",
     "start_typing_to_search": "Taibinna ni kakaea",
-    "not_available": "N/A"
+    "stocktake": "Warebwai"
   },
   "tl": {
-    "stocktake": "Ajustamentu",
+    "not_available": "N/A",
     "start_typing_to_search": "Hakerek iha ne'e hodi buka-hetan",
-    "not_available": "N/A"
+    "stocktake": "Ajustamentu"
   },
   "la": {
-    "stocktake": "ກວດ​ກາ​ສິນ​ຄ້າ​ໃນ​ສາງ",
+    "not_available": "N/A",
     "start_typing_to_search": "ພິມ ເພື່ອ​ຄົ້ນ​ຫາ",
-    "not_available": "N/A"
+    "stocktake": "ກວດ​ກາ​ສິນ​ຄ້າ​ໃນ​ສາງ"
   }
 }

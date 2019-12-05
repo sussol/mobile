@@ -1,60 +1,60 @@
 {
   "gb": {
-    "last_sync": "LAST SYNC",
-    "manual_sync": "Manual Sync",
-    "sync_enabled": "SYNC ENABLED",
-    "sync_error": "SYNC ERROR",
-    "sync_in_progress": "SYNC IN PROGRESS",
+    "all_records_updated": "All records updated.",
     "checking_server_for_records": "Checking server for records...",
+    "initialising": "Initialising...",
+    "last_successful_sync": "Last successful sync",
+    "last_sync": "LAST SYNC",
+    "loading_change_count": "Loading change count...",
+    "manual_sync": "Manual Sync",
+    "pulling_changes": "Pulling changes from the server",
+    "pushing_changes": "Pushing changes to the server",
     "records_waiting": "Records Waiting",
     "sync_complete": "Sync Complete",
-    "all_records_updated": "All records updated.",
-    "loading_change_count": "Loading change count...",
-    "last_successful_sync": "Last successful sync",
-    "initialising": "Initialising...",
-    "pulling_changes": "Pulling changes from the server",
-    "pushing_changes": "Pushing changes to the server"
+    "sync_enabled": "SYNC ENABLED",
+    "sync_error": "SYNC ERROR",
+    "sync_in_progress": "SYNC IN PROGRESS"
   },
   "fr": {
-    "last_sync": "Dernier SYNC",
-    "manual_sync": "SYNC Manuel",
-    "sync_enabled": "SYNC Activé",
-    "sync_error": "Erreur Sync",
-    "sync_in_progress": "SYNC en cours",
+    "all_records_updated": "Tous les enregistrements ont été mis à jour",
     "checking_server_for_records": "Vérifier le serveur pour des enregistrements",
+    "last_successful_sync": "Date de dernière synchronisation",
+    "last_sync": "Dernier SYNC",
+    "loading_change_count": "Chargement du nombre de changements",
+    "manual_sync": "SYNC Manuel",
     "records_waiting": "Enregistrements en attente",
     "sync_complete": "Sync complété",
-    "all_records_updated": "Tous les enregistrements ont été mis à jour",
-    "loading_change_count": "Chargement du nombre de changements",
-    "last_successful_sync": "Date de dernière synchronisation"
+    "sync_enabled": "SYNC Activé",
+    "sync_error": "Erreur Sync",
+    "sync_in_progress": "SYNC en cours"
   },
   "gil": {
+    "last_successful_sync": "Last successful sync",
     "last_sync": "LAST SYNC",
     "manual_sync": "Manual Sync",
     "sync_enabled": "SYNC ENABLED",
     "sync_error": "SYNC ERROR",
-    "sync_in_progress": "SYNC IN PROGRESS",
-    "last_successful_sync": "Last successful sync"
+    "sync_in_progress": "SYNC IN PROGRESS"
   },
   "tl": {
+    "last_successful_sync": "Last successful sync",
     "last_sync": "SYNC FOIN DADAUN",
     "manual_sync": "Synk Manual",
     "sync_enabled": "HAMORIS SYNC",
     "sync_error": "SYNC SALA",
-    "sync_in_progress": "SYNC LA'O HELA",
-    "last_successful_sync": "Last successful sync"
+    "sync_in_progress": "SYNC LA'O HELA"
   },
   "la": {
-    "last_sync": "ເຊື່ອມ​ຕໍ່​ຄັ້ງຫຼ້າ​ສຸດ",
-    "manual_sync": "ເຊື່ອມ​ຕໍ່​ຄູ່​ມື​ການ​ໃຊ້​ງານ",
-    "sync_enabled": "ສາ​ມາດ​ເຊື່ອມ​ຕໍ່​ໄດ້",
-    "sync_error": "ການ​ເຊື່ອມ​ຕ​ໍ່​ຜິດ​ພາດ",
-    "sync_in_progress": "ການ​ເຊື່ອມ​ຕໍ່​ກຳ​ລັງ​ດຳ​ເນີນ​ການ",
+    "all_records_updated": "ລາຍ​ການ​ທັງ​ໝົດ​ຖື​ກ​ອັບ​ເດດ​ແລ້ວ",
     "checking_server_for_records": "ກວດ​ເບິ່ງສັນ​ຍານ​ເນັດ​ເພື່ອ​ເຮັດ​ການ​ບັນ​ທຶກ",
+    "last_successful_sync": "Last successful sync",
+    "last_sync": "ເຊື່ອມ​ຕໍ່​ຄັ້ງຫຼ້າ​ສຸດ",
+    "loading_change_count": "ກຳ​ລັງ​ໂຫຼດ​ຮັບ​ການ​ປ່ຽນ​ແປງ",
+    "manual_sync": "ເຊື່ອມ​ຕໍ່​ຄູ່​ມື​ການ​ໃຊ້​ງານ",
     "records_waiting": "ລໍ​ຖ້າ ​ເຊື່ອມ​ຕໍ່​ເພື່ອ ການ​ບັນ​ທຶກ",
     "sync_complete": "ການ​ເຊື່ອມ​ຕໍ່​ສຳ​ເລັດ",
-    "all_records_updated": "ລາຍ​ການ​ທັງ​ໝົດ​ຖື​ກ​ອັບ​ເດດ​ແລ້ວ",
-    "loading_change_count": "ກຳ​ລັງ​ໂຫຼດ​ຮັບ​ການ​ປ່ຽນ​ແປງ",
-    "last_successful_sync": "Last successful sync"
+    "sync_enabled": "ສາ​ມາດ​ເຊື່ອມ​ຕໍ່​ໄດ້",
+    "sync_error": "ການ​ເຊື່ອມ​ຕ​ໍ່​ຜິດ​ພາດ",
+    "sync_in_progress": "ການ​ເຊື່ອມ​ຕໍ່​ກຳ​ລັງ​ດຳ​ເນີນ​ການ"
   }
 }
