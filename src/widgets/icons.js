@@ -26,18 +26,18 @@ export const SortAscIcon = () => <FAIcon name="sort-asc" size={15} style={{ marg
 export const SortNeutralIcon = () => <FAIcon name="sort" size={15} style={{ marginRight: 10 }} />;
 export const SortDescIcon = () => <FAIcon name="sort-desc" size={15} style={{ marginRight: 10 }} />;
 
-export const CheckedComponent = () => (
+export const CheckedIcon = () => (
   <IonIcon name="md-radio-button-on" size={15} color={dataTableColors.checkableCellChecked} />
 );
 
-export const UncheckedComponent = () => (
+export const UncheckedIcon = () => (
   <IonIcon name="md-radio-button-off" size={15} color={SUSSOL_ORANGE} />
 );
 
-export const DisabledCheckedComponent = () => (
+export const DisabledCheckedIcon = () => (
   <IonIcon name="md-radio-button-on" size={15} color={dataTableColors.checkableCellDisabled} />
 );
-export const DisabledUncheckedComponent = () => <MaterialIcon name="cancel" size={15} />;
+export const DisabledUncheckedIcon = () => <MaterialIcon name="cancel" size={15} />;
 
 export const OpenModalIcon = () => (
   <FAIcon name="angle-double-up" size={20} color={SUSSOL_ORANGE} />

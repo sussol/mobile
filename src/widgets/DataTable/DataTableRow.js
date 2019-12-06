@@ -19,10 +19,10 @@ import DropDownCell from '../DropDownCell';
 import { ExpiryDateInput } from '../ExpiryDateInput';
 
 import {
-  CheckedComponent,
-  UncheckedComponent,
-  DisabledCheckedComponent,
-  DisabledUncheckedComponent,
+  CheckedIcon,
+  UncheckedIcon,
+  DisabledCheckedIcon,
+  DisabledUncheckedIcon,
   OpenModalIcon,
 } from '../icons';
 import TextInputCell from './TextInputCell';
@@ -141,10 +141,10 @@ const DataTableRow = React.memo(
                   columnKey={columnKey}
                   isChecked={rowState && rowState.isSelected}
                   isDisabled={isDisabled}
-                  CheckedComponent={CheckedComponent}
-                  UncheckedComponent={UncheckedComponent}
-                  DisabledCheckedComponent={DisabledCheckedComponent}
-                  DisabledUncheckedComponent={DisabledUncheckedComponent}
+                  CheckedComponent={CheckedIcon}
+                  UncheckedComponent={UncheckedIcon}
+                  DisabledCheckedComponent={DisabledCheckedIcon}
+                  DisabledUncheckedComponent={DisabledUncheckedIcon}
                   onCheck={getCallback(columnKey, 'onCheck')}
                   onUncheck={getCallback(columnKey, 'onUncheck')}
                   containerStyle={touchableCellContainer}
