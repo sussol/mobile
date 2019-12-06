@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -6,18 +7,17 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import { connect } from 'react-redux';
 
-import { Requisition } from '../database/DataTypes/Requisition';
-
-import { MODAL_KEYS, debounce } from '../utilities';
+import { MODAL_KEYS } from '../utilities';
 
 import { DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import { DataTablePageView, PageButton, PageInfo, SearchBar } from '../widgets';
+import { ROUTES } from '../navigation/constants';
+import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
-import { getItemLayout } from './dataTableUtilities';
-
-import { usePageReducer, useRecordListener } from '../hooks';
+import { useRecordListener } from '../hooks';
 
 import globalStyles from '../globalStyles';
 import { buttonStrings } from '../localization';
@@ -34,51 +34,40 @@ import { buttonStrings } from '../localization';
  * dataState is a simple map of objects corresponding to a row being displayed,
  * holding the state of a given row. Each object has the shape :
  * { isSelected, isDisabled },
- *
- * @prop {Object} requisition The realm transaction object for this invoice.
- * @prop {Func}   runWithLoadingIndicator Callback for displaying a fullscreen spinner.
- * @prop {String} routeName The current route name for the top of the navigation stack.
  */
-export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, routeName }) => {
-  const initialState = { page: routeName, pageObject: requisition };
-  const [state, dispatch] = usePageReducer(initialState);
-
-  const {
-    data,
-    dataState,
-    sortBy,
-    isAscending,
-    modalKey,
-    pageObject,
-    keyExtractor,
-    modalValue,
-    searchTerm,
-    PageActions,
-    columns,
-    getPageInfoColumns,
-  } = state;
-
+export const CustomerRequisition = ({
+  runWithLoadingIndicator,
+  data,
+  dispatch,
+  dataState,
+  sortKey,
+  isAscending,
+  modalKey,
+  pageObject,
+  keyExtractor,
+  modalValue,
+  searchTerm,
+  columns,
+  getPageInfoColumns,
+  refreshData,
+  onEditComment,
+  onFilterData,
+  onCloseModal,
+  onSortColumn,
+  onEditSuppliedQuantity,
+  route,
+}) => {
   // Listen for changes to this pages requisition. Refreshing data on side effects i.e. finalizing.
-  useRecordListener(() => dispatch(PageActions.refreshData()), requisition, 'Requisition');
+  useRecordListener(refreshData, pageObject, 'Requisition');
 
   const { isFinalised, comment } = pageObject;
 
-  // On click handlers
-  const onCloseModal = () => dispatch(PageActions.closeModal());
-  const onAddItem = value => dispatch(PageActions.addRequisitionItem(value));
-  const onEditComment = value => dispatch(PageActions.editComment(value, 'Requisition'));
-  const onFilterData = value => dispatch(PageActions.filterData(value));
-  const onEditSuppliedQuantity = (newValue, rowKey, columnKey) =>
-    dispatch(PageActions.editSuppliedQuantity(newValue, rowKey, columnKey));
   const onSetSuppliedToRequested = () =>
-    runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToRequested()));
+    runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToRequested(route)));
   const onSetSuppliedToSuggested = () =>
-    runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToSuggested()));
-  const onSortColumn = useCallback(
-    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
-    []
-  );
-  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
+    runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToSuggested(route)));
+
+  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, route), [
     comment,
     isFinalised,
   ]);
@@ -94,8 +83,6 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
 
   const getModalOnSelect = () => {
     switch (modalKey) {
-      case MODAL_KEYS.SELECT_ITEM:
-        return onAddItem;
       case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
         return onEditComment;
       default:
@@ -127,10 +114,10 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         columns={columns}
         onPress={onSortColumn}
         isAscending={isAscending}
-        sortBy={sortBy}
+        sortKey={sortKey}
       />
     ),
-    [sortBy, isAscending]
+    [sortKey, isAscending]
   );
 
   const {
@@ -150,7 +137,7 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
             style={globalStyles.topButton}
             text={buttonStrings.use_requested_quantities}
             onPress={onSetSuppliedToRequested}
-            isDisabled={requisition.isFinalised}
+            isDisabled={isFinalised}
           />
           <PageButton
             style={globalStyles.topButton}
@@ -181,8 +168,43 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   );
 };
 
-CustomerRequisitionPage.propTypes = {
+const mapDispatchToProps = (dispatch, ownProps) =>
+  getPageDispatchers(dispatch, ownProps, 'Requisition', ROUTES.CUSTOMER_REQUISITION);
+
+const mapStateToProps = state => {
+  const { pages } = state;
+  const { customerRequisition } = pages;
+  return customerRequisition;
+};
+
+export const CustomerRequisitionPage = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CustomerRequisition);
+
+CustomerRequisition.defaultProps = {
+  modalValue: null,
+};
+
+CustomerRequisition.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  data: PropTypes.array.isRequired,
+  sortKey: PropTypes.string.isRequired,
+  isAscending: PropTypes.bool.isRequired,
+  searchTerm: PropTypes.string.isRequired,
+  columns: PropTypes.array.isRequired,
+  keyExtractor: PropTypes.func.isRequired,
   runWithLoadingIndicator: PropTypes.func.isRequired,
-  requisition: PropTypes.instanceOf(Requisition).isRequired,
-  routeName: PropTypes.string.isRequired,
+  dataState: PropTypes.object.isRequired,
+  modalKey: PropTypes.string.isRequired,
+  pageObject: PropTypes.object.isRequired,
+  modalValue: PropTypes.any,
+  getPageInfoColumns: PropTypes.func.isRequired,
+  refreshData: PropTypes.func.isRequired,
+  onEditComment: PropTypes.func.isRequired,
+  onFilterData: PropTypes.func.isRequired,
+  onCloseModal: PropTypes.func.isRequired,
+  onSortColumn: PropTypes.func.isRequired,
+  onEditSuppliedQuantity: PropTypes.func.isRequired,
+  route: PropTypes.string.isRequired,
 };

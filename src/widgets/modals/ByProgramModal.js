@@ -154,7 +154,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
     const Selector = () => (
       <AutocompleteSelector
         queryString="code CONTAINS[c] $0"
-        sortByString="name"
+        sortKeyString="name"
         primaryFilterProperty="name"
         renderLeftText={item => `${item.name}`}
         options={modalData}

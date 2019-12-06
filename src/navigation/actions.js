@@ -31,13 +31,24 @@ import { ROUTES } from './constants';
  */
 
 /**
+ * Pushes the Settings page route onto the main navigation stack.
+ */
+export const gotoSettings = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.SETTINGS,
+    params: {
+      title: navStrings.settings,
+    },
+  });
+
+/**
  * Pushes the Realm explorer route onto the main navigation stack.
  */
 export const gotoRealmExplorer = () =>
   NavigationActions.navigate({
     routeName: ROUTES.REALM_EXPLORER,
     params: {
-      title: 'Database Contents',
+      title: navStrings.database_contents,
     },
   });
 
@@ -126,6 +137,7 @@ export const gotoStocktakeManagePage = (stocktakeName, stocktake) => (dispatch, 
       title: stocktake ? navStrings.manage_stocktake : navStrings.new_stocktake,
       stocktakeName,
       stocktake,
+      pageObject: stocktake,
     },
   };
 
@@ -141,18 +153,14 @@ export const gotoStocktakeEditPage = stocktake => (dispatch, getState) => {
   const { nav } = getState();
   const currentRouteName = getCurrentRouteName(nav);
 
-  const hasNegativeAdjustmentReasons = UIDatabase.objects('NegativeAdjustmentReason').length > 0;
-  const hasPositiveAdjustmentReasons = UIDatabase.objects('PositiveAdjustmentReason').length > 0;
-  const usesReasons = hasNegativeAdjustmentReasons && hasPositiveAdjustmentReasons;
-
   // If navigating from the stocktakesPage, go straight to the StocktakeEditPage. Otherwise,
   // replace the current page as the user is coming from StocktakeManagePage.
   const navigationActionCreator =
     currentRouteName === ROUTES.STOCKTAKES ? NavigationActions.navigate : StackActions.replace;
 
   const navigationParameters = {
-    routeName: usesReasons ? ROUTES.STOCKTAKE_EDITOR_WITH_REASONS : ROUTES.STOCKTAKE_EDITOR,
-    params: { title: navStrings.stocktake, stocktake },
+    routeName: ROUTES.STOCKTAKE_EDITOR,
+    params: { title: navStrings.stocktake, stocktake, pageObject: stocktake },
   };
 
   dispatch(navigationActionCreator(navigationParameters));
@@ -184,6 +192,7 @@ export const gotoCustomerInvoice = transaction => dispatch => {
     params: {
       title: `${navStrings.invoice} ${transaction.serialNumber}`,
       transaction,
+      pageObject: transaction,
     },
   });
 
@@ -216,6 +225,7 @@ export const gotoSupplierInvoice = transaction => dispatch => {
     params: {
       title: `${navStrings.invoice} ${transaction.serialNumber}`,
       transaction,
+      pageObject: transaction,
     },
   });
 
@@ -229,12 +239,11 @@ export const gotoSupplierInvoice = transaction => dispatch => {
  */
 export const gotoSupplierRequisition = requisition =>
   NavigationActions.navigate({
-    routeName: !requisition.program
-      ? ROUTES.SUPPLIER_REQUISITION
-      : ROUTES.SUPPLIER_REQUISITION_WITH_PROGRAM,
+    routeName: ROUTES.SUPPLIER_REQUISITION,
     params: {
       title: `${navStrings.requisition} ${requisition.serialNumber}`,
       requisition,
+      pageObject: requisition,
     },
   });
 
@@ -249,6 +258,7 @@ export const gotoCustomerRequisition = requisition =>
     params: {
       title: `${navStrings.requisition} ${requisition.serialNumber}`,
       requisition,
+      pageObject: requisition,
     },
   });
 
@@ -273,7 +283,7 @@ export const createSupplierRequisition = ({
 
   // Months lead time has an effect on daysToSupply for a requisition.
   const monthsLeadTime = parsedCustomData.monthsLeadTime
-    ? Number(customData.monthsLeadTime.data)
+    ? Number(parsedCustomData.monthsLeadTime.data)
     : 0;
 
   // Create the requisition. If a program was supplied, add items from that

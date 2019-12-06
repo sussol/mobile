@@ -9,6 +9,8 @@ import DeviceInfo from 'react-native-device-info';
 
 import { Client as BugsnagClient } from 'bugsnag-react-native';
 
+import { syncStrings } from '../localization/syncStrings';
+
 import {
   incrementSyncProgress,
   setSyncProgress,
@@ -135,7 +137,7 @@ export class Synchroniser {
    */
   initialise = async (serverURL, syncSiteName, syncSitePassword) => {
     this.setIsSyncing(true);
-    this.setProgressMessage('Initialising...');
+    this.setProgressMessage(syncStrings.initialising);
     this.syncQueue.disable(); // Stop sync queue listening to database changes.
 
     // Check if the |serverURL| passed in is the same as that which has been used during
@@ -244,7 +246,7 @@ export class Synchroniser {
    * @return  {Promise}  Resolves if successful, or bubbles up any errors thrown.
    */
   push = async () => {
-    this.setProgressMessage('Pushing changes to the server');
+    this.setProgressMessage(syncStrings.pushing_changes);
     this.setProgress(0);
     this.setTotal(this.syncQueue.length);
     while (this.syncQueue.length > 0) {
@@ -311,7 +313,7 @@ export class Synchroniser {
     let total = waitingRecordCount;
     let progress = 0;
 
-    this.setProgressMessage('Pulling changes from the server');
+    this.setProgressMessage(syncStrings.pulling_changes);
     this.setProgress(progress);
     this.setTotal(total);
 

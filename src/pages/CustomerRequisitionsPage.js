@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -6,17 +7,19 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import { connect } from 'react-redux';
 
 import { SearchBar, DataTablePageView, ToggleBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
+import { useNavigationFocus, useSyncListener } from '../hooks';
 import { gotoCustomerRequisition } from '../navigation/actions';
-import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
+import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
 import globalStyles from '../globalStyles';
 import { buttonStrings } from '../localization';
-import { debounce } from '../utilities/index';
+
+import { ROUTES } from '../navigation/constants';
 
 /**
  * Renders a mSupply mobile page with a list of Customer requisitions.
@@ -30,41 +33,27 @@ import { debounce } from '../utilities/index';
  * dataState is a simple map of objects corresponding to a row being displayed,
  * holding the state of a given row. Each object has the shape :
  * { isSelected, isFocused },
- *
- * @prop {String} routeName     The current route name for the top of the navigation stack.
- * @prop {Object} currentUser   The currently logged in user.
- * @prop {Func}   reduxDispatch Dispatch method for the app-wide redux store.
- * @prop {Object} navigation    Reference to the main application stack navigator.
  */
-export const CustomerRequisitionsPage = ({ routeName, navigation, dispatch: reduxDispatch }) => {
-  const initialState = { page: routeName };
-  const [state, dispatch] = usePageReducer(initialState);
-
-  const {
-    data,
-    sortBy,
-    isAscending,
-    searchTerm,
-    PageActions,
-    columns,
-    keyExtractor,
-    showFinalised,
-  } = state;
-
-  const refreshCallback = () => dispatch(PageActions.refreshData(), []);
+export const CustomerRequisitions = ({
+  dispatch,
+  navigation,
+  data,
+  sortKey,
+  isAscending,
+  searchTerm,
+  columns,
+  keyExtractor,
+  showFinalised,
+  refreshData,
+  onFilterData,
+  toggleFinalised,
+  onSortColumn,
+}) => {
   // Custom hook to refresh data on this page when becoming the head of the stack again.
-  useNavigationFocus(refreshCallback, navigation);
-  // Custom hook to listen to sync changes - refreshing data when requisitions are synced.
-  useSyncListener(refreshCallback, 'Requisition');
+  useNavigationFocus(navigation, refreshData);
+  useSyncListener(refreshData, 'Requisition');
 
-  const onPressRow = useCallback(rowData => reduxDispatch(gotoCustomerRequisition(rowData)), []);
-  const onFilterData = value => dispatch(PageActions.filterData(value));
-  const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
-
-  const onSortColumn = useCallback(
-    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
-    []
-  );
+  const onPressRow = useCallback(rowData => dispatch(gotoCustomerRequisition(rowData)), []);
 
   const renderRow = useCallback(
     listItem => {
@@ -89,18 +78,18 @@ export const CustomerRequisitionsPage = ({ routeName, navigation, dispatch: redu
         columns={columns}
         onPress={onSortColumn}
         isAscending={isAscending}
-        sortBy={sortBy}
+        sortKey={sortKey}
       />
     ),
-    [sortBy, isAscending]
+    [sortKey, isAscending]
   );
 
   const PastCurrentToggleBar = useCallback(
     () => (
       <ToggleBar
         toggles={[
-          { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
-          { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
+          { text: buttonStrings.current, onPress: toggleFinalised, isOn: !showFinalised },
+          { text: buttonStrings.past, onPress: toggleFinalised, isOn: showFinalised },
         ]}
       />
     ),
@@ -120,19 +109,48 @@ export const CustomerRequisitionsPage = ({ routeName, navigation, dispatch: redu
         data={data}
         renderRow={renderRow}
         renderHeader={renderHeader}
-        keyExtractor={recordKeyExtractor}
+        keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}
       />
     </DataTablePageView>
   );
 };
 
-CustomerRequisitionsPage.propTypes = {
-  routeName: PropTypes.string.isRequired,
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.CUSTOMER_REQUISITIONS),
+  onFilterData: value =>
+    dispatch(PageActions.filterDataWithFinalisedToggle(value, ROUTES.CUSTOMER_REQUISITIONS)),
+  refreshData: () =>
+    dispatch(PageActions.refreshDataWithFinalisedToggle(ROUTES.CUSTOMER_REQUISITIONS)),
+});
+
+const mapStateToProps = state => {
+  const { pages } = state;
+  const { customerRequisitions } = pages;
+  return customerRequisitions;
+};
+
+export const CustomerRequisitionsPage = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CustomerRequisitions);
+
+CustomerRequisitions.defaultProps = {
+  showFinalised: false,
+};
+
+CustomerRequisitions.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired,
-    goBack: PropTypes.func.isRequired,
-    state: PropTypes.object.isRequired,
-  }).isRequired,
+  navigation: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
+  sortKey: PropTypes.string.isRequired,
+  isAscending: PropTypes.bool.isRequired,
+  searchTerm: PropTypes.string.isRequired,
+  columns: PropTypes.array.isRequired,
+  keyExtractor: PropTypes.func.isRequired,
+  showFinalised: PropTypes.bool,
+  refreshData: PropTypes.func.isRequired,
+  onFilterData: PropTypes.func.isRequired,
+  toggleFinalised: PropTypes.func.isRequired,
+  onSortColumn: PropTypes.func.isRequired,
 };

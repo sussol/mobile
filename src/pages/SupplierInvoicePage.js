@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -6,12 +7,11 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import { connect } from 'react-redux';
 
-import { Transaction } from '../database/DataTypes/Transaction';
-
-import { MODAL_KEYS, debounce } from '../utilities';
-import { usePageReducer, useRecordListener } from '../hooks';
-import { getItemLayout } from './dataTableUtilities';
+import { MODAL_KEYS } from '../utilities';
+import { useRecordListener } from '../hooks';
+import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { PageButton, PageInfo, SearchBar, DataTablePageView } from '../widgets';
@@ -20,58 +20,50 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 import { buttonStrings, modalStrings } from '../localization';
 import globalStyles from '../globalStyles';
 
-export const SupplierInvoicePage = ({ routeName, transaction }) => {
-  const initialState = { page: routeName, pageObject: transaction };
-  const [state, dispatch] = usePageReducer(initialState);
+import { ROUTES } from '../navigation/constants';
 
-  const {
-    pageObject,
-    data,
-    dataState,
-    keyExtractor,
-    sortBy,
-    isAscending,
-    modalKey,
-    modalValue,
-    hasSelection,
-    searchTerm,
-    PageActions,
-    columns,
-    getPageInfoColumns,
-  } = state;
-
+export const SupplierInvoice = ({
+  pageObject,
+  data,
+  dispatch,
+  dataState,
+  keyExtractor,
+  sortKey,
+  isAscending,
+  modalKey,
+  modalValue,
+  hasSelection,
+  searchTerm,
+  columns,
+  getPageInfoColumns,
+  refreshData,
+  onSelectNewItem,
+  onEditComment,
+  onEditTheirRef,
+  onFilterData,
+  onDeleteBatches,
+  onDeselectAll,
+  onCloseModal,
+  onCheck,
+  onUncheck,
+  onSortColumn,
+  onEditTotalQuantity,
+  onEditDate,
+  onAddTransactionBatch,
+  route,
+}) => {
   // Listen for this transaction being finalised, so data can be refreshed and kept consistent.
-  const refreshCallback = () => dispatch(PageActions.refreshData());
-  useRecordListener(refreshCallback, pageObject, 'Transaction');
+  useRecordListener(refreshData, pageObject, 'Transaction');
 
   const { isFinalised, comment, theirRef } = pageObject;
 
-  const onAddBatch = item => dispatch(PageActions.addTransactionBatch(item));
-  const onEditComment = value => dispatch(PageActions.editComment(value, 'Transaction'));
-  const onEditTheirRef = value => dispatch(PageActions.editTheirRef(value, 'Transaction'));
-  const onAddRow = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_ITEM));
-  const onFilterData = value => dispatch(PageActions.filterData(value));
-  const onCancelDelete = () => dispatch(PageActions.deselectAll());
-  const onConfirmDelete = () => dispatch(PageActions.deleteTransactionBatches());
-  const onCloseModal = () => dispatch(PageActions.closeModal());
-  const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
-  const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
-  const onEditDate = (date, rowKey) =>
-    dispatch(PageActions.editTransactionBatchExpiryDate(date, rowKey));
-  const onEditTotalQuantity = (newValue, rowKey) =>
-    dispatch(PageActions.editTotalQuantity(newValue, rowKey));
-
-  const onSortColumn = useCallback(
-    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
-    []
-  );
-  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
+  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, route), [
     comment,
     theirRef,
     isFinalised,
   ]);
 
-  const getCallback = useCallback((columnKey, propName) => {
+  const getCallback = (columnKey, propName) => {
     switch (columnKey) {
       case 'totalQuantity':
         return onEditTotalQuantity;
@@ -83,12 +75,12 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
       default:
         return null;
     }
-  }, []);
+  };
 
   const getModalOnSelect = () => {
     switch (modalKey) {
       case MODAL_KEYS.SELECT_ITEM:
-        return onAddBatch;
+        return onAddTransactionBatch;
       case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
         return onEditComment;
       case MODAL_KEYS.THEIR_REF_EDIT:
@@ -123,10 +115,10 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
         columns={columns}
         onPress={onSortColumn}
         isAscending={isAscending}
-        sortBy={sortBy}
+        sortKey={sortKey}
       />
     ),
-    [sortBy, isAscending]
+    [sortKey, isAscending]
   );
 
   const {
@@ -142,7 +134,11 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <View style={pageTopRightSectionContainer}>
-          <PageButton text={buttonStrings.new_item} onPress={onAddRow} isDisabled={isFinalised} />
+          <PageButton
+            text={buttonStrings.new_item}
+            onPress={onSelectNewItem}
+            isDisabled={isFinalised}
+          />
         </View>
       </View>
       <DataTable
@@ -157,8 +153,8 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
       <BottomConfirmModal
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
-        onCancel={onCancelDelete}
-        onConfirm={onConfirmDelete}
+        onCancel={onDeselectAll}
+        onConfirm={onDeleteBatches}
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
@@ -174,7 +170,51 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
   );
 };
 
-SupplierInvoicePage.propTypes = {
-  routeName: PropTypes.string.isRequired,
-  transaction: PropTypes.instanceOf(Transaction).isRequired,
+const mapDispatchToProps = (dispatch, ownProps) =>
+  getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.SUPPLIER_INVOICE);
+
+const mapStateToProps = state => {
+  const { pages } = state;
+  const { supplierInvoice } = pages;
+  return supplierInvoice;
+};
+
+export const SupplierInvoicePage = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SupplierInvoice);
+
+SupplierInvoice.defaultProps = {
+  modalValue: null,
+};
+
+SupplierInvoice.propTypes = {
+  pageObject: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
+  dataState: PropTypes.object.isRequired,
+  keyExtractor: PropTypes.func.isRequired,
+  sortKey: PropTypes.string.isRequired,
+  isAscending: PropTypes.bool.isRequired,
+  modalKey: PropTypes.string.isRequired,
+  modalValue: PropTypes.any,
+  hasSelection: PropTypes.bool.isRequired,
+  searchTerm: PropTypes.string.isRequired,
+  columns: PropTypes.array.isRequired,
+  getPageInfoColumns: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired,
+  refreshData: PropTypes.func.isRequired,
+  onSelectNewItem: PropTypes.func.isRequired,
+  onEditComment: PropTypes.func.isRequired,
+  onEditTheirRef: PropTypes.func.isRequired,
+  onFilterData: PropTypes.func.isRequired,
+  onDeleteBatches: PropTypes.func.isRequired,
+  onDeselectAll: PropTypes.func.isRequired,
+  onCloseModal: PropTypes.func.isRequired,
+  onCheck: PropTypes.func.isRequired,
+  onUncheck: PropTypes.func.isRequired,
+  onSortColumn: PropTypes.func.isRequired,
+  onEditTotalQuantity: PropTypes.func.isRequired,
+  onEditDate: PropTypes.func.isRequired,
+  onAddTransactionBatch: PropTypes.func.isRequired,
+  route: PropTypes.string.isRequired,
 };

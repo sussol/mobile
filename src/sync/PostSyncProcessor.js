@@ -7,13 +7,16 @@
  * All utility functions for processing synced records after being synced. These changes
  * should be detected by SyncQueue and sent back to the server on next sync.
  */
+import { Client } from 'bugsnag-react-native';
 
 import { getNextNumber, NUMBER_SEQUENCE_KEYS } from '../database/utilities';
 
-import { SETTINGS_KEYS } from '../settings';
+import { SETTINGS_KEYS, STORE_CUSTOM_DATA_KEYS } from '../settings';
 
 const { LAST_POST_PROCESSING_FAILED } = SETTINGS_KEYS;
 const { REQUISITION_SERIAL_NUMBER, SUPPLIER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+
+const BugsnagClient = new Client();
 
 export class PostSyncProcessor {
   constructor(database, settings) {
@@ -84,6 +87,39 @@ export class PostSyncProcessor {
   };
 
   /**
+   * Processes this stores custom data. Certain fields (See: Settings/index.js)
+   * in settings are customizable from the server, providing altered behavior.
+   * After syncing, recheck and save all of these fields.
+   */
+  processCustomData = () => {
+    // This stores custom data, stored as a JSON stringified object
+    const customData = this.settings.get(SETTINGS_KEYS.THIS_STORE_CUSTOM_DATA);
+
+    try {
+      // If there is no custom data, use an empty object and clear all
+      // customizable settings (set to an empty string)
+      const parsedCustomData = JSON.parse(customData || '{}');
+
+      // Iterate over custom data keys - setting to either what is in the
+      // current custom data, or set to an empty string if it is either not
+      // present, or has been deleted.
+      this.database.write(() => {
+        Object.values(STORE_CUSTOM_DATA_KEYS).forEach(value => {
+          this.database.update('Setting', {
+            key: value,
+            value: parsedCustomData[value]?.data ?? '',
+          });
+        });
+      });
+    } catch (error) {
+      BugsnagClient.notify(error, report => {
+        report.context = 'CustomDataProcessing Error';
+        report.metadata = { error: { message: 'Method: processCustomData', customData } };
+      });
+    }
+  };
+
+  /**
    * Iterates through records added through listening to sync, adding needed functions
    * to |functionQueue|. Runs the |functionQueue| to make the changes.
    */
@@ -97,7 +133,9 @@ export class PostSyncProcessor {
       this.enqueueFunctionsForRecordType(recordType, internalRecord);
     });
     this.processFunctionQueue();
+    this.processCustomData();
     this.recordQueue.clear(); // Reset the |recordQueue| to avoid unnecessary runs.
+
     this.settings.set(LAST_POST_PROCESSING_FAILED, 'false');
   };
 

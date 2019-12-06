@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -6,16 +7,19 @@
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import { connect } from 'react-redux';
 
-import { User } from '../database/DataTypes';
-
-import { MODAL_KEYS, debounce } from '../utilities';
-import { usePageReducer, useSyncListener, useNavigationFocus } from '../hooks';
-import { getItemLayout } from './dataTableUtilities';
+import { MODAL_KEYS, getAllPrograms } from '../utilities';
+import { useSyncListener, useNavigationFocus } from '../hooks';
+import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
 import { PageButton, DataTablePageView, SearchBar, ToggleBar } from '../widgets';
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+import { ROUTES } from '../navigation/constants';
+
+import { UIDatabase } from '../database';
+import Settings from '../settings/MobileAppSettings';
 
 import { buttonStrings, modalStrings } from '../localization';
 import globalStyles from '../globalStyles';
@@ -26,51 +30,38 @@ import {
   gotoStocktakeEditPage,
 } from '../navigation/actions';
 
-export const StocktakesPage = ({ routeName, currentUser, navigation, dispatch: reduxDispatch }) => {
-  const initialState = { page: routeName };
-  const [state, dispatch] = usePageReducer(initialState);
+export const Stocktakes = ({
+  currentUser,
+  dispatch,
+  navigation,
+  data,
+  dataState,
+  sortKey,
+  isAscending,
+  searchTerm,
+  modalKey,
+  hasSelection,
+  keyExtractor,
+  columns,
+  refreshData,
+  showFinalised,
+  onFilterData,
+  onDeselectAll,
+  onDeleteRecords,
+  onCloseModal,
+  toggleFinalised,
+  onCheck,
+  onUncheck,
+  onSortColumn,
+  onNewStocktake,
+}) => {
+  // Listen to sync & navigation changing stocktake data - refresh if there are any.
+  useSyncListener(refreshData, ['Stocktake']);
+  useNavigationFocus(navigation, refreshData);
 
-  const {
-    data,
-    dataState,
-    sortBy,
-    isAscending,
-    searchTerm,
-    modalKey,
-    hasSelection,
-    usingPrograms,
-    keyExtractor,
-    columns,
-    PageActions,
-    showFinalised,
-  } = state;
+  const onRowPress = useCallback(stocktake => dispatch(gotoStocktakeEditPage(stocktake)), []);
 
-  const refreshCallback = useCallback(() => dispatch(PageActions.refreshData()), []);
-  // Listen to sync changing stocktake data - refresh if there are any.
-  useSyncListener(refreshCallback, ['Stocktake']);
-  // Listen to navigation focusing this page - fresh if so.
-  useNavigationFocus(refreshCallback, navigation);
-
-  const onRowPress = useCallback(stocktake => reduxDispatch(gotoStocktakeEditPage(stocktake)), []);
-  const onFilterData = value => dispatch(PageActions.filterData(value));
-  const onCancelDelete = () => dispatch(PageActions.deselectAll());
-  const onConfirmDelete = () => dispatch(PageActions.deleteStocktakes());
-  const onCloseModal = () => dispatch(PageActions.closeModal());
-  const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
-  const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
-  const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
-
-  const onSortColumn = useCallback(
-    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
-    []
-  );
-
-  const onNewStocktake = () => {
-    if (usingPrograms) return dispatch(PageActions.openModal(MODAL_KEYS.PROGRAM_STOCKTAKE));
-    return reduxDispatch(gotoStocktakeManagePage(''));
-  };
-
-  const getCallback = useCallback((colKey, propName) => {
+  const getCallback = (colKey, propName) => {
     switch (colKey) {
       case 'remove':
         if (propName === 'onCheck') return onCheck;
@@ -78,13 +69,13 @@ export const StocktakesPage = ({ routeName, currentUser, navigation, dispatch: r
       default:
         return null;
     }
-  }, []);
+  };
 
   const getModalOnSelect = () => {
     switch (modalKey) {
       case MODAL_KEYS.PROGRAM_STOCKTAKE:
         return ({ stocktakeName, program }) => {
-          reduxDispatch(createStocktake({ program, stocktakeName, currentUser }));
+          dispatch(createStocktake({ program, stocktakeName, currentUser }));
           onCloseModal();
         };
       default:
@@ -117,16 +108,16 @@ export const StocktakesPage = ({ routeName, currentUser, navigation, dispatch: r
         columns={columns}
         onPress={onSortColumn}
         isAscending={isAscending}
-        sortBy={sortBy}
+        sortKey={sortKey}
       />
     ),
-    [sortBy, isAscending]
+    [sortKey, isAscending]
   );
 
   const toggles = useMemo(
     () => [
-      { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
-      { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
+      { text: buttonStrings.current, onPress: toggleFinalised, isOn: !showFinalised },
+      { text: buttonStrings.past, onPress: toggleFinalised, isOn: showFinalised },
     ],
     [showFinalised]
   );
@@ -158,8 +149,8 @@ export const StocktakesPage = ({ routeName, currentUser, navigation, dispatch: r
       <BottomConfirmModal
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
-        onCancel={onCancelDelete}
-        onConfirm={onConfirmDelete}
+        onCancel={onDeselectAll}
+        onConfirm={onDeleteRecords}
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
@@ -174,13 +165,58 @@ export const StocktakesPage = ({ routeName, currentUser, navigation, dispatch: r
   );
 };
 
-StocktakesPage.propTypes = {
-  routeName: PropTypes.string.isRequired,
+const mapDispatchToProps = (dispatch, ownProps) => {
+  const usingPrograms = getAllPrograms(Settings, UIDatabase).length > 0;
+  const onNewProgramStocktake = () =>
+    dispatch(PageActions.openModal(MODAL_KEYS.PROGRAM_STOCKTAKE, ROUTES.STOCKTAKES));
+  const onNewStocktake = () => dispatch(gotoStocktakeManagePage(''));
+
+  return {
+    ...getPageDispatchers(dispatch, ownProps, 'Stocktake', ROUTES.STOCKTAKES),
+    onNewStocktake: usingPrograms ? onNewProgramStocktake : onNewStocktake,
+    refreshData: () => dispatch(PageActions.refreshDataWithFinalisedToggle(ROUTES.STOCKTAKES)),
+    onFilterData: value =>
+      dispatch(PageActions.filterDataWithFinalisedToggle(value, ROUTES.STOCKTAKES)),
+  };
+};
+
+const mapStateToProps = state => {
+  const { pages } = state;
+  const { stocktakes } = pages;
+  return stocktakes;
+};
+
+export const StocktakesPage = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Stocktakes);
+
+Stocktakes.defaultProps = {
+  showFinalised: false,
+};
+
+Stocktakes.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  currentUser: PropTypes.instanceOf(User).isRequired,
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired,
-    goBack: PropTypes.func.isRequired,
-    state: PropTypes.object.isRequired,
-  }).isRequired,
+  navigation: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
+  dataState: PropTypes.object.isRequired,
+  sortKey: PropTypes.string.isRequired,
+  isAscending: PropTypes.bool.isRequired,
+  searchTerm: PropTypes.string.isRequired,
+  columns: PropTypes.array.isRequired,
+  keyExtractor: PropTypes.func.isRequired,
+  showFinalised: PropTypes.bool,
+  modalKey: PropTypes.string.isRequired,
+  hasSelection: PropTypes.bool.isRequired,
+  currentUser: PropTypes.object.isRequired,
+  onFilterData: PropTypes.func.isRequired,
+  onDeselectAll: PropTypes.func.isRequired,
+  onDeleteRecords: PropTypes.func.isRequired,
+  onCloseModal: PropTypes.func.isRequired,
+  toggleFinalised: PropTypes.func.isRequired,
+  onCheck: PropTypes.func.isRequired,
+  onUncheck: PropTypes.func.isRequired,
+  onSortColumn: PropTypes.func.isRequired,
+  refreshData: PropTypes.func.isRequired,
+  onNewStocktake: PropTypes.func.isRequired,
 };

@@ -4,23 +4,24 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import { connect } from 'react-redux';
 
-import { MODAL_KEYS, debounce } from '../utilities';
-import { usePageReducer } from '../hooks/usePageReducer';
-import { getItemLayout } from './dataTableUtilities';
+import { MODAL_KEYS } from '../utilities';
+import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
 import { DataTablePageModal } from '../widgets/modals';
 import { PageButton, PageInfo, DataTablePageView, SearchBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import { gotoStocktakeManagePage } from '../navigation/actions';
-
 import { buttonStrings } from '../localization';
 import globalStyles from '../globalStyles';
 import { useRecordListener, useNavigationFocus } from '../hooks/index';
+
+import { UIDatabase } from '../database/index';
+import { ROUTES } from '../navigation/constants';
 
 /**
  * Renders a mSupply page with a stocktake loaded for editing
@@ -34,82 +35,58 @@ import { useRecordListener, useNavigationFocus } from '../hooks/index';
  * dataState is a simple map of objects corresponding to a row being displayed,
  * holding the state of a given row. Each object has the shape :
  * { isSelected, isFocused, isDisabled },
- *
- * @prop {Object} stocktake The realm transaction object for this invoice.
- * @prop {Func}   runWithLoadingIndicator Callback for displaying a fullscreen spinner.
- * @prop {String} routeName The current route name for the top of the navigation stack.
- * @prop {Func}   dispatch  Redux store dispatch function.
- * @prop {Object} navigation App-wide stack navigator reference
- *
  */
-export const StocktakeEditPage = ({
-  runWithLoadingIndicator,
-  stocktake,
-  routeName,
+export const StocktakeEdit = ({
+  dispatch,
   navigation,
-  dispatch: reduxDispatch,
+  pageObject,
+  data,
+  dataState,
+  searchTerm,
+  sortKey,
+  isAscending,
+  modalKey,
+  modalValue,
+  keyExtractor,
+  columns,
+  getPageInfoColumns,
+  onEditName,
+  onEditBatch,
+  onFilterData,
+  onEditComment,
+  onEditReason,
+  onCloseModal,
+  onApplyReason,
+  onConfirmBatchEdit,
+  onManageStocktake,
+  onCheck,
+  onUncheck,
+  onEditCountedQuantity,
+  onResetStocktake,
+  onSortColumn,
+  refreshData,
+  onOpenOutdatedItemModal,
+  route,
 }) => {
-  const initialState = { page: routeName, pageObject: stocktake };
-  const [state, dispatch] = usePageReducer(initialState);
-
-  const {
-    pageObject,
-    data,
-    dataState,
-    searchTerm,
-    sortBy,
-    isAscending,
-    modalKey,
-    modalValue,
-    keyExtractor,
-    PageActions,
-    columns,
-    getPageInfoColumns,
-  } = state;
-
   const { isFinalised, comment, program, name } = pageObject;
 
   // Listen to the stocktake become the top of the stack or being finalised,
   // as these events are side-effects. Refreshing makes the state consistent again.
-  const refreshCallback = () => dispatch(PageActions.refreshData());
-  useRecordListener(refreshCallback, pageObject, 'Stocktake');
-  useNavigationFocus(refreshCallback, navigation);
+  useRecordListener(refreshData, pageObject, 'Stocktake');
+  useNavigationFocus(navigation, refreshData);
 
   // If the Stocktake is outdated, force a reset of the stocktake on mount.
   useEffect(() => {
-    if (stocktake.isOutdated) dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM));
+    if (pageObject.isOutdated) onOpenOutdatedItemModal();
   }, []);
 
-  const onEditName = value => dispatch(PageActions.editPageObjectName(value, 'Stocktake'));
-  const onFilterData = value => dispatch(PageActions.filterData(value));
-  const onEditBatch = rowKey =>
-    dispatch(PageActions.openModal(MODAL_KEYS.EDIT_STOCKTAKE_BATCH, rowKey));
-  const onEditReason = rowKey =>
-    dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey));
-  const onEditComment = value => dispatch(PageActions.editComment(value, 'Stocktake'));
-  const onCloseModal = () => dispatch(PageActions.closeModal());
-  const onApplyReason = ({ item }) => dispatch(PageActions.applyReason(item));
-  const onConfirmBatchEdit = () => dispatch(PageActions.closeAndRefresh());
-  const onManageStocktake = () => reduxDispatch(gotoStocktakeManagePage(name, stocktake));
-  const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
-  const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
-  const onEditCountedQuantity = (newValue, rowKey, columnKey) =>
-    dispatch(PageActions.editCountedQuantity(newValue, rowKey, columnKey));
-  const onResetStocktake = () =>
-    runWithLoadingIndicator(() => dispatch(PageActions.resetStocktake()));
-
-  const onSortColumn = useCallback(
-    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
-    []
-  );
-
-  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
+  const pageInfoColumns = useMemo(() => getPageInfoColumns(pageObject, dispatch, route), [
     comment,
     isFinalised,
     name,
   ]);
 
-  const getCallback = useCallback((colKey, propName) => {
+  const getCallback = (colKey, propName) => {
     switch (colKey) {
       case 'countedTotalQuantity':
         return onEditCountedQuantity;
@@ -123,7 +100,7 @@ export const StocktakeEditPage = ({
       default:
         return null;
     }
-  }, []);
+  };
 
   const getModalOnSelect = () => {
     switch (modalKey) {
@@ -168,10 +145,10 @@ export const StocktakeEditPage = ({
         columns={columns}
         onPress={onSortColumn}
         isAscending={isAscending}
-        sortBy={sortBy}
+        sortKey={sortKey}
       />
     ),
-    [sortBy, isAscending]
+    [sortKey, isAscending]
   );
 
   const {
@@ -218,14 +195,65 @@ export const StocktakeEditPage = ({
   );
 };
 
-StocktakeEditPage.propTypes = {
-  runWithLoadingIndicator: PropTypes.func.isRequired,
-  stocktake: PropTypes.object.isRequired,
-  routeName: PropTypes.string.isRequired,
+const mapDispatchToProps = (dispatch, ownProps) => {
+  const hasNegativeAdjustmentReasons = UIDatabase.objects('NegativeAdjustmentReason').length > 0;
+  const hasPositiveAdjustmentReasons = UIDatabase.objects('PositiveAdjustmentReason').length > 0;
+  const usesReasons = hasNegativeAdjustmentReasons && hasPositiveAdjustmentReasons;
+  const editQuantity = usesReasons
+    ? PageActions.editCountedQuantityWithReason
+    : PageActions.editCountedQuantity;
+
+  return {
+    ...getPageDispatchers(dispatch, ownProps, 'Stocktake', ROUTES.STOCKTAKE_EDITOR),
+    onEditCountedQuantity: (newValue, rowKey) =>
+      dispatch(editQuantity(newValue, rowKey, ROUTES.STOCKTAKE_EDITOR)),
+  };
+};
+
+const mapStateToProps = state => {
+  const { pages } = state;
+  const { stocktakeEditor } = pages;
+  return stocktakeEditor;
+};
+
+export const StocktakeEditPage = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(StocktakeEdit);
+
+StocktakeEdit.defaultProps = {
+  modalValue: null,
+};
+
+StocktakeEdit.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired,
-    goBack: PropTypes.func.isRequired,
-    state: PropTypes.object.isRequired,
-  }).isRequired,
+  navigation: PropTypes.object.isRequired,
+  pageObject: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
+  dataState: PropTypes.object.isRequired,
+  searchTerm: PropTypes.string.isRequired,
+  sortKey: PropTypes.string.isRequired,
+  isAscending: PropTypes.bool.isRequired,
+  modalKey: PropTypes.string.isRequired,
+  modalValue: PropTypes.any,
+  keyExtractor: PropTypes.func.isRequired,
+  columns: PropTypes.array.isRequired,
+  getPageInfoColumns: PropTypes.func.isRequired,
+  onEditName: PropTypes.func.isRequired,
+  onEditBatch: PropTypes.func.isRequired,
+  onFilterData: PropTypes.func.isRequired,
+  onEditComment: PropTypes.func.isRequired,
+  onEditReason: PropTypes.func.isRequired,
+  onCloseModal: PropTypes.func.isRequired,
+  onApplyReason: PropTypes.func.isRequired,
+  onConfirmBatchEdit: PropTypes.func.isRequired,
+  onManageStocktake: PropTypes.func.isRequired,
+  onCheck: PropTypes.func.isRequired,
+  onUncheck: PropTypes.func.isRequired,
+  onEditCountedQuantity: PropTypes.func.isRequired,
+  onResetStocktake: PropTypes.func.isRequired,
+  onSortColumn: PropTypes.func.isRequired,
+  refreshData: PropTypes.func.isRequired,
+  onOpenOutdatedItemModal: PropTypes.func.isRequired,
+  route: PropTypes.string.isRequired,
 };

@@ -4,10 +4,13 @@
  */
 
 import { UIDatabase } from '../../database';
-import Settings from '../../settings/MobileAppSettings';
 
-import { sortDataBy, getAllPrograms } from '../../utilities';
+import { sortDataBy } from '../../utilities';
 import { recordKeyExtractor } from './utilities';
+import getColumns from './getColumns';
+import getPageInfoColumns from './getPageInfoColumns';
+
+import { ROUTES } from '../../navigation/constants';
 
 /**
  * Gets data for initialising a customer invoice page from an associated transaction.
@@ -15,7 +18,7 @@ import { recordKeyExtractor } from './utilities';
  * @param    {Transaction}  transaction
  * @returns  {object}
  */
-const customerInvoiceInitialiser = transaction => {
+export const customerInvoiceInitialiser = transaction => {
   const { items: backingData } = transaction;
 
   const sortedData = backingData.sorted('item.name').slice();
@@ -28,11 +31,14 @@ const customerInvoiceInitialiser = transaction => {
     dataState: new Map(),
     searchTerm: '',
     filterDataKeys: ['item.name', 'item.code'],
-    sortBy: 'itemName',
+    sortKey: 'itemName',
     isAscending: true,
     modalKey: '',
     modalValue: null,
     hasSelection: false,
+    route: ROUTES.CUSTOMER_INVOICE,
+    columns: getColumns(ROUTES.CUSTOMER_INVOICE),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_INVOICE),
   };
 };
 
@@ -42,7 +48,7 @@ const customerInvoiceInitialiser = transaction => {
  *
  * @returns  {object}
  */
-const customerInvoicesInitialiser = () => {
+export const customerInvoicesInitialiser = () => {
   const backingData = UIDatabase.objects('CustomerInvoice');
   const filteredData = backingData.filtered('status != $0', 'finalised').slice();
   const sortedData = sortDataBy(filteredData, 'serialNumber', false);
@@ -54,10 +60,13 @@ const customerInvoicesInitialiser = () => {
     dataState: new Map(),
     searchTerm: '',
     filterDataKeys: ['otherParty.name'],
-    sortBy: 'serialNumber',
+    sortKey: 'serialNumber',
     isAscending: false,
     modalKey: '',
     hasSelection: false,
+    route: ROUTES.CUSTOMER_INVOICES,
+    columns: getColumns(ROUTES.CUSTOMER_INVOICES),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_INVOICES),
   };
 };
 
@@ -79,10 +88,13 @@ const customerRequisitionInitialiser = requisition => {
     dataState: new Map(),
     searchTerm: '',
     filterDataKeys: ['item.name', 'item.code'],
-    sortBy: 'itemName',
+    sortKey: 'itemName',
     isAscending: true,
     modalKey: '',
     modalValue: null,
+    route: ROUTES.CUSTOMER_REQUISITION,
+    columns: getColumns(ROUTES.CUSTOMER_REQUISITION),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_REQUISITION),
   };
 };
 
@@ -103,8 +115,11 @@ const customerRequisitionsInitialiser = () => {
     keyExtractor: recordKeyExtractor,
     searchTerm: '',
     filterDataKeys: ['serialNumber'],
-    sortBy: 'serialNumber',
+    sortKey: 'serialNumber',
     isAscending: false,
+    route: ROUTES.CUSTOMER_REQUISITIONS,
+    columns: getColumns(ROUTES.CUSTOMER_REQUISITIONS),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_REQUISITIONS),
   };
 };
 
@@ -123,9 +138,12 @@ const stockInitialiser = () => {
     dataState: new Map(),
     searchTerm: '',
     filterDataKeys: ['name', 'code'],
-    sortBy: 'name',
+    sortKey: 'name',
     isAscending: true,
     selectedRow: null,
+    route: ROUTES.STOCK,
+    columns: getColumns(ROUTES.STOCK),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.STOCK),
   };
 };
 
@@ -141,9 +159,6 @@ const stocktakesInitialiser = () => {
   const filteredData = backingData.filtered('status != $0', 'finalised');
   const sortedData = filteredData.sorted('createdDate', true).slice();
 
-  // Determine if programs are being used so the manage stocktake button can be hidden.
-  const usingPrograms = getAllPrograms(Settings, UIDatabase).length > 0;
-
   return {
     backingData,
     data: sortedData,
@@ -151,11 +166,13 @@ const stocktakesInitialiser = () => {
     dataState: new Map(),
     searchTerm: '',
     filterDataKeys: ['name', 'serialNumber'],
-    sortBy: 'createdDate',
+    sortKey: 'createdDate',
     isAscending: false,
     modalKey: '',
     hasSelection: false,
-    usingPrograms,
+    route: ROUTES.STOCKTAKES,
+    columns: getColumns(ROUTES.STOCKTAKES),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.STOCKTAKES),
   };
 };
 
@@ -171,10 +188,12 @@ const stocktakeBatchInitialiser = stocktakeItem => ({
   data: stocktakeItem.batches.slice(),
   keyExtractor: recordKeyExtractor,
   dataState: new Map(),
-  sortBy: 'itemName',
+  sortKey: 'itemName',
   isAscending: true,
   modalKey: '',
   modalValue: null,
+  columns: getColumns(ROUTES.CUSTOMER_INVOICE),
+  getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_INVOICE),
 });
 
 /**
@@ -195,11 +214,14 @@ const stocktakeManagerInitialiser = stocktake => {
     searchTerm: '',
     filterDataKeys: ['name', 'code'],
     name: stocktake ? stocktake.name : '',
-    sortBy: 'name',
+    sortKey: 'name',
     isAscending: true,
     hasSelection: false,
     allSelected: false,
     showAll: true,
+    route: ROUTES.STOCKTAKE_MANAGER,
+    columns: getColumns(ROUTES.STOCKTAKE_MANAGER),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.STOCKTAKE_MANAGER),
   };
 };
 
@@ -213,6 +235,12 @@ const stocktakeEditorInitialiser = stocktake => {
   const { items: backingData } = stocktake;
   const sortedData = backingData.sorted('item.name').slice();
 
+  const hasNegativeAdjustmentReasons = UIDatabase.objects('NegativeAdjustmentReason').length > 0;
+  const hasPositiveAdjustmentReasons = UIDatabase.objects('PositiveAdjustmentReason').length > 0;
+  const usesReasons = hasNegativeAdjustmentReasons && hasPositiveAdjustmentReasons;
+
+  const route = usesReasons ? ROUTES.STOCKTAKE_EDITOR_WITH_REASONS : ROUTES.STOCKTAKE_EDITOR;
+
   return {
     pageObject: stocktake,
     backingData,
@@ -221,10 +249,42 @@ const stocktakeEditorInitialiser = stocktake => {
     dataState: new Map(),
     searchTerm: '',
     filterDataKeys: ['item.name', 'item.code'],
-    sortBy: 'itemName',
+    sortKey: 'itemName',
     isAscending: true,
     modalKey: '',
     modalValue: null,
+    route,
+    columns: getColumns(route),
+    getPageInfoColumns: getPageInfoColumns(route),
+  };
+};
+
+/**
+ * Gets data for initialising an edit stocktake page when reasons
+ * are defined from an associated stocktake.
+ *
+ * @param    {Stocktake}  stocktake
+ * @returns  {object}
+ */
+const stocktakeEditorWithReasonsInitialiser = stocktake => {
+  const { items: backingData } = stocktake;
+  const sortedData = backingData.sorted('item.name').slice();
+
+  return {
+    pageObject: stocktake,
+    backingData,
+    data: sortedData,
+    keyExtractor: recordKeyExtractor,
+    dataState: new Map(),
+    searchTerm: '',
+    filterDataKeys: ['item.name', 'item.code'],
+    sortKey: 'itemName',
+    isAscending: true,
+    modalKey: '',
+    modalValue: null,
+    route: ROUTES.STOCKTAKE_EDITOR_WITH_REASONS,
+    columns: getColumns(ROUTES.STOCKTAKE_EDITOR_WITH_REASONS),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.STOCKTAKE_EDITOR_WITH_REASONS),
   };
 };
 
@@ -247,11 +307,14 @@ const supplierInvoiceInitialiser = transaction => {
     dataState: new Map(),
     searchTerm: '',
     filterDataKeys: ['itemName'],
-    sortBy: 'itemName',
+    sortKey: 'itemName',
     isAscending: true,
     modalKey: '',
     modalValue: null,
     hasSelection: false,
+    route: ROUTES.SUPPLIER_INVOICE,
+    columns: getColumns(ROUTES.SUPPLIER_INVOICE),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.SUPPLIER_INVOICE),
   };
 };
 
@@ -274,10 +337,13 @@ const supplierInvoicesInitialiser = () => {
     dataState: new Map(),
     searchTerm: '',
     filterDataKeys: ['serialNumber'],
-    sortBy: 'serialNumber',
+    sortKey: 'serialNumber',
     isAscending: false,
     modalKey: '',
     hasSelection: false,
+    route: ROUTES.SUPPLIER_INVOICES,
+    columns: getColumns(ROUTES.SUPPLIER_INVOICES),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.SUPPLIER_INVOICES),
   };
 };
 
@@ -288,50 +354,33 @@ const supplierInvoicesInitialiser = () => {
  * @returns  {object}
  */
 const supplierRequisitionInitialiser = requisition => {
-  const { items: backingData } = requisition;
-  const sortedData = backingData.sorted('item.name').slice();
-
-  return {
-    pageObject: requisition,
-    backingData,
-    data: sortedData,
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    searchTerm: '',
-    filterDataKeys: ['item.name', 'item.code'],
-    sortBy: 'itemName',
-    isAscending: true,
-    modalKey: '',
-    hasSelection: false,
-    modalValue: null,
-  };
-};
-
-/**
- * Gets data for initialising a supplier requisition page from an associated requisition
- * which has a related program.
- *
- * @param    {Requisition}  requisition
- * @returns  {object}
- */
-const supplierRequisitionWithProgramInitialiser = requisition => {
   const { program, items: backingData } = requisition;
-  const showAll = !program;
+
+  const usingPrograms = !!program;
+  const route = program ? ROUTES.SUPPLIER_REQUISITION_WITH_PROGRAM : ROUTES.SUPPLIER_REQUISITION;
+
+  const sortedData = backingData.sorted('item.name').slice();
+  const filteredData = usingPrograms
+    ? sortedData.filter(item => item.isLessThanThresholdMOS)
+    : sortedData;
 
   return {
     pageObject: requisition,
     backingData,
-    data: backingData.filter(item => item.isLessThanThresholdMOS),
+    data: filteredData,
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
     filterDataKeys: ['item.name', 'item.code'],
-    sortBy: 'itemName',
+    sortKey: 'itemName',
     isAscending: true,
     modalKey: '',
     hasSelection: false,
-    showAll,
     modalValue: null,
+    showAll: !usingPrograms,
+    route: ROUTES.SUPPLIER_REQUISITION,
+    columns: getColumns(route),
+    getPageInfoColumns: getPageInfoColumns(route),
   };
 };
 
@@ -354,10 +403,13 @@ const supplierRequisitionsInitialiser = () => {
     dataState: new Map(),
     searchTerm: '',
     filterDataKeys: ['serialNumber'],
-    sortBy: 'serialNumber',
+    sortKey: 'serialNumber',
     isAscending: false,
     modalKey: '',
     hasSelection: false,
+    route: ROUTES.SUPPLIER_REQUISITIONS,
+    columns: getColumns(ROUTES.SUPPLIER_REQUISITIONS),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.SUPPLIER_REQUISITIONS),
   };
 };
 
@@ -370,13 +422,12 @@ const pageInitialisers = {
   stocktakeBatchEditModal: stocktakeBatchInitialiser,
   stocktakeBatchEditModalWithReasons: stocktakeBatchInitialiser,
   stocktakeEditor: stocktakeEditorInitialiser,
-  stocktakeEditorWithReasons: stocktakeEditorInitialiser,
+  stocktakeEditorWithReasons: stocktakeEditorWithReasonsInitialiser,
   stocktakeManager: stocktakeManagerInitialiser,
   stocktakes: stocktakesInitialiser,
   supplierInvoice: supplierInvoiceInitialiser,
   supplierInvoices: supplierInvoicesInitialiser,
   supplierRequisition: supplierRequisitionInitialiser,
-  supplierRequisitionWithProgram: supplierRequisitionWithProgramInitialiser,
   supplierRequisitions: supplierRequisitionsInitialiser,
 };
 

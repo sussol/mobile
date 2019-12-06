@@ -76,7 +76,7 @@ Row.defaultProps = {
   rowState: null,
   style: {},
   onPress: null,
-  debug: true,
+  debug: false,
 };
 
 export default Row;

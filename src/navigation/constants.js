@@ -33,4 +33,6 @@ export const ROUTES = {
   STOCKTAKE_MANAGER: 'stocktakeManager',
   STOCKTAKE_EDITOR: 'stocktakeEditor',
   STOCKTAKE_EDITOR_WITH_REASONS: 'stocktakeEditorWithReasons',
+
+  SETTINGS: 'settings',
 };

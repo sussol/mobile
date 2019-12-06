@@ -1,24 +1,22 @@
-/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
-
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Text, View, ToastAndroid } from 'react-native';
 
-import { Image, StyleSheet, Text, View, ToastAndroid } from 'react-native';
 import { Button } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { CustomerImage, SupplierImage, StockImage, ModulesImage, InfoBadge } from '../widgets';
 
-import { UIDatabaseType } from '../database';
-
+import { ROUTES } from '../navigation/constants';
 import { navStrings } from '../localization';
-import { SETTINGS_KEYS } from '../settings';
-import { MobileAppSettings } from '../settings/MobileAppSettings';
 
-import globalStyles, { APP_FONT_FAMILY, SHADOW_BORDER, GREY, WARMER_GREY } from '../globalStyles';
+import { SETTINGS_KEYS } from '../settings';
+import { UIDatabase } from '../database';
+
 import {
   gotoCustomerInvoices,
   gotoCustomerRequisitions,
@@ -27,155 +25,223 @@ import {
   gotoStock,
   gotoStocktakes,
   gotoRealmExplorer,
+  gotoSettings,
 } from '../navigation/actions';
 
-const { SYNC_SITE_NAME } = SETTINGS_KEYS;
+import globalStyles, { SHADOW_BORDER, GREY } from '../globalStyles';
+import { UserActions } from '../actions/index';
 
-class Menu extends React.Component {
-  constructor(props) {
-    super(props);
-    this.databaseListenerId = null;
-  }
+const exportData = async () => {
+  const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
+  const { success, message } = await UIDatabase.exportData(syncSiteName);
+  const toastMessage = success ? 'Exported data file' : `Couldn't export data: ${message}`;
+  ToastAndroid.show(toastMessage, ToastAndroid.SHORT);
+};
 
-  exportData = async () => {
-    const { settings, database } = this.props;
-    const syncSiteName = settings.get(SYNC_SITE_NAME);
-    const { success, error } = await database.exportData(syncSiteName);
-    let toastMessage;
-    if (success) {
-      toastMessage = 'Exported data file';
-    } else {
-      const { message } = error;
-      toastMessage = `Couldn't export data: ${message}`;
-    }
-    ToastAndroid.show(toastMessage, ToastAndroid.SHORT);
-  };
+const Menu = ({
+  isInAdminMode,
+  logout,
+  toCustomerInvoices,
+  toCustomerRequisitions,
+  toStock,
+  toStocktakes,
+  toSupplierInvoices,
+  toSupplierRequisitions,
+  toRealmExplorer,
+  toSettings,
+  usingDispensary,
+  usingModules,
+  isAdmin,
+}) => {
+  const { menuButton, menuButtonText: buttonText, appBackground } = globalStyles;
+  const { image, originalContainer, moduleContainer, container, bottomIcon, moduleRow } = styles;
 
-  render() {
-    const {
-      isInAdminMode,
-      logOut,
-      navigateToCustomerInvoices,
-      navigateToCustomerRequisitions,
-      navigateToStock,
-      navigateToStocktakes,
-      navigateToSupplierInvoices,
-      navigateToSupplierRequisitions,
-      navigateToRealmExplorer,
-    } = this.props;
+  const containerStyle = { ...container, ...(usingModules ? moduleContainer : originalContainer) };
 
-    return (
-      <View style={[globalStyles.pageContentContainer, localStyles.pageContentContainer]}>
-        <View style={[globalStyles.horizontalContainer, localStyles.horizontalContainer]}>
-          <View style={localStyles.container}>
-            <Image
-              style={localStyles.image}
-              resizeMode="contain"
-              // eslint-disable-next-line global-require
-              source={require('../images/menu_people.png')}
-            />
-            <Button
-              style={globalStyles.menuButton}
-              textStyle={globalStyles.menuButtonText}
-              text={navStrings.customer_invoices}
-              onPress={navigateToCustomerInvoices}
-            />
-            <Button
-              style={globalStyles.menuButton}
-              textStyle={globalStyles.menuButtonText}
-              text={navStrings.customer_requisitions}
-              onPress={navigateToCustomerRequisitions}
-            />
-          </View>
+  const MenuButton = useCallback(
+    props => <Button style={menuButton} textStyle={buttonText} {...props} />,
+    [usingDispensary, usingModules]
+  );
 
-          <View style={[localStyles.container, localStyles.centralContainer]}>
-            <Image
-              style={localStyles.image}
-              resizeMode="contain"
-              // eslint-disable-next-line global-require
-              source={require('../images/menu_truck.png')}
-            />
-            <Button
-              style={globalStyles.menuButton}
-              textStyle={globalStyles.menuButtonText}
-              text={navStrings.supplier_invoices}
-              onPress={navigateToSupplierInvoices}
-            />
-            <Button
-              style={globalStyles.menuButton}
-              textStyle={globalStyles.menuButtonText}
-              text={navStrings.supplier_requisitions}
-              onPress={navigateToSupplierRequisitions}
-            />
-            {isInAdminMode && (
-              <Button
-                style={globalStyles.menuButton}
-                textStyle={globalStyles.menuButtonText}
-                text="Export Data"
-                onPress={this.exportData}
-              />
-            )}
-          </View>
-
-          <View style={localStyles.container}>
-            <Image
-              style={localStyles.image}
-              resizeMode="contain"
-              // eslint-disable-next-line global-require
-              source={require('../images/menu_pc_clipboard.png')}
-            />
-            <Button
-              style={globalStyles.menuButton}
-              textStyle={globalStyles.menuButtonText}
-              text={navStrings.current_stock}
-              onPress={navigateToStock}
-            />
-            <Button
-              style={globalStyles.menuButton}
-              textStyle={globalStyles.menuButtonText}
-              text={navStrings.stocktakes}
-              onPress={navigateToStocktakes}
-            />
-            {isInAdminMode && (
-              <Button
-                style={globalStyles.menuButton}
-                textStyle={globalStyles.menuButtonText}
-                text="Realm Explorer"
-                onPress={navigateToRealmExplorer}
-              />
-            )}
-          </View>
-        </View>
-        <View style={globalStyles.bottomContainer}>
-          <Icon.Button
-            name="power-off"
-            underlayColor="#888888"
-            iconStyle={localStyles.bottomIcon}
-            borderRadius={4}
-            backgroundColor="rgba(255,255,255,0)"
-            onPress={logOut}
-          >
-            <Text style={localStyles.logOutText}>{navStrings.log_out}</Text>
-          </Icon.Button>
+  const CustomerSection = useCallback(
+    () => (
+      <View style={containerStyle}>
+        <CustomerImage style={image} />
+        <View>
+          <InfoBadge routeName={ROUTES.CUSTOMER_INVOICES}>
+            <MenuButton text={navStrings.customer_invoices} onPress={toCustomerInvoices} />
+          </InfoBadge>
+          <InfoBadge routeName={ROUTES.CUSTOMER_REQUISITIONS}>
+            <MenuButton text={navStrings.customer_requisitions} onPress={toCustomerRequisitions} />
+          </InfoBadge>
         </View>
       </View>
-    );
-  }
-}
+    ),
+    [usingDispensary, usingModules]
+  );
 
-const actionCreators = {
-  navigateToCustomerInvoices: gotoCustomerInvoices,
-  navigateToCustomerRequisitions: gotoCustomerRequisitions,
-  navigateToStock: gotoStock,
-  navigateToStocktakes: gotoStocktakes,
-  navigateToSupplierInvoices: gotoSupplierInvoices,
-  navigateToSupplierRequisitions: gotoSupplierRequisitions,
-  navigateToRealmExplorer: gotoRealmExplorer,
+  const SupplierSection = useCallback(
+    () => (
+      <View style={containerStyle}>
+        <SupplierImage style={image} />
+        <View>
+          <InfoBadge routeName={ROUTES.SUPPLIER_INVOICES}>
+            <MenuButton text={navStrings.supplier_invoices} onPress={toSupplierInvoices} />
+          </InfoBadge>
+          <InfoBadge routeName={ROUTES.SUPPLIER_REQUISITIONS}>
+            <MenuButton text={navStrings.supplier_requisitions} onPress={toSupplierRequisitions} />
+          </InfoBadge>
+        </View>
+      </View>
+    ),
+    [usingDispensary, usingModules]
+  );
+
+  const StockSection = useCallback(
+    () => (
+      <View style={containerStyle}>
+        <StockImage style={image} />
+        <View>
+          <MenuButton text={navStrings.current_stock} onPress={toStock} />
+          <InfoBadge routeName={ROUTES.STOCKTAKES}>
+            <MenuButton text={navStrings.stocktake} onPress={toStocktakes} />
+          </InfoBadge>
+        </View>
+      </View>
+    ),
+    [usingDispensary, usingModules]
+  );
+
+  const ModulesSection = useCallback(
+    () => (
+      <View style={containerStyle}>
+        <ModulesImage style={image} />
+        <View>{usingDispensary && <MenuButton text="Dispensary" />}</View>
+      </View>
+    ),
+    [usingDispensary, usingModules]
+  );
+
+  const AdminRow = useCallback(
+    () => (
+      <View style={styles.bottomRow}>
+        <View style={styles.bottomIconView}>
+          <Icon.Button
+            name="power-off"
+            iconStyle={bottomIcon}
+            backgroundColor="rgba(255,255,255,0)"
+            onPress={logout}
+          >
+            <Text>{navStrings.log_out}</Text>
+          </Icon.Button>
+        </View>
+        {isInAdminMode && <MenuButton text="Realm Explorer" onPress={toRealmExplorer} />}
+        {isInAdminMode && <MenuButton text="Export Data" onPress={exportData} />}
+        {isAdmin && (
+          <Icon.Button
+            name="cog"
+            iconStyle={bottomIcon}
+            backgroundColor="rgba(255,255,255,0)"
+            onPress={toSettings}
+          >
+            <Text>SETTINGS</Text>
+          </Icon.Button>
+        )}
+      </View>
+    ),
+    [isInAdminMode, isAdmin]
+  );
+
+  const ModuleLayout = useCallback(
+    () => (
+      <View style={styles.moduleTopRow}>
+        <View style={moduleRow}>
+          <CustomerSection />
+          <SupplierSection />
+        </View>
+        <View style={moduleRow}>
+          <StockSection />
+          <ModulesSection />
+        </View>
+      </View>
+    ),
+    []
+  );
+
+  const OriginalLayout = useCallback(
+    () => (
+      <View style={styles.originalTopRow}>
+        <CustomerSection />
+        <SupplierSection />
+        <StockSection />
+      </View>
+    ),
+    []
+  );
+
+  return (
+    <View style={{ ...appBackground }}>
+      {usingModules ? <ModuleLayout /> : <OriginalLayout />}
+      <AdminRow />
+    </View>
+  );
+};
+
+const styles = {
+  moduleTopRow: { flex: 9 },
+  originalTopRow: { flex: 9, flexDirection: 'row' },
+  moduleRow: { flex: 1, flexDirection: 'row' },
+  image: { height: 150, width: 150, marginBottom: 30 },
+  bottomIcon: { color: GREY },
+  bottomRow: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginHorizontal: 20,
+  },
+  container: {
+    alignItems: 'center',
+    borderColor: SHADOW_BORDER,
+    backgroundColor: 'white',
+    marginTop: 30,
+    flex: 1,
+    borderWidth: 1,
+  },
+  moduleContainer: {
+    justifyContent: 'center',
+    flexDirection: 'row',
+    marginHorizontal: 15,
+  },
+  originalContainer: {
+    justifyContent: 'flex-start',
+    paddingTop: 50,
+    marginHorizontal: 30,
+  },
+};
+
+const mapDispatchToProps = dispatch => ({
+  toCustomerInvoices: () => dispatch(gotoCustomerInvoices()),
+  toCustomerRequisitions: () => dispatch(gotoCustomerRequisitions()),
+  toStock: () => dispatch(gotoStock()),
+  toStocktakes: () => dispatch(gotoStocktakes()),
+  toSupplierInvoices: () => dispatch(gotoSupplierInvoices()),
+  toSupplierRequisitions: () => dispatch(gotoSupplierRequisitions()),
+  toRealmExplorer: () => dispatch(gotoRealmExplorer()),
+  toSettings: () => dispatch(gotoSettings()),
+  logout: () => dispatch(UserActions.logout()),
+});
+
+const mapStateToProps = state => {
+  const { modules, user } = state;
+  const { currentUser } = user;
+  const { usingDispensary } = modules;
+  return { usingDispensary, usingModules: usingDispensary, isAdmin: currentUser?.isAdmin };
 };
 
 export const MenuPage = connect(
-  null,
-  actionCreators
+  mapStateToProps,
+  mapDispatchToProps
 )(Menu);
 
 Menu.defaultProps = {
@@ -183,51 +249,17 @@ Menu.defaultProps = {
 };
 
 Menu.propTypes = {
-  database: UIDatabaseType.isRequired,
   isInAdminMode: PropTypes.bool,
-  logOut: PropTypes.func.isRequired,
-  settings: PropTypes.instanceOf(MobileAppSettings).isRequired,
-  navigateToCustomerInvoices: PropTypes.func.isRequired,
-  navigateToCustomerRequisitions: PropTypes.func.isRequired,
-  navigateToStock: PropTypes.func.isRequired,
-  navigateToStocktakes: PropTypes.func.isRequired,
-  navigateToSupplierInvoices: PropTypes.func.isRequired,
-  navigateToSupplierRequisitions: PropTypes.func.isRequired,
-  navigateToRealmExplorer: PropTypes.func.isRequired,
+  logout: PropTypes.func.isRequired,
+  toCustomerInvoices: PropTypes.func.isRequired,
+  toCustomerRequisitions: PropTypes.func.isRequired,
+  toStock: PropTypes.func.isRequired,
+  toStocktakes: PropTypes.func.isRequired,
+  toSupplierInvoices: PropTypes.func.isRequired,
+  toSupplierRequisitions: PropTypes.func.isRequired,
+  toRealmExplorer: PropTypes.func.isRequired,
+  toSettings: PropTypes.func.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
+  usingDispensary: PropTypes.bool.isRequired,
+  usingModules: PropTypes.bool.isRequired,
 };
-
-const localStyles = StyleSheet.create({
-  pageContentContainer: {
-    padding: 0,
-  },
-  horizontalContainer: {
-    flex: 9,
-    justifyContent: 'space-between',
-  },
-  container: {
-    alignSelf: 'stretch',
-    flex: 1,
-    paddingTop: 30,
-    paddingHorizontal: 30,
-    borderColor: SHADOW_BORDER,
-    borderWidth: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    backgroundColor: 'white',
-  },
-  centralContainer: {
-    marginHorizontal: 40,
-  },
-  image: {
-    height: 150,
-    width: 150,
-    marginBottom: 30,
-  },
-  logOutText: {
-    fontFamily: APP_FONT_FAMILY,
-    color: WARMER_GREY,
-  },
-  bottomIcon: {
-    color: GREY,
-  },
-});
