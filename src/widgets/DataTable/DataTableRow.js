@@ -23,7 +23,7 @@ import {
   UncheckedComponent,
   DisabledCheckedComponent,
   DisabledUncheckedComponent,
-  OpenModal,
+  OpenModalIcon,
 } from '../icons';
 import TextInputCell from './TextInputCell';
 
@@ -205,7 +205,7 @@ const DataTableRow = React.memo(
               return (
                 <TouchableCell
                   key={columnKey}
-                  renderChildren={OpenModal}
+                  renderChildren={OpenModalIcon}
                   rowKey={rowKey}
                   columnKey={columnKey}
                   onPress={getCallback(columnKey)}

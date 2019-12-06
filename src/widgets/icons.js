@@ -39,19 +39,23 @@ export const DisabledCheckedComponent = () => (
 );
 export const DisabledUncheckedComponent = () => <MaterialIcon name="cancel" size={15} />;
 
-export const OpenModal = () => <FAIcon name="angle-double-up" size={20} color={SUSSOL_ORANGE} />;
+export const OpenModalIcon = () => (
+  <FAIcon name="angle-double-up" size={20} color={SUSSOL_ORANGE} />
+);
 
-export const MagnifyingGlass = React.memo(({ size, color }) => (
+export const MagnifyingGlassIcon = React.memo(({ size, color }) => (
   <EvilIcon name="search" size={size} color={color} />
 ));
-MagnifyingGlass.propTypes = { size: PropTypes.number, color: PropTypes.string };
-MagnifyingGlass.defaultProps = { size: 40, color: SUSSOL_ORANGE };
+MagnifyingGlassIcon.propTypes = { size: PropTypes.number, color: PropTypes.string };
+MagnifyingGlassIcon.defaultProps = { size: 40, color: SUSSOL_ORANGE };
 
-export const Cancel = React.memo(() => <EntypoIcon name="cross" color={FINALISED_RED} size={25} />);
+export const CancelIcon = React.memo(() => (
+  <EntypoIcon name="cross" color={FINALISED_RED} size={25} />
+));
 
 export const CloseIcon = React.memo(() => <IonIcon name="md-close" size={36} color="white" />);
 
-export const Expand = React.memo(() => (
+export const ExpandIcon = React.memo(() => (
   <FAIcon name="external-link" size={16} color={SUSSOL_ORANGE} />
 ));
 

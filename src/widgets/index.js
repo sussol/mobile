@@ -35,21 +35,7 @@ export { ToggleBar } from './ToggleBar';
 export { ToggleSelector } from './ToggleSelector';
 export { Wizard } from './Wizard';
 
-export {
-  SortAscIcon,
-  SortNeutralIcon,
-  SortDescIcon,
-  CheckedComponent,
-  UncheckedComponent,
-  DisabledCheckedComponent,
-  DisabledUncheckedComponent,
-  Cancel,
-  CloseIcon,
-  OpenModal,
-  Expand,
-  ConfirmIcon,
-  LockIcon,
-} from './icons';
+export * from './icons';
 
 export {
   KiribatiFlag,
