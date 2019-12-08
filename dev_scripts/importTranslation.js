@@ -51,12 +51,8 @@ syncStrings.name = 'syncStrings';
 tableStrings.name = 'tableStrings';
 validationStrings.name = 'validationStrings';
 
-let language = '';
-
-// read the language to be imported - entered by the user -
-process.argv.forEach((val, index) => {
-  if (index > 1) language = val;
-});
+// get the third command line argument
+const language = process.argv[2];
 
 // read the file chosen by the user
 const fileContent = fs.readFileSync(`./src/localization/translations/${language}.csv`, 'utf8');
@@ -68,65 +64,49 @@ let localizationFileName = [];
 let keys = [];
 let values = [];
 let key;
-let keyFound;
 let value;
-let valueFound;
+const nextLine = /{nextLine}/gi;
+const emptySpace = /{emptySpace}/gi;
 
-for (fileIndex in localizationFiles) {
+for (localizationFile of localizationFiles) {
   for (indexOfArrayOfData in arrayOfData) {
     const data = JSON.stringify(arrayOfData[indexOfArrayOfData])
       .replace(/"/g, '')
       .split(',');
 
     // [ key, value in english, value in other language ] of line i of whole csv file
-    data[indexOfArrayOfData] = arrayOfData[indexOfArrayOfData].split(':').slice(1);
-
+    data[indexOfArrayOfData] = arrayOfData[indexOfArrayOfData].split(',').slice(1);
     // authStrings, buttonStrings, etc.
-    localizationFileName = arrayOfData[indexOfArrayOfData].replace(/[" ]/g, '').split(':')[0];
-    if (localizationFiles[fileIndex].name === localizationFileName) {
-      keyFound = false;
-      valueFound = false;
+    localizationFileName = arrayOfData[indexOfArrayOfData].split(',').slice(0)[0];
 
-      // checks key
-      for (dataChar in data[indexOfArrayOfData][0]) {
-        if (data[indexOfArrayOfData][0][dataChar] === ',' && !keyFound) {
-          // find key -> create another function to do this
-          key = data[indexOfArrayOfData][0].slice(0, dataChar);
-          keyFound = true;
-        } else if (data[indexOfArrayOfData][0][dataChar] === ',' && keyFound) {
-          // find value -> create another function to do this
-          value = data[indexOfArrayOfData][0]
-            .slice(dataChar)
-            .replace(/[,]/g, '')
-            .trim();
-          valueFound = true;
-        }
-      }
+    if (localizationFile.name === localizationFileName) {
+      key = data[indexOfArrayOfData][0];
+      value = data[indexOfArrayOfData][2]
+        .replace(nextLine, '\n')
+        .replace(emptySpace, '"')
+        .trim();
       // if there is a key and value related with it, push changes in keys and values
-      if (keyFound && valueFound) {
-        if (value !== '') {
-          keys.push(key);
-          values.push(value);
-        }
+      if (value !== '') {
+        keys.push(key);
+        values.push(value);
       }
     }
   }
-  // keep all obtained keys and values in an object
+
   let resultObject = {};
   keys.forEach((key, value) => (resultObject[key] = values[value]));
   // update the correct object in the localization file
-  localizationFiles[fileIndex][language] = resultObject;
+  localizationFile[language] = resultObject;
 
-  // clean arrays keys and values to use it in next file
-  keys = [];
-  values = [];
+  keys.length = 0;
+  values.length = 0;
 
-  let fileName = localizationFiles[fileIndex].name;
-  delete localizationFiles[fileIndex].name;
+  let fileName = localizationFile.name;
+  delete localizationFile.name;
 
   // save changes in each localization file (authStrings, buttonStrings, etc)
-  localizationFiles[fileIndex] = JSON.stringify(localizationFiles[fileIndex], null, 2);
-  fs.writeFile(`./src/localization/${fileName}.json`, localizationFiles[fileIndex], err => {
+  localizationFile = JSON.stringify(localizationFile, null, 2);
+  fs.writeFile(`./src/localization/${fileName}.json`, localizationFile, err => {
     if (err) throw err;
     // eslint-disable-next-line no-console
     console.log(`The file ${fileName}.json has been saved`);
