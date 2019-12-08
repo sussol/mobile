@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable no-useless-escape */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -56,10 +58,10 @@ getSelectedLanguage = () => process.argv[2];
 
 saveCsvFile = (mainLanguage, selectedLanguage) => {
   let valueFound = false;
-  // keeps all the data coming from the json files
+  // csvFileData keeps all the data coming from the json files
   let csvFileData = '';
 
-  // go through all localization files
+  // go through all localization files one by one
   for (localizationFile of localizationFiles) {
     const mainLanguageKeys = [];
     const mainLanguageValues = [];
@@ -72,8 +74,9 @@ saveCsvFile = (mainLanguage, selectedLanguage) => {
         // save all the mainLanguage data in mainLanguageValues
         for (let [mainLanguageKeyAgain, mainLanguageValue] of Object.entries(mainLanguageKey)) {
           mainLanguageKeys.push(mainLanguageKeyAgain);
-          // eslint-disable-next-line no-useless-escape
-          mainLanguageValue = mainLanguageValue.replace(/\n/g, ' ').replace(/[\"]/g, '');
+          mainLanguageValue = mainLanguageValue
+            .replace(/\n/gi, '{nextLine}')
+            .replace(/[\"]/gi, '{emptySpace}');
           mainLanguageValues.push(mainLanguageValue);
         }
       }
@@ -89,9 +92,9 @@ saveCsvFile = (mainLanguage, selectedLanguage) => {
           )) {
             if (selectedLanguageKey === selectedLanguageKeyAgain && valueFound === false) {
               selectedLanguageValue = selectedLanguageValue
-                .replace(/\n/g, ' ')
+                .replace(/\n/gi, '{nextLine}')
                 // eslint-disable-next-line no-useless-escape
-                .replace(/[\"]/g, '');
+                .replace(/[\"]/gi, '{emptySpace}');
               selectedLanguageValues.push(selectedLanguageValue);
               // stops searching the selectedLanguageKey if it was found
               valueFound = true;
@@ -108,7 +111,7 @@ saveCsvFile = (mainLanguage, selectedLanguage) => {
     // iterates over mainLanguageKeys to save the data of every localizationFile
     for (mainLanguageKey in mainLanguageKeys) {
       // eslint-disable-next-line no-undef
-      csvFileData = `${csvFileData} ${localizationFile.name}:${mainLanguageKeys[mainLanguageKey]},"${mainLanguageValues[mainLanguageKey]}","${selectedLanguageValues[mainLanguageKey]}"\n`;
+      csvFileData = `${csvFileData} ${localizationFile.name},${mainLanguageKeys[mainLanguageKey]},"${mainLanguageValues[mainLanguageKey]}","${selectedLanguageValues[mainLanguageKey]}"\n`;
     }
   }
   return csvFileData;
