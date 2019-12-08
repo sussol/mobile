@@ -148,6 +148,7 @@ export class RequisitionItem extends Realm.Object {
 
     // Return the maximum price of all MasterListItems.
     return UIDatabase.objects('MasterListItem')
+      .filtered('item.id == $0', this.item.id)
       .filtered(queryString, this.item)
       .max('price');
   }
