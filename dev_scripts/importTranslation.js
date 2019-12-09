@@ -1,55 +1,29 @@
-/* eslint-disable no-loop-func */
+/* eslint-disable import/no-dynamic-require */
+/* eslint-disable global-require */
 /* eslint-disable no-return-assign */
+/* eslint-disable no-shadow */
+/* eslint-disable guard-for-in */
 /* eslint-disable prefer-destructuring */
+/* eslint-disable no-undef */
+/* eslint-disable no-restricted-syntax */
+
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-/* eslint-disable no-shadow */
-/* eslint-disable guard-for-in */
-/* eslint-disable prefer-const */
-/* eslint-disable no-undef */
-/* eslint-disable no-restricted-syntax */
-
-const fs = require('fs');
-const authStrings = require('../src/localization/authStrings.json');
-const buttonStrings = require('../src/localization/buttonStrings.json');
-const demoUserModalStrings = require('../src/localization/demoUserModalStrings.json');
-const generalStrings = require('../src/localization/generalStrings.json');
-const modalStrings = require('../src/localization/modalStrings.json');
-const navStrings = require('../src/localization/navStrings.json');
-const pageInfoStrings = require('../src/localization/pageInfoStrings.json');
-const programStrings = require('../src/localization/programStrings.json');
-const syncStrings = require('../src/localization/syncStrings.json');
-const tableStrings = require('../src/localization/tableStrings.json');
-const validationStrings = require('../src/localization/validationStrings.json');
-
-const localizationFiles = [
-  authStrings,
-  buttonStrings,
-  demoUserModalStrings,
-  generalStrings,
-  modalStrings,
-  navStrings,
-  pageInfoStrings,
-  programStrings,
-  syncStrings,
-  tableStrings,
-  validationStrings,
-];
-
-authStrings.name = 'authStrings';
-buttonStrings.name = 'buttonStrings';
-demoUserModalStrings.name = 'demoUserModalStrings';
-generalStrings.name = 'generalStrings';
-modalStrings.name = 'modalStrings';
-navStrings.name = 'navStrings';
-pageInfoStrings.name = 'pageInfoStrings';
-programStrings.name = 'programStrings';
-syncStrings.name = 'syncStrings';
-tableStrings.name = 'tableStrings';
-validationStrings.name = 'validationStrings';
+const localizationFiles = [];
+let index = 0;
+require('fs')
+  .readdirSync('././src/localization/')
+  .forEach(file => {
+    if (file.split('.').pop() === 'json') {
+      const fileName = require(`../src/localization/${file}`);
+      localizationFiles.push(fileName);
+      localizationFiles[index].name = file.replace('.json', '');
+      index += 1;
+    }
+  });
 
 // get the third command line argument
 const language = process.argv[2];
@@ -61,8 +35,8 @@ const fileContent = fs.readFileSync(`./src/localization/translations/${language}
 const arrayOfData = fileContent.toString().split('\n');
 
 let localizationFileName = [];
-let keys = [];
-let values = [];
+const keys = [];
+const values = [];
 let key;
 let value;
 const nextLine = /{nextLine}/gi;
@@ -93,7 +67,7 @@ for (localizationFile of localizationFiles) {
     }
   }
 
-  let resultObject = {};
+  const resultObject = {};
   keys.forEach((key, value) => (resultObject[key] = values[value]));
   // update the correct object in the localization file
   localizationFile[language] = resultObject;
@@ -101,7 +75,7 @@ for (localizationFile of localizationFiles) {
   keys.length = 0;
   values.length = 0;
 
-  let fileName = localizationFile.name;
+  const fileName = localizationFile.name;
   delete localizationFile.name;
 
   // save changes in each localization file (authStrings, buttonStrings, etc)
