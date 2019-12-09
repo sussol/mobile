@@ -1,68 +1,51 @@
+/* eslint-disable array-callback-return */
+/* eslint-disable func-names */
+/* eslint-disable import/no-dynamic-require */
+/* eslint-disable global-require */
 /* eslint-disable no-console */
 /* eslint-disable no-useless-escape */
-/**
- * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2019
- */
-
 /* eslint-disable no-shadow */
 /* eslint-disable guard-for-in */
 /* eslint-disable prefer-const */
 /* eslint-disable no-undef */
 /* eslint-disable no-restricted-syntax */
 
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 const fs = require('fs');
-const authStrings = require('../src/localization/authStrings.json');
-const buttonStrings = require('../src/localization/buttonStrings.json');
-const demoUserModalStrings = require('../src/localization/demoUserModalStrings.json');
-const generalStrings = require('../src/localization/generalStrings.json');
-const modalStrings = require('../src/localization/modalStrings.json');
-const navStrings = require('../src/localization/navStrings.json');
-const pageInfoStrings = require('../src/localization/pageInfoStrings.json');
-const programStrings = require('../src/localization/programStrings.json');
-const syncStrings = require('../src/localization/syncStrings.json');
-const tableStrings = require('../src/localization/tableStrings.json');
-const validationStrings = require('../src/localization/validationStrings.json');
 
-const localizationFiles = [
-  authStrings,
-  buttonStrings,
-  demoUserModalStrings,
-  generalStrings,
-  modalStrings,
-  navStrings,
-  pageInfoStrings,
-  programStrings,
-  syncStrings,
-  tableStrings,
-  validationStrings,
-];
+const localizationFiles = [];
+let index = 0;
 
-authStrings.name = 'authStrings';
-buttonStrings.name = 'buttonStrings';
-demoUserModalStrings.name = 'demoUserModalStrings';
-generalStrings.name = 'generalStrings';
-modalStrings.name = 'modalStrings';
-navStrings.name = 'navStrings';
-pageInfoStrings.name = 'pageInfoStrings';
-programStrings.name = 'programStrings';
-syncStrings.name = 'syncStrings';
-tableStrings.name = 'tableStrings';
-validationStrings.name = 'validationStrings';
-
-// mainLanguage is English
+// Define mainLanguage as English
 const mainLanguage = 'gb';
 
-// get the third command line argument
+getLocalizationFiles = () => {
+  // Reads all files in localization files and save them in localizationFiles array
+  fs.readdirSync('././src/localization/').forEach(file => {
+    // Filter to only use get JSON files
+    if (file.split('.').pop() === 'json') {
+      const fileName = require(`../src/localization/${file}`);
+      localizationFiles.push(fileName);
+      localizationFiles[index].name = file.replace('.json', '');
+      index += 1;
+    }
+  });
+};
+
+// Gets the language entered by the User (fr, la, gil, tl)
 getSelectedLanguage = () => process.argv[2];
 
-saveCsvFile = (mainLanguage, selectedLanguage) => {
+generateCsvData = (mainLanguage, selectedLanguage) => {
   let valueFound = false;
   // csvFileData keeps all the data coming from the json files
-  let csvFileData = '';
+  let csvData = '';
 
-  // go through all localization files one by one
-  for (localizationFile of localizationFiles) {
+  // Goes through all localization files
+  localizationFiles.map(localizationFile => {
     const mainLanguageKeys = [];
     const mainLanguageValues = [];
     const selectedLanguageValues = [];
@@ -93,7 +76,6 @@ saveCsvFile = (mainLanguage, selectedLanguage) => {
             if (selectedLanguageKey === selectedLanguageKeyAgain && valueFound === false) {
               selectedLanguageValue = selectedLanguageValue
                 .replace(/\n/gi, '{nextLine}')
-                // eslint-disable-next-line no-useless-escape
                 .replace(/[\"]/gi, '{emptySpace}');
               selectedLanguageValues.push(selectedLanguageValue);
               // stops searching the selectedLanguageKey if it was found
@@ -108,13 +90,12 @@ saveCsvFile = (mainLanguage, selectedLanguage) => {
         }
       }
     }
-    // iterates over mainLanguageKeys to save the data of every localizationFile
+    // Iterates over mainLanguageKeys to save the data of every localizationFile
     for (mainLanguageKey in mainLanguageKeys) {
-      // eslint-disable-next-line no-undef
-      csvFileData = `${csvFileData} ${localizationFile.name},${mainLanguageKeys[mainLanguageKey]},"${mainLanguageValues[mainLanguageKey]}","${selectedLanguageValues[mainLanguageKey]}"\n`;
+      csvData = `${csvData} ${localizationFile.name},${mainLanguageKeys[mainLanguageKey]},"${mainLanguageValues[mainLanguageKey]}","${selectedLanguageValues[mainLanguageKey]}"\n`;
     }
-  }
-  return csvFileData;
+  });
+  return csvData;
 };
 
 writeCsvFile = (selectedLanguage, csvFileData) => {
@@ -132,10 +113,11 @@ writeCsvFile = (selectedLanguage, csvFileData) => {
   );
 };
 
-executeJsonToCsv = () => {
+executeExportTranslation = () => {
+  getLocalizationFiles();
   const selectedLanguage = getSelectedLanguage();
-  const csvFileData = saveCsvFile(mainLanguage, selectedLanguage);
-  writeCsvFile(selectedLanguage, csvFileData);
+  const csvData = generateCsvData(mainLanguage, selectedLanguage);
+  writeCsvFile(selectedLanguage, csvData);
 };
 
-executeJsonToCsv();
+executeExportTranslation();
