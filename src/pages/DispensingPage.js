@@ -1,67 +1,126 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
 
-import { Button } from 'react-native-ui-components';
+import { ToggleBar, DataTablePageView, SearchBar, PageButton } from '../widgets';
+import { DataTable, DataTableRow, DataTableHeaderRow } from '../widgets/DataTable';
 
-import globalStyles, { SHADOW_BORDER, BACKGROUND_COLOR } from '../globalStyles';
-import { gotoPrescriptions, gotoPrescribers, gotoPatients } from '../navigation/actions';
+import globalStyles from '../globalStyles';
+import { PageActions, DATA_SET, getPageDispatchers, getItemLayout } from './dataTableUtilities';
+import { ROUTES } from '../navigation/constants';
 
-const Dispensing = ({ toPrescriptions, toPrescribers, toPatients }) => {
-  const { menuButton, menuButtonText: buttonText } = globalStyles;
-  const { flexOne, middleColumn, mainContainer, buttonContainer } = localStyles;
+const Dispensing = ({
+  data,
+  keyExtractor,
+  columns,
+  isAscending,
+  sortKey,
+  dispatch,
+  dataSet,
+  onSortColumn,
+  searchTerm,
+  onFilterData,
+}) => {
+  const getCellCallbacks = colKey => {
+    switch (colKey) {
+      case 'dispense':
+        return () => console.log('dispense');
+      default:
+        return null;
+    }
+  };
 
-  const MenuButton = useCallback(
-    props => <Button style={menuButton} textStyle={buttonText} {...props} />,
-    []
+  const renderRow = useCallback(
+    listItem => {
+      const { item, index } = listItem;
+      const rowKey = keyExtractor(item);
+      return (
+        <DataTableRow
+          rowData={data[index]}
+          rowKey={rowKey}
+          getCallback={getCellCallbacks}
+          columns={columns}
+          rowIndex={index}
+          onPress={() => console.log('Edit Patient')}
+        />
+      );
+    },
+    [data]
   );
 
+  const renderHeader = useCallback(
+    () => (
+      <DataTableHeaderRow
+        columns={columns}
+        isAscending={isAscending}
+        sortKey={sortKey}
+        onPress={onSortColumn}
+      />
+    ),
+    [sortKey, isAscending, columns]
+  );
+
+  const toggles = useMemo(
+    () => [
+      {
+        text: 'Patients',
+        onPress: () => dispatch(PageActions.toggleDataSet(DATA_SET.PATIENTS, ROUTES.DISPENSARY)),
+        isOn: dataSet === DATA_SET.PATIENTS,
+      },
+      {
+        text: 'Prescribers',
+        onPress: () => dispatch(PageActions.toggleDataSet(DATA_SET.PRESCRIBERS, ROUTES.DISPENSARY)),
+        isOn: dataSet === DATA_SET.PRESCRIBERS,
+      },
+    ],
+    [dataSet]
+  );
+
+  const { pageTopSectionContainer } = globalStyles;
   return (
-    <View style={mainContainer}>
-      <View style={flexOne} />
-      <View style={middleColumn}>
-        <View style={flexOne} />
-        <View style={buttonContainer}>
-          <MenuButton text="Prescriptions" onPress={toPrescriptions} />
-          <MenuButton text="Prescribers" onPress={toPrescribers} />
-          <MenuButton text="Patients" onPress={toPatients} />
-        </View>
-        <View style={flexOne} />
+    <DataTablePageView>
+      <View style={pageTopSectionContainer}>
+        <ToggleBar toggles={toggles} />
+        <SearchBar onChangeText={onFilterData} value={searchTerm} />
+        <PageButton text="New Patient" onPress={() => console.log('New Patient')} />
       </View>
-      <View style={flexOne} />
-    </View>
+      <DataTable
+        data={data}
+        renderRow={renderRow}
+        renderHeader={renderHeader}
+        keyExtractor={keyExtractor}
+        getItemLayout={getItemLayout}
+      />
+    </DataTablePageView>
   );
 };
 
-const mapDispatchToProps = dispatch => ({
-  toPrescriptions: () => dispatch(gotoPrescriptions()),
-  toPrescribers: () => dispatch(gotoPrescribers()),
-  toPatients: () => dispatch(gotoPatients()),
-});
+const mapStateToProps = state => {
+  const { pages } = state;
+  const { dispensing } = pages;
 
-export const DispensingPage = connect(null, mapDispatchToProps)(Dispensing);
+  return dispensing;
+};
+
+export const DispensingPage = connect(mapStateToProps, (dispatch, ownProps) => ({
+  ...getPageDispatchers(dispatch, ownProps, 'Name', 'dispensing'),
+}))(Dispensing);
 
 Dispensing.propTypes = {
-  toPrescriptions: PropTypes.func.isRequired,
-  toPrescribers: PropTypes.func.isRequired,
-  toPatients: PropTypes.func.isRequired,
-};
-
-const localStyles = {
-  flexOne: { flex: 1 },
-  middleColumn: { flex: 0.75, flexDirection: 'column' },
-  mainContainer: { backgroundColor: BACKGROUND_COLOR, flexDirection: 'row', flex: 1 },
-  buttonContainer: {
-    flex: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: SHADOW_BORDER,
-    backgroundColor: 'white',
-  },
+  data: PropTypes.array.isRequired,
+  keyExtractor: PropTypes.func.isRequired,
+  columns: PropTypes.array.isRequired,
+  isAscending: PropTypes.bool.isRequired,
+  sortKey: PropTypes.string.isRequired,
+  dispatch: PropTypes.func.isRequired,
+  dataSet: PropTypes.string.isRequired,
+  onSortColumn: PropTypes.func.isRequired,
+  searchTerm: PropTypes.string.isRequired,
+  onFilterData: PropTypes.func.isRequired,
 };
