@@ -1,3 +1,4 @@
+/* eslint-disable default-case */
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-useless-escape */
 /* eslint-disable array-callback-return */
@@ -17,16 +18,16 @@
 
 const fs = require('fs');
 
-const localizationFiles = [];
-let localizationFileName = [];
-const keys = [];
-const values = [];
-let key = null;
-let value = null;
 // To identify {nextLine} in the csv files
 const nextLine = /{nextLine}/gi;
 // To identify {emptySpace} in the csv files
 const emptySpace = /{emptySpace}/gi;
+const localizationFiles = [];
+const keys = [];
+const values = [];
+let localizationFileName = [];
+let key = null;
+let value = null;
 let index = 0;
 
 getLocalizationFiles = () => {
@@ -41,17 +42,15 @@ getLocalizationFiles = () => {
     }
   });
 };
-
 // Gets the language entered by the User (fr, la, gil, tl)
 getSelectedLanguage = () => process.argv[2];
 
 UpdateJsonFiles = selectedLanguage => {
-  // read the file chosen by the user
+  // Reads the updated csv file chosen by the user (fr.csv, la.csv, etc)
   const fileContent = fs.readFileSync(
     `./src/localization/translations/${selectedLanguage}.csv`,
     'utf8'
   );
-
   // Creates one string per line available in the csv file
   const arrayOfData = fileContent.toString().split('\n');
 
@@ -61,30 +60,34 @@ UpdateJsonFiles = selectedLanguage => {
       const data = JSON.stringify(arrayOfData)
         .replace(/"/g, '')
         .split(',');
-      // [ key, value in english, value in other language ] of line i of whole csv file
+      // Gets [ key, Value in mainLanguage, Value in selectedLanguage] data
       data[indexOfArrayOfData] = arrayOfData.split(',').slice(1);
-      // authStrings, buttonStrings, etc.
+      // Get the file name: authStrings, buttonStrings, etc.
       localizationFileName = arrayOfData
         .split(',')
         .slice(0)[0]
         .trim();
-      if (localizationFile.name === localizationFileName) {
-        key = data[indexOfArrayOfData][0];
-        value = data[indexOfArrayOfData][2]
-          .replace(nextLine, '\n')
-          .replace(emptySpace, '\"')
-          .trim();
-        // Checks if the value in empty or there is some text to save
-        if (value !== '') {
-          keys.push(key);
-          values.push(value);
-        }
+      switch (localizationFile.name) {
+        case localizationFileName:
+          key = data[indexOfArrayOfData][0];
+          value = data[indexOfArrayOfData][2]
+            .replace(nextLine, '\n')
+            .replace(emptySpace, '\"')
+            .trim();
+          // Checks if there is some text to save
+          if (value !== '') {
+            keys.push(key);
+            values.push(value);
+          }
+          break;
       }
     });
     const resultObject = {};
     keys.forEach((key, value) => (resultObject[key] = values[value]));
+
     // Updates strings related with the selectedLanguage in localizationFile
     localizationFile[selectedLanguage] = resultObject;
+
     // Cleans both arrays to be ready to use in next localizationFile
     keys.length = 0;
     values.length = 0;
@@ -103,10 +106,6 @@ UpdateJsonFiles = selectedLanguage => {
   });
 };
 
-executeImportTranslation = () => {
-  getLocalizationFiles();
-  const selectedLanguage = getSelectedLanguage();
-  UpdateJsonFiles(selectedLanguage);
-};
-
-executeImportTranslation();
+getLocalizationFiles();
+const selectedLanguage = getSelectedLanguage();
+UpdateJsonFiles(selectedLanguage);
