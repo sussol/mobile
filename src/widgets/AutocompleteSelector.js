@@ -6,9 +6,9 @@
 // eslint-disable-next-line max-classes-per-file
 import React from 'react';
 import PropTypes from 'prop-types';
-import { SearchBar } from 'react-native-ui-components';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { complement } from 'set-manipulator';
+import { SearchBar } from '.';
 import { APP_FONT_FAMILY } from '../globalStyles';
 import { generalStrings } from '../localization';
 import { withOnePress } from './withOnePress';
@@ -95,10 +95,7 @@ export class AutocompleteSelector extends React.PureComponent {
           autoCapitalize="none"
           autoCorrect={false}
           autoFocus
-          color="white"
-          onChange={text => this.setState({ queryText: text })}
           placeholder={placeholderText}
-          placeholderTextColor="white"
           style={[localStyles.text, localStyles.searchBar]}
         />
         {data.length > 0 && (
