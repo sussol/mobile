@@ -239,10 +239,7 @@ const mapStateToProps = state => {
   return { usingDispensary, usingModules: usingDispensary, isAdmin: currentUser?.isAdmin };
 };
 
-export const MenuPage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Menu);
+export const MenuPage = connect(mapStateToProps, mapDispatchToProps)(Menu);
 
 Menu.defaultProps = {
   isInAdminMode: false,

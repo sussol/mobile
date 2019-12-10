@@ -116,10 +116,7 @@ const mapStateToProps = state => {
   return stock;
 };
 
-export const StockPage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Stock);
+export const StockPage = connect(mapStateToProps, mapDispatchToProps)(Stock);
 
 Stock.defaultProps = {
   selectedRow: null,

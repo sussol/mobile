@@ -177,10 +177,7 @@ const mapStateToProps = state => {
   return supplierInvoices;
 };
 
-export const SupplierInvoicesPage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SupplierInvoices);
+export const SupplierInvoicesPage = connect(mapStateToProps, mapDispatchToProps)(SupplierInvoices);
 
 SupplierInvoices.defaultProps = {
   showFinalised: false,

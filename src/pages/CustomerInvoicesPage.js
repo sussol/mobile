@@ -174,10 +174,7 @@ const mapStateToProps = state => {
   return customerInvoices;
 };
 
-export const CustomerInvoicesPage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CustomerInvoices);
+export const CustomerInvoicesPage = connect(mapStateToProps, mapDispatchToProps)(CustomerInvoices);
 
 CustomerInvoices.defaultProps = {
   showFinalised: false,

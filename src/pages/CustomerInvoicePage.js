@@ -213,10 +213,7 @@ const mapStateToProps = state => {
   return customerInvoice;
 };
 
-export const CustomerInvoicePage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CustomerInvoice);
+export const CustomerInvoicePage = connect(mapStateToProps, mapDispatchToProps)(CustomerInvoice);
 
 CustomerInvoice.defaultProps = {
   modalValue: null,

@@ -216,10 +216,7 @@ const mapStateToProps = state => {
   return stocktakeEditor;
 };
 
-export const StocktakeEditPage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(StocktakeEdit);
+export const StocktakeEditPage = connect(mapStateToProps, mapDispatchToProps)(StocktakeEdit);
 
 StocktakeEdit.defaultProps = {
   modalValue: null,
