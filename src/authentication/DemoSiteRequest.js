@@ -30,27 +30,27 @@ export class DemoSiteRequest {
 
   validateFields(username, email, password, repeatPassword) {
     // Client side validation
-    if (email.length === 0) throw new Error(validationStrings.emailRequired);
+    if (email.length === 0) throw new Error(validationStrings.email_required);
     if (!this.validateEmail(email)) {
-      throw new Error(validationStrings.emailValid);
+      throw new Error(validationStrings.email_valid);
     }
     if (username.length === 0) {
-      throw new Error(validationStrings.usernameRequired);
+      throw new Error(validationStrings.username_required);
     }
     if (password.length === 0) {
-      throw new Error(validationStrings.passwordRequired);
+      throw new Error(validationStrings.password_required);
     }
     if (repeatPassword.length === 0) {
-      throw new Error(validationStrings.repeatPasswordRequired);
+      throw new Error(validationStrings.repeat_password_required);
     }
     if (password !== repeatPassword) {
-      throw new Error(validationStrings.passwordMatchRepeat);
+      throw new Error(validationStrings.password_match_repeat);
     }
     if (this.textLengthInvalid(password)) {
-      throw new Error(validationStrings.passwordLengthInvalid);
+      throw new Error(validationStrings.password_length_invalid);
     }
     if (this.textContainsSpaces(password)) {
-      throw new Error(validationStrings.passwordContainsSpaces);
+      throw new Error(validationStrings.password_contains_spaces);
     }
   }
 

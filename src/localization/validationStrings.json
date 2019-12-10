@@ -1,26 +1,16 @@
 {
   "gb": {
-    "emailRequired": "Enter the E-mail",
-    "emailValid": "Enter a valid E-mail",
-    "passwordContainsSpaces": "Password cannot contain spaces.",
-    "passwordLengthInvalid": "Password must be 8-32 characters long",
-    "passwordMatchRepeat": "Password & repeat password must match",
-    "passwordRequired": "Enter the password",
-    "repeatPasswordRequired": "Enter the repeat password",
-    "usernameRequired": "Enter the username"
+    "email_required": "Enter the E-mail",
+    "email_valid": "Enter a valid E-mail",
+    "password_contains_spaces": "Password cannot contain spaces.",
+    "password_length_invalid": "Password must be 8-32 characters long",
+    "password_match_repeat": "Password & repeat password must match",
+    "password_required": "Enter the password",
+    "repeat_password_required": "Enter the repeat password",
+    "username_required": "Enter the username"
   },
   "fr": {},
   "gil": {},
   "tl": {},
-  "la": {
-    "emailRequired": "undefined",
-    "emailValid": "undefined",
-    "general": "undefined",
-    "passwordContainsSpaces": "undefined",
-    "passwordLengthInvalid": "undefined",
-    "passwordMatchRepeat": "undefined",
-    "passwordRequired": "undefined",
-    "repeatPasswordRequired": "undefined",
-    "usernameRequired": "undefined"
-  }
+  "la": {}
 }
