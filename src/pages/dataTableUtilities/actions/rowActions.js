@@ -5,39 +5,7 @@
 
 import { UIDatabase } from '../../../database/index';
 import { ACTIONS } from './constants';
-
-/**
- * Uses the stores dataState map to set a row/column
- * to isFocused.
- * use case: react-native bug where rendering 100+ TextInput
- * components causes the app to crash. When a table needs a
- * large number of TextInputs, need to render View's when not
- * focused so using imperative focus handling is not possible.
- *
- * @param {String} rowKey       Key of the row to focus.
- * @param {String} columnKey    Key of the column to focus.
- */
-export const focusCell = (rowKey, columnKey) => ({
-  type: ACTIONS.FOCUS_CELL,
-  payload: { rowKey, columnKey },
-});
-
-/**
- * Uses the stores dataState map to set a row/column
- * to isFocused. Will focus the cell after the currently
- * focused cell.
- * use case: react-native bug where rendering 100+ TextInput
- * components causes the app to crash. When a table needs a
- * large number of TextInputs, need to render View's when not
- * focused so using imperative focus handling is not possible.
- *
- * @param {String} rowKey       Key of the row to focus.
- * @param {String} columnKey    Key of the column to focus.
- */
-export const focusNext = (rowKey, columnKey) => ({
-  type: ACTIONS.FOCUS_NEXT,
-  payload: { rowKey, columnKey },
-});
+import { pageStateSelector } from '../selectors';
 
 /**
  * Uses the stores dataState map to set a row to
@@ -46,14 +14,19 @@ export const focusNext = (rowKey, columnKey) => ({
  * @param {String} rowKey       Key of the row to focus.
  * @param {String} columnKey    Key of the column to focus.
  */
-export const selectRow = rowKey => ({
+export const selectRow = (rowKey, route) => ({
   type: ACTIONS.SELECT_ROW,
-  payload: { rowKey },
+  payload: { rowKey, route },
 });
 
-export const selectOneRow = rowKey => ({
+export const selectOneRow = (rowKey, route) => ({
   type: ACTIONS.SELECT_ONE_ROW,
-  payload: { rowKey },
+  payload: { rowKey, route },
+});
+
+export const deselectOneRow = route => ({
+  type: ACTIONS.DESELECT_ONE_ROW,
+  payload: { route },
 });
 
 /**
@@ -63,23 +36,25 @@ export const selectOneRow = rowKey => ({
  * @param {String} rowKey       Key of the row to focus.
  * @param {String} columnKey    Key of the column to focus.
  */
-export const deselectRow = rowKey => ({
+export const deselectRow = (rowKey, route) => ({
   type: ACTIONS.DESELECT_ROW,
-  payload: { rowKey },
+  payload: { rowKey, route },
 });
 
 /**
  * Removes isSelected field in all rows of the stores dataState map.
  */
-export const deselectAll = () => ({
+export const deselectAll = route => ({
   type: ACTIONS.DESELECT_ALL,
+  payload: { route },
 });
 
 /**
  * Adds isSelected field in all rows of the stores dataState map.
  */
-export const selectAll = () => ({
+export const selectAll = route => ({
   type: ACTIONS.SELECT_ALL,
+  payload: { route },
 });
 
 /**
@@ -87,10 +62,10 @@ export const selectAll = () => ({
  * be dispatched.
  * @param {Bool} allSelected indicator whether all items are currently selected.
  */
-export const toggleAllSelected = allSelected => {
-  if (allSelected) return deselectAll();
-  return selectAll();
-};
+export const toggleSelectAll = route => ({
+  type: ACTIONS.TOGGLE_SELECT_ALL,
+  payload: { route },
+});
 
 /**
  * Sets all rowState objects within the passed items array,
@@ -98,9 +73,9 @@ export const toggleAllSelected = allSelected => {
  *
  * @param {Array} items Row data objects to be set as selected.
  */
-export const selectItems = items => ({
+export const selectItems = (items, route) => ({
   type: ACTIONS.SELECT_ROWS,
-  payload: { items },
+  payload: { items, route },
 });
 
 /**
@@ -110,8 +85,8 @@ export const selectItems = items => ({
  *
  * @param {String} pageObjectType Type of the underlying pageObject, i.e. Transaction.
  */
-export const deleteSelectedBatches = pageObjectType => (dispatch, getState) => {
-  const { dataState, pageObject } = getState();
+export const deleteSelectedBatches = (pageObjectType, route) => (dispatch, getState) => {
+  const { dataState, pageObject } = pageStateSelector(getState());
 
   const itemIds = Array.from(dataState.keys()).filter(rowKey => dataState.get(rowKey).isSelected);
 
@@ -120,7 +95,7 @@ export const deleteSelectedBatches = pageObjectType => (dispatch, getState) => {
     UIDatabase.save(pageObjectType, pageObject);
   });
 
-  dispatch({ type: ACTIONS.DELETE_RECORDS });
+  dispatch({ type: ACTIONS.DELETE_RECORDS, payload: { route } });
 };
 
 /**
@@ -130,8 +105,8 @@ export const deleteSelectedBatches = pageObjectType => (dispatch, getState) => {
  *
  * @param {String} pageObjectType Type of the underlying pageObject, i.e. Transaction.
  */
-export const deleteSelectedItems = pageObjectType => (dispatch, getState) => {
-  const { dataState, pageObject } = getState();
+export const deleteSelectedItems = (pageObjectType, route) => (dispatch, getState) => {
+  const { dataState, pageObject } = pageStateSelector(getState());
 
   const itemIds = Array.from(dataState.keys()).filter(rowKey => dataState.get(rowKey).isSelected);
 
@@ -140,7 +115,7 @@ export const deleteSelectedItems = pageObjectType => (dispatch, getState) => {
     UIDatabase.save(pageObjectType, pageObject);
   });
 
-  dispatch({ type: ACTIONS.DELETE_RECORDS });
+  dispatch({ type: ACTIONS.DELETE_RECORDS, payload: { route } });
 };
 
 /**
@@ -149,8 +124,8 @@ export const deleteSelectedItems = pageObjectType => (dispatch, getState) => {
  *
  * @param {String} recordType
  */
-export const deleteSelectedRecords = recordType => (dispatch, getState) => {
-  const { dataState, backingData } = getState();
+export const deleteSelectedRecords = (recordType, route) => (dispatch, getState) => {
+  const { dataState, backingData } = pageStateSelector(getState());
 
   const recordIds = Array.from(dataState.keys()).filter(rowKey => dataState.get(rowKey).isSelected);
 
@@ -165,38 +140,19 @@ export const deleteSelectedRecords = recordType => (dispatch, getState) => {
     UIDatabase.delete(recordType, transactionsToDelete);
   });
 
-  dispatch({ type: ACTIONS.DELETE_RECORDS });
+  dispatch({ type: ACTIONS.DELETE_RECORDS, payload: { route } });
 };
 
-/**
- * Wrappers for easy calling of delete action creators.
- */
-export const deleteTransactions = () => deleteSelectedRecords('Transaction');
-export const deleteRequisitions = () => deleteSelectedRecords('Requisition');
-export const deleteStocktakes = () => deleteSelectedRecords('Stocktake');
-export const deleteTransactionItems = () => deleteSelectedItems('Transaction');
-export const deleteRequisitionItems = () => deleteSelectedItems('Requisition');
-export const deleteStocktakeItems = () => deleteSelectedItems('Stocktake');
-export const deleteTransactionBatches = () => deleteSelectedBatches('Transaction');
-
 export const RowActionsLookup = {
-  focusCell,
-  focusNext,
   selectRow,
   deselectRow,
+  deselectOneRow,
   deselectAll,
   selectAll,
-  toggleAllSelected,
+  toggleSelectAll,
   selectItems,
   deleteSelectedBatches,
   deleteSelectedItems,
   deleteSelectedRecords,
-  deleteTransactions,
-  deleteRequisitions,
-  deleteStocktakes,
-  deleteTransactionItems,
-  deleteRequisitionItems,
-  deleteStocktakeItems,
-  deleteTransactionBatches,
   selectOneRow,
 };

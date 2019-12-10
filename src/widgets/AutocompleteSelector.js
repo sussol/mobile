@@ -3,6 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
+// eslint-disable-next-line max-classes-per-file
 import React from 'react';
 import PropTypes from 'prop-types';
 import { SearchBar } from 'react-native-ui-components';
@@ -14,7 +15,7 @@ import { withOnePress } from './withOnePress';
 
 /**
  * A search bar that autocompletes from the options passed in, and allows any of
- * the dropdown options to be selected. Will gravefully handle null values
+ * the dropdown options to be selected. Will gracefully handle null values
  * by using an empty array of searchable objects.
  * @prop  {array}     options         The options to select from
  * @prop  {function}  onSelect        A function taking the selected option as a parameter
@@ -36,17 +37,17 @@ export class AutocompleteSelector extends React.PureComponent {
    * by two query strings. And concats A to B - A.
    */
   filterResultData = options => {
-    const { sortByString, queryString, queryStringSecondary } = this.props;
+    const { sortKeyString, queryString, queryStringSecondary } = this.props;
     const { queryText } = this.state;
 
     let data = options
       .filtered(queryString, queryText)
-      .sorted(sortByString)
+      .sorted(sortKeyString)
       .slice();
 
     if (queryStringSecondary) {
       data = data.concat(
-        complement(options.filtered(queryStringSecondary, queryText).sorted(sortByString), data)
+        complement(options.filtered(queryStringSecondary, queryText).sorted(sortKeyString), data)
       );
     }
 
@@ -128,7 +129,7 @@ AutocompleteSelector.propTypes = {
   options: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   queryString: PropTypes.string.isRequired,
   queryStringSecondary: PropTypes.string,
-  sortByString: PropTypes.string.isRequired,
+  sortKeyString: PropTypes.string.isRequired,
   placeholderText: PropTypes.string,
   onSelect: PropTypes.func.isRequired,
   renderLeftText: PropTypes.func,

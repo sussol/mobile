@@ -20,7 +20,8 @@ export class Spinner extends React.Component {
     this.startSpinning();
   }
 
-  componentWillReceiveProps(nextProps) {
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.isSpinning) this.startSpinning();
     else this.stopSpinning();
   }
@@ -63,6 +64,7 @@ export class Spinner extends React.Component {
 export default Spinner;
 
 Spinner.propTypes = {
+  // eslint-disable-next-line react/no-unused-prop-types
   isSpinning: PropTypes.bool,
   color: PropTypes.string,
 };

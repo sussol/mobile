@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -5,11 +6,13 @@
 
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import { View, ToastAndroid } from 'react-native';
+import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
-import { useRecordListener, usePageReducer } from '../hooks';
-import { getItemLayout } from './dataTableUtilities';
+import { useRecordListener } from '../hooks';
+import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
+import { ROUTES } from '../navigation/constants';
 
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { PageButton, PageInfo, SearchBar, DataTablePageView } from '../widgets';
@@ -29,77 +32,73 @@ import globalStyles from '../globalStyles';
  *
  * dataState is a simple map of objects corresponding to a row being displayed,
  * holding the state of a given row. Each object has the shape :
- * { isSelected, isFocused, isDisabled },
- *
- * @prop {Object} transaction The realm transaction object for this invoice.
- * @prop {Func} runWithLoadingIndicator Callback for displaying a fullscreen spinner.
- * @prop {String} routeName The current route name for the top of the navigation stack.
+ * { isSelected, isFocused, isDisabled }
  */
-export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, routeName }) => {
-  const initialState = { page: routeName, pageObject: transaction };
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
-
-  const {
-    data,
-    dataState,
-    pageObject,
-    sortBy,
-    isAscending,
-    modalKey,
-    hasSelection,
-    keyExtractor,
-    searchTerm,
-    modalValue,
-    columns,
-    PageActions,
-    getPageInfoColumns,
-  } = state;
-
+export const CustomerInvoice = ({
+  dispatch,
+  data,
+  dataState,
+  pageObject,
+  sortKey,
+  isAscending,
+  modalKey,
+  hasSelection,
+  keyExtractor,
+  searchTerm,
+  modalValue,
+  columns,
+  getPageInfoColumns,
+  refreshData,
+  onSelectNewItem,
+  onEditComment,
+  onEditTheirRef,
+  onFilterData,
+  onDeleteItems,
+  onDeselectAll,
+  onCloseModal,
+  onCheck,
+  onUncheck,
+  onSortColumn,
+  onEditTotalQuantity,
+  onAddTransactionItem,
+  onAddMasterList,
+  onApplyMasterLists,
+  route,
+}) => {
   const { isFinalised, comment, theirRef } = pageObject;
 
   // Listen for this invoice being finalised which will prune items and cause side effects
   // outside of the reducer. Reconcile differences when triggered.
-  const refreshCallback = () => dispatch(PageActions.refreshData());
-  useRecordListener(refreshCallback, pageObject, 'Transaction');
+  useRecordListener(refreshData, pageObject, 'Transaction');
 
-  const onAddItem = item => dispatch(PageActions.addTransactionItem(item));
-  const onNewRow = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_ITEM));
-  const onEditComment = value => dispatch(PageActions.editComment(value, 'Transaction'));
-  const onEditTheirRef = value => dispatch(PageActions.editTheirRef(value, 'Transaction'));
-  const onFilterData = value => dispatch(PageActions.filterData(value));
-  const onConfirmDelete = () => dispatch(PageActions.deleteTransactions());
-  const onCancelDelete = () => dispatch(PageActions.deselectAll());
-  const onCloseModal = () => dispatch(PageActions.closeModal());
-
-  const onAddMasterList = () =>
-    runWithLoadingIndicator(() => dispatch(PageActions.addMasterListItems('Transaction')));
-
-  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
+  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, route), [
     comment,
     theirRef,
     isFinalised,
   ]);
 
-  const getAction = useCallback((colKey, propName) => {
+  const getCallback = (colKey, propName) => {
     switch (colKey) {
       case 'totalQuantity':
-        return PageActions.editTotalQuantity;
+        return onEditTotalQuantity;
       case 'remove':
-        if (propName === 'onCheckAction') return PageActions.selectRow;
-        return PageActions.deselectRow;
+        if (propName === 'onCheck') return onCheck;
+        return onUncheck;
       default:
         return null;
     }
-  }, []);
+  };
 
   const getModalOnSelect = () => {
     switch (modalKey) {
       case MODAL_KEYS.SELECT_ITEM:
-        return onAddItem;
+        return onAddTransactionItem;
       case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
         return onEditComment;
       case MODAL_KEYS.THEIR_REF_EDIT:
         return onEditTheirRef;
+      case MODAL_KEYS.SELECT_MASTER_LISTS:
+        return onApplyMasterLists;
       default:
         return null;
     }
@@ -117,8 +116,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
           rowKey={rowKey}
           columns={columns}
           isFinalised={isFinalised}
-          dispatch={dispatch}
-          getAction={getAction}
+          getCallback={getCallback}
           rowIndex={index}
         />
       );
@@ -130,13 +128,12 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={instantDebouncedDispatch}
-        sortAction={PageActions.sortData}
+        onPress={onSortColumn}
         isAscending={isAscending}
-        sortBy={sortBy}
+        sortKey={sortKey}
       />
     ),
-    [sortBy, isAscending]
+    [sortKey, isAscending]
   );
 
   const { verticalContainer, topButton } = globalStyles;
@@ -144,21 +141,20 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     pageTopSectionContainer,
     pageTopLeftSectionContainer,
     pageTopRightSectionContainer,
-    searchBar,
   } = globalStyles;
   return (
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
         <View style={pageTopLeftSectionContainer}>
           <PageInfo columns={pageInfoColumns} isEditingDisabled={isFinalised} />
-          <SearchBar onChangeText={onFilterData} style={searchBar} value={searchTerm} />
+          <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <View style={pageTopRightSectionContainer}>
           <View style={verticalContainer}>
             <PageButton
               style={{ ...topButton, marginLeft: 0 }}
               text={buttonStrings.new_item}
-              onPress={onNewRow}
+              onPress={onSelectNewItem}
               isDisabled={isFinalised}
             />
             <PageButton
@@ -181,8 +177,8 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
       <BottomConfirmModal
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
-        onCancel={onCancelDelete}
-        onConfirm={onConfirmDelete}
+        onCancel={onDeselectAll}
+        onConfirm={onDeleteItems}
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
@@ -198,9 +194,59 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
   );
 };
 
-/* eslint-disable react/forbid-prop-types */
-CustomerInvoicePage.propTypes = {
-  runWithLoadingIndicator: PropTypes.func.isRequired,
-  transaction: PropTypes.object.isRequired,
-  routeName: PropTypes.string.isRequired,
+const mapDispatchToProps = (dispatch, ownProps) => {
+  const { transaction } = ownProps || {};
+  const { otherParty } = transaction;
+  const hasMasterLists = otherParty.masterLists.length > 0;
+
+  const noMasterLists = () =>
+    ToastAndroid.show(modalStrings.customer_no_masterlist_available, ToastAndroid.LONG);
+  return {
+    ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.CUSTOMER_INVOICE),
+    [hasMasterLists ? null : 'onAddMasterList']: noMasterLists,
+  };
+};
+
+const mapStateToProps = state => {
+  const { pages } = state;
+  const { customerInvoice } = pages;
+  return customerInvoice;
+};
+
+export const CustomerInvoicePage = connect(mapStateToProps, mapDispatchToProps)(CustomerInvoice);
+
+CustomerInvoice.defaultProps = {
+  modalValue: null,
+};
+
+CustomerInvoice.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  data: PropTypes.array.isRequired,
+  dataState: PropTypes.object.isRequired,
+  pageObject: PropTypes.object.isRequired,
+  sortKey: PropTypes.string.isRequired,
+  isAscending: PropTypes.bool.isRequired,
+  modalKey: PropTypes.string.isRequired,
+  hasSelection: PropTypes.bool.isRequired,
+  keyExtractor: PropTypes.func.isRequired,
+  searchTerm: PropTypes.string.isRequired,
+  modalValue: PropTypes.any,
+  columns: PropTypes.array.isRequired,
+  getPageInfoColumns: PropTypes.func.isRequired,
+  refreshData: PropTypes.func.isRequired,
+  onSelectNewItem: PropTypes.func.isRequired,
+  onAddMasterList: PropTypes.func.isRequired,
+  onEditComment: PropTypes.func.isRequired,
+  onEditTheirRef: PropTypes.func.isRequired,
+  onFilterData: PropTypes.func.isRequired,
+  onDeleteItems: PropTypes.func.isRequired,
+  onDeselectAll: PropTypes.func.isRequired,
+  onCloseModal: PropTypes.func.isRequired,
+  onCheck: PropTypes.func.isRequired,
+  onUncheck: PropTypes.func.isRequired,
+  onSortColumn: PropTypes.func.isRequired,
+  onEditTotalQuantity: PropTypes.func.isRequired,
+  onAddTransactionItem: PropTypes.func.isRequired,
+  onApplyMasterLists: PropTypes.func.isRequired,
+  route: PropTypes.string.isRequired,
 };

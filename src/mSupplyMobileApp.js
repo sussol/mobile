@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /* eslint-disable no-undef */
 /* eslint-disable no-console */
 /**
@@ -31,6 +32,7 @@ import { FinaliseButton, NavigationBar, SyncState, Spinner } from './widgets';
 import { FinaliseModal, LoginModal } from './widgets/modals';
 
 import { getCurrentParams, getCurrentRouteName, ReduxNavigator } from './navigation';
+import { syncCompleteTransaction } from './actions/SyncActions';
 import { migrateDataToVersion } from './dataMigration';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import Settings from './settings/MobileAppSettings';
@@ -38,11 +40,33 @@ import Database from './database/BaseDatabase';
 import { UIDatabase } from './database';
 
 import globalStyles, { textStyles, SUSSOL_ORANGE } from './globalStyles';
+import { UserActions } from './actions';
+import { debounce } from './utilities';
+import { prevRouteNameSelector } from './navigation/selectors';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 
 class MSupplyMobileAppContainer extends React.Component {
+  handleBackEvent = debounce(
+    () => {
+      const { dispatch, prevRouteName } = this.props;
+      const { confirmFinalise, syncModalIsOpen } = this.state;
+      // If finalise or sync modals are open, close them rather than navigating.
+      if (confirmFinalise || syncModalIsOpen) {
+        this.setState({ confirmFinalise: false, syncModalIsOpen: false });
+        return true;
+      }
+      // If we are on base screen (e.g. home), back button should close app as we can't go back.
+      if (!this.getCanNavigateBack()) BackHandler.exitApp();
+      else dispatch({ ...NavigationActions.back(), payload: { prevRouteName } });
+
+      return true;
+    },
+    400,
+    true
+  );
+
   constructor(props, ...otherArgs) {
     super(props, ...otherArgs);
 
@@ -55,15 +79,14 @@ class MSupplyMobileAppContainer extends React.Component {
     const isInitialised = this.synchroniser.isInitialised();
     this.scheduler.schedule(this.synchronise, SYNC_INTERVAL);
     this.scheduler.schedule(() => {
-      const { currentUser } = this.state;
+      const { currentUser } = this.props;
       if (currentUser !== null) {
-        // Only reauthenticate if currently logged in.
+        // Only re-authenticate if currently logged in.
         this.userAuthenticator.reauthenticate(this.onAuthentication);
       }
     }, AUTHENTICATION_INTERVAL);
     this.state = {
       confirmFinalise: false,
-      currentUser: null,
       isInitialised,
       isLoading: false,
       syncModalIsOpen: false,
@@ -78,7 +101,8 @@ class MSupplyMobileAppContainer extends React.Component {
   };
 
   onAuthentication = user => {
-    this.setState({ currentUser: user });
+    const { dispatch } = this.props;
+    dispatch(UserActions.login(user));
     this.postSyncProcessor.setUser(user);
   };
 
@@ -89,28 +113,24 @@ class MSupplyMobileAppContainer extends React.Component {
 
   getCanNavigateBack = () => {
     const { navigationState } = this.props;
-    return this.navigator && navigationState.index !== 0;
+    return navigationState.index !== 0;
   };
 
-  handleBackEvent = () => {
-    const { confirmFinalise, syncModalIsOpen } = this.state;
-    // If finalise or sync modals are open, close them rather than navigating.
-    if (confirmFinalise || syncModalIsOpen) {
-      this.setState({ confirmFinalise: false, syncModalIsOpen: false });
-      return true;
-    }
-    // If we are on base screen (e.g. home), back button should close app as we can't go back.
-    if (!this.getCanNavigateBack()) BackHandler.exitApp();
-    else {
-      const { dispatch } = this.navigator.props;
-      dispatch(NavigationActions.back());
-    }
-    return true;
-  };
+  // eslint-disable-next-line class-methods-use-this
+  getCurrentRouteName(navigationState) {
+    if (!navigationState) return null;
+
+    const route = navigationState.routes[navigationState.index];
+
+    // dive into nested navigators
+    if (route.routes) return getCurrentRouteName(route);
+
+    return route.routeName;
+  }
 
   runWithLoadingIndicator = async functionToRun => {
     UIDatabase.isLoading = true;
-    // We here set up an asyncronous promise that will be resolved after a timeout
+    // We here set up an asynchronous promise that will be resolved after a timeout
     // of 1 millisecond. This allows a fraction of a delay for the javascript thread
     // to unblock and allow the spinner animation to start up. The |functionToRun| should
     // not be run inside a |setTimeout| as that relegates to a lower priority, resulting
@@ -124,7 +144,7 @@ class MSupplyMobileAppContainer extends React.Component {
   };
 
   synchronise = async () => {
-    const { syncState } = this.props;
+    const { syncState, dispatch } = this.props;
     const { isInitialised } = this.state;
     if (!isInitialised || syncState.isSyncing) return; // Ignore if syncing.
     // True if most recent call to |this.synchroniser.synchronise()| failed.
@@ -140,9 +160,8 @@ class MSupplyMobileAppContainer extends React.Component {
     } else {
       this.postSyncProcessor.processRecordQueue();
     }
+    dispatch(syncCompleteTransaction());
   };
-
-  logOut = () => this.setState({ currentUser: null });
 
   renderFinaliseButton = () => {
     const { finaliseItem } = this.props;
@@ -194,10 +213,9 @@ class MSupplyMobileAppContainer extends React.Component {
   };
 
   render() {
-    const { dispatch, finaliseItem, navigationState, syncState } = this.props;
+    const { dispatch, finaliseItem, navigationState, syncState, currentUser } = this.props;
     const {
       confirmFinalise,
-      currentUser,
       isInAdminMode,
       isInitialised,
       isLoading,
@@ -217,21 +235,18 @@ class MSupplyMobileAppContainer extends React.Component {
     return (
       <View style={globalStyles.appBackground}>
         <NavigationBar
+          routeName={this.getCurrentRouteName(navigationState)}
           onPressBack={this.getCanNavigateBack() ? this.handleBackEvent : null}
           LeftComponent={this.getCanNavigateBack() ? this.renderPageTitle : null}
           CentreComponent={this.renderLogo}
           RightComponent={finaliseItem ? this.renderFinaliseButton : this.renderSyncState}
         />
         <ReduxNavigator
-          ref={navigator => {
-            this.navigator = navigator;
-          }}
           state={navigationState}
           dispatch={dispatch}
           screenProps={{
             database: UIDatabase,
             settings: Settings,
-            logOut: this.logOut,
             currentUser,
             routeName: navigationState.routes[navigationState.index].routeName,
             runWithLoadingIndicator: this.runWithLoadingIndicator,
@@ -256,7 +271,7 @@ class MSupplyMobileAppContainer extends React.Component {
         <LoginModal
           authenticator={this.userAuthenticator}
           settings={Settings}
-          isAuthenticated={currentUser !== null}
+          isAuthenticated={!!currentUser}
           onAuthentication={this.onAuthentication}
         />
         {isLoading && this.renderLoadingIndicator()}
@@ -267,6 +282,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
 const mapStateToProps = state => {
   const { nav: navigationState, sync: syncState } = state;
+
   const currentParams = getCurrentParams(navigationState);
   const currentTitle = currentParams && currentParams.title;
   const finaliseItem = FINALISABLE_PAGES[getCurrentRouteName(navigationState)];
@@ -276,19 +292,28 @@ const mapStateToProps = state => {
 
   return {
     currentTitle,
+    prevRouteName: prevRouteNameSelector(state),
     finaliseItem,
     navigationState,
     syncState,
+    currentUser: state.user.currentUser,
   };
 };
 
-/* eslint-disable react/forbid-prop-types, react/require-default-props */
+MSupplyMobileAppContainer.defaultProps = {
+  currentUser: null,
+  currentTitle: '',
+  finaliseItem: null,
+};
+
 MSupplyMobileAppContainer.propTypes = {
   currentTitle: PropTypes.string,
   dispatch: PropTypes.func.isRequired,
   finaliseItem: PropTypes.object,
   navigationState: PropTypes.object.isRequired,
   syncState: PropTypes.object.isRequired,
+  currentUser: PropTypes.object,
+  prevRouteName: PropTypes.string.isRequired,
 };
 
 export default connect(mapStateToProps)(MSupplyMobileAppContainer);

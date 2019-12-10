@@ -3,8 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { APP_FONT_FAMILY } from './fonts';
-import { SHADOW_BORDER, BLUE_WHITE, BACKGROUND_COLOR, TRANSPARENT } from './colors';
+import { SHADOW_BORDER, BLUE_WHITE, BACKGROUND_COLOR } from './colors';
 
 export const PAGE_CONTENT_PADDING_HORIZONTAL = 20;
 export const PAGE_CONTENT_PADDING_TOP = 10;
@@ -44,13 +43,6 @@ export const pageStyles = {
     flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
-  },
-  searchBar: {
-    height: 40,
-    flex: 1,
-    fontSize: 16,
-    fontFamily: APP_FONT_FAMILY,
-    backgroundColor: TRANSPARENT,
   },
 };
 

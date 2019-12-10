@@ -54,25 +54,6 @@ export class TransactionBatch extends Realm.Object {
   }
 
   /**
-   * Get usage of this transaction batch.
-   *
-   * @return  {number}
-   */
-  get usage() {
-    // Usage is zero if batch is for transaction which is unconfirmed and unfinalised.
-    if (!this.transaction.isConfirmed && !this.transaction.isFinalised) return 0;
-    switch (this.transaction.type) {
-      // Usage is |this.totalQuantity| if batch is for customer invoice.
-      case 'customer_invoice':
-        return this.totalQuantity;
-      case 'supplier_invoice':
-      case 'supplier_credit': // Do not include supplier credits as usage, may be discarding stock.
-      default:
-        return 0;
-    }
-  }
-
-  /**
    * Get id of associated item batch.
    *
    * @return  {string}

@@ -11,6 +11,7 @@ import {
   SET_SYNC_MESSAGE,
   SET_SYNC_IS_SYNCING,
   SET_SYNC_COMPLETION_TIME,
+  SYNC_TRANSACTION_COMPLETE,
 } from '../sync/constants';
 
 const setSyncProgress = progress => ({
@@ -48,6 +49,10 @@ const setSyncCompletionTime = lastSyncTime => ({
   lastSyncTime,
 });
 
+const syncCompleteTransaction = () => ({
+  type: SYNC_TRANSACTION_COMPLETE,
+});
+
 export {
   setSyncProgress,
   incrementSyncProgress,
@@ -56,4 +61,5 @@ export {
   setSyncProgressMessage,
   setSyncIsSyncing,
   setSyncCompletionTime,
+  syncCompleteTransaction,
 };

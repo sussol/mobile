@@ -44,14 +44,13 @@ import { generalStrings, tableStrings } from '../../localization/index';
  * @param {String} rowKey      Unique key for a row
  * @param {Array}  columns     Array of column objects, see: columns.js
  * @param {Bool}   isFinalised Boolean indicating if the DataTable page is finalised.
- * @param {Func}   dispatch    Dispatch function for containing reducer.
  * @param {Func}   rowIndex    index of this row.
  * @param {Func}   onPress     On press callback for the row itself.
- * @param {Func}   getAction   Function to return an action for a cell
- *                             (colKey, propName) => actionObject
+ * @param {Func}   getCallback Function to return a cells callback
+ *                             (colKey, propName) => callback
  */
 const DataTableRow = React.memo(
-  ({ rowData, rowState, rowKey, columns, isFinalised, dispatch, getAction, onPress, rowIndex }) => {
+  ({ rowData, rowState, rowKey, columns, isFinalised, getCallback, onPress, rowIndex }) => {
     const {
       cellText,
       cellContainer,
@@ -104,9 +103,8 @@ const DataTableRow = React.memo(
                   value={rowData[columnKey]}
                   rowKey={rowKey}
                   columnKey={columnKey}
-                  editAction={getAction(columnKey)}
+                  onChangeText={getCallback(columnKey)}
                   isDisabled={isDisabled}
-                  dispatch={dispatch}
                   width={width}
                   viewStyle={cellContainer[cellAlignment]}
                   textViewStyle={editableCellTextView}
@@ -127,9 +125,8 @@ const DataTableRow = React.memo(
                   value={rowData[columnKey]}
                   rowKey={rowKey}
                   columnKey={columnKey}
-                  editAction={getAction(columnKey)}
+                  onEndEditing={getCallback(columnKey)}
                   isDisabled={isDisabled}
-                  dispatch={dispatch}
                   width={width}
                   isLastCell={isLastCell}
                   rowIndex={rowIndex}
@@ -148,9 +145,8 @@ const DataTableRow = React.memo(
                   UncheckedComponent={UncheckedComponent}
                   DisabledCheckedComponent={DisabledCheckedComponent}
                   DisabledUncheckedComponent={DisabledUncheckedComponent}
-                  onCheckAction={getAction(columnKey, 'onCheckAction')}
-                  onUncheckAction={getAction(columnKey, 'onUncheckAction')}
-                  dispatch={dispatch}
+                  onCheck={getCallback(columnKey, 'onCheck')}
+                  onUncheck={getCallback(columnKey, 'onUncheck')}
                   containerStyle={touchableCellContainer}
                   width={width}
                   isLastCell={isLastCell}
@@ -212,8 +208,7 @@ const DataTableRow = React.memo(
                   renderChildren={OpenModal}
                   rowKey={rowKey}
                   columnKey={columnKey}
-                  onPressAction={getAction(columnKey)}
-                  dispatch={dispatch}
+                  onPress={getCallback(columnKey)}
                   width={width}
                   isLastCell={isLastCell}
                   containerStyle={iconCell}
@@ -225,8 +220,7 @@ const DataTableRow = React.memo(
                 <DropDownCell
                   key={columnKey}
                   isDisabled={isFinalised}
-                  dispatch={dispatch}
-                  onPressAction={getAction(columnKey)}
+                  onPress={getCallback(columnKey)}
                   rowKey={rowKey}
                   columnKey={columnKey}
                   value={rowData[columnKey]}
@@ -269,7 +263,7 @@ const DataTableRow = React.memo(
 
 DataTableRow.defaultProps = {
   isFinalised: false,
-  getAction: null,
+  getCallback: null,
   onPress: null,
   rowState: null,
 };
@@ -280,9 +274,8 @@ DataTableRow.propTypes = {
   rowState: PropTypes.object,
   rowKey: PropTypes.string.isRequired,
   columns: PropTypes.array.isRequired,
-  dispatch: PropTypes.func.isRequired,
   isFinalised: PropTypes.bool,
-  getAction: PropTypes.func,
+  getCallback: PropTypes.func,
   rowIndex: PropTypes.number.isRequired,
 };
 
