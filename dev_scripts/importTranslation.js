@@ -98,7 +98,7 @@ UpdateJsonFiles = selectedLanguage => {
 
     // Updates localizationFile
     localizationFile = JSON.stringify(localizationFile, null, 2);
-    fs.writeFile(`./src/localization/${fileName}.json`, localizationFile, err => {
+    fs.writeFile(`./src/localization/${fileName}.json`, `${localizationFile}\r\n`, err => {
       if (err) throw err;
       // eslint-disable-next-line no-console
       console.log(`The file ${fileName}.json has been saved`);
