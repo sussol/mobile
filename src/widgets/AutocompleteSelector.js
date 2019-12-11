@@ -98,7 +98,6 @@ export class AutocompleteSelector extends React.PureComponent {
           autoCorrect={false}
           autoFocus
           placeholder={placeholderText}
-          // onChangeText={text => this.setState({ queryText: text })}
           onChangeText={this.onChangeText}
           style={[localStyles.text, localStyles.searchBar]}
           color="white"
