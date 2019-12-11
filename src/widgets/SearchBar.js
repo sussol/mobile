@@ -10,8 +10,9 @@ import PropTypes from 'prop-types';
 
 import { StyleSheet, TextInput, View, TouchableOpacity } from 'react-native';
 import { MagnifyingGlass, Cancel } from './icons';
-import { SUSSOL_ORANGE, APP_FONT_FAMILY } from '../globalStyles/index';
+import { APP_FONT_FAMILY } from '../globalStyles/index';
 import { debounce } from '../utilities/index';
+import { WHITE } from '../globalStyles/colors';
 
 /**
  * Simple search bar - essentially a wrapper around a text input
@@ -132,7 +133,7 @@ SearchBarComponent.defaultProps = {
   debounceTimeout: 250,
   textInputStyle: defaultStyles.textInput,
   viewStyle: defaultStyles.container,
-  color: SUSSOL_ORANGE,
+  color: WHITE,
   value: '',
   placeholder: '',
   autoFocus: false,

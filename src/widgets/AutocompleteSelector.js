@@ -93,10 +93,9 @@ export class AutocompleteSelector extends React.PureComponent {
       <View style={localStyles.container}>
         <SearchBar
           autoCapitalize="none"
-          autoCorrect={true}
+          autoCorrect={false}
           autoFocus
           placeholder={placeholderText}
-          debouncedCallback
           onChangeText={text => this.setState({ queryText: text })}
           style={[localStyles.text, localStyles.searchBar]}
         />
