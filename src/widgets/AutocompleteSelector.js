@@ -8,7 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { complement } from 'set-manipulator';
-import { SearchBar } from '.';
+import { SearchBar } from './SearchBar';
 import { APP_FONT_FAMILY } from '../globalStyles';
 import { generalStrings } from '../localization';
 import { withOnePress } from './withOnePress';
