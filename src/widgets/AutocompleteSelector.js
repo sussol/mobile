@@ -32,6 +32,8 @@ export class AutocompleteSelector extends React.PureComponent {
     };
   }
 
+  onChangeText = queryText => this.setState({ queryText });
+
   /**
    * Filters a realm results object. Creates two realm results A, B
    * by two query strings. And concats A to B - A.
@@ -96,7 +98,8 @@ export class AutocompleteSelector extends React.PureComponent {
           autoCorrect={false}
           autoFocus
           placeholder={placeholderText}
-          onChangeText={text => this.setState({ queryText: text })}
+          // onChangeText={text => this.setState({ queryText: text })}
+          onChangeText={this.onChangeText}
           style={[localStyles.text, localStyles.searchBar]}
           color="white"
         />
