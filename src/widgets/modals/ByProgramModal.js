@@ -74,7 +74,7 @@ const modalProps = ({ dispatch, program, orderType }) => ({
       const requisitionsCount = `${requisitionsInPeriod}/${maxOrdersPerPeriod} ${requisitions}`;
 
       const periodText = isEmergency
-        ? `${requisitionsInPeriod} ${programStrings.emergency_orders}`
+        ? `${requisitionsInPeriod} ${programStrings.emergency_order}`
         : requisitionsCount;
 
       return `${item} - ${periodText}`;
