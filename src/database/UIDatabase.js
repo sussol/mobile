@@ -241,4 +241,22 @@ export const getUIDatabaseInstance = database => {
   return UIDatabaseInstance;
 };
 
+// Factory function for custom UIDatabase PropTypes.
+const createUIDatabasePropType = isRequired => (props, propName, componentName) => {
+  const { [propName]: prop } = props;
+
+  if (prop == null) {
+    if (isRequired) {
+      return new TypeError(`Missing database prop in ${componentName}`);
+    }
+    return null;
+  }
+
+  if (prop instanceof UIDatabase) return null;
+  return new TypeError(`Invalid database prop in ${componentName}`);
+};
+
+export const UIDatabaseType = createUIDatabasePropType(false);
+UIDatabaseType.isRequired = createUIDatabasePropType(true);
+
 export default getUIDatabaseInstance;

@@ -114,6 +114,11 @@ export class Requisition extends Realm.Object {
     return getTotal(this.items, 'requiredQuantity');
   }
 
+  get numberOfOrderedItems() {
+    const hasBeenCounted = requisitionItem => (requisitionItem.requiredQuantity !== 0 ? 1 : 0);
+    return this.items.reduce((acc, item) => acc + hasBeenCounted(item), 0);
+  }
+
   /**
    * Get number of items associated with requisition.
    *

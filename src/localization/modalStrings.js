@@ -57,6 +57,8 @@ export const modalStrings = new LocalizedStrings({
     select_master_lists: 'Select master list',
     customer_no_masterlist_available: 'This customer has no master lists!',
     supplier_no_masterlist_available: 'Your store has no master lists!',
+    emergency_orders_can_only_have: 'Emergency orders can only have',
+    items_remove_some: 'items! Remove some before you can finalise',
   },
   fr: {
     add_at_least_one_item_before_finalising:
@@ -112,6 +114,8 @@ export const modalStrings = new LocalizedStrings({
        d'autres relevé d'inventaire). La quantité actuelle et celle de l'instantané seront \
        réinitialisées.",
     select_a_reason: 'Sélectionnez une raison',
+    emergency_orders_can_only_have: "Commandes urgentes peuvent n'avoir que",
+    items_remove_some: 'articles ! Enlevez-en quelques-uns avant de finaliser.',
   },
   gil: {
     // TODO: add |edit_the_stocktake_comment|, |edit_the_stocktake_name|, |stocktake_invalid_stock|

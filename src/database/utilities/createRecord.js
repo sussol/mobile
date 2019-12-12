@@ -494,7 +494,7 @@ const createStocktakeBatch = (database, stocktakeItem, itemBatch) => {
     batch,
     costPrice,
     sellPrice,
-    sortIndex: stocktakeItem.stocktake ? stocktakeItem.stocktake.numberOfBatches : 0,
+    sortIndex: (stocktakeItem?.stocktake?.numberOfBatches || 0) + 1 || 1,
   });
 
   stocktakeItem.addBatch(stocktakeBatch);
@@ -556,8 +556,8 @@ const createTransactionBatch = (database, transactionItem, itemBatch, isAddition
     sellPrice,
     donor,
     transaction,
-    sortIndex: transaction?.numberOfBatches || 0,
     type: isAddition ? 'stock_in' : 'stock_out',
+    sortIndex: (transactionItem?.transaction?.numberOfBatches || 0) + 1 || 1,
   });
 
   transactionItem.addBatch(transactionBatch);

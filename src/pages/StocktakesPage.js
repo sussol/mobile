@@ -186,10 +186,7 @@ const mapStateToProps = state => {
   return stocktakes;
 };
 
-export const StocktakesPage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Stocktakes);
+export const StocktakesPage = connect(mapStateToProps, mapDispatchToProps)(Stocktakes);
 
 Stocktakes.defaultProps = {
   showFinalised: false,

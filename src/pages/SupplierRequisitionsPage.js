@@ -14,6 +14,7 @@ import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets'
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { UIDatabase } from '../database';
+import { User } from '../database/DataTypes';
 import Settings from '../settings/MobileAppSettings';
 import { MODAL_KEYS, getAllPrograms } from '../utilities';
 import { ROUTES } from '../navigation/constants';

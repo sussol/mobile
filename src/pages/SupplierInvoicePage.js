@@ -179,10 +179,7 @@ const mapStateToProps = state => {
   return supplierInvoice;
 };
 
-export const SupplierInvoicePage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SupplierInvoice);
+export const SupplierInvoicePage = connect(mapStateToProps, mapDispatchToProps)(SupplierInvoice);
 
 SupplierInvoice.defaultProps = {
   modalValue: null,

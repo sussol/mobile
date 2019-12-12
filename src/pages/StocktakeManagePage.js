@@ -157,10 +157,7 @@ const mapStateToProps = state => {
   return stocktakeManager;
 };
 
-export const StocktakeManagePage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(StocktakeManage);
+export const StocktakeManagePage = connect(mapStateToProps, mapDispatchToProps)(StocktakeManage);
 
 StocktakeManage.propTypes = {
   dispatch: PropTypes.func.isRequired,

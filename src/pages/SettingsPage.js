@@ -164,10 +164,7 @@ const styles = {
   topRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' },
 };
 
-export const SettingsPage = connect(
-  mapStateToProps,
-  mapStateToDispatch
-)(Settings);
+export const SettingsPage = connect(mapStateToProps, mapStateToDispatch)(Settings);
 
 Settings.propTypes = {
   toRealmExplorer: PropTypes.func.isRequired,

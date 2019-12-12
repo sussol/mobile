@@ -9,6 +9,7 @@ import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../../globalS
 import { SETTINGS_KEYS } from '../../settings';
 import { getAllPrograms, getAllPeriodsForProgram } from '../../utilities';
 import { programStrings, navStrings } from '../../localization';
+import { UIDatabase } from '../../database';
 
 import {
   selectProgram,
@@ -48,13 +49,19 @@ const modalProps = ({ dispatch, program, orderType }) => ({
         isEmergency,
       } = item;
 
+      const thisStoresTags = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_TAGS);
+      const maxLinesForOrder = program.getMaxLines?.(item.name, thisStoresTags);
+
       const mosText = `${maxMOS}: ${itemMOS}`;
       const thresholdText = `${threshMOS}: ${itemThreshMOS}`;
-      const maxOrdersText = isEmergency
-        ? programStrings.emergency_orders
-        : `${maxOPP}: ${maxOrders}`;
+      const maxItemsText =
+        maxLinesForOrder && maxLinesForOrder !== Infinity
+          ? `${programStrings.max_items}: ${maxLinesForOrder}`
+          : '';
+      const emergencyText = `[${programStrings.emergency_order}]  ${maxItemsText}`;
+      const maxOrdersText = isEmergency ? emergencyText : `${maxOPP}: ${maxOrders}`;
 
-      return `${mosText} - ${thresholdText} - ${maxOrdersText}`;
+      return `${maxOrdersText} - ${mosText} - ${thresholdText}`;
     },
   },
   period: {
@@ -67,7 +74,7 @@ const modalProps = ({ dispatch, program, orderType }) => ({
       const requisitionsCount = `${requisitionsInPeriod}/${maxOrdersPerPeriod} ${requisitions}`;
 
       const periodText = isEmergency
-        ? `${requisitionsInPeriod} ${programStrings.emergency_orders}`
+        ? `${requisitionsInPeriod} ${programStrings.emergency_order}`
         : requisitionsCount;
 
       return `${item} - ${periodText}`;
