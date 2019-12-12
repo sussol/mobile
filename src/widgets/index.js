@@ -6,9 +6,12 @@
 export { Button, ProgressBar } from 'react-native-ui-components';
 
 export { AutocompleteSelector } from './AutocompleteSelector';
+// eslint-disable-next-line import/no-cycle
+export { MultiSelectList } from './MultiSelectList';
 export { FinaliseButton } from './FinaliseButton';
 export { GenericChoiceList } from './GenericChoiceList';
 export { IconCell } from './IconCell';
+// eslint-disable-next-line import/named
 export { NavigationBar } from './NavigationBar';
 export { OnePressButton } from './OnePressButton';
 export { PageButton } from './PageButton';
@@ -36,5 +39,18 @@ export {
   CloseIcon,
   OpenModal,
   Expand,
+  ConfirmIcon,
+  LockIcon,
 } from './icons';
-export { KiribatiFlag, EnglishFlag, LaosFlag, TetumFlag, FrenchFlag } from './images';
+export {
+  KiribatiFlag,
+  EnglishFlag,
+  LaosFlag,
+  TetumFlag,
+  FrenchFlag,
+  CustomerImage,
+  SupplierImage,
+  StockImage,
+  ModulesImage,
+} from './images';
+export { InfoBadge } from './InfoBadge';

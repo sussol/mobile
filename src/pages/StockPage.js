@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -6,17 +7,20 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import { connect } from 'react-redux';
 
-import { getItemLayout } from './dataTableUtilities/utilities';
+import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import globalStyles from '../globalStyles';
-import { usePageReducer, useSyncListener } from '../hooks';
+import { useSyncListener } from '../hooks';
 
 import { DataTablePageView, SearchBar } from '../widgets';
 
 import { ItemDetails } from '../widgets/modals/ItemDetails';
+
+import { ROUTES } from '../navigation/constants';
 
 /**
  * Renders a mSupply mobile page with Items and their stock levels.
@@ -30,32 +34,24 @@ import { ItemDetails } from '../widgets/modals/ItemDetails';
  * dataState is a simple map of objects corresponding to a row being displayed,
  * holding the state of a given row. Each object has the shape :
  * { isSelected, isFocused, isDisabled },
- *
- * @prop {Object} routeName Name of the current route.
  */
-export const StockPage = ({ routeName }) => {
-  const initialState = { page: routeName };
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
-
-  const {
-    data,
-    dataState,
-    sortBy,
-    isAscending,
-    selectedRow,
-    searchTerm,
-    keyExtractor,
-    columns,
-    PageActions,
-  } = state;
-
+export const Stock = ({
+  data,
+  dataState,
+  sortKey,
+  isAscending,
+  selectedRow,
+  searchTerm,
+  keyExtractor,
+  columns,
+  refreshData,
+  onSelectRow,
+  onDeselectRow,
+  onFilterData,
+  onSortColumn,
+}) => {
   //  Refresh data on retrieving item or itembatch records from sync.
-  const refreshCallback = () => dispatch(PageActions.refreshData());
-  useSyncListener(refreshCallback, ['Item', 'ItemBatch']);
-
-  const onSelectRow = useCallback(({ id }) => dispatch(PageActions.selectOneRow(id)), []);
-  const onDeselectRow = () => dispatch(PageActions.deselectRow(selectedRow.id));
-  const onFilterData = value => dispatch(PageActions.filterData(value));
+  useSyncListener(refreshData, ['Item', 'ItemBatch']);
 
   const renderRow = useCallback(
     listItem => {
@@ -67,8 +63,6 @@ export const StockPage = ({ routeName }) => {
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
           columns={columns}
-          isFinalised={false}
-          dispatch={dispatch}
           rowIndex={index}
           onPress={onSelectRow}
         />
@@ -80,10 +74,9 @@ export const StockPage = ({ routeName }) => {
   const renderHeader = () => (
     <DataTableHeaderRow
       columns={columns}
-      dispatch={instantDebouncedDispatch}
-      sortAction={PageActions.sortData}
+      onPress={onSortColumn}
       isAscending={isAscending}
-      sortBy={sortBy}
+      sortKey={sortKey}
     />
   );
 
@@ -113,6 +106,34 @@ export const StockPage = ({ routeName }) => {
   );
 };
 
-StockPage.propTypes = {
-  routeName: PropTypes.string.isRequired,
+const mapDispatchToProps = (dispatch, ownProps) =>
+  getPageDispatchers(dispatch, ownProps, '', ROUTES.STOCK);
+
+const mapStateToProps = state => {
+  const { pages } = state;
+
+  const { stock } = pages;
+  return stock;
+};
+
+export const StockPage = connect(mapStateToProps, mapDispatchToProps)(Stock);
+
+Stock.defaultProps = {
+  selectedRow: null,
+};
+
+Stock.propTypes = {
+  data: PropTypes.array.isRequired,
+  dataState: PropTypes.object.isRequired,
+  sortKey: PropTypes.string.isRequired,
+  isAscending: PropTypes.bool.isRequired,
+  selectedRow: PropTypes.object,
+  searchTerm: PropTypes.string.isRequired,
+  keyExtractor: PropTypes.func.isRequired,
+  columns: PropTypes.array.isRequired,
+  refreshData: PropTypes.func.isRequired,
+  onSelectRow: PropTypes.func.isRequired,
+  onDeselectRow: PropTypes.func.isRequired,
+  onFilterData: PropTypes.func.isRequired,
+  onSortColumn: PropTypes.func.isRequired,
 };

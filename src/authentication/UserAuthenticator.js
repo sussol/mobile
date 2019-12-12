@@ -23,7 +23,7 @@ export class UserAuthenticator {
     this.settings = settings;
     this.activeUsername = '';
     this.activePassword = '';
-    this.extraHeaders = { 'msupply-site-uuid': DeviceInfo.getUniqueID() };
+    this.extraHeaders = { 'msupply-site-uuid': DeviceInfo.getUniqueId() };
   }
 
   /**
@@ -73,6 +73,7 @@ export class UserAuthenticator {
             id: userJson.UserID,
             username,
             passwordHash,
+            isAdmin: userJson.isAdmin || false,
           });
         });
       }

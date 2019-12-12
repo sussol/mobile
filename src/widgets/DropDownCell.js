@@ -21,8 +21,7 @@ const {
  * value is passed.
  *
  * @param {Bool}    isDisabled      Indicator whether this cell is disabled.
- * @param {Func}    dispatch        Dispatching function to containing reducer.
- * @param {Func}    onPressAction   Action creator when pressed.
+ * @param {Func}    onPress         Callback function for the onPress event.
  * @param {String}  rowKey          Key for this cells row.
  * @param {String}  columnKey       Key for this cells column.
  * @param {String}  value           Text value for this cell.
@@ -32,18 +31,7 @@ const {
  * @param {Bool}    debug           Indicator whether logging should occur for this cell.
  */
 const DropDownCell = React.memo(
-  ({
-    isDisabled,
-    dispatch,
-    onPressAction,
-    rowKey,
-    columnKey,
-    value,
-    isLastCell,
-    width,
-    placeholder,
-    debug,
-  }) => {
+  ({ isDisabled, onPress, rowKey, columnKey, value, isLastCell, width, placeholder, debug }) => {
     const internalFontStyle = value ? dropDownFont : dropDownPlaceholderFont;
 
     const TouchableChild = () => (
@@ -63,13 +51,12 @@ const DropDownCell = React.memo(
 
     return (
       <TouchableCell
-        dispatch={dispatch}
         rowKey={rowKey}
         columnKey={columnKey}
         value={value}
         debug={debug}
         isLastCell={isLastCell}
-        onPressAction={onPressAction}
+        onPress={onPress}
         isDisabled={!value || isDisabled}
         width={width}
         renderChildren={TouchableChild}
@@ -88,8 +75,7 @@ DropDownCell.defaultProps = {
   debug: false,
 };
 DropDownCell.propTypes = {
-  dispatch: PropTypes.func.isRequired,
-  onPressAction: PropTypes.func.isRequired,
+  onPress: PropTypes.func.isRequired,
   rowKey: PropTypes.string.isRequired,
   columnKey: PropTypes.string.isRequired,
   width: PropTypes.number.isRequired,

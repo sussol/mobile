@@ -7,3 +7,5 @@ export {
   setSyncIsSyncing,
   setSyncCompletionTime,
 } from './SyncActions';
+
+export { USER_ACTION_TYPES, UserActions } from './UserActions';

@@ -15,14 +15,14 @@ import { dataTableStyles } from '../../globalStyles';
  * the generic shared logic for all data table pages header rows into one place.
  *
  * @param {Array}  columns     Array of column objects see columns.js
- * @param {String} sortBy      columnKey indicating which column is sorted for the correct icon.
+ * @param {String} sortKey      columnKey indicating which column is sorted for the correct icon.
  * @param {Bool}   isAscending Additional indicator for the column which is sorted by.
  * @param {Func}   dispatch    Dispatch function for managing the row containers state.
  * @param {Func}   sortAction  Action creator for generating a sorting action.
  *
  *
  */
-const DataTableHeaderRow = React.memo(({ columns, sortBy, isAscending, dispatch, sortAction }) => {
+const DataTableHeaderRow = React.memo(({ columns, sortKey, isAscending, onPress }) => {
   const { headerRow, headerCells, cellText } = dataTableStyles;
   return (
     <HeaderRow
@@ -30,7 +30,7 @@ const DataTableHeaderRow = React.memo(({ columns, sortBy, isAscending, dispatch,
       renderCells={() =>
         columns.map(({ key, title, sortable, width, alignText }, index) => {
           const sortDirection = isAscending ? 'ASC' : 'DESC';
-          const directionForThisColumn = key === sortBy ? sortDirection : null;
+          const directionForThisColumn = key === sortKey ? sortDirection : null;
           const isLastCell = index === columns.length - 1;
 
           return (
@@ -41,8 +41,7 @@ const DataTableHeaderRow = React.memo(({ columns, sortBy, isAscending, dispatch,
               SortDescComponent={SortDescIcon}
               SortNeutralComponent={SortNeutralIcon}
               columnKey={key}
-              onPressAction={sortable ? sortAction : null}
-              dispatch={dispatch}
+              onPress={sortable ? onPress : null}
               sortDirection={directionForThisColumn}
               sortable={sortable}
               width={width}
@@ -59,17 +58,15 @@ const DataTableHeaderRow = React.memo(({ columns, sortBy, isAscending, dispatch,
 
 DataTableHeaderRow.propTypes = {
   columns: PropTypes.arrayOf(PropTypes.object),
-  sortBy: PropTypes.string,
+  sortKey: PropTypes.string,
   isAscending: PropTypes.bool.isRequired,
-  dispatch: PropTypes.func,
-  sortAction: PropTypes.func,
+  onPress: PropTypes.func,
 };
 
 DataTableHeaderRow.defaultProps = {
   columns: [],
-  sortBy: '',
-  dispatch: null,
-  sortAction: null,
+  sortKey: '',
+  onPress: null,
 };
 
 export default DataTableHeaderRow;

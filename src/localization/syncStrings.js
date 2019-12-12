@@ -18,6 +18,9 @@ export const syncStrings = new LocalizedStrings({
     all_records_updated: 'All records updated.',
     loading_change_count: 'Loading change count...',
     last_successful_sync: 'Last successful sync',
+    initialising: 'Initialising...',
+    pulling_changes: 'Pulling changes from the server',
+    pushing_changes: 'Pushing changes to the server',
   },
   fr: {
     last_sync: 'Dernier SYNC',

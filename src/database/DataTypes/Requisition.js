@@ -114,6 +114,11 @@ export class Requisition extends Realm.Object {
     return getTotal(this.items, 'requiredQuantity');
   }
 
+  get numberOfOrderedItems() {
+    const hasBeenCounted = requisitionItem => (requisitionItem.requiredQuantity !== 0 ? 1 : 0);
+    return this.items.reduce((acc, item) => acc + hasBeenCounted(item), 0);
+  }
+
   /**
    * Get number of items associated with requisition.
    *
@@ -210,15 +215,21 @@ export class Requisition extends Realm.Object {
   /**
    * Add all items from the mobile store master list to this requisition.
    *
-   * @param  {Realm}  database
-   * @param  {Name}   thisStore
+   * @param  {Realm}            database
+   * @param  {Array.<string>}   selected masterlists from multiselect
+   * @param  {Name}             thisStore
    */
-  addItemsFromMasterList(database, thisStore) {
+  addItemsFromMasterList({ database, thisStore, selected }) {
     if (this.isFinalised) {
       throw new Error('Cannot add items to a finalised requisition');
     }
 
-    thisStore.masterLists.forEach(masterList => {
+    // Filter through masterList ids that are on multiselect list
+    const filteredMasterLists = selected
+      ? thisStore.masterLists.filter(item => selected.indexOf(item.id) !== -1)
+      : thisStore.masterLists;
+
+    filteredMasterLists.forEach(masterList => {
       const itemsToAdd = complement(masterList.items, this.items, item => item.itemId);
       itemsToAdd.forEach(masterListItem => {
         if (!masterListItem.item.crossReferenceItem) {
@@ -254,7 +265,7 @@ export class Requisition extends Realm.Object {
       throw new Error('Cannot add items to a finalised requisition');
     }
 
-    this.addItemsFromMasterList(database, thisStore);
+    this.addItemsFromMasterList({ database, thisStore });
     this.setRequestedToSuggested(database);
     this.pruneRedundantItems(database);
   }

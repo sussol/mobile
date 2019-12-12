@@ -71,13 +71,16 @@ export const RegimenDataModal = ({ requisition }) => {
     });
   }, [customData]);
 
-  const getAction = columnKey => {
+  const updateComment = (value, rowKey) => dispatch(actions.updateComment(value, rowKey));
+  const updateValue = (value, rowKey) => dispatch(actions.updateValue(value, rowKey));
+
+  const getCallback = columnKey => {
     switch (columnKey) {
       default:
       case 'comment':
-        return actions.updateComment;
+        return updateComment;
       case 'value':
-        return actions.updateValue;
+        return updateValue;
     }
   };
 
@@ -90,8 +93,7 @@ export const RegimenDataModal = ({ requisition }) => {
         rowKey={rowKey}
         columns={columns}
         isFinalised={isFinalised}
-        dispatch={dispatch}
-        getAction={getAction}
+        getCallback={getCallback}
         rowIndex={index}
       />
     );
