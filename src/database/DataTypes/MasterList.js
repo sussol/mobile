@@ -72,6 +72,45 @@ export class MasterList extends Realm.Object {
     return foundStoreTag && storeTags[foundStoreTag];
   }
 
+  /**
+   * Returns an array of order type objects for this program, for the
+   * current store.
+   *
+   * @param  {String}  tags   Current stores tags field
+   * @return {Array} An array of order types for this program/store.
+   */
+  getOrderTypes(tags) {
+    const storeTagObject = this.getStoreTagObject(tags);
+    return storeTagObject?.orderTypes;
+  }
+
+  /**
+   * Returns a specific order type object which matches the name provided.
+   *
+   * @param   {String} orderTypeToFind
+   * @param   {String} tags
+   * @returns {Object} An order type object
+   */
+  getOrderType(orderTypeName, tags) {
+    const orderTypes = this.getOrderTypes(tags);
+    if (!orderTypes) return null;
+
+    return orderTypes.find(orderType => orderType.name === orderTypeName);
+  }
+
+  /**
+   * Returns the maximum number of lines for the provided order type.
+   *
+   * @param   {String} orderTypeName
+   * @param   {String} tags
+   * @returns {Number} The maximum number of lines an order can have with the supplied order type
+   */
+  getMaxLines(orderTypeName, tags) {
+    const orderType = this.getOrderType(orderTypeName, tags);
+    const maxLinesForOrder = orderType?.maxEmergencyOrders;
+    return maxLinesForOrder || Infinity;
+  }
+
   toString() {
     return this.name;
   }
