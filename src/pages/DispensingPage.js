@@ -12,7 +12,8 @@ import { ToggleBar, DataTablePageView, SearchBar, PageButton } from '../widgets'
 import { DataTable, DataTableRow, DataTableHeaderRow } from '../widgets/DataTable';
 
 import globalStyles from '../globalStyles';
-import { PageActions, DATA_SET, getPageDispatchers, getItemLayout } from './dataTableUtilities';
+import { PageActions, DATA_SET, getItemLayout } from './dataTableUtilities';
+import { createPrescription } from '../navigation/actions';
 import { ROUTES } from '../navigation/constants';
 
 const Dispensing = ({
@@ -26,11 +27,12 @@ const Dispensing = ({
   onSortColumn,
   searchTerm,
   onFilterData,
+  gotoPrescription,
 }) => {
   const getCellCallbacks = colKey => {
     switch (colKey) {
       case 'dispense':
-        return () => console.log('dispense');
+        return gotoPrescription;
       default:
         return null;
     }
@@ -108,9 +110,13 @@ const mapStateToProps = state => {
   return dispensing;
 };
 
-export const DispensingPage = connect(mapStateToProps, (dispatch, ownProps) => ({
-  ...getPageDispatchers(dispatch, ownProps, 'Name', 'dispensing'),
-}))(Dispensing);
+const mapDispatchToProps = dispatch => {
+  const gotoPrescription = patientID => dispatch(createPrescription(patientID));
+
+  return { gotoPrescription };
+};
+
+export const DispensingPage = connect(mapStateToProps, mapDispatchToProps)(Dispensing);
 
 Dispensing.propTypes = {
   data: PropTypes.array.isRequired,
@@ -123,4 +129,5 @@ Dispensing.propTypes = {
   onSortColumn: PropTypes.func.isRequired,
   searchTerm: PropTypes.string.isRequired,
   onFilterData: PropTypes.func.isRequired,
+  gotoPrescription: PropTypes.func.isRequired,
 };
