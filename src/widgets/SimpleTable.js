@@ -51,7 +51,7 @@ export const SimpleTable = React.memo(
     const renderRow = useCallback(
       ({ item, index }) => {
         const { id } = item;
-        const isSelected = extraData[id];
+        const isSelected = extraData?.[id];
         const rowStyle = isSelected
           ? selectedRowStyle
           : (index % 2 === 0 && alternateRowStyle) || basicRowStyle;
