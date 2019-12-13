@@ -84,3 +84,5 @@ export const HistoryIcon = React.memo(() => <FA5Icon name="history" />);
 export const ChevronRightIcon = () => (
   <FA5Icon name="chevron-right" color={SUSSOL_ORANGE} size={20} />
 );
+
+export const FavouriteStarIcon = () => <FAIcon name="star-o" color={SUSSOL_ORANGE} size={20} />;
