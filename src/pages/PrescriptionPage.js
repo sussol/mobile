@@ -4,213 +4,120 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React from 'react';
+
 import PropTypes from 'prop-types';
+
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { MODAL_KEYS } from '../utilities';
-import { useRecordListener } from '../hooks';
-import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 import { ROUTES } from '../navigation/constants';
 
-import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
-import { PageButton, PageInfo, SearchBar, DataTablePageView } from '../widgets';
-import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+import { FavouriteStarIcon, TableShortcut, TableShortcuts, Wizard, SimpleTable } from '../widgets';
+import { UIDatabase } from '../database';
+import { getColumns, getPageDispatchers } from './dataTableUtilities';
 
-import { buttonStrings, modalStrings } from '../localization';
-import globalStyles from '../globalStyles';
-import { PageActions } from './dataTableUtilities/actions/index';
+import { selectPrescriber } from '../reducers/DispensaryReducer';
 
-export const Prescription = ({
-  dispatch,
-  data,
-  dataState,
-  pageObject,
-  sortBy,
-  isAscending,
-  modalKey,
-  hasSelection,
-  keyExtractor,
-  searchTerm,
-  modalValue,
-  columns,
-  getPageInfoColumns,
-  refreshData,
-  onSelectNewItem,
-  onEditComment,
-  onFilterData,
-  onDeleteItems,
-  onDeselectAll,
-  onCloseModal,
-  onCheck,
-  onUncheck,
-  onSortColumn,
-  onEditTotalQuantity,
-  onAddTransactionItem,
-}) => {
-  const { isFinalised, comment, prescriber } = pageObject;
+const mapStateToProps = state => {
+  const { dispensary } = state;
 
-  // Listen for this invoice being finalised which will prune items and cause side effects
-  // outside of the reducer. Reconcile differences when triggered.
-  useRecordListener(refreshData, pageObject, 'Transaction');
+  return dispensary;
+};
 
-  const pageInfoColumns = useCallback(
-    getPageInfoColumns(pageObject, dispatch, ROUTES.PRESCRIPTION),
-    [comment, prescriber, isFinalised]
-  );
+const ALPHABET = [...'abcdefghijklmnopqrstuvwxyz'];
 
-  const getCallback = (colKey, propName) => {
-    switch (colKey) {
-      case 'totalQuantity':
-        return onEditTotalQuantity;
-      case 'remove':
-        if (propName === 'onCheck') return onCheck;
-        return onUncheck;
-      default:
-        return null;
-    }
-  };
+const localStyles = {
+  row: { flex: 1, flexDirection: 'row' },
+  extraLargeFlex: { flex: 29 },
+  largeFlex: { flex: 10 },
+  mediumFlex: { flex: 9 },
+  smallFlex: { flex: 1 },
+};
 
-  const getModalOnSelect = () => {
-    switch (modalKey) {
-      case MODAL_KEYS.SELECT_ITEM:
-        return onAddTransactionItem;
-      case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
-        return onEditComment;
-      case MODAL_KEYS.SELECT_PRESCRIBER:
-        return value => dispatch(PageActions.editPrescriber(value, ROUTES.PRESCRIPTION));
-      default:
-        return null;
-    }
-  };
+const PrescriberSelect = connect(mapStateToProps)(({ dispatch }) => {
+  const { row, extraLargeFlex } = localStyles;
+  const columns = getColumns('prescriberSelect');
 
-  const renderRow = useCallback(
-    listItem => {
-      const { item, index } = listItem;
+  const tableRef = React.useRef(React.createRef());
 
-      const rowKey = keyExtractor(item);
-      return (
-        <DataTableRow
-          rowData={data[index]}
-          rowState={dataState.get(rowKey)}
-          rowKey={rowKey}
-          columns={columns}
-          isFinalised={isFinalised}
-          getCallback={getCallback}
-          rowIndex={index}
-        />
-      );
-    },
-    [data, dataState]
-  );
-
-  const renderHeader = useCallback(
-    () => (
-      <DataTableHeaderRow
-        columns={columns}
-        onPress={onSortColumn}
-        isAscending={isAscending}
-        sortBy={sortBy}
-      />
-    ),
-    [sortBy, isAscending]
-  );
-
-  const { verticalContainer, topButton } = globalStyles;
-  const {
-    pageTopSectionContainer,
-    pageTopLeftSectionContainer,
-    pageTopRightSectionContainer,
-    searchBar,
-  } = globalStyles;
   return (
-    <DataTablePageView>
-      <View style={pageTopSectionContainer}>
-        <View style={pageTopLeftSectionContainer}>
-          <PageInfo columns={pageInfoColumns} isEditingDisabled={isFinalised} />
-          <SearchBar onChangeText={onFilterData} style={searchBar} value={searchTerm} />
-        </View>
-        <View style={pageTopRightSectionContainer}>
-          <View style={verticalContainer}>
-            <PageButton
-              style={{ ...topButton, marginLeft: 0 }}
-              text={buttonStrings.new_item}
-              onPress={onSelectNewItem}
-              isDisabled={isFinalised}
-            />
-          </View>
-        </View>
+    <View style={row}>
+      <TableShortcuts>
+        <TableShortcut>
+          <FavouriteStarIcon />
+        </TableShortcut>
+        {ALPHABET.map(character => (
+          <TableShortcut>{character.toUpperCase()}</TableShortcut>
+        ))}
+      </TableShortcuts>
+      <View style={extraLargeFlex}>
+        <SimpleTable
+          data={UIDatabase.objects('Prescriber')}
+          columns={columns}
+          selectRow={rowKey => {
+            dispatch(selectPrescriber(rowKey));
+          }}
+          extraData={[]}
+          ref={tableRef}
+        />
       </View>
-      <DataTable
-        data={data}
-        extraData={dataState}
-        renderRow={renderRow}
-        renderHeader={renderHeader}
-        keyExtractor={keyExtractor}
-        getItemLayout={getItemLayout}
-        columns={columns}
-      />
-      <BottomConfirmModal
-        isOpen={hasSelection}
-        questionText={modalStrings.remove_these_items}
-        onCancel={onDeselectAll}
-        onConfirm={onDeleteItems}
-        confirmText={modalStrings.remove}
-      />
-      <DataTablePageModal
-        fullScreen={false}
-        isOpen={!!modalKey}
-        modalKey={modalKey}
-        onClose={onCloseModal}
-        onSelect={getModalOnSelect()}
-        dispatch={dispatch}
-        currentValue={modalValue}
-      />
-    </DataTablePageView>
+    </View>
+  );
+});
+
+const ItemSelect = () => {
+  const { row, mediumFlex, largeFlex } = localStyles;
+  const columns = getColumns('itemSelect');
+
+  const tableRef = React.useRef(React.createRef());
+
+  return (
+    <View style={row}>
+      <TableShortcuts>
+        <TableShortcut>
+          <FavouriteStarIcon />
+        </TableShortcut>
+        {ALPHABET.map(character => (
+          <TableShortcut>{character.toUpperCase()}</TableShortcut>
+        ))}
+      </TableShortcuts>
+      <View style={mediumFlex}>
+        <SimpleTable
+          data={UIDatabase.objects('Item')}
+          columns={columns}
+          selectRow={() => {}}
+          extraData={[]}
+          ref={tableRef}
+        />
+      </View>
+      <View style={largeFlex} />
+    </View>
   );
 };
+
+const Summary = () => <View style={{ flex: 1 }} />;
+
+const tabs = [PrescriberSelect, ItemSelect, Summary];
+const titles = ['Select the Prescriber', 'Select items', 'Summary'];
+
+export const Prescription = ({ currentTab, dispatch }) => (
+  <Wizard
+    tabs={tabs}
+    titles={titles}
+    currentTabIndex={currentTab}
+    onPress={x => {
+      dispatch({ type: 'SPECIFIC', payload: { nextTab: x + 1 } });
+    }}
+  />
+);
 
 const mapDispatchToProps = (dispatch, ownProps) =>
   getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.PRESCRIPTION);
 
-const mapStateToProps = state => {
-  const { pages } = state;
-  const { prescription } = pages;
-
-  return prescription;
-};
-
 export const PrescriptionPage = connect(mapStateToProps, mapDispatchToProps)(Prescription);
 
-Prescription.defaultProps = {
-  modalValue: null,
-};
-
 Prescription.propTypes = {
+  currentTab: PropTypes.number.isRequired,
   dispatch: PropTypes.func.isRequired,
-  data: PropTypes.array.isRequired,
-  dataState: PropTypes.object.isRequired,
-  pageObject: PropTypes.object.isRequired,
-  sortBy: PropTypes.string.isRequired,
-  isAscending: PropTypes.bool.isRequired,
-  modalKey: PropTypes.string.isRequired,
-  hasSelection: PropTypes.bool.isRequired,
-  keyExtractor: PropTypes.func.isRequired,
-  searchTerm: PropTypes.string.isRequired,
-  modalValue: PropTypes.any,
-  columns: PropTypes.array.isRequired,
-  getPageInfoColumns: PropTypes.func.isRequired,
-  refreshData: PropTypes.func.isRequired,
-  onSelectNewItem: PropTypes.func.isRequired,
-  onEditComment: PropTypes.func.isRequired,
-  onFilterData: PropTypes.func.isRequired,
-  onDeleteItems: PropTypes.func.isRequired,
-  onDeselectAll: PropTypes.func.isRequired,
-  onCloseModal: PropTypes.func.isRequired,
-  onCheck: PropTypes.func.isRequired,
-  onUncheck: PropTypes.func.isRequired,
-  onSortColumn: PropTypes.func.isRequired,
-  onEditTotalQuantity: PropTypes.func.isRequired,
-  onAddTransactionItem: PropTypes.func.isRequired,
 };
