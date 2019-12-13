@@ -1,5 +1,5 @@
 import { ROUTES } from '../navigation/constants';
-import { UIDatabase } from '../database/index';
+import { UIDatabase } from '../database';
 
 /**
  * mSupply Mobile
@@ -14,9 +14,13 @@ const initialState = () => ({
   items: [],
 });
 
-export const switchTab = currentTab => ({
-  type: 'SWITCH_TAB',
-  payload: { currentTab },
+const ACTIONS = {
+  SWITCH_TAB: 'DISPENSARY/SWITCH_TAB',
+};
+
+export const switchTab = nextTab => ({
+  type: ACTIONS.SWITCH_TAB,
+  payload: { nextTab },
 });
 
 export const selectPrescriber = prescriberID => (dispatch, getState) => {
@@ -33,7 +37,7 @@ export const selectPrescriber = prescriberID => (dispatch, getState) => {
     })
   );
 
-  dispatch({ type: 'SWITCH_TAB', payload: { nextTab: currentTab + 1 } });
+  dispatch(switchTab(currentTab + 1));
 };
 
 export const DispensaryReducer = (state = initialState(), action) => {
@@ -49,7 +53,7 @@ export const DispensaryReducer = (state = initialState(), action) => {
       return { ...state, prescription: transaction };
     }
 
-    case 'SWITCH_TAB': {
+    case ACTIONS.SWITCH_TAB: {
       const { payload } = action;
       const { nextTab } = payload;
       return { ...state, currentTab: nextTab };
