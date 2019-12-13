@@ -12,7 +12,7 @@ import { ToggleBar, DataTablePageView, SearchBar, PageButton } from '../widgets'
 import { DataTable, DataTableRow, DataTableHeaderRow } from '../widgets/DataTable';
 
 import globalStyles from '../globalStyles';
-import { PageActions, DATA_SET, getItemLayout } from './dataTableUtilities';
+import { PageActions, DATA_SET, getItemLayout, getPageDispatchers } from './dataTableUtilities';
 import { createPrescription } from '../navigation/actions';
 import { ROUTES } from '../navigation/constants';
 
@@ -110,10 +110,13 @@ const mapStateToProps = state => {
   return dispensing;
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch, ownProps) => {
   const gotoPrescription = patientID => dispatch(createPrescription(patientID));
 
-  return { gotoPrescription };
+  return {
+    ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.DISPENSARY),
+    gotoPrescription,
+  };
 };
 
 export const DispensingPage = connect(mapStateToProps, mapDispatchToProps)(Dispensing);
