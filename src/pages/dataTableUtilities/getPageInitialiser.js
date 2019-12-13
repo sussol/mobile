@@ -354,16 +354,16 @@ const supplierInvoicesInitialiser = () => {
  * @returns  {object}
  */
 const supplierRequisitionInitialiser = requisition => {
-  const { program, items: backingData } = requisition;
+  const { isFinalised, program, items: backingData } = requisition;
 
   const usingPrograms = !!program;
   const route = program ? ROUTES.SUPPLIER_REQUISITION_WITH_PROGRAM : ROUTES.SUPPLIER_REQUISITION;
 
   const sortedData = backingData.sorted('item.name').slice();
-  const isFinalised = requisition.status === 'finalised';
-  const filteredData = !isFinalised
-    ? sortedData.filter(item => item.isLessThanThresholdMOS)
-    : sortedData;
+  const filteredData =
+    !usingPrograms || isFinalised
+      ? sortedData
+      : sortedData.filter(item => item.isLessThanThresholdMOS);
 
   return {
     pageObject: requisition,
@@ -378,7 +378,7 @@ const supplierRequisitionInitialiser = requisition => {
     modalKey: '',
     hasSelection: false,
     modalValue: null,
-    showAll: usingPrograms && isFinalised,
+    showAll: !usingPrograms || isFinalised,
     route: ROUTES.SUPPLIER_REQUISITION,
     columns: getColumns(route),
     getPageInfoColumns: getPageInfoColumns(route),
