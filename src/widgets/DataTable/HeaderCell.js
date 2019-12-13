@@ -76,6 +76,9 @@ HeaderCell.defaultProps = {
   sortable: false,
   width: 0,
   isLastCell: false,
+  SortAscComponent: null,
+  SortDescComponent: null,
+  SortNeutralComponent: null,
 };
 
 HeaderCell.propTypes = {
@@ -85,9 +88,9 @@ HeaderCell.propTypes = {
   onPressAction: PropTypes.func,
   dispatch: PropTypes.func,
   sortDirection: PropTypes.oneOf(['ASC', 'DESC']),
-  SortAscComponent: PropTypes.node.isRequired,
-  SortDescComponent: PropTypes.node.isRequired,
-  SortNeutralComponent: PropTypes.node.isRequired,
+  SortAscComponent: PropTypes.node,
+  SortDescComponent: PropTypes.node,
+  SortNeutralComponent: PropTypes.node,
   containerStyle: PropTypes.object,
   textStyle: PropTypes.object,
   width: PropTypes.number,
