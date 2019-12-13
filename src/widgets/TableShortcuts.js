@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-import { APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE, SHADOW_BORDER } from '../globalStyles';
+import { APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from '../globalStyles';
 
 export const TableShortcut = ({
   children,
@@ -13,8 +13,13 @@ export const TableShortcut = ({
   containerStyle,
   innerContainerStyle,
   textStyle,
+  extraLarge,
 }) => {
   const Container = onPress ? TouchableOpacity : View;
+
+  const internalStyle = extraLarge
+    ? { ...containerStyle, flex: containerStyle.flex * 2 }
+    : containerStyle;
 
   const wrappedOnPress = React.useCallback(() => onPress(shortcutKey), []);
   const renderChildren = React.useCallback(
@@ -23,8 +28,8 @@ export const TableShortcut = ({
   );
 
   return (
-    <View onPress={wrappedOnPress} style={containerStyle}>
-      <Container style={innerContainerStyle}>
+    <View style={internalStyle}>
+      <Container onPress={wrappedOnPress} style={innerContainerStyle}>
         {React.Children.map(children, renderChildren)}
       </Container>
     </View>
@@ -40,8 +45,6 @@ const localStyles = StyleSheet.create({
   container: {},
   shortcutContainer: {
     flex: 1,
-    borderBottomColor: SHADOW_BORDER,
-    borderBottomWidth: 1,
   },
   innerShortcutContainer: {
     flex: 1,
@@ -55,8 +58,6 @@ const localStyles = StyleSheet.create({
   shortcutsContainer: {
     flex: 1,
     flexDirection: 'column',
-    borderWidth: 1,
-    borderColor: SHADOW_BORDER,
   },
 });
 
@@ -65,6 +66,7 @@ TableShortcut.defaultProps = {
   shortcutKey: '',
   innerContainerStyle: localStyles.innerShortcutContainer,
   textStyle: localStyles.shortcutText,
+  extraLarge: false,
   containerStyle: localStyles.shortcutContainer,
 };
 
@@ -75,6 +77,7 @@ TableShortcut.propTypes = {
   containerStyle: PropTypes.object,
   innerContainerStyle: PropTypes.object,
   textStyle: PropTypes.object,
+  extraLarge: PropTypes.bool,
 };
 
 TableShortcuts.propTypes = {
