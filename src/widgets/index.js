@@ -28,6 +28,7 @@ export { Stepper } from './Stepper';
 export { Slider } from './Slider';
 export { SyncState } from './SyncState';
 export { TabNavigator } from './TabNavigator';
+export { TableShortcut } from './TableShortcuts';
 export { TableShortcuts } from './TableShortcuts';
 export { TextEditor } from './TextEditor';
 export { TextInput } from './TextInput';
