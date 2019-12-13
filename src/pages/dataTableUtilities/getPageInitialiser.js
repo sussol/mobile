@@ -360,11 +360,15 @@ const supplierRequisitionInitialiser = requisition => {
   const route = program ? ROUTES.SUPPLIER_REQUISITION_WITH_PROGRAM : ROUTES.SUPPLIER_REQUISITION;
 
   const sortedData = backingData.sorted('item.name').slice();
+  const isFinalised = requisition.status === 'finalised';
+  const filteredData = !isFinalised
+    ? sortedData.filter(item => item.isLessThanThresholdMOS)
+    : sortedData;
 
   return {
     pageObject: requisition,
     backingData,
-    data: sortedData,
+    data: filteredData,
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
@@ -374,7 +378,7 @@ const supplierRequisitionInitialiser = requisition => {
     modalKey: '',
     hasSelection: false,
     modalValue: null,
-    showAll: usingPrograms,
+    showAll: usingPrograms && isFinalised,
     route: ROUTES.SUPPLIER_REQUISITION,
     columns: getColumns(route),
     getPageInfoColumns: getPageInfoColumns(route),
