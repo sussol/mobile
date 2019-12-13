@@ -1,10 +1,10 @@
-import { ROUTES } from '../navigation/constants';
-import { UIDatabase } from '../database';
-
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
+
+import { ROUTES } from '../navigation/constants';
+import { UIDatabase } from '../database';
 
 const initialState = () => ({
   currentTab: 0,
@@ -40,7 +40,7 @@ export const selectPrescriber = prescriberID => (dispatch, getState) => {
   dispatch(switchTab(currentTab + 1));
 };
 
-export const DispensaryReducer = (state = initialState(), action) => {
+export const PrescriptionReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {

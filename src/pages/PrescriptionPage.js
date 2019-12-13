@@ -17,7 +17,7 @@ import { FavouriteStarIcon, TableShortcut, TableShortcuts, Wizard, SimpleTable }
 import { UIDatabase } from '../database';
 import { getColumns, getPageDispatchers } from './dataTableUtilities';
 
-import { selectPrescriber } from '../reducers/DispensaryReducer';
+import { selectPrescriber } from '../reducers/PrescriptionReducer';
 
 const mapStateToProps = state => {
   const { dispensary } = state;
