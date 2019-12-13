@@ -20,84 +20,95 @@ import { HeaderCell, HeaderRow } from './DataTable/index';
  * extraData, an object with the shape: {rowId1: [bool], rowId2: [bool], ... } used
  * to trigger styling effects on selected rows.
  */
-export const SimpleTable = React.memo(({ data, columns, selectRow, extraData }) => {
-  const {
-    cellText,
-    cellContainer,
-    selectedRow: selectedRowStyle,
-    alternateRow: alternateRowStyle,
-    row: basicRowStyle,
-    headerRow,
-    headerCells,
-  } = dataTableStyles;
+export const SimpleTable = React.memo(
+  React.forwardRef(({ data, columns, selectRow, extraData }, ref) => {
+    const {
+      cellText,
+      cellContainer,
+      selectedRow: selectedRowStyle,
+      alternateRow: alternateRowStyle,
+      row: basicRowStyle,
+      headerRow,
+      headerCells,
+    } = dataTableStyles;
 
-  const renderCells = useCallback(rowData => {
-    const { id } = rowData;
+    const renderCells = useCallback(rowData => {
+      const { id } = rowData;
 
-    return columns.map(({ key, width, alignText }, index) => (
-      <Cell
-        value={rowData[key]}
-        viewStyle={cellContainer[alignText]}
-        textStyle={cellText[alignText]}
-        isLastCell={index === columns.length - 1}
-        width={width}
-        key={`${id}${key}`}
-      />
-    ));
-  }, []);
-
-  const renderRow = useCallback(
-    ({ item, index }) => {
-      const { id } = item;
-      const isSelected = extraData[id];
-      const rowStyle = isSelected
-        ? selectedRowStyle
-        : (index % 2 === 0 && alternateRowStyle) || basicRowStyle;
-
-      return (
-        <SimpleRow
-          rowData={item}
-          rowIndex={index}
-          rowKey={id}
-          style={rowStyle}
-          renderCells={renderCells}
-          onPress={selectRow}
-          isSelected={isSelected}
-        />
-      );
-    },
-    [extraData]
-  );
-
-  const renderHeaderCells = useCallback(
-    () =>
-      columns.map(({ title, width, alignText }, index) => (
-        <HeaderCell
-          title={title}
-          containerStyle={headerCells[alignText]}
+      return columns.map(({ key, width, alignText }, index) => (
+        <Cell
+          value={rowData[key]}
+          viewStyle={cellContainer[alignText]}
           textStyle={cellText[alignText]}
           isLastCell={index === columns.length - 1}
           width={width}
+          key={`${id}${key}`}
         />
-      )),
-    [columns]
-  );
+      ));
+    }, []);
 
-  const renderHeaders = useCallback(
-    () => <HeaderRow style={headerRow} columns={columns} renderCells={renderHeaderCells} />,
-    [columns]
-  );
+    const renderRow = useCallback(
+      ({ item, index }) => {
+        const { id } = item;
+        const isSelected = extraData[id];
+        const rowStyle = isSelected
+          ? selectedRowStyle
+          : (index % 2 === 0 && alternateRowStyle) || basicRowStyle;
 
-  return (
-    <FlatList
-      data={data}
-      renderItem={renderRow}
-      stickyHeaderIndices={[0]}
-      ListHeaderComponent={renderHeaders}
-      extraData={extraData}
-    />
-  );
-});
+        return (
+          <SimpleRow
+            rowData={item}
+            rowIndex={index}
+            rowKey={id}
+            style={rowStyle}
+            renderCells={renderCells}
+            onPress={selectRow}
+            isSelected={isSelected}
+          />
+        );
+      },
+      [extraData]
+    );
+
+    const renderHeaderCells = useCallback(
+      () =>
+        columns.map(({ title, width, alignText }, index) => (
+          <HeaderCell
+            title={title}
+            containerStyle={headerCells[alignText]}
+            textStyle={cellText[alignText]}
+            isLastCell={index === columns.length - 1}
+            width={width}
+          />
+        )),
+      [columns]
+    );
+
+    const renderHeaders = useCallback(
+      () => <HeaderRow style={headerRow} columns={columns} renderCells={renderHeaderCells} />,
+      [columns]
+    );
+
+    return (
+      <FlatList
+        ref={ref}
+        data={data}
+        getItemLayout={(_, index) => {
+          const { height } = dataTableStyles.row;
+          return {
+            length: height,
+            offset: height * index,
+            index,
+          };
+        }}
+        renderItem={renderRow}
+        stickyHeaderIndices={[0]}
+        ListHeaderComponent={renderHeaders}
+        extraData={extraData}
+      />
+    );
+  })
+);
 
 SimpleTable.propTypes = {
   data: PropTypes.array.isRequired,
