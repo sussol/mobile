@@ -5,6 +5,7 @@ import { View, FlatList, TouchableOpacity } from 'react-native';
 import Cell from './DataTable/Cell';
 import { dataTableStyles } from '../globalStyles/index';
 import { HeaderCell, HeaderRow } from './DataTable/index';
+import { getItemLayout } from '../pages/dataTableUtilities';
 
 /**
  * Simple table component for rendering a large list of un-changing data.
@@ -93,14 +94,7 @@ export const SimpleTable = React.memo(
       <FlatList
         ref={ref}
         data={data}
-        getItemLayout={(_, index) => {
-          const { height } = dataTableStyles.row;
-          return {
-            length: height,
-            offset: height * index,
-            index,
-          };
-        }}
+        getItemLayout={getItemLayout}
         renderItem={renderRow}
         stickyHeaderIndices={[0]}
         ListHeaderComponent={renderHeaders}
