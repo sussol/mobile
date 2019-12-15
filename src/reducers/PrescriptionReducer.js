@@ -5,6 +5,7 @@
 
 import { ROUTES } from '../navigation/constants';
 import { UIDatabase } from '../database';
+import { createRecord } from '../database/utilities/index';
 
 const initialState = () => ({
   currentTab: 0,
@@ -40,6 +41,20 @@ export const selectPrescriber = prescriberID => (dispatch, getState) => {
   dispatch(switchTab(currentTab + 1));
 };
 
+export const selectItem = itemID => (dispatch, getState) => {
+  const { dispensary } = getState();
+  const { prescription } = dispensary;
+  const item = UIDatabase.get('Item', itemID);
+
+  if (!prescription.hasItem(item)) {
+    UIDatabase.write(() => {
+      createRecord(UIDatabase, 'TransactionItem', prescription, item);
+    });
+  }
+
+  dispatch({ type: 'SELECT_ITEM' });
+};
+
 export const PrescriptionReducer = (state = initialState(), action) => {
   const { type } = action;
 
@@ -58,6 +73,17 @@ export const PrescriptionReducer = (state = initialState(), action) => {
       const { nextTab } = payload;
       return { ...state, currentTab: nextTab };
     }
+
+    case 'SELECT_ITEM': {
+      return {
+        ...state,
+        prescription: UIDatabase.objects('Prescription').filtered(
+          'id == $0',
+          state.prescription.id
+        )[0],
+      };
+    }
+
     default:
       return state;
   }
