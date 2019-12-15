@@ -79,12 +79,13 @@ HeaderCell.defaultProps = {
   SortAscComponent: null,
   SortDescComponent: null,
   SortNeutralComponent: null,
+  columnKey: '',
 };
 
 HeaderCell.propTypes = {
   ...TouchableOpacityPropTypes,
   title: PropTypes.string.isRequired,
-  columnKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  columnKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   onPressAction: PropTypes.func,
   dispatch: PropTypes.func,
   sortDirection: PropTypes.oneOf(['ASC', 'DESC']),
