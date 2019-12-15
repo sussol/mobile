@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 
 import { StyleSheet, TextInput, View, TouchableOpacity } from 'react-native';
 import { MagnifyingGlass, Cancel } from './icons';
-import { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles/index';
+import { APP_FONT_FAMILY, WHITE } from '../globalStyles/index';
 import { debounce } from '../utilities/index';
 
 /**
@@ -67,6 +67,7 @@ export const SearchBarComponent = ({
 
   // On text change, set the internal text value, and call the debounced
   // callback. Keep the users input upto date, but optimize filtering.
+
   const onChangeTextCallback = useCallback(newValue => {
     setTextValue(newValue);
     debouncedCallback(newValue);
@@ -132,7 +133,7 @@ SearchBarComponent.defaultProps = {
   debounceTimeout: 250,
   textInputStyle: defaultStyles.textInput,
   viewStyle: defaultStyles.container,
-  color: SUSSOL_ORANGE,
+  color: WHITE,
   value: '',
   placeholder: '',
   autoFocus: false,
