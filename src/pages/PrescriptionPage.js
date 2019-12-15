@@ -40,8 +40,8 @@ const mapDispatchToProps = dispatch => {
 };
 
 const mapStateToProps = state => {
-  const { dispensary } = state;
-  return dispensary;
+  const { prescription } = state;
+  return prescription;
 };
 
 // Helper method finding the first instance of a Prescriber whos first name starts with
@@ -105,7 +105,7 @@ const PrescriberSelect = connect(
 const ItemSelect = connect(
   mapStateToProps,
   mapDispatchToProps
-)(({ prescription, chooseItem, changeTab }) => {
+)(({ transaction, chooseItem, changeTab }) => {
   const { row, mediumFlex, largeFlex } = localStyles;
   const columns = getColumns('itemSelect');
 
@@ -147,7 +147,7 @@ const ItemSelect = connect(
       </View>
       <View style={largeFlex}>
         <View>
-          {prescription.items.map(item => (
+          {transaction.items.map(item => (
             <View>
               <Text>{item.itemName}</Text>
             </View>
@@ -159,9 +159,9 @@ const ItemSelect = connect(
   );
 });
 
-const Summary = connect(mapStateToProps)(({ prescription }) => (
+const Summary = connect(mapStateToProps)(({ transaction }) => (
   <View style={{ flex: 1 }}>
-    {prescription.items.map(item => (
+    {transaction.items.map(item => (
       <View>
         <Text>{item.itemName}</Text>
       </View>

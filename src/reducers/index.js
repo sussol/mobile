@@ -12,5 +12,5 @@ export default combineReducers({
   sync: SyncReducer,
   pages: PagesReducer,
   modules: ModulesReducer,
-  dispensary: PrescriptionReducer,
+  prescription: PrescriptionReducer,
 });

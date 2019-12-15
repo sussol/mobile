@@ -9,14 +9,12 @@ import { createRecord } from '../database/utilities/index';
 
 const initialState = () => ({
   currentTab: 0,
-  patient: null,
-  prescriber: null,
-  itemsById: {},
-  items: [],
+  transaction: null,
 });
 
 const ACTIONS = {
-  SWITCH_TAB: 'DISPENSARY/SWITCH_TAB',
+  SWITCH_TAB: 'PRESCRIPTION/SWITCH_TAB',
+  SELECT_ITEM: 'PRESCRIPTION/SELECT_ITEM',
 };
 
 export const switchTab = nextTab => ({
@@ -25,15 +23,15 @@ export const switchTab = nextTab => ({
 });
 
 export const selectPrescriber = prescriberID => (dispatch, getState) => {
-  const { dispensary } = getState();
+  const { prescription } = getState();
 
-  const { prescription, currentTab } = dispensary;
+  const { transaction, currentTab } = prescription;
 
   const prescriber = UIDatabase.get('Prescriber', prescriberID);
 
   UIDatabase.write(() =>
     UIDatabase.update('Transaction', {
-      ...prescription,
+      ...transaction,
       prescriber,
     })
   );
@@ -42,17 +40,17 @@ export const selectPrescriber = prescriberID => (dispatch, getState) => {
 };
 
 export const selectItem = itemID => (dispatch, getState) => {
-  const { dispensary } = getState();
-  const { prescription } = dispensary;
+  const { prescription } = getState();
+  const { transaction } = prescription;
   const item = UIDatabase.get('Item', itemID);
 
-  if (!prescription.hasItem(item)) {
+  if (!transaction.hasItem(item)) {
     UIDatabase.write(() => {
-      createRecord(UIDatabase, 'TransactionItem', prescription, item);
+      createRecord(UIDatabase, 'TransactionItem', transaction, item);
     });
   }
 
-  dispatch({ type: 'SELECT_ITEM' });
+  dispatch({ type: ACTIONS.SELECT_ITEM });
 };
 
 export const PrescriptionReducer = (state = initialState(), action) => {
@@ -65,7 +63,7 @@ export const PrescriptionReducer = (state = initialState(), action) => {
       if (routeName !== ROUTES.PRESCRIPTION) return state;
       const { transaction } = params;
 
-      return { ...state, prescription: transaction };
+      return { ...state, transaction };
     }
 
     case ACTIONS.SWITCH_TAB: {
@@ -74,14 +72,12 @@ export const PrescriptionReducer = (state = initialState(), action) => {
       return { ...state, currentTab: nextTab };
     }
 
-    case 'SELECT_ITEM': {
-      return {
-        ...state,
-        prescription: UIDatabase.objects('Prescription').filtered(
-          'id == $0',
-          state.prescription.id
-        )[0],
-      };
+    case ACTIONS.SELECT_ITEM: {
+      const { transaction } = state;
+      const { id } = transaction;
+
+      // Force a new reference to the prescription object to force a re-render.
+      return { ...state, transaction: UIDatabase.get('Transaction', id) };
     }
 
     default:
