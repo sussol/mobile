@@ -52,6 +52,8 @@ export const ValidationTextInput = ({
   const InvalidMessageLabel = () =>
     !isValid && <Text style={invalidMessageStyle}>{invalidMessage}</Text>;
 
+  // On checking the validity of the input, if it has changed, trigger the callback
+  // to notify the parent.
   const onCheckValidity = React.useCallback(
     inputToCheck => {
       const newValidState = onValidate(inputToCheck);
@@ -61,10 +63,14 @@ export const ValidationTextInput = ({
     [isValid]
   );
 
+  // On completing input (losing focus/submitting), trigger the callback notifying
+  // the parent.
   const onCompletedInput = React.useCallback(() => {
     onSubmitEditing(inputValue);
   }, []);
 
+  // When changing the value of the input, check the new validity and set the new input.
+  // Do not restrict input, but provide feedback to the user.
   const onChangeText = React.useCallback(
     newValue => {
       const newValidState = onCheckValidity(newValue);
@@ -121,7 +127,7 @@ ValidationTextInput.defaultProps = {
   underlineColorAndroid: DARKER_GREY,
   value: '',
   isRequired: true,
-  invalidMessage: 'asdasdasdasdaszzzzzzzzzzz',
+  invalidMessage: '',
   labelStyle: localStyles.labelStyle,
   isRequiredStyle: localStyles.isRequiredStyle,
   invalidMessageStyle: localStyles.invalidMessageStyle,
