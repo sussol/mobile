@@ -6,6 +6,24 @@ import { validationStrings } from '../localization';
 
 import { SUSSOL_ORANGE, APP_FONT_FAMILY, DARKER_GREY, FINALISED_RED } from '../globalStyles/index';
 
+/**
+ * Uncontrolled wrapper component around a TextInput with validation
+ * and labels.
+ * @prop {String} placeholder           Placeholder text string
+ * @prop {String} placeholderTextColor  Color of the placeholder text
+ * @prop {String} underlineColorAndroid Color of the underline colour
+ * @prop {Bool}   isRequired            Indicator whether to show the is required label
+ * @prop {String} label                 The form label for this text input, displayed to the left.
+ * @prop {String} invalidMessage        Displayed under the TextInput when the input is invalid.
+ * @prop {Func}   onSubmitEditing       Callback when editing has completed.
+ * @prop {Func}   onValidate            Function determining if the current input value is valid.
+ * @prop {Func}   onChangeValidState    Callback when the validity state changes.
+ * @prop {String} value                 The initial value of the input.
+ * @prop {Object} labelStyle            Style of the label.
+ * @prop {Object} isRequiredStyle       Style for the is required label.
+ * @prop {Object} invalidMessageStyle   Style for the invalid message label.
+ * @prop {Object} textInputStyle        Style of the underlying TextInput.
+ */
 export const ValidationTextInput = ({
   placeholder,
   placeholderTextColor,
