@@ -5,7 +5,7 @@ import { View, FlatList, TouchableOpacity } from 'react-native';
 import Cell from './DataTable/Cell';
 import { dataTableStyles } from '../globalStyles/index';
 import { HeaderCell, HeaderRow } from './DataTable/index';
-import { getItemLayout } from '../pages/dataTableUtilities';
+import { getItemLayout, recordKeyExtractor } from '../pages/dataTableUtilities';
 
 /**
  * Simple table component for rendering a large list of un-changing data.
@@ -75,6 +75,7 @@ export const SimpleTable = React.memo(
       () =>
         columns.map(({ title, width, alignText }, index) => (
           <HeaderCell
+            key={title}
             title={title}
             containerStyle={headerCells[alignText]}
             textStyle={cellText[alignText]}
@@ -94,6 +95,7 @@ export const SimpleTable = React.memo(
       <FlatList
         ref={ref}
         data={data}
+        keyExtractor={recordKeyExtractor}
         getItemLayout={getItemLayout}
         renderItem={renderRow}
         stickyHeaderIndices={[0]}
@@ -104,11 +106,15 @@ export const SimpleTable = React.memo(
   })
 );
 
+SimpleTable.defaultProps = {
+  extraData: {},
+};
+
 SimpleTable.propTypes = {
-  data: PropTypes.array.isRequired,
+  data: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   columns: PropTypes.array.isRequired,
   selectRow: PropTypes.func.isRequired,
-  extraData: PropTypes.object.isRequired,
+  extraData: PropTypes.object,
 };
 
 const SimpleRow = React.memo(({ rowData, style, rowKey, renderCells, onPress }) => {
