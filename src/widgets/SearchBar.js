@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 
 import { StyleSheet, TextInput, View, TouchableOpacity } from 'react-native';
 import { MagnifyingGlass, Cancel } from './icons';
-import { APP_FONT_FAMILY, WHITE } from '../globalStyles/index';
+import { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles/index';
 import { debounce } from '../utilities/index';
 
 /**
@@ -133,7 +133,7 @@ SearchBarComponent.defaultProps = {
   debounceTimeout: 250,
   textInputStyle: defaultStyles.textInput,
   viewStyle: defaultStyles.container,
-  color: WHITE,
+  color: SUSSOL_ORANGE,
   value: '',
   placeholder: '',
   autoFocus: false,
