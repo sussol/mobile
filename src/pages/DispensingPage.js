@@ -72,12 +72,12 @@ const Dispensing = ({
     () => [
       {
         text: 'Patients',
-        onPress: () => dispatch(PageActions.toggleDataSet(DATA_SET.PATIENTS, 'dispensing')),
+        onPress: () => dispatch(PageActions.toggleDataSet(DATA_SET.PATIENTS, ROUTES.DISPENSARY)),
         isOn: dataSet === DATA_SET.PATIENTS,
       },
       {
         text: 'Prescribers',
-        onPress: () => dispatch(PageActions.toggleDataSet(DATA_SET.PRESCRIBERS, 'dispensing')),
+        onPress: () => dispatch(PageActions.toggleDataSet(DATA_SET.PRESCRIBERS, ROUTES.DISPENSARY)),
         isOn: dataSet === DATA_SET.PRESCRIBERS,
       },
     ],
@@ -105,9 +105,9 @@ const Dispensing = ({
 
 const mapStateToProps = state => {
   const { pages } = state;
-  const { dispensing } = pages;
+  const { dispensary } = pages;
 
-  return dispensing;
+  return dispensary;
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
