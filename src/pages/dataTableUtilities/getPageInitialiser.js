@@ -536,7 +536,7 @@ const pageInitialisers = {
   prescription: prescriptionInitialiser,
   prescribers: prescribersInitialiser,
   patients: patientsInitialiser,
-  dispensing: dispensingInitialiser,
+  dispensary: dispensingInitialiser,
 };
 
 /**

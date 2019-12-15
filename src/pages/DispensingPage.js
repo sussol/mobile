@@ -72,12 +72,12 @@ const Dispensing = ({
     () => [
       {
         text: 'Patients',
-        onPress: () => dispatch(PageActions.toggleDataSet(DATA_SET.PATIENTS, ROUTES.DISPENSARY)),
+        onPress: () => dispatch(PageActions.toggleDataSet(DATA_SET.PATIENTS, 'dispensing')),
         isOn: dataSet === DATA_SET.PATIENTS,
       },
       {
         text: 'Prescribers',
-        onPress: () => dispatch(PageActions.toggleDataSet(DATA_SET.PRESCRIBERS, ROUTES.DISPENSARY)),
+        onPress: () => dispatch(PageActions.toggleDataSet(DATA_SET.PRESCRIBERS, 'dispensing')),
         isOn: dataSet === DATA_SET.PRESCRIBERS,
       },
     ],
