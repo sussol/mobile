@@ -25,6 +25,11 @@ import { getColumns } from './dataTableUtilities';
 
 import { selectItem, selectPrescriber, switchTab } from '../reducers/PrescriptionReducer';
 
+/**
+ * File contains Four components for the PrescriptionPage. The container component Prescription and
+ * three "Tab" components PrescriberSelect/ItemSelect/Summary.
+ */
+
 const ALPHABET = [...'abcdefghijklmnopqrstuvwxyz'];
 
 const mapDispatchToProps = dispatch => {
@@ -36,16 +41,18 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = state => {
   const { dispensary } = state;
-
   return dispensary;
 };
 
-const getPrescriberIndex = char => {
-  const foundIndex = UIDatabase.objects('Prescriber').findIndex(
-    item => item.firstName[0].toLowerCase() === char
-  );
-  return foundIndex;
-};
+// Helper method finding the first instance of a Prescriber whos first name starts with
+// the passed character.
+const getPrescriberIndex = char =>
+  UIDatabase.objects('Prescriber').findIndex(item => item.firstName[0].toLowerCase() === char);
+
+// Helper method finding the first instance of an Item whos first name starts with
+// the passed character.
+const getItemIndex = char =>
+  UIDatabase.objects('Item').findIndex(item => item.name[0].toLowerCase() === char);
 
 const PrescriberSelect = connect(
   null,
@@ -94,9 +101,6 @@ const PrescriberSelect = connect(
     </View>
   );
 });
-
-const getItemIndex = char =>
-  UIDatabase.objects('Item').findIndex(item => item.name[0].toLowerCase() === char);
 
 const ItemSelect = connect(
   mapStateToProps,
