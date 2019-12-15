@@ -126,6 +126,7 @@ const defaultStyles = StyleSheet.create({
     fontFamily: APP_FONT_FAMILY,
     backgroundColor: 'rgba(0, 0, 0, 0)',
     flex: 1,
+    autocompleteColor: '#FFFFFF',
   },
 });
 
