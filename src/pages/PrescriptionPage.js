@@ -22,15 +22,13 @@ import {
 
 import { UIDatabase } from '../database';
 import { getColumns } from './dataTableUtilities';
-
+import { ALPHABET } from '../widgets/constants';
 import { selectItem, selectPrescriber, switchTab } from '../reducers/PrescriptionReducer';
 
 /**
  * File contains Four components for the PrescriptionPage. The container component Prescription and
  * three "Tab" components PrescriberSelect/ItemSelect/Summary.
  */
-
-const ALPHABET = [...'abcdefghijklmnopqrstuvwxyz'];
 
 const mapDispatchToProps = dispatch => {
   const choosePrescriber = prescriberID => dispatch(selectPrescriber(prescriberID));
