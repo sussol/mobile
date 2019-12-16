@@ -30,6 +30,8 @@ const PAGE_COLUMN_WIDTHS = {
   stocktakeBatchEditModal: [1, 1, 1, 1, 1],
   stocktakeBatchEditModalWithReasons: [1, 1, 1, 1, 1, 1],
   regimenDataModal: [4, 1, 5],
+  prescriberSelect: [1, 1],
+  itemSelect: [1, 1],
 };
 
 const PAGE_COLUMNS = {
@@ -178,6 +180,8 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.EDITABLE_VALUE,
     COLUMN_NAMES.EDITABLE_COMMENT,
   ],
+  prescriberSelect: [COLUMN_NAMES.FIRST_NAME, COLUMN_NAMES.LAST_NAME],
+  itemSelect: [COLUMN_NAMES.CODE, COLUMN_NAMES.NAME],
 };
 
 const COLUMNS = () => ({
