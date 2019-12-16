@@ -99,7 +99,6 @@ export class AutocompleteSelector extends React.PureComponent {
           placeholder={placeholderText}
           onChangeText={this.onChangeText}
           style={[localStyles.text, localStyles.searchBar]}
-          autocompleteColor="#FFFFFF"
         />
         {data.length > 0 && (
           <FlatList
