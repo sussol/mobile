@@ -8,7 +8,7 @@ import { RowActionsLookup } from './rowActions';
 import { TableActionsLookup } from './tableActions';
 import { PageActionsLookup } from './pageActions';
 
-export { ACTIONS } from './constants';
+export { ACTIONS, DATA_SET } from './constants';
 
 export const PageActions = {
   ...CellActionsLookup,

@@ -9,44 +9,53 @@ import PropTypes from 'prop-types';
 
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import FAIcon from 'react-native-vector-icons/FontAwesome';
+import FA5Icon from 'react-native-vector-icons/FontAwesome5';
 import EvilIcon from 'react-native-vector-icons/EvilIcons';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { FINALISE_GREEN, SUSSOL_ORANGE, FINALISED_RED, dataTableColors } from '../globalStyles';
+import {
+  WHITE,
+  FINALISE_GREEN,
+  SUSSOL_ORANGE,
+  FINALISED_RED,
+  dataTableColors,
+} from '../globalStyles';
 
-export const SortAscIcon = <FAIcon name="sort-asc" size={15} style={{ marginRight: 10 }} />;
-export const SortNeutralIcon = <FAIcon name="sort" size={15} style={{ marginRight: 10 }} />;
-export const SortDescIcon = <FAIcon name="sort-desc" size={15} style={{ marginRight: 10 }} />;
+export const SortAscIcon = () => <FAIcon name="sort-asc" size={15} style={{ marginRight: 10 }} />;
+export const SortNeutralIcon = () => <FAIcon name="sort" size={15} style={{ marginRight: 10 }} />;
+export const SortDescIcon = () => <FAIcon name="sort-desc" size={15} style={{ marginRight: 10 }} />;
 
-export const CheckedComponent = () => (
+export const CheckedIcon = () => (
   <IonIcon name="md-radio-button-on" size={15} color={dataTableColors.checkableCellChecked} />
 );
 
-export const UncheckedComponent = () => (
+export const UncheckedIcon = () => (
   <IonIcon name="md-radio-button-off" size={15} color={SUSSOL_ORANGE} />
 );
 
-export const DisabledCheckedComponent = () => (
+export const DisabledCheckedIcon = () => (
   <IonIcon name="md-radio-button-on" size={15} color={dataTableColors.checkableCellDisabled} />
 );
+export const DisabledUncheckedIcon = () => <MaterialIcon name="cancel" size={15} />;
 
-export const DisabledUncheckedComponent = () => <MaterialIcon name="cancel" size={15} />;
+export const OpenModalIcon = () => (
+  <FAIcon name="angle-double-up" size={20} color={SUSSOL_ORANGE} />
+);
 
-export const OpenModal = () => <FAIcon name="angle-double-up" size={20} color={SUSSOL_ORANGE} />;
-
-export const MagnifyingGlass = React.memo(({ size, color }) => (
+export const MagnifyingGlassIcon = React.memo(({ size, color }) => (
   <EvilIcon name="search" size={size} color={color} />
 ));
+MagnifyingGlassIcon.propTypes = { size: PropTypes.number, color: PropTypes.string };
+MagnifyingGlassIcon.defaultProps = { size: 40, color: SUSSOL_ORANGE };
 
-MagnifyingGlass.propTypes = { size: PropTypes.number, color: PropTypes.string };
-MagnifyingGlass.defaultProps = { size: 40, color: SUSSOL_ORANGE };
-
-export const Cancel = React.memo(() => <EntypoIcon name="cross" color={FINALISED_RED} size={25} />);
+export const CancelIcon = React.memo(() => (
+  <EntypoIcon name="cross" color={FINALISED_RED} size={25} />
+));
 
 export const CloseIcon = React.memo(() => <IonIcon name="md-close" size={36} color="white" />);
 
-export const Expand = React.memo(() => (
+export const ExpandIcon = React.memo(() => (
   <FAIcon name="external-link" size={16} color={SUSSOL_ORANGE} />
 ));
 
@@ -57,3 +66,23 @@ ConfirmIcon.propTypes = { style: PropTypes.object };
 export const LockIcon = React.memo(({ style }) => <FAIcon name="lock" size={28} style={style} />);
 LockIcon.defaultProps = { style: { color: FINALISED_RED, marginHorizontal: 8, bottom: 6 } };
 LockIcon.propTypes = { style: PropTypes.object };
+
+export const ChevronDownIcon = React.memo(({ color, size }) => (
+  <FA5Icon name="chevron-down" color={color} size={size} />
+));
+ChevronDownIcon.defaultProps = { color: WHITE, size: 20 };
+ChevronDownIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
+
+export const PencilIcon = React.memo(({ color, size }) => (
+  <FAIcon name="pencil" color={color} size={size} />
+));
+PencilIcon.defaultProps = { color: WHITE, size: 20 };
+PencilIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
+
+export const HistoryIcon = React.memo(() => <FA5Icon name="history" />);
+
+export const ChevronRightIcon = () => (
+  <FA5Icon name="chevron-right" color={SUSSOL_ORANGE} size={20} />
+);
+
+export const FavouriteStarIcon = () => <FAIcon name="star-o" color={SUSSOL_ORANGE} size={20} />;

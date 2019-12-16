@@ -11,6 +11,7 @@ import getColumns from './getColumns';
 import getPageInfoColumns from './getPageInfoColumns';
 
 import { ROUTES } from '../../navigation/constants';
+import { DATA_SET } from './actions/index';
 
 /**
  * Gets data for initialising a customer invoice page from an associated transaction.
@@ -498,6 +499,23 @@ const patientsInitialiser = () => {
   };
 };
 
+const dispensingInitialiser = () => {
+  const backingData = UIDatabase.objects('Patient');
+
+  return {
+    backingData,
+    data: backingData.sorted('firstName').slice(),
+    keyExtractor: recordKeyExtractor,
+    searchTerm: '',
+    filterDataKeys: ['firstName', 'lastName', 'code'],
+    sortKey: 'firstName',
+    isAscending: false,
+    route: ROUTES.DISPENSARY,
+    columns: getColumns(ROUTES.PATIENTS),
+    dataSet: DATA_SET.PATIENTS,
+  };
+};
+
 const pageInitialisers = {
   customerInvoice: customerInvoiceInitialiser,
   customerInvoices: customerInvoicesInitialiser,
@@ -518,6 +536,7 @@ const pageInitialisers = {
   prescription: prescriptionInitialiser,
   prescribers: prescribersInitialiser,
   patients: patientsInitialiser,
+  dispensary: dispensingInitialiser,
 };
 
 /**

@@ -49,7 +49,12 @@ export const gotoPrescribers = () =>
  * @param {Object} patient     The other party of the invoice (Customer)
  * @param {Object} currentUser    The currently logged in user.
  */
-export const createPrescription = (patient, currentUser) => dispatch => {
+export const createPrescription = patientID => (dispatch, getState) => {
+  const { user } = getState();
+  const { currentUser } = user;
+
+  const patient = UIDatabase.get('Name', patientID);
+
   let newPrescription;
   UIDatabase.write(() => {
     newPrescription = createRecord(
@@ -70,6 +75,7 @@ export const gotoPrescription = prescription =>
     params: {
       title: `Prescription ${prescription.serialNumber}`,
       transaction: prescription,
+      patient: prescription.otherParty,
       pageObject: prescription,
     },
   });
