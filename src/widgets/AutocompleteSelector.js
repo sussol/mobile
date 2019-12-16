@@ -9,9 +9,10 @@ import PropTypes from 'prop-types';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { complement } from 'set-manipulator';
 import { SearchBar } from './SearchBar';
-import { APP_FONT_FAMILY } from '../globalStyles';
+import { APP_FONT_FAMILY, WHITE } from '../globalStyles';
 import { generalStrings } from '../localization';
 import { withOnePress } from './withOnePress';
+
 /**
  * A search bar that autocompletes from the options passed in, and allows any of
  * the dropdown options to be selected. Will gracefully handle null values
@@ -99,6 +100,7 @@ export class AutocompleteSelector extends React.PureComponent {
           placeholder={placeholderText}
           onChangeText={this.onChangeText}
           style={[localStyles.text, localStyles.searchBar]}
+          color={WHITE}
         />
         {data.length > 0 && (
           <FlatList
