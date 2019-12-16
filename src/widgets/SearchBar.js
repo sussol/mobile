@@ -118,8 +118,6 @@ const defaultStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: 5,
-    flex: 1,
-    flexGrow: 1,
   },
   textInput: {
     height: 40,

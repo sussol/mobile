@@ -89,7 +89,11 @@ const Dispensing = ({
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
         <ToggleBar toggles={toggles} />
-        <SearchBar onChangeText={onFilterData} value={searchTerm} />
+        <SearchBar
+          onChangeText={onFilterData}
+          value={searchTerm}
+          viewStyle={localStyles.searchBar}
+        />
         <PageButton text="New Patient" onPress={() => console.log('New Patient')} />
       </View>
       <DataTable
@@ -101,6 +105,17 @@ const Dispensing = ({
       />
     </DataTablePageView>
   );
+};
+
+const localStyles = {
+  searchBar: {
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 5,
+    flex: 1,
+    flexGrow: 1,
+  },
 };
 
 const mapStateToProps = state => {
