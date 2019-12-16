@@ -24,9 +24,7 @@ export const switchTab = nextTab => ({
 
 export const selectPrescriber = prescriberID => (dispatch, getState) => {
   const { prescription } = getState();
-
   const { transaction, currentTab } = prescription;
-
   const prescriber = UIDatabase.get('Prescriber', prescriberID);
 
   UIDatabase.write(() =>
