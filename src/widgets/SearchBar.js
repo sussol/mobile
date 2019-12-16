@@ -138,7 +138,6 @@ SearchBarComponent.defaultProps = {
   placeholder: '',
   autoFocus: false,
   onFocusOrBlur: null,
-  WHITE: '#FFFFFF',
 };
 
 SearchBarComponent.propTypes = {
@@ -151,5 +150,4 @@ SearchBarComponent.propTypes = {
   textInputStyle: PropTypes.object,
   viewStyle: PropTypes.object,
   onFocusOrBlur: PropTypes.func,
-  WHITE: PropTypes.string,
 };
