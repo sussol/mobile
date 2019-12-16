@@ -12,7 +12,7 @@ import { getItemLayout, recordKeyExtractor } from '../pages/dataTableUtilities';
  * Only offers a selection feature.
  *
  * Usage:
- * Pass an array - data: [ { id, .. }, { id, .. }, .. ]
+ * Pass an array - data: [ { id, .. }, { id, .. }, .. ] (Also accepts a Realm Results array)
  * Also an array - columns: [ { key, alignText, title } ] (example: getColumns.js)
  * Such that each column.key is a field within an object in the data array.
  *
