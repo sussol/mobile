@@ -7,6 +7,24 @@ import { MODAL_KEYS, formatErrorItemNames } from '../../../utilities';
 import { UIDatabase } from '../../../database/index';
 import { SETTINGS_KEYS } from '../../../settings';
 import Settings from '../../../settings/MobileAppSettings';
+import { getColumns } from '../index';
+import { DATA_SET } from '../actions/index';
+
+export const toggleDataSet = (state, action) => {
+  const { payload } = action;
+  const { dataSet } = payload;
+
+  const columns = getColumns(
+    dataSet === DATA_SET.PATIENTS ? DATA_SET.PATIENTS : DATA_SET.PRESCRIBERS
+  );
+
+  const backingData =
+    dataSet === DATA_SET.PATIENTS
+      ? UIDatabase.objects('Patient')
+      : UIDatabase.objects('Prescriber');
+
+  return { ...state, backingData, data: backingData.slice(), columns, dataSet };
+};
 
 /**
  * Edits the name field in the current stores state.
@@ -122,4 +140,4 @@ export const openModal = (state, action) => {
  */
 export const closeModal = state => ({ ...state, modalKey: '', modalValue: null });
 
-export const PageReducerLookup = { editName, openModal, closeModal };
+export const PageReducerLookup = { editName, openModal, closeModal, toggleDataSet };

@@ -632,8 +632,6 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
           linkedTransaction: transaction,
         });
       }
-      otherParty.addTransactionIfUnique(transaction);
-      database.save('Name', otherParty);
       break;
     }
     case 'TransactionCategory': {

@@ -42,3 +42,8 @@ export const ACTIONS = {
   DESELECT_ROW: 'deselectRow',
   DELETE_RECORDS: 'deleteRecords',
 };
+
+export const DATA_SET = {
+  PATIENTS: 'patients',
+  PRESCRIBERS: 'prescribers',
+};
