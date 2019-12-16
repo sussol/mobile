@@ -160,7 +160,7 @@ const ItemSelect = connect(
 const Summary = connect(mapStateToProps)(({ transaction }) => (
   <View style={{ flex: 1 }}>
     {transaction.items.map(item => (
-      <View>
+      <View key={item.id}>
         <Text>{item.itemName}</Text>
       </View>
     ))}
