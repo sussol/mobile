@@ -18,11 +18,12 @@ const ResultRow = React.memo(
         style={[localStyles.resultRow, isSelected && localStyles.selected]}
         onPress={rowPressed}
       >
-        {showCheckIcon && isSelected ? (
-          <Icon name="md-checkbox" style={localStyles.checkIcon} />
-        ) : (
-          <Icon name="md-square-outline" style={[localStyles.checkIcon, { color: GREY }]} />
-        )}
+        {showCheckIcon &&
+          (isSelected ? (
+            <Icon name="md-checkbox" style={localStyles.checkIcon} />
+          ) : (
+            <Icon name="md-square-outline" style={[localStyles.checkIcon, { color: GREY }]} />
+          ))}
         <Text
           style={[
             localStyles.text,
