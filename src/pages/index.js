@@ -39,7 +39,7 @@ import { PrescribersPage } from './PrescribersPage';
 export { FirstUsePage } from './FirstUsePage';
 
 export const PAGES = {
-  [ROUTES.ROOT]: props => <PageContainer page={DispensingPage} {...props} />,
+  [ROUTES.ROOT]: props => <PageContainer page={MenuPage} {...props} />,
 
   [ROUTES.MENU]: props => <PageContainer page={MenuPage} {...props} />,
 
