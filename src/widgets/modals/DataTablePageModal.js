@@ -13,7 +13,7 @@ import Settings from '../../settings/MobileAppSettings';
 import { getModalTitle, MODAL_KEYS } from '../../utilities/getModalTitle';
 
 import ModalContainer from './ModalContainer';
-import { AutocompleteSelector } from '../AutocompleteSelector';
+import { AutocompleteSelector } from '..';
 import { MultiSelectList } from '../MultiSelectList';
 import { TextEditor } from '../TextEditor';
 import { ByProgramModal } from './ByProgramModal';

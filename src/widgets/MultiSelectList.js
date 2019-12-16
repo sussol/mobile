@@ -10,13 +10,12 @@ import PropTypes from 'prop-types';
 import { FlatList, StyleSheet, View } from 'react-native';
 import globalStyles, { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles';
 import { generalStrings, buttonStrings } from '../localization';
-import { OnePressButton, SearchBar } from '.';
-import ResultRow from './ResultRow';
+import { ResultRow, OnePressButton, SearchBar } from '.';
 import { WHITE } from '../globalStyles/colors';
 
 const keyExtractor = item => item.id || item.name;
 
-const MultiSelectList = ({
+export const MultiSelectList = ({
   options,
   sortByString,
   queryString,
@@ -34,7 +33,7 @@ const MultiSelectList = ({
 
   const onDoneSelected = useCallback(() => onConfirmSelections(selected), [selected]);
   const onSelect = useCallback(
-    ({ item }) =>
+    item =>
       setSelected(prevState =>
         prevState.indexOf(item.id) === -1
           ? [...prevState, item.id]
@@ -112,7 +111,6 @@ const MultiSelectList = ({
 };
 
 export default MultiSelectList;
-export { MultiSelectList };
 
 MultiSelectList.propTypes = {
   options: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
