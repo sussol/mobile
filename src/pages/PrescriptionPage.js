@@ -33,8 +33,8 @@ import { selectItem, selectPrescriber, switchTab } from '../reducers/Prescriptio
 const mapDispatchToProps = dispatch => {
   const choosePrescriber = prescriberID => dispatch(selectPrescriber(prescriberID));
   const chooseItem = itemID => dispatch(selectItem(itemID));
-  const changeTab = currentTab => dispatch(switchTab(currentTab + 1));
-  return { changeTab, choosePrescriber, chooseItem };
+  const nextTab = currentTab => dispatch(switchTab(currentTab + 1));
+  return { nextTab, choosePrescriber, chooseItem };
 };
 
 const mapStateToProps = state => {
@@ -103,7 +103,7 @@ const PrescriberSelect = connect(
 const ItemSelect = connect(
   mapStateToProps,
   mapDispatchToProps
-)(({ transaction, chooseItem, changeTab }) => {
+)(({ transaction, chooseItem, nextTab }) => {
   const { row, mediumFlex, largeFlex } = localStyles;
   const columns = getColumns('itemSelect');
 
@@ -152,7 +152,7 @@ const ItemSelect = connect(
           ))}
         </View>
       </View>
-      <PageButton text="NEXT" onPress={() => changeTab(1)} />
+      <PageButton text="NEXT" onPress={() => nextTab(1)} />
     </View>
   );
 });
@@ -170,8 +170,8 @@ const Summary = connect(mapStateToProps)(({ transaction }) => (
 const tabs = [PrescriberSelect, ItemSelect, Summary];
 const titles = ['Select the Prescriber', 'Select items', 'Summary'];
 
-export const Prescription = ({ currentTab, changeTab }) => (
-  <Wizard tabs={tabs} titles={titles} currentTabIndex={currentTab} onPress={changeTab} />
+export const Prescription = ({ currentTab, nextTab }) => (
+  <Wizard tabs={tabs} titles={titles} currentTabIndex={currentTab} onPress={nextTab} />
 );
 
 const localStyles = {
@@ -186,5 +186,5 @@ export const PrescriptionPage = connect(mapStateToProps, mapDispatchToProps)(Pre
 
 Prescription.propTypes = {
   currentTab: PropTypes.number.isRequired,
-  changeTab: PropTypes.func.isRequired,
+  nextTab: PropTypes.func.isRequired,
 };
