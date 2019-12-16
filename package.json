@@ -30,8 +30,7 @@
     "clean-mac-cache": "./dev_scripts/clean.sh",
     "keygen": "./dev_scripts/keygen.sh",
     "upload-bugsnag": "./dev_scripts/upload.sh",
-    "export-translation": "node ./dev_scripts/exportTranslation.js",
-    "import-translation": "node ./dev_scripts/importTranslation.js"
+    "translation": "node ./dev_scripts/translation.js"
   },
   "jest": {
     "preset": "react-native"
