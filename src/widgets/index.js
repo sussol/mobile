@@ -28,28 +28,16 @@ export { Stepper } from './Stepper';
 export { Slider } from './Slider';
 export { SyncState } from './SyncState';
 export { TabNavigator } from './TabNavigator';
+export { TableShortcut } from './TableShortcuts';
 export { TableShortcuts } from './TableShortcuts';
 export { TextEditor } from './TextEditor';
 export { TextInput } from './TextInput';
 export { ToggleBar } from './ToggleBar';
 export { ToggleSelector } from './ToggleSelector';
+export { ValidationTextInput } from './ValidationTextInput';
 export { Wizard } from './Wizard';
 
-export {
-  SortAscIcon,
-  SortNeutralIcon,
-  SortDescIcon,
-  CheckedComponent,
-  UncheckedComponent,
-  DisabledCheckedComponent,
-  DisabledUncheckedComponent,
-  Cancel,
-  CloseIcon,
-  OpenModal,
-  Expand,
-  ConfirmIcon,
-  LockIcon,
-} from './icons';
+export * from './icons';
 
 export {
   KiribatiFlag,

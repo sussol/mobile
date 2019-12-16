@@ -39,7 +39,7 @@ import { PrescribersPage } from './PrescribersPage';
 export { FirstUsePage } from './FirstUsePage';
 
 export const PAGES = {
-  [ROUTES.ROOT]: props => <PageContainer page={MenuPage} {...props} />,
+  [ROUTES.ROOT]: props => <PageContainer page={DispensingPage} {...props} />,
 
   [ROUTES.MENU]: props => <PageContainer page={MenuPage} {...props} />,
 
@@ -76,7 +76,7 @@ export const PAGES = {
   [ROUTES.STOCKTAKE_EDITOR_WITH_REASONS]: props => (
     <PageContainer page={StocktakeEditPage} {...props} />
   ),
-  dispensing: props => <PageContainer page={DispensingPage} {...props} />,
+  [ROUTES.DISPENSARY]: props => <PageContainer page={DispensingPage} {...props} />,
   [ROUTES.PRESCRIPTIONS]: props => <PageContainer page={PrescriptionsPage} {...props} />,
   [ROUTES.PRESCRIPTION]: props => <PageContainer page={PrescriptionPage} {...props} />,
 
