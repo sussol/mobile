@@ -1,7 +1,6 @@
 {
   "gb": {
     "address": "Address",
-    "by_batch": "By batch",
     "code": "Code",
     "comment": "Comment",
     "confirm_date": "Confirm Date",
@@ -11,11 +10,11 @@
     "months_stock_required": "Months Stock",
     "stocktake_name": "Stocktake Name",
     "supplier": "Supplier",
-    "their_ref": "Their Ref"
+    "their_ref": "Their Ref",
+    "by_batch": "By batch"
   },
   "fr": {
     "address": "Addresse",
-    "by_batch": "Par lot",
     "code": "Code",
     "comment": "Commentaire",
     "confirm_date": "Date de confirmation",
@@ -25,11 +24,11 @@
     "months_stock_required": "Mois de stock",
     "stocktake_name": "Nom du relevé d'inventaire",
     "supplier": "Fournisseur",
-    "their_ref": "Leur référence"
+    "their_ref": "Leur référence",
+    "by_batch": "Par lot"
   },
   "gil": {
     "address": "Am tabo",
-    "by_batch": "By batch",
     "code": "Code",
     "comment": "Comment",
     "confirm_date": "Confirm Date",
@@ -37,25 +36,25 @@
     "entered_by": "Entered By",
     "entry_date": "Entry Date",
     "months_stock_required": "Iraua te Namakaina?",
-    "supplier": "Pharmacy ke HC\"",
-    "their_ref": "Ana Ref"
+    "supplier": "Kambana n oota, Pharmacy ke HC",
+    "their_ref": "Ana Ref",
+    "by_batch": "By batch"
   },
   "tl": {
     "address": "Enderesu",
-    "by_batch": "By batch",
     "code": "Kódigu",
     "comment": "komentáriu",
     "confirm_date": "Data Konfirmadu",
     "customer": "Kliente",
-    "entered_by": "Naran Hatama Dadus",
+    "entered_by": "Naran Hatama\nDadus",
     "entry_date": "Data Hatama",
     "months_stock_required": "Pedido ba fulan",
     "supplier": "Distribuidor",
-    "their_ref": "Referensia"
+    "their_ref": "Referensia",
+    "by_batch": "By batch"
   },
   "la": {
     "address": "ທີ່ຢູ່",
-    "by_batch": "By batch",
     "code": "ລະຫັດ",
     "comment": "ຄໍາເຫັນ",
     "confirm_date": "ຢືນຢັນ ວັນທີ",
@@ -65,6 +64,7 @@
     "months_stock_required": "ສິນ​ຄ້າພາຍໃນເດືອນ",
     "stocktake_name": "ຊື່​ຂອງ​ໃບກວດ​ກາ​ສິນ​ຄ້າ​ໃນ​ສາງ",
     "supplier": "ຜູ້ສະໜອງ",
-    "their_ref": "ຂໍ້ມູນອ້າງອີງ"
+    "their_ref": "ຂໍ້ມູນອ້າງອີງ",
+    "by_batch": "By batch"
   }
 }
