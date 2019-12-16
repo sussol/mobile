@@ -66,7 +66,7 @@ const StepperNumber = ({ step, numberOfSteps, currentStep, title, onPress }) => 
         {title}
       </Text>
 
-      {lastStep && <View style={stepSeperator} />}
+      {!lastStep && <View style={stepSeperator} />}
     </Container>
   );
 };

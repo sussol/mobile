@@ -26,10 +26,12 @@ const PAGE_COLUMN_WIDTHS = {
   [ROUTES.PRESCRIPTIONS]: [1.5, 2.5, 2, 1.5, 3, 1],
   [ROUTES.PRESCRIPTION]: [2, 4, 2, 2, 1],
   [ROUTES.PRESCRIBERS]: [1, 3, 3],
-  [ROUTES.PATIENTS]: [1, 3, 3],
+  [ROUTES.PATIENTS]: [1, 3, 3, 1],
   stocktakeBatchEditModal: [1, 1, 1, 1, 1],
   stocktakeBatchEditModalWithReasons: [1, 1, 1, 1, 1, 1],
   regimenDataModal: [4, 1, 5],
+  prescriberSelect: [1, 1],
+  itemSelect: [1, 1],
 };
 
 const PAGE_COLUMNS = {
@@ -38,7 +40,12 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.FIRST_NAME,
     COLUMN_NAMES.LAST_NAME,
   ],
-  [ROUTES.PATIENTS]: [COLUMN_NAMES.CODE, COLUMN_NAMES.FIRST_NAME, COLUMN_NAMES.LAST_NAME],
+  [ROUTES.PATIENTS]: [
+    COLUMN_NAMES.CODE,
+    COLUMN_NAMES.FIRST_NAME,
+    COLUMN_NAMES.LAST_NAME,
+    COLUMN_NAMES.DISPENSE,
+  ],
   [ROUTES.CUSTOMER_INVOICE]: [
     COLUMN_NAMES.ITEM_CODE,
     COLUMN_NAMES.ITEM_NAME,
@@ -173,6 +180,8 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.EDITABLE_VALUE,
     COLUMN_NAMES.EDITABLE_COMMENT,
   ],
+  prescriberSelect: [COLUMN_NAMES.FIRST_NAME, COLUMN_NAMES.LAST_NAME],
+  itemSelect: [COLUMN_NAMES.CODE, COLUMN_NAMES.NAME],
 };
 
 const COLUMNS = () => ({
@@ -235,7 +244,7 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.FIRST_NAME]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.FIRST_NAME,
-    title: 'First Name',
+    title: 'FIRST NAME',
     alignText: 'left',
     sortable: true,
     editable: false,
@@ -243,7 +252,7 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.LAST_NAME]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.LAST_NAME,
-    title: 'Last Name',
+    title: 'LAST NAME',
     alignText: 'left',
     sortable: true,
     editable: false,
@@ -515,6 +524,14 @@ const COLUMNS = () => ({
     title: tableStrings.reason,
     alignText: 'center',
     sortable: false,
+    editable: false,
+  },
+  [COLUMN_NAMES.DISPENSE]: {
+    type: COLUMN_TYPES.ICON,
+    key: COLUMN_KEYS.DISPENSE,
+    title: 'DISPENSE',
+    sortable: false,
+    alignText: 'center',
     editable: false,
   },
 });
