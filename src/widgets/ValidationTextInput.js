@@ -48,7 +48,7 @@ export const ValidationTextInput = ({
   const { flexRow, flexColumn } = localStyles;
 
   const IsRequiredLabel = () =>
-    isRequired && <Text style={isRequiredStyle}>{validationStrings.is_required}</Text>;
+    isRequired && <Text style={isRequiredStyle}>{validationStrings.isRequired}</Text>;
   const InvalidMessageLabel = () =>
     !isValid && <Text style={invalidMessageStyle}>{invalidMessage}</Text>;
 

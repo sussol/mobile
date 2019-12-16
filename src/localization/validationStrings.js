@@ -24,7 +24,7 @@ export const validationStrings = new LocalizedStrings({
     repeatPassword: {
       required: 'Enter the repeat password',
     },
-    is_required: 'is required',
+    isRequired: 'is required',
   },
   fr: {},
   gil: {},
