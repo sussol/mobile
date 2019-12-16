@@ -42,11 +42,11 @@ const exportTranslation = () => {
       csvData = `${csvData} ${localizationFile.fileName},${key},"${valuesObject[key]}","${selectedValuesObject[key]}"\n`;
     });
   });
-  fs.writeFile(`${newFileFolder}${selectedLanguage}.tsv`, csvData, 'utf8', err => {
+  fs.writeFile(`${newFileFolder}${selectedLanguage}.csv`, csvData, 'utf8', err => {
     if (err) {
       console.log('Error - file either not saved or corrupted file saved.');
     } else {
-      console.log(`\nFile ${newFileFolder}${selectedLanguage}.tsv saved.${message}`);
+      console.log(`\nFile ${newFileFolder}${selectedLanguage}.csv saved.${message}`);
     }
   });
 };
