@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { UIDatabase } from '../database';
+import { UIDatabase, generateUUID } from '../database';
 
 export const PATIENT_ACTIONS = {
   FIELD_VALIDITY: 'Patient/fieldValidity',
@@ -47,11 +47,14 @@ const patientUpdate = () => (dispatch, getState) => {
     addressOne,
     addressTwo,
     country,
+    isCreating,
+    isEditing,
   } = patient;
 
   UIDatabase.write(() => {
     UIDatabase.update('Name', {
-      ...currentPatient,
+      id: isCreating ? generateUUID() : '',
+      ...(isEditing ? currentPatient : {}),
       firstName,
       lastName,
       code,
@@ -61,6 +64,8 @@ const patientUpdate = () => (dispatch, getState) => {
       addressOne,
       addressTwo,
       country,
+      isPatient: true,
+      isVisible: true,
     });
   });
 
