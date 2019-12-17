@@ -8,6 +8,7 @@ import Realm from 'realm';
 export class Address extends Realm.Object {}
 export class ItemCategory extends Realm.Object {}
 export class ItemDepartment extends Realm.Object {}
+export class Report extends Realm.Object {}
 export class Setting extends Realm.Object {}
 export class SyncOut extends Realm.Object {}
 export class TransactionCategory extends Realm.Object {}
