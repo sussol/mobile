@@ -8,7 +8,6 @@ import Realm from 'realm';
 export class Address extends Realm.Object {}
 export class ItemCategory extends Realm.Object {}
 export class ItemDepartment extends Realm.Object {}
-export class Report extends Realm.Object {}
 export class Setting extends Realm.Object {}
 export class SyncOut extends Realm.Object {}
 export class TransactionCategory extends Realm.Object {}
@@ -27,6 +26,7 @@ export { NumberToReuse } from './NumberToReuse';
 export { Options } from './Options';
 export { Period } from './Period';
 export { PeriodSchedule } from './PeriodSchedule';
+export { Report } from './Report';
 export { Requisition } from './Requisition';
 export { RequisitionItem } from './RequisitionItem';
 export { Stocktake } from './Stocktake';
