@@ -8,7 +8,21 @@ import { UIDatabase } from '../database';
 export const PATIENT_ACTIONS = {
   FIELD_VALIDITY: 'Patient/fieldValidity',
   FIELD_UPDATE: 'Patient/fieldUpdate',
+  PATIENT_EDIT: 'Patient/patientEdit',
+  PATIENT_CREATION: 'Patient/patientCreation',
+  COMPLETE: 'Patient/complete',
 };
+
+const closeModal = () => ({ type: PATIENT_ACTIONS.COMPLETE });
+
+const createPatient = () => ({ type: PATIENT_ACTIONS.PATIENT_CREATION });
+
+const editPatient = patient => ({
+  type: PATIENT_ACTIONS.PATIENT_EDIT,
+  payload: {
+    patient,
+  },
+});
 
 const setFieldValidity = (field, newValidity) => ({
   type: PATIENT_ACTIONS.FIELD_VALIDITY,
@@ -20,7 +34,7 @@ const setFieldUpdate = (field, newValue) => ({
   payload: { field, value: newValue },
 });
 
-const patientUpdate = () => (_, getState) => {
+const patientUpdate = () => (dispatch, getState) => {
   const { patient } = getState();
   const {
     currentPatient,
@@ -36,8 +50,7 @@ const patientUpdate = () => (_, getState) => {
   } = patient;
 
   UIDatabase.write(() => {
-    UIDatabase.update(
-      'Name',
+    UIDatabase.update('Name', {
       ...currentPatient,
       firstName,
       lastName,
@@ -47,9 +60,18 @@ const patientUpdate = () => (_, getState) => {
       phone,
       addressOne,
       addressTwo,
-      country
-    );
+      country,
+    });
   });
+
+  dispatch(closeModal());
 };
 
-export const PatientActions = { patientUpdate, setFieldUpdate, setFieldValidity };
+export const PatientActions = {
+  createPatient,
+  patientUpdate,
+  setFieldUpdate,
+  setFieldValidity,
+  editPatient,
+  closeModal,
+};
