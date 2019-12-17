@@ -7,12 +7,13 @@ import { PATIENT_ACTIONS } from '../actions/PatientActions';
 
 const patientInitialState = () => ({
   currentPatient: null,
-  firstNameIsValid: true,
-  lastNameIsValid: true,
-  codeIsValid: true,
-  dateOfBirthIsValid: true,
-  phoneIsValid: true,
-  countryIsValid: true,
+  isValid: {
+    code: true,
+    dateOfBirth: true,
+    country: true,
+    addressOne: true,
+    addressTwo: true,
+  },
   firstName: '',
   lastName: '',
   code: '',
@@ -31,19 +32,11 @@ export const PatientReducer = (state = patientInitialState(), action) => {
     case PATIENT_ACTIONS.FIELD_VALIDITY: {
       const { payload } = action;
       const { field, validity } = payload;
+      const { isValid } = state;
 
-      const fieldLookup = {
-        address1: 'addressOneIsValid',
-        address2: 'addressTwoIsValid',
-        firstName: 'firstNameIsValid',
-        lastName: 'lastNameIsValid',
-        code: 'codeIsValid',
-        dateOfBirth: 'dateOfBirthIsValid',
-        phone: 'phoneIsValid',
-        country: 'countryIsValid',
-      };
+      const newValidityState = { ...isValid, [field]: validity };
 
-      return { ...state, [fieldLookup[field]]: validity };
+      return { ...state, isValid: newValidityState };
     }
 
     case PATIENT_ACTIONS.FIELD_UPDATE: {
