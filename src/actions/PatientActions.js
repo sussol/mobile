@@ -36,36 +36,28 @@ const setFieldUpdate = (field, newValue) => ({
   payload: { field, value: newValue },
 });
 
-const patientUpdate = () => (dispatch, getState) => {
+const patientUpdate = completedForm => (dispatch, getState) => {
   const { patient } = getState();
-  const {
-    currentPatient,
-    firstName,
-    lastName,
-    code,
-    dateOfBirth,
-    email,
-    phone,
-    addressOne,
-    addressTwo,
-    country,
-    isCreating,
-    isEditing,
-  } = patient;
+  const { currentPatient } = patient;
 
   UIDatabase.write(() => {
     UIDatabase.update('Name', {
-      id: isCreating ? generateUUID() : '',
-      ...(isEditing ? currentPatient : {}),
-      firstName,
-      lastName,
-      code,
-      dateOfBirth,
-      email,
-      phone,
-      addressOne,
-      addressTwo,
-      country,
+      ...currentPatient,
+      ...completedForm,
+      isPatient: true,
+      isVisible: true,
+    });
+  });
+
+  dispatch(closeModal());
+  dispatch(PageActions.refreshData(ROUTES.DISPENSARY));
+};
+
+const saveNewPatient = completedForm => dispatch => {
+  UIDatabase.write(() => {
+    UIDatabase.update('Name', {
+      ...completedForm,
+      id: generateUUID(),
       isPatient: true,
       isVisible: true,
     });
@@ -82,4 +74,5 @@ export const PatientActions = {
   setFieldValidity,
   editPatient,
   closeModal,
+  saveNewPatient,
 };
