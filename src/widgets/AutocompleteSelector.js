@@ -14,20 +14,18 @@ import { generalStrings } from '../localization';
 import { withOnePress } from './withOnePress';
 import { ResultRow } from '.';
 
-export const AutocompleteSelector = props => {
-  const {
-    sortKeyString,
-    queryString,
-    queryStringSecondary,
-    primaryFilterProperty,
-    secondaryFilterProperty,
-    options,
-    onSelect,
-    placeholderText,
-    renderLeftText,
-    renderRightText,
-  } = props;
-
+export const AutocompleteSelector = ({
+  sortKeyString,
+  queryString,
+  queryStringSecondary,
+  primaryFilterProperty,
+  secondaryFilterProperty,
+  options,
+  onSelect,
+  placeholderText,
+  renderLeftText,
+  renderRightText,
+}) => {
   const [queryText, setQueryText] = useState('');
 
   const onChangeText = () => setQueryText(queryText);
