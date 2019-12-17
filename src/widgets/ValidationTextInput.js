@@ -67,7 +67,7 @@ export const ValidationTextInput = ({
   // the parent.
   const onCompletedInput = React.useCallback(() => {
     onSubmitEditing(inputValue);
-  }, []);
+  }, [inputValue]);
 
   // When changing the value of the input, check the new validity and set the new input.
   // Do not restrict input, but provide feedback to the user.
