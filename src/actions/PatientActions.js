@@ -4,6 +4,8 @@
  */
 
 import { UIDatabase, generateUUID } from '../database';
+import { PageActions } from '../pages/dataTableUtilities/actions';
+import { ROUTES } from '../navigation/constants';
 
 export const PATIENT_ACTIONS = {
   FIELD_VALIDITY: 'Patient/fieldValidity',
@@ -70,6 +72,7 @@ const patientUpdate = () => (dispatch, getState) => {
   });
 
   dispatch(closeModal());
+  dispatch(PageActions.refreshData(ROUTES.DISPENSARY));
 };
 
 export const PatientActions = {
