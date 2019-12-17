@@ -41,6 +41,7 @@ export const PatientEditComponent = ({
   addressTwo,
   country,
   savePatient,
+  cancelEdit,
 }) => {
   const { flexOne, flexTen, flexRow, buttonsRow, whiteBackground } = localStyles;
   const { saveButton, saveButtonTextStyle, cancelButton, cancelButtonTextStyle } = localStyles;
@@ -135,7 +136,12 @@ export const PatientEditComponent = ({
           text="Save"
           onPress={savePatient}
         />
-        <PageButton style={cancelButton} textStyle={cancelButtonTextStyle} text="Cancel" />
+        <PageButton
+          style={cancelButton}
+          onPress={cancelEdit}
+          textStyle={cancelButtonTextStyle}
+          text="Cancel"
+        />
       </View>
     </View>
   );
@@ -162,6 +168,7 @@ const mapDispatchToProps = dispatch => ({
   setAddressTwo: newValue => dispatch(PatientActions.setFieldUpdate('address2', newValue)),
   setCountry: newValue => dispatch(PatientActions.setFieldUpdate('country', newValue)),
   savePatient: () => dispatch(PatientActions.patientUpdate()),
+  cancelEdit: () => dispatch(PatientActions.closeModal()),
 });
 
 const mapStateToProps = state => {
@@ -221,6 +228,7 @@ PatientEditComponent.propTypes = {
   addressTwo: PropTypes.string.isRequired,
   country: PropTypes.string.isRequired,
   savePatient: PropTypes.func.isRequired,
+  cancelEdit: PropTypes.func.isRequired,
 };
 
 export const PatientEdit = connect(mapStateToProps, mapDispatchToProps)(PatientEditComponent);
