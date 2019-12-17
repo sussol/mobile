@@ -5,15 +5,18 @@
 
 import { UIDatabase } from '../database';
 
-const ACTIONS = { FIELD_VALIDITY: 'fieldValidity', FIELD_UPDATE: 'fieldUpdate' };
+export const PATIENT_ACTIONS = {
+  FIELD_VALIDITY: 'Patient/fieldValidity',
+  FIELD_UPDATE: 'Patient/fieldUpdate',
+};
 
 const setFieldValidity = (field, newValidity) => ({
-  type: ACTIONS.FIELD_VALIDITY,
+  type: PATIENT_ACTIONS.FIELD_VALIDITY,
   payload: { field, validity: newValidity },
 });
 
 const setFieldUpdate = (field, newValue) => ({
-  type: ACTIONS.FIELD_UPDATE,
+  type: PATIENT_ACTIONS.FIELD_UPDATE,
   payload: { field, value: newValue },
 });
 

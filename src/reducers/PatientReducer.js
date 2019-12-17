@@ -3,7 +3,9 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-const patientsInitialState = () => ({
+import { PATIENT_ACTIONS } from '../actions/PatientActions';
+
+const patientInitialState = () => ({
   currentPatient: null,
   firstNameIsValid: true,
   lastNameIsValid: true,
@@ -22,11 +24,11 @@ const patientsInitialState = () => ({
   country: '',
 });
 
-export const PatientReducer = (state = patientsInitialState(), action) => {
+export const PatientReducer = (state = patientInitialState(), action) => {
   const { type } = action;
 
   switch (type) {
-    case 'fieldValidity': {
+    case PATIENT_ACTIONS.FIELD_VALIDITY: {
       const { payload } = action;
       const { field, validity } = payload;
 
@@ -42,6 +44,13 @@ export const PatientReducer = (state = patientsInitialState(), action) => {
       };
 
       return { ...state, [fieldLookup[field]]: validity };
+    }
+
+    case PATIENT_ACTIONS.FIELD_UPDATE: {
+      const { payload } = action;
+      const { field, value } = payload;
+
+      return { ...state, [field]: value };
     }
 
     default: {
