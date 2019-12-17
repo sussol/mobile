@@ -61,10 +61,17 @@ export const PatientReducer = (state = patientInitialState(), action) => {
     }
 
     case PATIENT_ACTIONS.PATIENT_EDIT: {
+      const { hasValue } = state;
       const { payload } = action;
       const { patient } = payload;
 
       const { firstName, lastName, emailAddress, code, phoneNumber } = patient;
+
+      const requiredKeys = Object.keys(hasValue);
+      const newHasValue = requiredKeys.reduce(
+        (acc, hasValueKey) => ({ ...acc, [hasValueKey]: !!patient[hasValueKey] }),
+        {}
+      );
 
       return {
         ...state,
@@ -75,6 +82,7 @@ export const PatientReducer = (state = patientInitialState(), action) => {
         emailAddress,
         code,
         phoneNumber,
+        hasValue: newHasValue,
       };
     }
 
