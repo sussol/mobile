@@ -15,6 +15,9 @@ import globalStyles from '../globalStyles';
 import { PageActions, DATA_SET, getItemLayout, getPageDispatchers } from './dataTableUtilities';
 import { createPrescription } from '../navigation/actions';
 import { ROUTES } from '../navigation/constants';
+import ModalContainer from '../widgets/modals/ModalContainer';
+import { PatientEdit } from '../widgets/modals/PatientEdit';
+import { PatientActions } from '../actions/PatientActions';
 
 const Dispensing = ({
   data,
@@ -28,6 +31,8 @@ const Dispensing = ({
   searchTerm,
   onFilterData,
   gotoPrescription,
+  editPatient,
+  modalOpen,
 }) => {
   const getCellCallbacks = colKey => {
     switch (colKey) {
@@ -49,7 +54,7 @@ const Dispensing = ({
           getCallback={getCellCallbacks}
           columns={columns}
           rowIndex={index}
-          onPress={() => console.log('Edit Patient')}
+          onPress={editPatient}
         />
       );
     },
@@ -86,24 +91,29 @@ const Dispensing = ({
 
   const { pageTopSectionContainer } = globalStyles;
   return (
-    <DataTablePageView>
-      <View style={pageTopSectionContainer}>
-        <ToggleBar toggles={toggles} />
-        <SearchBar
-          onChangeText={onFilterData}
-          value={searchTerm}
-          viewStyle={localStyles.searchBar}
+    <>
+      <DataTablePageView>
+        <View style={pageTopSectionContainer}>
+          <ToggleBar toggles={toggles} />
+          <SearchBar
+            onChangeText={onFilterData}
+            value={searchTerm}
+            viewStyle={localStyles.searchBar}
+          />
+          <PageButton text="New Patient" onPress={() => console.log('New Patient')} />
+        </View>
+        <DataTable
+          data={data}
+          renderRow={renderRow}
+          renderHeader={renderHeader}
+          keyExtractor={keyExtractor}
+          getItemLayout={getItemLayout}
         />
-        <PageButton text="New Patient" onPress={() => console.log('New Patient')} />
-      </View>
-      <DataTable
-        data={data}
-        renderRow={renderRow}
-        renderHeader={renderHeader}
-        keyExtractor={keyExtractor}
-        getItemLayout={getItemLayout}
-      />
-    </DataTablePageView>
+      </DataTablePageView>
+      <ModalContainer title="Patient Details" fullScreen isVisible={modalOpen}>
+        <PatientEdit />
+      </ModalContainer>
+    </>
   );
 };
 
@@ -119,18 +129,23 @@ const localStyles = {
 };
 
 const mapStateToProps = state => {
-  const { pages } = state;
-  const { dispensary } = pages;
+  const { pages, patient } = state;
 
-  return dispensary;
+  const { dispensary } = pages;
+  const { isCreating, isEditing } = patient;
+
+  return { ...dispensary, modalOpen: isCreating || isEditing };
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   const gotoPrescription = patientID => dispatch(createPrescription(patientID));
 
+  const editPatient = patientID => dispatch(PatientActions.editPatient(patientID));
+
   return {
     ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.DISPENSARY),
     gotoPrescription,
+    editPatient,
   };
 };
 
@@ -148,4 +163,6 @@ Dispensing.propTypes = {
   searchTerm: PropTypes.string.isRequired,
   onFilterData: PropTypes.func.isRequired,
   gotoPrescription: PropTypes.func.isRequired,
+  editPatient: PropTypes.func.isRequired,
+  modalOpen: PropTypes.func.isRequired,
 };
