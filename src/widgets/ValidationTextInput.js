@@ -57,7 +57,7 @@ export const ValidationTextInput = ({
   const onCheckValidity = React.useCallback(
     inputToCheck => {
       const newValidState = onValidate ? onValidate(inputToCheck) : true;
-      if (newValidState !== isValid && onValidate) onChangeValidState(newValidState);
+      if (newValidState !== isValid && onChangeValidState) onChangeValidState(newValidState);
       return newValidState;
     },
     [isValid]
