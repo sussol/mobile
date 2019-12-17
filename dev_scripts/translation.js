@@ -13,6 +13,7 @@ const localizationFiles = [];
 const nextLine = /{nextLine}/g;
 const selectedLanguage = process.argv[3];
 const newFileFolder = './src/localization/translations/';
+const mainLanguage = 'gb';
 const message =
   '\nMore information about this script here: https://github.com/openmsupply/mobile/wiki/Scripts\n';
 
@@ -28,18 +29,19 @@ fs.readdirSync(`./${filesFolder}`).forEach(file => {
 });
 
 // Exports all strings from the selectedLanguage to CSV
-// csvData keeps all the content in csv formal
+// csvData keeps all the content in csv format
 const exportTranslation = () => {
   let csvData = '';
-  localizationFiles.forEach(localizationFile => {
-    const valuesObject = {};
-    const selectedValuesObject = {};
-    Object.entries(localizationFile.fileContent.gb).forEach(([key, value]) => {
-      valuesObject[key] = value.replace(/\n/gi, '{nextLine}');
-      selectedValuesObject[key] = localizationFile.fileContent[selectedLanguage][key]
-        ? localizationFile.fileContent[selectedLanguage][key].replace(/\n/gi, '{nextLine}')
-        : '';
-      csvData = `${csvData} ${localizationFile.fileName},${key},"${valuesObject[key]}","${selectedValuesObject[key]}"\n`;
+  localizationFiles.forEach(({ fileName, fileContent }) => {
+    const selectedLanguageContent = fileContent[selectedLanguage];
+    const mainLanguageContent = fileContent[mainLanguage];
+
+    Object.entries(mainLanguageContent).forEach(([key, value]) => {
+      value = value.replace(/\n/gi, '{nextLine}');
+      if (selectedLanguageContent[key]) {
+        selectedLanguageContent[key] = selectedLanguageContent[key].replace(/\n/gi, '{nextLine}');
+      } else selectedLanguageContent[key] = '';
+      csvData = `${csvData} ${fileName},${key},"${value}","${selectedLanguageContent[key]}"\n`;
     });
   });
   fs.writeFile(`${newFileFolder}${selectedLanguage}.csv`, csvData, 'utf8', err => {
@@ -65,18 +67,17 @@ const importTranslation = () => {
     const trimmedFileName = fileName.trim();
     if (!csvObject[trimmedFileName]) csvObject[trimmedFileName] = {};
     if (!selectedValue) return;
-    const trimmedSelectedValue = selectedValue.trim();
+    const trimmedSelectedValue = selectedValue.replace(nextLine, '\n').trim();
     if (trimmedSelectedValue) csvObject[trimmedFileName][translationField] = trimmedSelectedValue;
   });
 
-  localizationFiles.forEach(localizationFile => {
-    const { fileContent, fileName } = localizationFile;
+  localizationFiles.forEach(({ fileName, fileContent }) => {
     const newObject = {};
-    Object.entries(fileContent.gb).forEach(([key]) => {
+    Object.entries(fileContent[mainLanguage]).forEach(([key]) => {
       if (csvObject[fileName][key]) {
-        newObject[key] = csvObject[fileName][key].replace(nextLine, '\n');
+        newObject[key] = csvObject[fileName][key];
       } else if (fileContent[selectedLanguage] && fileContent[selectedLanguage][key]) {
-        newObject[key] = fileContent[selectedLanguage][key].replace(nextLine, '\n');
+        newObject[key] = fileContent[selectedLanguage][key];
       }
     });
     fileContent[selectedLanguage] = newObject;
