@@ -64,7 +64,6 @@ export const PatientReducer = (state = patientInitialState(), action) => {
       const { hasValue } = state;
       const { payload } = action;
       const { patient } = payload;
-
       const { firstName, lastName, emailAddress, code, phoneNumber } = patient;
 
       const requiredKeys = Object.keys(hasValue);

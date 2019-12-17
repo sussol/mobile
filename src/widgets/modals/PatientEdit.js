@@ -9,6 +9,7 @@ import { PageButton } from '../PageButton';
 import globalStyles, { WHITE, SUSSOL_ORANGE } from '../../globalStyles/index';
 
 import { PatientActions } from '../../actions/PatientActions';
+import { modalStrings } from '../../localization/index';
 
 /**
  * Component to be wrapped by `ModalContainer` acting as a form for adding or
@@ -140,7 +141,7 @@ export const PatientEditComponent = ({
           style={cancelButton}
           onPress={cancelEdit}
           textStyle={cancelButtonTextStyle}
-          text="Cancel"
+          text={modalStrings.cancel}
         />
       </View>
     </View>
