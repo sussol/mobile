@@ -8,8 +8,6 @@ import { PageActions } from '../pages/dataTableUtilities/actions';
 import { ROUTES } from '../navigation/constants';
 
 export const PATIENT_ACTIONS = {
-  FIELD_VALIDITY: 'Patient/fieldValidity',
-  FIELD_UPDATE: 'Patient/fieldUpdate',
   PATIENT_EDIT: 'Patient/patientEdit',
   PATIENT_CREATION: 'Patient/patientCreation',
   COMPLETE: 'Patient/complete',
