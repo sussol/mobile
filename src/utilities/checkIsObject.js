@@ -7,4 +7,4 @@
  */
 
 export const checkIsObject = object =>
-  object && typeof dataObject === 'object' && object.constructor === Object;
+  !!(object && typeof object === 'object' && object.constructor === Object);
