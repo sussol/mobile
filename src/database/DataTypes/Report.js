@@ -31,7 +31,7 @@ export class Report extends Realm.Object {
    * @param  {dataObject}  dataObject
    */
   set data(dataObject) {
-    this._data = checkIsObject(dataObject) ? JSON.stringify(dataObject) : {};
+    this._data = checkIsObject(dataObject) ? JSON.stringify(dataObject) : JSON.stringify({});
   }
 }
 
