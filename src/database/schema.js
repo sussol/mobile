@@ -18,6 +18,7 @@ import {
   NumberSequence,
   NumberToReuse,
   Options,
+  Report,
   Requisition,
   RequisitionItem,
   Setting,
@@ -65,6 +66,17 @@ ItemDepartment.schema = {
     id: 'string',
     name: { type: 'string', default: 'placeholderName' },
     parentDepartment: { type: 'ItemDepartment', optional: true },
+  },
+};
+
+Report.schema = {
+  name: 'Report',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    type: 'string',
+    title: 'string',
+    _data: 'string',
   },
 };
 
@@ -141,6 +153,7 @@ export const schema = {
     NumberSequence,
     NumberToReuse,
     Options,
+    Report,
     Requisition,
     RequisitionItem,
     Setting,
