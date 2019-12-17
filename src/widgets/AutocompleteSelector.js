@@ -6,10 +6,10 @@
 // eslint-disable-next-line max-classes-per-file
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { SearchBar } from 'react-native-ui-components';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { complement } from 'set-manipulator';
-import { APP_FONT_FAMILY } from '../globalStyles';
+import { SearchBar } from './SearchBar';
+import { APP_FONT_FAMILY, WHITE } from '../globalStyles';
 import { generalStrings } from '../localization';
 import { withOnePress } from './withOnePress';
 import { ResultRow } from '.';
@@ -30,9 +30,11 @@ export const AutocompleteSelector = props => {
 
   const [queryText, setQueryText] = useState('');
 
+  const onChangeText = () => setQueryText(queryText);
+
   /**
    * Filters a realm results object. Creates two realm results A, B
-   * by two query strings. And concats A to B - A.
+   * by two query strings. And concat A to B - A.
    */
   const filterResultData = () => {
     let data = options
@@ -85,8 +87,8 @@ export const AutocompleteSelector = props => {
         autoCapitalize="none"
         autoCorrect={false}
         autoFocus
-        color="white"
-        onChange={text => setQueryText(text)}
+        color={WHITE}
+        onChangeText={onChangeText}
         placeholder={placeholderText}
         placeholderTextColor="white"
         style={[localStyles.text, localStyles.searchBar]}
