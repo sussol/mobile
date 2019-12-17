@@ -5,6 +5,7 @@
 
 import Realm from 'realm';
 
+import checkIsObject from '../utilities';
 /**
  * A Report.
  *
@@ -30,7 +31,7 @@ export class Report extends Realm.Object {
    * @param  {dataObject}  dataObject
    */
   set data(dataObject) {
-    this._data = JSON.stringify(dataObject);
+    this._data = checkIsObject(dataObject) ? JSON.stringify(dataObject) : {};
   }
 }
 
@@ -46,3 +47,5 @@ Report.schema = {
 };
 
 export default Report;
+
+
