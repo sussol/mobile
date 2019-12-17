@@ -16,8 +16,11 @@ import { PageActions, DATA_SET, getItemLayout, getPageDispatchers } from './data
 import { createPrescription } from '../navigation/actions';
 import { ROUTES } from '../navigation/constants';
 import ModalContainer from '../widgets/modals/ModalContainer';
-import { PatientEdit } from '../widgets/modals/PatientEdit';
+
 import { PatientActions } from '../actions/PatientActions';
+import { FormControl } from '../widgets/FormControl';
+
+import { getFormInputConfig } from '../utilities/formInputConfigs';
 
 const Dispensing = ({
   data,
@@ -34,6 +37,11 @@ const Dispensing = ({
   editPatient,
   modalOpen,
   createPatient,
+  cancelPatientEdit,
+  savePatient,
+  saveNewPatient,
+  isCreating,
+  currentPatient,
 }) => {
   const getCellCallbacks = colKey => {
     switch (colKey) {
@@ -112,7 +120,11 @@ const Dispensing = ({
         />
       </DataTablePageView>
       <ModalContainer title="Patient Details" fullScreen isVisible={modalOpen}>
-        <PatientEdit />
+        <FormControl
+          onSave={isCreating ? saveNewPatient : savePatient}
+          onCancel={cancelPatientEdit}
+          inputConfig={getFormInputConfig('patient', currentPatient)}
+        />
       </ModalContainer>
     </>
   );
@@ -133,9 +145,9 @@ const mapStateToProps = state => {
   const { pages, patient } = state;
 
   const { dispensary } = pages;
-  const { isCreating, isEditing } = patient;
+  const { isCreating, isEditing, currentPatient } = patient;
 
-  return { ...dispensary, modalOpen: isCreating || isEditing };
+  return { ...dispensary, modalOpen: isCreating || isEditing, isCreating, currentPatient };
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
@@ -143,12 +155,16 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 
   const editPatient = patientID => dispatch(PatientActions.editPatient(patientID));
   const createPatient = () => dispatch(PatientActions.createPatient());
+  const cancelPatientEdit = () => dispatch(PatientActions.closeModal());
 
   return {
     ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.DISPENSARY),
     gotoPrescription,
     editPatient,
     createPatient,
+    cancelPatientEdit,
+    savePatient: patientDetails => dispatch(PatientActions.patientUpdate(patientDetails)),
+    saveNewPatient: patientDetails => dispatch(PatientActions.saveNewPatient(patientDetails)),
   };
 };
 
@@ -169,4 +185,9 @@ Dispensing.propTypes = {
   editPatient: PropTypes.func.isRequired,
   modalOpen: PropTypes.bool.isRequired,
   createPatient: PropTypes.func.isRequired,
+  savePatient: PropTypes.func.isRequired,
+  cancelPatientEdit: PropTypes.func.isRequired,
+  saveNewPatient: PropTypes.func.isRequired,
+  isCreating: PropTypes.bool.isRequired,
+  currentPatient: PropTypes.func.isRequired,
 };
