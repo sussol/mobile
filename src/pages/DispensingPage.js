@@ -33,6 +33,7 @@ const Dispensing = ({
   gotoPrescription,
   editPatient,
   modalOpen,
+  createPatient,
 }) => {
   const getCellCallbacks = colKey => {
     switch (colKey) {
@@ -100,7 +101,7 @@ const Dispensing = ({
             value={searchTerm}
             viewStyle={localStyles.searchBar}
           />
-          <PageButton text="New Patient" onPress={() => console.log('New Patient')} />
+          <PageButton text="New Patient" onPress={createPatient} />
         </View>
         <DataTable
           data={data}
@@ -141,11 +142,13 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   const gotoPrescription = patientID => dispatch(createPrescription(patientID));
 
   const editPatient = patientID => dispatch(PatientActions.editPatient(patientID));
+  const createPatient = () => dispatch(PatientActions.createPatient());
 
   return {
     ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.DISPENSARY),
     gotoPrescription,
     editPatient,
+    createPatient,
   };
 };
 
@@ -165,4 +168,5 @@ Dispensing.propTypes = {
   gotoPrescription: PropTypes.func.isRequired,
   editPatient: PropTypes.func.isRequired,
   modalOpen: PropTypes.func.isRequired,
+  createPatient: PropTypes.func.isRequired,
 };
