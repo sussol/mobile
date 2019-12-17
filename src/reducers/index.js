@@ -6,6 +6,7 @@ import { ModulesReducer } from './ModulesReducer';
 import { UserReducer } from './UserReducer';
 import { PrescriptionReducer } from './PrescriptionReducer';
 import { PatientReducer } from './PatientReducer';
+import { FormReducer } from './FormReducer';
 
 export default combineReducers({
   user: UserReducer,
@@ -15,4 +16,5 @@ export default combineReducers({
   modules: ModulesReducer,
   prescription: PrescriptionReducer,
   patient: PatientReducer,
+  form: FormReducer,
 });
