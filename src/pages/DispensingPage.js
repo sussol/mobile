@@ -167,6 +167,6 @@ Dispensing.propTypes = {
   onFilterData: PropTypes.func.isRequired,
   gotoPrescription: PropTypes.func.isRequired,
   editPatient: PropTypes.func.isRequired,
-  modalOpen: PropTypes.func.isRequired,
+  modalOpen: PropTypes.bool.isRequired,
   createPatient: PropTypes.func.isRequired,
 };
