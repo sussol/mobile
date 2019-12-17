@@ -249,6 +249,10 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: [],
       canBeBlank: ['units', 'comment', 'order_number'],
     },
+    Report: {
+      cannotBeBlank: ['ID', 'title', 'type', '_data'],
+      canBeBlank: [],
+    },
   };
   if (!requiredFields[recordType]) return false; // Unsupported record type
   const hasAllNonBlankFields = requiredFields[recordType].cannotBeBlank.reduce(
@@ -256,7 +260,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       containsAllFieldsSoFar &&
       record[fieldName] !== null && // Key must exist.
       record[fieldName] !== undefined && // Field may be undefined.
-      record[fieldName].length > 0, // Fidl must not be empty string.
+      record[fieldName].length > 0, // Fild must not be empty string.
     true
   );
 
@@ -491,6 +495,16 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       const numberToReuse = database.update(recordType, internalRecord);
       // Attach the number to reuse to the number sequence.
       numberSequence.addNumberToReuse(numberToReuse);
+      break;
+    }
+    case 'Report': {
+      internalRecord = {
+        id: record.ID,
+        title: record.title,
+        type: record.type,
+        _data: record.data,
+      };
+      database.update(recordType, internalRecord);
       break;
     }
     case 'Requisition': {
