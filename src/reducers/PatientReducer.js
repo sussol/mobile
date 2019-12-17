@@ -16,6 +16,11 @@ const patientInitialState = () => ({
     addressOne: true,
     addressTwo: true,
   },
+  hasValue: {
+    code: false,
+    firstName: false,
+    lastName: false,
+  },
   firstName: '',
   lastName: '',
   code: '',
@@ -44,6 +49,13 @@ export const PatientReducer = (state = patientInitialState(), action) => {
     case PATIENT_ACTIONS.FIELD_UPDATE: {
       const { payload } = action;
       const { field, value } = payload;
+      const { hasValue } = state;
+
+      const isRequired = field in hasValue;
+
+      if (isRequired) {
+        return { ...state, hasValue: { ...hasValue, [field]: !!value }, [field]: value };
+      }
 
       return { ...state, [field]: value };
     }
