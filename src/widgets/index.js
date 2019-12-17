@@ -4,11 +4,7 @@
  */
 
 export { Button, ProgressBar } from 'react-native-ui-components';
-// eslint-disable-next-line import/no-cycle
-export { AutocompleteSelector } from './AutocompleteSelector';
-export { ResultRow } from './ResultRow';
-// eslint-disable-next-line import/no-cycle
-export { MultiSelectList } from './MultiSelectList';
+
 export { FinaliseButton } from './FinaliseButton';
 export { GenericChoiceList } from './GenericChoiceList';
 export { IconCell } from './IconCell';
@@ -25,6 +21,7 @@ export { TextInput } from './TextInput';
 export { ToggleBar } from './ToggleBar';
 export { ToggleSelector } from './ToggleSelector';
 export { ExpiryDateInput } from './ExpiryDateInput';
+export { ResultRow } from './ResultRow';
 export { SearchBar } from './SearchBar';
 export { DataTablePageView } from './DataTablePageView';
 export { Flag } from './Flag';

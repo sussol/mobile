@@ -15,7 +15,7 @@ import { WHITE } from '../globalStyles/colors';
 
 const keyExtractor = item => item.id || item.name;
 
-export const MultiSelectList = ({
+const MultiSelectList = ({
   options,
   sortByString,
   queryString,

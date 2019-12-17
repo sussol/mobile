@@ -8,13 +8,12 @@ import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { complement } from 'set-manipulator';
-import { SearchBar } from './SearchBar';
+import { SearchBar, ResultRow } from '.';
 import { APP_FONT_FAMILY, WHITE } from '../globalStyles';
 import { generalStrings } from '../localization';
 import { withOnePress } from './withOnePress';
-import { ResultRow } from '.';
 
-export const AutocompleteSelector = ({
+const AutocompleteSelector = ({
   sortKeyString,
   queryString,
   queryStringSecondary,
