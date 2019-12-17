@@ -56,8 +56,8 @@ export const ValidationTextInput = ({
   // to notify the parent.
   const onCheckValidity = React.useCallback(
     inputToCheck => {
-      const newValidState = onValidate(inputToCheck);
-      if (newValidState !== isValid) onChangeValidState(newValidState);
+      const newValidState = onValidate ? onValidate(inputToCheck) : true;
+      if (newValidState !== isValid && onValidate) onChangeValidState(newValidState);
       return newValidState;
     },
     [isValid]
@@ -86,11 +86,11 @@ export const ValidationTextInput = ({
   return (
     <View style={flexColumn}>
       <View style={flexRow}>
-        <View>
-          <Text style={labelStyle}>{label}</Text>
-          <IsRequiredLabel />
-        </View>
         <View style={flexColumn}>
+          <View style={{ flexRow }}>
+            <Text style={labelStyle}>{label}</Text>
+            <IsRequiredLabel />
+          </View>
           <TextInput
             style={textInputStyle}
             value={inputValue}
@@ -126,12 +126,14 @@ ValidationTextInput.defaultProps = {
   placeholderTextColor: SUSSOL_ORANGE,
   underlineColorAndroid: DARKER_GREY,
   value: '',
-  isRequired: true,
+  isRequired: false,
   invalidMessage: '',
   labelStyle: localStyles.labelStyle,
   isRequiredStyle: localStyles.isRequiredStyle,
   invalidMessageStyle: localStyles.invalidMessageStyle,
   textInputStyle: localStyles.textInputStyle,
+  onValidate: null,
+  onChangeValidState: null,
 };
 
 ValidationTextInput.propTypes = {
@@ -139,8 +141,8 @@ ValidationTextInput.propTypes = {
   placeholderTextColor: PropTypes.string,
   underlineColorAndroid: PropTypes.string,
   onSubmitEditing: PropTypes.func.isRequired,
-  onValidate: PropTypes.func.isRequired,
-  onChangeValidState: PropTypes.func.isRequired,
+  onValidate: PropTypes.func,
+  onChangeValidState: PropTypes.func,
   value: PropTypes.string,
   isRequired: PropTypes.bool,
   label: PropTypes.string.isRequired,
