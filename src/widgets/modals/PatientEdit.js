@@ -167,12 +167,7 @@ const mapDispatchToProps = dispatch => ({
 const mapStateToProps = state => {
   const { patient } = state;
   const {
-    firstNameIsValid,
-    lastNameIsValid,
-    codeIsValid,
-    dateOfBirthIsValid,
-    phoneIsValid,
-    countryIsValid,
+    isValid,
     firstName,
     lastName,
     code,
@@ -184,13 +179,7 @@ const mapStateToProps = state => {
     country,
   } = patient;
 
-  const canSave =
-    firstNameIsValid &&
-    lastNameIsValid &&
-    codeIsValid &&
-    dateOfBirthIsValid &&
-    phoneIsValid &&
-    countryIsValid;
+  const canSave = Object.values(isValid).every(fieldIsValid => fieldIsValid);
 
   return {
     firstName,
