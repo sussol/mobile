@@ -119,7 +119,7 @@ const Dispensing = ({
           getItemLayout={getItemLayout}
         />
       </DataTablePageView>
-      <ModalContainer title="Patient Details" fullScreen isVisible={modalOpen}>
+      <ModalContainer title="Patient Details" noCancel fullScreen isVisible={modalOpen}>
         <FormControl
           onSave={isCreating ? saveNewPatient : savePatient}
           onCancel={cancelPatientEdit}
@@ -143,7 +143,6 @@ const localStyles = {
 
 const mapStateToProps = state => {
   const { pages, patient } = state;
-
   const { dispensary } = pages;
   const { isCreating, isEditing, currentPatient } = patient;
 
@@ -152,7 +151,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   const gotoPrescription = patientID => dispatch(createPrescription(patientID));
-
   const editPatient = patientID => dispatch(PatientActions.editPatient(patientID));
   const createPatient = () => dispatch(PatientActions.createPatient());
   const cancelPatientEdit = () => dispatch(PatientActions.closeModal());
