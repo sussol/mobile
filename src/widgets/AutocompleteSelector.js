@@ -4,7 +4,7 @@
  */
 
 // eslint-disable-next-line max-classes-per-file
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { complement } from 'set-manipulator';
@@ -77,6 +77,21 @@ export const AutocompleteSelector = props => {
     return [];
   };
 
+  const renderItem = useCallback(
+    item => (
+      <ResultRowWithOnePress
+        data={item}
+        onPress={onSelect}
+        renderLeftText={renderLeftText}
+        renderRightText={renderRightText}
+        showCheckIcon={false}
+      />
+    ),
+    [renderLeftText, renderRightText]
+  );
+
+  const keyExtractor = item => item.id || item.name;
+
   const data = getData();
 
   const ResultRowWithOnePress = withOnePress(ResultRow);
@@ -96,16 +111,8 @@ export const AutocompleteSelector = props => {
       {data.length > 0 && (
         <FlatList
           data={data}
-          keyExtractor={item => item.id || item.name}
-          renderItem={item => (
-            <ResultRowWithOnePress
-              data={item}
-              onPress={onSelect}
-              renderLeftText={renderLeftText}
-              renderRightText={renderRightText}
-              showCheckIcon={false}
-            />
-          )}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
           keyboardShouldPersistTaps="always"
           style={localStyles.resultList}
         />
