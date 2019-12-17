@@ -14,7 +14,6 @@ import { PatientActions } from '../../actions/PatientActions';
  * Component to be wrapped by `ModalContainer` acting as a form for adding or
  * editing details of a patient.
  *
- * Uses uncontrolled form inputs which pass valid
  */
 export const PatientEditComponent = ({
   canSave,
@@ -174,6 +173,15 @@ const mapStateToProps = state => {
     dateOfBirthIsValid,
     phoneIsValid,
     countryIsValid,
+    firstName,
+    lastName,
+    code,
+    dateOfBirth,
+    email,
+    phone,
+    addressOne,
+    addressTwo,
+    country,
   } = patient;
 
   const canSave =
@@ -184,7 +192,18 @@ const mapStateToProps = state => {
     phoneIsValid &&
     countryIsValid;
 
-  return { ...patient, canSave };
+  return {
+    firstName,
+    lastName,
+    code,
+    dateOfBirth,
+    email,
+    phone,
+    addressOne,
+    addressTwo,
+    country,
+    canSave,
+  };
 };
 
 PatientEditComponent.propTypes = {
