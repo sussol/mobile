@@ -36,8 +36,8 @@ export const PatientEditComponent = ({
   lastName,
   code,
   dateOfBirth,
-  email,
-  phone,
+  emailAddress,
+  phoneNumber,
   addressOne,
   addressTwo,
   country,
@@ -99,8 +99,8 @@ export const PatientEditComponent = ({
               onChangeValidState={setDateOfBirthValidity}
               onSubmitEditing={setDateOfBirth}
             />
-            <ValidationTextInput value={email} label="Email" onSubmitEditing={setEmail} />
-            <ValidationTextInput value={phone} label="Phone" onSubmitEditing={setPhone} />
+            <ValidationTextInput value={emailAddress} label="Email" onSubmitEditing={setEmail} />
+            <ValidationTextInput value={phoneNumber} label="Phone" onSubmitEditing={setPhone} />
             <ValidationTextInput
               value={addressOne}
               label="Address 1"
@@ -163,8 +163,8 @@ const mapDispatchToProps = dispatch => ({
   setLastName: newValue => dispatch(PatientActions.setFieldUpdate('lastName', newValue)),
   setCode: newValue => dispatch(PatientActions.setFieldUpdate('code', newValue)),
   setDateOfBirth: newValue => dispatch(PatientActions.setFieldUpdate('dateOfBirth', newValue)),
-  setEmail: newValue => dispatch(PatientActions.setFieldUpdate('email', newValue)),
-  setPhone: newValue => dispatch(PatientActions.setFieldUpdate('phone', newValue)),
+  setEmail: newValue => dispatch(PatientActions.setFieldUpdate('emailAddress', newValue)),
+  setPhone: newValue => dispatch(PatientActions.setFieldUpdate('phoneNumber', newValue)),
   setAddressOne: newValue => dispatch(PatientActions.setFieldUpdate('address1', newValue)),
   setAddressTwo: newValue => dispatch(PatientActions.setFieldUpdate('address2', newValue)),
   setCountry: newValue => dispatch(PatientActions.setFieldUpdate('country', newValue)),
@@ -180,8 +180,8 @@ const mapStateToProps = state => {
     lastName,
     code,
     dateOfBirth,
-    email,
-    phone,
+    emailAddress,
+    phoneNumber,
     addressOne,
     addressTwo,
     country,
@@ -197,8 +197,8 @@ const mapStateToProps = state => {
     lastName,
     code,
     dateOfBirth,
-    email,
-    phone,
+    emailAddress,
+    phoneNumber,
     addressOne,
     addressTwo,
     country,
@@ -226,8 +226,8 @@ PatientEditComponent.propTypes = {
   lastName: PropTypes.string.isRequired,
   code: PropTypes.string.isRequired,
   dateOfBirth: PropTypes.string.isRequired,
-  email: PropTypes.string.isRequired,
-  phone: PropTypes.string.isRequired,
+  emailAddress: PropTypes.string.isRequired,
+  phoneNumber: PropTypes.string.isRequired,
   addressOne: PropTypes.string.isRequired,
   addressTwo: PropTypes.string.isRequired,
   country: PropTypes.string.isRequired,
