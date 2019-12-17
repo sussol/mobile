@@ -191,7 +191,6 @@ const mapStateToProps = state => {
     Object.values(isValid).every(fieldIsValid => fieldIsValid) &&
     Object.values(hasValue).every(fieldHasValue => fieldHasValue);
 
-  console.log(hasValue);
   return {
     firstName,
     lastName,
