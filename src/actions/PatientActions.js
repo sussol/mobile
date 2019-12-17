@@ -26,16 +26,6 @@ const editPatient = patient => ({
   },
 });
 
-const setFieldValidity = (field, newValidity) => ({
-  type: PATIENT_ACTIONS.FIELD_VALIDITY,
-  payload: { field, validity: newValidity },
-});
-
-const setFieldUpdate = (field, newValue) => ({
-  type: PATIENT_ACTIONS.FIELD_UPDATE,
-  payload: { field, value: newValue },
-});
-
 const patientUpdate = completedForm => (dispatch, getState) => {
   const { patient } = getState();
   const { currentPatient } = patient;
@@ -70,8 +60,6 @@ const saveNewPatient = completedForm => dispatch => {
 export const PatientActions = {
   createPatient,
   patientUpdate,
-  setFieldUpdate,
-  setFieldValidity,
   editPatient,
   closeModal,
   saveNewPatient,
