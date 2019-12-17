@@ -33,9 +33,10 @@ fs.readdirSync(`./${filesFolder}`).forEach(file => {
 const exportTranslation = () => {
   let csvData = '';
   localizationFiles.forEach(({ fileName, fileContent }) => {
-    const selectedLanguageContent = fileContent[selectedLanguage];
-    const mainLanguageContent = fileContent[mainLanguage];
-
+    const {
+      [mainLanguage]: mainLanguageContent,
+      [selectedLanguage]: selectedLanguageContent,
+    } = fileContent;
     Object.entries(mainLanguageContent).forEach(([key, value]) => {
       value = value.replace(/\n/gi, '{nextLine}');
       if (selectedLanguageContent[key]) {
@@ -72,12 +73,16 @@ const importTranslation = () => {
   });
 
   localizationFiles.forEach(({ fileName, fileContent }) => {
+    const {
+      [mainLanguage]: mainLanguageContent,
+      [selectedLanguage]: selectedLanguageContent,
+    } = fileContent;
     const newObject = {};
-    Object.entries(fileContent[mainLanguage]).forEach(([key]) => {
+    Object.entries(mainLanguageContent).forEach(([key]) => {
       if (csvObject[fileName][key]) {
         newObject[key] = csvObject[fileName][key];
-      } else if (fileContent[selectedLanguage] && fileContent[selectedLanguage][key]) {
-        newObject[key] = fileContent[selectedLanguage][key];
+      } else if (selectedLanguageContent && selectedLanguageContent[key]) {
+        newObject[key] = selectedLanguageContent[key];
       }
     });
     fileContent[selectedLanguage] = newObject;
