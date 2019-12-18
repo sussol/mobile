@@ -26,8 +26,8 @@ const modulesInitialState = () => {
   const usingDispensary = checkModule(SETTINGS_KEYS.DISPENSARY_MODULE);
   const usingVaccines = checkModule(SETTINGS_KEYS.VACCINE_MODULE);
   const usingModules = usingDashboard || usingDispensary || usingVaccines;
-
-  return { usingDashboard, usingDispensary, usingVaccines, usingModules };
+  const modules = { usingDashboard, usingDispensary, usingVaccines };
+  return { ...modules, usingModules };
 };
 
 export const ModulesReducer = (state = modulesInitialState(), action) => {
