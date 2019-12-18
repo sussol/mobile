@@ -5,10 +5,9 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Button } from 'react-native-ui-components';
-
-import { Synchroniser } from '../sync';
 
 import { SyncState } from '../widgets';
 import { getAppVersion } from '../settings';
@@ -116,7 +115,7 @@ export class FirstUsePage extends React.Component {
               editable={status !== 'initialising'}
               returnKeyType="next"
               selectTextOnFocus
-              autoCapitalize="none"
+              autoCapitalize={"none"}
               autoCorrect={false}
               onChangeText={text => this.setState({ serverURL: text, status: 'uninitialised' })}
               onSubmitEditing={() => {
@@ -206,15 +205,11 @@ export class FirstUsePage extends React.Component {
 
 export default FirstUsePage;
 
+/* eslint-disable react/forbid-prop-types */
 FirstUsePage.propTypes = {
   onInitialised: PropTypes.func.isRequired,
-  synchroniser: PropTypes.instanceOf(Synchroniser).isRequired,
-  syncState: PropTypes.shape({
-    progressMessage: PropTypes.string,
-    errorMessage: PropTypes.string,
-    progress: PropTypes.number,
-    total: PropTypes.number,
-  }).isRequired,
+  synchroniser: PropTypes.object.isRequired,
+  syncState: PropTypes.object.isRequired,
 };
 
 const localStyles = StyleSheet.create({

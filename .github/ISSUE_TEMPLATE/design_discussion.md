@@ -4,7 +4,6 @@ about: A template for how to discuss designing features/modules
 title: Feature/module name and concise purpose if not conveyed in name
 labels: Epic
 assignees: ''
-
 ---
 
 <!-- It's expected that this template be edited and kept up to date as discussion around the design unfolds -->

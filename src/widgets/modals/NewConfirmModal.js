@@ -19,7 +19,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import { OnePressButton } from '..';
-import { modalStrings } from '../../localization';
+import { modalStrings } from '../../localization/index';
 
 import globalStyles, { DARK_GREY } from '../../globalStyles';
 

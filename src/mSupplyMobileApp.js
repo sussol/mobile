@@ -42,7 +42,6 @@ import { UIDatabase } from './database';
 import globalStyles, { textStyles, SUSSOL_ORANGE } from './globalStyles';
 import { UserActions } from './actions';
 import { debounce } from './utilities';
-import { prevRouteNameSelector } from './navigation/selectors';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -50,7 +49,7 @@ const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 class MSupplyMobileAppContainer extends React.Component {
   handleBackEvent = debounce(
     () => {
-      const { dispatch, prevRouteName } = this.props;
+      const { dispatch } = this.props;
       const { confirmFinalise, syncModalIsOpen } = this.state;
       // If finalise or sync modals are open, close them rather than navigating.
       if (confirmFinalise || syncModalIsOpen) {
@@ -59,7 +58,7 @@ class MSupplyMobileAppContainer extends React.Component {
       }
       // If we are on base screen (e.g. home), back button should close app as we can't go back.
       if (!this.getCanNavigateBack()) BackHandler.exitApp();
-      else dispatch({ ...NavigationActions.back(), payload: { prevRouteName } });
+      else dispatch(NavigationActions.back());
 
       return true;
     },
@@ -282,7 +281,6 @@ class MSupplyMobileAppContainer extends React.Component {
 
 const mapStateToProps = state => {
   const { nav: navigationState, sync: syncState } = state;
-
   const currentParams = getCurrentParams(navigationState);
   const currentTitle = currentParams && currentParams.title;
   const finaliseItem = FINALISABLE_PAGES[getCurrentRouteName(navigationState)];
@@ -292,7 +290,6 @@ const mapStateToProps = state => {
 
   return {
     currentTitle,
-    prevRouteName: prevRouteNameSelector(state),
     finaliseItem,
     navigationState,
     syncState,
@@ -313,7 +310,6 @@ MSupplyMobileAppContainer.propTypes = {
   navigationState: PropTypes.object.isRequired,
   syncState: PropTypes.object.isRequired,
   currentUser: PropTypes.object,
-  prevRouteName: PropTypes.string.isRequired,
 };
 
 export default connect(mapStateToProps)(MSupplyMobileAppContainer);

@@ -25,7 +25,7 @@ export const useNavigationFocus = (navigation, willFocusCallback, willBlurCallba
   const willBlurSub = useRef(null);
 
   const subscribe = () => {
-    if (!willFocusSub.current && willFocusCallback) {
+    if (!willFocusSub && willFocusCallback) {
       willFocusSub.current = navigation.addListener('willFocus', () => willFocusCallback());
     }
     if (!willBlurSub.current && willBlurCallback) {

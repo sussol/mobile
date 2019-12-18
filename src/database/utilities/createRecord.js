@@ -7,7 +7,7 @@ import { generateUUID } from 'react-native-database';
 
 import { formatDateAndTime } from '../../utilities';
 import { NUMBER_SEQUENCE_KEYS } from './constants';
-import { generalStrings } from '../../localization';
+import { generalStrings } from '../../localization/index';
 
 // Get the next highest number in an existing number sequence.
 export const getNextNumber = (database, sequenceKey) => {
@@ -297,7 +297,7 @@ const createStocktakeBatch = (database, stocktakeItem, itemBatch) => {
     batch,
     costPrice,
     sellPrice,
-    sortIndex: (stocktakeItem?.stocktake?.numberOfBatches || 0) + 1 || 1,
+    sortIndex: stocktakeItem.stocktake ? stocktakeItem.stocktake.numberOfBatches : 0,
   });
 
   stocktakeItem.addBatch(stocktakeBatch);
@@ -359,7 +359,7 @@ const createTransactionBatch = (database, transactionItem, itemBatch) => {
     sellPrice,
     donor,
     transaction: transactionItem.transaction,
-    sortIndex: (transactionItem?.transaction?.numberOfBatches || 0) + 1 || 1,
+    sortIndex: transactionItem.transaction ? transactionItem.transaction.numberOfBatches : 0,
   });
 
   transactionItem.addBatch(transactionBatch);

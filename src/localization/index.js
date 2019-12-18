@@ -2,19 +2,31 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
+import LocalizedStrings from 'react-native-localization';
 
-export { authStrings } from './authStrings';
-export { buttonStrings } from './buttonStrings';
-export { demoUserModalStrings } from './demoUserModalStrings';
-export { generalStrings } from './generalStrings';
-export { modalStrings } from './modalStrings';
-export { navStrings } from './navStrings';
-export { pageInfoStrings } from './pageInfoStrings';
-export { setCurrentLanguage } from './utilities';
-export { tableStrings } from './tableStrings';
-export { syncStrings } from './syncStrings';
-export { validationStrings } from './validationStrings';
-export { programStrings } from './programStrings';
+import authStringsJSON from './authStrings.json';
+import buttonStringsJSON from './buttonStrings.json';
+import demoUserModalStringsJSON from './demoUserModalStrings.json';
+import generalStringsJSON from './generalStrings.json';
+import modalStringsJSON from './modalStrings.json';
+import navStringsJSON from './navStrings.json';
+import pageInfoStringsJSON from './pageInfoStrings.json';
+import programStringsJSON from './programStrings.json';
+import syncStringsJSON from './syncStrings.json';
+import tableStringsJSON from './tableStrings.json';
+import validationStringsJSON from './validationStrings.json';
+
+export const authStrings = new LocalizedStrings(authStringsJSON);
+export const buttonStrings = new LocalizedStrings(buttonStringsJSON);
+export const demoUserModalStrings = new LocalizedStrings(demoUserModalStringsJSON);
+export const generalStrings = new LocalizedStrings(generalStringsJSON);
+export const modalStrings = new LocalizedStrings(modalStringsJSON);
+export const navStrings = new LocalizedStrings(navStringsJSON);
+export const pageInfoStrings = new LocalizedStrings(pageInfoStringsJSON);
+export const programStrings = new LocalizedStrings(programStringsJSON);
+export const syncStrings = new LocalizedStrings(syncStringsJSON);
+export const tableStrings = new LocalizedStrings(tableStringsJSON);
+export const validationStrings = new LocalizedStrings(validationStringsJSON);
 
 export const LANGUAGE_CODES = {
   ENGLISH: 'gb',

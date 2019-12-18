@@ -4,13 +4,11 @@ import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
 
 import { PageContentModal } from './PageContentModal';
-import { ToggleBar, PageButton, TextEditor, Step } from '..';
+import { AutocompleteSelector, ToggleBar, PageButton, TextEditor, Step } from '..';
 import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
 import { SETTINGS_KEYS } from '../../settings';
 import { getAllPrograms, getAllPeriodsForProgram } from '../../utilities';
-import { programStrings, navStrings } from '../../localization';
-import { UIDatabase } from '../../database';
-import AutocompleteSelector from '../AutocompleteSelector';
+import { programStrings, navStrings } from '../../localization/index';
 
 import {
   selectProgram,
@@ -50,19 +48,13 @@ const modalProps = ({ dispatch, program, orderType }) => ({
         isEmergency,
       } = item;
 
-      const thisStoresTags = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_TAGS);
-      const maxLinesForOrder = program.getMaxLines?.(item.name, thisStoresTags);
-
       const mosText = `${maxMOS}: ${itemMOS}`;
       const thresholdText = `${threshMOS}: ${itemThreshMOS}`;
-      const maxItemsText =
-        maxLinesForOrder && maxLinesForOrder !== Infinity
-          ? `${programStrings.max_items}: ${maxLinesForOrder}`
-          : '';
-      const emergencyText = `[${programStrings.emergency_order}]  ${maxItemsText}`;
-      const maxOrdersText = isEmergency ? emergencyText : `${maxOPP}: ${maxOrders}`;
+      const maxOrdersText = isEmergency
+        ? programStrings.emergency_orders
+        : `${maxOPP}: ${maxOrders}`;
 
-      return `${maxOrdersText} - ${mosText} - ${thresholdText}`;
+      return `${mosText} - ${thresholdText} - ${maxOrdersText}`;
     },
   },
   period: {
@@ -75,7 +67,7 @@ const modalProps = ({ dispatch, program, orderType }) => ({
       const requisitionsCount = `${requisitionsInPeriod}/${maxOrdersPerPeriod} ${requisitions}`;
 
       const periodText = isEmergency
-        ? `${requisitionsInPeriod} ${programStrings.emergency_order}`
+        ? `${requisitionsInPeriod} ${programStrings.emergency_orders}`
         : requisitionsCount;
 
       return `${item} - ${periodText}`;

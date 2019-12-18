@@ -16,7 +16,7 @@ import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles
 import { GenericChoiceList, Flag } from '..';
 import ModalContainer from './ModalContainer';
 
-import { LANGUAGE_NAMES, LANGUAGE_CHOICE, authStrings, navStrings } from '../../localization';
+import { LANGUAGE_NAMES, LANGUAGE_CHOICE, authStrings, navStrings } from '../../localization/index';
 import { getModalTitle, MODAL_KEYS } from '../../utilities/index';
 
 export class LoginModal extends React.Component {

@@ -4,10 +4,8 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { modalStrings } from '../localization';
+import { modalStrings } from '../localization/index';
 import { formatErrorItemNames } from './formatters';
-import { UIDatabase } from '../database/index';
-import { SETTINGS_KEYS } from '../settings/index';
 
 /**
  * Check whether a given customer invoice is safe to be finalised. If safe to finalise,
@@ -54,16 +52,12 @@ export function checkForSupplierInvoiceError(transaction) {
  * @return  {string}               Null if safe to finalise, else an error message.
  */
 export function checkForSupplierRequisitionError(requisition) {
-  const { numberOfOrderedItems, totalRequiredQuantity, program, orderType } = requisition;
+  if (requisition.items.length === 0) {
+    return modalStrings.add_at_least_one_item_before_finalising;
+  }
 
-  if (!numberOfOrderedItems) return modalStrings.add_at_least_one_item_before_finalising;
-  if (!totalRequiredQuantity) return modalStrings.record_stock_required_before_finalising;
-
-  const thisStoresTags = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_TAGS);
-  const maxLinesForOrder = program?.getMaxLines?.(orderType, thisStoresTags);
-
-  if (numberOfOrderedItems > maxLinesForOrder) {
-    return `${modalStrings.emergency_orders_can_only_have} ${maxLinesForOrder} ${modalStrings.items_remove_some}`;
+  if (requisition.totalRequiredQuantity === 0) {
+    return modalStrings.record_stock_required_before_finalising;
   }
 
   return null;

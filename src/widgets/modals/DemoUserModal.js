@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { ConfirmModal } from './ConfirmModal';
 
 import { DemoSiteRequest } from '../../authentication';
-import { authStrings, generalStrings, demoUserModalStrings } from '../../localization';
+import { authStrings, generalStrings, demoUserModalStrings } from '../../localization/index';
 
 import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
 
@@ -139,7 +139,7 @@ export class DemoUserModal extends React.Component {
             />
             <View style={globalStyles.horizontalContainer}>
               <Text style={[globalStyles.authFormTextInputStyle, localStyles.syncSiteName]}>
-                {demoUserModalStrings.modalBodyText}
+                {demoUserModalStrings.modal_body_text}
               </Text>
             </View>
             <View style={globalStyles.horizontalContainer}>
@@ -210,7 +210,7 @@ export class DemoUserModal extends React.Component {
           </View>
           <ConfirmModal
             isOpen={status === 'submitted'}
-            questionText={demoUserModalStrings.confirmModalBody}
+            questionText={demoUserModalStrings.confirm_modal_body}
             onConfirm={this.onDemoSubmittedModalClose}
             confirmText="Close"
           />

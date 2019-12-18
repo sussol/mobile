@@ -36,5 +36,6 @@ export const PageContainer = connect(mapStateToProps)(Page);
 export default PageContainer;
 
 Page.propTypes = {
-  page: PropTypes.elementType.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types, react/require-default-props
+  page: PropTypes.any,
 };
