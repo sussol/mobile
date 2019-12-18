@@ -237,13 +237,14 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const mapStateToProps = state => {
-  const { modules, user } = state;
+  const { modules, usingModules, user } = state;
   const { currentUser } = user;
-  const { usingDashboard, usingDispensary } = modules;
+  const { usingDashboard, usingDispensary, usingVaccines } = modules;
   return {
     usingDashboard,
     usingDispensary,
-    usingModules: usingDashboard || usingDispensary,
+    usingVaccines,
+    usingModules,
     isAdmin: currentUser?.isAdmin,
   };
 };
