@@ -1,6 +1,6 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
-import { View, ScrollView } from 'react-native';
+import { View, ScrollView, StyleSheet } from 'react-native';
 
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -13,13 +13,30 @@ import { modalStrings } from '../localization/index';
 import { selectCanSaveForm, selectCompletedForm } from '../selectors/form';
 import { FormActions } from '../actions/FormActions';
 
+/**
+ * Component which will manage and control a set of user inputs of a form.
+ * The configuration for the inputs comes from `formInputConfigs.js` where
+ * the configs are defined for common inputs to create a form semi-declaritively.
+ *
+ * Uses the `Form` object within redux state to help manage state.
+ *
+ * @param {func}  onCancel        Callback passed from a parent to control the cancel button.
+ * @param {func}  onUpdateForm    Takes the field/value and updates state within redux.
+ * @param {func}  onCancelPressed Resets the form state in redux and calls the onClose callback.
+ * @param {bool}  canSaveForm     Indicator that all fields are valid and required fields are filled
+ * @param {func}  completedForm   Object containing key:value pairs of valid inputs from the form.
+ * @param {func}  initialiseForm  Dispatcher to initialise the redux state with the correct config.
+ * @param {func}  onSave          Callback to invoke on saving the form, passing back completedForm.
+ * @param {Array} inputConfig     Configuration array of input config objects.
+ *                                See { getFormInputConfig } from src/utilities/formInputConfigs.
+ */
 const FormControlComponent = ({
   onUpdateForm,
+  onCancelPressed,
   canSaveForm,
   completedForm,
   initialiseForm,
   onSave,
-  onCancel,
   inputConfig,
 }) => {
   React.useEffect(() => {
@@ -60,7 +77,7 @@ const FormControlComponent = ({
         />
         <PageButton
           style={localStyles.cancelButton}
-          onPress={onCancel}
+          onPress={onCancelPressed}
           textStyle={localStyles.cancelButtonTextStyle}
           text={modalStrings.cancel}
         />
@@ -69,11 +86,16 @@ const FormControlComponent = ({
   );
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch, ownProps) => {
+  const { onCancel } = ownProps;
+
   const initialiseForm = config => dispatch(FormActions.initialiseForm(config));
-  const onUpdateForm = (field, value) =>
-    dispatch({ type: 'Form/Update', payload: { field, value } });
-  return { initialiseForm, onUpdateForm };
+  const onUpdateForm = (key, value) => dispatch(FormActions.updateForm(key, value));
+  const onCancelPressed = () => {
+    dispatch(FormActions.resetForm());
+    onCancel();
+  };
+  return { initialiseForm, onUpdateForm, onCancelPressed };
 };
 
 const mapStateToProps = state => {
@@ -92,14 +114,14 @@ FormControlComponent.propTypes = {
   completedForm: PropTypes.object,
   initialiseForm: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired,
   onUpdateForm: PropTypes.func.isRequired,
   inputConfig: PropTypes.array.isRequired,
+  onCancelPressed: PropTypes.func.isRequired,
 };
 
 export const FormControl = connect(mapStateToProps, mapDispatchToProps)(FormControlComponent);
 
-const localStyles = {
+const localStyles = StyleSheet.create({
   saveButton: {
     ...globalStyles.button,
     backgroundColor: SUSSOL_ORANGE,
@@ -125,4 +147,4 @@ const localStyles = {
   flexRow: { flex: 1, flexDirection: 'row' },
   buttonsRow: { marginTop: 10, flexDirection: 'row-reverse' },
   whiteBackground: { backgroundColor: WHITE },
-};
+});
