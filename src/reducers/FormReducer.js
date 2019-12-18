@@ -34,9 +34,9 @@ export const FormReducer = (state = initialState(), action) => {
     }
     case FORM_ACTIONS.UPDATE: {
       const { payload } = action;
-      const { field, value } = payload;
+      const { key, value } = payload;
 
-      const stateData = state[field];
+      const stateData = state[key];
 
       const { isRequired, validator } = stateData;
 
@@ -47,7 +47,7 @@ export const FormReducer = (state = initialState(), action) => {
         isValid: validator ? validator(value) : true,
       };
 
-      return { ...state, [field]: newStateData };
+      return { ...state, [key]: newStateData };
     }
     case FORM_ACTIONS.CANCEL: {
       return initialState();
