@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 /* eslint-disable camelcase */
 import {
   EXTERNAL_TO_INTERNAL,
@@ -13,6 +14,7 @@ import {
 import { CHANGE_TYPES, generateUUID } from '../database';
 import { deleteRecord } from '../database/utilities';
 import { SETTINGS_KEYS } from '../settings';
+import { checkIsObject } from '../utilities';
 
 const { THIS_STORE_ID, THIS_STORE_TAGS, THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
 
@@ -498,13 +500,16 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'Report': {
-      internalRecord = {
-        id: record.ID,
-        title: record.title,
-        type: record.type,
-        _data: record.data,
-      };
-      database.update(recordType, internalRecord);
+      const { ID: id, title, type, data } = record;
+      try {
+        const parsedData = JSON.parse(data);
+        const shouldSetData = checkIsObject(parsedData);
+        internalRecord = { id, title, type, _data: shouldSetData ? data : null };
+        database.update(recordType, internalRecord);
+      } catch (error) {
+        // Throw to parent, for now
+        throw error;
+      }
       break;
     }
     case 'Requisition': {
