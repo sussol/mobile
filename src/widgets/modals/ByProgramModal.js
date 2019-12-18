@@ -4,12 +4,13 @@ import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
 
 import { PageContentModal } from './PageContentModal';
-import { AutocompleteSelector, ToggleBar, PageButton, TextEditor, Step } from '..';
+import { ToggleBar, PageButton, TextEditor, Step } from '..';
 import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
 import { SETTINGS_KEYS } from '../../settings';
 import { getAllPrograms, getAllPeriodsForProgram } from '../../utilities';
 import { programStrings, navStrings } from '../../localization';
 import { UIDatabase } from '../../database';
+import AutocompleteSelector from '../AutocompleteSelector';
 
 import {
   selectProgram,
