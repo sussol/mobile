@@ -88,8 +88,8 @@ export const gotoPrescriptions = () =>
 
 export const gotoDispensingPage = () =>
   NavigationActions.navigate({
-    routeName: 'dispensing',
-    params: { title: 'Dispensing' },
+    routeName: ROUTES.DISPENSARY,
+    params: { title: 'Dispensary' },
   });
 
 /**
