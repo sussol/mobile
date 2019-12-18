@@ -39,6 +39,8 @@ export { Wizard } from './Wizard';
 
 export * from './icons';
 
+export { ResultRow } from './ResultRow';
+
 export {
   KiribatiFlag,
   EnglishFlag,

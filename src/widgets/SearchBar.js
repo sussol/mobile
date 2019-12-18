@@ -67,6 +67,7 @@ export const SearchBarComponent = ({
 
   // On text change, set the internal text value, and call the debounced
   // callback. Keep the users input upto date, but optimize filtering.
+
   const onChangeTextCallback = useCallback(newValue => {
     setTextValue(newValue);
     debouncedCallback(newValue);
