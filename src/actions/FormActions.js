@@ -10,5 +10,7 @@ export const FORM_ACTIONS = {
 };
 
 const initialiseForm = config => ({ type: FORM_ACTIONS.INITIALISE, payload: { config } });
+const updateForm = (key, value) => ({ type: FORM_ACTIONS.UPDATE, payload: { key, value } });
+const resetForm = () => ({ tpye: FORM_ACTIONS.CANCEL });
 
-export const FormActions = { initialiseForm };
+export const FormActions = { initialiseForm, updateForm, resetForm };
