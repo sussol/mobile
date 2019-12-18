@@ -9,21 +9,20 @@ import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { APP_FONT_FAMILY, SUSSOL_ORANGE, BACKGROUND_COLOR, GREY } from '../globalStyles';
 
-export const ResultRow = React.memo(
+const ResultRow = React.memo(
   ({ data, renderLeftText, renderRightText, onPress, isSelected, showCheckIcon }) => {
-    const rowPressed = useCallback(() => onPress(data.item), [data.item]);
+    const rowPressed = useCallback(() => onPress(data), [data]);
 
     return (
       <TouchableOpacity
         style={[localStyles.resultRow, isSelected && localStyles.selected]}
         onPress={rowPressed}
       >
-        {showCheckIcon &&
-          (isSelected ? (
-            <Icon name="md-checkbox" style={localStyles.checkIcon} />
-          ) : (
-            <Icon name="md-square-outline" style={[localStyles.checkIcon, { color: GREY }]} />
-          ))}
+        {showCheckIcon && isSelected ? (
+          <Icon name="md-checkbox" style={localStyles.checkIcon} />
+        ) : (
+          <Icon name="md-square-outline" style={[localStyles.checkIcon, { color: GREY }]} />
+        )}
         <Text
           style={[
             localStyles.text,

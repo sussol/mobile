@@ -16,7 +16,7 @@ import { BottomTextEditor } from '../widgets/modals';
 import { ToggleBar, DataTablePageView, SearchBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import { buttonStrings, modalStrings } from '../localization';
+import { buttonStrings, modalStrings } from '../localization/index';
 import globalStyles from '../globalStyles';
 
 import { ROUTES } from '../navigation/constants';

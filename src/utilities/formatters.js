@@ -5,7 +5,7 @@
  */
 
 import { truncateString } from 'sussol-utilities';
-import { modalStrings } from '../localization';
+import { modalStrings } from '../localization/index';
 
 export const formatErrorItemNames = items => {
   const MAX_ITEMS_IN_ERROR_MESSAGE = 4; // Number of items to display in finalise error modal.

@@ -12,7 +12,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { CustomerImage, SupplierImage, StockImage, ModulesImage, InfoBadge } from '../widgets';
 
 import { ROUTES } from '../navigation/constants';
-import { navStrings } from '../localization';
+import { navStrings } from '../localization/index';
 
 import { SETTINGS_KEYS } from '../settings';
 import { UIDatabase } from '../database';
@@ -169,7 +169,7 @@ const Menu = ({
         </View>
       </View>
     ),
-    []
+    [usingModules]
   );
 
   const OriginalLayout = useCallback(
@@ -180,7 +180,7 @@ const Menu = ({
         <StockSection />
       </View>
     ),
-    []
+    [usingModules]
   );
 
   return (

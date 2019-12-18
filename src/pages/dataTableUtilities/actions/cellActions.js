@@ -166,7 +166,7 @@ export const editStocktakeBatchCountedQuantity = (value, rowKey, route) => (disp
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
   UIDatabase.write(() => {
-    objectToEdit.countedTotalQuantity = parsePositiveInteger(value);
+    objectToEdit.countedTotalQuantity = value;
     UIDatabase.save('StocktakeBatch', UIDatabase);
   });
 

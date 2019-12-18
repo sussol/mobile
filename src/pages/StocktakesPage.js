@@ -21,7 +21,7 @@ import { ROUTES } from '../navigation/constants';
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
 
-import { buttonStrings, modalStrings } from '../localization';
+import { buttonStrings, modalStrings } from '../localization/index';
 import globalStyles from '../globalStyles';
 
 import {

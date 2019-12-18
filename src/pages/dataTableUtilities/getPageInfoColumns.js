@@ -3,7 +3,7 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
  */
-import { pageInfoStrings, programStrings, tableStrings } from '../../localization';
+import { pageInfoStrings, programStrings, tableStrings } from '../../localization/index';
 import { MODAL_KEYS, formatDate } from '../../utilities';
 import { ROUTES } from '../../navigation/constants';
 import { PageActions } from './actions';

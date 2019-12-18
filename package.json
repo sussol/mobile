@@ -5,7 +5,7 @@
   },
   "name": "mSupplyMobile",
   "//": "version must be in the format ${majorNumber}.${minorNumber}.${patchNumber}-rc${releaseCandidateNumber}",
-  "version": "3.1.1",
+  "version": "3.0.4",
   "private": false,
   "license": "MIT",
   "description": "Mobile app for use with the mSupply medical inventory control software",
@@ -29,7 +29,8 @@
     "reset": "./dev_scripts/reset.sh",
     "clean-mac-cache": "./dev_scripts/clean.sh",
     "keygen": "./dev_scripts/keygen.sh",
-    "upload-bugsnag": "./dev_scripts/upload.sh"
+    "upload-bugsnag": "./dev_scripts/upload.sh",
+    "translation": "node ./dev_scripts/translation.js"
   },
   "jest": {
     "preset": "react-native"

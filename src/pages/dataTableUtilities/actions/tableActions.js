@@ -110,7 +110,7 @@ export const addMasterListItems = (selected, objectType, route) => (dispatch, ge
   )[0];
 
   UIDatabase.write(() => {
-    pageObject.addItemsFromMasterList({ database: UIDatabase, thisStore, selected });
+    pageObject.addItemsFromMasterList(UIDatabase, selected, thisStore);
     UIDatabase.save(objectType, pageObject);
   });
 

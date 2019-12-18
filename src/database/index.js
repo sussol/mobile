@@ -4,11 +4,11 @@
  */
 
 import Database from './BaseDatabase';
-import { getUIDatabaseInstance, UIDatabaseType } from './UIDatabase';
+import { getUIDatabaseInstance } from './UIDatabase';
 
 export { CHANGE_TYPES, generateUUID } from 'react-native-database';
 
 export { createRecord, getNumberSequence, NUMBER_SEQUENCE_KEYS } from './utilities';
-export { getUIDatabaseInstance, UIDatabaseType };
+export { getUIDatabaseInstance };
 
 export const UIDatabase = getUIDatabaseInstance(Database);

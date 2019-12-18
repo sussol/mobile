@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import { tableStrings } from '../../localization';
+import { tableStrings } from '../../localization/index';
 import { COLUMN_TYPES, COLUMN_NAMES, COLUMN_KEYS } from './constants';
 
 import { ROUTES } from '../../navigation/constants';
