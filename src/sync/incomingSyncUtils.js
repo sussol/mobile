@@ -252,7 +252,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       canBeBlank: ['units', 'comment', 'order_number'],
     },
     Report: {
-      cannotBeBlank: ['ID', 'title', 'type', '_data'],
+      cannotBeBlank: ['ID', 'title', 'type', 'data'],
       canBeBlank: [],
     },
   };
@@ -262,7 +262,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       containsAllFieldsSoFar &&
       record[fieldName] !== null && // Key must exist.
       record[fieldName] !== undefined && // Field may be undefined.
-      record[fieldName].length > 0, // Fild must not be empty string.
+      record[fieldName].length > 0, // Field must not be empty string.
     true
   );
 
