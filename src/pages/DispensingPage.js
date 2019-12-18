@@ -119,7 +119,7 @@ const Dispensing = ({
             viewStyle={localStyles.searchBar}
           />
           <PageButton
-            text="New Patient"
+            text={dataSet === DATA_SET.PATIENTS ? 'New Patient' : 'New Prescriber'}
             onPress={dataSet === DATA_SET.PATIENTS ? createPatient : createPrescriber}
           />
         </View>
