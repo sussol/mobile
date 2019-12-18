@@ -167,7 +167,7 @@ const Menu = ({
         </View>
       </View>
     ),
-    []
+    [usingModules]
   );
 
   const OriginalLayout = useCallback(
@@ -178,7 +178,7 @@ const Menu = ({
         <StockSection />
       </View>
     ),
-    []
+    [usingModules]
   );
 
   return (
