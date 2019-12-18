@@ -32,6 +32,7 @@ const FORM_INPUT_KEYS = {
   COUNTRY: 'country',
   ADDRESS_ONE: 'addressOne',
   ADDRESS_TWO: 'addressTwo',
+  REGISTRATION_CODE: 'registrationCode',
 };
 
 const FORM_INPUT_CONFIGS = {
@@ -116,6 +117,22 @@ const FORM_INPUT_CONFIGS = {
     isRequired: false,
     label: 'Address 2:',
   },
+  [FORM_INPUT_KEYS.REGISTRATION_CODE]: {
+    type: 'text',
+    initialValue: '',
+    key: 'registrationCode',
+    validator: input => input.length < 50,
+    isRequired: false,
+    label: 'Registration code:',
+  },
+  [FORM_INPUT_KEYS.REGISTRATION_CODE]: {
+    type: 'text',
+    initialValue: '',
+    key: 'registrationCode',
+    validator: input => input.length < 50,
+    isRequired: true,
+    label: 'Registration code:',
+  },
 };
 
 const FORM_CONFIGS = {
@@ -129,6 +146,15 @@ const FORM_CONFIGS = {
     FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.ADDRESS_ONE],
     FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.ADDRESS_TWO],
     FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.COUNTRY],
+  ],
+  prescriber: [
+    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.FIRST_NAME],
+    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.LAST_NAME],
+    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.REGISTRATION_CODE],
+    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.EMAIL],
+    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.PHONE],
+    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.ADDRESS_ONE],
+    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.ADDRESS_TWO],
   ],
 };
 
