@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
@@ -10,31 +11,18 @@ import PropTypes from 'prop-types';
 import { VictoryLabel, VictoryPie } from 'victory-native';
 import { APP_FONT_FAMILY, GREY } from '../globalStyles';
 
-/**
- * A charting widget for displaying Pie chart report.
- *
- * @prop  {string}       id      The report ID.
- * @prop  {string}       title   The title of the report.
- * @prop  {string}       type    The type of chart to use to display the report,
- *                               options are BarChart, LineChart and PieChart.
- * @prop  {data}         array   An array of {x, y} datapoints to plot.
- * @prop  {width}        number  The width of the parent container.
- * @prop  {height}       number  The height of the parent container.
- */
-
 export const PieChart = ({ title, type, data }) => {
-  const [state, setState] = useState({ height: null, width: null });
-  const { height, width } = state;
+  const [dimensions, setDimensions] = useState({ height: null, width: null });
+  const { height, width } = dimensions;
 
   // Victory Native sizes are set using absolute values. Parents dimensions are used to
   // calculate relative values for width and height for each chart.
-
   const onLayout = event => {
-    const newStateObj = {
+    const newDimensionsObj = {
       height: event.nativeEvent.layout.width,
       width: event.nativeEvent.layout.height,
     };
-    setState(newStateObj);
+    setDimensions(newDimensionsObj);
   };
   const {
     padVertical,
@@ -53,7 +41,7 @@ export const PieChart = ({ title, type, data }) => {
     left: width * padHorizontal,
   };
 
-  const widthPadded = state.width * (1 - padHorizontal);
+  const widthPadded = width * (1 - padHorizontal);
   return (
     <View style={localStyles.ChartContainer} onLayout={onLayout}>
       <VictoryPie
