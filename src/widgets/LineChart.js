@@ -77,7 +77,6 @@ const localStyles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-
 const victoryStyles = {
   axisX: {
     fixLabelOverlap: true,
@@ -88,20 +87,11 @@ const victoryStyles = {
     },
   },
   axisY: {
-    fixLabelOverlap: false,
     style: {
       axis: { stroke: LIGHT_GREY },
       ticks: { stroke: DARK_GREY },
       tickLabels: { fontFamily: APP_FONT_FAMILY, fill: GREY },
     },
-  },
-  barChart: {
-    padTop: 0.1,
-    padBottom: 0.15,
-    padLeft: 0.1,
-    padRight: 0.05,
-    padDomain: 0.05,
-    style: { data: { fill: SUSSOL_ORANGE } },
   },
   lineChart: {
     padTop: 0.1,
