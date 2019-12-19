@@ -1,9 +1,10 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2018
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { VictoryLabel, VictoryPie } from 'victory-native';
@@ -18,47 +19,43 @@ import { APP_FONT_FAMILY, GREY } from '../globalStyles';
  *                               options are BarChart, LineChart and PieChart.
  * @prop  {data}         array   An array of {x, y} datapoints to plot.
  * @prop  {width}        number  The width of the parent container.
- * @prop  {height}       number  The height of the parent continer.
+ * @prop  {height}       number  The height of the parent container.
  */
 
-export const ReportChart = ({ report: initialReport }, props) => {
-  const [report, setReport] = useState(initialReport);
-  const [width, setWidth] = useState(null);
-  const [height, setHeight] = useState(null);
-
-  // Same affect as componentDidUpdate
-  useEffect(() => {
-    if (report.id !== props.report.id) setReport(props.report);
-  });
+export const PieChart = ({ title, type, data }) => {
+  const [state, setState] = useState({ height: null, width: null });
+  const { height, width } = state;
 
   // Victory Native sizes are set using absolute values. Parents dimensions are used to
   // calculate relative values for width and height for each chart.
+
   const onLayout = event => {
-    setWidth(event.nativeEvent.layout.width);
-    setHeight(event.nativeEvent.layout.height);
+    const newStateObj = {
+      height: event.nativeEvent.layout.width,
+      width: event.nativeEvent.layout.height,
+    };
+    setState(newStateObj);
+  };
+  const {
+    padVertical,
+    padHorizontal,
+    innerRadius,
+    labelRadius,
+    padAngle,
+    colorScale,
+    style,
+  } = victoryStyles.pieChart;
+
+  const padding = {
+    top: height * padVertical,
+    bottom: height * padVertical,
+    right: width * padHorizontal,
+    left: width * padHorizontal,
   };
 
-  const renderPieChart = () => {
-    const {
-      padVertical,
-      padHorizontal,
-      innerRadius,
-      labelRadius,
-      padAngle,
-      colorScale,
-      style,
-    } = victoryStyles.pieChart;
-
-    const padding = {
-      top: height * padVertical,
-      bottom: height * padVertical,
-      right: width * padHorizontal,
-      left: width * padHorizontal,
-    };
-
-    const widthPadded = width * (1 - padHorizontal);
-
-    return (
+  const widthPadded = state.width * (1 - padHorizontal);
+  return (
+    <View style={localStyles.ChartContainer} onLayout={onLayout}>
       <VictoryPie
         width={width}
         height={height}
@@ -68,29 +65,16 @@ export const ReportChart = ({ report: initialReport }, props) => {
         labelRadius={widthPadded * labelRadius}
         colorScale={colorScale}
         labelComponent={<VictoryLabel style={style} />}
-        data={report.data}
+        data={data}
       />
-    );
-  };
-
-  const renderVisualisation = () => {
-    if (report === null || !width || !height) return null;
-    switch (report.type) {
-      case 'PieChart':
-        return renderPieChart();
-      default:
-        return null;
-    }
-  };
-  return (
-    <View style={localStyles.ChartContainer} onLayout={onLayout}>
-      {renderVisualisation()}
     </View>
   );
 };
 
-ReportChart.propTypes = {
-  report: PropTypes.objectOf(PropTypes.object).isRequired,
+PieChart.propTypes = {
+  title: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+  data: PropTypes.array.isRequired,
 };
 
 const localStyles = StyleSheet.create({
