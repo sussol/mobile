@@ -10,7 +10,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { VictoryChart, VictoryBar, VictoryAxis } from 'victory-native';
-import { SUSSOL_ORANGE } from '../globalStyles';
+import { APP_FONT_FAMILY, GREY, LIGHT_GREY, DARK_GREY, SUSSOL_ORANGE } from '../globalStyles';
 
 export const BarChart = ({ title, type, data }) => {
   const [dimensions, setDimensions] = useState({ height: null, width: null });
@@ -75,6 +75,22 @@ const localStyles = StyleSheet.create({
 });
 
 const victoryStyles = {
+  axisX: {
+    fixLabelOverlap: true,
+    style: {
+      axis: { stroke: LIGHT_GREY },
+      ticks: { stroke: DARK_GREY },
+      tickLabels: { fontFamily: APP_FONT_FAMILY, fill: GREY, textAnchor: 'end', angle: -45 },
+    },
+  },
+  axisY: {
+    fixLabelOverlap: false,
+    style: {
+      axis: { stroke: LIGHT_GREY },
+      ticks: { stroke: DARK_GREY },
+      tickLabels: { fontFamily: APP_FONT_FAMILY, fill: GREY },
+    },
+  },
   barChart: {
     padTop: 0.1,
     padBottom: 0.15,
