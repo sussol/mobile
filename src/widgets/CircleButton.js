@@ -16,15 +16,28 @@ import { SUSSOL_ORANGE } from '../globalStyles/index';
  * @prop {Node} IconComponent An icon component to render in the center of the circle.
  * @prop {Func} onPress       OnPress callback.
  */
-export const CircleButton = ({ IconComponent, onPress }) => (
-  <TouchableOpacity onPress={onPress} style={localStyles.containerStyle}>
+export const CircleButton = ({ IconComponent, onPress, onPressIn, onPressOut }) => (
+  <TouchableOpacity
+    onPressIn={onPressIn}
+    onPressOut={onPressOut}
+    onPress={onPress}
+    style={localStyles.containerStyle}
+  >
     <IconComponent />
   </TouchableOpacity>
 );
 
+CircleButton.defaultProps = {
+  onPress: null,
+  onPressIn: null,
+  onPressOut: null,
+};
+
 CircleButton.propTypes = {
   IconComponent: PropTypes.node.isRequired,
-  onPress: PropTypes.func.isRequired,
+  onPress: PropTypes.func,
+  onPressIn: PropTypes.func,
+  onPressOut: PropTypes.func,
 };
 
 const localStyles = StyleSheet.create({
@@ -32,6 +45,7 @@ const localStyles = StyleSheet.create({
     borderRadius: 30,
     height: 30,
     width: 30,
+    elevation: 5,
     borderColor: SUSSOL_ORANGE,
     borderWidth: 1,
     alignItems: 'center',
