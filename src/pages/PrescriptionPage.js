@@ -19,6 +19,7 @@ import {
   SimpleTable,
   PageButton,
 } from '../widgets';
+import { PrescriptionCart } from '../widgets/PrescriptionCart';
 
 import { UIDatabase } from '../database';
 import { getColumns } from './dataTableUtilities';
@@ -104,7 +105,7 @@ const ItemSelect = connect(
   mapStateToProps,
   mapDispatchToProps
 )(({ transaction, chooseItem, nextTab }) => {
-  const { row, mediumFlex, largeFlex } = localStyles;
+  const { row, mediumFlex } = localStyles;
   const columns = getColumns('itemSelect');
 
   const tableRef = React.useRef(React.createRef());
@@ -128,7 +129,7 @@ const ItemSelect = connect(
   );
 
   return (
-    <View style={{ ...row, marginTop: 50 }}>
+    <View style={{ ...row, marginTop: 20 }}>
       <TableShortcuts>
         <TableShortcut>
           <FavouriteStarIcon />
@@ -143,16 +144,10 @@ const ItemSelect = connect(
           ref={tableRef}
         />
       </View>
-      <View style={largeFlex}>
-        <View>
-          {transaction.items.map(item => (
-            <View>
-              <Text>{item.itemName}</Text>
-            </View>
-          ))}
-        </View>
+      <View style={{ flex: 15, marginHorizontal: 15 }}>
+        <PrescriptionCart items={transaction.items.slice()} />
+        <PageButton text="Next" onPress={() => nextTab(1)} style={{ alignSelf: 'flex-end' }} />
       </View>
-      <PageButton text="NEXT" onPress={() => nextTab(1)} />
     </View>
   );
 });
