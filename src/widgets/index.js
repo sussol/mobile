@@ -27,6 +27,10 @@ export { ExpiryDateInput } from './ExpiryDateInput';
 export { SearchBar } from './SearchBar';
 export { DataTablePageView } from './DataTablePageView';
 export { Flag } from './Flag';
+export { BarChart } from './BarChart';
+export { LineChart } from './LineChart';
+export { PieChart } from './PieChart';
+export { ReportTable } from './ReportTable';
 export {
   SortAscIcon,
   SortNeutralIcon,
