@@ -8,7 +8,7 @@ import React from 'react';
 
 import PropTypes from 'prop-types';
 
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 import {
@@ -20,6 +20,7 @@ import {
   PageButton,
 } from '../widgets';
 import { PrescriptionCart } from '../widgets/PrescriptionCart';
+import { PrescriptionSummary } from '../widgets/PrescriptionSummary';
 
 import { UIDatabase } from '../database';
 import { getColumns } from './dataTableUtilities';
@@ -154,11 +155,7 @@ const ItemSelect = connect(
 
 const Summary = connect(mapStateToProps)(({ transaction }) => (
   <View style={{ flex: 1 }}>
-    {transaction.items.map(item => (
-      <View key={item.id}>
-        <Text>{item.itemName}</Text>
-      </View>
-    ))}
+    <PrescriptionSummary transaction={transaction} />
   </View>
 ));
 
