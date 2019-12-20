@@ -10,9 +10,7 @@ import { View, ListItem, FlatList, Text, StyleSheet } from 'react-native';
 import { APP_FONT_FAMILY, GREY } from '../../globalStyles';
 import { pageInfoStrings } from '../../localization/pageInfoStrings';
 
-export const ReportSidebar = props => {
-  const { dimensions, onPressItem, selectedItemIndex, data } = props;
-
+export const ReportSideBar = ({ data, onPressItem, selectedItemIndex, dimensions }) => {
   const renderItem = ({ item }) => {
     const { id, index, title, type, date } = item;
     return (
@@ -42,7 +40,7 @@ export const ReportSidebar = props => {
         data={data}
         ReportSideBarItem={renderItem}
         keyExtractor={item => item.id}
-        extraData={props}
+        extraData={{ dimensions, onPressItem, selectedItemIndex, data }}
       />
     </View>
   );
@@ -68,7 +66,7 @@ const localStyles = StyleSheet.create({
   },
 });
 
-ReportSidebar.propTypes = {
+ReportSideBar.propTypes = {
   item: PropTypes.objectOf(PropTypes.object).isRequired,
   data: PropTypes.PropTypes.shape([]).isRequired,
   onPressItem: PropTypes.func.isRequired,
