@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
@@ -7,23 +8,10 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
-import { PieChart } from './PieChart';
-import { BarChart } from './BarChart';
-import { LineChart } from './LineChart';
-import { ReportTable } from './ReportTable';
+import { PieChart, BarChart, LineChart, ReportTable } from './index';
 
-/**
- * A charting widget for displaying reports as bar charts, line charts and pie graphs.
- *
- * @prop  {string}       id      The report ID.
- * @prop  {string}       title   The title of the report.
- * @prop  {string}       type    The type of chart to use to display the report,
- *                               options are BarChart, LineChart and PieChart.
- * @prop  {data}         array   An array of {x, y} datapoints to plot.
- * @prop  {width}        number  The width of the parent container.
- * @prop  {height}       number  The height of the parent continer.
- */
-export const ReportChart = ({ type, title, data }) => {
+export const ReportChart = ({ report }) => {
+  const { type, data } = report;
   const { rows, header } = data;
   const [dimensions, setDimensions] = useState({ height: null, width: null });
   const { height, width } = dimensions;
@@ -39,17 +27,16 @@ export const ReportChart = ({ type, title, data }) => {
   };
 
   const renderChart = () => {
-    if (data === null || !width || !height) return null;
+    if (report === null || !width || !height) return null;
     switch (type) {
       case 'BarChart':
-        return <BarChart />;
+        return <BarChart report={report} />;
       case 'LineChart':
-        return <LineChart />;
-      case 'Table': {
+        return <LineChart report={report} />;
+      case 'Table':
         return <ReportTable rows={rows} header={header} />;
-      }
       case 'PieChart':
-        return <PieChart report={(type, title, data)} />;
+        return <PieChart report={report} />;
       default:
         return null;
     }
@@ -73,9 +60,7 @@ const localStyles = StyleSheet.create({
 });
 
 ReportChart.propTypes = {
-  type: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  data: PropTypes.array.isRequired,
+  report: PropTypes.objectOf(PropTypes.object()).isRequired,
   rows: PropTypes.string.isRequired,
   header: PropTypes.string.isRequired,
 };
