@@ -14,13 +14,17 @@ import { ReportRow } from './ReportRow';
 export const ReportTable = ({ rows, header }) => {
   const renderItem = ({ item, index }) => <ReportRow rowData={item} rowIndex={index} />;
 
-  const renderHeader = () => <ReportRow rowData={header} isHeader rowIndex={0} />;
+  const renderHeader = () => <ReportRow rowData={header} rowIndex={0} />;
 
   // TODO: KeyExtractor should be altered to not use the index.
   return (
     <View style={localStyles.container}>
-      {renderHeader()}
-      <FlatList data={rows} renderItem={renderItem} keyExtractor={(_, index) => `${index}`} />
+      <FlatList
+        data={rows}
+        ListHeaderComponent={renderHeader}
+        renderItem={renderItem}
+        keyExtractor={(_, index) => `${index}`}
+      />
     </View>
   );
 };
