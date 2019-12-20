@@ -11,10 +11,19 @@ import { NumberLabelRow } from './NumberLabelRow';
 import { DetailRow } from './DetailRow';
 import { SimpleLabel } from './SimpleLabel';
 
+/**
+ * Simple layout component for primary use within the PrescriptionSummary
+ * component.
+ *
+ * Simply lays out a TransactionItem record showing details related to
+ * the prescription it is related from.
+ *
+ * @param {Object} item A TransactionItem record to display details for.
+ */
 export const PrescriptionSummaryRow = ({ item }) => {
   const { itemName, itemCode, totalQuantity, direction } = item;
 
-  const details = React.useMemo([{ label: 'Code', text: itemCode }], []);
+  const details = [{ label: 'Code', text: itemCode }];
 
   return (
     <View style={localStyles.mainContainer}>
