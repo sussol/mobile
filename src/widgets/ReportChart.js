@@ -28,13 +28,13 @@ export const ReportChart = ({ report }) => {
     if (report === null || !width || !height) return null;
     switch (type) {
       case 'BarChart':
-        return <BarChart report={report} />;
+        return <BarChart report={report} height={height} width={width} />;
       case 'LineChart':
-        return <LineChart report={report} />;
+        return <LineChart report={report} height={height} width={width} />;
       case 'Table':
         return <ReportTable rows={rows} header={header} />;
       case 'PieChart':
-        return <PieChart report={report} />;
+        return <PieChart report={report} height={height} width={width} />;
       default:
         return null;
     }
