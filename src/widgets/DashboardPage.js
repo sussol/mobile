@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2018
@@ -77,6 +78,6 @@ const localStyles = StyleSheet.create({
 });
 
 DashboardPage.propTypes = {
-  database: PropTypes.objectOf(PropTypes.object()).isRequired,
-  settings: PropTypes.objectOf(PropTypes.object()).isRequired,
+  database: PropTypes.object.isRequired,
+  settings: PropTypes.object.isRequired,
 };
