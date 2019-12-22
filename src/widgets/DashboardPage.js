@@ -31,7 +31,7 @@ export const DashboardPage = ({ database, settings }) => {
       database
         .objects('Report')
         .snapshot()
-        .map((report, index) => ({
+        .then((report, index) => ({
           id: report.reportID,
           index,
           title: report.title,
@@ -40,7 +40,7 @@ export const DashboardPage = ({ database, settings }) => {
           data: JSON.parse(report.data),
         }))
     );
-  });
+  }, [reports]);
 
   const onPressItem = id => {
     if (selectedItemIndex === id) return;
