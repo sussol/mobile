@@ -33,6 +33,7 @@ export const PrescriptionCartRow = ({
   onRemoveItem,
   options,
   onOptionSelection,
+  currentOptionText,
 }) => {
   const { itemName, totalQuantity, itemCode, price } = item;
 
@@ -49,7 +50,7 @@ export const PrescriptionCartRow = ({
           <DetailRow details={itemDetails} />
           <View style={{ height: 10 }} />
           <DropdownRow
-            currentOptionText="Some direction"
+            currentOptionText={currentOptionText}
             options={options}
             onSelection={onOptionSelection}
             dropdownTitle="Directions"
@@ -63,12 +64,17 @@ export const PrescriptionCartRow = ({
   );
 };
 
+PrescriptionCartRow.defaultProps = {
+  currentOptionText: '',
+};
+
 PrescriptionCartRow.propTypes = {
   item: PropTypes.object.isRequired,
   onChangeQuantity: PropTypes.func.isRequired,
   onRemoveItem: PropTypes.func.isRequired,
   options: PropTypes.array.isRequired,
   onOptionSelection: PropTypes.func.isRequired,
+  currentOptionText: PropTypes.string,
 };
 
 const localStyles = StyleSheet.create({
