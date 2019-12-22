@@ -9,10 +9,8 @@
  * @return {bool}
  */
 export const selectCanSaveForm = ({ form }) => {
-  const areAllValid = Object.values(form).every(({ isValid }) => isValid);
-  const allHaveValues = Object.values(form).every(({ hasValue }) => hasValue);
-
-  return areAllValid && allHaveValues;
+  const allAreValid = Object.values(form).every(({ isValid }) => isValid);
+  return allAreValid;
 };
 
 /**

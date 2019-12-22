@@ -39,6 +39,7 @@ const FORM_INPUT_CONFIGS = {
     type: 'text',
     initialValue: '',
     key: 'firstName',
+    validator: input => input.length > 0,
     isRequired: true,
     label: 'First name:',
     invalidMessage: 'need to be x',
@@ -47,6 +48,7 @@ const FORM_INPUT_CONFIGS = {
     type: 'text',
     initialValue: '',
     key: 'lastName',
+    validator: input => input.length > 0,
     isRequired: true,
     label: 'Last name:',
   },
@@ -54,7 +56,7 @@ const FORM_INPUT_CONFIGS = {
     type: 'text',
     initialValue: '',
     key: 'code',
-    validator: input => input.length < 20,
+    validator: input => input.length > 0 && input.length < 20,
     isRequired: true,
     label: 'Code:',
   },
@@ -63,6 +65,7 @@ const FORM_INPUT_CONFIGS = {
     initialValue: '',
     key: 'dateOfBirth',
     invalidMessage: 'Must be a valid date',
+    isRequired: false,
     validator: input => {
       // Ensure the entered value is castable to a date and is less than
       // the current date.
