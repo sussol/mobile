@@ -51,6 +51,8 @@ const Dispensing = ({
   savePrescriber,
   saveNewPrescriber,
   prescriberModalOpen,
+  usingPatientsDataSet,
+  usingPrescribersDataSet,
 }) => {
   const getCellCallbacks = colKey => {
     switch (colKey) {
@@ -72,7 +74,7 @@ const Dispensing = ({
           getCallback={getCellCallbacks}
           columns={columns}
           rowIndex={index}
-          onPress={dataSet === DATA_SET.PATIENTS ? editPatient : editPrescriber}
+          onPress={usingPatientsDataSet ? editPatient : editPrescriber}
         />
       );
     },
@@ -96,12 +98,12 @@ const Dispensing = ({
       {
         text: 'Patients',
         onPress: () => dispatch(PageActions.toggleDataSet(DATA_SET.PATIENTS, ROUTES.DISPENSARY)),
-        isOn: dataSet === DATA_SET.PATIENTS,
+        isOn: usingPatientsDataSet,
       },
       {
         text: 'Prescribers',
         onPress: () => dispatch(PageActions.toggleDataSet(DATA_SET.PRESCRIBERS, ROUTES.DISPENSARY)),
-        isOn: dataSet === DATA_SET.PRESCRIBERS,
+        isOn: usingPrescribersDataSet,
       },
     ],
     [dataSet]
@@ -119,8 +121,8 @@ const Dispensing = ({
             viewStyle={localStyles.searchBar}
           />
           <PageButton
-            text={dataSet === DATA_SET.PATIENTS ? 'New Patient' : 'New Prescriber'}
-            onPress={dataSet === DATA_SET.PATIENTS ? createPatient : createPrescriber}
+            text={usingPatientsDataSet ? 'New Patient' : 'New Prescriber'}
+            onPress={usingPatientsDataSet ? createPatient : createPrescriber}
           />
         </View>
         <DataTable
@@ -169,8 +171,11 @@ const mapStateToProps = state => {
   const { pages, patient, prescriber } = state;
   const { dispensary } = pages;
   const { isCreating, isEditing, currentPatient } = patient;
-
   const { isCreatingPrescriber, isEditingPrescriber, currentPrescriber } = prescriber;
+
+  const { dataSet } = dispensary;
+  const usingPatientsDataSet = dataSet === ROUTES.PATIENTS;
+  const usingPrescribersDataSet = dataSet === ROUTES.PRESCRIBERS;
 
   return {
     ...dispensary,
@@ -181,32 +186,28 @@ const mapStateToProps = state => {
     isCreatingPrescriber,
     isEditingPrescriber,
     currentPrescriber,
+    usingPatientsDataSet,
+    usingPrescribersDataSet,
   };
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
-  const gotoPrescription = patientID => dispatch(createPrescription(patientID));
-  const editPatient = patientID => dispatch(PatientActions.editPatient(patientID));
-  const createPatient = () => dispatch(PatientActions.createPatient());
-  const cancelPatientEdit = () => dispatch(PatientActions.closeModal());
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.DISPENSARY),
+  gotoPrescription: patientID => dispatch(createPrescription(patientID)),
 
-  return {
-    ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.DISPENSARY),
-    gotoPrescription,
-    editPatient,
-    createPatient,
-    cancelPatientEdit,
-    savePatient: patientDetails => dispatch(PatientActions.patientUpdate(patientDetails)),
-    saveNewPatient: patientDetails => dispatch(PatientActions.saveNewPatient(patientDetails)),
-    editPrescriber: prescriber => dispatch(PrescriberActions.editPrescriber(prescriber)),
-    createPrescriber: () => dispatch(PrescriberActions.createPrescriber()),
-    cancelPrescriberEdit: () => dispatch(PrescriberActions.closeModal()),
-    savePrescriber: prescriberDetails =>
-      dispatch(PrescriberActions.updatePrescriber(prescriberDetails)),
-    saveNewPrescriber: prescriberDetails =>
-      dispatch(PrescriberActions.saveNewPrescriber(prescriberDetails)),
-  };
-};
+  editPatient: patientID => dispatch(PatientActions.editPatient(patientID)),
+  createPatient: () => dispatch(PatientActions.createPatient()),
+  cancelPatientEdit: () => dispatch(PatientActions.closeModal()),
+  savePatient: patientDetails => dispatch(PatientActions.patientUpdate(patientDetails)),
+  saveNewPatient: patientDetails => dispatch(PatientActions.saveNewPatient(patientDetails)),
+
+  createPrescriber: () => dispatch(PrescriberActions.createPrescriber()),
+  cancelPrescriberEdit: () => dispatch(PrescriberActions.closeModal()),
+  savePrescriber: prescriberDetails =>
+    dispatch(PrescriberActions.updatePrescriber(prescriberDetails)),
+  saveNewPrescriber: prescriberDetails =>
+    dispatch(PrescriberActions.saveNewPrescriber(prescriberDetails)),
+});
 
 export const DispensingPage = connect(mapStateToProps, mapDispatchToProps)(Dispensing);
 
@@ -243,4 +244,6 @@ Dispensing.propTypes = {
   savePrescriber: PropTypes.func.isRequired,
   saveNewPrescriber: PropTypes.func.isRequired,
   prescriberModalOpen: PropTypes.bool.isRequired,
+  usingPatientsDataSet: PropTypes.bool.isRequired,
+  usingPrescribersDataSet: PropTypes.bool.isRequired,
 };
