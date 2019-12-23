@@ -9,12 +9,8 @@ import { View } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import {
-  getColumns,
-  recordKeyExtractor,
-  getItemLayout,
-} from '../../pages/dataTableUtilities/index';
-import { DataTable, DataTableRow, DataTableHeaderRow } from '../DataTable/index';
+import { getColumns, recordKeyExtractor, getItemLayout } from '../../pages/dataTableUtilities';
+import { DataTable, DataTableRow, DataTableHeaderRow } from '../DataTable';
 import { selectSortedPatientHistory } from '../../selectors/patient';
 import { PatientActions } from '../../actions/PatientActions';
 
