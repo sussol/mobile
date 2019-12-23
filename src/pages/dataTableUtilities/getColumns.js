@@ -31,7 +31,7 @@ const PAGE_COLUMN_WIDTHS = {
   stocktakeBatchEditModalWithReasons: [1, 1, 1, 1, 1, 1],
   regimenDataModal: [4, 1, 5],
   prescriberSelect: [1, 1],
-  itemSelect: [1, 1],
+  itemSelect: [1, 3],
 };
 
 const PAGE_COLUMNS = {

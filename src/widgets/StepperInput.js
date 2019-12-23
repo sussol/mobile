@@ -1,10 +1,11 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TextInput, View, TouchableOpacity, StyleSheet } from 'react-native';
+import { TextInput, View, StyleSheet } from 'react-native';
 
-import IonIcon from 'react-native-vector-icons/Ionicons';
-import { SUSSOL_ORANGE, APP_FONT_FAMILY } from '../globalStyles/index';
+import { APP_FONT_FAMILY } from '../globalStyles/index';
+import { CircleButton } from './CircleButton';
+import { AddIcon, MinusIcon } from './icons';
 
 /**
  * Input component which will update a numerical value. The `value` passed will be
@@ -18,20 +19,10 @@ import { SUSSOL_ORANGE, APP_FONT_FAMILY } from '../globalStyles/index';
  * @prop {Func}          onChangeText   Callback for updating the value.
  * @prop {Number}        lowerLimit     The lower limit of the numerical range.
  * @prop {Number}        upperLimit     The upper limit of the numerical range.
- * @prop {Number}        iconSize       The size of the icons.
- * @prop {Number}        iconColour     The colour of the icons.
  * @prop {Object}        textInputStyle Style object for the underlying TextInput.
  *
  */
-export const StepperInput = ({
-  value,
-  onChangeText,
-  lowerLimit,
-  upperLimit,
-  iconSize,
-  iconColour,
-  textInputStyle,
-}) => {
+export const StepperInput = ({ value, onChangeText, lowerLimit, upperLimit, textInputStyle }) => {
   const currentValue = React.useRef(Number(value));
   const currentAdjustmentAmount = React.useRef(1);
   const valueAdjustmentInterval = React.useRef();
@@ -85,24 +76,29 @@ export const StepperInput = ({
 
   return (
     <View style={localStyles.row}>
-      <TouchableOpacity onPressIn={onStartDecrementPress} onPressOut={onEndLongPress}>
-        <IonIcon name="ios-remove" size={iconSize} color={iconColour} />
-      </TouchableOpacity>
-      <TextInput onChangeText={onUpdate} value={String(value)} style={{ textInputStyle }} />
-      <TouchableOpacity onPressIn={onStartIncrementPress} onPressOut={onEndLongPress}>
-        <IonIcon name="ios-add" size={iconSize} color={iconColour} />
-      </TouchableOpacity>
+      <CircleButton
+        IconComponent={MinusIcon}
+        onPressIn={onStartDecrementPress}
+        onPressOut={onEndLongPress}
+      />
+      <TextInput onChangeText={onUpdate} value={String(value)} style={textInputStyle} />
+      <CircleButton
+        IconComponent={AddIcon}
+        onPressIn={onStartIncrementPress}
+        onPressOut={onEndLongPress}
+      />
     </View>
   );
 };
 
 const localStyles = StyleSheet.create({
-  row: { flexDirection: 'row' },
+  row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
   textInput: {
-    marginHorizontal: 50,
+    marginHorizontal: 25,
     width: 100,
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: 24,
+
     fontFamily: APP_FONT_FAMILY,
   },
 });
@@ -110,8 +106,6 @@ const localStyles = StyleSheet.create({
 StepperInput.defaultProps = {
   lowerLimit: 0,
   upperLimit: 99999,
-  iconSize: 45,
-  iconColour: SUSSOL_ORANGE,
   textInputStyle: localStyles.textInput,
 };
 
@@ -120,7 +114,5 @@ StepperInput.propTypes = {
   upperLimit: PropTypes.number,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   onChangeText: PropTypes.func.isRequired,
-  iconSize: PropTypes.number,
-  iconColour: PropTypes.string,
   textInputStyle: PropTypes.object,
 };
