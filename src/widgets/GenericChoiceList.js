@@ -12,7 +12,7 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native
 import { COMPONENT_HEIGHT } from '../globalStyles';
 
 /**
- * Generic choice list for use within a PageContentModal.
+ * Generic choice list for use within a ModalContainer.
  *
  * On selecting a choice, returns the object which was selected, the index/row
  * within the data array and the field which was displayed to the user.
