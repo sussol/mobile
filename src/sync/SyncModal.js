@@ -11,7 +11,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Modal from 'react-native-modalbox';
 
 import { PROGRESS_LOADING } from './constants';
-import { syncStrings } from '../localization/index';
+import { syncStrings } from '../localization';
 import { formatPlural, formatDate } from '../utilities';
 import { Button, ProgressBar } from '../widgets';
 

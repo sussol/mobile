@@ -142,9 +142,9 @@ export class RequisitionItem extends Realm.Object {
       .map(({ masterList }) => masterList.id);
 
     // Query string: Query for all MasterList.IDs related to this store and this item.
-    const queryString = `${masterListIds
+    const queryString = `(${masterListIds
       .map(id => `masterList.id == '${id}'`)
-      .join(' OR ')} AND item = $0`;
+      .join(' OR ')}) AND item = $0`;
 
     // Return the maximum price of all MasterListItems.
     return UIDatabase.objects('MasterListItem')

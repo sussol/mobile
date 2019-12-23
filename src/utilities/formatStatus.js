@@ -1,4 +1,4 @@
-import { tableStrings } from '../localization/index';
+import { tableStrings } from '../localization';
 
 export const formatStatus = status => {
   switch (status) {
