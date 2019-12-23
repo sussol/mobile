@@ -15,9 +15,7 @@ import { SUSSOL_ORANGE, APP_FONT_FAMILY, DARKER_GREY, FINALISED_RED } from '../g
  * @prop {Bool}   isRequired            Indicator whether to show the is required label
  * @prop {String} label                 The form label for this text input, displayed to the left.
  * @prop {String} invalidMessage        Displayed under the TextInput when the input is invalid.
- * @prop {Func}   onSubmitEditing       Callback when editing has completed.
  * @prop {Func}   onValidate            Function determining if the current input value is valid.
- * @prop {Func}   onChangeValidState    Callback when the validity state changes.
  * @prop {String} value                 The initial value of the input.
  * @prop {Object} labelStyle            Style of the label.
  * @prop {Object} isRequiredStyle       Style for the is required label.
@@ -31,9 +29,8 @@ export const ValidationTextInput = ({
   isRequired,
   label,
   invalidMessage,
-  onSubmitEditing,
   onValidate,
-  onChangeValidState,
+  onChangeText,
   value,
   labelStyle,
   isRequiredStyle,
@@ -56,41 +53,31 @@ export const ValidationTextInput = ({
   // to notify the parent.
   const onCheckValidity = React.useCallback(
     inputToCheck => {
-      const newValidState = onValidate(inputToCheck);
-      if (newValidState !== isValid) onChangeValidState(newValidState);
+      const newValidState = onValidate ? onValidate(inputToCheck) : true;
       return newValidState;
     },
     [isValid]
   );
 
-  // On completing input (losing focus/submitting), trigger the callback notifying
-  // the parent.
-  const onCompletedInput = React.useCallback(() => {
-    onSubmitEditing(inputValue);
-  }, []);
-
   // When changing the value of the input, check the new validity and set the new input.
   // Do not restrict input, but provide feedback to the user.
-  const onChangeText = React.useCallback(
+  const onChangeTextCallback = React.useCallback(
     newValue => {
       const newValidState = onCheckValidity(newValue);
       setInputState({ isValid: newValidState, inputValue: newValue });
+      onChangeText(newValue);
     },
-    [isValid, onChangeValidState]
+    [isValid]
   );
-
-  React.useEffect(() => {
-    onChangeText(value);
-  }, [value]);
 
   return (
     <View style={flexColumn}>
       <View style={flexRow}>
-        <View>
-          <Text style={labelStyle}>{label}</Text>
-          <IsRequiredLabel />
-        </View>
         <View style={flexColumn}>
+          <View style={{ flexRow }}>
+            <Text style={labelStyle}>{label}</Text>
+            <IsRequiredLabel />
+          </View>
           <TextInput
             style={textInputStyle}
             value={inputValue}
@@ -101,9 +88,7 @@ export const ValidationTextInput = ({
             returnKeyType="next"
             autoCapitalize="none"
             autoCorrect={false}
-            onChangeText={onChangeText}
-            onBlur={onCompletedInput}
-            onSubmitEditing={onCompletedInput}
+            onChangeText={onChangeTextCallback}
           />
           <InvalidMessageLabel />
         </View>
@@ -126,21 +111,21 @@ ValidationTextInput.defaultProps = {
   placeholderTextColor: SUSSOL_ORANGE,
   underlineColorAndroid: DARKER_GREY,
   value: '',
-  isRequired: true,
+  isRequired: false,
   invalidMessage: '',
   labelStyle: localStyles.labelStyle,
   isRequiredStyle: localStyles.isRequiredStyle,
   invalidMessageStyle: localStyles.invalidMessageStyle,
   textInputStyle: localStyles.textInputStyle,
+  onValidate: null,
 };
 
 ValidationTextInput.propTypes = {
   placeholder: PropTypes.string,
   placeholderTextColor: PropTypes.string,
   underlineColorAndroid: PropTypes.string,
-  onSubmitEditing: PropTypes.func.isRequired,
-  onValidate: PropTypes.func.isRequired,
-  onChangeValidState: PropTypes.func.isRequired,
+  onChangeText: PropTypes.func.isRequired,
+  onValidate: PropTypes.func,
   value: PropTypes.string,
   isRequired: PropTypes.bool,
   label: PropTypes.string.isRequired,
