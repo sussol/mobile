@@ -13,8 +13,8 @@ import Settings from '../../settings/MobileAppSettings';
 import { getModalTitle, MODAL_KEYS } from '../../utilities/getModalTitle';
 
 import ModalContainer from './ModalContainer';
-import { AutocompleteSelector } from '../AutocompleteSelector';
-import { MultiSelectList } from '../MultiSelectList';
+import AutocompleteSelector from '../AutocompleteSelector';
+import MultiSelectList from '../MultiSelectList';
 import { TextEditor } from '../TextEditor';
 import { ByProgramModal } from './ByProgramModal';
 import { ToggleSelector } from '../ToggleSelector';
@@ -23,7 +23,7 @@ import { NewConfirmModal } from './NewConfirmModal';
 import { GenericChoiceList } from '../GenericChoiceList';
 import { StocktakeBatchModal } from './StocktakeBatchModal';
 
-import { modalStrings } from '../../localization/index';
+import { modalStrings } from '../../localization';
 
 /**
  * Wrapper around ModalContainer, containing common modals used in various

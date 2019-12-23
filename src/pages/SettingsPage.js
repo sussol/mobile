@@ -23,7 +23,7 @@ import { DataTablePageView, PageInfo } from '../widgets/index';
 import { DataTablePageModal } from '../widgets/modals/index';
 
 import globalStyles from '../globalStyles';
-import { generalStrings, buttonStrings } from '../localization/index';
+import { generalStrings, buttonStrings } from '../localization';
 
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);

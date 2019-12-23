@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { authStrings, modalStrings, buttonStrings } from '../localization/index';
+import { authStrings, modalStrings, buttonStrings } from '../localization';
 
 export const MODAL_KEYS = {
   CONFIRM_USER_PASSWORD: 'confirmUserPassword',

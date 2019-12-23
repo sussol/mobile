@@ -4,6 +4,7 @@ about: Suggest an idea for this project
 title: Concisely the feature I want
 labels: Feature
 assignees: ''
+
 ---
 
 ## Is your feature request related to a problem? Please describe.
@@ -13,6 +14,10 @@ assignees: ''
 ## Describe the solution you'd like
 
 **A clear and concise description of what you want to happen.**
+
+## Implementation
+
+**A description of how the solution would best be implemented in the code base**
 
 ## Describe alternatives you've considered
 
