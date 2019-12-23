@@ -36,6 +36,18 @@ export class TransactionBatch extends Realm.Object {
   }
 
   /**
+   * Returns either the prescriber name who prescribed the medicine
+   * to a patient, or an empty string.
+   * @return {String}
+   */
+  get prescriber() {
+    const { prescriber } = this.transaction;
+    const { firstName = '', lastName = '' } = prescriber || {};
+    if (!firstName && !lastName) return '';
+    return `${firstName} ${lastName}`.trim();
+  }
+
+  /**
    * Get total quantity of this batch.
    *
    * @return  {number}

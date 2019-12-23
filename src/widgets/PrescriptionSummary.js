@@ -8,7 +8,7 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import PropTypes from 'prop-types';
 
-import { Seperator } from './Seperator';
+import { Separator } from './Separator';
 import { PrescriptionSummaryRow } from './PrescriptionSummaryRow';
 
 import { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles';
@@ -24,7 +24,7 @@ export const PrescriptionSummary = ({ transaction }) => (
     <Text style={localStyles.titleStyle}>Item Details</Text>
     <FlatList
       data={transaction.items}
-      ItemSeparatorComponent={Seperator}
+      ItemSeparatorComponent={Separator}
       renderItem={PrescriptionSummaryRow}
     />
   </View>
