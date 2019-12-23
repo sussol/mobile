@@ -10,7 +10,7 @@ import { Client as BugsnagClient } from 'bugsnag-react-native';
 
 import { ConfirmModal } from './ConfirmModal';
 
-import { modalStrings } from '../../localization/index';
+import { modalStrings } from '../../localization';
 
 const bugsnagClient = new BugsnagClient();
 
