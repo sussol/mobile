@@ -48,8 +48,10 @@ const simpleLabelStyles = size => ({
     color: SUSSOL_ORANGE,
     fontSize: size === 'small' ? APP_GENERAL_FONT_SIZE : 20,
     fontWeight: 'bold',
+    flex: 1,
   },
   textStyle: {
+    flex: 4,
     fontFamily: APP_FONT_FAMILY,
     color: DARKER_GREY,
     fontSize: size === 'small' ? APP_GENERAL_FONT_SIZE : 20,

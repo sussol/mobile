@@ -22,7 +22,7 @@ export const DetailRow = ({ details }) => {
   const Details = React.useCallback(
     () =>
       details.map(({ label, text }) => (
-        <View key={label}>
+        <View key={label} style={{ flex: 1 }}>
           <SimpleLabel label={label} size="small" text={text} />
         </View>
       )),
@@ -40,6 +40,8 @@ const localStyles = {
   rowContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'flex-start',
+    flex: 1,
   },
 };
 
