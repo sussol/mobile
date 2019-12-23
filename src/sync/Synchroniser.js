@@ -9,7 +9,7 @@ import DeviceInfo from 'react-native-device-info';
 
 import { Client as BugsnagClient } from 'bugsnag-react-native';
 
-import { syncStrings } from '../localization/syncStrings';
+import { syncStrings } from '../localization/index';
 
 import {
   incrementSyncProgress,
