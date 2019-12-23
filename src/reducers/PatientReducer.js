@@ -4,10 +4,9 @@
  */
 
 import { PATIENT_ACTIONS } from '../actions/PatientActions';
-import { UIDatabase } from '../database/index';
 
 const patientInitialState = () => ({
-  currentPatient: UIDatabase.objects('Name')[0],
+  currentPatient: null,
   isEditing: false,
   isCreating: false,
   viewingHistory: false,
