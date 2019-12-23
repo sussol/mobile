@@ -17,47 +17,36 @@ import globalStyles from '../globalStyles';
 /**
  * Renders a View containing a TextInput and confirm Button, to allow editing
  * of the text passed in as a prop.
- * @prop {string}   text          The text in its initial state
- * @prop {function} onEndEditing  A function to call with the new text
- *                                on confirm
+ * @prop {string}   text            The text in its initial state
+ * @prop {function} onEndEditing    A function to call with the new text on confirm.
+ * @prop {Bool}     secureTextEntry Indicator if secure text entry should be used.
  */
-export class TextEditor extends React.Component {
-  constructor(props) {
-    super(props);
+const TextEditor = ({ onEndEditing, secureTextEntry, text }) => {
+  const [textValue, setTextValue] = React.useState(text);
 
-    const { text } = this.props;
+  const submitValue = React.useCallback(() => onEndEditing(textValue));
 
-    this.state = {
-      text,
-    };
-  }
-
-  render() {
-    const { onEndEditing, secureTextEntry } = this.props;
-    const { text } = this.state;
-
-    return (
-      <View style={localStyles.container}>
-        <TextInput
-          autoFocus={true}
-          style={localStyles.textInput}
-          textStyle={globalStyles.modalText}
-          underlineColorAndroid="transparent"
-          value={text}
-          onChangeText={newText => this.setState({ text: newText })}
-          onSubmitEditing={() => onEndEditing(text)}
-          secureTextEntry={secureTextEntry}
-        />
-        <Button
-          style={[globalStyles.button, globalStyles.modalOrangeButton]}
-          textStyle={[globalStyles.buttonText, globalStyles.modalButtonText]}
-          text={buttonStrings.done}
-          onPress={() => onEndEditing(text)}
-        />
-      </View>
-    );
-  }
-}
+  return (
+    <View style={localStyles.container}>
+      <TextInput
+        autoFocus={true}
+        style={localStyles.textInput}
+        textStyle={globalStyles.modalText}
+        underlineColorAndroid="transparent"
+        value={textValue}
+        onChangeText={setTextValue}
+        onSubmitEditing={submitValue}
+        secureTextEntry={secureTextEntry}
+      />
+      <Button
+        style={localStyles.confirmButtonStyle}
+        textStyle={localStyles.confirmButtonTextStyle}
+        text={buttonStrings.done}
+        onPress={submitValue}
+      />
+    </View>
+  );
+};
 
 export default TextEditor;
 
@@ -80,5 +69,13 @@ const localStyles = StyleSheet.create({
   textInput: {
     flex: 1,
     marginRight: 10,
+  },
+  confirmButtonStyle: {
+    ...globalStyles.button,
+    ...globalStyles.modalOrangeButton,
+  },
+  confirmButtonTextStyle: {
+    ...globalStyles.buttonText,
+    ...globalStyles.modalButtonText,
   },
 });
