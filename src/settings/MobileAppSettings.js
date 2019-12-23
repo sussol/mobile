@@ -1,8 +1,7 @@
 import { Settings } from 'react-native-database';
 
 import { SETTINGS_KEYS } from './index';
-import { DEFAULT_LANGUAGE } from '../localization/index';
-import { setCurrentLanguage } from '../localization/utilities';
+import { setCurrentLanguage, DEFAULT_LANGUAGE } from '../localization';
 import { UIDatabase } from '../database';
 
 class MobileAppSettings extends Settings {

@@ -58,5 +58,5 @@ export const dailyUsage = item => {
     .filtered('transaction.confirmDate >= $0 && transaction.confirmDate <= $1', startDate, dateNow)
     .reduce((sum, { totalQuantity }) => sum + totalQuantity, 0);
 
-  return usage / numberOfUsageDays || 1;
+  return usage / (numberOfUsageDays || 1);
 };

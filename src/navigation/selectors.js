@@ -16,4 +16,15 @@ const getCurrentRouteName = state =>
 const getCurrentParams = state =>
   state.routes[state.index] ? state.routes[state.index].params : undefined;
 
-export { routeList, getCurrentRouteName, getCurrentParams };
+const prevRouteNameSelector = state => {
+  const { nav } = state;
+  const { routes } = nav;
+
+  const numberOfRoutes = routes.length;
+  const prevRouteIndex = numberOfRoutes > 1 ? numberOfRoutes - 2 : 0;
+  const { routeName } = routes[prevRouteIndex];
+
+  return routeName;
+};
+
+export { routeList, prevRouteNameSelector, getCurrentRouteName, getCurrentParams };

@@ -14,6 +14,7 @@ import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets'
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { UIDatabase } from '../database';
+import { User } from '../database/DataTypes';
 import Settings from '../settings/MobileAppSettings';
 import { MODAL_KEYS, getAllPrograms } from '../utilities';
 import { ROUTES } from '../navigation/constants';
@@ -22,7 +23,7 @@ import { createSupplierRequisition, gotoSupplierRequisition } from '../navigatio
 import { getItemLayout, PageActions, getPageDispatchers } from './dataTableUtilities';
 
 import globalStyles from '../globalStyles';
-import { buttonStrings, modalStrings } from '../localization/index';
+import { buttonStrings, modalStrings } from '../localization';
 
 /**
  * Renders a mSupply mobile page with a list of supplier requisitions.
