@@ -18,12 +18,13 @@ import {
 
 /**
  * A modal that can be displayed over the page content container, rendering any children
- * about two thirds of the way up, and a cross in the top right to close
+ * about two thirds of the way up, and a cross in the top right to close.
  * @prop {Bool}             fullScreen Force the modal to cover the entire screen.
- * @prop {Bool}             isVisible  Whether the modal is open
- * @prop {Func}             onClose    A function to call if the close x is pressed
+ * @prop {Bool}             isVisible  Whether the modal is open.
+ * @prop {Func}             onClose    A function to call if the close x is pressed.
  * @prop {String}           title      The title to show in within the modal.
- * @prop {React.Element}    children   The components to render within the modal
+ * @prop {React.Element}    children   The components to render within the modal.
+ * @prop {Bool}             noCancel   Indicator that the close button should not display.
  */
 const ModalContainer = ({ fullScreen, isVisible, onClose, title, children, noCancel }) => {
   const {
@@ -42,18 +43,24 @@ const ModalContainer = ({ fullScreen, isVisible, onClose, title, children, noCan
   const internalChildrenContainer = fullScreen ? fullScreenChildrenContainer : childrenContainer;
   const internalContentContainer = fullScreen ? fullScreenContentContainer : contentContainer;
 
-  const CloseButton = () => (
-    <TouchableOpacity onPress={onClose} style={closeButton}>
-      <CloseIcon />
-    </TouchableOpacity>
+  const CloseButton = React.useCallback(
+    () => (
+      <TouchableOpacity onPress={onClose} style={closeButton}>
+        <CloseIcon />
+      </TouchableOpacity>
+    ),
+    []
   );
 
-  const TitleBar = () => (
-    <View style={titleBar}>
-      <View style={flexSpacer} />
-      {!!title && <Text style={titleFont}>{title}</Text>}
-      <View style={closeButtonContainer}>{onClose && !noCancel && <CloseButton />}</View>
-    </View>
+  const TitleBar = React.useCallback(
+    () => (
+      <View style={titleBar}>
+        <View style={flexSpacer} />
+        {!!title && <Text style={titleFont}>{title}</Text>}
+        <View style={closeButtonContainer}>{onClose && !noCancel && <CloseButton />}</View>
+      </View>
+    ),
+    [title, onClose, noCancel]
   );
 
   return (
