@@ -44,7 +44,7 @@ export class TransactionBatch extends Realm.Object {
     const { prescriber } = this.transaction;
     const { firstName = '', lastName = '' } = prescriber || {};
     if (!firstName && !lastName) return '';
-    return `${firstName} ${lastName}`;
+    return `${firstName} ${lastName}`.trim();
   }
 
   /**
