@@ -29,7 +29,8 @@
     "reset": "./dev_scripts/reset.sh",
     "clean-mac-cache": "./dev_scripts/clean.sh",
     "keygen": "./dev_scripts/keygen.sh",
-    "upload-bugsnag": "./dev_scripts/upload.sh"
+    "upload-bugsnag": "./dev_scripts/upload.sh",
+    "translation": "node ./dev_scripts/translation.js"
   },
   "jest": {
     "preset": "react-native"

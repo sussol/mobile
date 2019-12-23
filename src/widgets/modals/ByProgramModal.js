@@ -3,7 +3,6 @@ import React, { useReducer, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
 
-import { PageContentModal } from './PageContentModal';
 import { ToggleBar, PageButton, TextEditor, Step } from '..';
 import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
 import { SETTINGS_KEYS } from '../../settings';
@@ -26,6 +25,7 @@ import {
   byProgramReducer,
   initialState,
 } from '../../reducers/ByProgramReducer';
+import ModalContainer from './ModalContainer';
 
 const { THIS_STORE_TAGS } = SETTINGS_KEYS;
 
@@ -173,9 +173,9 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
       <TextEditor text={name} onEndEditing={value => dispatch(setName(value))} />
     );
     return (
-      <PageContentModal isOpen={isModalOpen} onClose={onCloseModal} coverScreen>
+      <ModalContainer isOpen={isModalOpen} onClose={onCloseModal} fullScreen>
         {currentKey !== 'name' ? <Selector /> : <Editor />}
-      </PageContentModal>
+      </ModalContainer>
     );
   };
 
