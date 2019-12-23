@@ -4,11 +4,15 @@
  */
 
 import { PATIENT_ACTIONS } from '../actions/PatientActions';
+import { UIDatabase } from '../database/index';
 
 const patientInitialState = () => ({
-  currentPatient: null,
+  currentPatient: UIDatabase.objects('Name')[0],
   isEditing: false,
   isCreating: false,
+  viewingHistory: false,
+  sortKey: 'itemName',
+  isAscending: true,
 });
 
 export const PatientReducer = (state = patientInitialState(), action) => {
@@ -27,6 +31,22 @@ export const PatientReducer = (state = patientInitialState(), action) => {
 
     case PATIENT_ACTIONS.COMPLETE: {
       return patientInitialState();
+    }
+
+    case PATIENT_ACTIONS.SORT_HISTORY: {
+      const { payload } = action;
+      const { sortKey } = payload;
+      const { isAscending } = state;
+
+      return { ...state, sortKey, isAscending: !isAscending };
+    }
+
+    case PATIENT_ACTIONS.VIEW_HISTORY: {
+      return { ...state, viewingHistory: true };
+    }
+
+    case PATIENT_ACTIONS.CLOSE_HISTORY: {
+      return { ...state, viewingHistory: false };
     }
 
     default: {
