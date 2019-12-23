@@ -22,7 +22,7 @@ export const DetailRow = ({ details }) => {
   const Details = React.useCallback(
     () =>
       details.map(({ label, text }) => (
-        <View style={{ flex: 1 }}>
+        <View key={label} style={{ flex: 1 }}>
           <SimpleLabel label={label} size="small" text={text} />
         </View>
       )),
