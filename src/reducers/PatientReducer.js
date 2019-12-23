@@ -7,43 +7,26 @@ import { PATIENT_ACTIONS } from '../actions/PatientActions';
 
 const patientInitialState = () => ({
   currentPatient: null,
-  isValid: {
-    code: true,
-    dateOfBirth: true,
-    country: true,
-    addressOne: true,
-    addressTwo: true,
-  },
-  firstName: '',
-  lastName: '',
-  code: '',
-  dateOfBirth: '',
-  email: '',
-  phone: '',
-  addressOne: '',
-  addressTwo: '',
-  country: '',
+  isEditing: false,
+  isCreating: false,
 });
 
 export const PatientReducer = (state = patientInitialState(), action) => {
   const { type } = action;
 
   switch (type) {
-    case PATIENT_ACTIONS.FIELD_VALIDITY: {
+    case PATIENT_ACTIONS.PATIENT_EDIT: {
       const { payload } = action;
-      const { field, validity } = payload;
-      const { isValid } = state;
-
-      const newValidityState = { ...isValid, [field]: validity };
-
-      return { ...state, isValid: newValidityState };
+      const { patient } = payload;
+      return { ...state, isEditing: true, currentPatient: patient };
     }
 
-    case PATIENT_ACTIONS.FIELD_UPDATE: {
-      const { payload } = action;
-      const { field, value } = payload;
+    case PATIENT_ACTIONS.PATIENT_CREATION: {
+      return { ...state, isCreating: true };
+    }
 
-      return { ...state, [field]: value };
+    case PATIENT_ACTIONS.COMPLETE: {
+      return patientInitialState();
     }
 
     default: {

@@ -3,53 +3,62 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { UIDatabase } from '../database';
+import { UIDatabase, generateUUID } from '../database';
+import { PageActions } from '../pages/dataTableUtilities/actions';
+import { ROUTES } from '../navigation/constants';
 
 export const PATIENT_ACTIONS = {
-  FIELD_VALIDITY: 'Patient/fieldValidity',
-  FIELD_UPDATE: 'Patient/fieldUpdate',
+  PATIENT_EDIT: 'Patient/patientEdit',
+  PATIENT_CREATION: 'Patient/patientCreation',
+  COMPLETE: 'Patient/complete',
 };
 
-const setFieldValidity = (field, newValidity) => ({
-  type: PATIENT_ACTIONS.FIELD_VALIDITY,
-  payload: { field, validity: newValidity },
+const closeModal = () => ({ type: PATIENT_ACTIONS.COMPLETE });
+
+const createPatient = () => ({ type: PATIENT_ACTIONS.PATIENT_CREATION });
+
+const editPatient = patient => ({
+  type: PATIENT_ACTIONS.PATIENT_EDIT,
+  payload: {
+    patient,
+  },
 });
 
-const setFieldUpdate = (field, newValue) => ({
-  type: PATIENT_ACTIONS.FIELD_UPDATE,
-  payload: { field, value: newValue },
-});
-
-const patientUpdate = () => (_, getState) => {
+const patientUpdate = completedForm => (dispatch, getState) => {
   const { patient } = getState();
-  const {
-    currentPatient,
-    firstName,
-    lastName,
-    code,
-    dateOfBirth,
-    email,
-    phone,
-    addressOne,
-    addressTwo,
-    country,
-  } = patient;
+  const { currentPatient } = patient;
 
   UIDatabase.write(() => {
-    UIDatabase.update(
-      'Name',
+    UIDatabase.update('Name', {
       ...currentPatient,
-      firstName,
-      lastName,
-      code,
-      dateOfBirth,
-      email,
-      phone,
-      addressOne,
-      addressTwo,
-      country
-    );
+      ...completedForm,
+      isPatient: true,
+      isVisible: true,
+    });
   });
+
+  dispatch(closeModal());
+  dispatch(PageActions.refreshData(ROUTES.DISPENSARY));
 };
 
-export const PatientActions = { patientUpdate, setFieldUpdate, setFieldValidity };
+const saveNewPatient = completedForm => dispatch => {
+  UIDatabase.write(() => {
+    UIDatabase.update('Name', {
+      ...completedForm,
+      id: generateUUID(),
+      isPatient: true,
+      isVisible: true,
+    });
+  });
+
+  dispatch(closeModal());
+  dispatch(PageActions.refreshData(ROUTES.DISPENSARY));
+};
+
+export const PatientActions = {
+  createPatient,
+  patientUpdate,
+  editPatient,
+  closeModal,
+  saveNewPatient,
+};

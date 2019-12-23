@@ -80,12 +80,13 @@ ModalContainer.defaultProps = {
   fullScreen: false,
   title: '',
   noCancel: false,
+  onClose: null,
 };
 
 ModalContainer.propTypes = {
   fullScreen: PropTypes.bool,
   isVisible: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
+  onClose: PropTypes.func,
   title: PropTypes.string,
   children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
   noCancel: PropTypes.bool,
