@@ -32,6 +32,7 @@ const PAGE_COLUMN_WIDTHS = {
   regimenDataModal: [4, 1, 5],
   prescriberSelect: [1, 1],
   itemSelect: [1, 3],
+  patientHistory: [1, 3, 1, 3],
 };
 
 const PAGE_COLUMNS = {
@@ -182,6 +183,12 @@ const PAGE_COLUMNS = {
   ],
   prescriberSelect: [COLUMN_NAMES.FIRST_NAME, COLUMN_NAMES.LAST_NAME],
   itemSelect: [COLUMN_NAMES.CODE, COLUMN_NAMES.NAME],
+  patientHistory: [
+    COLUMN_NAMES.ITEM_CODE,
+    COLUMN_NAMES.ITEM_NAME,
+    COLUMN_NAMES.TOTAL_QUANTITY,
+    'prescriber',
+  ],
 };
 
 const COLUMNS = () => ({
@@ -203,6 +210,7 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.ITEM_CODE]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.ITEM_CODE,
+    alignText: 'left',
     title: tableStrings.item_code,
     sortable: true,
     editable: false,
@@ -225,13 +233,21 @@ const COLUMNS = () => ({
   },
 
   // STRING COLUMNS
-
+  prescriber: {
+    type: COLUMN_TYPES.STRING,
+    key: 'prescriber',
+    title: 'PRESCRIBER',
+    alignText: 'right',
+    sortable: false,
+    editable: false,
+  },
   [COLUMN_NAMES.ITEM_NAME]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.ITEM_NAME,
     title: tableStrings.item_name,
     sortable: true,
     editable: false,
+    alignText: 'left',
   },
   [COLUMN_NAMES.NAME]: {
     type: COLUMN_TYPES.STRING,
