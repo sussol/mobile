@@ -10,6 +10,9 @@ import { ROUTES } from '../navigation/constants';
 export const PATIENT_ACTIONS = {
   PATIENT_EDIT: 'Patient/patientEdit',
   PATIENT_CREATION: 'Patient/patientCreation',
+  VIEW_HISTORY: 'Patient/viewHistory',
+  CLOSE_HISTORY: 'Patient/closeHistory',
+  SORT_HISTORY: 'Patient/sortHistory',
   COMPLETE: 'Patient/complete',
 };
 
@@ -55,10 +58,22 @@ const saveNewPatient = completedForm => dispatch => {
   dispatch(PageActions.refreshData(ROUTES.DISPENSARY));
 };
 
+const sortPatientHistory = sortKey => ({
+  type: PATIENT_ACTIONS.SORT_HISTORY,
+  payload: { sortKey },
+});
+
+const viewPatientHistory = () => ({ type: PATIENT_ACTIONS.VIEW_HISTORY });
+
+const closePatientHistory = () => ({ type: PATIENT_ACTIONS.CLOSE_HISTORY });
+
 export const PatientActions = {
   createPatient,
   patientUpdate,
   editPatient,
   closeModal,
   saveNewPatient,
+  sortPatientHistory,
+  viewPatientHistory,
+  closePatientHistory,
 };
