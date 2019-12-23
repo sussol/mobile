@@ -7,14 +7,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Keyboard, StyleSheet, View, ViewPropTypes } from 'react-native';
+import { Keyboard, StyleSheet, View } from 'react-native';
 import Modal from 'react-native-modalbox';
 
 import { DARKER_GREY } from '../../globalStyles/index';
 
-export const BottomModal = ({
+export const BottomModalContainer = ({
   children,
-  style,
   isOpen,
   swipeToClose,
   backdropPressToClose,
@@ -35,9 +34,9 @@ export const BottomModal = ({
       position={position}
       backdrop={backdrop}
       {...modalProps}
-      style={[localStyles.modal, style]}
+      style={localStyles.modalStyle}
     >
-      <View style={[localStyles.container, style]}>{children}</View>
+      <View style={localStyles.containerStyle}>{children}</View>
     </Modal>
   );
 };
@@ -57,8 +56,7 @@ const localStyles = StyleSheet.create({
   },
 });
 
-BottomModal.defaultProps = {
-  style: {},
+BottomModalContainer.defaultProps = {
   swipeToClose: false,
   backdropPressToClose: false,
   position: 'bottom',
@@ -67,8 +65,7 @@ BottomModal.defaultProps = {
   containerStyle: localStyles.containerStyle,
 };
 
-BottomModal.propTypes = {
-  style: ViewPropTypes.style,
+BottomModalContainer.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   swipeToClose: PropTypes.bool,
   backdropPressToClose: PropTypes.bool,
@@ -78,5 +75,3 @@ BottomModal.propTypes = {
   modalStyle: PropTypes.object,
   containerStyle: PropTypes.object,
 };
-
-export default BottomModal;
