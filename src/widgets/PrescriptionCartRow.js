@@ -13,7 +13,7 @@ import { DropdownRow } from './DropdownRow';
 import { DetailRow } from './DetailRow';
 import { StepperRow } from './StepperRow';
 import { CloseIcon } from './icons';
-import { Seperator } from './Seperator';
+import { Separator } from './Separator';
 
 /**
  * Renders a row in the PrescriptionCart consisting of a `StepperRow`, `DropdownRow`,
@@ -59,7 +59,7 @@ export const PrescriptionCartRow = ({
         <View style={localStyles.flexOne} />
         <CircleButton IconComponent={CloseIcon} onPress={onRemoveItem} />
       </View>
-      <Seperator width={1} />
+      <Separator width={1} />
     </View>
   );
 };
