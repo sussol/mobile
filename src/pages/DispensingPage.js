@@ -16,8 +16,12 @@ import { PageActions, DATA_SET, getItemLayout, getPageDispatchers } from './data
 import { createPrescription } from '../navigation/actions';
 import { ROUTES } from '../navigation/constants';
 import ModalContainer from '../widgets/modals/ModalContainer';
-import { PatientEdit } from '../widgets/modals/PatientEdit';
+
 import { PatientActions } from '../actions/PatientActions';
+import { PrescriberActions } from '../actions/PrescriberActions';
+
+import { FormControl } from '../widgets/FormControl';
+import { getFormInputConfig } from '../utilities/formInputConfigs';
 
 const Dispensing = ({
   data,
@@ -32,8 +36,23 @@ const Dispensing = ({
   onFilterData,
   gotoPrescription,
   editPatient,
-  modalOpen,
+  patientModalOpen,
   createPatient,
+  cancelPatientEdit,
+  savePatient,
+  saveNewPatient,
+  isCreating,
+  currentPatient,
+  isCreatingPrescriber,
+  currentPrescriber,
+  editPrescriber,
+  createPrescriber,
+  cancelPrescriberEdit,
+  savePrescriber,
+  saveNewPrescriber,
+  prescriberModalOpen,
+  usingPatientsDataSet,
+  usingPrescribersDataSet,
 }) => {
   const getCellCallbacks = colKey => {
     switch (colKey) {
@@ -55,7 +74,7 @@ const Dispensing = ({
           getCallback={getCellCallbacks}
           columns={columns}
           rowIndex={index}
-          onPress={editPatient}
+          onPress={usingPatientsDataSet ? editPatient : editPrescriber}
         />
       );
     },
@@ -79,12 +98,12 @@ const Dispensing = ({
       {
         text: 'Patients',
         onPress: () => dispatch(PageActions.toggleDataSet(DATA_SET.PATIENTS, ROUTES.DISPENSARY)),
-        isOn: dataSet === DATA_SET.PATIENTS,
+        isOn: usingPatientsDataSet,
       },
       {
         text: 'Prescribers',
         onPress: () => dispatch(PageActions.toggleDataSet(DATA_SET.PRESCRIBERS, ROUTES.DISPENSARY)),
-        isOn: dataSet === DATA_SET.PRESCRIBERS,
+        isOn: usingPrescribersDataSet,
       },
     ],
     [dataSet]
@@ -101,7 +120,10 @@ const Dispensing = ({
             value={searchTerm}
             viewStyle={localStyles.searchBar}
           />
-          <PageButton text="New Patient" onPress={createPatient} />
+          <PageButton
+            text={usingPatientsDataSet ? 'New Patient' : 'New Prescriber'}
+            onPress={usingPatientsDataSet ? createPatient : createPrescriber}
+          />
         </View>
         <DataTable
           data={data}
@@ -111,8 +133,24 @@ const Dispensing = ({
           getItemLayout={getItemLayout}
         />
       </DataTablePageView>
-      <ModalContainer title="Patient Details" fullScreen isVisible={modalOpen}>
-        <PatientEdit />
+      <ModalContainer title="Patient Details" noCancel fullScreen isVisible={patientModalOpen}>
+        <FormControl
+          onSave={isCreating ? saveNewPatient : savePatient}
+          onCancel={cancelPatientEdit}
+          inputConfig={getFormInputConfig('patient', currentPatient)}
+        />
+      </ModalContainer>
+      <ModalContainer
+        title="Prescriber Details"
+        noCancel
+        fullScreen
+        isVisible={prescriberModalOpen}
+      >
+        <FormControl
+          onSave={isCreatingPrescriber ? saveNewPrescriber : savePrescriber}
+          onCancel={cancelPrescriberEdit}
+          inputConfig={getFormInputConfig('prescriber', currentPrescriber)}
+        />
       </ModalContainer>
     </>
   );
@@ -130,29 +168,53 @@ const localStyles = {
 };
 
 const mapStateToProps = state => {
-  const { pages, patient } = state;
-
+  const { pages, patient, prescriber } = state;
   const { dispensary } = pages;
-  const { isCreating, isEditing } = patient;
+  const { isCreating, isEditing, currentPatient } = patient;
+  const { isCreatingPrescriber, isEditingPrescriber, currentPrescriber } = prescriber;
 
-  return { ...dispensary, modalOpen: isCreating || isEditing };
-};
-
-const mapDispatchToProps = (dispatch, ownProps) => {
-  const gotoPrescription = patientID => dispatch(createPrescription(patientID));
-
-  const editPatient = patientID => dispatch(PatientActions.editPatient(patientID));
-  const createPatient = () => dispatch(PatientActions.createPatient());
+  const { dataSet } = dispensary;
+  const usingPatientsDataSet = dataSet === ROUTES.PATIENTS;
+  const usingPrescribersDataSet = dataSet === ROUTES.PRESCRIBERS;
 
   return {
-    ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.DISPENSARY),
-    gotoPrescription,
-    editPatient,
-    createPatient,
+    ...dispensary,
+    patientModalOpen: isCreating || isEditing,
+    prescriberModalOpen: isCreatingPrescriber || isEditingPrescriber,
+    isCreating,
+    currentPatient,
+    isCreatingPrescriber,
+    isEditingPrescriber,
+    currentPrescriber,
+    usingPatientsDataSet,
+    usingPrescribersDataSet,
   };
 };
 
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.DISPENSARY),
+  gotoPrescription: patientID => dispatch(createPrescription(patientID)),
+
+  editPatient: patientID => dispatch(PatientActions.editPatient(patientID)),
+  createPatient: () => dispatch(PatientActions.createPatient()),
+  cancelPatientEdit: () => dispatch(PatientActions.closeModal()),
+  savePatient: patientDetails => dispatch(PatientActions.patientUpdate(patientDetails)),
+  saveNewPatient: patientDetails => dispatch(PatientActions.saveNewPatient(patientDetails)),
+
+  createPrescriber: () => dispatch(PrescriberActions.createPrescriber()),
+  cancelPrescriberEdit: () => dispatch(PrescriberActions.closeModal()),
+  savePrescriber: prescriberDetails =>
+    dispatch(PrescriberActions.updatePrescriber(prescriberDetails)),
+  saveNewPrescriber: prescriberDetails =>
+    dispatch(PrescriberActions.saveNewPrescriber(prescriberDetails)),
+});
+
 export const DispensingPage = connect(mapStateToProps, mapDispatchToProps)(Dispensing);
+
+Dispensing.defaultProps = {
+  currentPatient: null,
+  currentPrescriber: null,
+};
 
 Dispensing.propTypes = {
   data: PropTypes.array.isRequired,
@@ -167,6 +229,21 @@ Dispensing.propTypes = {
   onFilterData: PropTypes.func.isRequired,
   gotoPrescription: PropTypes.func.isRequired,
   editPatient: PropTypes.func.isRequired,
-  modalOpen: PropTypes.bool.isRequired,
+  patientModalOpen: PropTypes.bool.isRequired,
   createPatient: PropTypes.func.isRequired,
+  savePatient: PropTypes.func.isRequired,
+  cancelPatientEdit: PropTypes.func.isRequired,
+  saveNewPatient: PropTypes.func.isRequired,
+  isCreating: PropTypes.bool.isRequired,
+  currentPatient: PropTypes.object,
+  isCreatingPrescriber: PropTypes.bool.isRequired,
+  currentPrescriber: PropTypes.object,
+  editPrescriber: PropTypes.func.isRequired,
+  createPrescriber: PropTypes.func.isRequired,
+  cancelPrescriberEdit: PropTypes.func.isRequired,
+  savePrescriber: PropTypes.func.isRequired,
+  saveNewPrescriber: PropTypes.func.isRequired,
+  prescriberModalOpen: PropTypes.bool.isRequired,
+  usingPatientsDataSet: PropTypes.bool.isRequired,
+  usingPrescribersDataSet: PropTypes.bool.isRequired,
 };

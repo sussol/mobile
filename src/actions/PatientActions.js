@@ -8,8 +8,6 @@ import { PageActions } from '../pages/dataTableUtilities/actions';
 import { ROUTES } from '../navigation/constants';
 
 export const PATIENT_ACTIONS = {
-  FIELD_VALIDITY: 'Patient/fieldValidity',
-  FIELD_UPDATE: 'Patient/fieldUpdate',
   PATIENT_EDIT: 'Patient/patientEdit',
   PATIENT_CREATION: 'Patient/patientCreation',
   COMPLETE: 'Patient/complete',
@@ -26,46 +24,28 @@ const editPatient = patient => ({
   },
 });
 
-const setFieldValidity = (field, newValidity) => ({
-  type: PATIENT_ACTIONS.FIELD_VALIDITY,
-  payload: { field, validity: newValidity },
-});
-
-const setFieldUpdate = (field, newValue) => ({
-  type: PATIENT_ACTIONS.FIELD_UPDATE,
-  payload: { field, value: newValue },
-});
-
-const patientUpdate = () => (dispatch, getState) => {
+const patientUpdate = completedForm => (dispatch, getState) => {
   const { patient } = getState();
-  const {
-    currentPatient,
-    firstName,
-    lastName,
-    code,
-    dateOfBirth,
-    email,
-    phone,
-    addressOne,
-    addressTwo,
-    country,
-    isCreating,
-    isEditing,
-  } = patient;
+  const { currentPatient } = patient;
 
   UIDatabase.write(() => {
     UIDatabase.update('Name', {
-      id: isCreating ? generateUUID() : '',
-      ...(isEditing ? currentPatient : {}),
-      firstName,
-      lastName,
-      code,
-      dateOfBirth,
-      email,
-      phone,
-      addressOne,
-      addressTwo,
-      country,
+      ...currentPatient,
+      ...completedForm,
+      isPatient: true,
+      isVisible: true,
+    });
+  });
+
+  dispatch(closeModal());
+  dispatch(PageActions.refreshData(ROUTES.DISPENSARY));
+};
+
+const saveNewPatient = completedForm => dispatch => {
+  UIDatabase.write(() => {
+    UIDatabase.update('Name', {
+      ...completedForm,
+      id: generateUUID(),
       isPatient: true,
       isVisible: true,
     });
@@ -78,8 +58,7 @@ const patientUpdate = () => (dispatch, getState) => {
 export const PatientActions = {
   createPatient,
   patientUpdate,
-  setFieldUpdate,
-  setFieldValidity,
   editPatient,
   closeModal,
+  saveNewPatient,
 };
