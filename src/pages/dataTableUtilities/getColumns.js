@@ -233,9 +233,9 @@ const COLUMNS = () => ({
   },
 
   // STRING COLUMNS
-  prescriber: {
+  [COLUMN_NAMES]: {
     type: COLUMN_TYPES.STRING,
-    key: 'prescriber',
+    key: COLUMN_KEYS.PRESCRIBER,
     title: 'PRESCRIBER',
     alignText: 'right',
     sortable: false,
