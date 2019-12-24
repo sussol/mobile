@@ -253,6 +253,14 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: [],
       canBeBlank: ['units', 'comment', 'order_number'],
     },
+    ItemDirection: {
+      cannotBeBlank: ['directions', 'priority', 'item_ID'],
+      canBeBlank: [],
+    },
+    Abbreviation: {
+      cannotBeBlank: ['abbreviation', 'expansion'],
+      canBeBlank: [],
+    },
   };
   if (!requiredFields[recordType]) return false; // Unsupported record type
   const hasAllNonBlankFields = requiredFields[recordType].cannotBeBlank.reduce(
@@ -736,6 +744,24 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         phoneNumber: record.phone,
         mobileNumber: record.mobile,
         emailAddress: record.email,
+      });
+      break;
+    }
+    case 'Abbreviation': {
+      database.update(recordType, {
+        id: record.ID,
+        expansion: record.expansion,
+        abbreviation: record.abbreviation,
+      });
+      break;
+    }
+    case 'ItemDirection': {
+      const item = database.getOrCreate('Item', record.item_ID);
+      database.update(recordType, {
+        id: record.ID,
+        item,
+        priority: record.priority,
+        directions: record.directions,
       });
       break;
     }
