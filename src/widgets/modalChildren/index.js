@@ -5,3 +5,4 @@
 
 export { AutocompleteSelector } from './AutocompleteSelector';
 export { TextEditor } from './TextEditor';
+export { NewConfirmModal } from './NewConfirmModal';
