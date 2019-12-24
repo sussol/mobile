@@ -34,30 +34,36 @@ export const GenericChoiceList = ({
   highlightValue,
   renderLeftComponent,
 }) => {
-  const keyExtractor = (item, index) => {
-    const content = keyToDisplay && item ? item[keyToDisplay] : item;
-    return `${content}${index}`;
-  };
+  const keyExtractor = React.useCallback(
+    (item, index) => {
+      const content = keyToDisplay && item ? item[keyToDisplay] : item;
+      return `${content}${index}`;
+    },
+    [keyToDisplay]
+  );
 
-  const renderRow = ({ item, index }) => {
-    const { row, text } = localStyles;
+  const renderRow = React.useCallback(
+    ({ item, index }) => {
+      const { row, text } = localStyles;
 
-    let shouldHighlight = false;
-    if (keyToDisplay && highlightValue) shouldHighlight = item[keyToDisplay] === highlightValue;
-    else if (!highlightValue) shouldHighlight = index === highlightIndex;
+      let shouldHighlight = false;
+      if (keyToDisplay && highlightValue) shouldHighlight = item[keyToDisplay] === highlightValue;
+      else if (!highlightValue) shouldHighlight = index === highlightIndex;
 
-    const rowStyle = shouldHighlight ? { ...row, backgroundColor: '#E95C30' } : row;
-    const textStyle = shouldHighlight ? { ...text, color: '#FFF' } : text;
+      const rowStyle = shouldHighlight ? { ...row, backgroundColor: '#E95C30' } : row;
+      const textStyle = shouldHighlight ? { ...text, color: '#FFF' } : text;
 
-    return (
-      <TouchableOpacity onPress={() => onPress({ item, index, keyToDisplay })}>
-        <View style={rowStyle}>
-          {renderLeftComponent ? renderLeftComponent(item) : null}
-          <Text style={textStyle}>{keyToDisplay ? item[keyToDisplay] : item}</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
+      return (
+        <TouchableOpacity onPress={() => onPress({ item, index, keyToDisplay })}>
+          <View style={rowStyle}>
+            {renderLeftComponent ? renderLeftComponent(item) : null}
+            <Text style={textStyle}>{keyToDisplay ? item[keyToDisplay] : item}</Text>
+          </View>
+        </TouchableOpacity>
+      );
+    },
+    [keyToDisplay, highlightValue, highlightIndex]
+  );
 
   if (!data) return null;
   return (
