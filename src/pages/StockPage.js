@@ -12,13 +12,11 @@ import { connect } from 'react-redux';
 import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+import { ItemDetails } from '../widgets/bottomModals/ItemDetails';
+import { DataTablePageView, SearchBar } from '../widgets';
 
 import globalStyles from '../globalStyles';
 import { useSyncListener } from '../hooks';
-
-import { DataTablePageView, SearchBar } from '../widgets';
-
-import { ItemDetails } from '../widgets/modals/ItemDetails';
 
 import { ROUTES } from '../navigation/constants';
 
