@@ -26,55 +26,50 @@ import { COMPONENT_HEIGHT } from '../globalStyles';
  * NOTE: If there are multiple, equal values used in highlightValue within the data array,
  * multiple values will be highlighted.
  */
-export const GenericChoiceList = ({
-  keyToDisplay,
-  onPress,
-  data,
-  highlightIndex,
-  highlightValue,
-  renderLeftComponent,
-}) => {
-  const keyExtractor = React.useCallback(
-    (item, index) => {
-      const content = keyToDisplay && item ? item[keyToDisplay] : item;
-      return `${content}${index}`;
-    },
-    [keyToDisplay]
-  );
+export const GenericChoiceList = React.memo(
+  ({ keyToDisplay, onPress, data, highlightIndex, highlightValue, renderLeftComponent }) => {
+    const keyExtractor = React.useCallback(
+      (item, index) => {
+        const content = keyToDisplay && item ? item[keyToDisplay] : item;
+        return `${content}${index}`;
+      },
+      [keyToDisplay]
+    );
 
-  const renderRow = React.useCallback(
-    ({ item, index }) => {
-      const { row, text } = localStyles;
+    const renderRow = React.useCallback(
+      ({ item, index }) => {
+        const { row, text } = localStyles;
 
-      let shouldHighlight = false;
-      if (keyToDisplay && highlightValue) shouldHighlight = item[keyToDisplay] === highlightValue;
-      else if (!highlightValue) shouldHighlight = index === highlightIndex;
+        let shouldHighlight = false;
+        if (keyToDisplay && highlightValue) shouldHighlight = item[keyToDisplay] === highlightValue;
+        else if (!highlightValue) shouldHighlight = index === highlightIndex;
 
-      const rowStyle = shouldHighlight ? { ...row, backgroundColor: '#E95C30' } : row;
-      const textStyle = shouldHighlight ? { ...text, color: '#FFF' } : text;
+        const rowStyle = shouldHighlight ? { ...row, backgroundColor: '#E95C30' } : row;
+        const textStyle = shouldHighlight ? { ...text, color: '#FFF' } : text;
 
-      return (
-        <TouchableOpacity onPress={() => onPress({ item, index, keyToDisplay })}>
-          <View style={rowStyle}>
-            {renderLeftComponent ? renderLeftComponent(item) : null}
-            <Text style={textStyle}>{keyToDisplay ? item[keyToDisplay] : item}</Text>
-          </View>
-        </TouchableOpacity>
-      );
-    },
-    [keyToDisplay, highlightValue, highlightIndex]
-  );
+        return (
+          <TouchableOpacity onPress={() => onPress({ item, index, keyToDisplay })}>
+            <View style={rowStyle}>
+              {renderLeftComponent ? renderLeftComponent(item) : null}
+              <Text style={textStyle}>{keyToDisplay ? item[keyToDisplay] : item}</Text>
+            </View>
+          </TouchableOpacity>
+        );
+      },
+      [keyToDisplay, highlightValue, highlightIndex]
+    );
 
-  if (!data) return null;
-  return (
-    <FlatList
-      data={data}
-      renderItem={renderRow}
-      style={localStyles.list}
-      keyExtractor={keyExtractor}
-    />
-  );
-};
+    if (!data) return null;
+    return (
+      <FlatList
+        data={data}
+        renderItem={renderRow}
+        style={localStyles.list}
+        keyExtractor={keyExtractor}
+      />
+    );
+  }
+);
 
 const localStyles = StyleSheet.create({
   row: {
