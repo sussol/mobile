@@ -17,7 +17,7 @@ import { SearchBar } from '../SearchBar';
 import { WHITE, APP_FONT_FAMILY } from '../../globalStyles';
 import { generalStrings } from '../../localization';
 
-const AutocompleteSelector = ({
+export const AutocompleteSelector = ({
   sortKeyString,
   queryString,
   queryStringSecondary,
@@ -121,8 +121,6 @@ const AutocompleteSelector = ({
     </View>
   );
 };
-
-export default AutocompleteSelector;
 
 /* eslint-disable react/forbid-prop-types, react/require-default-props */
 AutocompleteSelector.propTypes = {
