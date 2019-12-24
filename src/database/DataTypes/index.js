@@ -38,3 +38,5 @@ export { TransactionBatch } from './TransactionBatch';
 export { TransactionItem } from './TransactionItem';
 export { Unit } from './Unit';
 export { Prescriber } from './Prescriber';
+export { Abbreviation } from './Abbreviation';
+export { ItemDirection } from './ItemDirection';
