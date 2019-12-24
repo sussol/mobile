@@ -13,7 +13,7 @@ ItemDirection.schema = {
   properties: {
     id: 'string',
     priority: 'string',
-    direction: 'string',
+    directions: 'string',
     item: { type: 'Item', optional: true },
   },
 };
