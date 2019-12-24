@@ -421,6 +421,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'Name': {
+      const isPatient = record.type === 'patient';
       internalRecord = {
         id: record.ID,
         name: record.name,
@@ -438,8 +439,13 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         type: NAME_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
         isCustomer: parseBoolean(record.customer),
         isSupplier: parseBoolean(record.supplier),
+        isVisible: isPatient, // Patients default visibility to true, regardless of nameStoreJoin.
         isManufacturer: parseBoolean(record.manufacturer),
         supplyingStoreId: record.supplying_store_id,
+        isPatient,
+        firstName: record.first,
+        lastName: record.last,
+        dateOfBirth: parseDate(record.date_of_birth),
       };
       database.update(recordType, internalRecord);
       break;
@@ -714,7 +720,6 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       });
       break;
     }
-
     default:
       break; // Silently ignore record types which are not used by mobile.
   }
