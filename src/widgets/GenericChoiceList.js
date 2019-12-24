@@ -16,30 +16,30 @@ import { COMPONENT_HEIGHT } from '../globalStyles';
  *
  * On selecting a choice, returns the object which was selected, the index/row
  * within the data array and the field which was displayed to the user.
- * @prop  {array}   data            Array of objects from which a choice must be made from
- * @prop  {string}  keyToDisplay    The object property which should be displayed to the user
- * @prop  {func}    onPress         Function to call on selection returns {item, index, field}
- * @prop  {int}     highlightIndex  Index of the data array for which object should be 'highlighted'
- * @prop  {string}  highlightValue  Value of the field in the data array for which object should be
- *                                  'highlighted'
+ * @prop  {array}   data                Array of objects from which a choice must be made from
+ * @prop  {string}  keyToDisplay        The object property which should be displayed to the user
+ * @prop  {func}    onPress             Function to call on selection returns {item, index, field}
+ * @prop  {int}     highlightIndex      Index in `data` for which object should be 'highlighted'
+ * @prop  {string}  highlightValue      Alternate to highlightIndex, using the value over index.
+ * @prop  {func}    renderLeftComponent Renders a component to the left of the text in a row.
+ *
  * NOTE: If there are multiple, equal values used in highlightValue within the data array,
  * multiple values will be highlighted.
  */
-export class GenericChoiceList extends React.PureComponent {
-  keyExtractor = (item, index) => {
-    const { keyToDisplay } = this.props;
+export const GenericChoiceList = ({
+  keyToDisplay,
+  onPress,
+  data,
+  highlightIndex,
+  highlightValue,
+  renderLeftComponent,
+}) => {
+  const keyExtractor = (item, index) => {
     const content = keyToDisplay && item ? item[keyToDisplay] : item;
     return `${content}${index}`;
   };
 
-  renderRow = ({ item, index }) => {
-    const {
-      onPress,
-      keyToDisplay,
-      highlightIndex,
-      highlightValue,
-      renderLeftComponent,
-    } = this.props;
+  const renderRow = ({ item, index }) => {
     const { row, text } = localStyles;
 
     let shouldHighlight = false;
@@ -59,19 +59,16 @@ export class GenericChoiceList extends React.PureComponent {
     );
   };
 
-  render() {
-    const { data } = this.props;
-    if (!data) return null;
-    return (
-      <FlatList
-        data={data}
-        renderItem={this.renderRow}
-        style={localStyles.list}
-        keyExtractor={this.keyExtractor}
-      />
-    );
-  }
-}
+  if (!data) return null;
+  return (
+    <FlatList
+      data={data}
+      renderItem={renderRow}
+      style={localStyles.list}
+      keyExtractor={keyExtractor}
+    />
+  );
+};
 
 const localStyles = StyleSheet.create({
   row: {
