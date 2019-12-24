@@ -25,7 +25,12 @@ import { PrescriptionSummary } from '../widgets/PrescriptionSummary';
 import { UIDatabase } from '../database';
 import { getColumns } from './dataTableUtilities';
 import { ALPHABET } from '../widgets/constants';
-import { selectItem, selectPrescriber, switchTab } from '../reducers/PrescriptionReducer';
+import {
+  selectItem,
+  selectPrescriber,
+  switchTab,
+  editQuantity,
+} from '../reducers/PrescriptionReducer';
 
 /**
  * File contains Four components for the PrescriptionPage. The container component Prescription and
@@ -36,7 +41,8 @@ const mapDispatchToProps = dispatch => {
   const choosePrescriber = prescriberID => dispatch(selectPrescriber(prescriberID));
   const chooseItem = itemID => dispatch(selectItem(itemID));
   const nextTab = currentTab => dispatch(switchTab(currentTab + 1));
-  return { nextTab, choosePrescriber, chooseItem };
+  const updateQuantity = (id, quantity) => dispatch(editQuantity(id, quantity));
+  return { nextTab, choosePrescriber, chooseItem, updateQuantity };
 };
 
 const mapStateToProps = state => {
@@ -105,7 +111,7 @@ const PrescriberSelect = connect(
 const ItemSelect = connect(
   mapStateToProps,
   mapDispatchToProps
-)(({ transaction, chooseItem, nextTab }) => {
+)(({ transaction, chooseItem, nextTab, updateQuantity }) => {
   const { row, mediumFlex } = localStyles;
   const columns = getColumns('itemSelect');
 
@@ -146,7 +152,7 @@ const ItemSelect = connect(
         />
       </View>
       <View style={{ flex: 15, marginHorizontal: 15 }}>
-        <PrescriptionCart items={transaction.items.slice()} />
+        <PrescriptionCart items={transaction.items.slice()} onChangeQuantity={updateQuantity} />
         <PageButton text="Next" onPress={() => nextTab(1)} style={{ alignSelf: 'flex-end' }} />
       </View>
     </View>

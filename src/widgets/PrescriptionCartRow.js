@@ -37,6 +37,13 @@ export const PrescriptionCartRow = ({
 }) => {
   const { itemName, totalQuantity, itemCode, price } = item;
 
+  const onChangeValue = React.useCallback(
+    quantity => {
+      onChangeQuantity(item.id, quantity);
+    },
+    [item.id]
+  );
+
   const itemDetails = [
     { label: 'Code', text: itemCode },
     { label: 'Price', text: price },
@@ -46,7 +53,7 @@ export const PrescriptionCartRow = ({
     <View>
       <View style={localStyles.flexRow}>
         <View style={localStyles.largeFlexRow}>
-          <StepperRow text={itemName} quantity={totalQuantity} onChangeValue={onChangeQuantity} />
+          <StepperRow text={itemName} quantity={totalQuantity} onChangeValue={onChangeValue} />
           <DetailRow details={itemDetails} />
           <View style={{ height: 10 }} />
           <DropdownRow
