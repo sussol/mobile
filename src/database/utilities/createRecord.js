@@ -63,6 +63,30 @@ const createInsurancePolicy = (
   return policy;
 };
 
+/**
+ * Creates a prescriber record. prescriberDetails can have the shape:
+ * {
+ *     firstName, lastName, registrationCode, line1, line2, isVisible,
+ *     isActive, phoneNumber, mobileNumber, emailAddress
+ * }
+ */
+const createPrescriber = (database, prescriberDetails) => {
+  const { line1, line2 } = prescriberDetails;
+  const address = createAddress({ line1, line2 });
+
+  const prescriber = database.create('Prescriber', {
+    id: generateUUID(),
+    ...prescriberDetails,
+    address,
+
+    // Defaults:
+    isVisible: true,
+    isActive: true,
+  });
+
+  database.save('Prescriber', prescriber);
+};
+
 const createAddress = (database, { line1, line2, line3, line4, zipCode } = {}) =>
   database.create('Address', {
     id: generateUUID(),
@@ -84,7 +108,7 @@ const createPatient = (database, patientDetails) => {
   const { line1, line2 } = patientDetails;
   const billingAddress = createAddress(database, { line1, line2 });
   const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
-  database.create('Name', {
+  const patient = database.create('Name', {
     id: generateUUID(),
     ...patientDetails,
     billingAddress,
@@ -95,6 +119,8 @@ const createPatient = (database, patientDetails) => {
     supplyingStoreId: thisStoreId,
     isCustomer: true,
   });
+
+  database.save('Patient', patient);
 };
 
 const createCashOut = (database, user, patient, amount) => {
@@ -690,6 +716,8 @@ export const createRecord = (database, type, ...args) => {
       return createAddress(database, ...args);
     case 'Patient':
       return createPatient(database, ...args);
+    case 'Prescriber':
+      return createPrescriber(database, ...args);
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }
