@@ -10,8 +10,8 @@ import {
   SYNC_TYPES,
   TRANSACTION_TYPES,
 } from './syncTranslators';
-import { CHANGE_TYPES, generateUUID } from '../database';
-import { deleteRecord } from '../database/utilities';
+import { CHANGE_TYPES } from '../database';
+import { deleteRecord, createRecord } from '../database/utilities';
 import { SETTINGS_KEYS } from '../settings';
 
 const { THIS_STORE_ID, THIS_STORE_TAGS, THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
@@ -106,13 +106,8 @@ const getOrCreateAddress = (database, line1, line2, line3, line4, zipCode) => {
     results = results.filtered('zipCode == $0', zipCode);
   }
   if (results.length > 0) return results[0];
-  const address = { id: generateUUID() };
-  if (typeof line1 === 'string') address.line1 = line1;
-  if (typeof line2 === 'string') address.line2 = line2;
-  if (typeof line3 === 'string') address.line3 = line3;
-  if (typeof line4 === 'string') address.line4 = line4;
-  if (typeof zipCode === 'string') address.zipCode = zipCode;
-  return database.create('Address', address);
+
+  return createRecord(database, 'Address', { line1, line2, line3, line4, zipCode });
 };
 
 /**
