@@ -8,6 +8,7 @@ import { generateUUID } from 'react-native-database';
 import { formatDateAndTime } from '../../utilities';
 import { NUMBER_SEQUENCE_KEYS } from './constants';
 import { generalStrings } from '../../localization';
+import { SETTINGS_KEYS } from '../../settings/index';
 
 // Get the next highest number in an existing number sequence.
 export const getNextNumber = (database, sequenceKey) => {
@@ -60,6 +61,40 @@ const createInsurancePolicy = (
 
   database.save('InsurancePolicy', policy);
   return policy;
+};
+
+const createAddress = (database, { line1, line2, line3, line4, zipCode } = {}) =>
+  database.create('Address', {
+    id: generateUUID(),
+    line1,
+    line2,
+    line3,
+    line4,
+    zipCode,
+  });
+
+/**
+ * Creates a patient record. Patient details passed can be in the shape:
+ *  {
+ *    firstName, lastName, dateOfBirth, code, emailAddress,
+ *    phoneNumber, line1, line2,
+ *  }
+ */
+const createPatient = (database, patientDetails) => {
+  const { line1, line2 } = patientDetails;
+  const billingAddress = createAddress(database, { line1, line2 });
+  const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
+  database.create('Name', {
+    id: generateUUID(),
+    ...patientDetails,
+    billingAddress,
+    // Defaults:
+    isVisible: true,
+    isPatient: true,
+    type: 'patient',
+    supplyingStoreId: thisStoreId,
+    isCustomer: true,
+  });
 };
 
 const createCashOut = (database, user, patient, amount) => {
@@ -651,6 +686,10 @@ export const createRecord = (database, type, ...args) => {
       return createOffsetCustomerInvoice(database, ...args);
     case 'RefundLine':
       return createCustomerRefundLine(database, ...args);
+    case 'Address':
+      return createAddress(database, ...args);
+    case 'Patient':
+      return createPatient(database, ...args);
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }
