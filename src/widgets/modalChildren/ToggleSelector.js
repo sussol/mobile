@@ -6,9 +6,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { ToggleBar } from './ToggleBar';
+import { ToggleBar } from '../ToggleBar';
 
-import globalStyles from '../globalStyles';
+import globalStyles from '../../globalStyles';
 
 /**
  * A selector based on |ToggleBar|, will highlight currently selected.
@@ -37,8 +37,6 @@ export const ToggleSelector = props => {
     />
   );
 };
-
-export default ToggleSelector;
 
 /* eslint-disable react/forbid-prop-types, react/require-default-props */
 ToggleSelector.propTypes = {

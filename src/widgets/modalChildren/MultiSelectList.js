@@ -8,12 +8,10 @@ import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { FlatList, StyleSheet, View } from 'react-native';
-import globalStyles, { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles';
-import { generalStrings, buttonStrings } from '../localization';
-import { OnePressButton } from './OnePressButton';
-import { SearchBar } from './SearchBar';
-import { ResultRow } from './ResultRow';
-import { WHITE } from '../globalStyles/colors';
+import globalStyles, { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../../globalStyles';
+import { generalStrings, buttonStrings } from '../../localization';
+import { ResultRow, OnePressButton, SearchBar } from '..';
+import { WHITE } from '../../globalStyles/colors';
 
 const keyExtractor = item => item.id || item.name;
 
@@ -111,8 +109,6 @@ export const MultiSelectList = ({
     </View>
   );
 };
-
-export default MultiSelectList;
 
 MultiSelectList.propTypes = {
   options: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
