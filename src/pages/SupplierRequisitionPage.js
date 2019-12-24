@@ -11,7 +11,8 @@ import { View, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
-import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
+import { DataTablePageModal } from '../widgets/modals';
+import { BottomConfirmModal } from '../widgets/bottomModals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import { DataTablePageView, PageButton, PageInfo, ToggleBar, SearchBar } from '../widgets';
 
@@ -21,7 +22,7 @@ import { ROUTES } from '../navigation/constants';
 import { useRecordListener } from '../hooks';
 
 import globalStyles from '../globalStyles';
-import { buttonStrings, modalStrings, programStrings } from '../localization/index';
+import { buttonStrings, modalStrings, programStrings } from '../localization';
 import { UIDatabase } from '../database/index';
 import { SETTINGS_KEYS } from '../settings/index';
 
@@ -204,13 +205,21 @@ const SupplierRequisition = ({
 
   const ThresholdMOSToggle = () => <ToggleBar toggles={toggles} />;
 
-  const ViewRegimenDataButton = () => (
-    <PageButton
-      style={globalStyles.topButton}
-      text={buttonStrings.view_regimen_data}
-      onPress={onOpenRegimenDataModal}
-    />
-  );
+  const ViewRegimenDataButton = () => {
+    const hasRegimenData =
+      pageObject.parsedCustomData &&
+      pageObject.parsedCustomData.regimenData &&
+      pageObject.parsedCustomData.regimenData.length;
+
+    return (
+      <PageButton
+        style={globalStyles.topButton}
+        text={buttonStrings.view_regimen_data}
+        onPress={onOpenRegimenDataModal}
+        isDisabled={!hasRegimenData}
+      />
+    );
+  };
 
   const GeneralButtons = useCallback(() => {
     const { verticalContainer } = globalStyles;

@@ -14,11 +14,12 @@ import { useRecordListener } from '../hooks';
 import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 import { ROUTES } from '../navigation/constants';
 
-import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
+import { DataTablePageModal } from '../widgets/modals';
 import { PageButton, PageInfo, SearchBar, DataTablePageView } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+import { BottomConfirmModal } from '../widgets/bottomModals';
 
-import { buttonStrings, modalStrings } from '../localization/index';
+import { buttonStrings, modalStrings } from '../localization';
 import globalStyles from '../globalStyles';
 
 /**

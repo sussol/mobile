@@ -3,7 +3,7 @@ import React from 'react';
 import { PropTypes } from 'prop-types';
 import { TextInput, StyleSheet } from 'react-native';
 
-import { BottomModal } from './BottomModal';
+import { BottomModalContainer } from './BottomModalContainer';
 import { OnePressButton } from '../OnePressButton';
 import globalStyles from '../../globalStyles';
 
@@ -18,7 +18,7 @@ const {
 
 export const BottomTextEditor = React.memo(
   ({ isOpen, placeholder, value, buttonText, onChangeText, onConfirm }) => (
-    <BottomModal isOpen={isOpen} style={localStyles.modalStyle}>
+    <BottomModalContainer isOpen={isOpen} style={localStyles.modalStyle}>
       <TextInput
         style={localStyles.textInputStyle}
         underlineColorAndroid="white"
@@ -34,7 +34,7 @@ export const BottomTextEditor = React.memo(
         text={buttonText}
         onPress={onConfirm}
       />
-    </BottomModal>
+    </BottomModalContainer>
   )
 );
 

@@ -19,7 +19,7 @@ import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import { OnePressButton } from '..';
-import { modalStrings } from '../../localization/index';
+import { modalStrings } from '../../localization';
 
 import globalStyles, { DARK_GREY } from '../../globalStyles';
 

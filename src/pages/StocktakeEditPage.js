@@ -16,7 +16,7 @@ import { DataTablePageModal } from '../widgets/modals';
 import { PageButton, PageInfo, DataTablePageView, SearchBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import { buttonStrings } from '../localization/index';
+import { buttonStrings } from '../localization';
 import globalStyles from '../globalStyles';
 import { useRecordListener, useNavigationFocus } from '../hooks/index';
 

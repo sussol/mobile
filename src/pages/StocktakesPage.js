@@ -14,14 +14,15 @@ import { useSyncListener, useNavigationFocus } from '../hooks';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
 import { PageButton, DataTablePageView, SearchBar, ToggleBar } from '../widgets';
-import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
+import { DataTablePageModal } from '../widgets/modals';
+import { BottomConfirmModal } from '../widgets/bottomModals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import { ROUTES } from '../navigation/constants';
 
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
 
-import { buttonStrings, modalStrings } from '../localization/index';
+import { buttonStrings, modalStrings } from '../localization';
 import globalStyles from '../globalStyles';
 
 import {

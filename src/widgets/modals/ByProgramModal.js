@@ -3,13 +3,16 @@ import React, { useReducer, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
 
-import { PageContentModal } from './PageContentModal';
-import { AutocompleteSelector, ToggleBar, PageButton, TextEditor, Step } from '..';
+import { ToggleBar, PageButton, Step } from '..';
+import { AutocompleteSelector, TextEditor } from '../modalChildren';
+import ModalContainer from './ModalContainer';
+
 import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
+
 import { SETTINGS_KEYS } from '../../settings';
 import { getAllPrograms, getAllPeriodsForProgram } from '../../utilities';
-import { programStrings, navStrings } from '../../localization/index';
-
+import { programStrings, navStrings } from '../../localization';
+import { UIDatabase } from '../../database';
 import {
   selectProgram,
   selectSupplier,
@@ -48,13 +51,19 @@ const modalProps = ({ dispatch, program, orderType }) => ({
         isEmergency,
       } = item;
 
+      const thisStoresTags = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_TAGS);
+      const maxLinesForOrder = program.getMaxLines?.(item.name, thisStoresTags);
+
       const mosText = `${maxMOS}: ${itemMOS}`;
       const thresholdText = `${threshMOS}: ${itemThreshMOS}`;
-      const maxOrdersText = isEmergency
-        ? programStrings.emergency_orders
-        : `${maxOPP}: ${maxOrders}`;
+      const maxItemsText =
+        maxLinesForOrder && maxLinesForOrder !== Infinity
+          ? `${programStrings.max_items}: ${maxLinesForOrder}`
+          : '';
+      const emergencyText = `[${programStrings.emergency_order}]  ${maxItemsText}`;
+      const maxOrdersText = isEmergency ? emergencyText : `${maxOPP}: ${maxOrders}`;
 
-      return `${mosText} - ${thresholdText} - ${maxOrdersText}`;
+      return `${maxOrdersText} - ${mosText} - ${thresholdText}`;
     },
   },
   period: {
@@ -67,7 +76,7 @@ const modalProps = ({ dispatch, program, orderType }) => ({
       const requisitionsCount = `${requisitionsInPeriod}/${maxOrdersPerPeriod} ${requisitions}`;
 
       const periodText = isEmergency
-        ? `${requisitionsInPeriod} ${programStrings.emergency_orders}`
+        ? `${requisitionsInPeriod} ${programStrings.emergency_order}`
         : requisitionsCount;
 
       return `${item} - ${periodText}`;
@@ -165,9 +174,9 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
       <TextEditor text={name} onEndEditing={value => dispatch(setName(value))} />
     );
     return (
-      <PageContentModal isOpen={isModalOpen} onClose={onCloseModal} coverScreen>
+      <ModalContainer isOpen={isModalOpen} onClose={onCloseModal} fullScreen>
         {currentKey !== 'name' ? <Selector /> : <Editor />}
-      </PageContentModal>
+      </ModalContainer>
     );
   };
 

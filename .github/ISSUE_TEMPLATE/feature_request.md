@@ -14,6 +14,10 @@ assignees: ''
 
 **A clear and concise description of what you want to happen.**
 
+## Implementation
+
+**A description of how the solution would best be implemented in the code base**
+
 ## Describe alternatives you've considered
 
 **A clear and concise description of any alternative solutions or features you've considered.**

@@ -12,7 +12,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { CustomerImage, SupplierImage, StockImage, ModulesImage, InfoBadge } from '../widgets';
 
 import { ROUTES } from '../navigation/constants';
-import { navStrings } from '../localization/index';
+import { navStrings } from '../localization';
 
 import { SETTINGS_KEYS } from '../settings';
 import { UIDatabase } from '../database';
@@ -39,7 +39,7 @@ const exportData = async () => {
 };
 
 const Menu = ({
-  isInAdminMode,
+  isInAdminMode, // isInAdminMode kept for backwards compatibility with Desktop < v4.07
   logout,
   toCustomerInvoices,
   toCustomerRequisitions,
@@ -252,7 +252,8 @@ const mapStateToProps = state => {
 export const MenuPage = connect(mapStateToProps, mapDispatchToProps)(Menu);
 
 Menu.defaultProps = {
-  isInAdminMode: false,
+  isInAdminMode: false, // isInAdminMode kept for backwards compatibility with Desktop < v4.07
+  isAdmin: false,
 };
 
 Menu.propTypes = {
@@ -266,8 +267,8 @@ Menu.propTypes = {
   toSupplierRequisitions: PropTypes.func.isRequired,
   toRealmExplorer: PropTypes.func.isRequired,
   toSettings: PropTypes.func.isRequired,
-  isAdmin: PropTypes.bool.isRequired,
-  usingDashboard: PropTypes.bool.isRequired,
+  isAdmin: PropTypes.bool,
   usingDispensary: PropTypes.bool.isRequired,
+  usingDashboard: PropTypes.bool.isRequired,
   usingModules: PropTypes.bool.isRequired,
 };

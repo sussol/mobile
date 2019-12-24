@@ -12,11 +12,11 @@ import { connect } from 'react-redux';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 import { createStocktake, updateStocktake } from '../navigation/actions';
 
-import { BottomTextEditor } from '../widgets/modals';
 import { ToggleBar, DataTablePageView, SearchBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+import { BottomTextEditor } from '../widgets/bottomModals';
 
-import { buttonStrings, modalStrings } from '../localization/index';
+import { buttonStrings, modalStrings } from '../localization';
 import globalStyles from '../globalStyles';
 
 import { ROUTES } from '../navigation/constants';

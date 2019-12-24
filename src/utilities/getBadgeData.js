@@ -1,5 +1,5 @@
 import { routeList } from '../navigation/selectors';
-import { generalStrings } from '../localization/index';
+import { generalStrings } from '../localization';
 import { UIDatabase } from '../database';
 
 const getBadgeData = routeName => {

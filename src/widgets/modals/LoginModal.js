@@ -13,10 +13,11 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { SETTINGS_KEYS, getAppVersion } from '../../settings';
 
 import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
-import { GenericChoiceList, Flag } from '..';
+import { Flag } from '..';
+import { GenericChoiceList } from '../modalChildren/GenericChoiceList';
 import ModalContainer from './ModalContainer';
 
-import { LANGUAGE_NAMES, LANGUAGE_CHOICE, authStrings, navStrings } from '../../localization/index';
+import { LANGUAGE_NAMES, LANGUAGE_CHOICE, authStrings, navStrings } from '../../localization';
 import { getModalTitle, MODAL_KEYS } from '../../utilities/index';
 
 export class LoginModal extends React.Component {
@@ -185,10 +186,7 @@ export class LoginModal extends React.Component {
                   returnKeyType="done"
                   selectTextOnFocus
                   onChangeText={text =>
-                    this.setState({
-                      password: text,
-                      authStatus: 'unauthenticated',
-                    })
+                    this.setState({ password: text, authStatus: 'unauthenticated' })
                   }
                   onSubmitEditing={() => {
                     if (this.passwordInputRef) this.passwordInputRef.blur();

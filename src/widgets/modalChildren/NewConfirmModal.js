@@ -19,7 +19,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import { OnePressButton } from '..';
-import { modalStrings } from '../../localization/index';
+import { modalStrings } from '../../localization';
 
 import globalStyles, { DARK_GREY } from '../../globalStyles';
 
@@ -75,8 +75,6 @@ export const NewConfirmModal = props => {
     </>
   );
 };
-
-export default NewConfirmModal;
 
 /* eslint-disable react/require-default-props */
 NewConfirmModal.propTypes = {

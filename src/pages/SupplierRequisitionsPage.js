@@ -9,9 +9,10 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
+import { DataTablePageModal } from '../widgets/modals';
 import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+import { BottomConfirmModal } from '../widgets/bottomModals';
 
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
@@ -22,7 +23,7 @@ import { createSupplierRequisition, gotoSupplierRequisition } from '../navigatio
 import { getItemLayout, PageActions, getPageDispatchers } from './dataTableUtilities';
 
 import globalStyles from '../globalStyles';
-import { buttonStrings, modalStrings } from '../localization/index';
+import { buttonStrings, modalStrings } from '../localization';
 
 /**
  * Renders a mSupply mobile page with a list of supplier requisitions.
