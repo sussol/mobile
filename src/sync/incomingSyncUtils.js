@@ -245,6 +245,10 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: ['name', 'startDate', 'endDate', 'periodScheduleID'],
       canBeBlank: [],
     },
+    Prescriber: {
+      cannotBeBlank: ['first_name', 'last_name', 'code'],
+      canBeBlank: [],
+    },
     Unit: {
       cannotBeBlank: [],
       canBeBlank: ['units', 'comment', 'order_number'],
@@ -717,6 +721,21 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         units: record.units,
         orderNumber: parseNumber(record.order_number),
         comment: record.comment,
+      });
+      break;
+    }
+    case 'Prescriber': {
+      database.update(recordType, {
+        id: record.ID,
+        firstName: record.first_name,
+        lastName: record.last_name,
+        registrationCode: record.registration_code,
+        address: getOrCreateAddress(database, record.address1, record.address2),
+        isVisible: true,
+        isActive: true,
+        phoneNumber: record.phone,
+        mobileNumber: record.mobile,
+        emailAddress: record.email,
       });
       break;
     }
