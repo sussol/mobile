@@ -17,6 +17,19 @@ const ACTIONS = {
   SELECT_ITEM: 'PRESCRIPTION/SELECT_ITEM',
 };
 
+export const editQuantity = (id, quantity) => (_, getState) => {
+  const { prescription } = getState();
+  const { transaction } = prescription;
+  const { items } = transaction;
+
+  const itemToUpdate = items.filtered('id == $0', id)[0];
+
+  UIDatabase.write(() => {
+    itemToUpdate.setTotalQuantity(UIDatabase, quantity);
+    UIDatabase.save('TransactionItem', itemToUpdate);
+  });
+};
+
 export const switchTab = nextTab => ({
   type: ACTIONS.SWITCH_TAB,
   payload: { nextTab },
