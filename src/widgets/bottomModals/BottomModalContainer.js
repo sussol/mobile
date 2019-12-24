@@ -33,6 +33,7 @@ export const BottomModalContainer = ({
       backdropPressToClose={backdropPressToClose}
       position={position}
       backdrop={backdrop}
+      isOpen={isOpen}
       {...modalProps}
       style={localStyles.modalStyle}
     >

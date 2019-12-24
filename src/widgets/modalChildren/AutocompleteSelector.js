@@ -7,13 +7,17 @@
 import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { FlatList, StyleSheet, View } from 'react-native';
-import { complement } from 'set-manipulator';
-import { SearchBar, ResultRow } from '.';
-import { APP_FONT_FAMILY, WHITE } from '../globalStyles';
-import { generalStrings } from '../localization';
-import { withOnePress } from './withOnePress';
 
-const AutocompleteSelector = ({
+import { complement } from 'set-manipulator';
+
+import { withOnePress } from '../withOnePress';
+import { ResultRow } from '../ResultRow';
+import { SearchBar } from '../SearchBar';
+
+import { WHITE, APP_FONT_FAMILY } from '../../globalStyles';
+import { generalStrings } from '../../localization';
+
+export const AutocompleteSelector = ({
   sortKeyString,
   queryString,
   queryStringSecondary,
@@ -117,8 +121,6 @@ const AutocompleteSelector = ({
     </View>
   );
 };
-
-export default AutocompleteSelector;
 
 /* eslint-disable react/forbid-prop-types, react/require-default-props */
 AutocompleteSelector.propTypes = {

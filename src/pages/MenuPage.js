@@ -39,7 +39,7 @@ const exportData = async () => {
 };
 
 const Menu = ({
-  isInAdminMode,
+  isInAdminMode, // isInAdminMode kept for backwards compatibility with Desktop < v4.07
   logout,
   toCustomerInvoices,
   toCustomerRequisitions,
@@ -242,7 +242,8 @@ const mapStateToProps = state => {
 export const MenuPage = connect(mapStateToProps, mapDispatchToProps)(Menu);
 
 Menu.defaultProps = {
-  isInAdminMode: false,
+  isInAdminMode: false, // isInAdminMode kept for backwards compatibility with Desktop < v4.07
+  isAdmin: false,
 };
 
 Menu.propTypes = {
@@ -256,7 +257,7 @@ Menu.propTypes = {
   toSupplierRequisitions: PropTypes.func.isRequired,
   toRealmExplorer: PropTypes.func.isRequired,
   toSettings: PropTypes.func.isRequired,
-  isAdmin: PropTypes.bool.isRequired,
+  isAdmin: PropTypes.bool,
   usingDispensary: PropTypes.bool.isRequired,
   usingModules: PropTypes.bool.isRequired,
 };
