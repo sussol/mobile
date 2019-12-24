@@ -102,6 +102,7 @@ Name.schema = {
     id: 'string',
     name: { type: 'string', default: 'placeholderName' },
     code: { type: 'string', default: 'placeholderCode' },
+    dateOfBirth: { type: 'date', optional: true },
     phoneNumber: { type: 'string', optional: true },
     billingAddress: { type: 'Address', optional: true },
     emailAddress: { type: 'string', optional: true },
