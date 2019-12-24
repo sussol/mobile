@@ -15,6 +15,9 @@ import { AddIcon, MinusIcon } from './icons';
  * The buttons can also be held, increase by one every 50ms. The increment amount
  * then grows exponentially every 500ms, reseting to one after releasing.
  *
+ * Component uses state to update itself, and a ref for storing the current value. This
+ * is a bit of a hack, but is much more responsive to the rapid updates of the input.
+ *
  * @prop {String|Number} value          The current numerical value.
  * @prop {Func}          onChangeText   Callback for updating the value.
  * @prop {Number}        lowerLimit     The lower limit of the numerical range.
@@ -23,26 +26,33 @@ import { AddIcon, MinusIcon } from './icons';
  *
  */
 export const StepperInput = ({ value, onChangeText, lowerLimit, upperLimit, textInputStyle }) => {
+  const [, setCurrentValueState] = React.useState(Number(value));
   const currentValue = React.useRef(Number(value));
   const currentAdjustmentAmount = React.useRef(1);
   const valueAdjustmentInterval = React.useRef();
   const adjustmentIncreaseInterval = React.useRef();
 
+  const parseNumber = number => Math.max(Math.min(number, upperLimit), lowerLimit);
+
   const onUpdate = newValue => {
-    currentValue.current = newValue;
-    onChangeText(newValue);
+    const updateValue = parseNumber(newValue);
+    currentValue.current = updateValue;
+    setCurrentValueState(updateValue);
+    onChangeText(updateValue);
   };
 
   const decrementValue = () => {
-    if (lowerLimit >= currentValue.current) return;
-    currentValue.current -= currentAdjustmentAmount.current;
-    onChangeText(currentValue.current);
+    const updateValue = parseNumber(currentValue.current - currentAdjustmentAmount.current);
+    currentValue.current = updateValue;
+    setCurrentValueState(updateValue);
+    onChangeText(updateValue);
   };
 
   const incrementValue = () => {
-    if (currentValue.current > upperLimit) return;
-    currentValue.current += currentAdjustmentAmount.current;
-    onChangeText(currentValue.current);
+    const updateValue = parseNumber(currentValue.current + currentAdjustmentAmount.current);
+    currentValue.current = updateValue;
+    setCurrentValueState(updateValue);
+    onChangeText(updateValue);
   };
 
   const inreaseIncrement = () => {
@@ -81,7 +91,11 @@ export const StepperInput = ({ value, onChangeText, lowerLimit, upperLimit, text
         onPressIn={onStartDecrementPress}
         onPressOut={onEndLongPress}
       />
-      <TextInput onChangeText={onUpdate} value={String(value)} style={textInputStyle} />
+      <TextInput
+        onChangeText={onUpdate}
+        value={String(currentValue.current)}
+        style={textInputStyle}
+      />
       <CircleButton
         IconComponent={AddIcon}
         onPressIn={onStartIncrementPress}
