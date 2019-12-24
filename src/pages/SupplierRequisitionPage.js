@@ -11,7 +11,8 @@ import { View, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
-import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
+import { DataTablePageModal } from '../widgets/modals';
+import { BottomConfirmModal } from '../widgets/bottomModals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import { DataTablePageView, PageButton, PageInfo, ToggleBar, SearchBar } from '../widgets';
 

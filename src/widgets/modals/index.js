@@ -9,4 +9,3 @@ export { DataTablePageModal } from './DataTablePageModal';
 export { DemoUserModal } from './DemoUserModal';
 export { FinaliseModal } from './FinaliseModal';
 export { LoginModal } from './LoginModal';
-export { NewConfirmModal } from './NewConfirmModal';

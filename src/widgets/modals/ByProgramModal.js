@@ -3,14 +3,16 @@ import React, { useReducer, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
 
-import { ToggleBar, PageButton, TextEditor, Step } from '..';
+import { ToggleBar, PageButton, Step } from '..';
+import { AutocompleteSelector, TextEditor } from '../modalChildren';
+import ModalContainer from './ModalContainer';
+
 import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
+
 import { SETTINGS_KEYS } from '../../settings';
 import { getAllPrograms, getAllPeriodsForProgram } from '../../utilities';
 import { programStrings, navStrings } from '../../localization';
 import { UIDatabase } from '../../database';
-import AutocompleteSelector from '../AutocompleteSelector';
-
 import {
   selectProgram,
   selectSupplier,
@@ -25,7 +27,6 @@ import {
   byProgramReducer,
   initialState,
 } from '../../reducers/ByProgramReducer';
-import ModalContainer from './ModalContainer';
 
 const { THIS_STORE_TAGS } = SETTINGS_KEYS;
 

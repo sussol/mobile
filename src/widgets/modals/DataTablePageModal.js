@@ -13,14 +13,17 @@ import Settings from '../../settings/MobileAppSettings';
 import { getModalTitle, MODAL_KEYS } from '../../utilities/getModalTitle';
 
 import ModalContainer from './ModalContainer';
-import AutocompleteSelector from '../AutocompleteSelector';
-import MultiSelectList from '../MultiSelectList';
-import { TextEditor } from '../TextEditor';
+import {
+  TextEditor,
+  AutocompleteSelector,
+  NewConfirmModal,
+  GenericChoiceList,
+  MultiSelectList,
+  ToggleSelector,
+} from '../modalChildren';
+
 import { ByProgramModal } from './ByProgramModal';
-import { ToggleSelector } from '../ToggleSelector';
 import { RegimenDataModal } from './RegimenDataModal';
-import { NewConfirmModal } from './NewConfirmModal';
-import { GenericChoiceList } from '../GenericChoiceList';
 import { StocktakeBatchModal } from './StocktakeBatchModal';
 
 import { modalStrings } from '../../localization';
