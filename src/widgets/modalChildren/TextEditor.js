@@ -9,10 +9,10 @@ import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
 import { Button } from 'react-native-ui-components';
 
-import { TextInput } from './TextInput';
+import { TextInput } from '../TextInput';
 
-import { buttonStrings } from '../localization';
-import globalStyles from '../globalStyles';
+import { buttonStrings } from '../../localization/index';
+import globalStyles from '../../globalStyles';
 
 /**
  * Renders a View containing a TextInput and confirm Button, to allow editing
@@ -21,7 +21,7 @@ import globalStyles from '../globalStyles';
  * @prop {function} onEndEditing    A function to call with the new text on confirm.
  * @prop {Bool}     secureTextEntry Indicator if secure text entry should be used.
  */
-const TextEditor = ({ onEndEditing, secureTextEntry, text }) => {
+export const TextEditor = ({ onEndEditing, secureTextEntry, text }) => {
   const [textValue, setTextValue] = React.useState(text);
 
   const submitValue = React.useCallback(() => onEndEditing(textValue));
@@ -47,8 +47,6 @@ const TextEditor = ({ onEndEditing, secureTextEntry, text }) => {
     </View>
   );
 };
-
-export default TextEditor;
 
 TextEditor.defaultProps = {
   text: '',

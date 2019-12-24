@@ -13,9 +13,9 @@ import Settings from '../../settings/MobileAppSettings';
 import { getModalTitle, MODAL_KEYS } from '../../utilities/getModalTitle';
 
 import ModalContainer from './ModalContainer';
-import AutocompleteSelector from '../AutocompleteSelector';
+import AutocompleteSelector from '../modalChildren/AutocompleteSelector';
 import MultiSelectList from '../MultiSelectList';
-import { TextEditor } from '../TextEditor';
+import { TextEditor } from '../modalChildren/TextEditor';
 import { ByProgramModal } from './ByProgramModal';
 import { ToggleSelector } from '../ToggleSelector';
 import { RegimenDataModal } from './RegimenDataModal';
