@@ -19,9 +19,10 @@ import {
   NewConfirmModal,
   GenericChoiceList,
   MultiSelectList,
+  ToggleSelector,
 } from '../modalChildren';
+
 import { ByProgramModal } from './ByProgramModal';
-import { ToggleSelector } from '../ToggleSelector';
 import { RegimenDataModal } from './RegimenDataModal';
 import { StocktakeBatchModal } from './StocktakeBatchModal';
 

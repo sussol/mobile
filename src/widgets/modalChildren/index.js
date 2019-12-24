@@ -8,3 +8,4 @@ export { TextEditor } from './TextEditor';
 export { NewConfirmModal } from './NewConfirmModal';
 export { GenericChoiceList } from './GenericChoiceList';
 export { MultiSelectList } from './MultiSelectList';
+export { ToggleSelector } from './ToggleSelector';
