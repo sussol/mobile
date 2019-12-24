@@ -6,7 +6,6 @@
 export { Button, ProgressBar } from 'react-native-ui-components';
 
 export { FinaliseButton } from './FinaliseButton';
-export { GenericChoiceList } from './GenericChoiceList';
 export { IconCell } from './IconCell';
 export { NavigationBar } from './NavigationBar';
 export { OnePressButton } from './OnePressButton';

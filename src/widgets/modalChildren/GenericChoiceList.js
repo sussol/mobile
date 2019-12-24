@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { COMPONENT_HEIGHT } from '../globalStyles';
+import { COMPONENT_HEIGHT } from '../../globalStyles';
 
 /**
  * Generic choice list for use within a ModalContainer.
@@ -104,5 +104,3 @@ GenericChoiceList.propTypes = {
   highlightValue: PropTypes.string,
   renderLeftComponent: PropTypes.func,
 };
-
-export default GenericChoiceList;
