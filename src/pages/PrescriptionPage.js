@@ -11,26 +11,20 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import {
-  FavouriteStarIcon,
-  TableShortcut,
-  TableShortcuts,
-  Wizard,
-  SimpleTable,
-  PageButton,
-} from '../widgets';
+import { Wizard, SimpleTable, PageButton } from '../widgets';
 import { PrescriptionCart } from '../widgets/PrescriptionCart';
 import { PrescriptionSummary } from '../widgets/PrescriptionSummary';
 
 import { UIDatabase } from '../database';
 import { getColumns } from './dataTableUtilities';
-import { ALPHABET } from '../widgets/constants';
 import {
   selectItem,
   selectPrescriber,
   switchTab,
   editQuantity,
 } from '../reducers/PrescriptionReducer';
+
+import { PrescriptionInfo } from '../widgets/PrescriptionInfo';
 
 /**
  * File contains Four components for the PrescriptionPage. The container component Prescription and
@@ -46,22 +40,12 @@ const mapDispatchToProps = dispatch => {
 };
 
 const mapStateToProps = state => {
-  const { prescription } = state;
-  return prescription;
+  const { prescription, patient, prescriber } = state;
+  return { ...prescription, ...patient, ...prescriber };
 };
 
-// Helper method finding the first instance of a Prescriber whos first name starts with
-// the passed character.
-const getPrescriberIndex = char =>
-  UIDatabase.objects('Prescriber').findIndex(item => item.firstName[0].toLowerCase() === char);
-
-// Helper method finding the first instance of an Item whos first name starts with
-// the passed character.
-const getItemIndex = char =>
-  UIDatabase.objects('Item').findIndex(item => item.name[0].toLowerCase() === char);
-
 const PrescriberSelect = connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(({ choosePrescriber }) => {
   const { row, extraLargeFlex } = localStyles;
@@ -69,42 +53,20 @@ const PrescriberSelect = connect(
 
   const tableRef = React.useRef(React.createRef());
 
-  const alphabetCallback = React.useCallback(
-    character => {
-      const startIndex = getPrescriberIndex(character);
-
-      if (startIndex > -1) tableRef.current.scrollToIndex({ index: startIndex });
-    },
-    [tableRef.current]
-  );
-
-  const AlphabetShortcuts = React.useCallback(
-    () =>
-      ALPHABET.map(character => (
-        <TableShortcut key={character} onPress={() => alphabetCallback(character)}>
-          {character.toUpperCase()}
-        </TableShortcut>
-      )),
-    []
-  );
-
   return (
-    <View style={row}>
-      <TableShortcuts>
-        <TableShortcut extraLarge>
-          <FavouriteStarIcon />
-        </TableShortcut>
-        <AlphabetShortcuts />
-      </TableShortcuts>
-      <View style={extraLargeFlex}>
-        <SimpleTable
-          data={UIDatabase.objects('Prescriber')}
-          columns={columns}
-          selectRow={choosePrescriber}
-          ref={tableRef}
-        />
+    <>
+      <PrescriptionInfo />
+      <View style={row}>
+        <View style={extraLargeFlex}>
+          <SimpleTable
+            data={UIDatabase.objects('Prescriber')}
+            columns={columns}
+            selectRow={choosePrescriber}
+            ref={tableRef}
+          />
+        </View>
       </View>
-    </View>
+    </>
   );
 });
 
@@ -117,50 +79,30 @@ const ItemSelect = connect(
 
   const tableRef = React.useRef(React.createRef());
 
-  const alphabetCallback = React.useCallback(
-    character => {
-      const startIndex = getItemIndex(character);
-      if (startIndex > -1) tableRef.current.scrollToIndex({ index: startIndex });
-    },
-    [tableRef.current]
-  );
-
-  const AlphabetShortcuts = React.useCallback(
-    () =>
-      ALPHABET.map(character => (
-        <TableShortcut key={character} onPress={alphabetCallback}>
-          {character.toUpperCase()}
-        </TableShortcut>
-      )),
-    []
-  );
-
   return (
-    <View style={{ ...row, marginTop: 20 }}>
-      <TableShortcuts>
-        <TableShortcut>
-          <FavouriteStarIcon />
-        </TableShortcut>
-        <AlphabetShortcuts />
-      </TableShortcuts>
-      <View style={mediumFlex}>
-        <SimpleTable
-          data={UIDatabase.objects('Item')}
-          columns={columns}
-          selectRow={x => chooseItem(x)}
-          ref={tableRef}
-        />
+    <>
+      <PrescriptionInfo />
+      <View style={{ ...row }}>
+        <View style={mediumFlex}>
+          <SimpleTable
+            data={UIDatabase.objects('Item')}
+            columns={columns}
+            selectRow={x => chooseItem(x)}
+            ref={tableRef}
+          />
+        </View>
+        <View style={{ flex: 15, marginHorizontal: 15 }}>
+          <PrescriptionCart items={transaction.items.slice()} onChangeQuantity={updateQuantity} />
+          <PageButton text="Next" onPress={() => nextTab(1)} style={{ alignSelf: 'flex-end' }} />
+        </View>
       </View>
-      <View style={{ flex: 15, marginHorizontal: 15 }}>
-        <PrescriptionCart items={transaction.items.slice()} onChangeQuantity={updateQuantity} />
-        <PageButton text="Next" onPress={() => nextTab(1)} style={{ alignSelf: 'flex-end' }} />
-      </View>
-    </View>
+    </>
   );
 });
 
 const Summary = connect(mapStateToProps)(({ transaction }) => (
   <View style={{ flex: 1 }}>
+    <PrescriptionInfo />
     <PrescriptionSummary transaction={transaction} />
   </View>
 ));
