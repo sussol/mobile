@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -17,30 +18,28 @@ import { SimpleTable } from '../SimpleTable';
 import { UIDatabase } from '../../database';
 import { getColumns } from '../../pages/dataTableUtilities';
 import { selectPrescriber } from '../../reducers/PrescriptionReducer';
+import { PrescriberActions } from '../../actions/PrescriberActions';
 
 /**
  * Layout component used for a tab within the prescription wizard.
  *
  * @props {Func} choosePrescriber   Callback for selecting a supplier.
  */
-const PrescriberSelectComponent = ({ choosePrescriber }) => {
-  const columns = getColumns('prescriberSelect');
-
-  const tableRef = React.useRef(React.createRef());
+const PrescriberSelectComponent = ({ choosePrescriber, data, onFilterData, searchTerm }) => {
+  const columns = React.useMemo(() => getColumns('prescriberSelect'), []);
 
   return (
     <>
       <PrescriptionInfo />
       <FlexRow>
-        <SearchBar viewStyle={localStyles.searchBar} />
+        <SearchBar
+          viewStyle={localStyles.searchBar}
+          onChangeText={onFilterData}
+          value={searchTerm}
+        />
         <PageButton text="Add Prescriber" />
       </FlexRow>
-      <SimpleTable
-        data={UIDatabase.objects('Prescriber')}
-        columns={columns}
-        selectRow={choosePrescriber}
-        ref={tableRef}
-      />
+      <SimpleTable data={data} columns={columns} selectRow={choosePrescriber} />
     </>
   );
 };
@@ -57,10 +56,28 @@ const localStyles = StyleSheet.create({
 
 const mapDispatchToProps = dispatch => {
   const choosePrescriber = prescriberID => dispatch(selectPrescriber(prescriberID));
-
-  return { choosePrescriber };
+  const onFilterData = searchTerm => dispatch(PrescriberActions.filterData(searchTerm));
+  return { choosePrescriber, onFilterData };
 };
 
-PrescriberSelectComponent.propTypes = { choosePrescriber: PropTypes.func.isRequired };
+const mapStateToProps = state => {
+  const { prescriber } = state;
+  const { searchTerm } = prescriber;
+  const data = UIDatabase.objects('Prescriber').filtered(
+    'firstName CONTAINS[c] $0 OR lastName CONTAINS[c] $0',
+    searchTerm
+  );
+  return { data, searchTerm };
+};
 
-export const PrescriberSelect = connect(null, mapDispatchToProps)(PrescriberSelectComponent);
+PrescriberSelectComponent.propTypes = {
+  choosePrescriber: PropTypes.func.isRequired,
+  data: PropTypes.object.isRequired,
+  onFilterData: PropTypes.func.isRequired,
+  searchTerm: PropTypes.string.isRequired,
+};
+
+export const PrescriberSelect = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PrescriberSelectComponent);
