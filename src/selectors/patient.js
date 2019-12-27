@@ -22,3 +22,13 @@ export const selectSortedPatientHistory = ({ patient }) => {
 
   return patientHistory ? sortDataBy(patientHistory.slice(), sortKey, isAscending) : patientHistory;
 };
+
+export const selectCurrentPatient = ({ patient }) => {
+  const { currentPatient } = patient;
+  return currentPatient;
+};
+
+export const selectPatientName = ({ patient }) => {
+  const currentPatient = selectCurrentPatient({ patient });
+  return `${currentPatient?.firstName} ${currentPatient?.lastName}`;
+};
