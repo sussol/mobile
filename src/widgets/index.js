@@ -6,6 +6,7 @@
 export { Button, ProgressBar } from 'react-native-ui-components';
 export { DataTablePageView } from './DataTablePageView';
 export { ExpiryDateInput } from './ExpiryDateInput';
+export { FlexRow } from './FlexRow';
 export { FinaliseButton } from './FinaliseButton';
 export { Flag } from './Flag';
 export { IconCell } from './IconCell';
