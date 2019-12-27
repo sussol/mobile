@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { Wizard, SimpleTable, PageButton } from '../widgets';
+import { SearchBar, FlexRow, Wizard, SimpleTable, PageButton } from '../widgets';
 import { PrescriptionCart } from '../widgets/PrescriptionCart';
 import { PrescriptionSummary } from '../widgets/PrescriptionSummary';
 
@@ -48,7 +48,6 @@ const PrescriberSelect = connect(
   mapStateToProps,
   mapDispatchToProps
 )(({ choosePrescriber }) => {
-  const { row, extraLargeFlex } = localStyles;
   const columns = getColumns('prescriberSelect');
 
   const tableRef = React.useRef(React.createRef());
@@ -56,16 +55,16 @@ const PrescriberSelect = connect(
   return (
     <>
       <PrescriptionInfo />
-      <View style={row}>
-        <View style={extraLargeFlex}>
-          <SimpleTable
-            data={UIDatabase.objects('Prescriber')}
-            columns={columns}
-            selectRow={choosePrescriber}
-            ref={tableRef}
-          />
-        </View>
-      </View>
+      <FlexRow>
+        <SearchBar viewStyle={localStyles.searchBar} />
+        <PageButton text="Add Prescriber" />
+      </FlexRow>
+      <SimpleTable
+        data={UIDatabase.objects('Prescriber')}
+        columns={columns}
+        selectRow={choosePrescriber}
+        ref={tableRef}
+      />
     </>
   );
 });
@@ -120,6 +119,13 @@ const localStyles = {
   largeFlex: { flex: 10 },
   mediumFlex: { flex: 9 },
   smallFlex: { flex: 1 },
+  searchBar: {
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    flexGrow: 1,
+  },
 };
 
 export const PrescriptionPage = connect(mapStateToProps, mapDispatchToProps)(Prescription);
