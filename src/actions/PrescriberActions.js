@@ -12,7 +12,10 @@ export const PRESCRIBER_ACTIONS = {
   CREATE: 'Prescriber/create',
   COMPLETE: 'Prescriber/complete',
   SET: 'Prescriber/set',
+  FILTER: 'Prescriber/filter',
 };
+
+const filterData = searchTerm => ({ type: PRESCRIBER_ACTIONS.FILTER, payload: { searchTerm } });
 
 const setPrescriber = prescriber => ({ type: PRESCRIBER_ACTIONS.SET, payload: { prescriber } });
 
@@ -59,4 +62,5 @@ export const PrescriberActions = {
   closeModal,
   saveNewPrescriber,
   setPrescriber,
+  filterData,
 };

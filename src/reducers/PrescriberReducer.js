@@ -35,6 +35,12 @@ export const PrescriberReducer = (state = prescriberInitialState(), action) => {
       return { ...state, currentPrescriber: prescriber };
     }
 
+    case PRESCRIBER_ACTIONS.FILTER: {
+      const { payload } = action;
+      const { searchTerm } = payload;
+      return { ...state, searchTerm };
+    }
+
     default: {
       return state;
     }
