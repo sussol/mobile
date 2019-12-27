@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { SearchBar, FlexRow, Wizard, SimpleTable, PageButton } from '../widgets';
+import { Wizard, SimpleTable, PageButton } from '../widgets';
 import { PrescriptionCart } from '../widgets/PrescriptionCart';
 import { PrescriptionSummary } from '../widgets/PrescriptionSummary';
 
@@ -25,6 +25,7 @@ import {
 } from '../reducers/PrescriptionReducer';
 
 import { PrescriptionInfo } from '../widgets/PrescriptionInfo';
+import { PrescriberSelect } from '../widgets/Tabs/PrescriberSelect';
 
 /**
  * File contains Four components for the PrescriptionPage. The container component Prescription and
@@ -43,31 +44,6 @@ const mapStateToProps = state => {
   const { prescription, patient, prescriber } = state;
   return { ...prescription, ...patient, ...prescriber };
 };
-
-const PrescriberSelect = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(({ choosePrescriber }) => {
-  const columns = getColumns('prescriberSelect');
-
-  const tableRef = React.useRef(React.createRef());
-
-  return (
-    <>
-      <PrescriptionInfo />
-      <FlexRow>
-        <SearchBar viewStyle={localStyles.searchBar} />
-        <PageButton text="Add Prescriber" />
-      </FlexRow>
-      <SimpleTable
-        data={UIDatabase.objects('Prescriber')}
-        columns={columns}
-        selectRow={choosePrescriber}
-        ref={tableRef}
-      />
-    </>
-  );
-});
 
 const ItemSelect = connect(
   mapStateToProps,
