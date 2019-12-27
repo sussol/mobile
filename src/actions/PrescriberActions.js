@@ -11,7 +11,10 @@ export const PRESCRIBER_ACTIONS = {
   EDIT: 'Prescriber/edit',
   CREATE: 'Prescriber/create',
   COMPLETE: 'Prescriber/complete',
+  SET: 'Prescriber/set',
 };
+
+const setPrescriber = prescriber => ({ type: PRESCRIBER_ACTIONS.SET, payload: { prescriber } });
 
 const closeModal = () => ({ type: PRESCRIBER_ACTIONS.COMPLETE });
 
@@ -55,4 +58,5 @@ export const PrescriberActions = {
   editPrescriber,
   closeModal,
   saveNewPrescriber,
+  setPrescriber,
 };
