@@ -9,8 +9,8 @@ import { View } from 'react-native';
 import PropTypes from 'prop-types';
 
 /**
- * Simple layout component. For use when needing a simple View with flex
- * direction of row.
+ * Simple layout component. For use when needing a simple View with flex.
+ *
  * @param {React.node} children       Children of this component
  * @param {Number}     flex           The flex amount i.e. 1
  * @param {Object}     style          An additional styles object.
