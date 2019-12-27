@@ -25,7 +25,13 @@ import { PrescriberActions } from '../../actions/PrescriberActions';
  *
  * @props {Func} choosePrescriber   Callback for selecting a supplier.
  */
-const PrescriberSelectComponent = ({ choosePrescriber, data, onFilterData, searchTerm }) => {
+const PrescriberSelectComponent = ({
+  choosePrescriber,
+  data,
+  onFilterData,
+  searchTerm,
+  createPrescriber,
+}) => {
   const columns = React.useMemo(() => getColumns('prescriberSelect'), []);
 
   return (
@@ -37,7 +43,7 @@ const PrescriberSelectComponent = ({ choosePrescriber, data, onFilterData, searc
           onChangeText={onFilterData}
           value={searchTerm}
         />
-        <PageButton text="Add Prescriber" />
+        <PageButton text="Add Prescriber" onPress={createPrescriber} />
       </FlexRow>
       <SimpleTable data={data} columns={columns} selectRow={choosePrescriber} />
     </>
@@ -57,7 +63,8 @@ const localStyles = StyleSheet.create({
 const mapDispatchToProps = dispatch => {
   const choosePrescriber = prescriberID => dispatch(selectPrescriber(prescriberID));
   const onFilterData = searchTerm => dispatch(PrescriberActions.filterData(searchTerm));
-  return { choosePrescriber, onFilterData };
+  const createPrescriber = () => dispatch(PrescriberActions.createPrescriber());
+  return { choosePrescriber, onFilterData, createPrescriber };
 };
 
 const mapStateToProps = state => {
@@ -75,6 +82,7 @@ PrescriberSelectComponent.propTypes = {
   data: PropTypes.object.isRequired,
   onFilterData: PropTypes.func.isRequired,
   searchTerm: PropTypes.string.isRequired,
+  createPrescriber: PropTypes.func.isRequired,
 };
 
 export const PrescriberSelect = connect(
