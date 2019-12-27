@@ -3,9 +3,11 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+import { batch } from 'react-redux';
 import { ROUTES } from '../navigation/constants';
 import { UIDatabase } from '../database';
-import { createRecord } from '../database/utilities/index';
+import { createRecord } from '../database/utilities';
+import { PrescriberActions } from '../actions/PrescriberActions';
 
 const initialState = () => ({
   currentTab: 0,
@@ -47,7 +49,10 @@ export const selectPrescriber = prescriberID => (dispatch, getState) => {
     })
   );
 
-  dispatch(switchTab(currentTab + 1));
+  batch(() => {
+    dispatch(PrescriberActions.setPrescriber(prescriber));
+    dispatch(switchTab(currentTab + 1));
+  });
 };
 
 export const selectItem = itemID => (dispatch, getState) => {
