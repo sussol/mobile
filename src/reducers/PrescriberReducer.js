@@ -29,6 +29,12 @@ export const PrescriberReducer = (state = prescriberInitialState(), action) => {
       return prescriberInitialState();
     }
 
+    case PRESCRIBER_ACTIONS.SET: {
+      const { payload } = action;
+      const { prescriber } = payload;
+      return { ...state, currentPrescriber: prescriber };
+    }
+
     default: {
       return state;
     }
