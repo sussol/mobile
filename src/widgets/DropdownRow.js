@@ -5,14 +5,13 @@
  */
 
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 import PropTypes from 'prop-types';
 
 import { ChevronDownIcon, BurgerMenuIcon } from './icons';
 import { PopoverDropDown } from './PopoverDropDown';
-import { SimpleLabel } from './SimpleLabel';
 
-import { SUSSOL_ORANGE } from '../globalStyles/index';
+import { SUSSOL_ORANGE, APP_FONT_FAMILY, GREY } from '../globalStyles/index';
 
 /**
  * Layout component rendering a DropdownPopover, a SimpleLabel and an optional
@@ -29,7 +28,6 @@ import { SUSSOL_ORANGE } from '../globalStyles/index';
  * @prop {String} dropdownTitle     The title of the drop down menu when opened.
  * @prop {Bool}   useSecondaryMenu  Indicator whether the secondary menu should show.
  * @prop {Number} iconSize          The size of the drop down icon.
- * @prop {String} labelSize         Size of the label component. See SimpleLabel.
  */
 export const DropdownRow = ({
   currentOptionText,
@@ -39,20 +37,19 @@ export const DropdownRow = ({
   useSecondaryMenu,
   secondaryCallback,
   iconSize,
-  labelSize,
 }) => {
-  const DropDownMenuIcon = React.useCallback(
-    () => <ChevronDownIcon color={SUSSOL_ORANGE} size={iconSize} />,
-    []
-  );
+  const DropDownMenuIcon = React.useCallback(() => {
+    const iconColor = options.length ? SUSSOL_ORANGE : GREY;
+    return <ChevronDownIcon color={iconColor} size={iconSize} />;
+  }, []);
 
   const BurgerMenuButton = React.useCallback(
-    () => (
-      <TouchableOpacity onPress={secondaryCallback}>
-        <BurgerMenuIcon />
-      </TouchableOpacity>
-    ),
-    [useSecondaryMenu]
+    () =>
+      (
+        <TouchableOpacity onPress={secondaryCallback}>
+          <BurgerMenuIcon />
+        </TouchableOpacity>
+      )[useSecondaryMenu]
   );
 
   return (
@@ -66,7 +63,13 @@ export const DropdownRow = ({
         />
       </View>
       <View style={localStyles.flexNine}>
-        <SimpleLabel size={labelSize} text={currentOptionText} />
+        <TextInput
+          onChangeText={onSelection}
+          value={currentOptionText}
+          underlineColorAndroid={SUSSOL_ORANGE}
+          style={{ flex: 1, fontFamily: APP_FONT_FAMILY }}
+          placeholder="Usage direction"
+        />
       </View>
       {useSecondaryMenu && <BurgerMenuButton />}
     </View>
@@ -93,7 +96,6 @@ DropdownRow.defaultProps = {
   useSecondaryMenu: false,
   secondaryCallback: null,
   iconSize: 20,
-  labelSize: 'small',
 };
 
 DropdownRow.propTypes = {
@@ -104,5 +106,4 @@ DropdownRow.propTypes = {
   useSecondaryMenu: PropTypes.bool,
   secondaryCallback: PropTypes.func,
   iconSize: PropTypes.number,
-  labelSize: PropTypes.oneOf(['small', 'large']),
 };
