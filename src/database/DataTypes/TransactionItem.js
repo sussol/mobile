@@ -86,6 +86,13 @@ export class TransactionItem extends Realm.Object {
   }
 
   /**
+   * Returns the note of the underlying transaction batch.
+   */
+  get note() {
+    return this.batches[0]?.note || null;
+  }
+
+  /**
    * Get available quantity of items.
    *
    * For customer invoices, get how much can be issued in total, accounting for the fact that any
@@ -250,6 +257,18 @@ export class TransactionItem extends Realm.Object {
     });
     database.delete('TransactionBatch', batchesToDelete);
   }
+
+  /**
+   * Sets the item direction for the underlying transaction batch.
+   */
+  setItemDirection = (database, newDirection) => {
+    const batch = this.batches[0];
+    if (!batch) return;
+    database.write(() => {
+      batch.note = newDirection;
+      database.save('TransactionBatch', batch);
+    });
+  };
 }
 
 TransactionItem.schema = {
