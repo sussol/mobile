@@ -637,7 +637,7 @@ const createTransactionBatch = (database, transactionItem, itemBatch, isAddition
  * @param   {Item}             item         Real item to create transaction item from.
  * @return  {TransactionItem}
  */
-const createTransactionItem = (database, transaction, item) => {
+const createTransactionItem = (database, transaction, item, initialQuantity = 0) => {
   // Handle cross reference items.
   const { realItem } = item;
 
@@ -646,6 +646,8 @@ const createTransactionItem = (database, transaction, item) => {
     item: realItem,
     transaction,
   });
+
+  transactionItem.setTotalQuantity(database, initialQuantity);
 
   transaction.addItem(transactionItem);
   database.save('Transaction', transaction);
