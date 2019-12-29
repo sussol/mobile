@@ -6,7 +6,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import { ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 
 import { PageButton } from '../PageButton';
@@ -61,7 +61,9 @@ const ItemSelectComponent = ({ transaction, chooseItem, nextTab, updateQuantity,
           />
         </FlexView>
         <FlexColumn flex={15}>
-          <PrescriptionCart items={transaction.items.slice()} onChangeQuantity={updateQuantity} />
+          <ScrollView>
+            <PrescriptionCart items={transaction.items.slice()} onChangeQuantity={updateQuantity} />
+          </ScrollView>
           <PageButton
             isDisabled={!canProceed}
             text="Next"
