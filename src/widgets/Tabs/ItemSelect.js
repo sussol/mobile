@@ -37,6 +37,7 @@ import { FlexView } from '../FlexView';
  */
 const ItemSelectComponent = ({ transaction, chooseItem, nextTab, updateQuantity }) => {
   const columns = getColumns('itemSelect');
+  const hasItems = transaction.items.length > 0;
   const disabledRows = UIDatabase.objects('Item').reduce(
     (acc, value) => ({ ...acc, [value.id]: value.totalQuantity <= 0 }),
     {}
@@ -61,7 +62,12 @@ const ItemSelectComponent = ({ transaction, chooseItem, nextTab, updateQuantity 
         </FlexView>
         <FlexColumn flex={15}>
           <PrescriptionCart items={transaction.items.slice()} onChangeQuantity={updateQuantity} />
-          <PageButton text="Next" onPress={() => nextTab(1)} style={{ alignSelf: 'flex-end' }} />
+          <PageButton
+            isDisabled={!hasItems}
+            text="Next"
+            onPress={() => nextTab(1)}
+            style={{ alignSelf: 'flex-end' }}
+          />
         </FlexColumn>
       </FlexRow>
     </>
