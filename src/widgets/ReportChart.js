@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2018
@@ -58,7 +59,7 @@ const localStyles = StyleSheet.create({
 });
 
 ReportChart.propTypes = {
-  report: PropTypes.objectOf(PropTypes.object()).isRequired,
+  report: PropTypes.object.isRequired,
   rows: PropTypes.string.isRequired,
   header: PropTypes.string.isRequired,
 };
