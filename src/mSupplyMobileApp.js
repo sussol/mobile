@@ -31,7 +31,7 @@ import { Synchroniser, PostSyncProcessor, SyncModal } from './sync';
 import { FinaliseButton, NavigationBar, SyncState, Spinner } from './widgets';
 import { FinaliseModal, LoginModal } from './widgets/modals';
 
-import { getCurrentParams, getCurrentRouteName, ReduxNavigator } from './navigation';
+import { getCurrentParams, getCurrentRouteName, ReduxNavigator, ROUTES } from './navigation';
 import { syncCompleteTransaction } from './actions/SyncActions';
 import { FinaliseActions } from './actions/FinaliseActions';
 import { migrateDataToVersion } from './dataMigration';
@@ -238,7 +238,11 @@ class MSupplyMobileAppContainer extends React.Component {
           onPressBack={this.getCanNavigateBack() ? this.handleBackEvent : null}
           LeftComponent={this.getCanNavigateBack() ? this.renderPageTitle : null}
           CentreComponent={this.renderLogo}
-          RightComponent={finaliseItem ? this.renderFinaliseButton : this.renderSyncState}
+          RightComponent={
+            finaliseItem && finaliseItem?.visibleButton
+              ? this.renderFinaliseButton
+              : this.renderSyncState
+          }
         />
         <ReduxNavigator
           state={navigationState}
@@ -290,8 +294,11 @@ const mapStateToProps = state => {
   const { finaliseModalOpen } = finalise;
   const currentParams = getCurrentParams(navigationState);
   const currentTitle = currentParams && currentParams.title;
-  const finaliseItem = FINALISABLE_PAGES[getCurrentRouteName(navigationState)];
+  const currentRouteName = getCurrentRouteName(navigationState);
+  const finaliseItem = FINALISABLE_PAGES[currentRouteName];
   if (finaliseItem && currentParams) {
+    if (currentRouteName === ROUTES.PRESCRIPTION) finaliseItem.visibleButton = false;
+    else finaliseItem.visibleButton = true;
     finaliseItem.record = currentParams[finaliseItem.recordToFinaliseKey];
   }
 
