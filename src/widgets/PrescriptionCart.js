@@ -14,7 +14,7 @@ import { PrescriptionCartRow } from './PrescriptionCartRow';
 import { SUSSOL_ORANGE, WHITE } from '../globalStyles/index';
 
 import { recordKeyExtractor } from '../pages/dataTableUtilities';
-import { removeItem } from '../reducers/PrescriptionReducer';
+import { removeItem, updateDirection } from '../reducers/PrescriptionReducer';
 
 /**
  * Layout container component for a prescriptions item cart.
@@ -36,9 +36,8 @@ export const PrescriptionCartComponent = ({
   const renderPrescriptionCartRow = React.useCallback(
     ({ item }) => (
       <PrescriptionCartRow
-        options={[]}
         onChangeQuantity={onChangeQuantity}
-        item={item}
+        transactionItem={item}
         onOptionSelection={onOptionSelection}
         onRemoveItem={onRemoveItem}
       />
@@ -89,6 +88,7 @@ const localStyles = StyleSheet.create({
 
 const mapDispatchToProps = dispatch => ({
   onRemoveItem: id => dispatch(removeItem(id)),
+  onOptionSelection: (id, newValue) => dispatch(updateDirection(id, newValue)),
   dispatch,
 });
 
