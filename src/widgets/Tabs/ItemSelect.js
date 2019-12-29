@@ -27,9 +27,16 @@ import { FlexRow } from '../FlexRow';
 import { FlexColumn } from '../FlexColumn';
 import { FlexView } from '../FlexView';
 
+/**
+ * Layout component used for a tab within the prescription wizard.
+ *
+ * @prop {Func} transaction    Underlying realm Transaction for this script.
+ * @prop {Func} chooseItem     Callback for selecting an item.
+ * @prop {Func} nextTab        Callback for transitioning to the next step.
+ * @prop {Func} updateQuantity Callback for updating an items quantity.
+ */
 const ItemSelectComponent = ({ transaction, chooseItem, nextTab, updateQuantity }) => {
   const columns = getColumns('itemSelect');
-
   const disabledRows = UIDatabase.objects('Item').reduce(
     (acc, value) => ({ ...acc, [value.id]: value.totalQuantity <= 0 }),
     {}
