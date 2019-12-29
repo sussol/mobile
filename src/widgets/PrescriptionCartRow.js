@@ -35,20 +35,20 @@ export const PrescriptionCartRow = ({
   onOptionSelection,
   currentOptionText,
 }) => {
-  const { itemName, totalQuantity, itemCode, price } = item;
+  const { itemName, totalQuantity, itemCode, price, id } = item;
 
+  const removeItem = React.useCallback(() => onRemoveItem(id), [id]);
   const onChangeValue = React.useCallback(
     quantity => {
-      onChangeQuantity(item.id, quantity);
+      onChangeQuantity(id, quantity);
     },
-    [item.id]
+    [id]
   );
 
   const itemDetails = [
     { label: 'Code', text: itemCode },
     { label: 'Price', text: price },
   ];
-
   return (
     <View>
       <View style={localStyles.flexRow}>
@@ -64,7 +64,7 @@ export const PrescriptionCartRow = ({
           />
         </View>
         <View style={localStyles.flexOne} />
-        <CircleButton IconComponent={CloseIcon} onPress={onRemoveItem} />
+        <CircleButton IconComponent={CloseIcon} onPress={removeItem} />
       </View>
       <Separator width={1} />
     </View>
