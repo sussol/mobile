@@ -11,12 +11,9 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { Wizard, SimpleTable, PageButton } from '../widgets';
-import { PrescriptionCart } from '../widgets/PrescriptionCart';
+import { Wizard } from '../widgets';
 import { PrescriptionSummary } from '../widgets/PrescriptionSummary';
 
-import { UIDatabase } from '../database';
-import { getColumns } from './dataTableUtilities';
 import {
   selectItem,
   selectPrescriber,
@@ -26,11 +23,7 @@ import {
 
 import { PrescriptionInfo } from '../widgets/PrescriptionInfo';
 import { PrescriberSelect } from '../widgets/Tabs/PrescriberSelect';
-
-/**
- * File contains Four components for the PrescriptionPage. The container component Prescription and
- * three "Tab" components PrescriberSelect/ItemSelect/Summary.
- */
+import { ItemSelect } from '../widgets/Tabs/ItemSelect';
 
 const mapDispatchToProps = dispatch => {
   const choosePrescriber = prescriberID => dispatch(selectPrescriber(prescriberID));
@@ -45,36 +38,6 @@ const mapStateToProps = state => {
   return { ...prescription, ...patient, ...prescriber };
 };
 
-const ItemSelect = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(({ transaction, chooseItem, nextTab, updateQuantity }) => {
-  const { row, mediumFlex } = localStyles;
-  const columns = getColumns('itemSelect');
-
-  const tableRef = React.useRef(React.createRef());
-
-  return (
-    <>
-      <PrescriptionInfo />
-      <View style={{ ...row }}>
-        <View style={mediumFlex}>
-          <SimpleTable
-            data={UIDatabase.objects('Item')}
-            columns={columns}
-            selectRow={x => chooseItem(x)}
-            ref={tableRef}
-          />
-        </View>
-        <View style={{ flex: 15, marginHorizontal: 15 }}>
-          <PrescriptionCart items={transaction.items.slice()} onChangeQuantity={updateQuantity} />
-          <PageButton text="Next" onPress={() => nextTab(1)} style={{ alignSelf: 'flex-end' }} />
-        </View>
-      </View>
-    </>
-  );
-});
-
 const Summary = connect(mapStateToProps)(({ transaction }) => (
   <View style={{ flex: 1 }}>
     <PrescriptionInfo />
@@ -88,21 +51,6 @@ const titles = ['Select the Prescriber', 'Select items', 'Summary'];
 export const Prescription = ({ currentTab, nextTab }) => (
   <Wizard tabs={tabs} titles={titles} currentTabIndex={currentTab} onPress={nextTab} />
 );
-
-const localStyles = {
-  row: { flex: 1, flexDirection: 'row' },
-  extraLargeFlex: { flex: 19 },
-  largeFlex: { flex: 10 },
-  mediumFlex: { flex: 9 },
-  smallFlex: { flex: 1 },
-  searchBar: {
-    borderBottomWidth: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    flexGrow: 1,
-  },
-};
 
 export const PrescriptionPage = connect(mapStateToProps, mapDispatchToProps)(Prescription);
 
