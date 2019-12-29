@@ -77,7 +77,7 @@ export const selectItem = itemID => (dispatch, getState) => {
 
   if (!transaction.hasItem(item)) {
     UIDatabase.write(() => {
-      createRecord(UIDatabase, 'TransactionItem', transaction, item);
+      createRecord(UIDatabase, 'TransactionItem', transaction, item, 1);
     });
   }
 
