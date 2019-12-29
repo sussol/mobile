@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { NumberLabelRow } from './NumberLabelRow';
 import { DetailRow } from './DetailRow';
 import { SimpleLabel } from './SimpleLabel';
-import { TouchableNoFeedback } from './DataTable/index';
+import { TouchableNoFeedback } from './DataTable';
 
 /**
  * Simple layout component for primary use within the PrescriptionSummary

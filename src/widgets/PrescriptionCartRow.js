@@ -14,7 +14,7 @@ import { DetailRow } from './DetailRow';
 import { StepperRow } from './StepperRow';
 import { CloseIcon } from './icons';
 import { Separator } from './Separator';
-import { TouchableNoFeedback } from './DataTable/index';
+import { TouchableNoFeedback } from './DataTable';
 
 /**
  * Renders a row in the PrescriptionCart consisting of a `StepperRow`, `DropdownRow`,
