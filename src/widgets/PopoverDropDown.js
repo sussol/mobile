@@ -16,9 +16,9 @@ import { usePopover } from '../hooks';
 import {
   SUSSOL_ORANGE,
   BLUE_WHITE,
-  SHADOW_BORDER,
   APP_FONT_FAMILY,
   textStyles,
+  DARKER_GREY,
   APP_GENERAL_FONT_SIZE,
 } from '../globalStyles';
 
@@ -30,12 +30,14 @@ const DropDownOption = ({ text, onPress, isLast }) => {
     dropDownOptionInnerBorder,
   } = localStyles;
 
+  const onPressCallback = React.useCallback(() => onPress(text), [text]);
+
   return (
     <View style={dropDownOptionContainer}>
       <View
         style={{ ...dropDownOptionInnerContainer, ...(isLast ? {} : dropDownOptionInnerBorder) }}
       >
-        <TouchableOpacity onPress={onPress}>
+        <TouchableOpacity onPress={onPressCallback}>
           <Text style={dropDownOptionText}>{text}</Text>
         </TouchableOpacity>
       </View>
@@ -65,7 +67,7 @@ const DropDown = ({ anchorRef, isVisible, options, onSelection, onClose, title }
       onRequestClose={onClose}
       arrowStyle={arrowStyle}
       backgroundStyle={popoverBackgroundStyle}
-      placement="bottom"
+      placement="auto"
       animationConfig={{ duration: 50 }}
     >
       <View style={dropDownContainer}>
@@ -101,16 +103,27 @@ const DropDown = ({ anchorRef, isVisible, options, onSelection, onClose, title }
 export const PopoverDropDown = withNavigation(
   ({ navigation, BaseComponent, options, onSelection, title }) => {
     const [ref, visible, show, close] = usePopover(navigation);
+
+    const selectionCallback = React.useCallback(
+      arg => {
+        close();
+        onSelection(arg);
+      },
+      [onSelection]
+    );
+
+    const { length } = options;
+    const Container = React.useMemo(() => (length ? TouchableOpacity : View), [length]);
     return (
       <>
-        <TouchableOpacity onPress={show} ref={ref}>
+        <Container onPress={show} ref={ref}>
           <BaseComponent />
-        </TouchableOpacity>
+        </Container>
         <DropDown
           anchorRef={ref}
           options={options}
           isVisible={visible}
-          onSelection={onSelection}
+          onSelection={selectionCallback}
           onClose={close}
           title={title}
         />
@@ -120,7 +133,7 @@ export const PopoverDropDown = withNavigation(
 );
 
 const localStyles = StyleSheet.create({
-  dropDownContainer: { borderColor: SHADOW_BORDER, borderWidth: 1 },
+  dropDownContainer: { borderColor: DARKER_GREY, borderWidth: 1 },
   dropDownTitleContainer: {
     height: 40,
     justifyContent: 'center',
