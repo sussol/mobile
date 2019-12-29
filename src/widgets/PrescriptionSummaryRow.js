@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import { NumberLabelRow } from './NumberLabelRow';
 import { DetailRow } from './DetailRow';
 import { SimpleLabel } from './SimpleLabel';
+import { TouchableNoFeedback } from './DataTable/index';
 
 /**
  * Simple layout component for primary use within the PrescriptionSummary
@@ -26,13 +27,13 @@ export const PrescriptionSummaryRow = ({ item }) => {
   const details = [{ label: 'Code', text: itemCode }];
 
   return (
-    <View style={localStyles.mainContainer}>
+    <TouchableNoFeedback style={localStyles.mainContainer}>
       <NumberLabelRow text={itemName} number={totalQuantity} />
       <View style={localStyles.marginFive} />
       <DetailRow details={details} />
       <View style={localStyles.marginFive} />
       <SimpleLabel label="Directions" text={direction} />
-    </View>
+    </TouchableNoFeedback>
   );
 };
 
