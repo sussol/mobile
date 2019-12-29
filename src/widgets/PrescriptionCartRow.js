@@ -14,6 +14,7 @@ import { DetailRow } from './DetailRow';
 import { StepperRow } from './StepperRow';
 import { CloseIcon } from './icons';
 import { Separator } from './Separator';
+import { TouchableNoFeedback } from './DataTable/index';
 
 /**
  * Renders a row in the PrescriptionCart consisting of a `StepperRow`, `DropdownRow`,
@@ -50,8 +51,8 @@ export const PrescriptionCartRow = ({
     { label: 'Price', text: price },
   ];
   return (
-    <View>
-      <View style={localStyles.flexRow}>
+    <>
+      <TouchableNoFeedback style={localStyles.flexRow}>
         <View style={localStyles.largeFlexRow}>
           <StepperRow text={itemName} quantity={totalQuantity} onChangeValue={onChangeValue} />
           <DetailRow details={itemDetails} />
@@ -65,9 +66,9 @@ export const PrescriptionCartRow = ({
         </View>
         <View style={localStyles.flexOne} />
         <CircleButton IconComponent={CloseIcon} onPress={removeItem} />
-      </View>
+      </TouchableNoFeedback>
       <Separator width={1} />
-    </View>
+    </>
   );
 };
 
