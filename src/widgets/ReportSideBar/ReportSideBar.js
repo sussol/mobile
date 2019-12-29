@@ -1,4 +1,5 @@
-/* eslint-disable react/no-unused-prop-types */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2018
@@ -6,15 +7,15 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, ListItem, FlatList, Text, StyleSheet } from 'react-native';
+import { View, FlatList, Text, StyleSheet } from 'react-native';
 import { APP_FONT_FAMILY, GREY } from '../../globalStyles';
-import { pageInfoStrings } from '../../localization/pageInfoStrings';
+import { ReportSideBarItem } from './ReportSideBarItem';
 
 export const ReportSideBar = ({ data, onPressItem, selectedItemIndex, dimensions }) => {
   const renderItem = ({ item }) => {
     const { id, index, title, type, date } = item;
     return (
-      <ListItem
+      <ReportSideBarItem
         id={id}
         index={index}
         onPress={onPressItem}
@@ -29,7 +30,7 @@ export const ReportSideBar = ({ data, onPressItem, selectedItemIndex, dimensions
 
   const renderHeader = () => (
     <View>
-      <Text style={localStyles.ListViewHeader}>{pageInfoStrings.reports}</Text>
+      <Text style={localStyles.ListViewHeader}>Reports</Text>
     </View>
   );
 
@@ -38,7 +39,7 @@ export const ReportSideBar = ({ data, onPressItem, selectedItemIndex, dimensions
       <FlatList
         ListHeaderComponent={renderHeader}
         data={data}
-        ReportSideBarItem={renderItem}
+        renderItem={renderItem}
         keyExtractor={item => item.id}
         extraData={{ dimensions, onPressItem, selectedItemIndex, data }}
       />
@@ -67,9 +68,8 @@ const localStyles = StyleSheet.create({
 });
 
 ReportSideBar.propTypes = {
-  item: PropTypes.objectOf(PropTypes.object).isRequired,
-  data: PropTypes.PropTypes.shape([]).isRequired,
+  data: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
   onPressItem: PropTypes.func.isRequired,
   selectedItemIndex: PropTypes.number.isRequired,
-  dimensions: PropTypes.objectOf(PropTypes.object).isRequired,
+  dimensions: PropTypes.object.isRequired,
 };
