@@ -26,6 +26,7 @@ import {
   gotoStocktakes,
   gotoRealmExplorer,
   gotoSettings,
+  gotoDashboard,
 } from '../navigation/actions';
 
 import globalStyles, { SHADOW_BORDER, GREY } from '../globalStyles';
@@ -49,6 +50,7 @@ const Menu = ({
   toSupplierRequisitions,
   toRealmExplorer,
   toSettings,
+  toDashboard,
   usingDashboard,
   usingDispensary,
   usingModules,
@@ -119,7 +121,7 @@ const Menu = ({
         <ModulesImage style={image} />
         <View>
           {usingDispensary && <MenuButton text="Dispensary" />}
-          {usingDashboard && <MenuButton text="Dashboard" />}
+          {usingDashboard && <MenuButton text="Dashboard" onPress={toDashboard} />}
         </View>
       </View>
     ),
@@ -233,6 +235,7 @@ const mapDispatchToProps = dispatch => ({
   toSupplierRequisitions: () => dispatch(gotoSupplierRequisitions()),
   toRealmExplorer: () => dispatch(gotoRealmExplorer()),
   toSettings: () => dispatch(gotoSettings()),
+  toDashboard: () => dispatch(gotoDashboard()),
   logout: () => dispatch(UserActions.logout()),
 });
 
@@ -267,6 +270,7 @@ Menu.propTypes = {
   toSupplierRequisitions: PropTypes.func.isRequired,
   toRealmExplorer: PropTypes.func.isRequired,
   toSettings: PropTypes.func.isRequired,
+  toDashboard: PropTypes.func.isRequired,
   isAdmin: PropTypes.bool,
   usingDispensary: PropTypes.bool.isRequired,
   usingDashboard: PropTypes.bool.isRequired,
