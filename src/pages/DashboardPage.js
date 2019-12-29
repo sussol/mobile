@@ -6,7 +6,6 @@
 
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-// import PropTypes from 'prop-types';
 
 import { ReportSideBar } from '../widgets/ReportSideBar';
 import { ReportChart } from '../widgets/ReportChart';
@@ -52,8 +51,3 @@ const localStyles = StyleSheet.create({
     height: '100%',
   },
 });
-
-// DashboardPage.propTypes = {
-//   database: PropTypes.object.isRequired,
-//   settings: PropTypes.object.isRequired,
-// };
