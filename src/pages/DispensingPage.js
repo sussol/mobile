@@ -22,6 +22,7 @@ import { PrescriberActions } from '../actions/PrescriberActions';
 
 import { FormControl } from '../widgets/FormControl';
 import { getFormInputConfig } from '../utilities/formInputConfigs';
+import { PatientHistoryModal } from '../widgets/modals/PatientHistory';
 
 const Dispensing = ({
   data,
@@ -53,6 +54,7 @@ const Dispensing = ({
   prescriberModalOpen,
   usingPatientsDataSet,
   usingPrescribersDataSet,
+  viewingHistory,
 }) => {
   const getCellCallbacks = colKey => {
     switch (colKey) {
@@ -152,6 +154,14 @@ const Dispensing = ({
           inputConfig={getFormInputConfig('prescriber', currentPrescriber)}
         />
       </ModalContainer>
+      <ModalContainer
+        title={`Patient History: ${currentPatient?.firstName} ${currentPatient?.lastName}`}
+        onClose={cancelPatientEdit}
+        fullScreen
+        isVisible={viewingHistory}
+      >
+        <PatientHistoryModal />
+      </ModalContainer>
     </>
   );
 };
@@ -170,7 +180,7 @@ const localStyles = {
 const mapStateToProps = state => {
   const { pages, patient, prescriber } = state;
   const { dispensary } = pages;
-  const { isCreating, isEditing, currentPatient } = patient;
+  const { isCreating, isEditing, currentPatient, viewingHistory } = patient;
   const { isCreatingPrescriber, isEditingPrescriber, currentPrescriber } = prescriber;
 
   const { dataSet } = dispensary;
@@ -183,6 +193,7 @@ const mapStateToProps = state => {
     prescriberModalOpen: isCreatingPrescriber || isEditingPrescriber,
     isCreating,
     currentPatient,
+    viewingHistory,
     isCreatingPrescriber,
     isEditingPrescriber,
     currentPrescriber,
@@ -246,4 +257,5 @@ Dispensing.propTypes = {
   prescriberModalOpen: PropTypes.bool.isRequired,
   usingPatientsDataSet: PropTypes.bool.isRequired,
   usingPrescribersDataSet: PropTypes.bool.isRequired,
+  viewingHistory: PropTypes.bool.isRequired,
 };

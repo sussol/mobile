@@ -4,6 +4,7 @@
  */
 
 import { PATIENT_ACTIONS } from '../actions/PatientActions';
+import { ROUTES } from '../navigation/index';
 
 const patientInitialState = () => ({
   currentPatient: null,
@@ -18,6 +19,15 @@ export const PatientReducer = (state = patientInitialState(), action) => {
   const { type } = action;
 
   switch (type) {
+    case 'Navigation/NAVIGATE': {
+      const { routeName, params } = action;
+
+      if (routeName !== ROUTES.PRESCRIPTION) return state;
+      const { transaction } = params;
+      const { otherParty } = transaction;
+      return { ...state, currentPatient: otherParty };
+    }
+
     case PATIENT_ACTIONS.PATIENT_EDIT: {
       const { payload } = action;
       const { patient } = payload;
@@ -29,7 +39,14 @@ export const PatientReducer = (state = patientInitialState(), action) => {
     }
 
     case PATIENT_ACTIONS.COMPLETE: {
-      return patientInitialState();
+      return {
+        ...state,
+        isEditing: false,
+        isCreating: false,
+        viewingHistory: false,
+        sortKey: 'itemName',
+        isAscending: true,
+      };
     }
 
     case PATIENT_ACTIONS.SORT_HISTORY: {

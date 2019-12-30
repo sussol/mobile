@@ -3,9 +3,11 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+import { batch } from 'react-redux';
 import { ROUTES } from '../navigation/constants';
 import { UIDatabase } from '../database';
-import { createRecord } from '../database/utilities/index';
+import { createRecord } from '../database/utilities';
+import { PrescriberActions } from '../actions/PrescriberActions';
 
 const initialState = () => ({
   currentTab: 0,
@@ -13,8 +15,23 @@ const initialState = () => ({
 });
 
 const ACTIONS = {
-  SWITCH_TAB: 'PRESCRIPTION/SWITCH_TAB',
-  SELECT_ITEM: 'PRESCRIPTION/SELECT_ITEM',
+  SWITCH_TAB: 'Prescription/SWITCH_TAB',
+  SELECT_ITEM: 'Prescription/SELECT_ITEM',
+  REMOVE_ITEM: 'Prescription/REMOVE_ITEM',
+};
+
+export const removeItem = id => (dispatch, getState) => {
+  const { prescription } = getState();
+  const { transaction } = prescription;
+  const { items } = transaction;
+
+  const item = items.filtered('id == $0', id);
+
+  UIDatabase.write(() => {
+    UIDatabase.delete('TransactionItem', item);
+  });
+
+  dispatch({ type: ACTIONS.REMOVE_ITEM });
 };
 
 export const editQuantity = (id, quantity) => (_, getState) => {
@@ -47,7 +64,10 @@ export const selectPrescriber = prescriberID => (dispatch, getState) => {
     })
   );
 
-  dispatch(switchTab(currentTab + 1));
+  batch(() => {
+    dispatch(PrescriberActions.setPrescriber(prescriber));
+    dispatch(switchTab(currentTab + 1));
+  });
 };
 
 export const selectItem = itemID => (dispatch, getState) => {
@@ -57,7 +77,7 @@ export const selectItem = itemID => (dispatch, getState) => {
 
   if (!transaction.hasItem(item)) {
     UIDatabase.write(() => {
-      createRecord(UIDatabase, 'TransactionItem', transaction, item);
+      createRecord(UIDatabase, 'TransactionItem', transaction, item, 1);
     });
   }
 
@@ -76,7 +96,11 @@ export const PrescriptionReducer = (state = initialState(), action) => {
 
       return { ...state, transaction };
     }
-
+    case ACTIONS.REMOVE_ITEM: {
+      const { transaction } = state;
+      const { id } = transaction;
+      return { ...state, transaction: UIDatabase.get('Transaction', id) };
+    }
     case ACTIONS.SWITCH_TAB: {
       const { payload } = action;
       const { nextTab } = payload;
