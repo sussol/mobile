@@ -9,9 +9,15 @@ import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { APP_FONT_FAMILY, GREY, WARMER_GREY, SUSSOL_ORANGE } from '../../globalStyles';
 
-export const ReportSideBarItem = props => {
-  const { isLastItem, isSelected, content, subContent, icon } = props;
-
+export const ReportSideBarItem = ({
+  isLastItem,
+  isSelected,
+  content,
+  subContent,
+  icon,
+  onPress,
+  id,
+}) => {
   const CONTENT_COLOR = {
     selected: SUSSOL_ORANGE,
     unselected: WARMER_GREY,
@@ -25,16 +31,13 @@ export const ReportSideBarItem = props => {
     BarChart: 'bar-chart',
   };
 
+  const onPressItem = React.useCallback(() => onPress(id), [id, onPress]);
+
   const { borderTopWidth, borderTopColor } = localStyles.FlatListItem;
   const contentColor = isSelected ? CONTENT_COLOR.selected : CONTENT_COLOR.unselected;
   const bottomBorder = isLastItem
     ? { borderBottomWidth: borderTopWidth, borderBottomColor: borderTopColor }
     : null;
-
-  const onPressItem = () => {
-    const { onPress, index } = props;
-    onPress(index);
-  };
 
   return (
     <TouchableOpacity onPress={onPressItem}>
@@ -82,9 +85,9 @@ const localStyles = StyleSheet.create({
 ReportSideBarItem.propTypes = {
   isSelected: PropTypes.bool.isRequired,
   isLastItem: PropTypes.bool.isRequired,
-  onPress: PropTypes.bool.isRequired,
-  index: PropTypes.number.isRequired,
+  onPress: PropTypes.func.isRequired,
   content: PropTypes.string.isRequired,
   subContent: PropTypes.string.isRequired,
   icon: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
 };
