@@ -24,12 +24,13 @@ import {
   DisabledCheckedIcon,
   DisabledUncheckedIcon,
   OpenModalIcon,
+  ChevronRightIcon,
 } from '../icons';
 import TextInputCell from './TextInputCell';
 
 import { formatStatus } from '../../utilities';
 
-import { COLUMN_TYPES, COLUMN_NAMES } from '../../pages/dataTableUtilities';
+import { COLUMN_TYPES, COLUMN_NAMES, COLUMN_KEYS } from '../../pages/dataTableUtilities';
 import { generalStrings, tableStrings } from '../../localization/index';
 
 /**
@@ -201,11 +202,13 @@ const DataTableRow = React.memo(
                 />
               );
 
-            case COLUMN_TYPES.ICON:
+            case COLUMN_TYPES.ICON: {
+              const renderChild =
+                columnKey === COLUMN_KEYS.DISPENSE ? ChevronRightIcon : OpenModalIcon;
               return (
                 <TouchableCell
                   key={columnKey}
-                  renderChildren={OpenModalIcon}
+                  renderChildren={renderChild}
                   rowKey={rowKey}
                   columnKey={columnKey}
                   onPress={getCallback(columnKey)}
@@ -214,6 +217,7 @@ const DataTableRow = React.memo(
                   containerStyle={iconCell}
                 />
               );
+            }
 
             case COLUMN_TYPES.DROP_DOWN:
               return (
