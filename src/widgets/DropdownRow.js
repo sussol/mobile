@@ -28,6 +28,7 @@ import { SUSSOL_ORANGE, APP_FONT_FAMILY, GREY } from '../globalStyles/index';
  * @prop {String} dropdownTitle     The title of the drop down menu when opened.
  * @prop {Bool}   useSecondaryMenu  Indicator whether the secondary menu should show.
  * @prop {Number} iconSize          The size of the drop down icon.
+ * @prop {String} placeholder       Placeholder string value, when no value has been chosen/entered.
  */
 export const DropdownRow = ({
   currentOptionText,
@@ -37,6 +38,7 @@ export const DropdownRow = ({
   useSecondaryMenu,
   secondaryCallback,
   iconSize,
+  placeholder,
 }) => {
   const DropDownMenuIcon = React.useCallback(() => {
     const iconColor = options.length ? SUSSOL_ORANGE : GREY;
@@ -67,8 +69,8 @@ export const DropdownRow = ({
           onChangeText={onSelection}
           value={currentOptionText}
           underlineColorAndroid={SUSSOL_ORANGE}
-          style={{ flex: 1, fontFamily: APP_FONT_FAMILY }}
-          placeholder="Usage direction"
+          style={localStyles.textInputStyle}
+          placeholder={placeholder}
         />
       </View>
       {useSecondaryMenu && <BurgerMenuButton />}
@@ -87,6 +89,10 @@ const localStyles = StyleSheet.create({
     justifyContent: 'space-between',
     flex: 1,
   },
+  textInputStyle: {
+    flex: 1,
+    fontFamily: APP_FONT_FAMILY,
+  },
   flexNine: { flex: 9 },
   flexTwo: { flex: 2 },
   flexOne: { flex: 1 },
@@ -96,6 +102,7 @@ DropdownRow.defaultProps = {
   useSecondaryMenu: false,
   secondaryCallback: null,
   iconSize: 20,
+  placeholder: '',
 };
 
 DropdownRow.propTypes = {
@@ -106,4 +113,5 @@ DropdownRow.propTypes = {
   useSecondaryMenu: PropTypes.bool,
   secondaryCallback: PropTypes.func,
   iconSize: PropTypes.number,
+  placeholder: PropTypes.string,
 };
