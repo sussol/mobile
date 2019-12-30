@@ -37,5 +37,6 @@ ReportTable.propTypes = {
 const localStyles = StyleSheet.create({
   container: {
     backgroundColor: LIGHT_GREY,
+    flex: 1,
   },
 });
