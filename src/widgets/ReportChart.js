@@ -19,8 +19,8 @@ export const ReportChart = ({ report }) => {
   // calculate relative values for width and height for each chart.
   const onLayout = event => {
     const newDimensionsObj = {
-      height: event.nativeEvent.layout.width,
-      width: event.nativeEvent.layout.height,
+      height: event.nativeEvent.layout.height,
+      width: event.nativeEvent.layout.width,
     };
     setDimensions(newDimensionsObj);
   };
@@ -49,13 +49,7 @@ export const ReportChart = ({ report }) => {
 };
 
 const localStyles = StyleSheet.create({
-  ChartContainer: {
-    width: '75%',
-    minHeight: '100%',
-    backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  ChartContainer: { flex: 1 },
 });
 
 ReportChart.propTypes = {
