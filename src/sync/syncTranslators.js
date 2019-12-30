@@ -58,6 +58,9 @@ export const RECORD_TYPES = new SyncTranslator({
   TransactionBatch: 'trans_line',
   User: 'user',
   Unit: 'unit',
+  Prescriber: 'clinician',
+  ItemDirection: 'item_direction',
+  Abbreviation: 'abbreviation',
 });
 
 export const REQUISITION_TYPES = new SyncTranslator({

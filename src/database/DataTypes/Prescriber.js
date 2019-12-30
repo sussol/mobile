@@ -13,9 +13,9 @@ Prescriber.schema = {
     address: { type: 'Address', optional: true },
     isVisible: { type: 'bool', default: false },
     isActive: { type: 'bool', default: false },
-    phone: { type: 'string', optional: true },
-    mobile: { type: 'string', optional: true },
-    email: { type: 'string', optional: true },
+    phoneNumber: { type: 'string', optional: true },
+    mobileNumber: { type: 'string', optional: true },
+    emailAddress: { type: 'string', optional: true },
     transactions: { type: 'linkingObjects', objectType: 'Transaction', property: 'prescriber' },
   },
 };

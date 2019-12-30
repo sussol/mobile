@@ -36,6 +36,8 @@ import {
   Prescriber,
   InsurancePolicy,
   InsuranceProvider,
+  Abbreviation,
+  ItemDirection,
 } from './DataTypes';
 
 Address.schema = {
@@ -158,6 +160,8 @@ export const schema = {
     Prescriber,
     InsurancePolicy,
     InsuranceProvider,
+    Abbreviation,
+    ItemDirection,
   ],
   schemaVersion: 11,
 };

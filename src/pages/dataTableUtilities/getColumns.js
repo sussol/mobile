@@ -26,12 +26,12 @@ const PAGE_COLUMN_WIDTHS = {
   [ROUTES.PRESCRIPTIONS]: [1.5, 2.5, 2, 1.5, 3, 1],
   [ROUTES.PRESCRIPTION]: [2, 4, 2, 2, 1],
   [ROUTES.PRESCRIBERS]: [1, 3, 3],
-  [ROUTES.PATIENTS]: [1, 3, 3, 1],
+  [ROUTES.PATIENTS]: [1, 3, 3, 2, 1],
   stocktakeBatchEditModal: [1, 1, 1, 1, 1],
   stocktakeBatchEditModalWithReasons: [1, 1, 1, 1, 1, 1],
   regimenDataModal: [4, 1, 5],
   prescriberSelect: [1, 1],
-  itemSelect: [1, 3],
+  itemSelect: [1, 3, 1],
   patientHistory: [1, 3, 1, 3],
 };
 
@@ -45,6 +45,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.CODE,
     COLUMN_NAMES.FIRST_NAME,
     COLUMN_NAMES.LAST_NAME,
+    COLUMN_NAMES.DATE_OF_BIRTH,
     COLUMN_NAMES.DISPENSE,
   ],
   [ROUTES.CUSTOMER_INVOICE]: [
@@ -182,7 +183,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.EDITABLE_COMMENT,
   ],
   prescriberSelect: [COLUMN_NAMES.FIRST_NAME, COLUMN_NAMES.LAST_NAME],
-  itemSelect: [COLUMN_NAMES.CODE, COLUMN_NAMES.NAME],
+  itemSelect: [COLUMN_NAMES.CODE, COLUMN_NAMES.NAME, COLUMN_NAMES.TOTAL_QUANTITY],
   patientHistory: [
     COLUMN_NAMES.ITEM_CODE,
     COLUMN_NAMES.ITEM_NAME,
@@ -479,6 +480,14 @@ const COLUMNS = () => ({
 
   // DATE COLUMNS
 
+  [COLUMN_NAMES.DATE_OF_BIRTH]: {
+    type: COLUMN_TYPES.DATE,
+    key: COLUMN_KEYS.DATE_OF_BIRTH,
+    title: 'D.O.B',
+    alignText: 'left',
+    sortable: true,
+    editable: false,
+  },
   [COLUMN_NAMES.CREATED_DATE]: {
     type: COLUMN_TYPES.DATE,
     key: COLUMN_KEYS.CREATED_DATE,

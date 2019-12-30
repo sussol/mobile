@@ -10,8 +10,8 @@ import {
   SYNC_TYPES,
   TRANSACTION_TYPES,
 } from './syncTranslators';
-import { CHANGE_TYPES, generateUUID } from '../database';
-import { deleteRecord } from '../database/utilities';
+import { CHANGE_TYPES } from '../database';
+import { deleteRecord, createRecord } from '../database/utilities';
 import { SETTINGS_KEYS } from '../settings';
 
 const { THIS_STORE_ID, THIS_STORE_TAGS, THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
@@ -106,13 +106,8 @@ const getOrCreateAddress = (database, line1, line2, line3, line4, zipCode) => {
     results = results.filtered('zipCode == $0', zipCode);
   }
   if (results.length > 0) return results[0];
-  const address = { id: generateUUID() };
-  if (typeof line1 === 'string') address.line1 = line1;
-  if (typeof line2 === 'string') address.line2 = line2;
-  if (typeof line3 === 'string') address.line3 = line3;
-  if (typeof line4 === 'string') address.line4 = line4;
-  if (typeof zipCode === 'string') address.zipCode = zipCode;
-  return database.create('Address', address);
+
+  return createRecord(database, 'Address', { line1, line2, line3, line4, zipCode });
 };
 
 /**
@@ -245,9 +240,21 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: ['name', 'startDate', 'endDate', 'periodScheduleID'],
       canBeBlank: [],
     },
+    Prescriber: {
+      cannotBeBlank: ['first_name', 'last_name', 'code'],
+      canBeBlank: [],
+    },
     Unit: {
       cannotBeBlank: [],
       canBeBlank: ['units', 'comment', 'order_number'],
+    },
+    ItemDirection: {
+      cannotBeBlank: ['directions', 'priority', 'item_ID'],
+      canBeBlank: [],
+    },
+    Abbreviation: {
+      cannotBeBlank: ['abbreviation', 'expansion'],
+      canBeBlank: [],
     },
   };
   if (!requiredFields[recordType]) return false; // Unsupported record type
@@ -421,6 +428,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'Name': {
+      const isPatient = record.type === 'patient';
       internalRecord = {
         id: record.ID,
         name: record.name,
@@ -438,8 +446,13 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         type: NAME_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
         isCustomer: parseBoolean(record.customer),
         isSupplier: parseBoolean(record.supplier),
+        isVisible: isPatient, // Patients default visibility to true, regardless of nameStoreJoin.
         isManufacturer: parseBoolean(record.manufacturer),
         supplyingStoreId: record.supplying_store_id,
+        isPatient,
+        firstName: record.first,
+        lastName: record.last,
+        dateOfBirth: parseDate(record.date_of_birth),
       };
       database.update(recordType, internalRecord);
       break;
@@ -714,7 +727,39 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       });
       break;
     }
-
+    case 'Prescriber': {
+      database.update(recordType, {
+        id: record.ID,
+        firstName: record.first_name,
+        lastName: record.last_name,
+        registrationCode: record.registration_code,
+        address: getOrCreateAddress(database, record.address1, record.address2),
+        isVisible: true,
+        isActive: true,
+        phoneNumber: record.phone,
+        mobileNumber: record.mobile,
+        emailAddress: record.email,
+      });
+      break;
+    }
+    case 'Abbreviation': {
+      database.update(recordType, {
+        id: record.ID,
+        expansion: record.expansion,
+        abbreviation: record.abbreviation,
+      });
+      break;
+    }
+    case 'ItemDirection': {
+      const item = database.getOrCreate('Item', record.item_ID);
+      database.update(recordType, {
+        id: record.ID,
+        item,
+        priority: record.priority,
+        directions: record.directions,
+      });
+      break;
+    }
     default:
       break; // Silently ignore record types which are not used by mobile.
   }
