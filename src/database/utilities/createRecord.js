@@ -8,6 +8,7 @@ import { generateUUID } from 'react-native-database';
 import { formatDateAndTime } from '../../utilities';
 import { NUMBER_SEQUENCE_KEYS } from './constants';
 import { generalStrings } from '../../localization';
+import { SETTINGS_KEYS } from '../../settings/index';
 
 // Get the next highest number in an existing number sequence.
 export const getNextNumber = (database, sequenceKey) => {
@@ -60,6 +61,66 @@ const createInsurancePolicy = (
 
   database.save('InsurancePolicy', policy);
   return policy;
+};
+
+/**
+ * Creates a prescriber record. prescriberDetails can have the shape:
+ * {
+ *     firstName, lastName, registrationCode, line1, line2, isVisible,
+ *     isActive, phoneNumber, mobileNumber, emailAddress
+ * }
+ */
+const createPrescriber = (database, prescriberDetails) => {
+  const { line1, line2 } = prescriberDetails;
+  const address = createAddress({ line1, line2 });
+
+  const prescriber = database.create('Prescriber', {
+    id: generateUUID(),
+    ...prescriberDetails,
+    address,
+
+    // Defaults:
+    isVisible: true,
+    isActive: true,
+  });
+
+  database.save('Prescriber', prescriber);
+};
+
+const createAddress = (database, { line1, line2, line3, line4, zipCode } = {}) =>
+  database.create('Address', {
+    id: generateUUID(),
+    line1,
+    line2,
+    line3,
+    line4,
+    zipCode,
+  });
+
+/**
+ * Creates a patient record. Patient details passed can be in the shape:
+ *  {
+ *    firstName, lastName, dateOfBirth, code, emailAddress,
+ *    phoneNumber, line1, line2,
+ *  }
+ */
+const createPatient = (database, patientDetails) => {
+  const { line1, line2 } = patientDetails;
+  const billingAddress = createAddress(database, { line1, line2 });
+  const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
+  const patient = database.create('Name', {
+    id: generateUUID(),
+    ...patientDetails,
+    billingAddress,
+    // Defaults:
+    isVisible: true,
+    isPatient: true,
+    type: 'patient',
+    supplyingStoreId: thisStoreId,
+    isCustomer: true,
+  });
+
+  database.save('Patient', patient);
 };
 
 const createCashOut = (database, user, patient, amount) => {
@@ -576,7 +637,7 @@ const createTransactionBatch = (database, transactionItem, itemBatch, isAddition
  * @param   {Item}             item         Real item to create transaction item from.
  * @return  {TransactionItem}
  */
-const createTransactionItem = (database, transaction, item) => {
+const createTransactionItem = (database, transaction, item, initialQuantity = 0) => {
   // Handle cross reference items.
   const { realItem } = item;
 
@@ -585,6 +646,9 @@ const createTransactionItem = (database, transaction, item) => {
     item: realItem,
     transaction,
   });
+
+  const { isFinalised } = transaction;
+  if (!isFinalised) transactionItem.setTotalQuantity(database, initialQuantity);
 
   transaction.addItem(transactionItem);
   database.save('Transaction', transaction);
@@ -651,6 +715,12 @@ export const createRecord = (database, type, ...args) => {
       return createOffsetCustomerInvoice(database, ...args);
     case 'RefundLine':
       return createCustomerRefundLine(database, ...args);
+    case 'Address':
+      return createAddress(database, ...args);
+    case 'Patient':
+      return createPatient(database, ...args);
+    case 'Prescriber':
+      return createPrescriber(database, ...args);
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }

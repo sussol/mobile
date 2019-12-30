@@ -79,7 +79,7 @@ export const PencilIcon = React.memo(({ color, size }) => (
 PencilIcon.defaultProps = { color: WHITE, size: 20 };
 PencilIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
 
-export const HistoryIcon = React.memo(() => <FA5Icon name="history" />);
+export const HistoryIcon = React.memo(() => <FA5Icon name="history" size={20} color={WHITE} />);
 
 export const ChevronRightIcon = () => (
   <FA5Icon name="chevron-right" color={SUSSOL_ORANGE} size={20} />
