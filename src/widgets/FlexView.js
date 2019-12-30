@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
  * @param {Object}     style          An additional styles object.
  */
 export const FlexView = ({ children, flex, style }) => {
-  const internalStyle = React.useMemo(() => ({ flex, ...style }));
+  const internalStyle = React.useMemo(() => ({ flex, ...style }), [style, flex]);
   return <View style={internalStyle}>{children}</View>;
 };
 

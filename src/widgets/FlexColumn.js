@@ -18,13 +18,17 @@ import PropTypes from 'prop-types';
  * @param {Object}     style          An additional styles object.
  */
 export const FlexColumn = ({ children, flex, alignItems, justifyContent, style }) => {
-  const internalStyle = React.useMemo(() => ({
-    flex,
-    flexDirection: 'column',
-    [alignItems ? 'alignItems' : undefined]: alignItems,
-    [justifyContent ? 'justifyContent' : undefined]: justifyContent,
-    ...style,
-  }));
+  const internalStyle = React.useMemo(
+    () => ({
+      flex,
+      flexDirection: 'column',
+      [alignItems ? 'alignItems' : undefined]: alignItems,
+      [justifyContent ? 'justifyContent' : undefined]: justifyContent,
+      ...style,
+    }),
+    [flex, alignItems, justifyContent, style]
+  );
+
   return <View style={internalStyle}>{children}</View>;
 };
 
