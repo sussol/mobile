@@ -41,19 +41,8 @@ export const StepperInput = ({ value, onChangeText, lowerLimit, upperLimit, text
     onChangeText(updateValue);
   };
 
-  const decrementValue = () => {
-    const updateValue = parseNumber(currentValue.current - currentAdjustmentAmount.current);
-    currentValue.current = updateValue;
-    setCurrentValueState(updateValue);
-    onChangeText(updateValue);
-  };
-
-  const incrementValue = () => {
-    const updateValue = parseNumber(currentValue.current + currentAdjustmentAmount.current);
-    currentValue.current = updateValue;
-    setCurrentValueState(updateValue);
-    onChangeText(updateValue);
-  };
+  const decrementValue = () => onUpdate(currentValue.current - currentAdjustmentAmount.current);
+  const incrementValue = () => onUpdate(currentValue.current + currentAdjustmentAmount.current);
 
   const inreaseIncrement = () => {
     currentAdjustmentAmount.current *= 2;
