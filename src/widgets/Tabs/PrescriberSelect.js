@@ -77,11 +77,15 @@ const mapStateToProps = state => {
   return { data, searchTerm };
 };
 
+PrescriberSelectComponent.defaultProps = {
+  searchTerm: '',
+};
+
 PrescriberSelectComponent.propTypes = {
   choosePrescriber: PropTypes.func.isRequired,
   data: PropTypes.object.isRequired,
   onFilterData: PropTypes.func.isRequired,
-  searchTerm: PropTypes.string.isRequired,
+  searchTerm: PropTypes.string,
   createPrescriber: PropTypes.func.isRequired,
 };
 
