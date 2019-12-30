@@ -4,6 +4,7 @@ import SyncReducer from './SyncReducer';
 import { PagesReducer } from './PagesReducer';
 import { ModulesReducer } from './ModulesReducer';
 import { UserReducer } from './UserReducer';
+import { DashboardReducer } from './DashboardReducer';
 
 export default combineReducers({
   user: UserReducer,
@@ -11,4 +12,5 @@ export default combineReducers({
   sync: SyncReducer,
   pages: PagesReducer,
   modules: ModulesReducer,
+  dashboard: DashboardReducer,
 });

@@ -11,7 +11,7 @@ import { View, FlatList, Text, StyleSheet } from 'react-native';
 import { APP_FONT_FAMILY, GREY } from '../../globalStyles';
 import { ReportSideBarItem } from './ReportSideBarItem';
 
-export const ReportSideBar = ({ data, onPressItem, selectedItemIndex, dimensions }) => {
+export const ReportSideBar = ({ reports, currentReport, onPressItem, dimensions }) => {
   const renderItem = ({ item }) => {
     const { id, index, title, type, date } = item;
     return (
@@ -19,8 +19,8 @@ export const ReportSideBar = ({ data, onPressItem, selectedItemIndex, dimensions
         id={id}
         index={index}
         onPress={onPressItem}
-        isLastItem={index + 1 === data.length}
-        isSelected={selectedItemIndex === index}
+        isLastItem={index + 1 === reports.length}
+        isSelected={id === currentReport.id}
         icon={type}
         content={title}
         subContent={date}
@@ -38,10 +38,10 @@ export const ReportSideBar = ({ data, onPressItem, selectedItemIndex, dimensions
     <View style={[localStyles.ListViewContainer, dimensions]}>
       <FlatList
         ListHeaderComponent={renderHeader}
-        data={data}
+        data={reports}
         renderItem={renderItem}
         keyExtractor={item => item.id}
-        extraData={{ dimensions, onPressItem, selectedItemIndex, data }}
+        extraData={reports}
       />
     </View>
   );
@@ -68,8 +68,8 @@ const localStyles = StyleSheet.create({
 });
 
 ReportSideBar.propTypes = {
-  data: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
+  reports: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
   onPressItem: PropTypes.func.isRequired,
-  selectedItemIndex: PropTypes.number.isRequired,
   dimensions: PropTypes.object.isRequired,
+  currentReport: PropTypes.object.isRequired,
 };
