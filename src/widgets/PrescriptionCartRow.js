@@ -63,6 +63,7 @@ export const PrescriptionCartRow = ({
             options={defaultDirections}
             onSelection={selectionCallback}
             dropdownTitle="Directions"
+            placeholder="Usage direction"
           />
         </View>
         <View style={localStyles.flexOne} />
