@@ -41,7 +41,7 @@ FlexColumn.defaultProps = {
 };
 
 FlexColumn.propTypes = {
-  children: PropTypes.oneOf([PropTypes.node, PropTypes.arrayOf(PropTypes.node)]),
+  children: PropTypes.oneOfType([PropTypes.node, PropTypes.arrayOf(PropTypes.node)]),
   flex: PropTypes.number,
   alignItems: PropTypes.string,
   justifyContent: PropTypes.string,
