@@ -110,9 +110,8 @@ class UIDatabase {
       case 'CustomerInvoice':
         // Only show invoices generated from requisitions once finalised.
         return results.filtered(
-          'type == $0 AND mode == $1 AND (linkedRequisition == $2 OR status == $3)',
+          'type == $0 AND (linkedRequisition == $1 OR status == $2)',
           'customer_invoice',
-          'store',
           null,
           'finalised'
         );
