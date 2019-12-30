@@ -12,6 +12,7 @@ import { ChevronDownIcon, BurgerMenuIcon } from './icons';
 import { PopoverDropDown } from './PopoverDropDown';
 
 import { SUSSOL_ORANGE, APP_FONT_FAMILY, GREY } from '../globalStyles/index';
+import { FlexView } from './FlexView';
 
 /**
  * Layout component rendering a DropdownPopover, a SimpleLabel and an optional
@@ -56,15 +57,15 @@ export const DropdownRow = ({
 
   return (
     <View style={localStyles.containerStyle}>
-      <View style={localStyles.flexOne}>
+      <FlexView flex={1}>
         <PopoverDropDown
           BaseComponent={DropDownMenuIcon}
           options={options}
           onSelection={onSelection}
           title={dropdownTitle}
         />
-      </View>
-      <View style={localStyles.flexNine}>
+      </FlexView>
+      <FlexView flex={9}>
         <TextInput
           onChangeText={onSelection}
           value={currentOptionText}
@@ -72,7 +73,7 @@ export const DropdownRow = ({
           style={localStyles.textInputStyle}
           placeholder={placeholder}
         />
-      </View>
+      </FlexView>
       {useSecondaryMenu && <BurgerMenuButton />}
     </View>
   );
@@ -93,9 +94,6 @@ const localStyles = StyleSheet.create({
     flex: 1,
     fontFamily: APP_FONT_FAMILY,
   },
-  flexNine: { flex: 9 },
-  flexTwo: { flex: 2 },
-  flexOne: { flex: 1 },
 });
 
 DropdownRow.defaultProps = {
