@@ -14,6 +14,7 @@ import { DetailRow } from './DetailRow';
 import { StepperRow } from './StepperRow';
 import { CloseIcon } from './icons';
 import { Separator } from './Separator';
+import { TouchableNoFeedback } from './DataTable';
 
 /**
  * Renders a row in the PrescriptionCart consisting of a `StepperRow`, `DropdownRow`,
@@ -35,18 +36,25 @@ export const PrescriptionCartRow = ({
   onOptionSelection,
   currentOptionText,
 }) => {
-  const { itemName, totalQuantity, itemCode, price } = item;
+  const { itemName, totalQuantity, itemCode, price, id } = item;
+
+  const removeItem = React.useCallback(() => onRemoveItem(id), [id]);
+  const onChangeValue = React.useCallback(
+    quantity => {
+      onChangeQuantity(id, quantity);
+    },
+    [id]
+  );
 
   const itemDetails = [
     { label: 'Code', text: itemCode },
     { label: 'Price', text: price },
   ];
-
   return (
-    <View>
-      <View style={localStyles.flexRow}>
+    <>
+      <TouchableNoFeedback style={localStyles.flexRow}>
         <View style={localStyles.largeFlexRow}>
-          <StepperRow text={itemName} quantity={totalQuantity} onChangeValue={onChangeQuantity} />
+          <StepperRow text={itemName} quantity={totalQuantity} onChangeValue={onChangeValue} />
           <DetailRow details={itemDetails} />
           <View style={{ height: 10 }} />
           <DropdownRow
@@ -57,10 +65,10 @@ export const PrescriptionCartRow = ({
           />
         </View>
         <View style={localStyles.flexOne} />
-        <CircleButton IconComponent={CloseIcon} onPress={onRemoveItem} />
-      </View>
+        <CircleButton IconComponent={CloseIcon} onPress={removeItem} />
+      </TouchableNoFeedback>
       <Separator width={1} />
-    </View>
+    </>
   );
 };
 
