@@ -8,6 +8,7 @@ import { PrescriptionReducer } from './PrescriptionReducer';
 import { PatientReducer } from './PatientReducer';
 import { FormReducer } from './FormReducer';
 import { PrescriberReducer } from './PrescriberReducer';
+import { FinaliseReducer } from './FinaliseReducer';
 
 export default combineReducers({
   user: UserReducer,
@@ -19,4 +20,5 @@ export default combineReducers({
   patient: PatientReducer,
   prescriber: PrescriberReducer,
   form: FormReducer,
+  finalise: FinaliseReducer,
 });

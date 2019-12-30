@@ -5,14 +5,13 @@
  */
 
 import React from 'react';
-
 import PropTypes from 'prop-types';
-
-import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { Wizard } from '../widgets';
-import { PrescriptionSummary } from '../widgets/PrescriptionSummary';
+import { PrescriberSelect } from '../widgets/Tabs/PrescriberSelect';
+import { ItemSelect } from '../widgets/Tabs/ItemSelect';
+import { PrescriptionConfirmation } from '../widgets/Tabs/PrescriptionConfirmation';
 
 import {
   selectItem,
@@ -20,10 +19,6 @@ import {
   switchTab,
   editQuantity,
 } from '../reducers/PrescriptionReducer';
-
-import { PrescriptionInfo } from '../widgets/PrescriptionInfo';
-import { PrescriberSelect } from '../widgets/Tabs/PrescriberSelect';
-import { ItemSelect } from '../widgets/Tabs/ItemSelect';
 
 const mapDispatchToProps = dispatch => {
   const choosePrescriber = prescriberID => dispatch(selectPrescriber(prescriberID));
@@ -38,15 +33,8 @@ const mapStateToProps = state => {
   return { ...prescription, ...patient, ...prescriber };
 };
 
-const Summary = connect(mapStateToProps)(({ transaction }) => (
-  <View style={{ flex: 1 }}>
-    <PrescriptionInfo />
-    <PrescriptionSummary transaction={transaction} />
-  </View>
-));
-
-const tabs = [PrescriberSelect, ItemSelect, Summary];
-const titles = ['Select the Prescriber', 'Select items', 'Summary'];
+const tabs = [PrescriberSelect, ItemSelect, PrescriptionConfirmation];
+const titles = ['Select the Prescriber', 'Select items', 'Finalise'];
 
 export const Prescription = ({ currentTab, nextTab }) => (
   <Wizard tabs={tabs} titles={titles} currentTabIndex={currentTab} onPress={nextTab} />
