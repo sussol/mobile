@@ -10,5 +10,5 @@ export const selectCurrentPrescriber = ({ prescriber }) => {
 
 export const selectPrescriberName = ({ prescriber }) => {
   const currentPrescriber = selectCurrentPrescriber({ prescriber });
-  return `${currentPrescriber?.firstName} ${currentPrescriber?.lastName}`;
+  return `${currentPrescriber?.firstName} ${currentPrescriber?.lastName}`.trim();
 };
