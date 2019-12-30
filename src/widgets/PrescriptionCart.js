@@ -7,12 +7,14 @@
 import React from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import { PrescriptionCartRow } from './PrescriptionCartRow';
 
 import { SUSSOL_ORANGE, WHITE } from '../globalStyles/index';
 
 import { recordKeyExtractor } from '../pages/dataTableUtilities';
+import { removeItem } from '../reducers/PrescriptionReducer';
 
 /**
  * Layout container component for a prescriptions item cart.
@@ -25,7 +27,12 @@ import { recordKeyExtractor } from '../pages/dataTableUtilities';
  * @prop {Func}  onOptionSelection Callback when an option in the dropdown is selected.
  * @prop {Func}  onRemoveItem      Callback when this row is removed.
  */
-export const PrescriptionCart = ({ items, onChangeQuantity, onOptionSelection, onRemoveItem }) => {
+export const PrescriptionCartComponent = ({
+  items,
+  onChangeQuantity,
+  onOptionSelection,
+  onRemoveItem,
+}) => {
   const renderPrescriptionCartRow = React.useCallback(
     ({ item }) => (
       <PrescriptionCartRow
@@ -53,7 +60,7 @@ export const PrescriptionCart = ({ items, onChangeQuantity, onOptionSelection, o
   );
 };
 
-PrescriptionCart.propTypes = {
+PrescriptionCartComponent.propTypes = {
   items: PropTypes.array.isRequired,
   onChangeQuantity: PropTypes.func.isRequired,
   onOptionSelection: PropTypes.func.isRequired,
@@ -79,3 +86,10 @@ const localStyles = StyleSheet.create({
   },
   flexNine: { flex: 9 },
 });
+
+const mapDispatchToProps = dispatch => ({
+  onRemoveItem: id => dispatch(removeItem(id)),
+  dispatch,
+});
+
+export const PrescriptionCart = connect(null, mapDispatchToProps)(PrescriptionCartComponent);

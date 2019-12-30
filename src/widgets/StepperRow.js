@@ -60,7 +60,7 @@ const localStylez = {
 };
 
 StepperRow.defaultProps = {
-  lowerLimit: 0,
+  lowerLimit: 1,
   upperLimit: 99999,
   labelSize: 'large',
 };
