@@ -647,7 +647,8 @@ const createTransactionItem = (database, transaction, item, initialQuantity = 0)
     transaction,
   });
 
-  transactionItem.setTotalQuantity(database, initialQuantity);
+  const { isFinalised } = transaction;
+  if (!isFinalised) transactionItem.setTotalQuantity(database, initialQuantity);
 
   transaction.addItem(transactionItem);
   database.save('Transaction', transaction);
