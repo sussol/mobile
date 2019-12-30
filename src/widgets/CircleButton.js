@@ -35,7 +35,7 @@ CircleButton.defaultProps = {
 };
 
 CircleButton.propTypes = {
-  IconComponent: PropTypes.object.isRequired,
+  IconComponent: PropTypes.oneOfType([PropTypes.object, PropTypes.func]).isRequired,
   onPress: PropTypes.func,
   onPressIn: PropTypes.func,
   onPressOut: PropTypes.func,
