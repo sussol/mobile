@@ -161,6 +161,6 @@ export const getFormInputConfig = (formName, seedObject) => {
   return formConfig.map(({ key, ...restOfConfig }) => ({
     ...restOfConfig,
     key,
-    initialValue: seedObject[key] || '',
+    initialValue: (seedObject[key] && seedObject[key].toString()) || '',
   }));
 };

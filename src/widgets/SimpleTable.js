@@ -1,10 +1,11 @@
+/* eslint-disable react/no-unused-prop-types */
 /* eslint-disable react/forbid-prop-types */
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View, FlatList, TouchableOpacity } from 'react-native';
 import Cell from './DataTable/Cell';
-import { dataTableStyles } from '../globalStyles/index';
-import { HeaderCell, HeaderRow } from './DataTable/index';
+import { dataTableStyles, GREY } from '../globalStyles/index';
+import { HeaderCell, HeaderRow, TouchableNoFeedback } from './DataTable/index';
 import { getItemLayout, recordKeyExtractor } from '../pages/dataTableUtilities';
 
 /**
@@ -18,11 +19,11 @@ import { getItemLayout, recordKeyExtractor } from '../pages/dataTableUtilities';
  *
  * selectRow should be a function: (rowId) => { ... }
  *
- * extraData, an object with the shape: {rowId1: [bool], rowId2: [bool], ... } used
+ * selectedRows, an object with the shape: {rowId1: [bool], rowId2: [bool], ... } used
  * to trigger styling effects on selected rows.
  */
 export const SimpleTable = React.memo(
-  React.forwardRef(({ data, columns, selectRow, extraData }, ref) => {
+  React.forwardRef(({ data, columns, selectRow, selectedRows, disabledRows }, ref) => {
     const {
       cellText,
       cellContainer,
@@ -32,26 +33,33 @@ export const SimpleTable = React.memo(
       headerRow,
       headerCells,
     } = dataTableStyles;
+    const renderCells = useCallback(
+      rowData => {
+        const { id } = rowData;
 
-    const renderCells = useCallback(rowData => {
-      const { id } = rowData;
-
-      return columns.map(({ key, width, alignText }, index) => (
-        <Cell
-          value={rowData[key]}
-          viewStyle={cellContainer[alignText]}
-          textStyle={cellText[alignText]}
-          isLastCell={index === columns.length - 1}
-          width={width}
-          key={`${id}${key}`}
-        />
-      ));
-    }, []);
+        return columns.map(({ key, width, alignText }, index) => {
+          const disabledStyle = disabledRows?.[id] ? { color: GREY } : {};
+          const textStyle = { ...cellText[alignText], ...disabledStyle };
+          return (
+            <Cell
+              value={rowData[key]}
+              viewStyle={cellContainer[alignText]}
+              textStyle={textStyle}
+              isLastCell={index === columns.length - 1}
+              width={width}
+              key={`${id}${key}`}
+            />
+          );
+        });
+      },
+      [disabledRows]
+    );
 
     const renderRow = useCallback(
       ({ item, index }) => {
         const { id } = item;
-        const isSelected = extraData?.[id];
+        const isDisabled = disabledRows?.[id];
+        const isSelected = selectedRows?.[id];
         const rowStyle = isSelected
           ? selectedRowStyle
           : (index % 2 === 0 && alternateRowStyle) || basicRowStyle;
@@ -63,12 +71,12 @@ export const SimpleTable = React.memo(
             rowKey={id}
             style={rowStyle}
             renderCells={renderCells}
-            onPress={selectRow}
+            onPress={isDisabled ? null : selectRow}
             isSelected={isSelected}
           />
         );
       },
-      [extraData]
+      [selectedRows, disabledRows]
     );
 
     const renderHeaderCells = useCallback(
@@ -100,29 +108,32 @@ export const SimpleTable = React.memo(
         renderItem={renderRow}
         stickyHeaderIndices={[0]}
         ListHeaderComponent={renderHeaders}
-        extraData={extraData}
+        extraData={selectedRows}
       />
     );
   })
 );
 
 SimpleTable.defaultProps = {
-  extraData: {},
+  selectedRows: {},
+  disabledRows: null,
 };
 
 SimpleTable.propTypes = {
   data: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   columns: PropTypes.array.isRequired,
   selectRow: PropTypes.func.isRequired,
-  extraData: PropTypes.object,
+  selectedRows: PropTypes.object,
+  disabledRows: PropTypes.object,
 };
 
 const SimpleRow = React.memo(({ rowData, style, rowKey, renderCells, onPress }) => {
   const onSelect = useCallback(() => onPress(rowKey), [rowKey, onPress]);
+  const Container = onPress ? TouchableOpacity : TouchableNoFeedback;
   return (
-    <TouchableOpacity onPress={onSelect} key={rowKey}>
+    <Container onPress={onSelect} key={rowKey}>
       <View style={style}>{renderCells(rowData)}</View>
-    </TouchableOpacity>
+    </Container>
   );
 });
 

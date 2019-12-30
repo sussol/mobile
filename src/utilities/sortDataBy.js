@@ -6,6 +6,7 @@
 const sortKeyToType = {
   itemCode: 'string',
   itemName: 'string',
+  dateOfBirth: 'date',
   availableQuantity: 'number',
   totalQuantity: 'number',
   expiryDate: 'date',
