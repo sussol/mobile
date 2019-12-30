@@ -207,7 +207,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   gotoPrescription: patientID => dispatch(createPrescription(patientID)),
 
   editPrescriber: prescriber => dispatch(PrescriberActions.editPrescriber(prescriber)),
-  editPatient: patientID => dispatch(PatientActions.editPatient(patientID)),
+  editPatient: patient => dispatch(PatientActions.editPatient(patient)),
   createPatient: () => dispatch(PatientActions.createPatient()),
   cancelPatientEdit: () => dispatch(PatientActions.closeModal()),
   savePatient: patientDetails => dispatch(PatientActions.patientUpdate(patientDetails)),
