@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -18,6 +19,18 @@ const ACTIONS = {
   SWITCH_TAB: 'Prescription/SWITCH_TAB',
   SELECT_ITEM: 'Prescription/SELECT_ITEM',
   REMOVE_ITEM: 'Prescription/REMOVE_ITEM',
+  UPDATE_DIRECTION: 'Prescription/UPDATE_DIRECTION',
+};
+
+export const updateDirection = (id, newValue) => (dispatch, getState) => {
+  const { prescription } = getState();
+  const { transaction } = prescription;
+  const { items } = transaction;
+
+  const item = items.filtered('id == $0', id)[0];
+  item?.setItemDirection(UIDatabase, newValue);
+
+  dispatch({ type: ACTIONS.REMOVE_ITEM });
 };
 
 export const removeItem = id => (dispatch, getState) => {

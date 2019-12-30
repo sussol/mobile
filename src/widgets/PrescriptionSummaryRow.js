@@ -22,7 +22,7 @@ import { TouchableNoFeedback } from './DataTable';
  * @param {Object} item A TransactionItem record to display details for.
  */
 export const PrescriptionSummaryRow = ({ item }) => {
-  const { itemName, itemCode, totalQuantity, direction } = item;
+  const { itemName, itemCode, totalQuantity, note } = item;
 
   const details = [{ label: 'Code', text: itemCode }];
 
@@ -32,7 +32,7 @@ export const PrescriptionSummaryRow = ({ item }) => {
       <View style={localStyles.marginFive} />
       <DetailRow details={details} />
       <View style={localStyles.marginFive} />
-      <SimpleLabel label="Directions" text={direction} />
+      <SimpleLabel label="Directions" text={note} />
     </TouchableNoFeedback>
   );
 };

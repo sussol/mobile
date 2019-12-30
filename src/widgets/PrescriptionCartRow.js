@@ -16,40 +16,41 @@ import { CloseIcon } from './icons';
 import { Separator } from './Separator';
 import { TouchableNoFeedback } from './DataTable';
 
+import { UIDatabase } from '../database';
+
 /**
  * Renders a row in the PrescriptionCart consisting of a `StepperRow`, `DropdownRow`,
  * `DetailsRow` and a close button.
  *
  * Is passed all details needed as this is a simple layout and presentation component.
  *
- * @prop {Object} item
+ * @prop {Object} transactionItem
  * @prop {Func}   onChangeQuantity
  * @prop {Func}   onRemoveItem
  * @prop {Array}  options
  * @prop {Func}   onOptionSelection
  */
 export const PrescriptionCartRow = ({
-  item,
+  transactionItem,
   onChangeQuantity,
   onRemoveItem,
-  options,
   onOptionSelection,
-  currentOptionText,
 }) => {
-  const { itemName, totalQuantity, itemCode, price, id } = item;
+  const { itemName, totalQuantity, itemCode, price, id, note, item } = transactionItem;
 
-  const removeItem = React.useCallback(() => onRemoveItem(id), [id]);
-  const onChangeValue = React.useCallback(
-    quantity => {
-      onChangeQuantity(id, quantity);
-    },
-    [id]
+  const itemDetails = React.useMemo(
+    () => [
+      { label: 'Code', text: itemCode },
+      { label: 'Price', text: price },
+    ],
+    [itemCode, price]
   );
 
-  const itemDetails = [
-    { label: 'Code', text: itemCode },
-    { label: 'Price', text: price },
-  ];
+  const removeItem = React.useCallback(() => onRemoveItem(id), [id]);
+  const onChangeValue = React.useCallback(quantity => onChangeQuantity(id, quantity), [id]);
+  const selectionCallback = React.useCallback(direction => onOptionSelection(id, direction), [id]);
+  const defaultDirections = React.useMemo(() => item.getDirectionExpansions(UIDatabase), [item.id]);
+
   return (
     <>
       <TouchableNoFeedback style={localStyles.flexRow}>
@@ -58,10 +59,11 @@ export const PrescriptionCartRow = ({
           <DetailRow details={itemDetails} />
           <View style={{ height: 10 }} />
           <DropdownRow
-            currentOptionText={currentOptionText}
-            options={options}
-            onSelection={onOptionSelection}
+            currentOptionText={note}
+            options={defaultDirections}
+            onSelection={selectionCallback}
             dropdownTitle="Directions"
+            placeholder="Usage direction"
           />
         </View>
         <View style={localStyles.flexOne} />
@@ -72,17 +74,11 @@ export const PrescriptionCartRow = ({
   );
 };
 
-PrescriptionCartRow.defaultProps = {
-  currentOptionText: '',
-};
-
 PrescriptionCartRow.propTypes = {
-  item: PropTypes.object.isRequired,
+  transactionItem: PropTypes.object.isRequired,
   onChangeQuantity: PropTypes.func.isRequired,
   onRemoveItem: PropTypes.func.isRequired,
-  options: PropTypes.array.isRequired,
   onOptionSelection: PropTypes.func.isRequired,
-  currentOptionText: PropTypes.string,
 };
 
 const localStyles = StyleSheet.create({

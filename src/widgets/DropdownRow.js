@@ -5,14 +5,14 @@
  */
 
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 import PropTypes from 'prop-types';
 
 import { ChevronDownIcon, BurgerMenuIcon } from './icons';
 import { PopoverDropDown } from './PopoverDropDown';
-import { SimpleLabel } from './SimpleLabel';
 
-import { SUSSOL_ORANGE } from '../globalStyles/index';
+import { SUSSOL_ORANGE, APP_FONT_FAMILY, GREY } from '../globalStyles/index';
+import { FlexView } from './FlexView';
 
 /**
  * Layout component rendering a DropdownPopover, a SimpleLabel and an optional
@@ -29,7 +29,7 @@ import { SUSSOL_ORANGE } from '../globalStyles/index';
  * @prop {String} dropdownTitle     The title of the drop down menu when opened.
  * @prop {Bool}   useSecondaryMenu  Indicator whether the secondary menu should show.
  * @prop {Number} iconSize          The size of the drop down icon.
- * @prop {String} labelSize         Size of the label component. See SimpleLabel.
+ * @prop {String} placeholder       Placeholder string value, when no value has been chosen/entered.
  */
 export const DropdownRow = ({
   currentOptionText,
@@ -39,35 +39,41 @@ export const DropdownRow = ({
   useSecondaryMenu,
   secondaryCallback,
   iconSize,
-  labelSize,
+  placeholder,
 }) => {
-  const DropDownMenuIcon = React.useCallback(
-    () => <ChevronDownIcon color={SUSSOL_ORANGE} size={iconSize} />,
-    []
-  );
+  const DropDownMenuIcon = React.useCallback(() => {
+    const iconColor = options.length ? SUSSOL_ORANGE : GREY;
+    return <ChevronDownIcon color={iconColor} size={iconSize} />;
+  }, []);
 
   const BurgerMenuButton = React.useCallback(
-    () => (
-      <TouchableOpacity onPress={secondaryCallback}>
-        <BurgerMenuIcon />
-      </TouchableOpacity>
-    ),
-    [useSecondaryMenu]
+    () =>
+      (
+        <TouchableOpacity onPress={secondaryCallback}>
+          <BurgerMenuIcon />
+        </TouchableOpacity>
+      )[useSecondaryMenu]
   );
 
   return (
     <View style={localStyles.containerStyle}>
-      <View style={localStyles.flexOne}>
+      <FlexView flex={1}>
         <PopoverDropDown
           BaseComponent={DropDownMenuIcon}
           options={options}
           onSelection={onSelection}
           title={dropdownTitle}
         />
-      </View>
-      <View style={localStyles.flexNine}>
-        <SimpleLabel size={labelSize} text={currentOptionText} />
-      </View>
+      </FlexView>
+      <FlexView flex={9}>
+        <TextInput
+          onChangeText={onSelection}
+          value={currentOptionText}
+          underlineColorAndroid={SUSSOL_ORANGE}
+          style={localStyles.textInputStyle}
+          placeholder={placeholder}
+        />
+      </FlexView>
       {useSecondaryMenu && <BurgerMenuButton />}
     </View>
   );
@@ -84,16 +90,17 @@ const localStyles = StyleSheet.create({
     justifyContent: 'space-between',
     flex: 1,
   },
-  flexNine: { flex: 9 },
-  flexTwo: { flex: 2 },
-  flexOne: { flex: 1 },
+  textInputStyle: {
+    flex: 1,
+    fontFamily: APP_FONT_FAMILY,
+  },
 });
 
 DropdownRow.defaultProps = {
   useSecondaryMenu: false,
   secondaryCallback: null,
   iconSize: 20,
-  labelSize: 'small',
+  placeholder: '',
 };
 
 DropdownRow.propTypes = {
@@ -104,5 +111,5 @@ DropdownRow.propTypes = {
   useSecondaryMenu: PropTypes.bool,
   secondaryCallback: PropTypes.func,
   iconSize: PropTypes.number,
-  labelSize: PropTypes.oneOf(['small', 'large']),
+  placeholder: PropTypes.string,
 };

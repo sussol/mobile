@@ -755,7 +755,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       database.update(recordType, {
         id: record.ID,
         item,
-        priority: record.priority,
+        priority: Number(record.priority),
         directions: record.directions,
       });
       break;
