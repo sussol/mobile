@@ -10,8 +10,6 @@ import PropTypes from 'prop-types';
 import { PieChart, BarChart, LineChart, ReportTable } from './index';
 
 export const ReportChart = ({ report }) => {
-  const { type, data } = report;
-  const { rows, header } = data;
   const [dimensions, setDimensions] = useState({ height: null, width: null });
   const { height, width } = dimensions;
 
@@ -26,16 +24,18 @@ export const ReportChart = ({ report }) => {
   };
 
   const renderChart = () => {
-    if (report === null || !width || !height) return null;
+    if (!report || !(width ?? false) || !(height ?? false)) return null;
+    const { type, data } = report;
+    const { rows, header } = data;
     switch (type) {
       case 'BarChart':
-        return <BarChart report={report} height={height} width={width} />;
+        return <BarChart data={data} height={height} width={width} />;
       case 'LineChart':
-        return <LineChart report={report} height={height} width={width} />;
+        return <LineChart data={data} height={height} width={width} />;
       case 'Table':
         return <ReportTable rows={rows} header={header} />;
       case 'PieChart':
-        return <PieChart report={report} height={height} width={width} />;
+        return <PieChart data={data} height={height} width={width} />;
       default:
         return null;
     }
@@ -43,17 +43,15 @@ export const ReportChart = ({ report }) => {
 
   return (
     <View style={localStyles.ChartContainer} onLayout={onLayout}>
-      {renderChart(type)}
+      {renderChart()}
     </View>
   );
 };
 
 const localStyles = StyleSheet.create({
-  ChartContainer: { flex: 1 },
+  ChartContainer: { flex: 1, minHeight: '100%' },
 });
 
 ReportChart.propTypes = {
   report: PropTypes.object.isRequired,
-  rows: PropTypes.string.isRequired,
-  header: PropTypes.string.isRequired,
 };

@@ -62,12 +62,16 @@ const localStyles = StyleSheet.create({
   },
 });
 
+ReportSideBarItem.defaultProps = {
+  subContent: '',
+};
+
 ReportSideBarItem.propTypes = {
   contentStyle: PropTypes.object.isRequired,
   iconStyle: PropTypes.object.isRequired,
   onPress: PropTypes.func.isRequired,
   content: PropTypes.string.isRequired,
-  subContent: PropTypes.string.isRequired,
+  subContent: PropTypes.string,
   icon: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
 };
