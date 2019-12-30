@@ -8,22 +8,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
-import { APP_FONT_FAMILY, GREY } from '../../globalStyles';
+
 import { ReportSideBarItem } from './ReportSideBarItem';
+
+import { DARKER_GREY, SUSSOL_ORANGE, WARMER_GREY, APP_FONT_FAMILY, GREY } from '../../globalStyles';
 
 export const ReportSideBar = ({ reports, currentReport, onPressItem, dimensions }) => {
   const renderItem = ({ item }) => {
     const { id, index, title, type, date } = item;
+    const isSelected = id === currentReport.id;
     return (
       <ReportSideBarItem
         id={id}
         index={index}
         onPress={onPressItem}
-        isLastItem={index + 1 === reports.length}
-        isSelected={id === currentReport.id}
         icon={type}
         content={title}
         subContent={date}
+        iconStyle={isSelected ? localStyles.selectedIcon : localStyles.icon}
+        contentStyle={isSelected ? localStyles.selectedContent : localStyles.content}
       />
     );
   };
@@ -65,6 +68,20 @@ const localStyles = StyleSheet.create({
     borderRightWidth: 1,
     margin: 0,
   },
+  content: {
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: 16,
+    textAlignVertical: 'center',
+    color: DARKER_GREY,
+  },
+  selectedContent: {
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: 16,
+    textAlignVertical: 'center',
+    color: SUSSOL_ORANGE,
+  },
+  icon: { fontSize: 18, color: WARMER_GREY },
+  selectedIcon: { fontSize: 18, color: SUSSOL_ORANGE },
 });
 
 ReportSideBar.propTypes = {
