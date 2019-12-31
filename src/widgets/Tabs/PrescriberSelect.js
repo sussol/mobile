@@ -23,7 +23,12 @@ import { PrescriberActions } from '../../actions/PrescriberActions';
 /**
  * Layout component used for a tab within the prescription wizard.
  *
- * @props {Func} choosePrescriber   Callback for selecting a supplier.
+ * @prop {Func} choosePrescriber Callback for selecting a supplier.
+ * @prop {Func} data             Current set of prescriber data.
+ * @prop {Func} onFilterData     Callback for filtering prescribers.
+ * @prop {Func} searchTerm       The current filtering search term.
+ * @prop {Func} createPrescriber Callback for creating a prescriber.
+ * @prop {Func} isComplete       Indicator for this prescription being complete.
  */
 const PrescriberSelectComponent = ({
   choosePrescriber,
@@ -31,9 +36,9 @@ const PrescriberSelectComponent = ({
   onFilterData,
   searchTerm,
   createPrescriber,
+  isComplete,
 }) => {
   const columns = React.useMemo(() => getColumns('prescriberSelect'), []);
-
   return (
     <>
       <PrescriptionInfo />
@@ -45,7 +50,12 @@ const PrescriberSelectComponent = ({
         />
         <PageButton text="Add Prescriber" onPress={createPrescriber} />
       </FlexRow>
-      <SimpleTable data={data} columns={columns} selectRow={choosePrescriber} />
+      <SimpleTable
+        data={data}
+        columns={columns}
+        selectRow={choosePrescriber}
+        isDisabled={isComplete}
+      />
     </>
   );
 };
@@ -68,17 +78,19 @@ const mapDispatchToProps = dispatch => {
 };
 
 const mapStateToProps = state => {
-  const { prescriber } = state;
+  const { prescriber, wizard } = state;
   const { searchTerm } = prescriber;
+  const { isComplete } = wizard;
   const data = UIDatabase.objects('Prescriber').filtered(
     'firstName CONTAINS[c] $0 OR lastName CONTAINS[c] $0',
     searchTerm
   );
-  return { data, searchTerm };
+  return { data, searchTerm, isComplete };
 };
 
 PrescriberSelectComponent.defaultProps = {
   searchTerm: '',
+  isComplete: false,
 };
 
 PrescriberSelectComponent.propTypes = {
@@ -87,6 +99,7 @@ PrescriberSelectComponent.propTypes = {
   onFilterData: PropTypes.func.isRequired,
   searchTerm: PropTypes.string,
   createPrescriber: PropTypes.func.isRequired,
+  isComplete: PropTypes.bool,
 };
 
 export const PrescriberSelect = connect(
