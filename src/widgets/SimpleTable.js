@@ -23,7 +23,7 @@ import { getItemLayout, recordKeyExtractor } from '../pages/dataTableUtilities';
  * to trigger styling effects on selected rows.
  */
 export const SimpleTable = React.memo(
-  React.forwardRef(({ data, columns, selectRow, selectedRows, disabledRows }, ref) => {
+  React.forwardRef(({ data, columns, selectRow, selectedRows, disabledRows, isDisabled }, ref) => {
     const {
       cellText,
       cellContainer,
@@ -38,7 +38,7 @@ export const SimpleTable = React.memo(
         const { id } = rowData;
 
         return columns.map(({ key, width, alignText }, index) => {
-          const disabledStyle = disabledRows?.[id] ? { color: GREY } : {};
+          const disabledStyle = disabledRows?.[id] || isDisabled ? { color: GREY } : {};
           const textStyle = { ...cellText[alignText], ...disabledStyle };
           return (
             <Cell
@@ -52,13 +52,13 @@ export const SimpleTable = React.memo(
           );
         });
       },
-      [disabledRows]
+      [disabledRows, isDisabled]
     );
 
     const renderRow = useCallback(
       ({ item, index }) => {
         const { id } = item;
-        const isDisabled = disabledRows?.[id];
+        const isRowDisabled = disabledRows?.[id] || isDisabled;
         const isSelected = selectedRows?.[id];
         const rowStyle = isSelected
           ? selectedRowStyle
@@ -71,12 +71,12 @@ export const SimpleTable = React.memo(
             rowKey={id}
             style={rowStyle}
             renderCells={renderCells}
-            onPress={isDisabled ? null : selectRow}
+            onPress={isRowDisabled ? null : selectRow}
             isSelected={isSelected}
           />
         );
       },
-      [selectedRows, disabledRows]
+      [selectedRows, disabledRows, selectRow, isDisabled]
     );
 
     const renderHeaderCells = useCallback(
@@ -117,14 +117,17 @@ export const SimpleTable = React.memo(
 SimpleTable.defaultProps = {
   selectedRows: {},
   disabledRows: null,
+  selectRow: null,
+  isDisabled: false,
 };
 
 SimpleTable.propTypes = {
   data: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   columns: PropTypes.array.isRequired,
-  selectRow: PropTypes.func.isRequired,
+  selectRow: PropTypes.func,
   selectedRows: PropTypes.object,
   disabledRows: PropTypes.object,
+  isDisabled: PropTypes.bool,
 };
 
 const SimpleRow = React.memo(({ rowData, style, rowKey, renderCells, onPress }) => {
