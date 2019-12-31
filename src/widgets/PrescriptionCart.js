@@ -26,12 +26,14 @@ import { removeItem, updateDirection } from '../reducers/PrescriptionReducer';
  * @prop {Func}  onChangeQuantity  Callback when an items quantity is updated.
  * @prop {Func}  onOptionSelection Callback when an option in the dropdown is selected.
  * @prop {Func}  onRemoveItem      Callback when this row is removed.
+ * @prop {Bool}  isDisabled        Indicator if this component should be editable.
  */
 const PrescriptionCartComponent = ({
   items,
   onChangeQuantity,
   onOptionSelection,
   onRemoveItem,
+  isDisabled,
 }) => {
   const renderPrescriptionCartRow = React.useCallback(
     ({ item }) => (
@@ -40,9 +42,10 @@ const PrescriptionCartComponent = ({
         transactionItem={item}
         onOptionSelection={onOptionSelection}
         onRemoveItem={onRemoveItem}
+        isDisabled={isDisabled}
       />
     ),
-    [onChangeQuantity]
+    [onChangeQuantity, isDisabled]
   );
 
   return (
@@ -59,11 +62,16 @@ const PrescriptionCartComponent = ({
   );
 };
 
+PrescriptionCartComponent.defaultProps = {
+  isDisabled: false,
+};
+
 PrescriptionCartComponent.propTypes = {
   items: PropTypes.array.isRequired,
   onChangeQuantity: PropTypes.func.isRequired,
   onOptionSelection: PropTypes.func.isRequired,
   onRemoveItem: PropTypes.func.isRequired,
+  isDisabled: PropTypes.bool,
 };
 
 const localStyles = StyleSheet.create({

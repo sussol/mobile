@@ -24,20 +24,20 @@ import { UIDatabase } from '../database';
  *
  * Is passed all details needed as this is a simple layout and presentation component.
  *
- * @prop {Object} transactionItem
- * @prop {Func}   onChangeQuantity
- * @prop {Func}   onRemoveItem
- * @prop {Array}  options
- * @prop {Func}   onOptionSelection
+ * @prop {Object} transactionItem    Underlying Transaction Item for this row.s
+ * @prop {Func}   onChangeQuantity   Callback for changing the quantity ordered.
+ * @prop {Func}   onRemoveItem       Callback for deleting this item.
+ * @prop {Func}   onOptionSelection  Callback for selecting a direction.
+ * @prop {Bool}   isDisabled         Indicator if this component should be editable.
  */
 export const PrescriptionCartRow = ({
   transactionItem,
   onChangeQuantity,
   onRemoveItem,
   onOptionSelection,
+  isDisabled,
 }) => {
   const { itemName, totalQuantity, itemCode, price, id, note, item } = transactionItem;
-
   const itemDetails = React.useMemo(
     () => [
       { label: 'Code', text: itemCode },
@@ -55,10 +55,16 @@ export const PrescriptionCartRow = ({
     <>
       <TouchableNoFeedback style={localStyles.flexRow}>
         <View style={localStyles.largeFlexRow}>
-          <StepperRow text={itemName} quantity={totalQuantity} onChangeValue={onChangeValue} />
+          <StepperRow
+            text={itemName}
+            quantity={totalQuantity}
+            onChangeValue={onChangeValue}
+            isDisabled={isDisabled}
+          />
           <DetailRow details={itemDetails} />
           <View style={{ height: 10 }} />
           <DropdownRow
+            isDisabled={isDisabled}
             currentOptionText={note}
             options={defaultDirections}
             onSelection={selectionCallback}
@@ -67,11 +73,15 @@ export const PrescriptionCartRow = ({
           />
         </View>
         <View style={localStyles.flexOne} />
-        <CircleButton IconComponent={CloseIcon} onPress={removeItem} />
+        <CircleButton IconComponent={CloseIcon} onPress={isDisabled ? null : removeItem} />
       </TouchableNoFeedback>
       <Separator width={1} />
     </>
   );
+};
+
+PrescriptionCartRow.defaultProps = {
+  isDisabled: false,
 };
 
 PrescriptionCartRow.propTypes = {
@@ -79,6 +89,7 @@ PrescriptionCartRow.propTypes = {
   onChangeQuantity: PropTypes.func.isRequired,
   onRemoveItem: PropTypes.func.isRequired,
   onOptionSelection: PropTypes.func.isRequired,
+  isDisabled: PropTypes.bool,
 };
 
 const localStyles = StyleSheet.create({
