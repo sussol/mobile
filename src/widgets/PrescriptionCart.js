@@ -27,7 +27,7 @@ import { removeItem, updateDirection } from '../reducers/PrescriptionReducer';
  * @prop {Func}  onOptionSelection Callback when an option in the dropdown is selected.
  * @prop {Func}  onRemoveItem      Callback when this row is removed.
  */
-export const PrescriptionCartComponent = ({
+const PrescriptionCartComponent = ({
   items,
   onChangeQuantity,
   onOptionSelection,

@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -34,7 +35,7 @@ CircleButton.defaultProps = {
 };
 
 CircleButton.propTypes = {
-  IconComponent: PropTypes.node.isRequired,
+  IconComponent: PropTypes.oneOfType([PropTypes.object, PropTypes.func]).isRequired,
   onPress: PropTypes.func,
   onPressIn: PropTypes.func,
   onPressOut: PropTypes.func,

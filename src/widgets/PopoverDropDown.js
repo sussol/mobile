@@ -78,6 +78,7 @@ const DropDown = ({ anchorRef, isVisible, options, onSelection, onClose, title }
         </View>
         {options.map((option, index) => (
           <DropDownOption
+            key={option}
             text={option}
             onPress={onSelection}
             isLast={options.length - 1 === index}

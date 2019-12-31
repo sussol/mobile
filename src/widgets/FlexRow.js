@@ -18,13 +18,16 @@ import PropTypes from 'prop-types';
  * @param {Object}     style          An additional styles object.
  */
 export const FlexRow = ({ children, flex, alignItems, justifyContent, style }) => {
-  const internalStyle = React.useMemo(() => ({
-    flex,
-    flexDirection: 'row',
-    [alignItems ? 'alignItems' : undefined]: alignItems,
-    [justifyContent ? 'justifyContent' : undefined]: justifyContent,
-    ...style,
-  }));
+  const internalStyle = React.useMemo(
+    () => ({
+      flex,
+      flexDirection: 'row',
+      [alignItems ? 'alignItems' : undefined]: alignItems,
+      [justifyContent ? 'justifyContent' : undefined]: justifyContent,
+      ...style,
+    }),
+    [style, alignItems, justifyContent, flex]
+  );
   return <View style={internalStyle}>{children}</View>;
 };
 
@@ -37,7 +40,7 @@ FlexRow.defaultProps = {
 };
 
 FlexRow.propTypes = {
-  children: PropTypes.oneOf([PropTypes.node, PropTypes.arrayOf(PropTypes.node)]),
+  children: PropTypes.oneOfType([PropTypes.node, PropTypes.arrayOf(PropTypes.node)]),
   flex: PropTypes.number,
   alignItems: PropTypes.string,
   justifyContent: PropTypes.string,

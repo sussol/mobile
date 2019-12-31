@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 
 import { SimpleLabel } from './SimpleLabel';
@@ -33,7 +33,7 @@ export const StepperRow = ({
   upperLimit,
   labelSize,
 }) => {
-  const { containerStyle, largeFlex, mediumFlex, smallFlex } = localStylez;
+  const { containerStyle, largeFlex, mediumFlex, smallFlex } = localStyles;
   return (
     <View style={containerStyle}>
       <View style={largeFlex}>
@@ -52,12 +52,12 @@ export const StepperRow = ({
   );
 };
 
-const localStylez = {
+const localStyles = StyleSheet.create({
   containerStyle: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   largeFlex: { flex: 5 },
   mediumFlex: { flex: 3 },
   smallFlex: { flex: 1 },
-};
+});
 
 StepperRow.defaultProps = {
   lowerLimit: 1,

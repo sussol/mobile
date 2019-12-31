@@ -15,8 +15,8 @@ import { AddIcon, MinusIcon } from './icons';
  * The buttons can also be held, increase by one every 50ms. The increment amount
  * then grows exponentially every 500ms, reseting to one after releasing.
  *
- * Component uses state to update itself, and a ref for storing the current value. This
- * is a bit of a hack, but is much more responsive to the rapid updates of the input.
+ * Component uses state to update itself, and a ref for storing the current value as
+ * this is far more responsive than updating the redux store and re-rendering every 50ms.
  *
  * @prop {String|Number} value          The current numerical value.
  * @prop {Func}          onChangeText   Callback for updating the value.
@@ -41,19 +41,8 @@ export const StepperInput = ({ value, onChangeText, lowerLimit, upperLimit, text
     onChangeText(updateValue);
   };
 
-  const decrementValue = () => {
-    const updateValue = parseNumber(currentValue.current - currentAdjustmentAmount.current);
-    currentValue.current = updateValue;
-    setCurrentValueState(updateValue);
-    onChangeText(updateValue);
-  };
-
-  const incrementValue = () => {
-    const updateValue = parseNumber(currentValue.current + currentAdjustmentAmount.current);
-    currentValue.current = updateValue;
-    setCurrentValueState(updateValue);
-    onChangeText(updateValue);
-  };
+  const decrementValue = () => onUpdate(currentValue.current - currentAdjustmentAmount.current);
+  const incrementValue = () => onUpdate(currentValue.current + currentAdjustmentAmount.current);
 
   const inreaseIncrement = () => {
     currentAdjustmentAmount.current *= 2;

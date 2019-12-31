@@ -206,7 +206,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.DISPENSARY),
   gotoPrescription: patientID => dispatch(createPrescription(patientID)),
 
-  editPatient: patientID => dispatch(PatientActions.editPatient(patientID)),
+  editPrescriber: prescriber => dispatch(PrescriberActions.editPrescriber(prescriber)),
+  editPatient: patient => dispatch(PatientActions.editPatient(patient)),
   createPatient: () => dispatch(PatientActions.createPatient()),
   cancelPatientEdit: () => dispatch(PatientActions.closeModal()),
   savePatient: patientDetails => dispatch(PatientActions.patientUpdate(patientDetails)),

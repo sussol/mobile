@@ -101,10 +101,11 @@ DropdownRow.defaultProps = {
   secondaryCallback: null,
   iconSize: 20,
   placeholder: '',
+  currentOptionText: '',
 };
 
 DropdownRow.propTypes = {
-  currentOptionText: PropTypes.string.isRequired,
+  currentOptionText: PropTypes.string,
   options: PropTypes.array.isRequired,
   onSelection: PropTypes.func.isRequired,
   dropdownTitle: PropTypes.string.isRequired,

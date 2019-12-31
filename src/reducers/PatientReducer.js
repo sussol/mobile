@@ -35,18 +35,12 @@ export const PatientReducer = (state = patientInitialState(), action) => {
     }
 
     case PATIENT_ACTIONS.PATIENT_CREATION: {
-      return { ...state, isCreating: true };
+      return { ...state, currentPatient: null, isCreating: true };
     }
 
     case PATIENT_ACTIONS.COMPLETE: {
-      return {
-        ...state,
-        isEditing: false,
-        isCreating: false,
-        viewingHistory: false,
-        sortKey: 'itemName',
-        isAscending: true,
-      };
+      const { currentPatient } = state;
+      return { ...patientInitialState(), currentPatient };
     }
 
     case PATIENT_ACTIONS.SORT_HISTORY: {

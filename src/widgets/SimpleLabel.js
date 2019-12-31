@@ -66,7 +66,7 @@ SimpleLabel.defaultProps = {
 };
 
 SimpleLabel.propTypes = {
-  text: PropTypes.string,
+  text: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   size: PropTypes.oneOf(['small', 'large']),
   label: PropTypes.string,
 };
