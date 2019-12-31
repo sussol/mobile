@@ -53,8 +53,7 @@ const StepperNumber = ({ step, numberOfSteps, currentStep, title, onPress }) => 
   const lastStep = step === numberOfSteps - 1;
   const completedStep = currentStep > step;
   const Container = completedStep ? TouchableOpacity : View;
-
-  const wrappedOnPress = () => onPress(step - 1);
+  const wrappedOnPress = () => onPress(step);
 
   return (
     <Container onPress={wrappedOnPress} style={container}>

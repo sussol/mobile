@@ -23,9 +23,17 @@ import { AddIcon, MinusIcon } from './icons';
  * @prop {Number}        lowerLimit     The lower limit of the numerical range.
  * @prop {Number}        upperLimit     The upper limit of the numerical range.
  * @prop {Object}        textInputStyle Style object for the underlying TextInput.
+ * @prop {Bool}          isDisabled     Indicator if this component should be editable.
  *
  */
-export const StepperInput = ({ value, onChangeText, lowerLimit, upperLimit, textInputStyle }) => {
+export const StepperInput = ({
+  value,
+  onChangeText,
+  lowerLimit,
+  upperLimit,
+  textInputStyle,
+  isDisabled,
+}) => {
   const [, setCurrentValueState] = React.useState(Number(value));
   const currentValue = React.useRef(Number(value));
   const currentAdjustmentAmount = React.useRef(1);
@@ -77,18 +85,19 @@ export const StepperInput = ({ value, onChangeText, lowerLimit, upperLimit, text
     <View style={localStyles.row}>
       <CircleButton
         IconComponent={MinusIcon}
-        onPressIn={onStartDecrementPress}
-        onPressOut={onEndLongPress}
+        onPressIn={isDisabled ? null : onStartDecrementPress}
+        onPressOut={isDisabled ? null : onEndLongPress}
       />
       <TextInput
+        editable={!isDisabled}
         onChangeText={onUpdate}
         value={String(currentValue.current)}
         style={textInputStyle}
       />
       <CircleButton
         IconComponent={AddIcon}
-        onPressIn={onStartIncrementPress}
-        onPressOut={onEndLongPress}
+        onPressIn={isDisabled ? null : onStartIncrementPress}
+        onPressOut={isDisabled ? null : onEndLongPress}
       />
     </View>
   );
@@ -110,6 +119,7 @@ StepperInput.defaultProps = {
   lowerLimit: 0,
   upperLimit: 99999,
   textInputStyle: localStyles.textInput,
+  isDisabled: false,
 };
 
 StepperInput.propTypes = {
@@ -118,4 +128,5 @@ StepperInput.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   onChangeText: PropTypes.func.isRequired,
   textInputStyle: PropTypes.object,
+  isDisabled: PropTypes.bool,
 };

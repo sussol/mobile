@@ -30,6 +30,7 @@ import { FlexView } from './FlexView';
  * @prop {Bool}   useSecondaryMenu  Indicator whether the secondary menu should show.
  * @prop {Number} iconSize          The size of the drop down icon.
  * @prop {String} placeholder       Placeholder string value, when no value has been chosen/entered.
+ * @prop {Bool}   isDisabled        Indicator if this component should be editable.
  */
 export const DropdownRow = ({
   currentOptionText,
@@ -40,9 +41,10 @@ export const DropdownRow = ({
   secondaryCallback,
   iconSize,
   placeholder,
+  isDisabled,
 }) => {
   const DropDownMenuIcon = React.useCallback(() => {
-    const iconColor = options.length ? SUSSOL_ORANGE : GREY;
+    const iconColor = options.length && !isDisabled ? SUSSOL_ORANGE : GREY;
     return <ChevronDownIcon color={iconColor} size={iconSize} />;
   }, []);
 
@@ -63,10 +65,12 @@ export const DropdownRow = ({
           options={options}
           onSelection={onSelection}
           title={dropdownTitle}
+          isDisabled={isDisabled}
         />
       </FlexView>
       <FlexView flex={9}>
         <TextInput
+          editable={!isDisabled}
           onChangeText={onSelection}
           value={currentOptionText}
           underlineColorAndroid={SUSSOL_ORANGE}
@@ -102,6 +106,7 @@ DropdownRow.defaultProps = {
   iconSize: 20,
   placeholder: '',
   currentOptionText: '',
+  isDisabled: false,
 };
 
 DropdownRow.propTypes = {
@@ -113,4 +118,5 @@ DropdownRow.propTypes = {
   secondaryCallback: PropTypes.func,
   iconSize: PropTypes.number,
   placeholder: PropTypes.string,
+  isDisabled: PropTypes.bool,
 };

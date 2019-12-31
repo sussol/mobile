@@ -24,6 +24,7 @@ import { StepperInput } from './StepperInput';
  * @prop {Number}        lowerLimit     Lower bound valid value of the stepper.
  * @prop {Number}        upperLimit     Upper bound valid value of the stepper.
  * @prop {String}        labelSize      Size of the label: See SimpleLabel for valid values.
+ * @prop {Bool}          isDisabled     Indicator if this component should be editable.
  */
 export const StepperRow = ({
   text,
@@ -32,6 +33,7 @@ export const StepperRow = ({
   lowerLimit,
   upperLimit,
   labelSize,
+  isDisabled,
 }) => {
   const { containerStyle, largeFlex, mediumFlex, smallFlex } = localStyles;
   return (
@@ -42,6 +44,7 @@ export const StepperRow = ({
       <View style={smallFlex} />
       <View style={mediumFlex}>
         <StepperInput
+          isDisabled={isDisabled}
           value={quantity}
           onChangeText={onChangeValue}
           lowerLimit={lowerLimit}
@@ -63,6 +66,7 @@ StepperRow.defaultProps = {
   lowerLimit: 1,
   upperLimit: 99999,
   labelSize: 'large',
+  isDisabled: false,
 };
 
 StepperRow.propTypes = {
@@ -72,4 +76,5 @@ StepperRow.propTypes = {
   lowerLimit: PropTypes.number,
   upperLimit: PropTypes.number,
   labelSize: PropTypes.oneOf(['large', 'small']),
+  isDisabled: PropTypes.bool,
 };
