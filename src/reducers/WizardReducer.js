@@ -12,8 +12,7 @@ const initialState = () => ({
 
 export const WizardReducer = (state = initialState(), action) => {
   const { type } = action;
-  console.log(type);
-  console.log(action);
+
   switch (type) {
     case 'Navigation/BACK': {
       return initialState();
