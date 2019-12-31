@@ -9,6 +9,7 @@ import { ROUTES } from '../navigation/constants';
 import { UIDatabase } from '../database';
 import { createRecord } from '../database/utilities';
 import { PrescriberActions } from '../actions/PrescriberActions';
+import { WizardActions } from '../actions/WizardActions';
 
 const initialState = () => ({
   currentTab: 0,
@@ -67,7 +68,7 @@ export const switchTab = nextTab => ({
 
 export const selectPrescriber = prescriberID => (dispatch, getState) => {
   const { prescription } = getState();
-  const { transaction, currentTab } = prescription;
+  const { transaction } = prescription;
   const prescriber = UIDatabase.get('Prescriber', prescriberID);
 
   UIDatabase.write(() =>
@@ -79,7 +80,7 @@ export const selectPrescriber = prescriberID => (dispatch, getState) => {
 
   batch(() => {
     dispatch(PrescriberActions.setPrescriber(prescriber));
-    dispatch(switchTab(currentTab + 1));
+    dispatch(WizardActions.nextTab());
   });
 };
 
