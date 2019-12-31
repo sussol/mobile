@@ -1,29 +1,16 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2018
  */
 
-import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { VictoryLabel, VictoryPie } from 'victory-native';
+
 import { APP_FONT_FAMILY, GREY } from '../globalStyles';
 
-export const PieChart = ({ title, type, data }) => {
-  const [dimensions, setDimensions] = useState({ height: null, width: null });
-  const { height, width } = dimensions;
-
-  // Victory Native sizes are set using absolute values. Parents dimensions are used to
-  // calculate relative values for width and height for each chart.
-  const onLayout = event => {
-    const newDimensionsObj = {
-      height: event.nativeEvent.layout.width,
-      width: event.nativeEvent.layout.height,
-    };
-    setDimensions(newDimensionsObj);
-  };
+export const PieChart = ({ width, height, data }) => {
   const {
     padVertical,
     padHorizontal,
@@ -43,37 +30,25 @@ export const PieChart = ({ title, type, data }) => {
 
   const widthPadded = width * (1 - padHorizontal);
   return (
-    <View style={localStyles.ChartContainer} onLayout={onLayout}>
-      <VictoryPie
-        width={width}
-        height={height}
-        padding={padding}
-        padAngle={padAngle}
-        innerRadius={widthPadded * innerRadius}
-        labelRadius={widthPadded * labelRadius}
-        colorScale={colorScale}
-        labelComponent={<VictoryLabel style={style} />}
-        data={data}
-      />
-    </View>
+    <VictoryPie
+      width={width}
+      height={height}
+      padding={padding}
+      padAngle={padAngle}
+      innerRadius={widthPadded * innerRadius}
+      labelRadius={widthPadded * labelRadius}
+      colorScale={colorScale}
+      labelComponent={<VictoryLabel style={style} />}
+      data={data}
+    />
   );
 };
 
 PieChart.propTypes = {
-  title: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
+  width: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
   data: PropTypes.array.isRequired,
 };
-
-const localStyles = StyleSheet.create({
-  ChartContainer: {
-    width: '75%',
-    minHeight: '100%',
-    backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 const victoryStyles = {
   pieChart: {

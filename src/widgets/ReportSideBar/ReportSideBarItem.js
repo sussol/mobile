@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2018
@@ -7,53 +8,45 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { APP_FONT_FAMILY, GREY, WARMER_GREY, SUSSOL_ORANGE } from '../../globalStyles';
+
+import { GREY } from '../../globalStyles';
+
+// Translations between icon props and names of FontAwesome icons.
+const TYPE_TO_ICON = {
+  PieChart: 'pie-chart',
+  LineChart: 'line-chart',
+  Table: 'table',
+  BarChart: 'bar-chart',
+};
 
 export const ReportSideBarItem = ({
-  isLastItem,
-  isSelected,
   content,
   subContent,
   icon,
   onPress,
   id,
+  contentStyle,
+  iconStyle,
 }) => {
-  const CONTENT_COLOR = {
-    selected: SUSSOL_ORANGE,
-    unselected: WARMER_GREY,
-  };
-
-  // Translations between icon props and names of FontAwesome icons.
-  const TYPE_TO_ICON = {
-    PieChart: 'pie-chart',
-    LineChart: 'line-chart',
-    Table: 'table',
-    BarChart: 'bar-chart',
-  };
-
   const onPressItem = React.useCallback(() => onPress(id), [id, onPress]);
-
-  const { borderTopWidth, borderTopColor } = localStyles.FlatListItem;
-  const contentColor = isSelected ? CONTENT_COLOR.selected : CONTENT_COLOR.unselected;
-  const bottomBorder = isLastItem
-    ? { borderBottomWidth: borderTopWidth, borderBottomColor: borderTopColor }
-    : null;
 
   return (
     <TouchableOpacity onPress={onPressItem}>
-      <View style={[localStyles.FlatListItem, bottomBorder]}>
-        <View style={localStyles.ContentContainer}>
-          <Text style={[localStyles.Content, { color: contentColor }]}>{content}</Text>
-          <Text style={[localStyles.SubContent, { color: contentColor }]}>{subContent}</Text>
+      <View style={localStyles.flatListItem}>
+        <View style={localStyles.contentContainer}>
+          <Text style={contentStyle}>{content}</Text>
+          <Text style={contentStyle}>{subContent}</Text>
         </View>
-        <Icon name={TYPE_TO_ICON[icon]} style={localStyles.Icon} color={contentColor} />
+        <View style={{ flex: 1 }}>
+          <Icon name={TYPE_TO_ICON[icon]} style={iconStyle} />
+        </View>
       </View>
     </TouchableOpacity>
   );
 };
 
 const localStyles = StyleSheet.create({
-  FlatListItem: {
+  flatListItem: {
     padding: 10,
     borderTopWidth: 1,
     borderTopColor: GREY,
@@ -63,31 +56,22 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
     height: 85,
   },
-  ContentContainer: {
+  contentContainer: {
     flexDirection: 'column',
-    width: '80%',
-  },
-  Content: {
-    fontFamily: APP_FONT_FAMILY,
-    fontSize: 16,
-    textAlignVertical: 'center',
-  },
-  SubContent: {
-    fontFamily: APP_FONT_FAMILY,
-    fontSize: 12,
-    color: WARMER_GREY,
-  },
-  Icon: {
-    fontSize: 18,
+    flex: 9,
   },
 });
 
+ReportSideBarItem.defaultProps = {
+  subContent: '',
+};
+
 ReportSideBarItem.propTypes = {
-  isSelected: PropTypes.bool.isRequired,
-  isLastItem: PropTypes.bool.isRequired,
+  contentStyle: PropTypes.object.isRequired,
+  iconStyle: PropTypes.object.isRequired,
   onPress: PropTypes.func.isRequired,
   content: PropTypes.string.isRequired,
-  subContent: PropTypes.string.isRequired,
+  subContent: PropTypes.string,
   icon: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
 };

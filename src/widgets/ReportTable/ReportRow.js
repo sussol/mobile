@@ -32,8 +32,12 @@ const localStyles = StyleSheet.create({
   },
 });
 
+ReportRow.defaultProps = {
+  isHeader: false,
+};
+
 ReportRow.propTypes = {
-  isHeader: PropTypes.bool.isRequired,
+  isHeader: PropTypes.bool,
   rowData: PropTypes.array.isRequired,
   rowIndex: PropTypes.number.isRequired,
 };
