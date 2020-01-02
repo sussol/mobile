@@ -322,6 +322,16 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'IndicatorValue': {
+      const recordValue = record.value && JSON.parse(record.value);
+      internalRecord = {
+        id: record.ID,
+        facilityId: record.facility_ID,
+        period: database.getOrCreate('Period', record.period_ID),
+        column: database.getOrCreate('IndicatorAttribute', record.column_ID),
+        row: database.getOrCreate('IndicatorAttribute', record.row_ID),
+        value: recordValue && recordValue.value,
+      };
+      database.update(recordType, internalRecord);
       break;
     }
     case 'Item': {
