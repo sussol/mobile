@@ -19,6 +19,7 @@ export class User extends Realm.Object {}
 export { Item } from './Item';
 export { ItemBatch } from './ItemBatch';
 export { ItemStoreJoin } from './ItemStoreJoin';
+export { IndicatorAttribute } from './IndicatorAttribute';
 export { MasterList } from './MasterList';
 export { MasterListItem } from './MasterListItem';
 export { MasterListNameJoin } from './MasterListNameJoin';

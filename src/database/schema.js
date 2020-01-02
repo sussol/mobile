@@ -10,6 +10,7 @@ import {
   ItemCategory,
   ItemDepartment,
   ItemStoreJoin,
+  IndicatorAttribute,
   MasterList,
   MasterListItem,
   MasterListNameJoin,
@@ -125,6 +126,7 @@ User.schema = {
 export const schema = {
   schema: [
     Address,
+    IndicatorAttribute,
     Item,
     ItemBatch,
     ItemDepartment,
