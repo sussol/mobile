@@ -4,6 +4,7 @@
  */
 
 /* eslint-disable quote-props */
+/* eslint-disable max-classes-per-file */
 
 export const INTERNAL_TO_EXTERNAL = 0;
 export const EXTERNAL_TO_INTERNAL = 1;
