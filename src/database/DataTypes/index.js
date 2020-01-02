@@ -20,6 +20,7 @@ export { Item } from './Item';
 export { ItemBatch } from './ItemBatch';
 export { ItemStoreJoin } from './ItemStoreJoin';
 export { IndicatorAttribute } from './IndicatorAttribute';
+export { IndicatorValue } from './IndicatorValue';
 export { MasterList } from './MasterList';
 export { MasterListItem } from './MasterListItem';
 export { MasterListNameJoin } from './MasterListNameJoin';

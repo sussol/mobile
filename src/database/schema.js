@@ -11,6 +11,7 @@ import {
   ItemDepartment,
   ItemStoreJoin,
   IndicatorAttribute,
+  IndicatorValue,
   MasterList,
   MasterListItem,
   MasterListNameJoin,
@@ -127,6 +128,7 @@ export const schema = {
   schema: [
     Address,
     IndicatorAttribute,
+    IndicatorValue,
     Item,
     ItemBatch,
     ItemDepartment,
