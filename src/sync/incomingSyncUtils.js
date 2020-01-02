@@ -723,6 +723,12 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'ProgramIndicator': {
+      database.update(recordType, {
+        id: record.ID,
+        code: record.code,
+        program: database.getOrCreate('MasterList', record.program_ID),
+        isActive: parseBoolean(record.isActive),
+      });
       break;
     }
     case 'Options': {
