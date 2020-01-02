@@ -187,7 +187,23 @@ const SupplierRequisition = ({
     />
   );
 
-  const toggles = useMemo(
+  const ItemIndicatorToggles = useMemo(
+    () => [
+      {
+        text: programStrings.items,
+        isOn: true,
+        onPress: null,
+      },
+      {
+        text: programStrings.indicators,
+        isOn: false,
+        onPress: null,
+      },
+    ],
+    [showAll]
+  );
+
+  const ThresholdMOSToggles = useMemo(
     () => [
       {
         text: programStrings.hide_over_stocked,
@@ -203,7 +219,9 @@ const SupplierRequisition = ({
     [showAll]
   );
 
-  const ThresholdMOSToggle = () => <ToggleBar toggles={toggles} />;
+  const ItemIndicatorToggle = () => <ToggleBar toggles={ItemIndicatorToggles} />;
+
+  const ThresholdMOSToggle = () => <ToggleBar toggles={ThresholdMOSToggles} />;
 
   const ViewRegimenDataButton = () => {
     const hasRegimenData =
@@ -246,6 +264,7 @@ const SupplierRequisition = ({
             <UseSuggestedQuantitiesButton />
             <ViewRegimenDataButton />
           </View>
+          <ItemIndicatorToggle />
           <ThresholdMOSToggle />
         </View>
       </>
