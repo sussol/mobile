@@ -187,6 +187,20 @@ const SupplierRequisition = ({
     />
   );
 
+  const UseSuggestedQuantitiesButtonWide = () => (
+    <PageButton
+      style={{
+        ...globalStyles.topButton,
+        ...globalStyles.wideButton,
+        marginBottom: 5,
+        marginTop: 5,
+      }}
+      text={buttonStrings.use_suggested_quantities}
+      onPress={onSetRequestedToSuggested}
+      isDisabled={isFinalised}
+    />
+  );
+
   const ItemIndicatorToggles = useMemo(
     () => [
       {
@@ -256,14 +270,12 @@ const SupplierRequisition = ({
   }, [isFinalised]);
 
   const ProgramButtons = useCallback(() => {
-    const { verticalContainer, horizontalContainer } = globalStyles;
+    const { verticalContainer } = globalStyles;
     return (
       <>
         <View style={verticalContainer}>
-          <View style={horizontalContainer}>
-            <UseSuggestedQuantitiesButton />
-          </View>
           <ItemIndicatorToggle />
+          <UseSuggestedQuantitiesButtonWide />
           <ThresholdMOSToggle />
         </View>
       </>
