@@ -49,6 +49,7 @@ export const RECORD_TYPES = new SyncTranslator({
   Options: 'options',
   Period: 'period',
   PeriodSchedule: 'periodSchedule',
+  ProgramIndicator: 'program_indicator',
   Requisition: 'requisition',
   RequisitionItem: 'requisition_line',
   Stocktake: 'Stock_take',

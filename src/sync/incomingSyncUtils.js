@@ -249,6 +249,10 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: [],
       canBeBlank: ['units', 'comment', 'order_number'],
     },
+    ProgramIndicator: {
+      cannotBeBlank: ['code', 'program_ID', 'is_active'],
+      canBeBlank: [],
+    },
   };
   if (!requiredFields[recordType]) return false; // Unsupported record type
   const hasAllNonBlankFields = requiredFields[recordType].cannotBeBlank.reduce(
@@ -693,6 +697,9 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         id: record.ID,
         name: record.name,
       });
+      break;
+    }
+    case 'ProgramIndicator': {
       break;
     }
     case 'Options': {
