@@ -306,6 +306,19 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
   let internalRecord;
   switch (recordType) {
     case 'IndicatorAttribute': {
+      internalRecord = {
+        id: record.ID,
+        indicator: database.getOrCreate('ProgramIndicator', record.indicator_ID),
+        description: record.description,
+        code: record.code,
+        index: parseNumber(record.index),
+        isRequired: parseBoolean(record.is_required),
+        valueType: record.data_type && record.data_type.value,
+        valueDefault: record.data_type && record.data_type.default,
+        axis: record.axis,
+        isActive: parseBoolean(record.is_active),
+      };
+      database.update(recordType, internalRecord);
       break;
     }
     case 'IndicatorValue': {
