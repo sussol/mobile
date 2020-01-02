@@ -141,6 +141,10 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       ],
       canBeBlank: [],
     },
+    IndicatorValue: {
+      cannotBeBlank: ['facility_ID', 'period_ID', 'column_ID', 'row_ID', 'value'],
+      canBeBlank: [],
+    },
     Item: {
       cannotBeBlank: ['code', 'item_name'],
       canBeBlank: ['default_pack_size'],
@@ -302,6 +306,9 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
   let internalRecord;
   switch (recordType) {
     case 'IndicatorAttribute': {
+      break;
+    }
+    case 'IndicatorValue': {
       break;
     }
     case 'Item': {
