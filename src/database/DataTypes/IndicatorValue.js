@@ -9,7 +9,7 @@ import Realm from 'realm';
  * An abstract object which contains metadata describing an indicator row or column.
  *
  * @property  {string}              id
- * @property  {string}              facilityId
+ * @property  {string}              storeId
  * @property  {Period}              period
  * @property  {IndicatorAttribute}  column
  * @property  {IndicatorAttribute}  row
@@ -24,7 +24,7 @@ IndicatorValue.schema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
-    facilityId: 'string',
+    storeId: 'string',
     period: 'Period',
     column: 'IndicatorAttribute',
     row: 'IndicatorAttribute',

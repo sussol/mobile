@@ -325,7 +325,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       const recordValue = (record.value && JSON.parse(record.value))?.value;
       internalRecord = {
         id: record.ID,
-        facilityId: record.facility_ID,
+        storeId: record.facility_ID,
         period: database.getOrCreate('Period', record.period_ID),
         column: database.getOrCreate('IndicatorAttribute', record.column_ID),
         row: database.getOrCreate('IndicatorAttribute', record.row_ID),
