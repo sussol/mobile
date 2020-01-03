@@ -313,8 +313,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         code: record.code,
         index: parseNumber(record.index),
         isRequired: parseBoolean(record.is_required),
-        valueType: record.data_type && record.data_type.value,
-        valueDefault: record.data_type && record.data_type.default,
+        valueType: record?.data_type?.value,
+        valueDefault: record?.data_type?.default,
         axis: record.axis,
         isActive: parseBoolean(record.is_active),
       };
