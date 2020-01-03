@@ -28,7 +28,7 @@ IndicatorAttribute.schema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
-    indicator: 'ProgramIndicator',
+    indicator: { type: 'ProgramIndicator', optional: true },
     description: { type: 'string', default: 'placeholderDescription' },
     code: { type: 'string', default: 'placeholderCode' },
     index: { type: 'int', default: 0 },
