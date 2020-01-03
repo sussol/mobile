@@ -14,7 +14,7 @@ import { MODAL_KEYS } from '../utilities';
 import { DataTablePageModal } from '../widgets/modals';
 import { BottomConfirmModal } from '../widgets/bottomModals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
-import { DataTablePageView, PageButton, PageInfo, ToggleBar, SearchBar } from '../widgets';
+import { Button, DataTablePageView, PageButton, PageInfo, ToggleBar, SearchBar } from '../widgets';
 
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 import { ROUTES } from '../navigation/constants';
@@ -51,6 +51,7 @@ const SupplierRequisition = ({
   pageObject,
   hasSelection,
   showAll,
+  showIndicators,
   keyExtractor,
   searchTerm,
   columns,
@@ -205,16 +206,16 @@ const SupplierRequisition = ({
     () => [
       {
         text: programStrings.items,
-        isOn: true,
+        isOn: !showIndicators,
         onPress: null,
       },
       {
         text: programStrings.indicators,
-        isOn: false,
+        isOn: showIndicators,
         onPress: null,
       },
     ],
-    [showAll]
+    [showIndicators]
   );
 
   const ThresholdMOSToggles = useMemo(
@@ -271,16 +272,30 @@ const SupplierRequisition = ({
 
   const ProgramButtons = useCallback(() => {
     const { verticalContainer } = globalStyles;
+
+    const ProgramItemButtons = (
+      <>
+        <UseSuggestedQuantitiesButtonWide />
+        <ThresholdMOSToggle />
+      </>
+    );
+
+    const ProgramIndicatorButtons = (
+      <>
+        <Button />
+        <Button />
+      </>
+    );
+
     return (
       <>
         <View style={verticalContainer}>
           <ItemIndicatorToggle />
-          <UseSuggestedQuantitiesButtonWide />
-          <ThresholdMOSToggle />
+          {showIndicators ? ProgramIndicatorButtons : ProgramItemButtons}
         </View>
       </>
     );
-  }, [showAll, isFinalised]);
+  }, [showIndicators, showAll, isFinalised]);
 
   const {
     pageTopSectionContainer,
@@ -354,6 +369,7 @@ export const SupplierRequisitionPage = connect(
 SupplierRequisition.defaultProps = {
   modalValue: null,
   showAll: false,
+  showIndicators: false,
 };
 
 SupplierRequisition.propTypes = {
@@ -372,6 +388,7 @@ SupplierRequisition.propTypes = {
   routeName: PropTypes.string.isRequired,
   hasSelection: PropTypes.bool.isRequired,
   showAll: PropTypes.bool,
+  showIndicators: PropTypes.bool,
   modalValue: PropTypes.any,
   refreshData: PropTypes.func.isRequired,
   onSelectNewItem: PropTypes.func.isRequired,
