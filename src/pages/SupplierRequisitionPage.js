@@ -7,14 +7,14 @@
 
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { View, ToastAndroid } from 'react-native';
+import { View, ToastAndroid, Picker } from 'react-native';
 import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
 import { DataTablePageModal } from '../widgets/modals';
 import { BottomConfirmModal } from '../widgets/bottomModals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
-import { Button, DataTablePageView, PageButton, PageInfo, ToggleBar, SearchBar } from '../widgets';
+import { DataTablePageView, PageButton, PageInfo, ToggleBar, SearchBar } from '../widgets';
 
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 import { ROUTES } from '../navigation/constants';
@@ -284,8 +284,21 @@ const SupplierRequisition = ({
     // TODO: add actions/reducers for indicators dropdown.
     const ProgramIndicatorButtons = (
       <>
-        <Button />
-        <Button />
+        <Picker
+          selectedValue="HIV"
+          mode="dropdown"
+          style={{
+            marginBottom: 45,
+            marginLeft: 5,
+            marginTop: 10,
+            height: 45,
+            width: 285,
+            color: globalStyles.SUSSOL_ORANGE,
+          }}
+        >
+          <Picker.Item label="HIV" value="HIV" color={globalStyles.SUSSOL_ORANGE} />
+          <Picker.Item label="REGIMEN" value="REGIMEN" color={globalStyles.SUSSOL_ORANGE} />
+        </Picker>
       </>
     );
 
