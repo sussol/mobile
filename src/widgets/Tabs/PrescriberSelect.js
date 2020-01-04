@@ -17,10 +17,9 @@ import { SimpleTable } from '../SimpleTable';
 
 import { UIDatabase } from '../../database';
 import { getColumns } from '../../pages/dataTableUtilities';
-
+import { debounce } from '../../utilities';
 import { PrescriberActions } from '../../actions/PrescriberActions';
 import { PrescriptionActions } from '../../actions/PrescriptionActions';
-import { debounce } from '../../utilities/index';
 
 /**
  * Layout component used for a tab within the prescription wizard.
