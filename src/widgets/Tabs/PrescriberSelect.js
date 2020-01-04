@@ -20,6 +20,7 @@ import { getColumns } from '../../pages/dataTableUtilities';
 
 import { PrescriberActions } from '../../actions/PrescriberActions';
 import { PrescriptionActions } from '../../actions/PrescriptionActions';
+import { debounce } from '../../utilities/index';
 
 /**
  * Layout component used for a tab within the prescription wizard.
@@ -72,8 +73,11 @@ const localStyles = StyleSheet.create({
 });
 
 const mapDispatchToProps = dispatch => {
-  const choosePrescriber = prescriberID =>
-    dispatch(PrescriptionActions.assignPrescriber(prescriberID));
+  const choosePrescriber = debounce(
+    prescriberID => dispatch(PrescriptionActions.assignPrescriber(prescriberID)),
+    1000,
+    true
+  );
   const onFilterData = searchTerm => dispatch(PrescriberActions.filterData(searchTerm));
   const createPrescriber = () => dispatch(PrescriberActions.createPrescriber());
   return { choosePrescriber, onFilterData, createPrescriber };
