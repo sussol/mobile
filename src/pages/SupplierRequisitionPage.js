@@ -66,6 +66,7 @@ const SupplierRequisition = ({
   onCheck,
   onUncheck,
   onSortColumn,
+  onShowIndicators,
   onShowOverStocked,
   onHideOverStocked,
   // onOpenRegimenDataModal,
@@ -212,7 +213,7 @@ const SupplierRequisition = ({
       {
         text: programStrings.indicators,
         isOn: showIndicators,
-        onPress: null,
+        onPress: onShowIndicators,
       },
     ],
     [showIndicators]
@@ -422,6 +423,7 @@ SupplierRequisition.propTypes = {
   onCheck: PropTypes.func.isRequired,
   onUncheck: PropTypes.func.isRequired,
   onSortColumn: PropTypes.func.isRequired,
+  onShowIndicators: PropTypes.func.isRequired,
   onShowOverStocked: PropTypes.func.isRequired,
   onHideOverStocked: PropTypes.func.isRequired,
   // onOpenRegimenDataModal: PropTypes.func.isRequired,
