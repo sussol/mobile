@@ -54,6 +54,25 @@ export class MasterList extends Realm.Object {
   }
 
   /**
+   * Add an indicator to this master list.
+   *
+   * @param {ProgramIndicator} programIndicator
+   */
+  addIndicator(programIndicator) {
+    this.indicators.push(programIndicator);
+  }
+
+  /**
+   * Add an indicator to this master list, if it has not already been added.
+   *
+   * @param {ProgramIndicator} programIndicator
+   */
+  addIndicatorIfUnique(programIndicator) {
+    if (this.indicators.filtered('id == $0', programIndicator.id).length > 0) return;
+    this.addIndicator(programIndicator);
+  }
+
+  /**
    * Find the current stores matching store tag object in this master lists program settings.
    * Program settings is a JSON object held as a string - example below.
    * @param  {string}  tags   Current stores tags field
