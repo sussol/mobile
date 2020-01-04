@@ -53,7 +53,7 @@ export const FormDateInput = ({
     const newState = {
       isValid: validity,
       inputValue: newValue,
-      pickerSeedValue: validity ? moment(newValue, 'DD/MM/YY').toDate() : new Date(),
+      pickerSeedValue: validity ? moment(newValue, 'DD/MM/YYYY').toDate() : new Date(),
       datePickerOpen: pickerVisibility,
     };
     setInputState(newState);
@@ -73,7 +73,7 @@ export const FormDateInput = ({
   const onChangeDatez = ({ nativeEvent }) => {
     const { timestamp } = nativeEvent;
     if (!timestamp) return;
-    const newDate = moment(new Date(timestamp)).format('D/M/Y');
+    const newDate = moment(new Date(timestamp)).format('DD/MM/YYYY');
     onUpdate(newDate, true);
   };
 
