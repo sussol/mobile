@@ -144,15 +144,9 @@ export const toggleShowFinalised = state => {
   return { ...state, data: sortedData, showFinalised: newShowFinalisedState, searchTerm: '' };
 };
 
-export const showIndicators = state => {
-  console.log('SHOWING INDICATORS');
-  return { ...state, showIndicators: true };
-};
+export const showIndicators = state => ({ ...state, showIndicators: true });
 
-export const hideIndicators = state => {
-  console.log('HIDING INDICATORS');
-  return { ...state, showIndicators: false };
-};
+export const hideIndicators = state => ({ ...state, showIndicators: false });
 
 /**
  * Filters backingData by the elements isLessThanThresholdMOS field.
