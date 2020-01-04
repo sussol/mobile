@@ -26,5 +26,7 @@ ProgramIndicator.schema = {
     code: { type: 'string', default: 'placeholderCode' },
     program: { type: 'MasterList', optional: true },
     isActive: { type: 'bool', default: false },
+    rows: { type: 'list', objectType: 'IndicatorAttribute' },
+    columns: { type: 'list', objectType: 'IndicatorAttribute' },
   },
 };
