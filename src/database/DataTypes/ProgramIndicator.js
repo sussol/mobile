@@ -14,7 +14,34 @@ import Realm from 'realm';
  * @property  {MasterList}  program
  * @property  {boolean}     isActive
  */
-export class ProgramIndicator extends Realm.Object {}
+export class ProgramIndicator extends Realm.Object {
+  /**
+   * Add an attribute to this indicator.
+   *
+   * @param {IndicatorAttribute} indicatorAttribute
+   */
+  addIndicatorAttribute(indicatorAttribute) {
+    if (indicatorAttribute.isRow) {
+      this.rows.push(indicatorAttribute);
+    }
+    if (indicatorAttribute.isColumn) {
+      this.columns.push(indicatorAttribute);
+    }
+  }
+
+  /**
+   * Add an attribute to this indicator.
+   *
+   * @param {IndicatorAttribute} indicatorAttribute
+   */
+  addIndicatorAttributeIfUnique(indicatorAttribute) {
+    const isUnique = !(
+      this.rows.filtered('id == $0', indicatorAttribute.id).length > 0 ||
+      this.columns.filtered('id == $0', indicatorAttribute.id).length > 0
+    );
+    if (isUnique) this.addIndicatorAttribute(indicatorAttribute);
+  }
+}
 
 export default ProgramIndicator;
 
