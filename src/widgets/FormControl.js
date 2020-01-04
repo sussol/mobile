@@ -12,6 +12,7 @@ import globalStyles, { SUSSOL_ORANGE, WHITE } from '../globalStyles/index';
 import { modalStrings } from '../localization/index';
 import { selectCanSaveForm, selectCompletedForm } from '../selectors/form';
 import { FormActions } from '../actions/FormActions';
+import { FormDateInput } from './FormDateInput';
 
 /**
  * Component which will manage and control a set of user inputs of a form.
@@ -46,17 +47,38 @@ const FormControlComponent = ({
   const onSaveCompletedForm = React.useCallback(() => onSave(completedForm), [completedForm]);
 
   const formInputs = () =>
-    inputConfig.map(({ key, isRequired, validator, initialValue, label, invalidMessage }) => (
-      <ValidationTextInput
-        key={key}
-        value={initialValue}
-        isRequired={isRequired}
-        onValidate={validator}
-        onChangeText={value => onUpdateForm(key, value)}
-        label={label}
-        invalidMessage={invalidMessage}
-      />
-    ));
+    inputConfig.map(({ type, key, isRequired, validator, initialValue, label, invalidMessage }) => {
+      switch (type) {
+        case 'text': {
+          return (
+            <ValidationTextInput
+              key={key}
+              value={initialValue}
+              isRequired={isRequired}
+              onValidate={validator}
+              onChangeText={value => onUpdateForm(key, value)}
+              label={label}
+              invalidMessage={invalidMessage}
+            />
+          );
+        }
+        case 'date': {
+          return (
+            <FormDateInput
+              key={key}
+              isRequired={isRequired}
+              label={label}
+              value={initialValue}
+              onChangeDate={value => onUpdateForm(key, value)}
+              onValidate={validator}
+              invalidMessage={invalidMessage}
+            />
+          );
+        }
+        default:
+          return null;
+      }
+    });
 
   return (
     <View style={localStyles.flexOne}>
