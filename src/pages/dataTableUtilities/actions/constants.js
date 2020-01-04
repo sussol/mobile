@@ -11,6 +11,7 @@ export const ACTIONS = {
   ADD_ITEM: 'addItem',
   ADD_RECORD: 'addRecord',
   SHOW_INDICATORS: 'showIndicators',
+  HIDE_INDICATORS: 'hideIndicators',
   HIDE_OVER_STOCKED: 'hideOverStocked',
   TOGGLE_STOCK_OUT: 'toggleStockOut',
   TOGGLE_SHOW_FINALISED: 'toggleShowFinalised',

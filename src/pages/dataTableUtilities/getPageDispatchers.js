@@ -27,6 +27,7 @@ export const getPageDispatchers = (dispatch, props, dataType, route) => {
     toggleStockOut: () => dispatch(BasePageActions.toggleStockOut(route)),
     onFilterData: debounce(value => dispatch(BasePageActions.filterData(value, route)), 75),
     onShowIndicators: () => dispatch(BasePageActions.showIndicators(route)),
+    onHideIndicators: () => dispatch(BasePageActions.hideIndicators(route)),
     onShowOverStocked: () => dispatch(BasePageActions.showOverStocked(route)),
     onHideOverStocked: () => dispatch(BasePageActions.hideOverStocked(route)),
     onDeselectAll: () => dispatch(BasePageActions.deselectAll(route)),

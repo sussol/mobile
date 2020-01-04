@@ -149,6 +149,11 @@ export const showIndicators = state => {
   return { ...state, showIndicators: true };
 };
 
+export const hideIndicators = state => {
+  console.log('HIDING INDICATORS');
+  return { ...state, showIndicators: false };
+};
+
 /**
  * Filters backingData by the elements isLessThanThresholdMOS field.
  */
@@ -196,6 +201,7 @@ export const TableReducerLookup = {
   toggleShowFinalised,
   addRecord,
   showIndicators,
+  hideIndicators,
   hideOverStocked,
   refreshData,
   filterData,
