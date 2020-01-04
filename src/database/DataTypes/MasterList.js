@@ -124,6 +124,7 @@ MasterList.schema = {
     name: { type: 'string', default: 'placeholderName' },
     note: { type: 'string', optional: true },
     items: { type: 'list', objectType: 'MasterListItem' },
+    indicators: { type: 'list', objectType: 'ProgramIndicator' },
     programSettings: { type: 'string', optional: true },
     isProgram: { type: 'bool', optional: true },
   },
