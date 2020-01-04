@@ -132,14 +132,13 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: [
         'indicator_ID',
         'description',
-        'code',
         'index',
         'is_required',
         'data_type',
         'axis',
         'is_active',
       ],
-      canBeBlank: [],
+      canBeBlank: ['code'],
     },
     IndicatorValue: {
       cannotBeBlank: ['facility_ID', 'period_ID', 'column_ID', 'row_ID', 'value'],
