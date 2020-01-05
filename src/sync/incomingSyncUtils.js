@@ -128,6 +128,23 @@ const getOrCreateAddress = (database, line1, line2, line3, line4, zipCode) => {
 export const sanityCheckIncomingRecord = (recordType, record) => {
   if (!record.ID || record.ID.length < 1) return false; // Every record must have an ID.
   const requiredFields = {
+    IndicatorAttribute: {
+      cannotBeBlank: [
+        'indicator_ID',
+        'description',
+        'code',
+        'index',
+        'is_required',
+        'data_type',
+        'axis',
+        'is_active',
+      ],
+      canBeBlank: [],
+    },
+    IndicatorValue: {
+      cannotBeBlank: ['facility_ID', 'period_ID', 'column_ID', 'row_ID', 'value'],
+      canBeBlank: [],
+    },
     Item: {
       cannotBeBlank: ['code', 'item_name'],
       canBeBlank: ['default_pack_size'],
@@ -249,6 +266,10 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: [],
       canBeBlank: ['units', 'comment', 'order_number'],
     },
+    ProgramIndicator: {
+      cannotBeBlank: ['code', 'program_ID', 'is_active'],
+      canBeBlank: [],
+    },
   };
   if (!requiredFields[recordType]) return false; // Unsupported record type
   const hasAllNonBlankFields = requiredFields[recordType].cannotBeBlank.reduce(
@@ -284,6 +305,12 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
   if (!sanityCheckIncomingRecord(recordType, record)) return; // Unsupported or malformed record.
   let internalRecord;
   switch (recordType) {
+    case 'IndicatorAttribute': {
+      break;
+    }
+    case 'IndicatorValue': {
+      break;
+    }
     case 'Item': {
       internalRecord = {
         id: record.ID,
@@ -693,6 +720,9 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         id: record.ID,
         name: record.name,
       });
+      break;
+    }
+    case 'ProgramIndicator': {
       break;
     }
     case 'Options': {
