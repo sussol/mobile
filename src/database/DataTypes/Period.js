@@ -56,7 +56,7 @@ Period.schema = {
     startDate: { type: 'date', default: new Date() },
     endDate: { type: 'date', default: new Date() },
     name: { type: 'string', default: 'Placeholder Name' },
-    periodSchedule: 'PeriodSchedule',
+    periodSchedule: { type: 'PeriodSchedule', optional: true },
     requisitions: { type: 'list', objectType: 'Requisition' },
   },
 };

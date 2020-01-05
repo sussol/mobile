@@ -312,8 +312,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         code: record.code,
         index: parseNumber(record.index),
         isRequired: parseBoolean(record.is_required),
-        valueType: record.data_type && record.data_type.value,
-        valueDefault: record.data_type && record.data_type.default,
+        valueType: record?.data_type?.value,
+        valueDefault: record?.data_type?.default,
         axis: record.axis,
         isActive: parseBoolean(record.is_active),
       });
@@ -321,14 +321,14 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'IndicatorValue': {
-      const recordValue = record.value && JSON.parse(record.value);
+      const recordValue = (record.value && JSON.parse(record.value))?.value;
       internalRecord = {
         id: record.ID,
-        facilityId: record.facility_ID,
+        storeId: record.facility_ID,
         period: database.getOrCreate('Period', record.period_ID),
         column: database.getOrCreate('IndicatorAttribute', record.column_ID),
         row: database.getOrCreate('IndicatorAttribute', record.row_ID),
-        value: recordValue && recordValue.value,
+        value: recordValue || '',
       };
       database.update(recordType, internalRecord);
       break;
