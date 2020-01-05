@@ -11,7 +11,6 @@ export { NavigationBar } from './NavigationBar';
 export { OnePressButton } from './OnePressButton';
 export { PageButton } from './PageButton';
 export { PageInfo } from './PageInfo';
-export { PopoverDropDown } from './PopoverDropDown';
 export { Step } from './Step';
 export { Spinner } from './Spinner';
 export { SyncState } from './SyncState';
