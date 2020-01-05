@@ -68,7 +68,6 @@ const SupplierRequisition = ({
   onSortColumn,
   onShowOverStocked,
   onHideOverStocked,
-  // onOpenRegimenDataModal,
   onEditMonth,
   onEditRequiredQuantity,
   onAddRequisitionItem,
@@ -237,22 +236,6 @@ const SupplierRequisition = ({
   const ItemIndicatorToggle = () => <ToggleBar toggles={ItemIndicatorToggles} />;
 
   const ThresholdMOSToggle = () => <ToggleBar toggles={ThresholdMOSToggles} />;
-
-  // const ViewRegimenDataButton = () => {
-  //   const hasRegimenData =
-  //     pageObject.parsedCustomData &&
-  //     pageObject.parsedCustomData.regimenData &&
-  //     pageObject.parsedCustomData.regimenData.length;
-
-  //   return (
-  //     <PageButton
-  //       style={globalStyles.topButton}
-  //       text={buttonStrings.view_regimen_data}
-  //       onPress={onOpenRegimenDataModal}
-  //       isDisabled={!hasRegimenData}
-  //     />
-  //   );
-  // };
 
   const GeneralButtons = useCallback(() => {
     const { verticalContainer } = globalStyles;
@@ -424,7 +407,6 @@ SupplierRequisition.propTypes = {
   onSortColumn: PropTypes.func.isRequired,
   onShowOverStocked: PropTypes.func.isRequired,
   onHideOverStocked: PropTypes.func.isRequired,
-  // onOpenRegimenDataModal: PropTypes.func.isRequired,
   onEditMonth: PropTypes.func.isRequired,
   onEditRequiredQuantity: PropTypes.func.isRequired,
   onAddRequisitionItem: PropTypes.func.isRequired,
