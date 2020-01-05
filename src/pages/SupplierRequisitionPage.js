@@ -21,7 +21,7 @@ import { ROUTES } from '../navigation/constants';
 
 import { useRecordListener } from '../hooks';
 
-import globalStyles from '../globalStyles';
+import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
 import { buttonStrings, modalStrings, programStrings } from '../localization';
 import { UIDatabase } from '../database/index';
 import { SETTINGS_KEYS } from '../settings/index';
@@ -52,6 +52,7 @@ const SupplierRequisition = ({
   hasSelection,
   showAll,
   showIndicators,
+  indicators,
   keyExtractor,
   searchTerm,
   columns,
@@ -284,6 +285,16 @@ const SupplierRequisition = ({
 
     // TODO: add dropdown component.
     // TODO: add actions/reducers for indicators dropdown.
+
+    const ProgramIndicatorItems = indicators.map(indicator => (
+      <Picker.Item
+        key={indicator.code}
+        label={indicator.code}
+        value={indicator.code}
+        color={SUSSOL_ORANGE}
+      />
+    ));
+
     const ProgramIndicatorButtons = (
       <>
         <Picker
@@ -298,8 +309,7 @@ const SupplierRequisition = ({
             color: globalStyles.SUSSOL_ORANGE,
           }}
         >
-          <Picker.Item label="HIV" value="HIV" color={globalStyles.SUSSOL_ORANGE} />
-          <Picker.Item label="REGIMEN" value="REGIMEN" color={globalStyles.SUSSOL_ORANGE} />
+          {ProgramIndicatorItems}
         </Picker>
       </>
     );
@@ -412,6 +422,7 @@ SupplierRequisition.propTypes = {
   hasSelection: PropTypes.bool.isRequired,
   showAll: PropTypes.bool,
   showIndicators: PropTypes.bool,
+  indicators: PropTypes.array.isRequired,
   modalValue: PropTypes.any,
   refreshData: PropTypes.func.isRequired,
   onSelectNewItem: PropTypes.func.isRequired,
