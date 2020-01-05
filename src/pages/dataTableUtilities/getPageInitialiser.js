@@ -368,14 +368,16 @@ const supplierRequisitionInitialiser = requisition => {
   const indicators = program?.indicators?.slice() || [];
   const [selectedIndicator] = indicators;
 
-  const indicatorColumns = selectedIndicator.columns.map(column => ({
-    type: column.valueType,
-    key: column.description,
-    title: column.description,
-    width: 10,
-    sortable: false,
-    editable: false,
-  }));
+  const indicatorColumns = selectedIndicator.columns.map(
+    ({ valueType: type, description: key, description: title }) => ({
+      type,
+      key,
+      title,
+      width: 10,
+      sortable: false,
+      editable: false,
+    })
+  );
 
   return {
     pageObject: requisition,
