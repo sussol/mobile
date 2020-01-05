@@ -141,7 +141,7 @@ const SupplierRequisition = ({
         />
       );
     },
-    [data, dataState]
+    [columns, data, dataState]
   );
 
   const renderHeader = useCallback(
@@ -153,7 +153,7 @@ const SupplierRequisition = ({
         sortKey={sortKey}
       />
     ),
-    [sortKey, isAscending]
+    [columns, sortKey, isAscending]
   );
 
   const AddMasterListItemsButton = () => (
@@ -394,6 +394,13 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 const mapStateToProps = state => {
   // TODO: add indicator toggle flag to page state.
   const { pages } = state;
+  const { showIndicators, indicatorColumns } = pages[ROUTES.SUPPLIER_REQUISITION];
+  if (showIndicators) {
+    return {
+      ...pages[ROUTES.SUPPLIER_REQUISITION],
+      columns: indicatorColumns,
+    };
+  }
   return pages[ROUTES.SUPPLIER_REQUISITION];
 };
 
@@ -415,6 +422,7 @@ SupplierRequisition.propTypes = {
   isAscending: PropTypes.bool.isRequired,
   searchTerm: PropTypes.string.isRequired,
   columns: PropTypes.array.isRequired,
+  indicatorColumns: PropTypes.array.isRequired,
   keyExtractor: PropTypes.func.isRequired,
   runWithLoadingIndicator: PropTypes.func.isRequired,
   dataState: PropTypes.object.isRequired,

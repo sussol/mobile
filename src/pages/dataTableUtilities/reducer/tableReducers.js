@@ -155,8 +155,19 @@ export const selectIndicator = (state, action) => {
   const { indicators } = state;
 
   const [selectedIndicator] = indicators.filter(({ code }) => code === indicatorCode);
-  return { ...state, selectedIndicator };
+
+  const indicatorColumns = selectedIndicator.columns.map(column => ({
+    type: column.valueType,
+    key: column.description,
+    title: column.description,
+    width: 10,
+    sortable: false,
+    editable: false,
+  }));
+
+  return { ...state, selectedIndicator, indicatorColumns };
 };
+
 /**
  * Filters backingData by the elements isLessThanThresholdMOS field.
  */

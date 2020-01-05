@@ -367,6 +367,16 @@ const supplierRequisitionInitialiser = requisition => {
 
   const indicators = program?.indicators?.slice() || [];
   const [selectedIndicator] = indicators;
+
+  const indicatorColumns = selectedIndicator.columns.map(column => ({
+    type: column.valueType,
+    key: column.description,
+    title: column.description,
+    width: 10,
+    sortable: false,
+    editable: false,
+  }));
+
   return {
     pageObject: requisition,
     backingData,
@@ -382,6 +392,7 @@ const supplierRequisitionInitialiser = requisition => {
     modalValue: null,
     showIndicators: false,
     selectedIndicator,
+    indicatorColumns,
     indicators,
     showAll: !usingPrograms || isFinalised,
     route: ROUTES.SUPPLIER_REQUISITION,
