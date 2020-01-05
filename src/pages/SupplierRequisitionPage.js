@@ -7,7 +7,7 @@
 
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { View, ToastAndroid, Picker } from 'react-native';
+import { View, ToastAndroid, Picker, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
@@ -267,18 +267,7 @@ const SupplierRequisition = ({
     // TODO: add actions/reducers for indicators dropdown.
     const ProgramIndicatorButtons = (
       <>
-        <Picker
-          selectedValue="HIV"
-          mode="dropdown"
-          style={{
-            marginBottom: 45,
-            marginLeft: 8.5,
-            marginTop: 10,
-            height: 45,
-            width: 285,
-            color: { SUSSOL_ORANGE },
-          }}
-        >
+        <Picker selectedValue="HIV" mode="dropdown" style={localStyles.picker}>
           <Picker.Item label="HIV" value="HIV" color={SUSSOL_ORANGE} />
           <Picker.Item label="REGIMEN" value="REGIMEN" color={SUSSOL_ORANGE} />
         </Picker>
@@ -370,6 +359,10 @@ export const SupplierRequisitionPage = connect(
   mapStateToProps,
   mapDispatchToProps
 )(SupplierRequisition);
+
+const localStyles = StyleSheet.create({
+  picker: { ...globalStyles.pickerText, ...globalStyles.picker },
+});
 
 SupplierRequisition.defaultProps = {
   modalValue: null,
