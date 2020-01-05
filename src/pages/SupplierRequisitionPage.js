@@ -52,6 +52,8 @@ const SupplierRequisition = ({
   hasSelection,
   showAll,
   showIndicators,
+  selectedIndicator,
+  indicators,
   keyExtractor,
   searchTerm,
   columns,
@@ -68,6 +70,7 @@ const SupplierRequisition = ({
   onSortColumn,
   onShowIndicators,
   onHideIndicators,
+  onSelectIndicator,
   onShowOverStocked,
   onHideOverStocked,
   onEditMonth,
@@ -137,7 +140,7 @@ const SupplierRequisition = ({
         />
       );
     },
-    [data, dataState]
+    [columns, data, dataState]
   );
 
   const renderHeader = useCallback(
@@ -149,7 +152,7 @@ const SupplierRequisition = ({
         sortKey={sortKey}
       />
     ),
-    [sortKey, isAscending]
+    [columns, sortKey, isAscending]
   );
 
   const AddMasterListItemsButton = () => (
@@ -253,13 +256,25 @@ const SupplierRequisition = ({
 
     // TODO: add dropdown component.
     // TODO: add actions/reducers for indicators dropdown.
+
+    const ProgramIndicatorItems = indicators.map(indicator => (
+      <Picker.Item
+        key={indicator.code}
+        label={indicator.code}
+        value={indicator.code}
+        color={SUSSOL_ORANGE}
+      />
+    ));
+
     const ProgramIndicatorButtons = (
-      <>
-        <Picker selectedValue="HIV" mode="dropdown" style={localStyles.picker}>
-          <Picker.Item label="HIV" value="HIV" color={SUSSOL_ORANGE} />
-          <Picker.Item label="REGIMEN" value="REGIMEN" color={SUSSOL_ORANGE} />
-        </Picker>
-      </>
+      <Picker
+        selectedValue={selectedIndicator.code}
+        mode="dropdown"
+        onValueChange={onSelectIndicator}
+        style={localStyles.picker}
+      >
+        {ProgramIndicatorItems}
+      </Picker>
     );
 
     return (
@@ -270,7 +285,7 @@ const SupplierRequisition = ({
         </View>
       </>
     );
-  }, [showIndicators, showAll, isFinalised]);
+  }, [showIndicators, selectedIndicator, showAll, isFinalised]);
 
   const {
     pageTopSectionContainer,
@@ -339,6 +354,13 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 const mapStateToProps = state => {
   // TODO: add indicator toggle flag to page state.
   const { pages } = state;
+  const { showIndicators, indicatorColumns } = pages[ROUTES.SUPPLIER_REQUISITION];
+  if (showIndicators) {
+    return {
+      ...pages[ROUTES.SUPPLIER_REQUISITION],
+      columns: indicatorColumns,
+    };
+  }
   return pages[ROUTES.SUPPLIER_REQUISITION];
 };
 
@@ -364,6 +386,7 @@ SupplierRequisition.propTypes = {
   isAscending: PropTypes.bool.isRequired,
   searchTerm: PropTypes.string.isRequired,
   columns: PropTypes.array.isRequired,
+  indicatorColumns: PropTypes.array.isRequired,
   keyExtractor: PropTypes.func.isRequired,
   runWithLoadingIndicator: PropTypes.func.isRequired,
   dataState: PropTypes.object.isRequired,
@@ -374,6 +397,8 @@ SupplierRequisition.propTypes = {
   hasSelection: PropTypes.bool.isRequired,
   showAll: PropTypes.bool,
   showIndicators: PropTypes.bool,
+  selectedIndicator: PropTypes.object.isRequired,
+  indicators: PropTypes.array.isRequired,
   modalValue: PropTypes.any,
   refreshData: PropTypes.func.isRequired,
   onSelectNewItem: PropTypes.func.isRequired,
@@ -389,6 +414,7 @@ SupplierRequisition.propTypes = {
   onHideIndicators: PropTypes.func.isRequired,
   onShowOverStocked: PropTypes.func.isRequired,
   onHideOverStocked: PropTypes.func.isRequired,
+  onSelectIndicator: PropTypes.func.isRequired,
   onEditMonth: PropTypes.func.isRequired,
   onEditRequiredQuantity: PropTypes.func.isRequired,
   onAddRequisitionItem: PropTypes.func.isRequired,

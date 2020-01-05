@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { sortDataBy } from '../../../utilities';
+import { sortDataBy, mapIndicatorColumn } from '../../../utilities';
 
 /**
  * Sorts the current set of data by the provided
@@ -148,6 +148,19 @@ export const showIndicators = state => ({ ...state, showIndicators: true });
 
 export const hideIndicators = state => ({ ...state, showIndicators: false });
 
+export const selectIndicator = (state, action) => {
+  const { payload } = action;
+  const { indicatorCode } = payload;
+
+  const { indicators } = state;
+
+  const [selectedIndicator] = indicators.filter(({ code }) => code === indicatorCode);
+
+  const indicatorColumns = selectedIndicator.columns.map(mapIndicatorColumn);
+
+  return { ...state, selectedIndicator, indicatorColumns };
+};
+
 /**
  * Filters backingData by the elements isLessThanThresholdMOS field.
  */
@@ -195,6 +208,7 @@ export const TableReducerLookup = {
   toggleShowFinalised,
   addRecord,
   showIndicators,
+  selectIndicator,
   hideIndicators,
   hideOverStocked,
   refreshData,

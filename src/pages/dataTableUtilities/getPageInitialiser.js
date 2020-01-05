@@ -5,7 +5,7 @@
 
 import { UIDatabase } from '../../database';
 
-import { sortDataBy } from '../../utilities';
+import { sortDataBy, mapIndicatorColumn } from '../../utilities';
 import { recordKeyExtractor } from './utilities';
 import getColumns from './getColumns';
 import getPageInfoColumns from './getPageInfoColumns';
@@ -365,6 +365,11 @@ const supplierRequisitionInitialiser = requisition => {
       ? sortedData
       : sortedData.filter(item => item.isLessThanThresholdMOS);
 
+  const indicators = program?.indicators?.slice() || [];
+  const [selectedIndicator] = indicators;
+
+  const indicatorColumns = selectedIndicator.columns.map(mapIndicatorColumn);
+
   return {
     pageObject: requisition,
     backingData,
@@ -379,6 +384,9 @@ const supplierRequisitionInitialiser = requisition => {
     hasSelection: false,
     modalValue: null,
     showIndicators: false,
+    selectedIndicator,
+    indicatorColumns,
+    indicators,
     showAll: !usingPrograms || isFinalised,
     route: ROUTES.SUPPLIER_REQUISITION,
     columns: getColumns(route),

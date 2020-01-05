@@ -12,6 +12,7 @@ export const ACTIONS = {
   ADD_RECORD: 'addRecord',
   SHOW_INDICATORS: 'showIndicators',
   HIDE_INDICATORS: 'hideIndicators',
+  SELECT_INDICATOR: 'selectIndicator',
   HIDE_OVER_STOCKED: 'hideOverStocked',
   TOGGLE_STOCK_OUT: 'toggleStockOut',
   TOGGLE_SHOW_FINALISED: 'toggleShowFinalised',

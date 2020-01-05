@@ -132,14 +132,13 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: [
         'indicator_ID',
         'description',
-        'code',
         'index',
         'is_required',
         'data_type',
         'axis',
         'is_active',
       ],
-      canBeBlank: [],
+      canBeBlank: ['code'],
     },
     IndicatorValue: {
       cannotBeBlank: ['facility_ID', 'period_ID', 'column_ID', 'row_ID', 'value'],
@@ -746,12 +745,13 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'ProgramIndicator': {
-      database.update(recordType, {
+      const indicator = database.update(recordType, {
         id: record.ID,
         code: record.code,
         program: database.getOrCreate('MasterList', record.program_ID),
         isActive: parseBoolean(record.isActive),
       });
+      indicator.program.addIndicatorIfUnique(indicator);
       break;
     }
     case 'Options': {
