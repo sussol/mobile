@@ -306,9 +306,32 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
   let internalRecord;
   switch (recordType) {
     case 'IndicatorAttribute': {
+      internalRecord = {
+        id: record.ID,
+        indicator: database.getOrCreate('ProgramIndicator', record.indicator_ID),
+        description: record.description,
+        code: record.code,
+        index: parseNumber(record.index),
+        isRequired: parseBoolean(record.is_required),
+        valueType: record?.data_type?.value,
+        valueDefault: record?.data_type?.default,
+        axis: record.axis,
+        isActive: parseBoolean(record.is_active),
+      };
+      database.update(recordType, internalRecord);
       break;
     }
     case 'IndicatorValue': {
+      const recordValue = (record.value && JSON.parse(record.value))?.value;
+      internalRecord = {
+        id: record.ID,
+        storeId: record.facility_ID,
+        period: database.getOrCreate('Period', record.period_ID),
+        column: database.getOrCreate('IndicatorAttribute', record.column_ID),
+        row: database.getOrCreate('IndicatorAttribute', record.row_ID),
+        value: recordValue || '',
+      };
+      database.update(recordType, internalRecord);
       break;
     }
     case 'Item': {
@@ -723,6 +746,12 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'ProgramIndicator': {
+      database.update(recordType, {
+        id: record.ID,
+        code: record.code,
+        program: database.getOrCreate('MasterList', record.program_ID),
+        isActive: parseBoolean(record.isActive),
+      });
       break;
     }
     case 'Options': {

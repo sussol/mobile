@@ -10,6 +10,8 @@ import {
   ItemCategory,
   ItemDepartment,
   ItemStoreJoin,
+  IndicatorAttribute,
+  IndicatorValue,
   MasterList,
   MasterListItem,
   MasterListNameJoin,
@@ -27,6 +29,7 @@ import {
   SyncOut,
   Period,
   PeriodSchedule,
+  ProgramIndicator,
   Transaction,
   TransactionBatch,
   TransactionCategory,
@@ -124,6 +127,8 @@ User.schema = {
 export const schema = {
   schema: [
     Address,
+    IndicatorAttribute,
+    IndicatorValue,
     Item,
     ItemBatch,
     ItemDepartment,
@@ -149,6 +154,7 @@ export const schema = {
     StocktakeItem,
     Period,
     PeriodSchedule,
+    ProgramIndicator,
     StocktakeBatch,
     User,
     Unit,

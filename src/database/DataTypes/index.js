@@ -3,6 +3,9 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+/* eslint-disable max-classes-per-file */
+/* eslint-disable import/no-cycle */
+
 import Realm from 'realm';
 
 export class Address extends Realm.Object {}
@@ -16,6 +19,8 @@ export class User extends Realm.Object {}
 export { Item } from './Item';
 export { ItemBatch } from './ItemBatch';
 export { ItemStoreJoin } from './ItemStoreJoin';
+export { IndicatorAttribute } from './IndicatorAttribute';
+export { IndicatorValue } from './IndicatorValue';
 export { MasterList } from './MasterList';
 export { MasterListItem } from './MasterListItem';
 export { MasterListNameJoin } from './MasterListNameJoin';
@@ -26,6 +31,7 @@ export { NumberToReuse } from './NumberToReuse';
 export { Options } from './Options';
 export { Period } from './Period';
 export { PeriodSchedule } from './PeriodSchedule';
+export { ProgramIndicator } from './ProgramIndicator';
 export { Requisition } from './Requisition';
 export { RequisitionItem } from './RequisitionItem';
 export { Stocktake } from './Stocktake';
