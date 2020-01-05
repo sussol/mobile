@@ -29,6 +29,7 @@ export const buttonStyles = {
   },
   wideButton: {
     width: 285,
+    marginLeft: 5,
     marginBottom: 5,
     marginTop: 5,
   },

@@ -178,23 +178,9 @@ const SupplierRequisition = ({
     />
   );
 
-  const UseSuggestedQuantitiesButton = () => (
+  const UseSuggestedQuantitiesButton = (isWide = false) => (
     <PageButton
-      style={globalStyles.topButton}
-      text={buttonStrings.use_suggested_quantities}
-      onPress={onSetRequestedToSuggested}
-      isDisabled={isFinalised}
-    />
-  );
-
-  const UseSuggestedQuantitiesButtonWide = () => (
-    <PageButton
-      style={{
-        ...globalStyles.topButton,
-        ...globalStyles.wideButton,
-        marginBottom: 5,
-        marginTop: 5,
-      }}
+      style={isWide ? globalStyles.wideButton : globalStyles.topButton}
       text={buttonStrings.use_suggested_quantities}
       onPress={onSetRequestedToSuggested}
       isDisabled={isFinalised}
@@ -258,7 +244,7 @@ const SupplierRequisition = ({
 
     const ProgramItemButtons = (
       <>
-        <UseSuggestedQuantitiesButtonWide />
+        <UseSuggestedQuantitiesButton isWide={true} />
         <ThresholdMOSToggle />
       </>
     );
