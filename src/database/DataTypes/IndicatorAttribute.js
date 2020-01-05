@@ -19,7 +19,21 @@ import Realm from 'realm';
  * @property  {string}            axis
  * @property  {boolean}           isActive
  */
-export class IndicatorAttribute extends Realm.Object {}
+export class IndicatorAttribute extends Realm.Object {
+  /**
+   * Get if an attribute is a row.
+   */
+  get isRow() {
+    return this.axis === 'row';
+  }
+
+  /**
+   * Get if an attribute is a column.
+   */
+  get isColumn() {
+    return this.axis === 'column';
+  }
+}
 
 export default IndicatorAttribute;
 
