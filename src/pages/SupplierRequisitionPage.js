@@ -21,7 +21,7 @@ import { ROUTES } from '../navigation/constants';
 
 import { useRecordListener } from '../hooks';
 
-import globalStyles from '../globalStyles';
+import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
 import { buttonStrings, modalStrings, programStrings } from '../localization';
 import { UIDatabase } from '../database/index';
 import { SETTINGS_KEYS } from '../settings/index';
@@ -289,15 +289,15 @@ const SupplierRequisition = ({
           mode="dropdown"
           style={{
             marginBottom: 45,
-            marginLeft: 5,
+            marginLeft: 8.5,
             marginTop: 10,
             height: 45,
             width: 285,
-            color: globalStyles.SUSSOL_ORANGE,
+            color: { SUSSOL_ORANGE },
           }}
         >
-          <Picker.Item label="HIV" value="HIV" color={globalStyles.SUSSOL_ORANGE} />
-          <Picker.Item label="REGIMEN" value="REGIMEN" color={globalStyles.SUSSOL_ORANGE} />
+          <Picker.Item label="HIV" value="HIV" color={SUSSOL_ORANGE} />
+          <Picker.Item label="REGIMEN" value="REGIMEN" color={SUSSOL_ORANGE} />
         </Picker>
       </>
     );

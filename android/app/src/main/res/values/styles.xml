@@ -1,8 +1,22 @@
 <resources>
 
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-    </style>
+        <item name="android:spinnerItemStyle">@style/SpinnerItem</item>
+        <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItem</item>
+      </style>
+      
+      <style name="SpinnerItem" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:fontFamily">@font/sussol_font</item>
+        <item name="android:textColor">@color/sussol_orange</item>
+        <item name="android:textSize">12dp</item>
+      </style>
+      
+      <style name="SpinnerDropDownItem" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:fontFamily">@font/sussol_font</item>
+          <item name="android:textColor">@color/sussol_orange</item>
+          <item name="android:textSize">12dp</item>
+          <item name="android:gravity">center</item>  
+          <item name="android:background">@drawable/picker_item</item>
+      </style>
 
 </resources>
