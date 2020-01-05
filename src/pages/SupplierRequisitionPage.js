@@ -7,7 +7,7 @@
 
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { View, ToastAndroid } from 'react-native';
+import { View, ToastAndroid, Picker, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
@@ -21,7 +21,7 @@ import { ROUTES } from '../navigation/constants';
 
 import { useRecordListener } from '../hooks';
 
-import globalStyles from '../globalStyles';
+import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
 import { buttonStrings, modalStrings, programStrings } from '../localization';
 import { UIDatabase } from '../database/index';
 import { SETTINGS_KEYS } from '../settings/index';
@@ -51,6 +51,7 @@ const SupplierRequisition = ({
   pageObject,
   hasSelection,
   showAll,
+  showIndicators,
   keyExtractor,
   searchTerm,
   columns,
@@ -67,7 +68,6 @@ const SupplierRequisition = ({
   onSortColumn,
   onShowOverStocked,
   onHideOverStocked,
-  onOpenRegimenDataModal,
   onEditMonth,
   onEditRequiredQuantity,
   onAddRequisitionItem,
@@ -178,16 +178,32 @@ const SupplierRequisition = ({
     />
   );
 
-  const UseSuggestedQuantitiesButton = () => (
+  const UseSuggestedQuantitiesButton = (isWide = false) => (
     <PageButton
-      style={globalStyles.topButton}
+      style={isWide ? globalStyles.wideButton : globalStyles.topButton}
       text={buttonStrings.use_suggested_quantities}
       onPress={onSetRequestedToSuggested}
       isDisabled={isFinalised}
     />
   );
 
-  const toggles = useMemo(
+  const ItemIndicatorToggles = useMemo(
+    () => [
+      {
+        text: programStrings.items,
+        isOn: !showIndicators,
+        onPress: null,
+      },
+      {
+        text: programStrings.indicators,
+        isOn: showIndicators,
+        onPress: null,
+      },
+    ],
+    [showIndicators]
+  );
+
+  const ThresholdMOSToggles = useMemo(
     () => [
       {
         text: programStrings.hide_over_stocked,
@@ -203,23 +219,9 @@ const SupplierRequisition = ({
     [showAll]
   );
 
-  const ThresholdMOSToggle = () => <ToggleBar toggles={toggles} />;
+  const ItemIndicatorToggle = () => <ToggleBar toggles={ItemIndicatorToggles} />;
 
-  const ViewRegimenDataButton = () => {
-    const hasRegimenData =
-      pageObject.parsedCustomData &&
-      pageObject.parsedCustomData.regimenData &&
-      pageObject.parsedCustomData.regimenData.length;
-
-    return (
-      <PageButton
-        style={globalStyles.topButton}
-        text={buttonStrings.view_regimen_data}
-        onPress={onOpenRegimenDataModal}
-        isDisabled={!hasRegimenData}
-      />
-    );
-  };
+  const ThresholdMOSToggle = () => <ToggleBar toggles={ThresholdMOSToggles} />;
 
   const GeneralButtons = useCallback(() => {
     const { verticalContainer } = globalStyles;
@@ -238,25 +240,44 @@ const SupplierRequisition = ({
   }, [isFinalised]);
 
   const ProgramButtons = useCallback(() => {
-    const { verticalContainer, horizontalContainer } = globalStyles;
+    const { verticalContainer } = globalStyles;
+
+    const ProgramItemButtons = (
+      <>
+        <UseSuggestedQuantitiesButton isWide={true} />
+        <ThresholdMOSToggle />
+      </>
+    );
+
+    // TODO: add dropdown component.
+    // TODO: add actions/reducers for indicators dropdown.
+    const ProgramIndicatorButtons = (
+      <>
+        <Picker selectedValue="HIV" mode="dropdown" style={localStyles.picker}>
+          <Picker.Item label="HIV" value="HIV" color={SUSSOL_ORANGE} />
+          <Picker.Item label="REGIMEN" value="REGIMEN" color={SUSSOL_ORANGE} />
+        </Picker>
+      </>
+    );
+
     return (
       <>
         <View style={verticalContainer}>
-          <View style={horizontalContainer}>
-            <UseSuggestedQuantitiesButton />
-            <ViewRegimenDataButton />
-          </View>
-          <ThresholdMOSToggle />
+          <ItemIndicatorToggle />
+          {showIndicators ? ProgramIndicatorButtons : ProgramItemButtons}
         </View>
       </>
     );
-  }, [showAll, isFinalised]);
+  }, [showIndicators, showAll, isFinalised]);
 
   const {
     pageTopSectionContainer,
     pageTopLeftSectionContainer,
     pageTopRightSectionContainer,
   } = globalStyles;
+
+  // TODO: add logic for swapping between items/indicators data.
+
   return (
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
@@ -298,6 +319,8 @@ const SupplierRequisition = ({
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
+  // TODO: add actions/reducers for indicators toggle.
+
   const thisStoreID = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_NAME_ID);
   const thisStore = UIDatabase.get('Name', thisStoreID);
   const hasMasterLists = thisStore?.masterLists?.length > 0;
@@ -312,6 +335,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 };
 
 const mapStateToProps = state => {
+  // TODO: add indicator toggle flag to page state.
+
   const { pages } = state;
   return pages[ROUTES.SUPPLIER_REQUISITION];
 };
@@ -321,9 +346,14 @@ export const SupplierRequisitionPage = connect(
   mapDispatchToProps
 )(SupplierRequisition);
 
+const localStyles = StyleSheet.create({
+  picker: { ...globalStyles.pickerText, ...globalStyles.picker },
+});
+
 SupplierRequisition.defaultProps = {
   modalValue: null,
   showAll: false,
+  showIndicators: false,
 };
 
 SupplierRequisition.propTypes = {
@@ -342,6 +372,7 @@ SupplierRequisition.propTypes = {
   routeName: PropTypes.string.isRequired,
   hasSelection: PropTypes.bool.isRequired,
   showAll: PropTypes.bool,
+  showIndicators: PropTypes.bool,
   modalValue: PropTypes.any,
   refreshData: PropTypes.func.isRequired,
   onSelectNewItem: PropTypes.func.isRequired,
@@ -355,7 +386,6 @@ SupplierRequisition.propTypes = {
   onSortColumn: PropTypes.func.isRequired,
   onShowOverStocked: PropTypes.func.isRequired,
   onHideOverStocked: PropTypes.func.isRequired,
-  onOpenRegimenDataModal: PropTypes.func.isRequired,
   onEditMonth: PropTypes.func.isRequired,
   onEditRequiredQuantity: PropTypes.func.isRequired,
   onAddRequisitionItem: PropTypes.func.isRequired,

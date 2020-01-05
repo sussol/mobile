@@ -21,6 +21,7 @@ import {
 } from './pageStyles';
 import { toggleBarStyles } from './toggleBarStyles';
 import { dataTableStyles, dataTableColors } from './dataTableStyles';
+import { pickerStyles } from './pickerStyles';
 
 export {
   BACKGROUND_COLOR,
@@ -40,7 +41,7 @@ export {
   WHITE,
 } from './colors';
 
-export { APP_FONT_FAMILY } from './fonts';
+export { APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from './fonts';
 
 export { textStyles } from './textStyles';
 
@@ -63,5 +64,6 @@ export default StyleSheet.create({
   ...modalStyles,
   ...navigationStyles,
   ...pageStyles,
+  ...pickerStyles,
   ...toggleBarStyles,
 });
