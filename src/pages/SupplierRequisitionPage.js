@@ -66,6 +66,8 @@ const SupplierRequisition = ({
   onCheck,
   onUncheck,
   onSortColumn,
+  onShowIndicators,
+  onHideIndicators,
   onShowOverStocked,
   onHideOverStocked,
   onEditMonth,
@@ -192,12 +194,12 @@ const SupplierRequisition = ({
       {
         text: programStrings.items,
         isOn: !showIndicators,
-        onPress: null,
+        onPress: onHideIndicators,
       },
       {
         text: programStrings.indicators,
         isOn: showIndicators,
-        onPress: null,
+        onPress: onShowIndicators,
       },
     ],
     [showIndicators]
@@ -336,7 +338,6 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 
 const mapStateToProps = state => {
   // TODO: add indicator toggle flag to page state.
-
   const { pages } = state;
   return pages[ROUTES.SUPPLIER_REQUISITION];
 };
@@ -384,6 +385,8 @@ SupplierRequisition.propTypes = {
   onCheck: PropTypes.func.isRequired,
   onUncheck: PropTypes.func.isRequired,
   onSortColumn: PropTypes.func.isRequired,
+  onShowIndicators: PropTypes.func.isRequired,
+  onHideIndicators: PropTypes.func.isRequired,
   onShowOverStocked: PropTypes.func.isRequired,
   onHideOverStocked: PropTypes.func.isRequired,
   onEditMonth: PropTypes.func.isRequired,

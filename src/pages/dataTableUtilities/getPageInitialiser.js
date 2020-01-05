@@ -378,6 +378,7 @@ const supplierRequisitionInitialiser = requisition => {
     modalKey: '',
     hasSelection: false,
     modalValue: null,
+    showIndicators: false,
     showAll: !usingPrograms || isFinalised,
     route: ROUTES.SUPPLIER_REQUISITION,
     columns: getColumns(route),

@@ -144,6 +144,10 @@ export const toggleShowFinalised = state => {
   return { ...state, data: sortedData, showFinalised: newShowFinalisedState, searchTerm: '' };
 };
 
+export const showIndicators = state => ({ ...state, showIndicators: true });
+
+export const hideIndicators = state => ({ ...state, showIndicators: false });
+
 /**
  * Filters backingData by the elements isLessThanThresholdMOS field.
  */
@@ -190,6 +194,8 @@ export const TableReducerLookup = {
   toggleStockOut,
   toggleShowFinalised,
   addRecord,
+  showIndicators,
+  hideIndicators,
   hideOverStocked,
   refreshData,
   filterData,

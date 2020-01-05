@@ -52,6 +52,10 @@ export const addRecord = (record, route) => ({
  */
 export const refreshData = route => ({ type: ACTIONS.REFRESH_DATA, payload: { route } });
 
+export const showIndicators = route => ({ type: ACTIONS.SHOW_INDICATORS, payload: { route } });
+
+export const hideIndicators = route => ({ type: ACTIONS.HIDE_INDICATORS, payload: { route } });
+
 /**
  * Hides all items which have current stock on hand greater than the
  * threshold MOS stock for that item.
@@ -253,6 +257,8 @@ export const TableActionsLookup = {
   sortData,
   filterData,
   refreshData,
+  showIndicators,
+  hideIndicators,
   hideOverStocked,
   toggleShowFinalised,
   showOverStocked,
