@@ -148,6 +148,15 @@ export const showIndicators = state => ({ ...state, showIndicators: true });
 
 export const hideIndicators = state => ({ ...state, showIndicators: false });
 
+export const selectIndicator = (state, action) => {
+  const { payload } = action;
+  const { indicatorCode } = payload;
+
+  const { indicators } = state;
+
+  const [selectedIndicator] = indicators.filter(({ code }) => code === indicatorCode);
+  return { ...state, selectedIndicator };
+};
 /**
  * Filters backingData by the elements isLessThanThresholdMOS field.
  */
@@ -195,6 +204,7 @@ export const TableReducerLookup = {
   toggleShowFinalised,
   addRecord,
   showIndicators,
+  selectIndicator,
   hideIndicators,
   hideOverStocked,
   refreshData,

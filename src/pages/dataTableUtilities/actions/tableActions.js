@@ -56,6 +56,11 @@ export const showIndicators = route => ({ type: ACTIONS.SHOW_INDICATORS, payload
 
 export const hideIndicators = route => ({ type: ACTIONS.HIDE_INDICATORS, payload: { route } });
 
+export const selectIndicator = (indicatorCode, route) => ({
+  type: ACTIONS.SELECT_INDICATOR,
+  payload: { indicatorCode, route },
+});
+
 /**
  * Hides all items which have current stock on hand greater than the
  * threshold MOS stock for that item.
@@ -259,6 +264,7 @@ export const TableActionsLookup = {
   refreshData,
   showIndicators,
   hideIndicators,
+  selectIndicator,
   hideOverStocked,
   toggleShowFinalised,
   showOverStocked,

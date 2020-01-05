@@ -52,6 +52,7 @@ const SupplierRequisition = ({
   hasSelection,
   showAll,
   showIndicators,
+  selectedIndicator,
   indicators,
   keyExtractor,
   searchTerm,
@@ -69,6 +70,7 @@ const SupplierRequisition = ({
   onSortColumn,
   onShowIndicators,
   onHideIndicators,
+  onSelectIndicator,
   onShowOverStocked,
   onHideOverStocked,
   // onOpenRegimenDataModal,
@@ -298,8 +300,9 @@ const SupplierRequisition = ({
     const ProgramIndicatorButtons = (
       <>
         <Picker
-          selectedValue="HIV"
+          selectedValue={selectedIndicator.code}
           mode="dropdown"
+          onValueChange={onSelectIndicator}
           style={{
             marginBottom: 45,
             marginLeft: 5,
@@ -322,7 +325,7 @@ const SupplierRequisition = ({
         </View>
       </>
     );
-  }, [showIndicators, showAll, isFinalised]);
+  }, [showIndicators, selectedIndicator, showAll, isFinalised]);
 
   const {
     pageTopSectionContainer,
@@ -422,6 +425,7 @@ SupplierRequisition.propTypes = {
   hasSelection: PropTypes.bool.isRequired,
   showAll: PropTypes.bool,
   showIndicators: PropTypes.bool,
+  selectedIndicator: PropTypes.object.isRequired,
   indicators: PropTypes.array.isRequired,
   modalValue: PropTypes.any,
   refreshData: PropTypes.func.isRequired,
@@ -438,6 +442,7 @@ SupplierRequisition.propTypes = {
   onHideIndicators: PropTypes.func.isRequired,
   onShowOverStocked: PropTypes.func.isRequired,
   onHideOverStocked: PropTypes.func.isRequired,
+  onSelectIndicator: PropTypes.func.isRequired,
   // onOpenRegimenDataModal: PropTypes.func.isRequired,
   onEditMonth: PropTypes.func.isRequired,
   onEditRequiredQuantity: PropTypes.func.isRequired,

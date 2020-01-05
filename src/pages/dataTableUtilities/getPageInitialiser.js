@@ -366,6 +366,7 @@ const supplierRequisitionInitialiser = requisition => {
       : sortedData.filter(item => item.isLessThanThresholdMOS);
 
   const indicators = program?.indicators?.slice() || [];
+  const [selectedIndicator] = indicators;
   return {
     pageObject: requisition,
     backingData,
@@ -380,6 +381,7 @@ const supplierRequisitionInitialiser = requisition => {
     hasSelection: false,
     modalValue: null,
     showIndicators: false,
+    selectedIndicator,
     indicators,
     showAll: !usingPrograms || isFinalised,
     route: ROUTES.SUPPLIER_REQUISITION,
