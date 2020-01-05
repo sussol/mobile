@@ -5,7 +5,7 @@
 
 import { UIDatabase } from '../../database';
 
-import { sortDataBy } from '../../utilities';
+import { sortDataBy, mapIndicatorColumn } from '../../utilities';
 import { recordKeyExtractor } from './utilities';
 import getColumns from './getColumns';
 import getPageInfoColumns from './getPageInfoColumns';
@@ -368,16 +368,7 @@ const supplierRequisitionInitialiser = requisition => {
   const indicators = program?.indicators?.slice() || [];
   const [selectedIndicator] = indicators;
 
-  const indicatorColumns = selectedIndicator.columns.map(
-    ({ valueType: type, description: key, description: title }) => ({
-      type,
-      key,
-      title,
-      width: 10,
-      sortable: false,
-      editable: false,
-    })
-  );
+  const indicatorColumns = selectedIndicator.columns.map(mapIndicatorColumn);
 
   return {
     pageObject: requisition,

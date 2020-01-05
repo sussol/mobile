@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { sortDataBy } from '../../../utilities';
+import { sortDataBy, mapIndicatorColumn } from '../../../utilities';
 
 /**
  * Sorts the current set of data by the provided
@@ -156,14 +156,7 @@ export const selectIndicator = (state, action) => {
 
   const [selectedIndicator] = indicators.filter(({ code }) => code === indicatorCode);
 
-  const indicatorColumns = selectedIndicator.columns.map(column => ({
-    type: column.valueType,
-    key: column.description,
-    title: column.description,
-    width: 10,
-    sortable: false,
-    editable: false,
-  }));
+  const indicatorColumns = selectedIndicator.columns.map(mapIndicatorColumn);
 
   return { ...state, selectedIndicator, indicatorColumns };
 };
