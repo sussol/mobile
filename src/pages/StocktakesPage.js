@@ -135,7 +135,7 @@ export const Stocktakes = ({
           <SearchBar
             onChangeText={onFilterData}
             value={searchTerm}
-            placeholder={`${generalStrings.searchBar} ${tableStrings.name}`}
+            placeholder={`${generalStrings.search_by} ${tableStrings.name}`}
           />
         </View>
         <View style={pageTopRightSectionContainer}>

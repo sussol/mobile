@@ -133,7 +133,7 @@ export const CustomerRequisition = ({
           <SearchBar
             onChangeText={onFilterData}
             value={searchTerm}
-            placeholder={`${generalStrings.searchBar} ${tableStrings.item_name}`}
+            placeholder={`${generalStrings.search_by} ${tableStrings.item_name}`}
           />
         </View>
         <View style={pageTopRightSectionContainer}>
