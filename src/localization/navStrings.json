@@ -37,7 +37,9 @@
     "stocktakes": "Relevés d'inventaire",
     "stocktake": "Relevé d'inventaire",
     "supplier_invoices": "Factures fournisseurs",
-    "supplier_requisitions": "Factures réquisitions"
+    "supplier_requisitions": "Factures réquisitions",
+    "dispensary": "Dispensaire",
+    "dashboard": "Tableau de bord"
   },
   "gil": {
     "current_stock": "Mwaitin am bwai n\naoraki ke am supply",
