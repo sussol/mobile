@@ -16,6 +16,7 @@ export { Spinner } from './Spinner';
 export { SyncState } from './SyncState';
 export { TextInput } from './TextInput';
 export { ToggleBar } from './ToggleBar';
+export { DropDown } from './DropDown';
 export { ExpiryDateInput } from './ExpiryDateInput';
 export { ResultRow } from './ResultRow';
 export { SearchBar } from './SearchBar';

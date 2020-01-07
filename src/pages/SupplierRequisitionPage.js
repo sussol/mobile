@@ -7,21 +7,28 @@
 
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { View, ToastAndroid, Picker, StyleSheet } from 'react-native';
+import { View, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
 import { DataTablePageModal } from '../widgets/modals';
 import { BottomConfirmModal } from '../widgets/bottomModals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
-import { DataTablePageView, PageButton, PageInfo, ToggleBar, SearchBar } from '../widgets';
+import {
+  DataTablePageView,
+  DropDown,
+  PageButton,
+  PageInfo,
+  ToggleBar,
+  SearchBar,
+} from '../widgets';
 
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 import { ROUTES } from '../navigation/constants';
 
 import { useRecordListener } from '../hooks';
 
-import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
+import globalStyles from '../globalStyles';
 import { buttonStrings, modalStrings, programStrings } from '../localization';
 import { UIDatabase } from '../database/index';
 import { SETTINGS_KEYS } from '../settings/index';
@@ -254,27 +261,15 @@ const SupplierRequisition = ({
       </>
     );
 
-    // TODO: add dropdown component.
-    // TODO: add actions/reducers for indicators dropdown.
-
-    const ProgramIndicatorItems = indicators.map(indicator => (
-      <Picker.Item
-        key={indicator.code}
-        label={indicator.code}
-        value={indicator.code}
-        color={SUSSOL_ORANGE}
-      />
-    ));
+    const { code: selectedIndicatorCode } = selectedIndicator;
+    const indicatorCodes = indicators.map(indicator => indicator.code);
 
     const ProgramIndicatorButtons = (
-      <Picker
-        selectedValue={selectedIndicator.code}
-        mode="dropdown"
+      <DropDown
+        values={indicatorCodes}
+        selectedValue={selectedIndicatorCode}
         onValueChange={onSelectIndicator}
-        style={localStyles.picker}
-      >
-        {ProgramIndicatorItems}
-      </Picker>
+      />
     );
 
     return (
@@ -368,10 +363,6 @@ export const SupplierRequisitionPage = connect(
   mapStateToProps,
   mapDispatchToProps
 )(SupplierRequisition);
-
-const localStyles = StyleSheet.create({
-  picker: { ...globalStyles.pickerText, ...globalStyles.picker },
-});
 
 SupplierRequisition.defaultProps = {
   modalValue: null,

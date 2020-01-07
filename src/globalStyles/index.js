@@ -21,7 +21,6 @@ import {
 } from './pageStyles';
 import { toggleBarStyles } from './toggleBarStyles';
 import { dataTableStyles, dataTableColors } from './dataTableStyles';
-import { pickerStyles } from './pickerStyles';
 
 export {
   BACKGROUND_COLOR,
@@ -64,6 +63,5 @@ export default StyleSheet.create({
   ...modalStyles,
   ...navigationStyles,
   ...pageStyles,
-  ...pickerStyles,
   ...toggleBarStyles,
 });
