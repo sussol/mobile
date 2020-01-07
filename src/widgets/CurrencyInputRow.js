@@ -39,6 +39,12 @@ export const CurrencyInputRow = ({
 }) => {
   const dollarAmount = React.useRef(String(currencyAmount.dollars()));
   const centAmount = React.useRef(String(currencyAmount.cents()));
+  const refsArray = React.useRef([React.useRef(), React.useRef()]);
+
+  const onSubmit = nextIndex => () => {
+    console.log('onsubmit');
+    refsArray.current[nextIndex]?.current?.focus();
+  };
 
   const update = () => {
     const fullValue = `${dollarAmount.current}.${centAmount.current}`;
@@ -60,21 +66,25 @@ export const CurrencyInputRow = ({
       <FlexRow flex={3}>
         <SimpleLabel text="$" size="large" />
         <TextInput
+          ref={refsArray.current[0]}
           value={dollarAmount.current}
           underlineColorAndroid={underlineColorAndroid}
           style={textInputStyle}
           selectTextOnFocus
           onChangeText={onChange('dollars')}
           editable={!isDisabled}
+          onSubmitEditing={onSubmit(1)}
         />
         <SimpleLabel text="." size="large" />
         <TextInput
+          ref={refsArray.current[1]}
           value={centAmount.current}
           underlineColorAndroid={underlineColorAndroid}
           style={textInputStyle}
           selectTextOnFocus
           onChangeText={onChange('cents')}
           editable={!isDisabled}
+          onSubmitEditing={onSubmit(0)}
         />
       </FlexRow>
     </FlexRow>
