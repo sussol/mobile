@@ -17,104 +17,116 @@ import { APP_FONT_FAMILY, SUSSOL_ORANGE, DARKER_GREY, FINALISED_RED } from '../g
 import { CalendarIcon } from './icons';
 import { CircleButton } from './CircleButton';
 
-export const FormDateInput = ({
-  value,
-  isRequired,
-  onValidate,
-  onChangeDate,
-  label,
-  invalidMessage,
-  invalidMessageStyle,
-  isRequiredStyle,
-  labelStyle,
-  textInputStyle,
-  placeholder,
-  placeholderTextColor,
-  underlineColorAndroid,
-}) => {
-  const initialValue = onValidate(value) ? new Date(value) : new Date();
-
-  const [inputState, setInputState] = React.useState({
-    isValid: true,
-    inputValue: moment(initialValue).format('DD/MM/YYYY'),
-    pickerSeedValue: initialValue,
-    datePickerOpen: false,
-  });
-
-  const { inputValue, isValid, pickerSeedValue, datePickerOpen } = inputState;
-
-  const IsRequiredLabel = () =>
-    (isRequired && <Text style={isRequiredStyle}>Is Required</Text>) || null;
-
-  const InvalidMessageLabel = () =>
-    !isValid && <Text style={invalidMessageStyle}>{invalidMessage}</Text>;
-
-  const onUpdate = (newValue, validity = true, pickerVisibility = false) => {
-    const newState = {
-      isValid: validity,
-      inputValue: newValue,
-      pickerSeedValue: validity ? moment(newValue, 'DD/MM/YYYY').toDate() : new Date(),
-      datePickerOpen: pickerVisibility,
-    };
-    setInputState(newState);
-    onChangeDate(newValue);
-  };
-
-  // When changing the value of the input, check the new validity and set the new input.
-  // Do not restrict input, but provide feedback to the user.
-  const onChangeTextCallback = React.useCallback(
-    newValue => {
-      const newValueIsValid = onValidate ? onValidate(newValue) : true;
-      onUpdate(newValue, newValueIsValid);
+export const FormDateInput = React.forwardRef(
+  (
+    {
+      value,
+      isRequired,
+      onValidate,
+      onChangeDate,
+      label,
+      invalidMessage,
+      invalidMessageStyle,
+      isRequiredStyle,
+      labelStyle,
+      textInputStyle,
+      placeholder,
+      placeholderTextColor,
+      underlineColorAndroid,
+      onSubmit,
     },
-    [onValidate]
-  );
+    ref
+  ) => {
+    const initialValue = onValidate(value) ? new Date(value) : new Date();
 
-  const onChangeDates = ({ nativeEvent }) => {
-    const { timestamp } = nativeEvent;
-    if (!timestamp) return;
-    const newDate = moment(new Date(timestamp)).format('DD/MM/YYYY');
-    onUpdate(newDate, true);
-  };
+    const [inputState, setInputState] = React.useState({
+      isValid: true,
+      inputValue: moment(initialValue).format('DD/MM/YYYY'),
+      pickerSeedValue: initialValue,
+      datePickerOpen: false,
+    });
 
-  const openDatePicker = () => setInputState(state => ({ ...state, datePickerOpen: true }));
+    const { inputValue, isValid, pickerSeedValue, datePickerOpen } = inputState;
 
-  return (
-    <FlexRow flex={1}>
-      <FlexColumn flex={1}>
-        <FlexRow flex={1}>
-          <Text style={labelStyle}>{label}</Text>
-          <IsRequiredLabel />
-        </FlexRow>
-        <FlexRow flex={1}>
-          <TextInput
-            style={textInputStyle}
-            value={inputValue}
-            placeholderTextColor={placeholderTextColor}
-            underlineColorAndroid={underlineColorAndroid}
-            placeholder={placeholder}
-            selectTextOnFocus
-            returnKeyType="next"
-            autoCapitalize="none"
-            autoCorrect={false}
-            onChangeText={onChangeTextCallback}
-          />
-          <CircleButton IconComponent={CalendarIcon} onPress={openDatePicker} />
-        </FlexRow>
+    const IsRequiredLabel = () =>
+      (isRequired && <Text style={isRequiredStyle}>Is Required</Text>) || null;
 
-        {datePickerOpen && (
-          <DateTimePicker
-            onChange={onChangeDates}
-            mode="date"
-            display="spinner"
-            value={pickerSeedValue}
-          />
-        )}
-        <InvalidMessageLabel />
-      </FlexColumn>
-    </FlexRow>
-  );
-};
+    const InvalidMessageLabel = () =>
+      !isValid && <Text style={invalidMessageStyle}>{invalidMessage}</Text>;
+
+    const onUpdate = (newValue, validity = true, pickerVisibility = false) => {
+      const newState = {
+        isValid: validity,
+        inputValue: newValue,
+        pickerSeedValue: validity ? moment(newValue, 'DD/MM/YYYY').toDate() : new Date(),
+        datePickerOpen: pickerVisibility,
+      };
+      setInputState(newState);
+      onChangeDate(newValue);
+    };
+
+    // When changing the value of the input, check the new validity and set the new input.
+    // Do not restrict input, but provide feedback to the user.
+    const onChangeTextCallback = React.useCallback(
+      newValue => {
+        const newValueIsValid = onValidate ? onValidate(newValue) : true;
+        onUpdate(newValue, newValueIsValid);
+      },
+      [onValidate]
+    );
+
+    const onChangeDatez = ({ nativeEvent }) => {
+      const { timestamp } = nativeEvent;
+      if (!timestamp) return;
+      const newDate = moment(new Date(timestamp)).format('DD/MM/YYYY');
+      onUpdate(newDate, true);
+    };
+
+    const openDatePicker = () => setInputState(state => ({ ...state, datePickerOpen: true }));
+
+    const onSubmitEditing = React.useCallback(event => onSubmit?.(event.nativeEvent.text), [
+      onSubmit,
+    ]);
+
+    return (
+      <FlexRow flex={1}>
+        <FlexColumn flex={1}>
+          <FlexRow flex={1}>
+            <Text style={labelStyle}>{label}</Text>
+            <IsRequiredLabel />
+          </FlexRow>
+          <FlexRow flex={1}>
+            <TextInput
+              ref={ref}
+              style={textInputStyle}
+              value={inputValue}
+              placeholderTextColor={placeholderTextColor}
+              underlineColorAndroid={underlineColorAndroid}
+              placeholder={placeholder}
+              selectTextOnFocus
+              returnKeyType="next"
+              autoCapitalize="none"
+              autoCorrect={false}
+              onChangeText={onChangeTextCallback}
+              onSubmitEditing={onSubmitEditing}
+            />
+            <CircleButton IconComponent={CalendarIcon} onPress={openDatePicker} />
+          </FlexRow>
+
+          {datePickerOpen && (
+            <DateTimePicker
+              onChange={onChangeDatez}
+              mode="date"
+              display="spinner"
+              value={pickerSeedValue}
+            />
+          )}
+          <InvalidMessageLabel />
+        </FlexColumn>
+      </FlexRow>
+    );
+  }
+);
 
 const localStyles = StyleSheet.create({
   labelStyle: { marginTop: 15, fontSize: 16, fontFamily: APP_FONT_FAMILY },
@@ -134,7 +146,9 @@ FormDateInput.defaultProps = {
   isRequired: false,
   onValidate: null,
   invalidMessage: '',
+  onSubmit: null,
 };
+
 FormDateInput.propTypes = {
   invalidMessageStyle: PropTypes.object,
   isRequiredStyle: PropTypes.object,
@@ -149,4 +163,5 @@ FormDateInput.propTypes = {
   placeholder: PropTypes.string,
   placeholderTextColor: PropTypes.string,
   underlineColorAndroid: PropTypes.string,
+  onSubmit: PropTypes.func,
 };
