@@ -99,7 +99,7 @@ const getIndicatorTableRows = (indicator, period) =>
       const { description: key } = column;
       const value = getIndicatorRowColumnValue(row, column, period);
       return { ...acc, [key]: value.value };
-    }, []);
+    }, {});
     return { id, description, code, ...values };
   });
 
