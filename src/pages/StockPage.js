@@ -89,7 +89,7 @@ export const Stock = ({
           onChangeText={onFilterData}
           value={searchTerm}
           onFocusOrBlur={selectedRow && onDeselectRow}
-          placeholder={`${generalStrings.search_by} ${tableStrings.name || tableStrings.item_code}`}
+          placeholder={`${generalStrings.search_by} ${tableStrings.name}, ${tableStrings.item_code}`}
         />
       </View>
 
