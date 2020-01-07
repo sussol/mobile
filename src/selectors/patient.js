@@ -32,3 +32,5 @@ export const selectPatientName = ({ patient }) => {
   const currentPatient = selectCurrentPatient({ patient });
   return `${currentPatient?.firstName} ${currentPatient?.lastName}`.trim();
 };
+
+export const selectAvailableCredit = ({ patient }) => patient?.currentPatient?.availableCredit;
