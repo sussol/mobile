@@ -4,7 +4,6 @@ about: Suggest a refactor in the codebase
 title: ''
 labels: Refactor
 assignees: ''
-
 ---
 
 <!-- Remember that a in it's purest form, a refactor should **not** affect functionality. Side affects such as better performance might be seen though. -->

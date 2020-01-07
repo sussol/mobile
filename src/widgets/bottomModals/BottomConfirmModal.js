@@ -9,8 +9,8 @@ import PropTypes from 'prop-types';
 import { Text, StyleSheet, ViewPropTypes } from 'react-native';
 
 import { OnePressButton } from '../OnePressButton';
-import { BottomModal } from './BottomModal';
-import { modalStrings } from '../../localization';
+import { BottomModalContainer } from './BottomModalContainer';
+import { modalStrings } from '../../localization/index';
 
 import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
 
@@ -26,7 +26,7 @@ export const BottomConfirmModalComponent = props => {
   } = props;
 
   return (
-    <BottomModal {...modalProps} style={[localStyles.modal, style]}>
+    <BottomModalContainer {...modalProps} style={[localStyles.modal, style]}>
       <Text style={[globalStyles.text, localStyles.questionText]}>{questionText}</Text>
       <OnePressButton
         style={[globalStyles.button, localStyles.cancelButton]}
@@ -40,7 +40,7 @@ export const BottomConfirmModalComponent = props => {
         text={confirmText}
         onPress={onConfirm}
       />
-    </BottomModal>
+    </BottomModalContainer>
   );
 };
 

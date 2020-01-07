@@ -15,7 +15,8 @@ import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtili
 import { gotoCustomerInvoice, createCustomerInvoice } from '../navigation/actions';
 
 import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets';
-import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
+import { DataTablePageModal } from '../widgets/modals';
+import { BottomConfirmModal } from '../widgets/bottomModals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { buttonStrings, modalStrings, tableStrings, generalStrings } from '../localization';

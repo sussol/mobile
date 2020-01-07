@@ -40,7 +40,7 @@ export {
   WHITE,
 } from './colors';
 
-export { APP_FONT_FAMILY } from './fonts';
+export { APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from './fonts';
 
 export { textStyles } from './textStyles';
 

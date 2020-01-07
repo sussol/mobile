@@ -13,7 +13,7 @@ import { MODAL_KEYS } from '../../utilities';
 import { usePageReducer } from '../../hooks';
 import { getItemLayout } from '../../pages/dataTableUtilities';
 
-import { GenericChoiceList } from '../GenericChoiceList';
+import { GenericChoiceList } from '../modalChildren/GenericChoiceList';
 import { PageInfo, DataTablePageView, PageButton } from '..';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../DataTable';
 
