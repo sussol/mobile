@@ -15,7 +15,7 @@ export const PRESCRIPTION_ACTIONS = {
   REFRESH: 'Prescription/refresh',
 };
 
-export const updateDirection = (id, newValue) => (_, getState) => {
+const updateDirection = (id, newValue) => (_, getState) => {
   const { prescription } = getState();
   const { transaction } = prescription;
   const { items } = transaction;
@@ -24,7 +24,7 @@ export const updateDirection = (id, newValue) => (_, getState) => {
   item?.setItemDirection(UIDatabase, newValue);
 };
 
-export const removeItem = id => (dispatch, getState) => {
+const removeItem = id => (dispatch, getState) => {
   const { prescription } = getState();
   const { transaction } = prescription;
   const { items } = transaction;
@@ -37,7 +37,7 @@ export const removeItem = id => (dispatch, getState) => {
   dispatch({ type: PRESCRIPTION_ACTIONS.REFRESH });
 };
 
-export const editQuantity = (id, quantity) => (_, getState) => {
+const editQuantity = (id, quantity) => (_, getState) => {
   const { prescription } = getState();
   const { transaction } = prescription;
   const { items } = transaction;
@@ -68,7 +68,7 @@ const assignPrescriber = prescriberID => (dispatch, getState) => {
   });
 };
 
-export const addItem = itemID => (dispatch, getState) => {
+const addItem = itemID => (dispatch, getState) => {
   const { prescription } = getState();
   const { transaction } = prescription;
   const item = UIDatabase.get('Item', itemID);
