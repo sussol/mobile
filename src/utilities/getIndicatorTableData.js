@@ -28,6 +28,13 @@ const COLUMNS = {
   },
 };
 
+/**
+ * Intialise a new indicator value.
+ *
+ * @param {IndicatorAttribute} row
+ * @param {IndicatorAttribute} column
+ * @param {Period} period
+ */
 export const initialiseRowColumnValue = (row, column, period) => {
   UIDatabase.write(() => {
     createRecord(UIDatabase, 'IndicatorValue', row, column, period);
@@ -59,6 +66,13 @@ export const getIndicatorRowColumnValue = (row, column, period) => {
   return rowColumnValue;
 };
 
+/**
+ * Get indicator data table columns.
+ *
+ * @param {ProgramIndicator} indicator
+ * @param {Period} period
+ * @returns {Array.<object>}
+ */
 // eslint-disable-next-line no-unused-vars
 const getIndicatorTableColumns = (indicator, period) => {
   const descriptionColumn = COLUMNS.DESCRIPTION;
@@ -76,6 +90,13 @@ const getIndicatorTableColumns = (indicator, period) => {
   return [descriptionColumn, codeColumn, ...valueColumns];
 };
 
+/**
+ * Get indicator data table rows.
+ *
+ * @param {ProgramIndicator} indicator
+ * @param {Period} period
+ * @returns {Array.<object>}
+ */
 const getIndicatorTableRows = (indicator, period) =>
   indicator.rows.map(row => {
     const { id, description, code } = row;
@@ -88,9 +109,11 @@ const getIndicatorTableRows = (indicator, period) =>
   });
 
 /**
- * Get data table columns for indicator.
+ * Get indicator data table rows and columns.
  *
  * @param {ProgramIndicator} indicator
+ * @param {Period} period
+ * @returns {object}
  */
 const getIndicatorTableData = (indicator, period) => {
   const columns = getIndicatorTableColumns(indicator, period);
