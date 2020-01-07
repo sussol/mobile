@@ -25,7 +25,6 @@ export const generalStrings = new LocalizedStrings({
     couldnt_export_data: "Couldn't export data",
     sync_password: 'Sync password',
     sync_url: 'Sync url',
-    search_by: 'Search by',
   },
   fr: {
     stocktake: 'Inventaire',
