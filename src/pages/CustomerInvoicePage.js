@@ -18,7 +18,7 @@ import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { PageButton, PageInfo, SearchBar, DataTablePageView } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import { buttonStrings, modalStrings } from '../localization';
+import { buttonStrings, modalStrings, tableStrings, generalStrings } from '../localization';
 import globalStyles from '../globalStyles';
 
 /**
@@ -147,7 +147,11 @@ export const CustomerInvoice = ({
       <View style={pageTopSectionContainer}>
         <View style={pageTopLeftSectionContainer}>
           <PageInfo columns={pageInfoColumns} isEditingDisabled={isFinalised} />
-          <SearchBar onChangeText={onFilterData} value={searchTerm} />
+          <SearchBar
+            onChangeText={onFilterData}
+            value={searchTerm}
+            placeholder={`${generalStrings.searchBar} ${tableStrings.item_name}`}
+          />
         </View>
         <View style={pageTopRightSectionContainer}>
           <View style={verticalContainer}>
