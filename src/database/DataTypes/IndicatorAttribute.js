@@ -33,6 +33,15 @@ export class IndicatorAttribute extends Realm.Object {
   get isColumn() {
     return this.axis === 'column';
   }
+
+  /**
+   * Add a value to this indicator.
+   *
+   * @param {IndicatorValue} indicatorValue
+   */
+  addIndicatorValue(indicatorValue) {
+    this.values.push(indicatorValue);
+  }
 }
 
 export default IndicatorAttribute;
@@ -51,5 +60,6 @@ IndicatorAttribute.schema = {
     valueDefault: { type: 'string', default: 'string' },
     axis: { type: 'string', default: 'row' },
     isActive: { type: 'bool', default: false },
+    values: { type: 'list', objectType: 'IndicatorValue' },
   },
 };
