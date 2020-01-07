@@ -15,7 +15,7 @@ import { SimpleTable } from '../SimpleTable';
 
 import { UIDatabase } from '../../database';
 import { getColumns } from '../../pages/dataTableUtilities';
-import { selectPrescriber, selectItem, editQuantity } from '../../reducers/PrescriptionReducer';
+import { selectItem, editQuantity } from '../../reducers/PrescriptionReducer';
 
 import { PrescriptionCart } from '../PrescriptionCart';
 import { FlexRow } from '../FlexRow';
@@ -85,11 +85,10 @@ const ItemSelectComponent = ({
 };
 
 const mapDispatchToProps = dispatch => {
-  const choosePrescriber = prescriberID => dispatch(selectPrescriber(prescriberID));
   const chooseItem = itemID => dispatch(selectItem(itemID));
   const nextTab = () => dispatch(WizardActions.nextTab());
   const updateQuantity = (id, quantity) => dispatch(editQuantity(id, quantity));
-  return { nextTab, choosePrescriber, chooseItem, updateQuantity };
+  return { nextTab, chooseItem, updateQuantity };
 };
 
 const mapStateToProps = state => {
