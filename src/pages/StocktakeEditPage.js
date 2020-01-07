@@ -16,7 +16,7 @@ import { DataTablePageModal } from '../widgets/modals';
 import { PageButton, PageInfo, DataTablePageView, SearchBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import { buttonStrings } from '../localization';
+import { buttonStrings, generalStrings, tableStrings } from '../localization';
 import globalStyles from '../globalStyles';
 import { useRecordListener, useNavigationFocus } from '../hooks/index';
 
@@ -161,7 +161,11 @@ export const StocktakeEdit = ({
       <View style={pageTopSectionContainer}>
         <View style={pageTopLeftSectionContainer}>
           <PageInfo columns={pageInfoColumns} isEditingDisabled={isFinalised} />
-          <SearchBar onChangeText={onFilterData} value={searchTerm} />
+          <SearchBar
+            onChangeText={onFilterData}
+            value={searchTerm}
+            placeholder={`${generalStrings.searchBar} ${tableStrings.name}`}
+          />
         </View>
         <View style={pageTopRightSectionContainer}>
           {!program && (
