@@ -12,7 +12,7 @@ const persistConfig = {
   keyPrefix: '',
   key: 'root',
   storage: AsyncStorage,
-  blacklist: ['nav', 'pages', 'user', 'prescription', 'patient', 'form', 'prescriber'],
+  blacklist: ['nav', 'pages', 'user', 'prescription', 'patient', 'form', 'prescriber', 'wizard'],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);

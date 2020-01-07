@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
@@ -12,6 +13,7 @@ import globalStyles, { SUSSOL_ORANGE, WHITE } from '../globalStyles/index';
 import { modalStrings } from '../localization/index';
 import { selectCanSaveForm, selectCompletedForm } from '../selectors/form';
 import { FormActions } from '../actions/FormActions';
+import { FormDateInput } from './FormDateInput';
 
 /**
  * Component which will manage and control a set of user inputs of a form.
@@ -39,24 +41,59 @@ const FormControlComponent = ({
   onSave,
   inputConfig,
 }) => {
+  const [refs, setRefs] = React.useState([]);
   React.useEffect(() => {
     initialiseForm(inputConfig);
+    setRefs({ length: inputConfig.length });
   }, []);
 
   const onSaveCompletedForm = React.useCallback(() => onSave(completedForm), [completedForm]);
 
+  const nextFocus = (index, key) => value => {
+    onUpdateForm(key, value);
+    refs[index + 1]?.current?.focus?.();
+  };
+
   const formInputs = () =>
-    inputConfig.map(({ key, isRequired, validator, initialValue, label, invalidMessage }) => (
-      <ValidationTextInput
-        key={key}
-        value={initialValue}
-        isRequired={isRequired}
-        onValidate={validator}
-        onChangeText={value => onUpdateForm(key, value)}
-        label={label}
-        invalidMessage={invalidMessage}
-      />
-    ));
+    inputConfig.map(
+      ({ type, key, isRequired, validator, initialValue, label, invalidMessage }, index) => {
+        refs[index] = React.useRef();
+        switch (type) {
+          case 'text': {
+            return (
+              <ValidationTextInput
+                ref={refs[index]}
+                onSubmit={nextFocus(index, key)}
+                key={key}
+                value={initialValue}
+                isRequired={isRequired}
+                onValidate={validator}
+                onChangeText={value => onUpdateForm(key, value)}
+                label={label}
+                invalidMessage={invalidMessage}
+              />
+            );
+          }
+          case 'date': {
+            return (
+              <FormDateInput
+                ref={refs[index]}
+                key={key}
+                isRequired={isRequired}
+                label={label}
+                value={initialValue}
+                onChangeDate={value => onUpdateForm(key, value)}
+                onValidate={validator}
+                invalidMessage={invalidMessage}
+                onSubmit={nextFocus(index, key)}
+              />
+            );
+          }
+          default:
+            return null;
+        }
+      }
+    );
 
   return (
     <View style={localStyles.flexOne}>

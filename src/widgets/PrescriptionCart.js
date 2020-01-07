@@ -11,10 +11,10 @@ import { connect } from 'react-redux';
 
 import { PrescriptionCartRow } from './PrescriptionCartRow';
 
-import { SUSSOL_ORANGE, WHITE } from '../globalStyles/index';
-
 import { recordKeyExtractor } from '../pages/dataTableUtilities';
-import { removeItem, updateDirection } from '../reducers/PrescriptionReducer';
+import { PrescriptionActions } from '../actions/PrescriptionActions';
+
+import { SUSSOL_ORANGE, WHITE } from '../globalStyles';
 
 /**
  * Layout container component for a prescriptions item cart.
@@ -26,12 +26,14 @@ import { removeItem, updateDirection } from '../reducers/PrescriptionReducer';
  * @prop {Func}  onChangeQuantity  Callback when an items quantity is updated.
  * @prop {Func}  onOptionSelection Callback when an option in the dropdown is selected.
  * @prop {Func}  onRemoveItem      Callback when this row is removed.
+ * @prop {Bool}  isDisabled        Indicator if this component should not be editable.
  */
 const PrescriptionCartComponent = ({
   items,
   onChangeQuantity,
   onOptionSelection,
   onRemoveItem,
+  isDisabled,
 }) => {
   const renderPrescriptionCartRow = React.useCallback(
     ({ item }) => (
@@ -40,9 +42,10 @@ const PrescriptionCartComponent = ({
         transactionItem={item}
         onOptionSelection={onOptionSelection}
         onRemoveItem={onRemoveItem}
+        isDisabled={isDisabled}
       />
     ),
-    [onChangeQuantity]
+    [onChangeQuantity, isDisabled]
   );
 
   return (
@@ -59,11 +62,16 @@ const PrescriptionCartComponent = ({
   );
 };
 
+PrescriptionCartComponent.defaultProps = {
+  isDisabled: false,
+};
+
 PrescriptionCartComponent.propTypes = {
   items: PropTypes.array.isRequired,
   onChangeQuantity: PropTypes.func.isRequired,
   onOptionSelection: PropTypes.func.isRequired,
   onRemoveItem: PropTypes.func.isRequired,
+  isDisabled: PropTypes.bool,
 };
 
 const localStyles = StyleSheet.create({
@@ -87,8 +95,8 @@ const localStyles = StyleSheet.create({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onRemoveItem: id => dispatch(removeItem(id)),
-  onOptionSelection: (id, newValue) => dispatch(updateDirection(id, newValue)),
+  onRemoveItem: id => dispatch(PrescriptionActions.removeItem(id)),
+  onOptionSelection: (id, newValue) => dispatch(PrescriptionActions.updateDirection(id, newValue)),
   dispatch,
 });
 

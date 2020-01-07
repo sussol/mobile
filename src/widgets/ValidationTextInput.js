@@ -22,80 +22,92 @@ import { SUSSOL_ORANGE, APP_FONT_FAMILY, DARKER_GREY, FINALISED_RED } from '../g
  * @prop {Object} invalidMessageStyle   Style for the invalid message label.
  * @prop {Object} textInputStyle        Style of the underlying TextInput.
  */
-export const ValidationTextInput = ({
-  placeholder,
-  placeholderTextColor,
-  underlineColorAndroid,
-  isRequired,
-  label,
-  invalidMessage,
-  onValidate,
-  onChangeText,
-  value,
-  labelStyle,
-  isRequiredStyle,
-  invalidMessageStyle,
-  textInputStyle,
-}) => {
-  const [inputState, setInputState] = React.useState({
-    isValid: true,
-    inputValue: value,
-  });
-  const { inputValue, isValid } = inputState;
-  const { flexRow, flexColumn } = localStyles;
-
-  const IsRequiredLabel = () =>
-    isRequired && <Text style={isRequiredStyle}>{validationStrings.isRequired}</Text>;
-  const InvalidMessageLabel = () =>
-    !isValid && <Text style={invalidMessageStyle}>{invalidMessage}</Text>;
-
-  // On checking the validity of the input, if it has changed, trigger the callback
-  // to notify the parent.
-  const onCheckValidity = React.useCallback(
-    inputToCheck => {
-      const newValidState = onValidate ? onValidate(inputToCheck) : true;
-      return newValidState;
+export const ValidationTextInput = React.forwardRef(
+  (
+    {
+      placeholder,
+      placeholderTextColor,
+      underlineColorAndroid,
+      isRequired,
+      label,
+      invalidMessage,
+      onValidate,
+      onChangeText,
+      value,
+      labelStyle,
+      isRequiredStyle,
+      invalidMessageStyle,
+      textInputStyle,
+      onSubmit,
     },
-    [isValid]
-  );
+    ref
+  ) => {
+    const [inputState, setInputState] = React.useState({
+      isValid: true,
+      inputValue: value,
+    });
+    const { inputValue, isValid } = inputState;
+    const { flexRow, flexColumn } = localStyles;
 
-  // When changing the value of the input, check the new validity and set the new input.
-  // Do not restrict input, but provide feedback to the user.
-  const onChangeTextCallback = React.useCallback(
-    newValue => {
-      const newValidState = onCheckValidity(newValue);
-      setInputState({ isValid: newValidState, inputValue: newValue });
-      onChangeText(newValue);
-    },
-    [isValid]
-  );
+    const IsRequiredLabel = () =>
+      isRequired && <Text style={isRequiredStyle}>{validationStrings.isRequired}</Text>;
+    const InvalidMessageLabel = () =>
+      !isValid && <Text style={invalidMessageStyle}>{invalidMessage}</Text>;
 
-  return (
-    <View style={flexColumn}>
-      <View style={flexRow}>
-        <View style={flexColumn}>
-          <View style={{ flexRow }}>
-            <Text style={labelStyle}>{label}</Text>
-            <IsRequiredLabel />
+    // On checking the validity of the input, if it has changed, trigger the callback
+    // to notify the parent.
+    const onCheckValidity = React.useCallback(
+      inputToCheck => {
+        const newValidState = onValidate ? onValidate(inputToCheck) : true;
+        return newValidState;
+      },
+      [isValid]
+    );
+
+    // When changing the value of the input, check the new validity and set the new input.
+    // Do not restrict input, but provide feedback to the user.
+    const onChangeTextCallback = React.useCallback(
+      newValue => {
+        const newValidState = onCheckValidity(newValue);
+        setInputState({ isValid: newValidState, inputValue: newValue });
+        onChangeText(newValue);
+      },
+      [isValid]
+    );
+
+    const onSubmitEditing = React.useCallback(event => onSubmit?.(event.nativeEvent.text), [
+      onSubmit,
+    ]);
+
+    return (
+      <View style={flexColumn}>
+        <View style={flexRow}>
+          <View style={flexColumn}>
+            <View style={{ flexRow }}>
+              <Text style={labelStyle}>{label}</Text>
+              <IsRequiredLabel />
+            </View>
+            <TextInput
+              ref={ref}
+              style={textInputStyle}
+              value={inputValue}
+              placeholderTextColor={placeholderTextColor}
+              underlineColorAndroid={underlineColorAndroid}
+              placeholder={placeholder}
+              selectTextOnFocus
+              returnKeyType="next"
+              autoCapitalize="none"
+              autoCorrect={false}
+              onChangeText={onChangeTextCallback}
+              onSubmitEditing={onSubmitEditing}
+            />
+            <InvalidMessageLabel />
           </View>
-          <TextInput
-            style={textInputStyle}
-            value={inputValue}
-            placeholderTextColor={placeholderTextColor}
-            underlineColorAndroid={underlineColorAndroid}
-            placeholder={placeholder}
-            selectTextOnFocus
-            returnKeyType="next"
-            autoCapitalize="none"
-            autoCorrect={false}
-            onChangeText={onChangeTextCallback}
-          />
-          <InvalidMessageLabel />
         </View>
       </View>
-    </View>
-  );
-};
+    );
+  }
+);
 
 const localStyles = StyleSheet.create({
   flexRow: { flex: 1, flexDirection: 'row' },
@@ -118,6 +130,7 @@ ValidationTextInput.defaultProps = {
   invalidMessageStyle: localStyles.invalidMessageStyle,
   textInputStyle: localStyles.textInputStyle,
   onValidate: null,
+  onSubmit: null,
 };
 
 ValidationTextInput.propTypes = {
@@ -134,4 +147,5 @@ ValidationTextInput.propTypes = {
   isRequiredStyle: PropTypes.object,
   invalidMessageStyle: PropTypes.object,
   textInputStyle: PropTypes.object,
+  onSubmit: PropTypes.func,
 };

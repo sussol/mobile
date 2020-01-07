@@ -51,7 +51,7 @@ DropDownOption.propTypes = {
   isLast: PropTypes.bool.isRequired,
 };
 
-const DropDown = ({ anchorRef, isVisible, options, onSelection, onClose, title }) => {
+const DropDown = ({ anchorRef, isVisible, options, onSelection, onClose, title, isDisabled }) => {
   const {
     dropDownContainer,
     dropDownTitleContainer,
@@ -80,7 +80,7 @@ const DropDown = ({ anchorRef, isVisible, options, onSelection, onClose, title }
           <DropDownOption
             key={option}
             text={option}
-            onPress={onSelection}
+            onPress={isDisabled ? null : onSelection}
             isLast={options.length - 1 === index}
           />
         ))}
@@ -102,7 +102,7 @@ const DropDown = ({ anchorRef, isVisible, options, onSelection, onClose, title }
  * @prop {String}      title A title for the drop down.
  */
 export const PopoverDropDown = withNavigation(
-  ({ navigation, BaseComponent, options, onSelection, title }) => {
+  ({ navigation, BaseComponent, options, onSelection, title, isDisabled }) => {
     const [ref, visible, show, close] = usePopover(navigation);
 
     const selectionCallback = React.useCallback(
@@ -121,6 +121,7 @@ export const PopoverDropDown = withNavigation(
           <BaseComponent />
         </Container>
         <DropDown
+          isDisabled={isDisabled}
           anchorRef={ref}
           options={options}
           isVisible={visible}
@@ -175,6 +176,8 @@ const localStyles = StyleSheet.create({
   popoverBackgroundStyle: { backgroundColor: 'transparent' },
 });
 
+DropDown.defaultProps = { isDisabled: false };
+
 DropDown.propTypes = {
   anchorRef: PropTypes.object.isRequired,
   isVisible: PropTypes.bool.isRequired,
@@ -182,4 +185,5 @@ DropDown.propTypes = {
   onSelection: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
+  isDisabled: PropTypes.bool,
 };

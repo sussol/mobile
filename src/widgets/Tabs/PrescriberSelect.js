@@ -17,23 +17,29 @@ import { SimpleTable } from '../SimpleTable';
 
 import { UIDatabase } from '../../database';
 import { getColumns } from '../../pages/dataTableUtilities';
-import { selectPrescriber } from '../../reducers/PrescriptionReducer';
+import { debounce } from '../../utilities';
 import { PrescriberActions } from '../../actions/PrescriberActions';
+import { PrescriptionActions } from '../../actions/PrescriptionActions';
 
 /**
  * Layout component used for a tab within the prescription wizard.
  *
- * @props {Func} choosePrescriber   Callback for selecting a supplier.
+ * @prop {Func} choosePrescriber Callback for selecting a supplier.
+ * @prop {Func} prescribers      Current set of prescriber data.
+ * @prop {Func} onFilterData     Callback for filtering prescribers.
+ * @prop {Func} searchTerm       The current filtering search term.
+ * @prop {Func} createPrescriber Callback for creating a prescriber.
+ * @prop {Func} isComplete       Indicator for this prescription being complete.
  */
 const PrescriberSelectComponent = ({
   choosePrescriber,
-  data,
+  prescribers,
   onFilterData,
   searchTerm,
   createPrescriber,
+  isComplete,
 }) => {
   const columns = React.useMemo(() => getColumns('prescriberSelect'), []);
-
   return (
     <>
       <PrescriptionInfo />
@@ -45,7 +51,12 @@ const PrescriberSelectComponent = ({
         />
         <PageButton text="Add Prescriber" onPress={createPrescriber} />
       </FlexRow>
-      <SimpleTable data={data} columns={columns} selectRow={choosePrescriber} />
+      <SimpleTable
+        data={prescribers}
+        columns={columns}
+        selectRow={choosePrescriber}
+        isDisabled={isComplete}
+      />
     </>
   );
 };
@@ -61,32 +72,41 @@ const localStyles = StyleSheet.create({
 });
 
 const mapDispatchToProps = dispatch => {
-  const choosePrescriber = prescriberID => dispatch(selectPrescriber(prescriberID));
+  const choosePrescriber = debounce(
+    prescriberID => dispatch(PrescriptionActions.assignPrescriber(prescriberID)),
+    1000,
+    true
+  );
   const onFilterData = searchTerm => dispatch(PrescriberActions.filterData(searchTerm));
   const createPrescriber = () => dispatch(PrescriberActions.createPrescriber());
   return { choosePrescriber, onFilterData, createPrescriber };
 };
 
 const mapStateToProps = state => {
-  const { prescriber } = state;
+  const { prescriber, wizard } = state;
   const { searchTerm } = prescriber;
-  const data = UIDatabase.objects('Prescriber').filtered(
+  const { isComplete } = wizard;
+
+  const prescribers = UIDatabase.objects('Prescriber').filtered(
     'firstName CONTAINS[c] $0 OR lastName CONTAINS[c] $0',
     searchTerm
   );
-  return { data, searchTerm };
+
+  return { prescribers, searchTerm, isComplete };
 };
 
 PrescriberSelectComponent.defaultProps = {
   searchTerm: '',
+  isComplete: false,
 };
 
 PrescriberSelectComponent.propTypes = {
   choosePrescriber: PropTypes.func.isRequired,
-  data: PropTypes.object.isRequired,
+  prescribers: PropTypes.object.isRequired,
   onFilterData: PropTypes.func.isRequired,
   searchTerm: PropTypes.string,
   createPrescriber: PropTypes.func.isRequired,
+  isComplete: PropTypes.bool,
 };
 
 export const PrescriberSelect = connect(
