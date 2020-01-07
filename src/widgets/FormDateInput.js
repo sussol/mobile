@@ -75,7 +75,7 @@ export const FormDateInput = React.forwardRef(
       [onValidate]
     );
 
-    const onChangeDatez = ({ nativeEvent }) => {
+    const onChangeDates = ({ nativeEvent }) => {
       const { timestamp } = nativeEvent;
       if (!timestamp) return;
       const newDate = moment(new Date(timestamp)).format('DD/MM/YYYY');
@@ -115,7 +115,7 @@ export const FormDateInput = React.forwardRef(
 
           {datePickerOpen && (
             <DateTimePicker
-              onChange={onChangeDatez}
+              onChange={onChangeDates}
               mode="date"
               display="spinner"
               value={pickerSeedValue}
