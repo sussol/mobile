@@ -17,7 +17,9 @@
     "supplier_invoices": "Supplier Invoices",
     "supplier_requisitions": "Supplier Requisitions",
     "settings": "settings",
-    "database_contents": "Database Contents"
+    "database_contents": "Database Contents",
+    "dispensary": "Dispensary",
+    "dashboard": "Dashboard"
   },
   "fr": {
     "current_stock": "Stock actuel",
