@@ -119,7 +119,7 @@ export const StocktakeManage = ({
           <SearchBar
             onChangeText={onFilterData}
             value={searchTerm}
-            placeholder={`${generalStrings.search_by} ${tableStrings.item_code}`}
+            placeholder={`${generalStrings.search_by} ${tableStrings.item_name} ${tableStrings.item_code}`}
           />
         </View>
 
