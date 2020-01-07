@@ -16,12 +16,12 @@ import { selectCurrentTab } from '../selectors/wizard';
  * to completion for completion. See TabNavigator and StepsTracker
  * for individual component implementation.
  */
-const WizardComponent = ({ tabs, titles, currentTab, nextTab }) => (
+const WizardComponent = ({ tabs, titles, currentTab, switchTab }) => (
   <DataTablePageView>
     <Stepper
       numberOfSteps={tabs.length}
       currentStep={currentTab}
-      onPress={nextTab}
+      onPress={switchTab}
       titles={titles}
     />
     <TabNavigator tabs={tabs} currentTabIndex={currentTab} />
@@ -31,7 +31,7 @@ const WizardComponent = ({ tabs, titles, currentTab, nextTab }) => (
 WizardComponent.propTypes = {
   tabs: PropTypes.array.isRequired,
   titles: PropTypes.array.isRequired,
-  nextTab: PropTypes.func.isRequired,
+  switchTab: PropTypes.func.isRequired,
   currentTab: PropTypes.number.isRequired,
 };
 
@@ -41,7 +41,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  nextTab: tab => dispatch(WizardActions.switchTab(tab)),
+  switchTab: tab => dispatch(WizardActions.switchTab(tab)),
 });
 
 export const Wizard = connect(mapStateToProps, mapDispatchToProps)(WizardComponent);
