@@ -56,10 +56,12 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.6.2",
+    "@react-native-community/datetimepicker": "^2.1.0",
     "@react-native-community/slider": "^2.0.7",
     "@react-navigation/core": "^3.5.1",
     "@react-navigation/native": "^3.6.2",
     "bugsnag-react-native": "2.23.2",
+    "moment": "^2.24.0",
     "prop-types": "^15.7.2",
     "react": "16.9.0",
     "react-devtools-core": "4.2.0",

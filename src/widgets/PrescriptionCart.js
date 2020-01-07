@@ -11,10 +11,10 @@ import { connect } from 'react-redux';
 
 import { PrescriptionCartRow } from './PrescriptionCartRow';
 
-import { SUSSOL_ORANGE, WHITE } from '../globalStyles/index';
-
 import { recordKeyExtractor } from '../pages/dataTableUtilities';
-import { removeItem, updateDirection } from '../reducers/PrescriptionReducer';
+import { PrescriptionActions } from '../actions/PrescriptionActions';
+
+import { SUSSOL_ORANGE, WHITE } from '../globalStyles';
 
 /**
  * Layout container component for a prescriptions item cart.
@@ -95,8 +95,8 @@ const localStyles = StyleSheet.create({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onRemoveItem: id => dispatch(removeItem(id)),
-  onOptionSelection: (id, newValue) => dispatch(updateDirection(id, newValue)),
+  onRemoveItem: id => dispatch(PrescriptionActions.removeItem(id)),
+  onOptionSelection: (id, newValue) => dispatch(PrescriptionActions.updateDirection(id, newValue)),
   dispatch,
 });
 

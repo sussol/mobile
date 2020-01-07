@@ -12,17 +12,18 @@ import { connect } from 'react-redux';
 import { PageButton } from '../PageButton';
 import { PrescriptionInfo } from '../PrescriptionInfo';
 import { SimpleTable } from '../SimpleTable';
-
-import { UIDatabase } from '../../database';
-import { getColumns } from '../../pages/dataTableUtilities';
-import { selectItem, editQuantity } from '../../reducers/PrescriptionReducer';
-
 import { PrescriptionCart } from '../PrescriptionCart';
 import { FlexRow } from '../FlexRow';
 import { FlexColumn } from '../FlexColumn';
 import { FlexView } from '../FlexView';
+
+import { UIDatabase } from '../../database';
+import { getColumns } from '../../pages/dataTableUtilities';
+
 import { selectHasItemsAndQuantity } from '../../selectors/prescription';
+
 import { WizardActions } from '../../actions/WizardActions';
+import { PrescriptionActions } from '../../actions/PrescriptionActions';
 
 /**
  * Layout component used for a tab within the prescription wizard.
@@ -85,9 +86,9 @@ const ItemSelectComponent = ({
 };
 
 const mapDispatchToProps = dispatch => {
-  const chooseItem = itemID => dispatch(selectItem(itemID));
+  const chooseItem = itemID => dispatch(PrescriptionActions.addItem(itemID));
   const nextTab = () => dispatch(WizardActions.nextTab());
-  const updateQuantity = (id, quantity) => dispatch(editQuantity(id, quantity));
+  const updateQuantity = (id, quantity) => dispatch(PrescriptionActions.editQuantity(id, quantity));
   return { nextTab, chooseItem, updateQuantity };
 };
 

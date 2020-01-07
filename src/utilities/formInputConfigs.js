@@ -3,6 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+import moment from 'moment';
+
 /**
  * File contains constants and config objects which declaritively define
  * form inputs to be used with `FormControl`.
@@ -62,24 +64,12 @@ const FORM_INPUT_CONFIGS = {
     label: 'Code:',
   },
   [FORM_INPUT_KEYS.DATE_OF_BIRTH]: {
-    type: 'text',
+    type: 'date',
     initialValue: '',
     key: 'dateOfBirth',
-    invalidMessage: 'Must be a valid date',
+    invalidMessage: 'Must be a date in the format DD/MM/YYYY',
     isRequired: false,
-    validator: input => {
-      // Ensure the entered value is castable to a date and is less than
-      // the current date.
-      const dateTime = new Date(input).getTime();
-      const dateTimeNow = new Date().getTime();
-      if (!input) return true;
-
-      const inputIsAValidDate = !Number.isNaN(dateTime);
-      const inputIsLessThanNow = dateTime < dateTimeNow;
-      const inputHasAForwardSlash = input.includes('/');
-
-      return inputIsAValidDate && inputIsLessThanNow && inputHasAForwardSlash;
-    },
+    validator: input => moment(input, 'DD/MM/YYYY', null, true).isValid(),
     label: 'Date of birth:',
   },
   [FORM_INPUT_KEYS.EMAIL]: {
@@ -161,6 +151,6 @@ export const getFormInputConfig = (formName, seedObject) => {
   return formConfig.map(({ key, ...restOfConfig }) => ({
     ...restOfConfig,
     key,
-    initialValue: (seedObject[key] && seedObject[key].toString()) || '',
+    initialValue: seedObject[key] || '',
   }));
 };
