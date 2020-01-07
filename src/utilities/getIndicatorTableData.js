@@ -33,6 +33,32 @@ export const initialiseRowColumnValue = (row, column, period) => {
     createRecord(UIDatabase, 'IndicatorValue', row, column, period);
   });
 };
+
+/**
+ * Get value for indicator row, column tuple.
+ *
+ * @param {IndicatorAttribute} row
+ * @param {IndicatorAttribute} column
+ * @return {IndicatorValue}
+ */
+export const getIndicatorRowColumnValue = (row, column, period) => {
+  const columnValues = column?.values?.filter(
+    ({ period: valuePeriod }) => valuePeriod.ID === period.ID
+  );
+  const rowValues = row?.values?.filter(({ period: valuePeriod }) => valuePeriod.ID === period.ID);
+  const columnValueIds = columnValues?.map(({ id }) => id);
+  const rowValueIds = rowValues?.map(({ id }) => id);
+  const [rowColumnValueId] = columnValueIds?.filter(id => rowValueIds.includes(id)) || [];
+  const rowColumnValue = column?.values?.find(({ id }) => id === rowColumnValueId);
+
+  if (!rowColumnValue) {
+    initialiseRowColumnValue(row, column, period);
+    return getIndicatorRowColumnValue(row, column, period);
+  }
+
+  return rowColumnValue;
+};
+
 // eslint-disable-next-line no-unused-vars
 const getIndicatorTableColumns = (indicator, period) => {
   const descriptionColumn = COLUMNS.DESCRIPTION;
