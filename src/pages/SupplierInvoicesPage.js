@@ -18,7 +18,7 @@ import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets'
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import { buttonStrings, modalStrings } from '../localization';
+import { buttonStrings, modalStrings, generalStrings, tableStrings } from '../localization';
 import globalStyles from '../globalStyles';
 import { ROUTES } from '../navigation/constants';
 
@@ -130,7 +130,11 @@ export const SupplierInvoices = ({
       <View style={pageTopSectionContainer}>
         <View style={pageTopLeftSectionContainer}>
           <ToggleBar toggles={toggles} />
-          <SearchBar onChangeText={onFilterData} value={searchTerm} />
+          <SearchBar
+            onChangeText={onFilterData}
+            value={searchTerm}
+            placeholder={`${generalStrings.searchBar} ${tableStrings.invoice_number}`}
+          />
         </View>
         <View style={pageTopRightSectionContainer}>
           <PageButton text={buttonStrings.new_invoice} onPress={onNewInvoice} />
