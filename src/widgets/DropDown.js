@@ -9,6 +9,15 @@ import { Picker } from 'react-native';
 
 import { COMPONENT_HEIGHT, SUSSOL_ORANGE } from '../globalStyles';
 
+/**
+ * A single selection dropdown menu implemented as a simple light-weight wrapper over the
+ * native Picker component.
+ *
+ * @param {Array.<string>} values A list of values to render in the dropdown selection.
+ * @param {string} selectedValue The currently selected value.
+ * @param {Func} onValueChange On selection callback handler.
+ * @param {object} style Optional additional component styling.
+ */
 export const DropDown = React.memo(({ values, selectedValue, onValueChange, style }) => {
   const Items = values.map(value => (
     <Picker.Item key={value} label={value} value={value} color={SUSSOL_ORANGE} />
