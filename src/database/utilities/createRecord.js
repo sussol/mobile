@@ -3,6 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+import moment from 'moment';
 import { generateUUID } from 'react-native-database';
 
 import { formatDateAndTime } from '../../utilities';
@@ -105,13 +106,17 @@ const createAddress = (database, { line1, line2, line3, line4, zipCode } = {}) =
  *  }
  */
 const createPatient = (database, patientDetails) => {
-  const { line1, line2 } = patientDetails;
+  const { dateOfBirth, line1, line2 } = patientDetails;
+
   const billingAddress = createAddress(database, { line1, line2 });
+  const parsedDateOfBirth = moment(dateOfBirth, 'DD-MM-YYYY').toDate();
   const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
+
   const patient = database.create('Name', {
     id: generateUUID(),
     ...patientDetails,
     billingAddress,
+    dateOfBirth: parsedDateOfBirth,
     // Defaults:
     isVisible: true,
     isPatient: true,

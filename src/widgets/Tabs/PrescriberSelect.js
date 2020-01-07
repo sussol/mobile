@@ -17,7 +17,7 @@ import { SimpleTable } from '../SimpleTable';
 
 import { UIDatabase } from '../../database';
 import { getColumns } from '../../pages/dataTableUtilities';
-
+import { debounce } from '../../utilities';
 import { PrescriberActions } from '../../actions/PrescriberActions';
 import { PrescriptionActions } from '../../actions/PrescriptionActions';
 
@@ -72,8 +72,11 @@ const localStyles = StyleSheet.create({
 });
 
 const mapDispatchToProps = dispatch => {
-  const choosePrescriber = prescriberID =>
-    dispatch(PrescriptionActions.assignPrescriber(prescriberID));
+  const choosePrescriber = debounce(
+    prescriberID => dispatch(PrescriptionActions.assignPrescriber(prescriberID)),
+    1000,
+    true
+  );
   const onFilterData = searchTerm => dispatch(PrescriberActions.filterData(searchTerm));
   const createPrescriber = () => dispatch(PrescriberActions.createPrescriber());
   return { choosePrescriber, onFilterData, createPrescriber };
