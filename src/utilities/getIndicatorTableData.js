@@ -75,3 +75,27 @@ const getIndicatorTableColumns = (indicator, period) => {
 
   return [descriptionColumn, codeColumn, ...valueColumns];
 };
+
+const getIndicatorTableRows = (indicator, period) =>
+  indicator.rows.map(row => {
+    const { id, description, code } = row;
+    const values = indicator.columns.reduce((acc, column) => {
+      const { description: key } = column;
+      const value = getIndicatorRowColumnValue(row, column, period);
+      return { ...acc, [key]: value.value };
+    }, []);
+    return { id, description, code, ...values };
+  });
+
+/**
+ * Get data table columns for indicator.
+ *
+ * @param {ProgramIndicator} indicator
+ */
+const getIndicatorTableData = (indicator, period) => {
+  const columns = getIndicatorTableColumns(indicator, period);
+  const rows = getIndicatorTableRows(indicator, period);
+  return { columns, rows };
+};
+
+export { getIndicatorTableData };
