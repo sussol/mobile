@@ -24,7 +24,7 @@ import { UIDatabase } from '../database';
  *
  * Is passed all details needed as this is a simple layout and presentation component.
  *
- * @prop {Object} transactionItem    Underlying Transaction Item for this row.s
+ * @prop {Object} transactionItem    Underlying Transaction Item for this row.
  * @prop {Func}   onChangeQuantity   Callback for changing the quantity ordered.
  * @prop {Func}   onRemoveItem       Callback for deleting this item.
  * @prop {Func}   onOptionSelection  Callback for selecting a direction.

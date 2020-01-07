@@ -86,12 +86,10 @@ const ItemSelectComponent = ({
 };
 
 const mapDispatchToProps = dispatch => {
-  const choosePrescriber = prescriberID =>
-    dispatch(PrescriptionActions.assignPrescriber(prescriberID));
   const chooseItem = itemID => dispatch(PrescriptionActions.addItem(itemID));
   const nextTab = () => dispatch(WizardActions.nextTab());
   const updateQuantity = (id, quantity) => dispatch(PrescriptionActions.editQuantity(id, quantity));
-  return { nextTab, choosePrescriber, chooseItem, updateQuantity };
+  return { nextTab, chooseItem, updateQuantity };
 };
 
 const mapStateToProps = state => {

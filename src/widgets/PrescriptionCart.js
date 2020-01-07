@@ -26,7 +26,7 @@ import { SUSSOL_ORANGE, WHITE } from '../globalStyles';
  * @prop {Func}  onChangeQuantity  Callback when an items quantity is updated.
  * @prop {Func}  onOptionSelection Callback when an option in the dropdown is selected.
  * @prop {Func}  onRemoveItem      Callback when this row is removed.
- * @prop {Bool}  isDisabled        Indicator if this component should be editable.
+ * @prop {Bool}  isDisabled        Indicator if this component should not be editable.
  */
 const PrescriptionCartComponent = ({
   items,
