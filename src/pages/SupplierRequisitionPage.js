@@ -354,10 +354,11 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 const mapStateToProps = state => {
   // TODO: add indicator toggle flag to page state.
   const { pages } = state;
-  const { showIndicators, indicatorColumns } = pages[ROUTES.SUPPLIER_REQUISITION];
+  const { showIndicators, indicatorColumns, indicatorRows } = pages[ROUTES.SUPPLIER_REQUISITION];
   if (showIndicators) {
     return {
       ...pages[ROUTES.SUPPLIER_REQUISITION],
+      data: indicatorRows,
       columns: indicatorColumns,
     };
   }
