@@ -17,7 +17,8 @@ export { requestPermission } from './requestPermission';
 export { backupValidation } from './fileSystem';
 export { debounce } from './underscoreMethods';
 export { getModalTitle, MODAL_KEYS } from './getModalTitle';
-export { mapIndicatorColumn } from './mapIndicatorColumn';
+// eslint-disable-next-line import/no-cycle
+export { getIndicatorTableData } from './getIndicatorTableData';
 
 // eslint-disable-next-line import/no-cycle
 export {

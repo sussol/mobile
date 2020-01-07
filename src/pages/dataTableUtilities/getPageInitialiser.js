@@ -5,7 +5,7 @@
 
 import { UIDatabase } from '../../database';
 
-import { sortDataBy, mapIndicatorColumn } from '../../utilities';
+import { sortDataBy, getIndicatorTableData } from '../../utilities';
 import { recordKeyExtractor } from './utilities';
 import getColumns from './getColumns';
 import getPageInfoColumns from './getPageInfoColumns';
@@ -354,7 +354,7 @@ const supplierInvoicesInitialiser = () => {
  * @returns  {object}
  */
 const supplierRequisitionInitialiser = requisition => {
-  const { isFinalised, program, items: backingData } = requisition;
+  const { isFinalised, program, period, items: backingData } = requisition;
 
   const usingPrograms = !!program;
   const route = program ? ROUTES.SUPPLIER_REQUISITION_WITH_PROGRAM : ROUTES.SUPPLIER_REQUISITION;
@@ -366,9 +366,12 @@ const supplierRequisitionInitialiser = requisition => {
       : sortedData.filter(item => item.isLessThanThresholdMOS);
 
   const indicators = program?.indicators?.slice() || [];
-  const [selectedIndicator] = indicators;
 
-  const indicatorColumns = selectedIndicator.columns.map(mapIndicatorColumn);
+  const [selectedIndicator] = indicators;
+  const { columns: indicatorColumns, rows: indicatorRows } = getIndicatorTableData(
+    selectedIndicator,
+    period
+  );
 
   return {
     pageObject: requisition,
@@ -386,6 +389,7 @@ const supplierRequisitionInitialiser = requisition => {
     showIndicators: false,
     selectedIndicator,
     indicatorColumns,
+    indicatorRows,
     indicators,
     showAll: !usingPrograms || isFinalised,
     route: ROUTES.SUPPLIER_REQUISITION,
