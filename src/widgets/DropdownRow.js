@@ -30,7 +30,7 @@ import { FlexView } from './FlexView';
  * @prop {Bool}   useSecondaryMenu  Indicator whether the secondary menu should show.
  * @prop {Number} iconSize          The size of the drop down icon.
  * @prop {String} placeholder       Placeholder string value, when no value has been chosen/entered.
- * @prop {Bool}   isDisabled        Indicator if this component should be editable.
+ * @prop {Bool}   isDisabled        Indicator if this component should not be editable.
  */
 export const DropdownRow = ({
   currentOptionText,
