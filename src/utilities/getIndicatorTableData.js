@@ -5,26 +5,23 @@
 
 import { UIDatabase, createRecord } from '../database';
 
-const COLUMN_WIDTH = 1;
-const COLUMN_SORTABLE = false;
-const COLUMN_EDITABLE = false;
+const COLUMN_DEFAULTS = {
+  type: 'string',
+  width: 1,
+  sortable: false,
+  editable: false,
+};
 
 const COLUMNS = {
   DESCRIPTION: {
     title: 'Description',
     key: 'description',
-    type: 'string',
-    width: COLUMN_WIDTH,
-    sortable: COLUMN_SORTABLE,
-    editable: COLUMN_EDITABLE,
+    ...COLUMN_DEFAULTS,
   },
   CODE: {
     title: 'Code',
     key: 'code',
-    type: 'string',
-    width: COLUMN_WIDTH,
-    sortable: COLUMN_SORTABLE,
-    editable: COLUMN_EDITABLE,
+    ...COLUMN_DEFAULTS,
   },
 };
 
@@ -46,7 +43,7 @@ export const initialiseRowColumnValue = (row, column, period) => {
  *
  * @param {IndicatorAttribute} row
  * @param {IndicatorAttribute} column
- * @return {IndicatorValue}
+ * @returns {IndicatorValue}
  */
 export const getIndicatorRowColumnValue = (row, column, period) => {
   const columnValues = column?.values?.filter(
@@ -82,9 +79,7 @@ const getIndicatorTableColumns = (indicator, period) => {
     title: description,
     key: description,
     type: valueType,
-    width: COLUMN_WIDTH,
-    sortable: COLUMN_SORTABLE,
-    editable: COLUMN_EDITABLE,
+    ...COLUMN_DEFAULTS,
   }));
 
   return [descriptionColumn, codeColumn, ...valueColumns];
