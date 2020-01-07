@@ -20,7 +20,7 @@ import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtili
 import { useRecordListener } from '../hooks';
 
 import globalStyles from '../globalStyles';
-import { buttonStrings } from '../localization';
+import { buttonStrings, generalStrings, tableStrings } from '../localization';
 
 /**
  * Renders a mSupply mobile page with a customer requisition loaded for editing
@@ -130,7 +130,11 @@ export const CustomerRequisition = ({
       <View style={pageTopSectionContainer}>
         <View style={pageTopLeftSectionContainer}>
           <PageInfo columns={pageInfoColumns} isEditingDisabled={isFinalised} />
-          <SearchBar onChangeText={onFilterData} value={searchTerm} />
+          <SearchBar
+            onChangeText={onFilterData}
+            value={searchTerm}
+            placeholder={`${generalStrings.searchBar} ${tableStrings.customerRequisitions}`}
+          />
         </View>
         <View style={pageTopRightSectionContainer}>
           <PageButton
