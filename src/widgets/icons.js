@@ -96,3 +96,5 @@ export const MinusIcon = ({ size, color }) => (
 );
 MinusIcon.defaultProps = { color: WHITE, size: 30 };
 MinusIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
+
+export const CalendarIcon = () => <FAIcon name="calendar" size={20} color={WHITE} />;
