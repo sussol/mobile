@@ -46,7 +46,8 @@ const PrescriptionConfirmationComponent = ({
   canConfirm,
 }) => {
   const confirmPrescription = React.useCallback(
-    () => UIDatabase.write(() => pay(currentUser, currentPatient, transaction, paymentAmount)),
+    () =>
+      UIDatabase.write(() => pay(currentUser, currentPatient, transaction, paymentAmount.value)),
     []
   );
   return (
