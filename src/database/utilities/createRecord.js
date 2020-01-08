@@ -5,7 +5,7 @@
 
 import { generateUUID } from 'react-native-database';
 
-import { formatDateAndTime } from '../../utilities';
+import { versionToInteger, formatDateAndTime } from '../../utilities';
 import { NUMBER_SEQUENCE_KEYS } from './constants';
 import { generalStrings } from '../../localization';
 import { SETTINGS_KEYS } from '../../settings/index';
@@ -408,8 +408,10 @@ const createUpgradeMessage = (database, fromVersion, toVersion) => {
   const syncSiteId = database.getSetting(SETTINGS_KEYS.SYNC_SITE_ID);
 
   const body = {
-    fromVersion: Number(fromVersion),
-    toVersion: Number(toVersion),
+    fromVersion: versionToInteger(fromVersion),
+    toVersion: versionToInteger(toVersion),
+    fromVersionString: String(fromVersion),
+    toVersionString: String(toVersion),
     syncSiteId: Number(syncSiteId),
   };
 
