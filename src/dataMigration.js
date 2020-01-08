@@ -47,6 +47,9 @@ export const migrateDataToVersion = async (database, settings) => {
         migration.migrate(database, settings, fromVersion, toVersion);
       }
     }
+    database.write(() => {
+      createRecord(database, 'Message', fromVersion, toVersion);
+    });
   }
   // Record the new app version.
   AsyncStorage.setItem(APP_VERSION_KEY, toVersion);
@@ -233,17 +236,6 @@ const dataMigrations = [
             database.update('ItemBatch', { id, supplier: transactionsSupplier });
           }
         });
-      });
-    },
-  },
-  // 3.2.0 Adds indicator and dashboard functionality. This functionality requires certain tables
-  // to be synced to mobile. Sending a message to the server that the mobile site has upgraded
-  // will trigger syncing of the needed tables.
-  {
-    version: '3.2.0-rc1',
-    migrate: (database, _, fromVersion, toVersion) => {
-      database.write(() => {
-        createRecord(database, 'Message', fromVersion, toVersion);
       });
     },
   },
