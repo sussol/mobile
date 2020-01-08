@@ -37,13 +37,13 @@ export const PrescriptionCartRow = ({
   onOptionSelection,
   isDisabled,
 }) => {
-  const { itemName, totalQuantity, itemCode, price, id, note, item } = transactionItem;
+  const { itemName, totalQuantity, itemCode, totalPrice, id, note, item } = transactionItem;
   const itemDetails = React.useMemo(
     () => [
       { label: 'Code', text: itemCode },
-      { label: 'Price', text: price },
+      { label: 'Price', text: totalPrice },
     ],
-    [itemCode, price]
+    [itemCode, totalPrice]
   );
 
   const removeItem = React.useCallback(() => onRemoveItem(id), [id]);

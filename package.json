@@ -61,6 +61,7 @@
     "@react-navigation/core": "^3.5.1",
     "@react-navigation/native": "^3.6.2",
     "bugsnag-react-native": "2.23.2",
+    "currency.js": "^1.2.2",
     "moment": "^2.24.0",
     "prop-types": "^15.7.2",
     "react": "16.9.0",

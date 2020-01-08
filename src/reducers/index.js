@@ -1,15 +1,22 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2020
+ */
+
 import { combineReducers } from 'redux';
+
+import { FinaliseReducer } from './FinaliseReducer';
+import { FormReducer } from './FormReducer';
+import { ModulesReducer } from './ModulesReducer';
+import { PagesReducer } from './PagesReducer';
+import { PatientReducer } from './PatientReducer';
+import { PaymentReducer } from './PaymentReducer';
+import { PrescriberReducer } from './PrescriberReducer';
+import { PrescriptionReducer } from './PrescriptionReducer';
+import { UserReducer } from './UserReducer';
+import { WizardReducer } from './WizardReducer';
 import NavigationReducer from './NavigationReducer';
 import SyncReducer from './SyncReducer';
-import { PagesReducer } from './PagesReducer';
-import { ModulesReducer } from './ModulesReducer';
-import { UserReducer } from './UserReducer';
-import { PrescriptionReducer } from './PrescriptionReducer';
-import { PatientReducer } from './PatientReducer';
-import { FormReducer } from './FormReducer';
-import { PrescriberReducer } from './PrescriberReducer';
-import { FinaliseReducer } from './FinaliseReducer';
-import { WizardReducer } from './WizardReducer';
 
 export default combineReducers({
   user: UserReducer,
@@ -23,4 +30,5 @@ export default combineReducers({
   form: FormReducer,
   finalise: FinaliseReducer,
   wizard: WizardReducer,
+  payment: PaymentReducer,
 });
