@@ -7,10 +7,10 @@ InsuranceProvider.schema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
-    name: 'string',
-    comment: 'string?',
-    validityDays: 'int',
-    isActive: 'bool',
+    name: { type: 'string', optional: true },
+    comment: { type: 'string', optional: true },
+    validityDays: { type: 'int', optional: true },
+    isActive: { type: 'bool', optional: true },
     policies: {
       type: 'linkingObjects',
       objectType: 'InsurancePolicy',
