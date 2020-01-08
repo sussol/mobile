@@ -31,8 +31,6 @@ export const AutocompleteSelector = ({
 }) => {
   const [queryText, setQueryText] = useState('');
 
-  const onChangeText = () => setQueryText(queryText);
-
   /**
    * Filters a realm results object. Creates two realm results A, B
    * by two query strings. And concat A to B - A.
@@ -104,7 +102,7 @@ export const AutocompleteSelector = ({
         autoCorrect={false}
         autoFocus
         color={WHITE}
-        onChangeText={onChangeText}
+        onChangeText={inputValue => setQueryText(inputValue)}
         placeholder={placeholderText}
         placeholderTextColor="white"
         style={[localStyles.text, localStyles.searchBar]}
