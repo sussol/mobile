@@ -240,7 +240,7 @@ const dataMigrations = [
   // to be synced to mobile. Sending a message to the server that the mobile site has upgraded
   // will trigger syncing of the needed tables.
   {
-    version: '3.2.0',
+    version: '3.2.0-rc1',
     migrate: (database, _, fromVersion, toVersion) => {
       database.write(() => {
         createRecord(database, 'Message', fromVersion, toVersion);
