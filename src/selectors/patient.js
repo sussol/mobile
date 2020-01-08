@@ -14,7 +14,7 @@ export const selectPatientHistory = ({ patient }) => {
   // finding all transaction batches for the patient.
   const queryString = `(${transactions
     .map(({ id }) => `transaction.id == "${id}"`)
-    .join(' OR ')}) AND type != "cash_in"`;
+    .join(' OR ')}) AND type != "cash_in" AND type != "cash_out"`;
   return queryString ? UIDatabase.objects('TransactionBatch').filtered(queryString) : [];
 };
 
