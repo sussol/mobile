@@ -1,6 +1,6 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2019
+ * Sustainable Solutions (NZ) Ltd. 2020
  */
 
 import currency from 'currency.js';
