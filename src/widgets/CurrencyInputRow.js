@@ -41,10 +41,7 @@ export const CurrencyInputRow = ({
   const centAmount = React.useRef(String(currencyAmount.cents()));
   const refsArray = React.useRef([React.useRef(), React.useRef()]);
 
-  const onSubmit = nextIndex => () => {
-    console.log('onsubmit');
-    refsArray.current[nextIndex]?.current?.focus();
-  };
+  const onSubmit = nextIndex => () => refsArray.current[nextIndex]?.current?.focus();
 
   const update = () => {
     const fullValue = `${dollarAmount.current}.${centAmount.current}`;
