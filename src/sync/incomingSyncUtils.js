@@ -329,6 +329,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         enteredBy: database.getOrCreate('User', record.enteredByID),
         patient: database.getOrCreate('Name', record.nameID),
         insuranceProvider: database.getOrCreate('InsuranceProvider', record.insuranceProviderID),
+        isActive: parseBoolean(record.isActive),
       });
       return;
     }
