@@ -7,6 +7,7 @@ import { batch } from 'react-redux';
 
 import { selectAvailableCredit } from '../selectors/patient';
 import { selectPrescriptionTotal } from '../selectors/payment';
+import { UIDatabase } from '../database';
 
 export const PAYMENT_ACTIONS = {
   CHOOSE_POLICY: 'Payment/choosePolicy',
@@ -17,11 +18,34 @@ export const PAYMENT_ACTIONS = {
 
 const updatePayment = amount => ({ type: PAYMENT_ACTIONS.UPDATE_PAYMENT, payload: { amount } });
 const creditOverflow = () => ({ type: PAYMENT_ACTIONS.CREDIT_OVERFLOW });
-const choosePolicy = policy => ({ type: PAYMENT_ACTIONS.CHOOSE_POLICY, payload: { policy } });
-const choosePaymentType = paymentType => ({
-  type: PAYMENT_ACTIONS.CHOOSE_PAYMENT_TYPE,
-  payload: { paymentType },
-});
+
+const choosePolicy = insurancePolicy => (dispatch, getState) => {
+  const { payment } = getState();
+  const { transaction } = payment;
+
+  UIDatabase.write(() => {
+    UIDatabase.update('Transaction', {
+      ...transaction,
+      insurancePolicy,
+    });
+  });
+
+  dispatch({ type: PAYMENT_ACTIONS.CHOOSE_POLICY, payload: { insurancePolicy } });
+};
+
+const choosePaymentType = paymentType => (dispatch, getState) => {
+  const { payment } = getState();
+  const { transaction } = payment;
+
+  UIDatabase.write(() => {
+    UIDatabase.update('Transaction', {
+      ...transaction,
+      option: paymentType,
+    });
+  });
+
+  dispatch({ type: PAYMENT_ACTIONS.CHOOSE_PAYMENT_TYPE, payload: { paymentType } });
+};
 const validatePayment = amount => (dispatch, getState) => {
   const { payment, patient } = getState();
 
