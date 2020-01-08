@@ -48,7 +48,7 @@ export const migrateDataToVersion = async (database, settings) => {
       }
     }
     database.write(() => {
-      createRecord(database, 'Message', fromVersion, toVersion);
+      createRecord(database, 'UpgradeMessage', fromVersion, toVersion);
     });
   }
   // Record the new app version.

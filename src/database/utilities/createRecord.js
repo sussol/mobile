@@ -404,7 +404,7 @@ const createTransactionItem = (database, transaction, item) => {
  * @param {String} toVersion   Which version the app is being upgraded too.
  */
 
-const createMessage = (database, fromVersion, toVersion) => {
+const createUpgradeMessage = (database, fromVersion, toVersion) => {
   const syncSiteId = database.getSetting(SETTINGS_KEYS.SYNC_SITE_ID);
 
   const body = {
@@ -462,8 +462,8 @@ export const createRecord = (database, type, ...args) => {
       return createTransactionItem(database, ...args);
     case 'TransactionBatch':
       return createTransactionBatch(database, ...args);
-    case 'Message':
-      return createMessage(database, ...args);
+    case 'UpgradeMessage':
+      return createUpgradeMessage(database, ...args);
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }
