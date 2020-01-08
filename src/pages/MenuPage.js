@@ -120,8 +120,8 @@ const Menu = ({
       <View style={containerStyle}>
         <ModulesImage style={image} />
         <View>
-          {usingDispensary && <MenuButton text="Dispensary" />}
-          {usingDashboard && <MenuButton text="Dashboard" onPress={toDashboard} />}
+          {usingDispensary && <MenuButton text={navStrings.dispensary} />}
+          {usingDashboard && <MenuButton text={navStrings.dashboard} onPress={toDashboard} />}
         </View>
       </View>
     ),

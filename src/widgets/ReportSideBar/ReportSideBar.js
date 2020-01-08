@@ -13,6 +13,8 @@ import { ReportSideBarItem } from './ReportSideBarItem';
 
 import { DARKER_GREY, SUSSOL_ORANGE, WARMER_GREY, APP_FONT_FAMILY, GREY } from '../../globalStyles';
 
+import { generalStrings } from '../../localization';
+
 export const ReportSideBar = ({ reports, currentReport, onPressItem, dimensions }) => {
   const renderItem = ({ item }) => {
     const { id, index, title, type, date } = item;
@@ -33,7 +35,7 @@ export const ReportSideBar = ({ reports, currentReport, onPressItem, dimensions 
 
   const renderHeader = () => (
     <View>
-      <Text style={localStyles.ListViewHeader}>Reports</Text>
+      <Text style={localStyles.ListViewHeader}>{generalStrings.reports}</Text>
     </View>
   );
 
