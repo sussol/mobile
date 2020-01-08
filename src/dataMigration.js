@@ -44,7 +44,7 @@ export const migrateDataToVersion = async (database, settings) => {
         compareVersions(fromVersion, migration.version) < 0 &&
         compareVersions(toVersion, migration.version) >= 0
       ) {
-        migration.migrate(database, settings, fromVersion, toVersion);
+        migration.migrate(database, settings);
       }
     }
     database.write(() => {
