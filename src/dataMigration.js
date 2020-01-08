@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { compareVersions } from './utilities';
 import { SETTINGS_KEYS } from './settings';
 import packageJson from '../package.json';
+import { createRecord } from './database/utilities/index';
 
 const APP_VERSION_KEY = 'AppVersion';
 
@@ -43,7 +44,7 @@ export const migrateDataToVersion = async (database, settings) => {
         compareVersions(fromVersion, migration.version) < 0 &&
         compareVersions(toVersion, migration.version) >= 0
       ) {
-        migration.migrate(database, settings);
+        migration.migrate(database, settings, fromVersion, toVersion);
       }
     }
   }
@@ -232,6 +233,14 @@ const dataMigrations = [
             database.update('ItemBatch', { id, supplier: transactionsSupplier });
           }
         });
+      });
+    },
+  },
+  {
+    version: '3.2.0',
+    migrate: (database, _, fromVersion, toVersion) => {
+      database.write(() => {
+        createRecord(database, 'Message', fromVersion, toVersion);
       });
     },
   },
