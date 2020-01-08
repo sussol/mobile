@@ -16,7 +16,7 @@ import { ToggleBar, DataTablePageView, SearchBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import { BottomTextEditor } from '../widgets/bottomModals';
 
-import { buttonStrings, modalStrings } from '../localization';
+import { buttonStrings, modalStrings, generalStrings, tableStrings } from '../localization';
 import globalStyles from '../globalStyles';
 
 import { ROUTES } from '../navigation/constants';
@@ -116,7 +116,11 @@ export const StocktakeManage = ({
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
         <View style={pageTopLeftSectionContainer}>
-          <SearchBar onChangeText={onFilterData} value={searchTerm} />
+          <SearchBar
+            onChangeText={onFilterData}
+            value={searchTerm}
+            placeholder={`${generalStrings.search_by} ${tableStrings.item_name}, ${tableStrings.item_code}`}
+          />
         </View>
 
         <View style={pageTopRightSectionContainer}>
