@@ -62,7 +62,7 @@ export class TransactionBatch extends Realm.Object {
    * @return  {string}
    */
   get itemCode() {
-    return this.itemBatch.item.code;
+    return this.itemBatch?.item?.code || '';
   }
 
   /**
@@ -71,7 +71,7 @@ export class TransactionBatch extends Realm.Object {
    * @return  {string}
    */
   get itemBatchId() {
-    return this.itemBatch ? this.itemBatch.id : '';
+    return this.itemBatch?.id || '';
   }
 
   /**
@@ -144,7 +144,7 @@ export class TransactionBatch extends Realm.Object {
    * @return  {string}
    */
   toString() {
-    return `${this.itemBatch} in a ${this.transaction.type}`;
+    return `${this?.itemBatch} in a ${this.transaction.type}`;
   }
 }
 

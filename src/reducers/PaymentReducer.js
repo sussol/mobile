@@ -15,7 +15,7 @@ const initialState = () => ({
   patient: null,
   paymentAmount: currency(0),
   policy: null,
-  paymentValid: false,
+  paymentValid: true,
 });
 
 export const PaymentReducer = (state = initialState(), action) => {
@@ -55,11 +55,11 @@ export const PaymentReducer = (state = initialState(), action) => {
       const { payload } = action;
       const { amount } = payload;
 
-      return { ...state, paymentAmount: amount, creditOverflow: false };
+      return { ...state, paymentAmount: amount, creditOverflow: false, paymentValid: true };
     }
 
     case PAYMENT_ACTIONS.CREDIT_OVERFLOW: {
-      return { ...state, creditOverflow: true };
+      return { ...state, creditOverflow: true, paymentValid: false };
     }
 
     default:
