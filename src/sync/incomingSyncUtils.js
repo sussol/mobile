@@ -256,6 +256,22 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: ['abbreviation', 'expansion'],
       canBeBlank: [],
     },
+    InsuranceProvider: {
+      cannotBeBlank: ['providerName', 'isActive', 'prescriptionValidityDays'],
+      canBeBlank: ['comment'],
+    },
+    InsurancePolicy: {
+      cannotBeBlank: [
+        'insuranceProviderID',
+        'nameID',
+        'isActive',
+        'policyNumberFamily',
+        'policyNumberPerson',
+        'expiryDate',
+        'discountRate',
+      ],
+      canBeBlank: ['type', 'policyNumberFull', 'enteredByID'],
+    },
   };
   if (!requiredFields[recordType]) return false; // Unsupported record type
   const hasAllNonBlankFields = requiredFields[recordType].cannotBeBlank.reduce(
@@ -290,7 +306,32 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
 export const createOrUpdateRecord = (database, settings, recordType, record) => {
   if (!sanityCheckIncomingRecord(recordType, record)) return; // Unsupported or malformed record.
   let internalRecord;
+
   switch (recordType) {
+    case 'InsuranceProvider': {
+      database.update(recordType, {
+        id: record.ID,
+        name: record.providerName,
+        comment: record?.comment,
+        validityDays: parseNumber(record?.prescriptionValidityDays || 0),
+        isActive: parseBoolean(record?.isActive || false),
+      });
+      return;
+    }
+    case 'InsurancePolicy': {
+      database.update(recordType, {
+        id: record.ID,
+        policyNumberFamily: record.policyNumberFamily,
+        policyNumberPerson: record.policyNumberPerson,
+        type: record.type,
+        discountRate: parseNumber(record.discountRate),
+        expiryDate: parseDate(record.expiryDate),
+        enteredBy: database.getOrCreate('User', record.enteredByID),
+        patient: database.getOrCreate('Name', record.nameID),
+        insuranceProvider: database.getOrCreate('InsuranceProvider', record.insuranceProviderID),
+      });
+      return;
+    }
     case 'Item': {
       internalRecord = {
         id: record.ID,
