@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { compareVersions } from './utilities';
 import { SETTINGS_KEYS } from './settings';
 import packageJson from '../package.json';
-import { createRecord } from './database/utilities/index';
+import { createRecord } from './database/utilities';
 
 const APP_VERSION_KEY = 'AppVersion';
 
