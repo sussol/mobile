@@ -8,8 +8,8 @@ import currency from 'currency.js';
 export const selectPrescriptionSubTotal = ({ payment }) => {
   const { transaction } = payment;
   const { items = [] } = transaction || {};
-  const total = items.reduce((acc, { totalPrice }) => acc + totalPrice || 0, 0);
-  return currency(total);
+  const total = items.reduce((acc, { totalPrice }) => currency(totalPrice || 0).add(acc), 0);
+  return total;
 };
 
 export const selectPrescriptionTotal = ({ payment }) => {
