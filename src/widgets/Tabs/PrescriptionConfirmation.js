@@ -14,16 +14,23 @@ import { FlexView } from '../FlexView';
 import { PageButton } from '../PageButton';
 import { FlexRow } from '../FlexRow';
 
-import { UIDatabase } from '../../database/index';
+import { UIDatabase } from '../../database';
 import { pay } from '../../utilities/modules/dispensary/pay';
 import { FinaliseActions } from '../../actions/FinaliseActions';
 import { PaymentSummary } from '../PaymentSummary';
+import { selectCurrentUser } from '../../selectors/user';
+import { selectCurrentPatient } from '../../selectors/patient';
 
 const mapStateToProps = state => {
-  const { prescription, patient, prescriber, user, payment } = state;
-  const { cashAmount } = payment;
+  const { payment, wizard } = state;
+  const { transaction, paymentValid, paymentAmount } = payment;
+  const { isComplete } = wizard;
 
-  return { ...prescription, ...patient, ...prescriber, ...user, cashAmount };
+  const currentPatient = selectCurrentPatient(state);
+  const currentUser = selectCurrentUser(state);
+  const canConfirm = paymentValid || isComplete;
+
+  return { transaction, canConfirm, paymentAmount, currentUser, currentPatient };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -36,6 +43,7 @@ const PrescriptionConfirmationComponent = ({
   currentUser,
   currentPatient,
   paymentAmount,
+  canConfirm,
 }) => {
   const confirmPrescription = React.useCallback(
     () => UIDatabase.write(() => pay(currentUser, currentPatient, transaction, paymentAmount)),
@@ -48,7 +56,12 @@ const PrescriptionConfirmationComponent = ({
         <PrescriptionSummary transaction={transaction} />
         <PaymentSummary />
       </FlexRow>
-      <PageButton style={{ alignSelf: 'flex-end' }} text="Complete" onPress={confirmPrescription} />
+      <PageButton
+        style={{ alignSelf: 'flex-end' }}
+        isDisabled={!canConfirm}
+        text="Complete"
+        onPress={confirmPrescription}
+      />
     </FlexView>
   );
 };
@@ -58,6 +71,7 @@ PrescriptionConfirmationComponent.propTypes = {
   currentUser: PropTypes.object.isRequired,
   currentPatient: PropTypes.object.isRequired,
   paymentAmount: PropTypes.object.isRequired,
+  canConfirm: PropTypes.bool.isRequired,
 };
 
 export const PrescriptionConfirmation = connect(

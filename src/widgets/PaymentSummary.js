@@ -23,8 +23,9 @@ import {
 } from '../selectors/payment';
 
 const paymentState = state => {
-  const { payment } = state;
+  const { payment, wizard } = state;
 
+  const { isComplete } = wizard;
   const { paymentAmount, creditOverflow } = payment;
   const subtotal = selectPrescriptionSubTotal(state);
   const total = selectPrescriptionTotal(state);
@@ -37,6 +38,7 @@ const paymentState = state => {
     creditUsed,
     paymentAmount,
     creditOverflow,
+    isComplete,
   };
 };
 
@@ -55,6 +57,7 @@ const PaymentSummaryComponent = ({
   creditUsed,
   paymentAmount,
   creditOverflow,
+  isComplete,
 }) => (
   <ScrollView>
     <FlexView flex={1} style={localStyles.container}>
@@ -62,7 +65,11 @@ const PaymentSummaryComponent = ({
 
       <FlexView flex={1}>
         <FlexView flex={0.25}>
-          <CurrencyInputRow currencyAmount={paymentAmount} onChangeText={updatePayment} />
+          <CurrencyInputRow
+            isDisabled={isComplete}
+            currencyAmount={paymentAmount}
+            onChangeText={updatePayment}
+          />
         </FlexView>
 
         <FlexView flex={0.25}>
@@ -89,6 +96,7 @@ PaymentSummaryComponent.propTypes = {
   creditUsed: PropTypes.object.isRequired,
   paymentAmount: PropTypes.object.isRequired,
   creditOverflow: PropTypes.bool.isRequired,
+  isComplete: PropTypes.bool.isRequired,
 };
 
 const localStyles = {
