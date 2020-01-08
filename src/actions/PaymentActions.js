@@ -46,6 +46,7 @@ const choosePaymentType = paymentType => (dispatch, getState) => {
 
   dispatch({ type: PAYMENT_ACTIONS.CHOOSE_PAYMENT_TYPE, payload: { paymentType } });
 };
+
 const validatePayment = amount => (dispatch, getState) => {
   const { payment, patient } = getState();
 
