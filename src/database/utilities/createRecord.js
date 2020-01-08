@@ -408,8 +408,8 @@ const createUpgradeMessage = (database, fromVersion, toVersion) => {
   const syncSiteId = database.getSetting(SETTINGS_KEYS.SYNC_SITE_ID);
 
   const body = {
-    fromVersion: String(fromVersion),
-    toVersion: String(toVersion),
+    fromVersion: Number(fromVersion),
+    toVersion: Number(toVersion),
     syncSiteId: Number(syncSiteId),
   };
 

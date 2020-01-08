@@ -9,6 +9,7 @@ import { compareVersions } from './utilities';
 import { SETTINGS_KEYS } from './settings';
 import packageJson from '../package.json';
 import { createRecord } from './database/utilities';
+import { versionToInteger } from './utilities/compareVersions';
 
 const APP_VERSION_KEY = 'AppVersion';
 
@@ -48,7 +49,12 @@ export const migrateDataToVersion = async (database, settings) => {
       }
     }
     database.write(() => {
-      createRecord(database, 'UpgradeMessage', fromVersion, toVersion);
+      createRecord(
+        database,
+        'UpgradeMessage',
+        versionToInteger(fromVersion),
+        versionToInteger(toVersion)
+      );
     });
   }
   // Record the new app version.
