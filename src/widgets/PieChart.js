@@ -10,8 +10,8 @@ import { VictoryLabel, VictoryPie } from 'victory-native';
 
 import { APP_FONT_FAMILY, GREY } from '../globalStyles';
 
-export const PieChart = ({ width, height, json }) => {
-  const { values } = json;
+export const PieChart = ({ width, height, data }) => {
+  const { values } = data;
   const {
     padVertical,
     padHorizontal,
@@ -48,7 +48,7 @@ export const PieChart = ({ width, height, json }) => {
 PieChart.propTypes = {
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
-  json: PropTypes.array.isRequired,
+  data: PropTypes.array.isRequired,
 };
 
 const victoryStyles = {

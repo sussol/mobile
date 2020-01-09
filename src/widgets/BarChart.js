@@ -11,8 +11,8 @@ import { VictoryChart, VictoryBar, VictoryAxis } from 'victory-native';
 
 import { APP_FONT_FAMILY, GREY, LIGHT_GREY, DARK_GREY, SUSSOL_ORANGE } from '../globalStyles';
 
-export const BarChart = ({ json, width, height }) => {
-  const { values } = json;
+export const BarChart = ({ data, width, height }) => {
+  const { values } = data;
   const renderYAxis = () => <VictoryAxis dependentAxis style={victoryStyles.axisY} />;
   const renderXAxis = () => {
     const tickTruncate = label => (label.length > 11 ? `${label.slice(0, 11)}...` : label);
@@ -43,7 +43,7 @@ export const BarChart = ({ json, width, height }) => {
 BarChart.propTypes = {
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
-  json: PropTypes.array.isRequired,
+  data: PropTypes.array.isRequired,
 };
 
 const victoryStyles = {
