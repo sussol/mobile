@@ -12,6 +12,7 @@ import { VictoryChart, VictoryBar, VictoryAxis } from 'victory-native';
 import { APP_FONT_FAMILY, GREY, LIGHT_GREY, DARK_GREY, SUSSOL_ORANGE } from '../globalStyles';
 
 export const BarChart = ({ data, width, height }) => {
+  const { values } = data;
   const renderYAxis = () => <VictoryAxis dependentAxis style={victoryStyles.axisY} />;
   const renderXAxis = () => {
     const tickTruncate = label => (label.length > 11 ? `${label.slice(0, 11)}...` : label);
@@ -32,7 +33,7 @@ export const BarChart = ({ data, width, height }) => {
 
   return (
     <VictoryChart width={width} height={height} padding={padding} domainPadding={domainPadding}>
-      <VictoryBar style={style} data={data} />
+      <VictoryBar style={style} data={values} />
       {renderXAxis()}
       {renderYAxis()}
     </VictoryChart>
