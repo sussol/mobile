@@ -21,6 +21,11 @@ export const refreshRow = (rowKey, route) => ({
   payload: { rowKey, route },
 });
 
+export const refreshIndicatorRow = route => ({
+  type: 'refreshIndicatorRow',
+  payload: { route },
+});
+
 /**
  * Edits a rows underlying `batch` field.
  *
