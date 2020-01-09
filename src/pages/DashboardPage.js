@@ -6,31 +6,45 @@
  */
 
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+
+import { generalStrings } from '../localization';
 
 import { ReportSideBar } from '../widgets/ReportSideBar';
 import { ReportChart } from '../widgets/ReportChart';
 
 import globalStyles from '../globalStyles';
+
 import { DashboardActions } from '../actions/index';
 
 const DashboardPageComponent = ({ reports, currentReport, switchReport }) => {
   const { pageContentContainer, container, pageTopSectionContainer } = globalStyles;
   const pageContainer = StyleSheet.flatten([pageTopSectionContainer, { paddingHorizontal: 0 }]);
 
+  if (reports.length) {
+    return (
+      <View style={pageContentContainer}>
+        <View style={container}>
+          <View style={pageContainer}>
+            <ReportSideBar
+              reports={reports}
+              onPressItem={switchReport}
+              currentReport={currentReport}
+              dimensions={localStyles.sidebarDimensions}
+            />
+            <ReportChart report={currentReport} />
+          </View>
+        </View>
+      </View>
+    );
+  }
   return (
     <View style={pageContentContainer}>
       <View style={container}>
-        <View style={pageContainer}>
-          <ReportSideBar
-            reports={reports}
-            onPressItem={switchReport}
-            currentReport={currentReport}
-            dimensions={localStyles.sidebarDimensions}
-          />
-          <ReportChart report={currentReport} />
+        <View style={localStyles.centeredText}>
+          <Text style={localStyles.noReportsText}>{generalStrings.no_reports}</Text>
         </View>
       </View>
     </View>
@@ -41,6 +55,17 @@ const localStyles = StyleSheet.create({
   sidebarDimensions: {
     width: '25%',
     height: '100%',
+  },
+  centeredText: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noReportsText: {
+    fontFamily: globalStyles.APP_FONT_FAMILY,
+    color: globalStyles.GREY,
+    fontWeight: 'bold',
+    fontSize: 20,
   },
 });
 
