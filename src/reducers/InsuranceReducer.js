@@ -26,10 +26,13 @@ export const InsuranceReducer = (state = initialState(), action) => {
     }
 
     case INSURANCE_ACTIONS.EDIT: {
-      const { payload } = action;
-      const { insurancePolicy } = payload;
+      const { selectedInsurancePolicy } = state;
 
-      return { ...state, isEditingInsurancePolicy: true, currentInsurancePolicy: insurancePolicy };
+      return {
+        ...state,
+        isEditingInsurancePolicy: true,
+        currentInsurancePolicy: selectedInsurancePolicy,
+      };
     }
 
     case INSURANCE_ACTIONS.SAVE: {
@@ -45,13 +48,6 @@ export const InsuranceReducer = (state = initialState(), action) => {
       };
     }
 
-    case INSURANCE_ACTIONS.SET: {
-      const { payload } = action;
-      const { insurancePolicy } = payload;
-
-      return { ...state, currentInsurancePolicy: insurancePolicy };
-    }
-
     case INSURANCE_ACTIONS.CREATE: {
       return { ...state, isCreatingInsurancePolicy: true, currentInsurancePolicy: null };
     }
@@ -59,9 +55,6 @@ export const InsuranceReducer = (state = initialState(), action) => {
     case INSURANCE_ACTIONS.SELECT: {
       const { payload } = action;
       const { insurancePolicy } = payload;
-      console.log('#################################');
-      console.log(action);
-      console.log('#################################');
 
       return { ...state, selectedInsurancePolicy: insurancePolicy };
     }

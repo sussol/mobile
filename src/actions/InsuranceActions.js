@@ -17,16 +17,11 @@ export const INSURANCE_ACTIONS = {
 };
 
 const cancel = () => ({ type: INSURANCE_ACTIONS.CLOSE });
-
+const edit = () => ({ type: INSURANCE_ACTIONS.EDIT });
 const createNew = () => ({ type: INSURANCE_ACTIONS.CREATE });
 
 const selectPolicy = insurancePolicy => ({
   type: INSURANCE_ACTIONS.SELECT,
-  payload: { insurancePolicy },
-});
-
-const edit = insurancePolicy => ({
-  type: INSURANCE_ACTIONS.EDIT,
   payload: { insurancePolicy },
 });
 
