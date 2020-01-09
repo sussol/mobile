@@ -3,25 +3,37 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+// eslint-disable-next-line import/no-cycle
+import { COLUMN_TYPES } from '../pages/dataTableUtilities';
 import { UIDatabase, createRecord } from '../database';
 
-const COLUMN_DEFAULTS = {
-  type: 'string',
+const COLUMN_INDICATOR = {
   width: 1,
   sortable: false,
+};
+
+const COLUMN_INDICATOR_IMMUTABLE = {
+  type: COLUMN_TYPES.STRING,
   editable: false,
+  ...COLUMN_INDICATOR,
+};
+
+const COLUMN_INDICATOR_MUTABLE = {
+  type: COLUMN_TYPES.EDITABLE_STRING,
+  editable: true,
+  ...COLUMN_INDICATOR,
 };
 
 const COLUMNS = {
   DESCRIPTION: {
+    ...COLUMN_INDICATOR_IMMUTABLE,
     title: 'Description',
     key: 'description',
-    ...COLUMN_DEFAULTS,
   },
   CODE: {
+    ...COLUMN_INDICATOR_IMMUTABLE,
     title: 'Code',
     key: 'code',
-    ...COLUMN_DEFAULTS,
   },
 };
 
