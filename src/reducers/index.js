@@ -7,6 +7,7 @@ import { combineReducers } from 'redux';
 
 import { FinaliseReducer } from './FinaliseReducer';
 import { FormReducer } from './FormReducer';
+import { InsuranceReducer } from './InsuranceReducer';
 import { ModulesReducer } from './ModulesReducer';
 import { PagesReducer } from './PagesReducer';
 import { PatientReducer } from './PatientReducer';
@@ -31,4 +32,5 @@ export default combineReducers({
   finalise: FinaliseReducer,
   wizard: WizardReducer,
   payment: PaymentReducer,
+  insurance: InsuranceReducer,
 });
