@@ -469,6 +469,7 @@ Transaction.schema = {
     total: { type: 'float', optional: true },
     outstanding: { type: 'float', optional: true },
     insurancePolicy: { type: 'InsurancePolicy', optional: true },
+    option: { type: 'Options', optional: true },
   },
 };
 
