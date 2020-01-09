@@ -10,6 +10,8 @@ import { View, StyleSheet, Text } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import { generalStrings } from '../localization';
+
 import { ReportSideBar } from '../widgets/ReportSideBar';
 import { ReportChart } from '../widgets/ReportChart';
 
@@ -42,7 +44,7 @@ const DashboardPageComponent = ({ reports, currentReport, switchReport }) => {
     <View style={pageContentContainer}>
       <View style={container}>
         <View style={localStyles.centeredText}>
-          <Text style={localStyles.noReportsText}>No Reports to show</Text>
+          <Text style={localStyles.noReportsText}>{generalStrings.no_reports}</Text>
         </View>
       </View>
     </View>
