@@ -504,7 +504,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       try {
         const parsedData = JSON.parse(data);
         const shouldSetData = checkIsObject(parsedData);
-        internalRecord = { id, title, type, _data: shouldSetData ? data : null };
+        internalRecord = { id, title, type, _data: shouldSetData ? data.data : null };
         database.update(recordType, internalRecord);
       } catch (error) {
         // Throw to parent, for now
