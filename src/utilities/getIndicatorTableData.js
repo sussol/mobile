@@ -38,6 +38,10 @@ export const initialiseRowColumnValue = (row, column, period) => {
   });
 };
 
+
+const getIndicatorRows = (indicator, code) =>
+  indicator?.rows?.filter(({ id: rowCode }) => rowCode === code);
+
 /**
  * Get value for indicator row, column tuple.
  *
@@ -116,4 +120,6 @@ const getIndicatorTableData = (indicator, period) => {
   return { columns, rows };
 };
 
-export { getIndicatorTableData };
+export {
+  getIndicatorRows,
+};
