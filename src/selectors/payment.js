@@ -14,7 +14,6 @@ export const selectPrescriptionSubTotal = ({ payment }) => {
 
 export const selectPrescriptionTotal = ({ payment }) => {
   const { policy } = payment;
-  console.log(!!policy);
   const subtotal = selectPrescriptionSubTotal({ payment });
 
   return currency(subtotal * (policy ? (policy.discountRate || 100) / 100 : 1));
