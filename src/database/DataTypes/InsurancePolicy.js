@@ -15,6 +15,7 @@ InsurancePolicy.schema = {
     policyNumberPerson: 'string',
     type: 'string',
     discountRate: 'float',
+    isActive: { type: 'bool', default: true },
     expiryDate: 'date',
     enteredBy: { type: 'User', optional: true },
     patient: { type: 'Name', optional: false },

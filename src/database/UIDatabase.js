@@ -31,6 +31,7 @@ const translateToCoreDatabaseType = type => {
       return 'Requisition';
     case 'NegativeAdjustmentReason':
     case 'PositiveAdjustmentReason':
+    case 'PaymentType':
       return 'Options';
     case 'Policy':
       return 'InsurancePolicy';
@@ -168,6 +169,8 @@ class UIDatabase {
         return results.filtered('type == $0 && isActive == true', 'negativeInventoryAdjustment');
       case 'PositiveAdjustmentReason':
         return results.filtered('type == $0 && isActive == true', 'positiveInventoryAdjustment');
+      case 'PaymentType':
+        return results.filtered('type == $0 && isActive == true', 'transactionPaymentType');
       case 'Prescription':
         return results.filtered(
           'type == $0 AND mode == $1 AND (linkedRequisition == $2 OR status == $3)',

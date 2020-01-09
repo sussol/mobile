@@ -222,6 +222,21 @@ const generateSyncData = (settings, recordType, record) => {
         type: record.type,
       };
     }
+    case 'InsurancePolicy': {
+      return {
+        ID: record.id,
+        insuranceProviderID: record.insuranceProvider.id,
+        nameID: record.patient.id,
+        isActive: record.isActive,
+        policyNumberFamily: record.policyNumberFamily,
+        policyNumberPerson: record.policyNumberPerson,
+        type: record.type,
+        discountRate: String(record.discountRate),
+        expiryDate: getDateString(record.expiryDate),
+        policyNumberFull: `${record.policyNumberFamily}-${record.policyNumberPerson}`,
+        enteredByID: record.enteredBy?.id,
+      };
+    }
     default:
       throw new Error('Sync out record type not supported.');
   }

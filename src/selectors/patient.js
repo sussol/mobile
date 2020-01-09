@@ -36,3 +36,9 @@ export const selectPatientName = ({ patient }) => {
 };
 
 export const selectAvailableCredit = ({ patient }) => patient?.currentPatient?.availableCredit;
+
+export const selectPatientInsurancePolicies = ({ patient }) => {
+  const { currentPatient } = patient;
+  const { policies } = currentPatient;
+  return policies;
+};

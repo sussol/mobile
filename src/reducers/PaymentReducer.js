@@ -14,8 +14,9 @@ const initialState = () => ({
   transaction: null,
   patient: null,
   paymentAmount: currency(0),
-  policy: null,
+  insurancePolicy: null,
   paymentValid: true,
+  paymentType: null,
 });
 
 export const PaymentReducer = (state = initialState(), action) => {
@@ -39,9 +40,9 @@ export const PaymentReducer = (state = initialState(), action) => {
 
     case PAYMENT_ACTIONS.CHOOSE_POLICY: {
       const { payload } = action;
-      const { policy } = payload;
+      const { insurancePolicy } = payload;
 
-      return { ...state, policy };
+      return { ...state, insurancePolicy };
     }
 
     case PAYMENT_ACTIONS.CHOOSE_PAYMENT_TYPE: {

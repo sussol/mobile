@@ -61,6 +61,8 @@ export const RECORD_TYPES = new SyncTranslator({
   Prescriber: 'clinician',
   ItemDirection: 'item_direction',
   Abbreviation: 'abbreviation',
+  InsuranceProvider: 'insuranceProvider',
+  InsurancePolicy: 'nameInsuranceJoin',
 });
 
 export const REQUISITION_TYPES = new SyncTranslator({
