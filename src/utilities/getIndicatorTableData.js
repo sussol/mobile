@@ -49,13 +49,12 @@ const getIndicatorRows = (indicator, code) =>
  *
  * @param {IndicatorAttribute} row
  * @param {IndicatorAttribute} column
+ * @param {Period} period
  * @returns {IndicatorValue}
  */
-export const getIndicatorRowColumnValue = (row, column, period) => {
-  const columnValues = column?.values?.filter(
-    ({ period: valuePeriod }) => valuePeriod.ID === period.ID
-  );
-  const rowValues = row?.values?.filter(({ period: valuePeriod }) => valuePeriod.ID === period.ID);
+const getIndicatorRowColumnValue = (row, column, period) => {
+  const columnValues = column.values.filtered('period == $0', period);
+  const rowValues = row.values.filter(({ period: valuePeriod }) => valuePeriod.ID === period.ID);
   const columnValueIds = columnValues?.map(({ id }) => id);
   const rowValueIds = rowValues?.map(({ id }) => id);
   const [rowColumnValueId] = columnValueIds?.filter(id => rowValueIds.includes(id)) || [];
@@ -81,11 +80,10 @@ const getIndicatorTableColumns = (indicator, period) => {
   const descriptionColumn = COLUMNS.DESCRIPTION;
   const codeColumn = COLUMNS.CODE;
   // eslint-disable-next-line no-unused-vars
-  const valueColumns = indicator.columns.map(({ description, code, valueType }) => ({
+  const valueColumns = indicator.columns.map(({ description, code }) => ({
+    ...COLUMN_INDICATOR_MUTABLE,
     title: description,
     key: description,
-    type: valueType,
-    ...COLUMN_DEFAULTS,
   }));
 
   return [descriptionColumn, codeColumn, ...valueColumns];
