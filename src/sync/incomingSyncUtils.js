@@ -252,7 +252,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       canBeBlank: ['units', 'comment', 'order_number'],
     },
     Report: {
-      cannotBeBlank: ['ID', 'title', 'type', 'data'],
+      cannotBeBlank: ['ID', 'title', 'type', 'json'],
       canBeBlank: [],
     },
   };
@@ -500,11 +500,11 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'Report': {
-      const { ID: id, title, type, data } = record;
+      const { ID: id, title, type, json } = record;
       try {
-        const parsedData = JSON.parse(data);
+        const parsedData = JSON.parse(json);
         const shouldSetData = checkIsObject(parsedData);
-        internalRecord = { id, title, type, _data: shouldSetData ? data.data : null };
+        internalRecord = { id, title, type, _data: shouldSetData ? json.data : null };
         database.update(recordType, internalRecord);
       } catch (error) {
         // Throw to parent, for now
