@@ -23,20 +23,22 @@ import {
 } from '../selectors/payment';
 import { DropDown } from './DropDown';
 import { selectPatientInsurancePolicies } from '../selectors/patient';
+import { UIDatabase } from '../database/index';
 
 const paymentState = state => {
   const { payment, wizard } = state;
 
   const { isComplete } = wizard;
-  const { policy, paymentAmount, creditOverflow } = payment;
+  const { insurancePolicy, paymentAmount, creditOverflow, paymentType } = payment;
   const subtotal = selectPrescriptionSubTotal(state);
   const total = selectPrescriptionTotal(state);
-
   const creditUsed = selectCreditBeingUsed(state);
+
   const insurancePolicies = selectPatientInsurancePolicies(state);
+  const paymentTypes = UIDatabase.objects('PaymentType');
 
   return {
-    policy,
+    insurancePolicy,
     subtotal,
     total,
     creditUsed,
@@ -44,6 +46,8 @@ const paymentState = state => {
     creditOverflow,
     isComplete,
     insurancePolicies,
+    paymentTypes,
+    paymentType,
   };
 };
 
@@ -65,7 +69,10 @@ const PaymentSummaryComponent = ({
   isComplete,
   insurancePolicies,
   choosePolicy,
-  policy,
+  insurancePolicy,
+  paymentTypes,
+  choosePaymentType,
+  paymentType,
 }) => {
   const policyNumbers = React.useMemo(() => insurancePolicies.map(p => p.policyNumber), [
     insurancePolicies,
@@ -73,6 +80,14 @@ const PaymentSummaryComponent = ({
   const onSelectPolicy = React.useCallback((_, index) => choosePolicy(insurancePolicies[index]), [
     choosePolicy,
   ]);
+  const paymentTypeTitles = React.useMemo(() => paymentTypes.map(({ title }) => title), [
+    paymentTypes,
+  ]);
+  const onSelectPaymentType = React.useCallback(
+    (_, index) => choosePaymentType(paymentTypes[index]),
+    [choosePaymentType]
+  );
+
   return (
     <ScrollView>
       <FlexView flex={1} style={localStyles.container}>
@@ -80,8 +95,15 @@ const PaymentSummaryComponent = ({
 
         <DropDown
           values={policyNumbers}
-          selectedValue={policy?.policyNumber}
+          selectedValue={insurancePolicy?.policyNumber}
           onValueChange={onSelectPolicy}
+          style={localStyles.dropdown}
+        />
+
+        <DropDown
+          values={paymentTypeTitles}
+          selectedValue={paymentType?.title}
+          onValueChange={onSelectPaymentType}
           style={localStyles.dropdown}
         />
 
@@ -127,7 +149,10 @@ PaymentSummaryComponent.propTypes = {
   isComplete: PropTypes.bool.isRequired,
   insurancePolicies: PropTypes.object.isRequired,
   choosePolicy: PropTypes.func.isRequired,
-  policy: PropTypes.object.isRequired,
+  insurancePolicy: PropTypes.object.isRequired,
+  paymentTypes: PropTypes.object.isRequired,
+  choosePaymentType: PropTypes.func.isRequired,
+  paymentType: PropTypes.object.isRequired,
 };
 
 const localStyles = {
