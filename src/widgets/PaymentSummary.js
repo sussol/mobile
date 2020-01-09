@@ -24,12 +24,17 @@ import {
 import { DropDown } from './DropDown';
 import { selectPatientInsurancePolicies } from '../selectors/patient';
 import { UIDatabase } from '../database/index';
+import { FlexRow } from './FlexRow';
+import { CircleButton } from './CircleButton';
+import { PencilIcon, AddIcon } from './icons';
+import { InsuranceActions } from '../actions/InsuranceActions';
 
 const paymentState = state => {
-  const { payment, wizard } = state;
+  const { insurance, payment, wizard } = state;
 
   const { isComplete } = wizard;
-  const { insurancePolicy, paymentAmount, creditOverflow, paymentType } = payment;
+  const { paymentAmount, creditOverflow, paymentType } = payment;
+  const { selectedInsurancePolicy, currentInsurancePolicy } = insurance;
   const subtotal = selectPrescriptionSubTotal(state);
   const total = selectPrescriptionTotal(state);
   const creditUsed = selectCreditBeingUsed(state);
@@ -38,7 +43,7 @@ const paymentState = state => {
   const paymentTypes = UIDatabase.objects('PaymentType');
 
   return {
-    insurancePolicy,
+    currentInsurancePolicy,
     subtotal,
     total,
     creditUsed,
@@ -48,15 +53,19 @@ const paymentState = state => {
     insurancePolicies,
     paymentTypes,
     paymentType,
+    selectedInsurancePolicy,
   };
 };
 
 const paymentDispatch = dispatch => {
-  const choosePolicy = policy => dispatch(PaymentActions.choosePolicy(policy));
+  const choosePolicy = policy => dispatch(InsuranceActions.select(policy));
   const choosePaymentType = paymentType => dispatch(PaymentActions.choosePaymentType(paymentType));
   const updatePayment = amount => dispatch(PaymentActions.validatePayment(amount));
 
-  return { choosePolicy, choosePaymentType, updatePayment };
+  const editPolicy = () => dispatch(InsuranceActions.edit());
+  const newPolicy = () => dispatch(InsuranceActions.createNew());
+
+  return { choosePolicy, choosePaymentType, updatePayment, editPolicy, newPolicy };
 };
 
 const PaymentSummaryComponent = ({
@@ -69,17 +78,23 @@ const PaymentSummaryComponent = ({
   isComplete,
   insurancePolicies,
   choosePolicy,
-  insurancePolicy,
   paymentTypes,
   choosePaymentType,
   paymentType,
+  selectedInsurancePolicy,
+  editPolicy,
+  newPolicy,
 }) => {
-  const policyNumbers = React.useMemo(() => insurancePolicies.map(p => p.policyNumber), [
-    insurancePolicies,
-  ]);
-  const onSelectPolicy = React.useCallback((_, index) => choosePolicy(insurancePolicies[index]), [
-    choosePolicy,
-  ]);
+  const policyNumbers = React.useMemo(
+    () => ['Select a policy..', ...insurancePolicies.map(p => p.policyNumber)],
+    [insurancePolicies]
+  );
+  const onSelectPolicy = React.useCallback(
+    (_, index) => {
+      choosePolicy(insurancePolicies[index - 1]);
+    },
+    [choosePolicy, insurancePolicies]
+  );
   const paymentTypeTitles = React.useMemo(() => paymentTypes.map(({ title }) => title), [
     paymentTypes,
   ]);
@@ -92,13 +107,18 @@ const PaymentSummaryComponent = ({
     <ScrollView>
       <FlexView flex={1} style={localStyles.container}>
         <Text style={localStyles.title}>Payment</Text>
-
-        <DropDown
-          values={policyNumbers}
-          selectedValue={insurancePolicy?.policyNumber}
-          onValueChange={onSelectPolicy}
-          style={localStyles.dropdown}
-        />
+        <FlexRow flex={1}>
+          <DropDown
+            values={policyNumbers}
+            selectedValue={selectedInsurancePolicy?.policyNumber}
+            onValueChange={onSelectPolicy}
+            style={localStyles.dropdown}
+          />
+          {!!selectedInsurancePolicy && (
+            <CircleButton IconComponent={PencilIcon} onPress={editPolicy} />
+          )}
+          <CircleButton IconComponent={AddIcon} onPress={newPolicy} />
+        </FlexRow>
 
         <DropDown
           values={paymentTypeTitles}
@@ -149,7 +169,9 @@ PaymentSummaryComponent.propTypes = {
   isComplete: PropTypes.bool.isRequired,
   insurancePolicies: PropTypes.object.isRequired,
   choosePolicy: PropTypes.func.isRequired,
-  insurancePolicy: PropTypes.object.isRequired,
+  selectedInsurancePolicy: PropTypes.object.isRequired,
+  editPolicy: PropTypes.func.isRequired,
+  newPolicy: PropTypes.func.isRequired,
   paymentTypes: PropTypes.object.isRequired,
   choosePaymentType: PropTypes.func.isRequired,
   paymentType: PropTypes.object.isRequired,
