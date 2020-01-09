@@ -8,6 +8,12 @@ import { parsePositiveInteger, MODAL_KEYS } from '../../../utilities';
 import { ACTIONS } from './constants';
 import { openModal, closeModal } from './pageActions';
 import { pageStateSelector } from '../selectors';
+// eslint-disable-next-line import/no-cycle
+import {
+  getIndicatorRows,
+  getIndicatorColumns,
+  getIndicatorRowColumnValue,
+} from '../../../utilities/getIndicatorTableData';
 
 /**
  * Refreshes a row in the DataTable component.
@@ -45,6 +51,24 @@ export const editBatchName = (value, rowKey, objectType, route) => (dispatch, ge
 
     dispatch(refreshRow(rowKey, route));
   }
+};
+
+export const editIndicatorValue = (value, rowKey, columnKey, route) => (dispatch, getState) => {
+  const rowCode = rowKey;
+  const columnCode = columnKey;
+
+  const { selectedIndicator: indicator, pageObject } = pageStateSelector(getState());
+  const { period } = pageObject;
+
+  const [column] = getIndicatorColumns(indicator, columnCode);
+
+  const [row] = getIndicatorRows(indicator, rowCode);
+
+  const valueRecord = getIndicatorRowColumnValue(row, column, period);
+
+  UIDatabase.write(() => UIDatabase.update('IndicatorValue', { ...valueRecord, value }));
+
+  dispatch(refreshIndicatorRow(route));
 };
 
 /**
@@ -278,6 +302,7 @@ export const CellActionsLookup = {
   enforceReasonChoice,
   applyReason,
   editBatchName,
+  editIndicatorValue,
   editStocktakeBatchName,
   editCountedQuantityWithReason,
   editStocktakeBatchCountedQuantityWithReason,
