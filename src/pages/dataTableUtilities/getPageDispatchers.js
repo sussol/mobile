@@ -3,6 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+// eslint-disable-next-line import/no-cycle
 import { BasePageActions } from './actions/getPageActions';
 import { MODAL_KEYS } from '../../utilities/getModalTitle';
 import { debounce } from '../../utilities/underscoreMethods';
@@ -39,6 +40,9 @@ export const getPageDispatchers = (dispatch, props, dataType, route) => {
       300,
       true
     ),
+
+    onEditIndicatorValue: (value, rowKey, columnKey) =>
+      dispatch(BasePageActions.editIndicatorValue(value, rowKey, columnKey, route)),
 
     // Modals
     onOpenRegimenDataModal: () =>

@@ -78,6 +78,7 @@ const SupplierRequisition = ({
   onShowIndicators,
   onHideIndicators,
   onSelectIndicator,
+  onEditIndicatorValue,
   onShowOverStocked,
   onHideOverStocked,
   onEditMonth,
@@ -111,7 +112,8 @@ const SupplierRequisition = ({
         if (propName === 'onCheck') return onCheck;
         return onUncheck;
       default:
-        return null;
+        // TODO: check indicator keys.
+        return onEditIndicatorValue;
     }
   };
 
@@ -407,6 +409,7 @@ SupplierRequisition.propTypes = {
   onShowOverStocked: PropTypes.func.isRequired,
   onHideOverStocked: PropTypes.func.isRequired,
   onSelectIndicator: PropTypes.func.isRequired,
+  onEditIndicatorValue: PropTypes.func.isRequired,
   onEditMonth: PropTypes.func.isRequired,
   onEditRequiredQuantity: PropTypes.func.isRequired,
   onAddRequisitionItem: PropTypes.func.isRequired,
