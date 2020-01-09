@@ -32,7 +32,7 @@ const COLUMNS = {
  * @param {IndicatorAttribute} column
  * @param {Period} period
  */
-export const initialiseRowColumnValue = (row, column, period) => {
+const initialiseRowColumnValue = (row, column, period) => {
   UIDatabase.write(() => {
     createRecord(UIDatabase, 'IndicatorValue', row, column, period);
   });
@@ -123,4 +123,7 @@ const getIndicatorTableData = (indicator, period) => {
 export {
   getIndicatorRows,
   getIndicatorColumns,
+  getIndicatorTableRows,
+  getIndicatorRowColumnValue,
+  getIndicatorTableData,
 };
