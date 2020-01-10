@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -235,6 +236,17 @@ const generateSyncData = (settings, recordType, record) => {
         expiryDate: getDateString(record.expiryDate),
         policyNumberFull: `${record.policyNumberFamily}-${record.policyNumberPerson}`,
         enteredByID: record.enteredBy?.id,
+      };
+    }
+    case 'Message': {
+      return {
+        ID: record.id,
+        fromStoreID: settings.get(THIS_STORE_ID),
+        body: record._body,
+        createdDate: getDateString(record.createdDate),
+        createdTime: getTimeString(record.createdTime),
+        status: record.status,
+        type: record.type,
       };
     }
     default:

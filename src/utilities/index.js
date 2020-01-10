@@ -10,7 +10,7 @@ export {
 } from 'sussol-utilities';
 export { formatStatus } from './formatStatus';
 export { sortDataBy } from './sortDataBy';
-export { compareVersions } from './compareVersions';
+export { compareVersions, versionToInteger } from './compareVersions';
 export { createReducer, REHYDRATE } from './createReducer';
 export { getAllPeriodsForProgram, getAllPrograms } from './byProgram';
 export { requestPermission } from './requestPermission';

@@ -41,6 +41,7 @@ export const RECORD_TYPES = new SyncTranslator({
   MasterList: 'list_master',
   MasterListItem: 'list_master_line',
   MasterListNameJoin: 'list_master_name_join',
+  Message: 'message',
   Name: 'name',
   NameStoreJoin: 'name_store_join',
   NumberSequence: 'number',

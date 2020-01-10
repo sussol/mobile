@@ -21,6 +21,7 @@ export { ItemStoreJoin } from './ItemStoreJoin';
 export { MasterList } from './MasterList';
 export { MasterListItem } from './MasterListItem';
 export { MasterListNameJoin } from './MasterListNameJoin';
+export { Message } from './Message';
 export { Name } from './Name';
 export { NameStoreJoin } from './NameStoreJoin';
 export { NumberSequence } from './NumberSequence';
