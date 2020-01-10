@@ -4,6 +4,7 @@
  */
 
 import moment from 'moment';
+import { UIDatabase } from '../database/index';
 
 /**
  * File contains constants and config objects which declaritively define
@@ -37,6 +38,7 @@ const FORM_INPUT_KEYS = {
   REGISTRATION_CODE: 'registrationCode',
   POLICY_NUMBER_FAMILY: 'policyNumberFamily',
   POLICY_NUMBER_PERSON: 'policyNumberPerson',
+  POLICY_PROVIDER: 'insuranceProvider',
 };
 
 const FORM_INPUT_CONFIGS = {
@@ -136,6 +138,15 @@ const FORM_INPUT_CONFIGS = {
     isRequired: true,
     label: 'Family policy number:',
   },
+  [FORM_INPUT_KEYS.POLICY_PROVIDER]: {
+    type: 'dropdown',
+    initialValue: '',
+    key: 'insuranceProvider',
+    isRequired: true,
+    label: 'Policy provider:',
+    options: UIDatabase.objects('InsuranceProvider'),
+    optionKey: 'name',
+  },
 };
 
 const FORM_CONFIGS = {
@@ -162,6 +173,7 @@ const FORM_CONFIGS = {
   insurancePolicy: [
     FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.POLICY_NUMBER_PERSON],
     FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.POLICY_NUMBER_FAMILY],
+    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.POLICY_PROVIDER],
   ],
 };
 

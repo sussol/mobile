@@ -14,6 +14,7 @@ import { modalStrings } from '../localization/index';
 import { selectCanSaveForm, selectCompletedForm } from '../selectors/form';
 import { FormActions } from '../actions/FormActions';
 import { FormDateInput } from './FormDateInput';
+import { FormDropdown } from './FormInputs/FormDropdown';
 
 /**
  * Component which will manage and control a set of user inputs of a form.
@@ -59,7 +60,10 @@ const FormControlComponent = ({
 
   const formInputs = () =>
     inputConfig.map(
-      ({ type, key, isRequired, validator, initialValue, label, invalidMessage }, index) => {
+      (
+        { type, key, isRequired, validator, initialValue, label, invalidMessage, ...rest },
+        index
+      ) => {
         refs[index] = React.useRef();
         switch (type) {
           case 'text': {
@@ -89,6 +93,20 @@ const FormControlComponent = ({
                 onValidate={validator}
                 invalidMessage={invalidMessage}
                 onSubmit={nextFocus(index, key)}
+              />
+            );
+          }
+          case 'dropdown': {
+            const { options, optionKey } = rest;
+            return (
+              <FormDropdown
+                key={key}
+                isRequired={isRequired}
+                label={label}
+                value={completedForm?.[key]?.[optionKey]}
+                onValueChange={value => onUpdateForm(key, value)}
+                options={options}
+                optionKey={optionKey}
               />
             );
           }
