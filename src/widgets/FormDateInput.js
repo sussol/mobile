@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { Text, StyleSheet, TextInput } from 'react-native';
+import { StyleSheet, TextInput } from 'react-native';
 import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import PropTypes from 'prop-types';
@@ -13,10 +13,11 @@ import PropTypes from 'prop-types';
 import { FlexColumn } from './FlexColumn';
 import { FlexRow } from './FlexRow';
 
-import { APP_FONT_FAMILY, SUSSOL_ORANGE, DARKER_GREY, FINALISED_RED } from '../globalStyles';
+import { APP_FONT_FAMILY, SUSSOL_ORANGE, DARKER_GREY } from '../globalStyles';
 import { CalendarIcon } from './icons';
 import { CircleButton } from './CircleButton';
 import { FormLabel } from './FormInputs/FormLabel';
+import { FormInvalidMessage } from './FormInputs/FormInvalidMessage';
 
 export const FormDateInput = React.forwardRef(
   (
@@ -27,7 +28,6 @@ export const FormDateInput = React.forwardRef(
       onChangeDate,
       label,
       invalidMessage,
-      invalidMessageStyle,
       textInputStyle,
       placeholder,
       placeholderTextColor,
@@ -46,9 +46,6 @@ export const FormDateInput = React.forwardRef(
     });
 
     const { inputValue, isValid, pickerSeedValue, datePickerOpen } = inputState;
-
-    const InvalidMessageLabel = () =>
-      !isValid && <Text style={invalidMessageStyle}>{invalidMessage}</Text>;
 
     const onUpdate = (newValue, validity = true, pickerVisibility = false) => {
       const newState = {
@@ -114,7 +111,7 @@ export const FormDateInput = React.forwardRef(
               value={pickerSeedValue}
             />
           )}
-          <InvalidMessageLabel />
+          <FormInvalidMessage isValid={isValid} message={invalidMessage} />
         </FlexColumn>
       </FlexRow>
     );
@@ -124,7 +121,6 @@ export const FormDateInput = React.forwardRef(
 const localStyles = StyleSheet.create({
   labelStyle: { marginTop: 15, fontSize: 16, fontFamily: APP_FONT_FAMILY },
   isRequiredStyle: { fontSize: 12, color: SUSSOL_ORANGE, fontFamily: APP_FONT_FAMILY },
-  invalidMessageStyle: { color: FINALISED_RED, fontFamily: APP_FONT_FAMILY },
   textInputStyle: { flex: 1, fontFamily: APP_FONT_FAMILY },
 });
 
@@ -132,7 +128,6 @@ FormDateInput.defaultProps = {
   placeholder: '',
   placeholderTextColor: SUSSOL_ORANGE,
   underlineColorAndroid: DARKER_GREY,
-  invalidMessageStyle: localStyles.invalidMessageStyle,
   textInputStyle: localStyles.textInputStyle,
   isRequired: false,
   onValidate: null,
@@ -141,7 +136,6 @@ FormDateInput.defaultProps = {
 };
 
 FormDateInput.propTypes = {
-  invalidMessageStyle: PropTypes.object,
   textInputStyle: PropTypes.object,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
   isRequired: PropTypes.bool,

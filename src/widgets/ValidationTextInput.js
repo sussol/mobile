@@ -1,11 +1,12 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { View, TextInput, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 
 import { FormLabel } from './FormInputs/FormLabel';
+import { FormInvalidMessage } from './FormInputs/FormInvalidMessage';
 
-import { SUSSOL_ORANGE, APP_FONT_FAMILY, DARKER_GREY, FINALISED_RED } from '../globalStyles';
+import { SUSSOL_ORANGE, APP_FONT_FAMILY, DARKER_GREY } from '../globalStyles';
 
 /**
  * Uncontrolled wrapper component around a TextInput with validation
@@ -19,8 +20,6 @@ import { SUSSOL_ORANGE, APP_FONT_FAMILY, DARKER_GREY, FINALISED_RED } from '../g
  * @prop {Func}   onValidate            Function determining if the current input value is valid.
  * @prop {String} value                 The initial value of the input.
  * @prop {Object} labelStyle            Style of the label.
- * @prop {Object} isRequiredStyle       Style for the is required label.
- * @prop {Object} invalidMessageStyle   Style for the invalid message label.
  * @prop {Object} textInputStyle        Style of the underlying TextInput.
  */
 export const ValidationTextInput = React.forwardRef(
@@ -35,7 +34,6 @@ export const ValidationTextInput = React.forwardRef(
       onValidate,
       onChangeText,
       value,
-      invalidMessageStyle,
       textInputStyle,
       onSubmit,
     },
@@ -47,9 +45,6 @@ export const ValidationTextInput = React.forwardRef(
     });
     const { inputValue, isValid } = inputState;
     const { flexRow, flexColumn } = localStyles;
-
-    const InvalidMessageLabel = () =>
-      !isValid && <Text style={invalidMessageStyle}>{invalidMessage}</Text>;
 
     // On checking the validity of the input, if it has changed, trigger the callback
     // to notify the parent.
@@ -95,7 +90,7 @@ export const ValidationTextInput = React.forwardRef(
               onChangeText={onChangeTextCallback}
               onSubmitEditing={onSubmitEditing}
             />
-            <InvalidMessageLabel />
+            <FormInvalidMessage message={invalidMessage} isValid={isValid} />
           </View>
         </View>
       </View>
@@ -106,7 +101,6 @@ export const ValidationTextInput = React.forwardRef(
 const localStyles = StyleSheet.create({
   flexRow: { flex: 1, flexDirection: 'row' },
   flexColumn: { flex: 1, flexDirection: 'column' },
-  invalidMessageStyle: { color: FINALISED_RED, fontFamily: APP_FONT_FAMILY },
   textInputStyle: { flex: 1, fontFamily: APP_FONT_FAMILY },
 });
 
@@ -117,7 +111,6 @@ ValidationTextInput.defaultProps = {
   value: '',
   isRequired: false,
   invalidMessage: '',
-  invalidMessageStyle: localStyles.invalidMessageStyle,
   textInputStyle: localStyles.textInputStyle,
   onValidate: null,
   onSubmit: null,
@@ -133,7 +126,6 @@ ValidationTextInput.propTypes = {
   isRequired: PropTypes.bool,
   label: PropTypes.string.isRequired,
   invalidMessage: PropTypes.string,
-  invalidMessageStyle: PropTypes.object,
   textInputStyle: PropTypes.object,
   onSubmit: PropTypes.func,
 };
