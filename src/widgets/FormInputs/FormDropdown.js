@@ -12,13 +12,13 @@ import { DropDown } from '../DropDown';
 import { FormLabel } from './FormLabel';
 import { FlexColumn } from '../FlexColumn';
 
-export const FormDropdown = ({ label, onValueChange, options, optionKey, value }) => {
+export const FormDropdown = ({ isRequired, label, onValueChange, options, optionKey, value }) => {
   const valueStrings = options.map(({ [optionKey]: valueString }) => valueString);
   const onValueChangeCallback = (_, index) => onValueChange(options[index]);
 
   return (
     <FlexColumn flex={1}>
-      <FormLabel value={label} />
+      <FormLabel value={label} isRequired={isRequired} />
       <DropDown
         style={{ width: null, flex: 1 }}
         values={valueStrings}
@@ -35,4 +35,5 @@ FormDropdown.propTypes = {
   optionKey: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
+  isRequired: PropTypes.bool.isRequired,
 };
