@@ -16,6 +16,7 @@ import { FlexRow } from './FlexRow';
 import { APP_FONT_FAMILY, SUSSOL_ORANGE, DARKER_GREY, FINALISED_RED } from '../globalStyles';
 import { CalendarIcon } from './icons';
 import { CircleButton } from './CircleButton';
+import { FormLabel } from './FormInputs/FormLabel';
 
 export const FormDateInput = React.forwardRef(
   (
@@ -27,8 +28,6 @@ export const FormDateInput = React.forwardRef(
       label,
       invalidMessage,
       invalidMessageStyle,
-      isRequiredStyle,
-      labelStyle,
       textInputStyle,
       placeholder,
       placeholderTextColor,
@@ -47,9 +46,6 @@ export const FormDateInput = React.forwardRef(
     });
 
     const { inputValue, isValid, pickerSeedValue, datePickerOpen } = inputState;
-
-    const IsRequiredLabel = () =>
-      (isRequired && <Text style={isRequiredStyle}>Is Required</Text>) || null;
 
     const InvalidMessageLabel = () =>
       !isValid && <Text style={invalidMessageStyle}>{invalidMessage}</Text>;
@@ -91,10 +87,7 @@ export const FormDateInput = React.forwardRef(
     return (
       <FlexRow flex={1}>
         <FlexColumn flex={1}>
-          <FlexRow flex={1}>
-            <Text style={labelStyle}>{label}</Text>
-            <IsRequiredLabel />
-          </FlexRow>
+          <FormLabel value={label} isRequired={isRequired} />
           <FlexRow flex={1}>
             <TextInput
               ref={ref}
@@ -140,8 +133,6 @@ FormDateInput.defaultProps = {
   placeholderTextColor: SUSSOL_ORANGE,
   underlineColorAndroid: DARKER_GREY,
   invalidMessageStyle: localStyles.invalidMessageStyle,
-  isRequiredStyle: localStyles.isRequiredStyle,
-  labelStyle: localStyles.labelStyle,
   textInputStyle: localStyles.textInputStyle,
   isRequired: false,
   onValidate: null,
@@ -151,8 +142,6 @@ FormDateInput.defaultProps = {
 
 FormDateInput.propTypes = {
   invalidMessageStyle: PropTypes.object,
-  isRequiredStyle: PropTypes.object,
-  labelStyle: PropTypes.object,
   textInputStyle: PropTypes.object,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
   isRequired: PropTypes.bool,

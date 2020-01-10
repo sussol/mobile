@@ -2,9 +2,10 @@
 import React from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
-import { validationStrings } from '../localization';
 
-import { SUSSOL_ORANGE, APP_FONT_FAMILY, DARKER_GREY, FINALISED_RED } from '../globalStyles/index';
+import { FormLabel } from './FormInputs/FormLabel';
+
+import { SUSSOL_ORANGE, APP_FONT_FAMILY, DARKER_GREY, FINALISED_RED } from '../globalStyles';
 
 /**
  * Uncontrolled wrapper component around a TextInput with validation
@@ -34,8 +35,6 @@ export const ValidationTextInput = React.forwardRef(
       onValidate,
       onChangeText,
       value,
-      labelStyle,
-      isRequiredStyle,
       invalidMessageStyle,
       textInputStyle,
       onSubmit,
@@ -49,8 +48,6 @@ export const ValidationTextInput = React.forwardRef(
     const { inputValue, isValid } = inputState;
     const { flexRow, flexColumn } = localStyles;
 
-    const IsRequiredLabel = () =>
-      isRequired && <Text style={isRequiredStyle}>{validationStrings.isRequired}</Text>;
     const InvalidMessageLabel = () =>
       !isValid && <Text style={invalidMessageStyle}>{invalidMessage}</Text>;
 
@@ -83,10 +80,7 @@ export const ValidationTextInput = React.forwardRef(
       <View style={flexColumn}>
         <View style={flexRow}>
           <View style={flexColumn}>
-            <View style={{ flexRow }}>
-              <Text style={labelStyle}>{label}</Text>
-              <IsRequiredLabel />
-            </View>
+            <FormLabel value={label} isRequired={isRequired} />
             <TextInput
               ref={ref}
               style={textInputStyle}
@@ -112,8 +106,6 @@ export const ValidationTextInput = React.forwardRef(
 const localStyles = StyleSheet.create({
   flexRow: { flex: 1, flexDirection: 'row' },
   flexColumn: { flex: 1, flexDirection: 'column' },
-  labelStyle: { marginTop: 15, fontSize: 16, fontFamily: APP_FONT_FAMILY },
-  isRequiredStyle: { fontSize: 12, color: SUSSOL_ORANGE, fontFamily: APP_FONT_FAMILY },
   invalidMessageStyle: { color: FINALISED_RED, fontFamily: APP_FONT_FAMILY },
   textInputStyle: { flex: 1, fontFamily: APP_FONT_FAMILY },
 });
@@ -125,8 +117,6 @@ ValidationTextInput.defaultProps = {
   value: '',
   isRequired: false,
   invalidMessage: '',
-  labelStyle: localStyles.labelStyle,
-  isRequiredStyle: localStyles.isRequiredStyle,
   invalidMessageStyle: localStyles.invalidMessageStyle,
   textInputStyle: localStyles.textInputStyle,
   onValidate: null,
@@ -143,8 +133,6 @@ ValidationTextInput.propTypes = {
   isRequired: PropTypes.bool,
   label: PropTypes.string.isRequired,
   invalidMessage: PropTypes.string,
-  labelStyle: PropTypes.object,
-  isRequiredStyle: PropTypes.object,
   invalidMessageStyle: PropTypes.object,
   textInputStyle: PropTypes.object,
   onSubmit: PropTypes.func,
