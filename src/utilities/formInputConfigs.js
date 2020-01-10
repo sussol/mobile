@@ -35,6 +35,8 @@ const FORM_INPUT_KEYS = {
   ADDRESS_ONE: 'addressOne',
   ADDRESS_TWO: 'addressTwo',
   REGISTRATION_CODE: 'registrationCode',
+  POLICY_NUMBER_FAMILY: 'policyNumberFamily',
+  POLICY_NUMBER_PERSON: 'policyNumberPerson',
 };
 
 const FORM_INPUT_CONFIGS = {
@@ -118,6 +120,22 @@ const FORM_INPUT_CONFIGS = {
     isRequired: true,
     label: 'Registration code:',
   },
+  [FORM_INPUT_KEYS.POLICY_NUMBER_PERSON]: {
+    type: 'text',
+    initialValue: '',
+    key: 'policyNumberPerson',
+    validator: input => input.length < 50,
+    isRequired: true,
+    label: 'Person policy number:',
+  },
+  [FORM_INPUT_KEYS.POLICY_NUMBER_FAMILY]: {
+    type: 'text',
+    initialValue: '',
+    key: 'policyNumberFamily',
+    validator: input => input.length < 50,
+    isRequired: true,
+    label: 'Family policy number:',
+  },
 };
 
 const FORM_CONFIGS = {
@@ -140,6 +158,10 @@ const FORM_CONFIGS = {
     FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.PHONE],
     FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.ADDRESS_ONE],
     FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.ADDRESS_TWO],
+  ],
+  insurancePolicy: [
+    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.POLICY_NUMBER_PERSON],
+    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.POLICY_NUMBER_FAMILY],
   ],
 };
 

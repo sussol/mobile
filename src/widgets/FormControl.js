@@ -47,7 +47,10 @@ const FormControlComponent = ({
     setRefs({ length: inputConfig.length });
   }, []);
 
-  const onSaveCompletedForm = React.useCallback(() => onSave(completedForm), [completedForm]);
+  const onSaveCompletedForm = React.useCallback(() => onSave(completedForm), [
+    onSave,
+    completedForm,
+  ]);
 
   const nextFocus = (index, key) => value => {
     onUpdateForm(key, value);

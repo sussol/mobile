@@ -38,7 +38,7 @@ export const PaymentReducer = (state = initialState(), action) => {
       return { ...state, paymentAmount };
     }
 
-    case PAYMENT_ACTIONS.CHOOSE_POLICY: {
+    case PAYMENT_ACTIONS.SET_POLICY: {
       const { payload } = action;
       const { insurancePolicy } = payload;
 

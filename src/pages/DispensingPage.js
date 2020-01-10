@@ -23,6 +23,7 @@ import { PrescriberActions } from '../actions/PrescriberActions';
 import { FormControl } from '../widgets/FormControl';
 import { getFormInputConfig } from '../utilities/formInputConfigs';
 import { PatientHistoryModal } from '../widgets/modals/PatientHistory';
+import { InsuranceActions } from '../actions/InsuranceActions';
 
 const Dispensing = ({
   data,
@@ -55,6 +56,12 @@ const Dispensing = ({
   usingPatientsDataSet,
   usingPrescribersDataSet,
   viewingHistory,
+  selectedInsurancePolicy,
+  insuranceModalOpen,
+  cancelInsuranceEdit,
+  isCreatingInsurancePolicy,
+  saveNewInsurancePolicy,
+  saveInsurancePolicy,
 }) => {
   const getCellCallbacks = colKey => {
     switch (colKey) {
@@ -154,6 +161,16 @@ const Dispensing = ({
           inputConfig={getFormInputConfig('prescriber', currentPrescriber)}
         />
       </ModalContainer>
+      <ModalContainer title="Insurance Policy" noCancel fullScreen isVisible={insuranceModalOpen}>
+        <FormControl
+          onSave={isCreatingInsurancePolicy ? saveNewInsurancePolicy : saveInsurancePolicy}
+          onCancel={cancelInsuranceEdit}
+          inputConfig={getFormInputConfig(
+            'insurancePolicy',
+            isCreatingInsurancePolicy ? null : selectedInsurancePolicy
+          )}
+        />
+      </ModalContainer>
       <ModalContainer
         title={`Patient History: ${currentPatient?.firstName} ${currentPatient?.lastName}`}
         onClose={cancelPatientEdit}
@@ -178,10 +195,17 @@ const localStyles = {
 };
 
 const mapStateToProps = state => {
-  const { pages, patient, prescriber } = state;
+  const { pages, patient, payment, prescriber, insurance } = state;
   const { dispensary } = pages;
+  const { insurancePolicy } = payment;
   const { isCreating, isEditing, currentPatient, viewingHistory } = patient;
   const { isCreatingPrescriber, isEditingPrescriber, currentPrescriber } = prescriber;
+  const {
+    isCreatingInsurancePolicy,
+    isEditingInsurancePolicy,
+    selectedInsurancePolicy,
+    currentInsurancePolicy,
+  } = insurance;
 
   const { dataSet } = dispensary;
   const usingPatientsDataSet = dataSet === ROUTES.PATIENTS;
@@ -191,14 +215,20 @@ const mapStateToProps = state => {
     ...dispensary,
     patientModalOpen: isCreating || isEditing,
     prescriberModalOpen: isCreatingPrescriber || isEditingPrescriber,
+    insuranceModalOpen: isCreatingInsurancePolicy || isEditingInsurancePolicy,
     isCreating,
     currentPatient,
+    insurancePolicy,
     viewingHistory,
     isCreatingPrescriber,
     isEditingPrescriber,
     currentPrescriber,
     usingPatientsDataSet,
     usingPrescribersDataSet,
+    isCreatingInsurancePolicy,
+    isEditingInsurancePolicy,
+    selectedInsurancePolicy,
+    currentInsurancePolicy,
   };
 };
 
@@ -219,6 +249,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     dispatch(PrescriberActions.updatePrescriber(prescriberDetails)),
   saveNewPrescriber: prescriberDetails =>
     dispatch(PrescriberActions.saveNewPrescriber(prescriberDetails)),
+
+  cancelInsuranceEdit: () => dispatch(InsuranceActions.cancel()),
+  saveInsurancePolicy: policyDetails => dispatch(InsuranceActions.update(policyDetails)),
+  saveNewInsurancePolicy: policyDetails => dispatch(InsuranceActions.create(policyDetails)),
 });
 
 export const DispensingPage = connect(mapStateToProps, mapDispatchToProps)(Dispensing);
@@ -259,4 +293,10 @@ Dispensing.propTypes = {
   usingPatientsDataSet: PropTypes.bool.isRequired,
   usingPrescribersDataSet: PropTypes.bool.isRequired,
   viewingHistory: PropTypes.bool.isRequired,
+  selectedInsurancePolicy: PropTypes.object.isRequired,
+  insuranceModalOpen: PropTypes.bool.isRequired,
+  cancelInsuranceEdit: PropTypes.func.isRequired,
+  isCreatingInsurancePolicy: PropTypes.bool.isRequired,
+  saveNewInsurancePolicy: PropTypes.func.isRequired,
+  saveInsurancePolicy: PropTypes.func.isRequired,
 };

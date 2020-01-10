@@ -22,6 +22,7 @@ const persistConfig = {
     'prescriber',
     'wizard',
     'payment',
+    'insurance',
   ],
 };
 

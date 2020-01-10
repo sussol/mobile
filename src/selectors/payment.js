@@ -13,10 +13,13 @@ export const selectPrescriptionSubTotal = ({ payment }) => {
 };
 
 export const selectPrescriptionTotal = ({ payment }) => {
-  const { policy } = payment;
+  const { insurancePolicy } = payment;
   const subtotal = selectPrescriptionSubTotal({ payment });
 
-  return currency(subtotal * (policy ? (policy.discountRate || 100) / 100 : 1));
+  const insuranceDiscountRate = insurancePolicy ? (insurancePolicy.discountRate || 100) / 100 : 1;
+  const total = currency(subtotal).multiply(1 - insuranceDiscountRate);
+
+  return total;
 };
 
 export const selectCreditBeingUsed = ({ payment }) => {
