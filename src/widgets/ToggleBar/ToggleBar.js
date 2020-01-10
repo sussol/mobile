@@ -7,7 +7,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { StyleSheet, Text, TouchableOpacity, ViewPropTypes, View } from 'react-native';
-import globalStyles from '../../globalStyles';
+import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
 
 /**
  * Renders a bar of multiple toggling buttons, defined by the array 'toggles' passed in.
@@ -106,6 +106,9 @@ const localStyles = StyleSheet.create({
     justifyContent: 'center',
     height: 45,
     borderWidth: 1,
+    borderColor: SUSSOL_ORANGE,
+    marginHorizontal: 5,
+    borderRadius: 4,
   },
   toggleOffStyle: {
     alignItems: 'center',
@@ -116,6 +119,6 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: 142,
-    backgroundColor: 'rgb(114, 211, 242)',
+    backgroundColor: SUSSOL_ORANGE,
   },
 });
