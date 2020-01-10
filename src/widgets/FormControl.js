@@ -14,6 +14,7 @@ import { modalStrings } from '../localization/index';
 import { selectCanSaveForm, selectCompletedForm } from '../selectors/form';
 import { FormActions } from '../actions/FormActions';
 import { FormDateInput } from './FormDateInput';
+import { FormToggle } from './FormInputs/FormToggle';
 import { FormDropdown } from './FormInputs/FormDropdown';
 
 /**
@@ -107,6 +108,20 @@ const FormControlComponent = ({
                 onValueChange={value => onUpdateForm(key, value)}
                 options={options}
                 optionKey={optionKey}
+              />
+            );
+          }
+          case 'toggle': {
+            const { options, optionLabels } = rest;
+            return (
+              <FormToggle
+                options={options}
+                optionLabels={optionLabels}
+                value={completedForm?.[key]}
+                onValueChange={value => onUpdateForm(key, value)}
+                key={key}
+                label={label}
+                isRequired={isRequired}
               />
             );
           }

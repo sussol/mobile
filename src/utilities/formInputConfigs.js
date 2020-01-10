@@ -39,6 +39,8 @@ const FORM_INPUT_KEYS = {
   POLICY_NUMBER_FAMILY: 'policyNumberFamily',
   POLICY_NUMBER_PERSON: 'policyNumberPerson',
   POLICY_PROVIDER: 'insuranceProvider',
+  POLICY_TYPE: 'policyType',
+  IS_ACTIVE: 'isActive',
 };
 
 const FORM_INPUT_CONFIGS = {
@@ -147,6 +149,24 @@ const FORM_INPUT_CONFIGS = {
     options: UIDatabase.objects('InsuranceProvider'),
     optionKey: 'name',
   },
+  [FORM_INPUT_KEYS.IS_ACTIVE]: {
+    type: 'toggle',
+    initialValue: '',
+    key: 'isActive',
+    isRequired: true,
+    options: [true, false],
+    optionLabels: ['Yes', 'No'],
+    label: 'Is Active:',
+  },
+  [FORM_INPUT_KEYS.POLICY_TYPE]: {
+    type: 'toggle',
+    initialValue: '',
+    key: 'type',
+    isRequired: true,
+    options: ['personal', 'business'],
+    optionLabels: ['Personal', 'Business'],
+    label: 'Policy Type:',
+  },
 };
 
 const FORM_CONFIGS = {
@@ -174,6 +194,8 @@ const FORM_CONFIGS = {
     FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.POLICY_NUMBER_PERSON],
     FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.POLICY_NUMBER_FAMILY],
     FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.POLICY_PROVIDER],
+    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.IS_ACTIVE],
+    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.POLICY_TYPE],
   ],
 };
 
