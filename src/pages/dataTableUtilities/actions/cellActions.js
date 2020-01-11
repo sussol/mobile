@@ -27,9 +27,9 @@ export const refreshRow = (rowKey, route) => ({
   payload: { rowKey, route },
 });
 
-export const refreshIndicatorRow = route => ({
+export const refreshIndicatorRow = (rowKey, route) => ({
   type: 'refreshIndicatorRow',
-  payload: { route },
+  payload: { rowKey, route },
 });
 
 /**
@@ -68,7 +68,7 @@ export const editIndicatorValue = (value, rowKey, columnKey, route) => (dispatch
 
   UIDatabase.write(() => UIDatabase.update('IndicatorValue', { ...valueRecord, value }));
 
-  dispatch(refreshIndicatorRow(route));
+  dispatch(refreshIndicatorRow(rowKey, route));
 };
 
 /**
@@ -289,6 +289,7 @@ export const editStocktakeBatchCountedQuantityWithReason = (value, rowKey, route
 
 export const CellActionsLookup = {
   refreshRow,
+  refreshIndicatorRow,
   editExpiryDate,
   editTransactionBatchExpiryDate,
   editStocktakeBatchExpiryDate,

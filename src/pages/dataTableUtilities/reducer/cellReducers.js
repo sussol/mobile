@@ -1,4 +1,4 @@
-import { getIndicatorTableRows } from '../../../utilities';
+import { getIndicatorTableRow } from '../../../utilities';
 
 /**
  * mSupply Mobile
@@ -23,12 +23,17 @@ export const refreshRow = (state, action) => {
   return { ...state, dataState: newDataState };
 };
 
-export const refreshIndicatorRow = state => {
-  const { selectedIndicator, pageObject } = state;
+export const refreshIndicatorRow = (state, action) => {
+  const { selectedIndicator, indicatorRows, pageObject } = state;
   const { period } = pageObject;
 
-  const newIndicatorRows = getIndicatorTableRows(selectedIndicator, period);
+  const { payload } = action;
+  const { rowKey } = payload;
 
+  const rowIndex = indicatorRows.findIndex(({ id }) => id === rowKey);
+
+  const newIndicatorRows = [...indicatorRows];
+  newIndicatorRows[rowIndex] = getIndicatorTableRow(rowKey, selectedIndicator, period);
   return { ...state, indicatorRows: newIndicatorRows };
 };
 

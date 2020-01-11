@@ -21,6 +21,7 @@ export { getModalTitle, MODAL_KEYS } from './getModalTitle';
 export {
   getIndicatorRows,
   getIndicatorColumns,
+  getIndicatorTableRow,
   getIndicatorTableRows,
   getIndicatorRowColumnValue,
   getIndicatorTableData,
