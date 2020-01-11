@@ -101,6 +101,17 @@ const getIndicatorTableColumns = (indicator, period) => {
   return [descriptionColumn, codeColumn, ...valueColumns];
 };
 
+const getIndicatorTableRow = (rowId, indicator, period) => {
+  const [row] = indicator.rows.filter(({ id }) => id === rowId);
+  const { description, code } = row;
+  const values = indicator.columns.reduce((acc, column) => {
+    const { description: key } = column;
+    const value = getIndicatorRowColumnValue(row, column, period);
+    return { ...acc, [key]: value.value };
+  }, {});
+  return { id: rowId, description, code, ...values };
+};
+
 /**
  * Get indicator data table rows.
  *
@@ -109,15 +120,7 @@ const getIndicatorTableColumns = (indicator, period) => {
  * @returns {Array.<object>}
  */
 const getIndicatorTableRows = (indicator, period) =>
-  indicator.rows.map(row => {
-    const { id, description, code } = row;
-    const values = indicator.columns.reduce((acc, column) => {
-      const { description: key } = column;
-      const value = getIndicatorRowColumnValue(row, column, period);
-      return { ...acc, [key]: value.value };
-    }, {});
-    return { id, description, code, ...values };
-  });
+  indicator.rows.map(({ id }) => getIndicatorTableRow(id, indicator, period));
 
 /**
  * Get indicator data table rows and columns.
@@ -135,6 +138,7 @@ const getIndicatorTableData = (indicator, period) => {
 export {
   getIndicatorRows,
   getIndicatorColumns,
+  getIndicatorTableRow,
   getIndicatorTableRows,
   getIndicatorRowColumnValue,
   getIndicatorTableData,
