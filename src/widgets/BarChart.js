@@ -33,7 +33,7 @@ export const BarChart = ({ data, width, height }) => {
 
   return (
     <VictoryChart width={width} height={height} padding={padding} domainPadding={domainPadding}>
-      <VictoryBar style={style} data={values} />
+      <VictoryBar style={style} data={values[0]} />
       {renderXAxis()}
       {renderYAxis()}
     </VictoryChart>

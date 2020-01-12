@@ -40,7 +40,7 @@ export const PieChart = ({ width, height, data }) => {
       labelRadius={widthPadded * labelRadius}
       colorScale={colorScale}
       labelComponent={<VictoryLabel style={style} />}
-      data={values}
+      data={values[0]}
     />
   );
 };

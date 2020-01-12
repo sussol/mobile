@@ -36,8 +36,8 @@ export const LineChart = ({ width, height, data }) => {
   };
   return (
     <VictoryChart width={width} height={height} padding={padding}>
-      <VictoryScatter size={dotSize} style={dotStyle} data={values} />
-      <VictoryLine style={lineStyle} data={values} />
+      <VictoryScatter size={dotSize} style={dotStyle} data={values[0]} />
+      <VictoryLine style={lineStyle} data={values[0]} />
       {renderXAxis()}
       {renderYAxis()}
     </VictoryChart>
