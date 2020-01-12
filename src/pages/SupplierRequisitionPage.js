@@ -58,6 +58,7 @@ const SupplierRequisition = ({
   pageObject,
   hasSelection,
   showAll,
+  usingIndicators,
   showIndicators,
   selectedIndicator,
   indicators,
@@ -192,9 +193,9 @@ const SupplierRequisition = ({
     />
   );
 
-  const UseSuggestedQuantitiesButton = (isWide = false) => (
+  const UseSuggestedQuantitiesButton = () => (
     <PageButton
-      style={isWide ? globalStyles.wideButton : globalStyles.topButton}
+      style={usingIndicators ? globalStyles.wideButton : globalStyles.topButton}
       text={buttonStrings.use_suggested_quantities}
       onPress={onSetRequestedToSuggested}
       isDisabled={isFinalised}
@@ -351,8 +352,11 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 const mapStateToProps = state => {
   // TODO: add indicator toggle flag to page state.
   const { pages } = state;
-  const { showIndicators, indicatorColumns, indicatorRows } = pages[ROUTES.SUPPLIER_REQUISITION];
-  if (showIndicators) {
+  const { usingIndicators, showIndicators, indicatorColumns, indicatorRows } = pages[
+    ROUTES.SUPPLIER_REQUISITION
+  ];
+
+  if (usingIndicators && showIndicators) {
     return {
       ...pages[ROUTES.SUPPLIER_REQUISITION],
       data: indicatorRows,
@@ -370,6 +374,7 @@ export const SupplierRequisitionPage = connect(
 SupplierRequisition.defaultProps = {
   modalValue: null,
   showAll: false,
+  usingIndicators: false,
   showIndicators: false,
 };
 
@@ -390,6 +395,7 @@ SupplierRequisition.propTypes = {
   routeName: PropTypes.string.isRequired,
   hasSelection: PropTypes.bool.isRequired,
   showAll: PropTypes.bool,
+  usingIndicators: PropTypes.bool,
   showIndicators: PropTypes.bool,
   selectedIndicator: PropTypes.object.isRequired,
   indicators: PropTypes.array.isRequired,
