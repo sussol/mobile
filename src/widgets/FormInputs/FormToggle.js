@@ -36,11 +36,15 @@ export const FormToggle = ({ label, options, optionLabels, value, onValueChange,
   );
 };
 
+FormToggle.defaultProps = {
+  isRequired: false,
+};
+
 FormToggle.propTypes = {
   onValueChange: PropTypes.func.isRequired,
   options: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   optionLabels: PropTypes.array.isRequired,
   value: PropTypes.any.isRequired,
   label: PropTypes.string.isRequired,
-  isRequired: PropTypes.bool.isRequired,
+  isRequired: PropTypes.bool,
 };
