@@ -11,7 +11,6 @@ import { VictoryAxis, VictoryChart, VictoryLine, VictoryScatter } from 'victory-
 import { APP_FONT_FAMILY, GREY, LIGHT_GREY, DARK_GREY, SUSSOL_ORANGE } from '../globalStyles';
 
 export const LineChart = ({ width, height, data }) => {
-  const { values } = data;
   const renderYAxis = () => <VictoryAxis dependentAxis style={victoryStyles.axisY} />;
   const renderXAxis = () => {
     const tickTruncate = label => (label.length > 11 ? `${label.slice(0, 11)}...` : label);
@@ -36,10 +35,14 @@ export const LineChart = ({ width, height, data }) => {
   };
   return (
     <VictoryChart width={width} height={height} padding={padding}>
-      <VictoryScatter size={dotSize} style={dotStyle} data={values[0]} />
-      <VictoryLine style={lineStyle} data={values[0]} />
-      {renderXAxis()}
+      {data.map(({ values }) => (
+        <VictoryScatter size={dotSize} style={dotStyle} data={values} />
+      ))}
+      {data.map(({ values }) => (
+        <VictoryLine style={lineStyle} data={values} />
+      ))}
       {renderYAxis()}
+      {renderXAxis()}
     </VictoryChart>
   );
 };
