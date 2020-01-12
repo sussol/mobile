@@ -51,7 +51,7 @@ const initialiseRowColumnValue = (row, column, period) => {
 };
 
 const getIndicatorColumns = (indicator, code) =>
-  indicator?.columns?.filter(({ description: columnCode }) => columnCode === code);
+  indicator?.columns?.filter(({ code: columnCode }) => columnCode === code);
 
 const getIndicatorRows = (indicator, code) =>
   indicator?.rows?.filter(({ id: rowCode }) => rowCode === code);
