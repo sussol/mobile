@@ -354,7 +354,7 @@ const supplierInvoicesInitialiser = () => {
  * @returns  {object}
  */
 const supplierRequisitionInitialiser = requisition => {
-  const { isFinalised, program, period, items: backingData } = requisition;
+  const { isFinalised, program, period, items: backingData, indicators } = requisition;
 
   const usingPrograms = !!program;
   const route = program ? ROUTES.SUPPLIER_REQUISITION_WITH_PROGRAM : ROUTES.SUPPLIER_REQUISITION;
@@ -364,8 +364,6 @@ const supplierRequisitionInitialiser = requisition => {
     !usingPrograms || isFinalised
       ? sortedData
       : sortedData.filter(item => item.isLessThanThresholdMOS);
-
-  const indicators = program?.indicators?.slice() || [];
 
   const [selectedIndicator] = indicators;
   const { columns: indicatorColumns, rows: indicatorRows } = getIndicatorTableData(
