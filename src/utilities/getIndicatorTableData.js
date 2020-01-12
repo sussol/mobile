@@ -129,8 +129,10 @@ const getIndicatorTableRow = (rowId, indicator, period) => {
  * @param {Period} period
  * @returns {Array.<object>}
  */
-const getIndicatorTableRows = (indicator, period) =>
-  indicator.rows.map(({ id }) => getIndicatorTableRow(id, indicator, period));
+const getIndicatorTableRows = (indicator, period) => {
+  if (!indicator) return [];
+  return indicator.rows.map(({ id }) => getIndicatorTableRow(id, indicator, period));
+};
 
 /**
  * Get indicator data table rows and columns.
