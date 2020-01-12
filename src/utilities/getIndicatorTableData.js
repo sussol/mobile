@@ -99,14 +99,14 @@ const getIndicatorTableColumn = (columnCode, indicator, period) => {
  */
 // eslint-disable-next-line no-unused-vars
 const getIndicatorTableColumns = (indicator, period) => {
+  if (!indicator) return [];
+
   const descriptionColumn = COLUMNS.DESCRIPTION;
   const codeColumn = COLUMNS.CODE;
   // eslint-disable-next-line no-unused-vars
-  const valueColumns = indicator.columns.map(({ description, code }) => ({
-    ...COLUMN_INDICATOR_MUTABLE,
-    title: description,
-    key: description,
-  }));
+  const valueColumns = indicator.columns.map(({ code }) =>
+    getIndicatorTableColumn(code, indicator, period)
+  );
 
   return [descriptionColumn, codeColumn, ...valueColumns];
 };
