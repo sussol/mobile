@@ -80,6 +80,16 @@ const getIndicatorRowColumnValue = (row, column, period) => {
   return rowColumnValue;
 };
 
+// eslint-disable-next-line no-unused-vars
+const getIndicatorTableColumn = (columnCode, indicator, period) => {
+  const [column] = indicator.columns.filter(({ code }) => code === columnCode);
+  return {
+    ...COLUMN_INDICATOR_MUTABLE,
+    title: column.description,
+    key: column.code,
+  };
+};
+
 /**
  * Get indicator data table columns.
  *
