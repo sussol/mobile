@@ -22,18 +22,22 @@ export const FormDropdown = ({ isRequired, label, onValueChange, options, option
       <DropDown
         style={{ width: null, flex: 1 }}
         values={valueStrings}
-        selectedValue={value}
+        selectedValue={value[optionKey]}
         onValueChange={onValueChangeCallback}
       />
     </FlexColumn>
   );
 };
 
+FormDropdown.defaultProps = {
+  isRequired: false,
+};
+
 FormDropdown.propTypes = {
   onValueChange: PropTypes.func.isRequired,
   options: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   optionKey: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.object.isRequired,
   label: PropTypes.string.isRequired,
-  isRequired: PropTypes.bool.isRequired,
+  isRequired: PropTypes.bool,
 };
