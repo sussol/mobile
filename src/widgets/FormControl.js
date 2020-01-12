@@ -16,6 +16,7 @@ import { FormActions } from '../actions/FormActions';
 import { FormDateInput } from './FormDateInput';
 import { FormToggle } from './FormInputs/FormToggle';
 import { FormDropdown } from './FormInputs/FormDropdown';
+import { FormSlider } from './FormInputs/FormSlider';
 
 /**
  * Component which will manage and control a set of user inputs of a form.
@@ -104,7 +105,7 @@ const FormControlComponent = ({
                 key={key}
                 isRequired={isRequired}
                 label={label}
-                value={completedForm?.[key]?.[optionKey]}
+                value={completedForm?.[key] ?? initialValue}
                 onValueChange={value => onUpdateForm(key, value)}
                 options={options}
                 optionKey={optionKey}
@@ -117,7 +118,23 @@ const FormControlComponent = ({
               <FormToggle
                 options={options}
                 optionLabels={optionLabels}
-                value={completedForm?.[key]}
+                value={completedForm?.[key] ?? initialValue}
+                onValueChange={value => onUpdateForm(key, value)}
+                key={key}
+                label={label}
+                isRequired={isRequired}
+              />
+            );
+          }
+          case 'slider': {
+            const { maximumValue, minimumValue, step } = rest;
+            return (
+              <FormSlider
+                ref={refs[index]}
+                maxmimumValue={maximumValue}
+                minimumValue={minimumValue}
+                step={step}
+                value={completedForm?.[key] ?? initialValue}
                 onValueChange={value => onUpdateForm(key, value)}
                 key={key}
                 label={label}
@@ -174,7 +191,6 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 const mapStateToProps = state => {
   const canSaveForm = selectCanSaveForm(state);
   const completedForm = selectCompletedForm(state);
-
   return { canSaveForm, completedForm };
 };
 
