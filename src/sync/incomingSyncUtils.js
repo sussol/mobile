@@ -129,16 +129,17 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
   if (!record.ID || record.ID.length < 1) return false; // Every record must have an ID.
   const requiredFields = {
     IndicatorAttribute: {
-      cannotBeBlank: [
-        'indicator_ID',
+      canBeBlank: [
+        'code',
         'description',
         'index',
         'is_required',
-        'data_type',
+        'value_type',
+        'default_value',
         'axis',
         'is_active',
       ],
-      canBeBlank: ['code'],
+      cannotBeBlank: ['indicator_ID'],
     },
     IndicatorValue: {
       cannotBeBlank: ['facility_ID', 'period_ID', 'column_ID', 'row_ID', 'value'],
@@ -312,8 +313,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         code: record.code,
         index: parseNumber(record.index),
         isRequired: parseBoolean(record.is_required),
-        valueType: record?.data_type?.value,
-        valueDefault: record?.data_type?.default,
+        valueType: record.value_type,
+        defaultValue: record?.default_value,
         axis: record.axis,
         isActive: parseBoolean(record.is_active),
       });

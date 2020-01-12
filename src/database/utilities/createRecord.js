@@ -100,7 +100,7 @@ const createNumberToReuse = (database, numberSequence, number) => {
 };
 
 const createIndicatorValue = (database, row, column, period) => {
-  const { valueDefault: value } = column;
+  const { defaultValue: value } = column;
   const indicatorValue = database.create('IndicatorValue', {
     id: generateUUID(),
     storeId: UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_NAME_ID),
