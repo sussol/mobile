@@ -365,6 +365,7 @@ const supplierRequisitionInitialiser = requisition => {
       ? sortedData
       : sortedData.filter(item => item.isLessThanThresholdMOS);
 
+  const usingIndicators = !!indicators.length;
   const [selectedIndicator] = indicators;
   const { columns: indicatorColumns, rows: indicatorRows } = getIndicatorTableData(
     selectedIndicator,
@@ -384,6 +385,7 @@ const supplierRequisitionInitialiser = requisition => {
     modalKey: '',
     hasSelection: false,
     modalValue: null,
+    usingIndicators,
     showIndicators: false,
     selectedIndicator,
     indicatorColumns,
