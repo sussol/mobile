@@ -115,7 +115,7 @@ const getIndicatorTableRow = (rowId, indicator, period) => {
   const [row] = indicator.rows.filter(({ id }) => id === rowId);
   const { description, code } = row;
   const values = indicator.columns.reduce((acc, column) => {
-    const { description: key } = column;
+    const { code: key } = column;
     const value = getIndicatorRowColumnValue(row, column, period);
     return { ...acc, [key]: value.value };
   }, {});
