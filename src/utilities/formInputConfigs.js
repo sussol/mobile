@@ -41,9 +41,10 @@ const FORM_INPUT_KEYS = {
   POLICY_PROVIDER: 'insuranceProvider',
   POLICY_TYPE: 'policyType',
   IS_ACTIVE: 'isActive',
+  DISCOUNT_RATE: 'discountRate',
 };
 
-const FORM_INPUT_CONFIGS = {
+const FORM_INPUT_CONFIGS = seedObject => ({
   [FORM_INPUT_KEYS.FIRST_NAME]: {
     type: 'text',
     initialValue: '',
@@ -128,85 +129,102 @@ const FORM_INPUT_CONFIGS = {
     type: 'text',
     initialValue: '',
     key: 'policyNumberPerson',
-    validator: input => input.length < 50,
+    validator: input =>
+      input.length > 0 &&
+      input.length < 50 &&
+      UIDatabase.objects('InsurancePolicy').filtered(
+        'policyNumberPerson == $0 && id != $1',
+        input,
+        seedObject?.id ?? ''
+      ).length === 0,
     isRequired: true,
+    invalidMessage:
+      'Must be between 0 and 50 characters, and must be a unique personal policy number',
     label: 'Person policy number:',
   },
   [FORM_INPUT_KEYS.POLICY_NUMBER_FAMILY]: {
     type: 'text',
     initialValue: '',
     key: 'policyNumberFamily',
-    validator: input => input.length < 50,
+    validator: input => input.length > 0 && input.length < 50,
     isRequired: true,
     label: 'Family policy number:',
   },
   [FORM_INPUT_KEYS.POLICY_PROVIDER]: {
     type: 'dropdown',
-    initialValue: '',
+    initialValue: UIDatabase.objects('InsuranceProvider')[0],
     key: 'insuranceProvider',
-    isRequired: true,
     label: 'Policy provider:',
     options: UIDatabase.objects('InsuranceProvider'),
     optionKey: 'name',
   },
   [FORM_INPUT_KEYS.IS_ACTIVE]: {
     type: 'toggle',
-    initialValue: '',
+    initialValue: true,
     key: 'isActive',
-    isRequired: true,
     options: [true, false],
     optionLabels: ['Yes', 'No'],
     label: 'Is Active:',
   },
   [FORM_INPUT_KEYS.POLICY_TYPE]: {
     type: 'toggle',
-    initialValue: '',
+    initialValue: 'personal',
     key: 'type',
-    isRequired: true,
     options: ['personal', 'business'],
     optionLabels: ['Personal', 'Business'],
     label: 'Policy Type:',
   },
-};
+  [FORM_INPUT_KEYS.DISCOUNT_RATE]: {
+    type: 'slider',
+    initialValue: 25,
+    key: 'discountRate',
+    maximumValue: 100,
+    minimumValue: 0,
+    step: 0.1,
+    label: 'Discount Rate:',
+  },
+});
 
 const FORM_CONFIGS = {
   patient: [
-    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.FIRST_NAME],
-    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.LAST_NAME],
-    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.CODE],
-    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.DATE_OF_BIRTH],
-    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.EMAIL],
-    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.PHONE],
-    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.ADDRESS_ONE],
-    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.ADDRESS_TWO],
-    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.COUNTRY],
+    FORM_INPUT_KEYS.FIRST_NAME,
+    FORM_INPUT_KEYS.LAST_NAME,
+    FORM_INPUT_KEYS.CODE,
+    FORM_INPUT_KEYS.DATE_OF_BIRTH,
+    FORM_INPUT_KEYS.EMAIL,
+    FORM_INPUT_KEYS.PHONE,
+    FORM_INPUT_KEYS.ADDRESS_ONE,
+    FORM_INPUT_KEYS.ADDRESS_TWO,
+    FORM_INPUT_KEYS.COUNTRY,
   ],
   prescriber: [
-    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.FIRST_NAME],
-    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.LAST_NAME],
-    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.REGISTRATION_CODE],
-    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.EMAIL],
-    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.PHONE],
-    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.ADDRESS_ONE],
-    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.ADDRESS_TWO],
+    FORM_INPUT_KEYS.FIRST_NAME,
+    FORM_INPUT_KEYS.LAST_NAME,
+    FORM_INPUT_KEYS.REGISTRATION_CODE,
+    FORM_INPUT_KEYS.EMAIL,
+    FORM_INPUT_KEYS.PHONE,
+    FORM_INPUT_KEYS.ADDRESS_ONE,
+    FORM_INPUT_KEYS.ADDRESS_TWO,
   ],
   insurancePolicy: [
-    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.POLICY_NUMBER_PERSON],
-    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.POLICY_NUMBER_FAMILY],
-    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.POLICY_PROVIDER],
-    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.IS_ACTIVE],
-    FORM_INPUT_CONFIGS[FORM_INPUT_KEYS.POLICY_TYPE],
+    FORM_INPUT_KEYS.POLICY_NUMBER_PERSON,
+    FORM_INPUT_KEYS.POLICY_NUMBER_FAMILY,
+    FORM_INPUT_KEYS.DISCOUNT_RATE,
+    FORM_INPUT_KEYS.POLICY_PROVIDER,
+    FORM_INPUT_KEYS.IS_ACTIVE,
+    FORM_INPUT_KEYS.POLICY_TYPE,
   ],
 };
 
 export const getFormInputConfig = (formName, seedObject) => {
-  const formConfig = FORM_CONFIGS[formName];
+  const formInputConfigs = FORM_INPUT_CONFIGS(seedObject);
+  const formConfig = FORM_CONFIGS[formName].map(config => formInputConfigs[config]);
 
   if (!seedObject) return formConfig;
 
-  return formConfig.map(({ key, ...restOfConfig }) => ({
+  return formConfig.map(({ key, initialValue, ...restOfConfig }) => ({
     ...restOfConfig,
     key,
-    initialValue: seedObject[key] || '',
+    initialValue: seedObject[key] ?? initialValue,
   }));
 };
