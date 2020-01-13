@@ -17,6 +17,7 @@ const recordTypesSynced = [
   'StocktakeBatch',
   'Transaction',
   'TransactionBatch',
+  'IndicatorValue',
 ];
 
 /**
