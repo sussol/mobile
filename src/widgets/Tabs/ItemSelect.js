@@ -51,13 +51,21 @@ const ItemSelectComponent = ({
     (acc, { item }) => ({ ...acc, [item.id]: true }),
     {}
   );
+
+  const itemSelection = React.useMemo(() => {
+    const sortedItems = UIDatabase.objects('Item').sorted('name');
+    const itemsWithStock = sortedItems.filtered('ANY batches.numberOfPacks > 0').slice();
+    const itemsWithoutStock = sortedItems.filtered('ALL batches.numberOfPacks == 0').slice();
+    return [...itemsWithStock, ...itemsWithoutStock];
+  }, []);
+
   return (
     <>
       <PrescriptionInfo />
       <FlexRow flex={1}>
         <FlexView flex={10}>
           <SimpleTable
-            data={UIDatabase.objects('Item')}
+            data={itemSelection}
             columns={columns}
             disabledRows={disabledRows}
             selectedRows={selectedRows}
