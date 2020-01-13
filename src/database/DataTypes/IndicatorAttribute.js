@@ -57,7 +57,7 @@ IndicatorAttribute.schema = {
     index: { type: 'int', default: 0 },
     isRequired: { type: 'bool', default: true },
     valueType: { type: 'string', default: 'string' },
-    defaultValue: { type: 'string', default: 'string' },
+    defaultValue: { type: 'string', default: '' },
     axis: { type: 'string', default: 'row' },
     isActive: { type: 'bool', default: false },
     values: { type: 'list', objectType: 'IndicatorValue' },
