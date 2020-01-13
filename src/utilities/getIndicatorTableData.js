@@ -51,7 +51,7 @@ const initialiseRowColumnValue = (row, column, period) => {
 };
 
 const getIndicatorColumns = (indicator, code) =>
-  indicator?.columns?.filter(({ description: columnCode }) => columnCode === code);
+  indicator?.columns?.filter(({ code: columnCode }) => columnCode === code);
 
 const getIndicatorRows = (indicator, code) =>
   indicator?.rows?.filter(({ id: rowCode }) => rowCode === code);
@@ -80,6 +80,16 @@ const getIndicatorRowColumnValue = (row, column, period) => {
   return rowColumnValue;
 };
 
+// eslint-disable-next-line no-unused-vars
+const getIndicatorTableColumn = (columnCode, indicator, period) => {
+  const [column] = indicator.columns.filter(({ code }) => code === columnCode);
+  return {
+    ...COLUMN_INDICATOR_MUTABLE,
+    title: column.description,
+    key: column.code,
+  };
+};
+
 /**
  * Get indicator data table columns.
  *
@@ -89,14 +99,14 @@ const getIndicatorRowColumnValue = (row, column, period) => {
  */
 // eslint-disable-next-line no-unused-vars
 const getIndicatorTableColumns = (indicator, period) => {
+  if (!indicator) return [];
+
   const descriptionColumn = COLUMNS.DESCRIPTION;
   const codeColumn = COLUMNS.CODE;
   // eslint-disable-next-line no-unused-vars
-  const valueColumns = indicator.columns.map(({ description, code }) => ({
-    ...COLUMN_INDICATOR_MUTABLE,
-    title: description,
-    key: description,
-  }));
+  const valueColumns = indicator.columns.map(({ code }) =>
+    getIndicatorTableColumn(code, indicator, period)
+  );
 
   return [descriptionColumn, codeColumn, ...valueColumns];
 };
@@ -105,7 +115,7 @@ const getIndicatorTableRow = (rowId, indicator, period) => {
   const [row] = indicator.rows.filter(({ id }) => id === rowId);
   const { description, code } = row;
   const values = indicator.columns.reduce((acc, column) => {
-    const { description: key } = column;
+    const { code: key } = column;
     const value = getIndicatorRowColumnValue(row, column, period);
     return { ...acc, [key]: value.value };
   }, {});
@@ -119,8 +129,10 @@ const getIndicatorTableRow = (rowId, indicator, period) => {
  * @param {Period} period
  * @returns {Array.<object>}
  */
-const getIndicatorTableRows = (indicator, period) =>
-  indicator.rows.map(({ id }) => getIndicatorTableRow(id, indicator, period));
+const getIndicatorTableRows = (indicator, period) => {
+  if (!indicator) return [];
+  return indicator.rows.map(({ id }) => getIndicatorTableRow(id, indicator, period));
+};
 
 /**
  * Get indicator data table rows and columns.
