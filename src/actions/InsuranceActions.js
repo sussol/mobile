@@ -38,11 +38,8 @@ const create = completedForm => (dispatch, getState) => {
     insurancePolicy = UIDatabase.update('InsurancePolicy', {
       ...completedForm,
       id: generateUUID(),
-      type: 'personal',
-      discountRate: 20,
       expiryDate: new Date(),
       patient: currentPatient,
-      insuranceProvider: UIDatabase.objects('InsuranceProvider')[0],
     });
   });
 
