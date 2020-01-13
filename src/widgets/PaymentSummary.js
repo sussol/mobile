@@ -28,6 +28,7 @@ import { FlexRow } from './FlexRow';
 import { CircleButton } from './CircleButton';
 import { PencilIcon, AddIcon } from './icons';
 import { InsuranceActions } from '../actions/InsuranceActions';
+import { selectInsuranceDiscountRate } from '../selectors/insurance';
 
 const paymentState = state => {
   const { insurance, payment, wizard } = state;
@@ -41,9 +42,11 @@ const paymentState = state => {
 
   const insurancePolicies = selectPatientInsurancePolicies(state);
   const paymentTypes = UIDatabase.objects('PaymentType');
+  const discountRate = selectInsuranceDiscountRate(state);
 
   return {
     currentInsurancePolicy,
+    discountRate,
     subtotal,
     total,
     creditUsed,
@@ -84,6 +87,7 @@ const PaymentSummaryComponent = ({
   selectedInsurancePolicy,
   editPolicy,
   newPolicy,
+  discountRate,
 }) => {
   const policyNumbers = React.useMemo(
     () => ['Select a policy..', ...insurancePolicies.map(p => p.policyNumber)],
@@ -152,6 +156,7 @@ const PaymentSummaryComponent = ({
         <FlexView flex={1}>
           <Separator />
           <NumberLabelRow size="small" text="Sub total" isCurrency number={subtotal.format()} />
+          <NumberLabelRow size="small" text="Insurance discount" number={discountRate} />
           <NumberLabelRow size="large" text="Total" isCurrency number={total.format()} />
         </FlexView>
       </FlexView>
@@ -175,6 +180,7 @@ PaymentSummaryComponent.propTypes = {
   paymentTypes: PropTypes.object.isRequired,
   choosePaymentType: PropTypes.func.isRequired,
   paymentType: PropTypes.object.isRequired,
+  discountRate: PropTypes.number.isRequired,
 };
 
 const localStyles = {
