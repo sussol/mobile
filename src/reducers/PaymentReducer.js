@@ -46,7 +46,6 @@ export const PaymentReducer = (state = initialState(), action) => {
       return { ...state, insurancePolicy };
     }
 
-    case PAYMENT_ACTIONS.SAVE:
     case PAYMENT_ACTIONS.CHOOSE_PAYMENT_TYPE: {
       const { payload } = action;
       const { paymentType } = payload;
@@ -65,12 +64,15 @@ export const PaymentReducer = (state = initialState(), action) => {
       return { ...state, creditOverflow: true, paymentValid: false };
     }
 
-    case INSURANCE_ACTIONS.CREATE:
     case INSURANCE_ACTIONS.SAVE:
     case INSURANCE_ACTIONS.SELECT: {
-      const paymentAmount = selectPrescriptionTotal({ payment: state });
+      const { payload } = action;
+      const { insurancePolicy } = payload;
 
-      return { ...state, paymentAmount };
+      const newState = { payment: { ...state, insurancePolicy } };
+      const paymentAmount = selectPrescriptionTotal(newState);
+
+      return { ...newState, paymentAmount };
     }
 
     default:
