@@ -72,7 +72,7 @@ export const PaymentReducer = (state = initialState(), action) => {
       const newState = { payment: { ...state, insurancePolicy } };
       const paymentAmount = selectPrescriptionTotal(newState);
 
-      return { ...newState, paymentAmount };
+      return { ...state, insurancePolicy, paymentAmount };
     }
 
     default:
