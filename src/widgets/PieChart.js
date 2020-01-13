@@ -11,7 +11,6 @@ import { VictoryLabel, VictoryPie } from 'victory-native';
 import { APP_FONT_FAMILY, GREY } from '../globalStyles';
 
 export const PieChart = ({ width, height, data }) => {
-  const { values } = data;
   const {
     padVertical,
     padHorizontal,
@@ -30,7 +29,7 @@ export const PieChart = ({ width, height, data }) => {
   };
 
   const widthPadded = width * (1 - padHorizontal);
-  return (
+  return data.map(({ values }) => (
     <VictoryPie
       width={width}
       height={height}
@@ -40,9 +39,9 @@ export const PieChart = ({ width, height, data }) => {
       labelRadius={widthPadded * labelRadius}
       colorScale={colorScale}
       labelComponent={<VictoryLabel style={style} />}
-      data={values[0]}
+      data={values}
     />
-  );
+  ));
 };
 
 PieChart.propTypes = {
