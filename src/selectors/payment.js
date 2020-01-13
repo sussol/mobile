@@ -16,7 +16,7 @@ export const selectPrescriptionTotal = ({ payment }) => {
   const { insurancePolicy } = payment;
   const subtotal = selectPrescriptionSubTotal({ payment });
 
-  const insuranceDiscountRate = insurancePolicy ? (insurancePolicy.discountRate || 100) / 100 : 1;
+  const insuranceDiscountRate = insurancePolicy ? (insurancePolicy.discountRate || 100) / 100 : 0;
   const total = currency(subtotal).multiply(1 - insuranceDiscountRate);
 
   return total;
