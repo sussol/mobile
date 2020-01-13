@@ -20,6 +20,7 @@ import {
   selectPrescriptionSubTotal,
   selectPrescriptionTotal,
   selectCreditBeingUsed,
+  selectDiscountAmount,
 } from '../selectors/payment';
 import { DropDown } from './DropDown';
 import { selectPatientInsurancePolicies } from '../selectors/patient';
@@ -43,10 +44,12 @@ const paymentState = state => {
   const insurancePolicies = selectPatientInsurancePolicies(state);
   const paymentTypes = UIDatabase.objects('PaymentType');
   const discountRate = selectInsuranceDiscountRate(state);
+  const discountAmount = selectDiscountAmount(state);
 
   return {
     currentInsurancePolicy,
     discountRate,
+    discountAmount,
     subtotal,
     total,
     creditUsed,
@@ -88,6 +91,7 @@ const PaymentSummaryComponent = ({
   editPolicy,
   newPolicy,
   discountRate,
+  discountAmount,
 }) => {
   const policyNumbers = React.useMemo(
     () => ['Select a policy..', ...insurancePolicies.map(p => p.policyNumber)],
@@ -154,9 +158,15 @@ const PaymentSummaryComponent = ({
         </FlexView>
 
         <FlexView flex={1}>
-          <Separator />
-          <NumberLabelRow size="small" text="Sub total" isCurrency number={subtotal.format()} />
-          <NumberLabelRow size="small" text="Insurance discount" number={discountRate} />
+          <Separator marginBottom={20} />
+          <NumberLabelRow text="Sub total" isCurrency number={subtotal.format()} />
+          <NumberLabelRow text="Insurance discount rate" isPercentage number={discountRate} />
+          <NumberLabelRow
+            text="Insurance discount amount"
+            isCurrency
+            number={discountAmount.format()}
+          />
+          <Separator length="50%" marginTop={20} marginBottom={20} />
           <NumberLabelRow size="large" text="Total" isCurrency number={total.format()} />
         </FlexView>
       </FlexView>
@@ -181,6 +191,7 @@ PaymentSummaryComponent.propTypes = {
   choosePaymentType: PropTypes.func.isRequired,
   paymentType: PropTypes.object.isRequired,
   discountRate: PropTypes.number.isRequired,
+  discountAmount: PropTypes.object.isRequired,
 };
 
 const localStyles = {
