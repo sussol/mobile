@@ -9,6 +9,7 @@ import { ROUTES } from '../navigation';
 import { PAYMENT_ACTIONS } from '../actions/PaymentActions';
 import { WIZARD_ACTIONS } from '../actions/WizardActions';
 import { selectPrescriptionTotal } from '../selectors/payment';
+import { INSURANCE_ACTIONS } from '../actions/InsuranceActions';
 
 const initialState = () => ({
   transaction: null,
@@ -61,6 +62,12 @@ export const PaymentReducer = (state = initialState(), action) => {
 
     case PAYMENT_ACTIONS.CREDIT_OVERFLOW: {
       return { ...state, creditOverflow: true, paymentValid: false };
+    }
+
+    case INSURANCE_ACTIONS.SELECT: {
+      const paymentAmount = selectPrescriptionTotal({ payment: state });
+
+      return { ...state, paymentAmount };
     }
 
     default:

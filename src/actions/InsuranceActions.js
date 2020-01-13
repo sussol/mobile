@@ -73,8 +73,8 @@ const select = insurancePolicy => (dispatch, getState) => {
   });
 
   batch(() => {
-    dispatch(selectPolicy(insurancePolicy));
     dispatch(PaymentActions.setPolicy(insurancePolicy));
+    dispatch(selectPolicy(insurancePolicy));
   });
 };
 
