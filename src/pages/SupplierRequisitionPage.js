@@ -112,7 +112,8 @@ const SupplierRequisition = ({
         if (propName === 'onCheck') return onCheck;
         return onUncheck;
       default:
-        // TODO: check indicator keys.
+        // Indicators functionality generates columns at run-time from indicator attribute
+        // data. If known column key not found, assume column is a dynamic indicators column.
         return onEditIndicatorValue;
     }
   };
