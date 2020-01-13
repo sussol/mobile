@@ -3,25 +3,37 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+// eslint-disable-next-line import/no-cycle
+import { COLUMN_TYPES } from '../pages/dataTableUtilities';
 import { UIDatabase, createRecord } from '../database';
 
-const COLUMN_DEFAULTS = {
-  type: 'string',
+const COLUMN_INDICATOR = {
   width: 1,
   sortable: false,
+};
+
+const COLUMN_INDICATOR_IMMUTABLE = {
+  type: COLUMN_TYPES.STRING,
   editable: false,
+  ...COLUMN_INDICATOR,
+};
+
+const COLUMN_INDICATOR_MUTABLE = {
+  type: COLUMN_TYPES.EDITABLE_STRING,
+  editable: true,
+  ...COLUMN_INDICATOR,
 };
 
 const COLUMNS = {
   DESCRIPTION: {
+    ...COLUMN_INDICATOR_IMMUTABLE,
     title: 'Description',
     key: 'description',
-    ...COLUMN_DEFAULTS,
   },
   CODE: {
+    ...COLUMN_INDICATOR_IMMUTABLE,
     title: 'Code',
     key: 'code',
-    ...COLUMN_DEFAULTS,
   },
 };
 
@@ -32,24 +44,29 @@ const COLUMNS = {
  * @param {IndicatorAttribute} column
  * @param {Period} period
  */
-export const initialiseRowColumnValue = (row, column, period) => {
+const initialiseRowColumnValue = (row, column, period) => {
   UIDatabase.write(() => {
     createRecord(UIDatabase, 'IndicatorValue', row, column, period);
   });
 };
+
+const getIndicatorColumns = (indicator, code) =>
+  indicator?.columns?.filter(({ description: columnCode }) => columnCode === code);
+
+const getIndicatorRows = (indicator, code) =>
+  indicator?.rows?.filter(({ id: rowCode }) => rowCode === code);
 
 /**
  * Get value for indicator row, column tuple.
  *
  * @param {IndicatorAttribute} row
  * @param {IndicatorAttribute} column
+ * @param {Period} period
  * @returns {IndicatorValue}
  */
-export const getIndicatorRowColumnValue = (row, column, period) => {
-  const columnValues = column?.values?.filter(
-    ({ period: valuePeriod }) => valuePeriod.ID === period.ID
-  );
-  const rowValues = row?.values?.filter(({ period: valuePeriod }) => valuePeriod.ID === period.ID);
+const getIndicatorRowColumnValue = (row, column, period) => {
+  const columnValues = column.values.filtered('period == $0', period);
+  const rowValues = row.values.filter(({ period: valuePeriod }) => valuePeriod.ID === period.ID);
   const columnValueIds = columnValues?.map(({ id }) => id);
   const rowValueIds = rowValues?.map(({ id }) => id);
   const [rowColumnValueId] = columnValueIds?.filter(id => rowValueIds.includes(id)) || [];
@@ -75,14 +92,24 @@ const getIndicatorTableColumns = (indicator, period) => {
   const descriptionColumn = COLUMNS.DESCRIPTION;
   const codeColumn = COLUMNS.CODE;
   // eslint-disable-next-line no-unused-vars
-  const valueColumns = indicator.columns.map(({ description, code, valueType }) => ({
+  const valueColumns = indicator.columns.map(({ description, code }) => ({
+    ...COLUMN_INDICATOR_MUTABLE,
     title: description,
     key: description,
-    type: valueType,
-    ...COLUMN_DEFAULTS,
   }));
 
   return [descriptionColumn, codeColumn, ...valueColumns];
+};
+
+const getIndicatorTableRow = (rowId, indicator, period) => {
+  const [row] = indicator.rows.filter(({ id }) => id === rowId);
+  const { description, code } = row;
+  const values = indicator.columns.reduce((acc, column) => {
+    const { description: key } = column;
+    const value = getIndicatorRowColumnValue(row, column, period);
+    return { ...acc, [key]: value.value };
+  }, {});
+  return { id: rowId, description, code, ...values };
 };
 
 /**
@@ -93,15 +120,7 @@ const getIndicatorTableColumns = (indicator, period) => {
  * @returns {Array.<object>}
  */
 const getIndicatorTableRows = (indicator, period) =>
-  indicator.rows.map(row => {
-    const { id, description, code } = row;
-    const values = indicator.columns.reduce((acc, column) => {
-      const { description: key } = column;
-      const value = getIndicatorRowColumnValue(row, column, period);
-      return { ...acc, [key]: value.value };
-    }, {});
-    return { id, description, code, ...values };
-  });
+  indicator.rows.map(({ id }) => getIndicatorTableRow(id, indicator, period));
 
 /**
  * Get indicator data table rows and columns.
@@ -116,4 +135,11 @@ const getIndicatorTableData = (indicator, period) => {
   return { columns, rows };
 };
 
-export { getIndicatorTableData };
+export {
+  getIndicatorRows,
+  getIndicatorColumns,
+  getIndicatorTableRow,
+  getIndicatorTableRows,
+  getIndicatorRowColumnValue,
+  getIndicatorTableData,
+};
