@@ -300,6 +300,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       canBeBlank: [],
     },
   };
+
   if (!requiredFields[recordType]) return false; // Unsupported record type
   const hasAllNonBlankFields = requiredFields[recordType].cannotBeBlank.reduce(
     (containsAllFieldsSoFar, fieldName) =>

@@ -6,10 +6,10 @@
 import moment from 'moment';
 import { generateUUID } from 'react-native-database';
 
+import { UIDatabase } from '..';
 import { versionToInteger, formatDateAndTime } from '../../utilities';
 import { NUMBER_SEQUENCE_KEYS } from './constants';
 import { generalStrings } from '../../localization';
-import { UIDatabase } from '..';
 import { SETTINGS_KEYS } from '../../settings';
 
 // Get the next highest number in an existing number sequence.

@@ -8,7 +8,9 @@ import { CHANGE_TYPES, generateUUID } from '../database';
 const { CREATE, UPDATE, DELETE } = CHANGE_TYPES;
 
 const recordTypesSynced = [
+  'IndicatorValue',
   'ItemBatch',
+  'Message',
   'NumberSequence',
   'NumberToReuse',
   'Requisition',
@@ -18,7 +20,6 @@ const recordTypesSynced = [
   'Transaction',
   'TransactionBatch',
   'InsurancePolicy',
-  'Message',
   'IndicatorValue',
 ];
 

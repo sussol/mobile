@@ -22,6 +22,7 @@ export class Report extends Realm.Object {
    * @return  {Object}
    */
   get data() {
+    // eslint-disable-next-line no-underscore-dangle
     return JSON.parse(this._data);
   }
 
@@ -31,6 +32,7 @@ export class Report extends Realm.Object {
    * @param  {dataObject}  dataObject
    */
   set data(dataObject) {
+    // eslint-disable-next-line no-underscore-dangle
     this._data = checkIsObject(dataObject) ? JSON.stringify(dataObject) : JSON.stringify({});
   }
 }
@@ -47,5 +49,3 @@ Report.schema = {
 };
 
 export default Report;
-
-
