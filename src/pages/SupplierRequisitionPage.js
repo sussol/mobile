@@ -302,8 +302,6 @@ const SupplierRequisition = ({
     pageTopRightSectionContainer,
   } = globalStyles;
 
-  // TODO: add logic for swapping between items/indicators data.
-
   return (
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
@@ -349,8 +347,6 @@ const SupplierRequisition = ({
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
-  // TODO: add actions/reducers for indicators toggle.
-
   const thisStoreID = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_NAME_ID);
   const thisStore = UIDatabase.get('Name', thisStoreID);
   const hasMasterLists = thisStore?.masterLists?.length > 0;
