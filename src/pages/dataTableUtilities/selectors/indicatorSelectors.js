@@ -10,11 +10,19 @@ const getIndicatorRows = pageState => pageState.indicatorRows;
 const getIndicatorColumns = pageState => pageState.indicatorColumns;
 const getPeriod = pageState => pageState.pageObject.period;
 
+/**
+ * Maps indicator rows to data table row objects.
+ * @param {Array.<IndicatorAttribute>} indicatorRows
+ */
 export const getIndicatorTableRows = createSelector(
   [getIndicatorRows, getPeriod],
   (indicatorRows, period) => mapIndicatorTableRows(indicatorRows, period)
 );
 
+/**
+ * Maps indicator columns to data table column objects.
+ * @param {Array.<IndicatorAttribute>} indicatorColumns
+ */
 export const getIndicatorTableColumns = createSelector([getIndicatorColumns], indicatorColumns =>
   mapIndicatorTableColumns(indicatorColumns)
 );
