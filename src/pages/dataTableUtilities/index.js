@@ -14,3 +14,12 @@ import getPageInitialiser from './getPageInitialiser';
 import { getPageDispatchers } from './getPageDispatchers';
 
 export { getColumns, getPageInfoColumns, getPageInitialiser, getPageDispatchers };
+
+export {
+  getIndicatorRows,
+  getIndicatorColumns,
+  getIndicatorTableRow,
+  getIndicatorTableRows,
+  getIndicatorRowColumnValue,
+  getIndicatorTableData,
+} from './getIndicatorTableData';

@@ -1,4 +1,4 @@
-import { getIndicatorTableRow } from '../../../utilities';
+import { getIndicatorTableRow } from '../getIndicatorTableData';
 
 /**
  * mSupply Mobile

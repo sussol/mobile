@@ -3,8 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { sortDataBy, getIndicatorTableData } from '../../../utilities';
-
+import { sortDataBy } from '../../../utilities';
+import { getIndicatorTableData } from '../getIndicatorTableData';
 /**
  * Sorts the current set of data by the provided
  * key and direction in action.

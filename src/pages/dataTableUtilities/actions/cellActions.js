@@ -5,15 +5,14 @@
 
 import { UIDatabase } from '../../../database';
 import { parsePositiveInteger, MODAL_KEYS } from '../../../utilities';
-import { ACTIONS } from './constants';
-import { openModal, closeModal } from './pageActions';
-import { pageStateSelector } from '../selectors';
-// eslint-disable-next-line import/no-cycle
 import {
   getIndicatorRows,
   getIndicatorColumns,
   getIndicatorRowColumnValue,
-} from '../../../utilities/getIndicatorTableData';
+} from '../getIndicatorTableData';
+import { ACTIONS } from './constants';
+import { openModal, closeModal } from './pageActions';
+import { pageStateSelector } from '../selectors';
 
 /**
  * Refreshes a row in the DataTable component.

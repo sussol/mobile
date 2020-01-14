@@ -3,9 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-// eslint-disable-next-line import/no-cycle
-import { COLUMN_TYPES } from '../pages/dataTableUtilities';
-import { UIDatabase, createRecord } from '../database';
+import { COLUMN_TYPES } from './constants';
+import { UIDatabase, createRecord } from '../../database';
 
 const COLUMN_INDICATOR = {
   width: 1,
