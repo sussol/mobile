@@ -50,10 +50,9 @@ const editQuantity = (id, quantity) => (_, getState) => {
   });
 };
 
-const assignPrescriber = prescriberID => (dispatch, getState) => {
+const assignPrescriber = prescriber => (dispatch, getState) => {
   const { prescription } = getState();
   const { transaction } = prescription;
-  const prescriber = UIDatabase.get('Prescriber', prescriberID);
 
   UIDatabase.write(() =>
     UIDatabase.update('Transaction', {
