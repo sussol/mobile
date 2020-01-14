@@ -19,15 +19,6 @@ export { debounce } from './underscoreMethods';
 export { getModalTitle, MODAL_KEYS } from './getModalTitle';
 // eslint-disable-next-line import/no-cycle
 export {
-  getIndicatorRows,
-  getIndicatorColumns,
-  getIndicatorTableRow,
-  getIndicatorTableRows,
-  getIndicatorRowColumnValue,
-  getIndicatorTableData,
-} from './getIndicatorTableData';
-// eslint-disable-next-line import/no-cycle
-export {
   checkForCustomerInvoiceError,
   checkForSupplierInvoiceError,
   checkForSupplierRequisitionError,

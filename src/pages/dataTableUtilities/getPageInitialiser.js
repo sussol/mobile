@@ -5,10 +5,11 @@
 
 import { UIDatabase } from '../../database';
 
-import { sortDataBy, getIndicatorTableData } from '../../utilities';
+import { sortDataBy } from '../../utilities';
 import { recordKeyExtractor } from './utilities';
 import getColumns from './getColumns';
 import getPageInfoColumns from './getPageInfoColumns';
+import { getIndicatorTableData } from './getIndicatorTableData';
 
 import { ROUTES } from '../../navigation/constants';
 
