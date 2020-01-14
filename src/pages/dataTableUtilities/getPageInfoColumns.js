@@ -6,7 +6,7 @@
 import { pageInfoStrings, programStrings, tableStrings } from '../../localization';
 import { MODAL_KEYS, formatDate } from '../../utilities';
 import { ROUTES } from '../../navigation/constants';
-import { PageActions } from './actions';
+import { ACTIONS } from './actions/constants';
 
 /**
  * PageInfo rows/columns for use with the PageInfo component.
@@ -71,25 +71,25 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
   theirRef: {
     title: `${pageInfoStrings.their_ref}:`,
     info: pageObject.theirRef,
-    onPress: () => dispatch(PageActions.openModal(MODAL_KEYS.THEIR_REF_EDIT, route)),
+    onPress: () => dispatch(ACTIONS.openModal(MODAL_KEYS.THEIR_REF_EDIT, route)),
     editableType: 'text',
   },
   transactionComment: {
     title: `${pageInfoStrings.comment}:`,
     info: pageObject.comment,
-    onPress: () => dispatch(PageActions.openModal(MODAL_KEYS.TRANSACTION_COMMENT_EDIT, route)),
+    onPress: () => dispatch(ACTIONS.openModal(MODAL_KEYS.TRANSACTION_COMMENT_EDIT, route)),
     editableType: 'text',
   },
   stocktakeComment: {
     title: `${pageInfoStrings.comment}:`,
     info: pageObject.comment,
-    onPress: () => dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_COMMENT_EDIT, route)),
+    onPress: () => dispatch(ACTIONS.openModal(MODAL_KEYS.STOCKTAKE_COMMENT_EDIT, route)),
     editableType: 'text',
   },
   requisitionComment: {
     title: `${pageInfoStrings.comment}:`,
     info: pageObject.comment,
-    onPress: () => dispatch(PageActions.openModal(MODAL_KEYS.REQUISITION_COMMENT_EDIT, route)),
+    onPress: () => dispatch(ACTIONS.openModal(MODAL_KEYS.REQUISITION_COMMENT_EDIT, route)),
     editableType: 'text',
   },
   otherParty: {
@@ -107,7 +107,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
   editableMonthsToSupply: {
     title: `${pageInfoStrings.months_stock_required}:`,
     info: pageObject.monthsToSupply,
-    onPress: () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_MONTH, route)),
+    onPress: () => dispatch(ACTIONS.openModal(MODAL_KEYS.SELECT_MONTH, route)),
     editableType: 'selectable',
   },
   period: {
@@ -121,7 +121,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
   stocktakeName: {
     title: `${pageInfoStrings.stocktake_name}:`,
     info: pageObject.name,
-    onPress: () => dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_NAME_EDIT, route)),
+    onPress: () => dispatch(ACTIONS.openModal(MODAL_KEYS.STOCKTAKE_NAME_EDIT, route)),
     editableType: 'text',
   },
   itemName: {
