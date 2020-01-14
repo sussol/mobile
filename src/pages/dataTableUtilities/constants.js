@@ -49,6 +49,7 @@ export const COLUMN_KEYS = {
   STOCK_ON_HAND: 'stockOnHand',
   SUGGESTED_QUANTITY: 'suggestedQuantity',
   SUPPLIED_QUANTITY: 'suppliedQuantity',
+  SELECT: 'select',
   TOTAL_QUANTITY: 'totalQuantity',
   UNIT: 'unitString',
   VALUE: 'value',
@@ -98,6 +99,7 @@ export const COLUMN_NAMES = {
   THEIR_STOCK_ON_HAND: 'theirStockOnHand',
   TOTAL_QUANTITY: 'totalQuantity',
   UNIT: 'unit',
+  SELECT: 'select',
 };
 
 export default { COLUMN_TYPES, COLUMN_NAMES, COLUMN_KEYS };

@@ -44,7 +44,8 @@ const TouchableCell = React.memo(
     const onPressCell = () => onPress(rowKey, columnKey);
 
     const internalContainerStyle = getAdjustedStyle(containerStyle, width, isLastCell);
-    const Container = isDisabled ? TouchableNoFeedback : TouchableComponent || TouchableOpacity;
+    const Container =
+      isDisabled || !onPress ? TouchableNoFeedback : TouchableComponent || TouchableOpacity;
     const content = renderChildren ? renderChildren() : <Text style={textStyle}>{value}</Text>;
 
     return (

@@ -20,11 +20,12 @@ import {
  *
  * @prop {String} label  The label text
  * @prop {String} text   The text string
- * @prop {String} size   The size of the label: "small" or "large"
+ * @prop {String} size   The size of the label: "small", "medium" or "large"
  *
  */
 export const SimpleLabel = React.memo(({ label, text, size, labelAlign, textAlign }) => {
   // Ensure null is set rather than any other nullish value as null is a node, but "" is not.
+  const usingText = text || null;
   const usingLabel = label || null;
   const styles = React.useMemo(() => simpleLabelStyles(size), [size]);
   const { labelStyle, textStyle, containerStyle } = styles;
@@ -39,31 +40,38 @@ export const SimpleLabel = React.memo(({ label, text, size, labelAlign, textAlig
           {`${label}  `}
         </Text>
       )}
-      <Text numberOfLines={2} ellipsizeMode="tail" style={{ ...textStyle, textAlign }}>
-        {text}
-      </Text>
+      {usingText && (
+        <Text numberOfLines={2} ellipsizeMode="tail" style={{ ...textStyle, textAlign }}>
+          {text}
+        </Text>
+      )}
     </View>
   );
 });
+
+const FONT_SIZES = {
+  small: APP_GENERAL_FONT_SIZE,
+  medium: 18,
+  large: 20,
+};
 
 const simpleLabelStyles = size => ({
   labelStyle: {
     fontFamily: APP_FONT_FAMILY,
     color: SUSSOL_ORANGE,
-    fontSize: size === 'small' ? APP_GENERAL_FONT_SIZE : 20,
+    fontSize: FONT_SIZES[size],
     fontWeight: 'bold',
     flex: 1,
     flexShrink: 1,
   },
   textStyle: {
-    flex: 4,
+    flex: 1,
     flexGrow: 1,
     fontFamily: APP_FONT_FAMILY,
     color: DARKER_GREY,
-
-    fontSize: size === 'small' ? APP_GENERAL_FONT_SIZE : 20,
+    fontSize: FONT_SIZES[size],
   },
-  containerStyle: { flexDirection: 'row', flex: 1, alignItems: 'center' },
+  containerStyle: { flexDirection: 'row', alignItems: 'center' },
 });
 
 SimpleLabel.defaultProps = {
@@ -76,7 +84,7 @@ SimpleLabel.defaultProps = {
 
 SimpleLabel.propTypes = {
   text: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  size: PropTypes.oneOf(['small', 'large']),
+  size: PropTypes.oneOf(['small', 'medium', 'large']),
   label: PropTypes.string,
   labelAlign: PropTypes.string,
   textAlign: PropTypes.string,
