@@ -16,12 +16,13 @@ import PropTypes from 'prop-types';
  * @param {String}     alignItems     The alignItems style value
  * @param {String}     justifyContent The justifyContent style value
  * @param {Object}     style          An additional styles object.
+ * @param {Bool}       reverse        Indicator whether to use column-reverse
  */
-export const FlexColumn = ({ children, flex, alignItems, justifyContent, style }) => {
+export const FlexColumn = ({ children, flex, alignItems, justifyContent, style, reverse }) => {
   const internalStyle = React.useMemo(
     () => ({
       flex,
-      flexDirection: 'column',
+      flexDirection: reverse ? 'column-reverse' : 'column',
       [alignItems ? 'alignItems' : undefined]: alignItems,
       [justifyContent ? 'justifyContent' : undefined]: justifyContent,
       ...style,
@@ -38,6 +39,7 @@ FlexColumn.defaultProps = {
   alignItems: '',
   justifyContent: '',
   style: {},
+  reverse: false,
 };
 
 FlexColumn.propTypes = {
@@ -46,4 +48,5 @@ FlexColumn.propTypes = {
   alignItems: PropTypes.string,
   justifyContent: PropTypes.string,
   style: PropTypes.object,
+  reverse: PropTypes.bool,
 };

@@ -16,12 +16,13 @@ import PropTypes from 'prop-types';
  * @param {String}     alignItems     The alignItems style value
  * @param {String}     justifyContent The justifyContent style value
  * @param {Object}     style          An additional styles object.
+ * @param {Bool}       reverse        Indicator to use row-reverse. Defaults to false.
  */
-export const FlexRow = ({ children, flex, alignItems, justifyContent, style }) => {
+export const FlexRow = ({ children, flex, alignItems, justifyContent, style, reverse }) => {
   const internalStyle = React.useMemo(
     () => ({
       flex,
-      flexDirection: 'row',
+      flexDirection: reverse ? 'row-reverse' : 'row',
       [alignItems ? 'alignItems' : undefined]: alignItems,
       [justifyContent ? 'justifyContent' : undefined]: justifyContent,
       ...style,
@@ -37,6 +38,7 @@ FlexRow.defaultProps = {
   alignItems: '',
   justifyContent: '',
   style: {},
+  reverse: false,
 };
 
 FlexRow.propTypes = {
@@ -45,4 +47,5 @@ FlexRow.propTypes = {
   alignItems: PropTypes.string,
   justifyContent: PropTypes.string,
   style: PropTypes.object,
+  reverse: PropTypes.bool,
 };

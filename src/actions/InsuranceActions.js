@@ -4,9 +4,11 @@
  */
 import { batch } from 'react-redux';
 
-import { UIDatabase, generateUUID } from '../database';
+import { UIDatabase } from '../database';
 import { selectCurrentPatient } from '../selectors/patient';
 import { PaymentActions } from './PaymentActions';
+import { selectCurrentUser } from '../selectors/user';
+import { createRecord } from '../database/utilities';
 
 export const INSURANCE_ACTIONS = {
   CREATE: 'Insurance/create',
@@ -31,16 +33,14 @@ const save = insurancePolicy => ({
 });
 
 const create = completedForm => (dispatch, getState) => {
-  const currentPatient = selectCurrentPatient(getState());
+  const user = selectCurrentUser(getState());
+  const patient = selectCurrentPatient(getState());
+
+  const policyValues = { ...completedForm, patient, user };
 
   let insurancePolicy;
   UIDatabase.write(() => {
-    insurancePolicy = UIDatabase.update('InsurancePolicy', {
-      ...completedForm,
-      id: generateUUID(),
-      expiryDate: new Date(),
-      patient: currentPatient,
-    });
+    insurancePolicy = createRecord(UIDatabase, 'InsurancePolicy', policyValues);
   });
 
   dispatch(save(insurancePolicy));

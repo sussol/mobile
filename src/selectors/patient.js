@@ -3,6 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+import currency from 'currency.js';
+
 import { UIDatabase } from '../database';
 import { sortDataBy } from '../utilities';
 
@@ -35,7 +37,8 @@ export const selectPatientName = ({ patient }) => {
   return `${currentPatient?.firstName} ${currentPatient?.lastName}`.trim();
 };
 
-export const selectAvailableCredit = ({ patient }) => patient?.currentPatient?.availableCredit;
+export const selectAvailableCredit = ({ patient }) =>
+  currency(patient?.currentPatient?.availableCredit);
 
 export const selectPatientInsurancePolicies = ({ patient }) => {
   const { currentPatient } = patient;

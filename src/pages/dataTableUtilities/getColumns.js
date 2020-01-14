@@ -30,7 +30,7 @@ const PAGE_COLUMN_WIDTHS = {
   stocktakeBatchEditModal: [1, 1, 1, 1, 1],
   stocktakeBatchEditModalWithReasons: [1, 1, 1, 1, 1, 1],
   regimenDataModal: [4, 1, 5],
-  prescriberSelect: [1, 1],
+  prescriberSelect: [3, 3, 1],
   itemSelect: [1, 3, 1],
   patientHistory: [1, 3, 1, 3],
 };
@@ -182,7 +182,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.EDITABLE_VALUE,
     COLUMN_NAMES.EDITABLE_COMMENT,
   ],
-  prescriberSelect: [COLUMN_NAMES.FIRST_NAME, COLUMN_NAMES.LAST_NAME],
+  prescriberSelect: [COLUMN_NAMES.FIRST_NAME, COLUMN_NAMES.LAST_NAME, COLUMN_NAMES.SELECT],
   itemSelect: [COLUMN_NAMES.CODE, COLUMN_NAMES.NAME, COLUMN_NAMES.TOTAL_QUANTITY],
   patientHistory: [
     COLUMN_NAMES.ITEM_CODE,
@@ -555,6 +555,14 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.ICON,
     key: COLUMN_KEYS.DISPENSE,
     title: 'DISPENSE',
+    sortable: false,
+    alignText: 'center',
+    editable: false,
+  },
+  [COLUMN_NAMES.SELECT]: {
+    type: COLUMN_TYPES.ICON,
+    key: COLUMN_KEYS.SELECT,
+    title: 'SELECT',
     sortable: false,
     alignText: 'center',
     editable: false,
