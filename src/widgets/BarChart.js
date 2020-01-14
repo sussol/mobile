@@ -7,7 +7,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { VictoryChart, VictoryBar, VictoryAxis } from 'victory-native';
+import { VictoryChart, VictoryBar, VictoryAxis, VictoryLabel } from 'victory-native';
 
 import { APP_FONT_FAMILY, GREY, LIGHT_GREY, DARK_GREY, SUSSOL_ORANGE } from '../globalStyles';
 
@@ -33,7 +33,12 @@ export const BarChart = ({ data, width, height }) => {
   return (
     <VictoryChart width={width} height={height} padding={padding} domainPadding={domainPadding}>
       {data.map(({ values }) => (
-        <VictoryBar style={style} data={values} />
+        <VictoryBar
+          style={style}
+          data={values}
+          labels={({ datum }) => datum.y}
+          labelComponent={<VictoryLabel style={victoryStyles.labelStyle} />}
+        />
       ))}
       {renderYAxis()}
       {renderXAxis()}
@@ -66,4 +71,5 @@ const victoryStyles = {
     padDomain: 0.05,
     style: { data: { fill: SUSSOL_ORANGE } },
   },
+  labelStyle: { fontFamily: APP_FONT_FAMILY, fill: GREY },
 };

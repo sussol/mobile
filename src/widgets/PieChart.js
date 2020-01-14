@@ -38,6 +38,7 @@ export const PieChart = ({ width, height, data }) => {
       innerRadius={widthPadded * innerRadius}
       labelRadius={widthPadded * labelRadius}
       colorScale={colorScale}
+      labels={({ datum }) => `${datum.x} : ${datum.y}`}
       labelComponent={<VictoryLabel style={style} />}
       data={values}
     />
