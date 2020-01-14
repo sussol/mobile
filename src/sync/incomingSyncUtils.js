@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 /* eslint-disable camelcase */
 import {
   EXTERNAL_TO_INTERNAL,
@@ -13,6 +14,7 @@ import {
 import { CHANGE_TYPES, generateUUID } from '../database';
 import { deleteRecord } from '../database/utilities';
 import { SETTINGS_KEYS } from '../settings';
+import { checkIsObject } from '../utilities';
 
 const { THIS_STORE_ID, THIS_STORE_TAGS, THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
 
@@ -249,6 +251,10 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: [],
       canBeBlank: ['units', 'comment', 'order_number'],
     },
+    Report: {
+      cannotBeBlank: ['ID', 'title', 'type', 'json'],
+      canBeBlank: [],
+    },
   };
   if (!requiredFields[recordType]) return false; // Unsupported record type
   const hasAllNonBlankFields = requiredFields[recordType].cannotBeBlank.reduce(
@@ -256,7 +262,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       containsAllFieldsSoFar &&
       record[fieldName] !== null && // Key must exist.
       record[fieldName] !== undefined && // Field may be undefined.
-      record[fieldName].length > 0, // Fidl must not be empty string.
+      record[fieldName].length > 0, // Field must not be empty string.
     true
   );
 
@@ -491,6 +497,24 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       const numberToReuse = database.update(recordType, internalRecord);
       // Attach the number to reuse to the number sequence.
       numberSequence.addNumberToReuse(numberToReuse);
+      break;
+    }
+    case 'Report': {
+      const { ID: id, title, type, json } = record;
+      try {
+        const parsedData = JSON.parse(json);
+        const shouldSetData = checkIsObject(parsedData);
+        internalRecord = {
+          id,
+          title,
+          type,
+          _data: shouldSetData ? JSON.stringify(parsedData.data) : null,
+        };
+        database.update(recordType, internalRecord);
+      } catch (error) {
+        // Throw to parent, for now
+        throw error;
+      }
       break;
     }
     case 'Requisition': {

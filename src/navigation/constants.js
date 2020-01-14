@@ -35,4 +35,5 @@ export const ROUTES = {
   STOCKTAKE_EDITOR_WITH_REASONS: 'stocktakeEditorWithReasons',
 
   SETTINGS: 'settings',
+  DASHBOARD: 'dashboard',
 };

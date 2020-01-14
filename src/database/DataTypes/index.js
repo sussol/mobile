@@ -27,6 +27,7 @@ export { NumberToReuse } from './NumberToReuse';
 export { Options } from './Options';
 export { Period } from './Period';
 export { PeriodSchedule } from './PeriodSchedule';
+export { Report } from './Report';
 export { Requisition } from './Requisition';
 export { RequisitionItem } from './RequisitionItem';
 export { Stocktake } from './Stocktake';
