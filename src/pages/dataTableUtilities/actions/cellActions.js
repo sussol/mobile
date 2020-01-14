@@ -5,9 +5,15 @@
 
 import { UIDatabase } from '../../../database';
 import { parsePositiveInteger, MODAL_KEYS } from '../../../utilities';
+import {
+  getIndicatorValue,
+  updateIndicatorValue,
+  getIndicatorRow,
+  getIndicatorColumn,
+} from '../getIndicatorTableData';
 import { ACTIONS } from './constants';
 import { openModal, closeModal } from './pageActions';
-import { pageStateSelector } from '../selectors';
+import { pageStateSelector } from '../selectors/pageSelectors';
 
 /**
  * Refreshes a row in the DataTable component.
@@ -19,6 +25,11 @@ import { pageStateSelector } from '../selectors';
 export const refreshRow = (rowKey, route) => ({
   type: ACTIONS.REFRESH_ROW,
   payload: { rowKey, route },
+});
+
+export const refreshIndicatorRow = route => ({
+  type: 'refreshIndicatorRow',
+  payload: { route },
 });
 
 /**
@@ -40,6 +51,16 @@ export const editBatchName = (value, rowKey, objectType, route) => (dispatch, ge
 
     dispatch(refreshRow(rowKey, route));
   }
+};
+
+export const editIndicatorValue = (value, rowKey, columnKey, route) => (dispatch, getState) => {
+  const { indicatorRows, indicatorColumns, pageObject } = pageStateSelector(getState());
+  const { period } = pageObject;
+  const row = getIndicatorRow(indicatorRows, rowKey);
+  const column = getIndicatorColumn(indicatorColumns, columnKey);
+  const indicatorValue = getIndicatorValue(row, column, period);
+  updateIndicatorValue(indicatorValue, value);
+  dispatch(refreshIndicatorRow(route));
 };
 
 /**
@@ -260,6 +281,7 @@ export const editStocktakeBatchCountedQuantityWithReason = (value, rowKey, route
 
 export const CellActionsLookup = {
   refreshRow,
+  refreshIndicatorRow,
   editExpiryDate,
   editTransactionBatchExpiryDate,
   editStocktakeBatchExpiryDate,
@@ -273,6 +295,7 @@ export const CellActionsLookup = {
   enforceReasonChoice,
   applyReason,
   editBatchName,
+  editIndicatorValue,
   editStocktakeBatchName,
   editCountedQuantityWithReason,
   editStocktakeBatchCountedQuantityWithReason,

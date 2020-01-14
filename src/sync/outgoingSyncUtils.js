@@ -74,6 +74,16 @@ const safeGet = (record, path) => {
  */
 const generateSyncData = (settings, recordType, record) => {
   switch (recordType) {
+    case 'IndicatorValue': {
+      return {
+        ID: record.id,
+        facility_ID: settings.get(THIS_STORE_ID),
+        period_ID: record.period.id,
+        column_ID: record.column.id,
+        row_ID: record.row.id,
+        value: record.value,
+      };
+    }
     case 'ItemBatch': {
       return {
         ID: record.id,

@@ -140,6 +140,10 @@ export class Requisition extends Realm.Object {
     return (this.otherStoreName && this.otherStoreName.name) || '';
   }
 
+  get indicators() {
+    return this.program?.indicators.slice() || [];
+  }
+
   /**
    * Set the days to supply of this requisition in months.
    *

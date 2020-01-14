@@ -14,8 +14,19 @@ import { MODAL_KEYS } from '../utilities';
 import { DataTablePageModal } from '../widgets/modals';
 import { BottomConfirmModal } from '../widgets/bottomModals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
-import { DataTablePageView, PageButton, PageInfo, ToggleBar, SearchBar } from '../widgets';
+import {
+  DataTablePageView,
+  DropDown,
+  PageButton,
+  PageInfo,
+  ToggleBar,
+  SearchBar,
+} from '../widgets';
 
+import {
+  selectIndicatorTableColumns,
+  selectIndicatorTableRows,
+} from './dataTableUtilities/selectors/indicatorSelectors';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 import { ROUTES } from '../navigation/constants';
 
@@ -57,6 +68,10 @@ const SupplierRequisition = ({
   pageObject,
   hasSelection,
   showAll,
+  usingIndicators,
+  showIndicators,
+  selectedIndicator,
+  indicators,
   keyExtractor,
   searchTerm,
   columns,
@@ -71,9 +86,12 @@ const SupplierRequisition = ({
   onCheck,
   onUncheck,
   onSortColumn,
+  onShowIndicators,
+  onHideIndicators,
+  onSelectIndicator,
+  onEditIndicatorValue,
   onShowOverStocked,
   onHideOverStocked,
-  onOpenRegimenDataModal,
   onEditMonth,
   onEditRequiredQuantity,
   onAddRequisitionItem,
@@ -105,7 +123,9 @@ const SupplierRequisition = ({
         if (propName === 'onCheck') return onCheck;
         return onUncheck;
       default:
-        return null;
+        // Indicators functionality generates columns at run-time from indicator attribute
+        // data. If known column key not found, assume column is a dynamic indicators column.
+        return onEditIndicatorValue;
     }
   };
 
@@ -141,7 +161,7 @@ const SupplierRequisition = ({
         />
       );
     },
-    [data, dataState]
+    [columns, data, dataState]
   );
 
   const renderHeader = useCallback(
@@ -153,7 +173,7 @@ const SupplierRequisition = ({
         sortKey={sortKey}
       />
     ),
-    [sortKey, isAscending]
+    [columns, sortKey, isAscending]
   );
 
   const AddMasterListItemsButton = () => (
@@ -186,14 +206,30 @@ const SupplierRequisition = ({
 
   const UseSuggestedQuantitiesButton = () => (
     <PageButton
-      style={globalStyles.topButton}
+      style={usingIndicators ? globalStyles.wideButton : globalStyles.topButton}
       text={buttonStrings.use_suggested_quantities}
       onPress={onSetRequestedToSuggested}
       isDisabled={isFinalised}
     />
   );
 
-  const toggles = useMemo(
+  const ItemIndicatorToggles = useMemo(
+    () => [
+      {
+        text: programStrings.items,
+        isOn: !showIndicators,
+        onPress: onHideIndicators,
+      },
+      {
+        text: programStrings.indicators,
+        isOn: showIndicators,
+        onPress: onShowIndicators,
+      },
+    ],
+    [showIndicators]
+  );
+
+  const ThresholdMOSToggles = useMemo(
     () => [
       {
         text: programStrings.hide_over_stocked,
@@ -209,23 +245,9 @@ const SupplierRequisition = ({
     [showAll]
   );
 
-  const ThresholdMOSToggle = () => <ToggleBar toggles={toggles} />;
+  const ItemIndicatorToggle = () => <ToggleBar toggles={ItemIndicatorToggles} />;
 
-  const ViewRegimenDataButton = () => {
-    const hasRegimenData =
-      pageObject.parsedCustomData &&
-      pageObject.parsedCustomData.regimenData &&
-      pageObject.parsedCustomData.regimenData.length;
-
-    return (
-      <PageButton
-        style={globalStyles.topButton}
-        text={buttonStrings.view_regimen_data}
-        onPress={onOpenRegimenDataModal}
-        isDisabled={!hasRegimenData}
-      />
-    );
-  };
+  const ThresholdMOSToggle = () => <ToggleBar toggles={ThresholdMOSToggles} />;
 
   const GeneralButtons = useCallback(() => {
     const { verticalContainer } = globalStyles;
@@ -244,25 +266,42 @@ const SupplierRequisition = ({
   }, [isFinalised]);
 
   const ProgramButtons = useCallback(() => {
-    const { verticalContainer, horizontalContainer } = globalStyles;
+    const { verticalContainer } = globalStyles;
+
+    const ProgramItemButtons = (
+      <>
+        <UseSuggestedQuantitiesButton isWide={true} />
+        <ThresholdMOSToggle />
+      </>
+    );
+
+    const { code: selectedIndicatorCode } = selectedIndicator;
+    const indicatorCodes = indicators.map(indicator => indicator.code);
+
+    const ProgramIndicatorButtons = (
+      <DropDown
+        values={indicatorCodes}
+        selectedValue={selectedIndicatorCode}
+        onValueChange={onSelectIndicator}
+      />
+    );
+
     return (
       <>
         <View style={verticalContainer}>
-          <View style={horizontalContainer}>
-            <UseSuggestedQuantitiesButton />
-            <ViewRegimenDataButton />
-          </View>
-          <ThresholdMOSToggle />
+          <ItemIndicatorToggle />
+          {showIndicators ? ProgramIndicatorButtons : ProgramItemButtons}
         </View>
       </>
     );
-  }, [showAll, isFinalised]);
+  }, [showIndicators, selectedIndicator, showAll, isFinalised]);
 
   const {
     pageTopSectionContainer,
     pageTopLeftSectionContainer,
     pageTopRightSectionContainer,
   } = globalStyles;
+
   return (
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
@@ -323,6 +362,18 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 
 const mapStateToProps = state => {
   const { pages } = state;
+  const page = pages[ROUTES.SUPPLIER_REQUISITION];
+  const { usingIndicators, showIndicators } = page;
+
+  if (usingIndicators && showIndicators) {
+    const data = selectIndicatorTableRows(page);
+    const columns = selectIndicatorTableColumns(page);
+    return {
+      ...page,
+      data,
+      columns,
+    };
+  }
   return pages[ROUTES.SUPPLIER_REQUISITION];
 };
 
@@ -334,6 +385,8 @@ export const SupplierRequisitionPage = connect(
 SupplierRequisition.defaultProps = {
   modalValue: null,
   showAll: false,
+  usingIndicators: false,
+  showIndicators: false,
 };
 
 SupplierRequisition.propTypes = {
@@ -352,6 +405,12 @@ SupplierRequisition.propTypes = {
   routeName: PropTypes.string.isRequired,
   hasSelection: PropTypes.bool.isRequired,
   showAll: PropTypes.bool,
+  usingIndicators: PropTypes.bool,
+  showIndicators: PropTypes.bool,
+  selectedIndicator: PropTypes.object.isRequired,
+  indicators: PropTypes.array.isRequired,
+  indicatorColumns: PropTypes.object.isRequired,
+  indicatorRows: PropTypes.object.isRequired,
   modalValue: PropTypes.any,
   refreshData: PropTypes.func.isRequired,
   onSelectNewItem: PropTypes.func.isRequired,
@@ -363,9 +422,12 @@ SupplierRequisition.propTypes = {
   onCheck: PropTypes.func.isRequired,
   onUncheck: PropTypes.func.isRequired,
   onSortColumn: PropTypes.func.isRequired,
+  onShowIndicators: PropTypes.func.isRequired,
+  onHideIndicators: PropTypes.func.isRequired,
   onShowOverStocked: PropTypes.func.isRequired,
   onHideOverStocked: PropTypes.func.isRequired,
-  onOpenRegimenDataModal: PropTypes.func.isRequired,
+  onSelectIndicator: PropTypes.func.isRequired,
+  onEditIndicatorValue: PropTypes.func.isRequired,
   onEditMonth: PropTypes.func.isRequired,
   onEditRequiredQuantity: PropTypes.func.isRequired,
   onAddRequisitionItem: PropTypes.func.isRequired,

@@ -5,7 +5,7 @@
 
 import { UIDatabase } from '../../../database/index';
 import { ACTIONS } from './constants';
-import { pageStateSelector } from '../selectors';
+import { pageStateSelector } from '../selectors/pageSelectors';
 
 /**
  * Uses the stores dataState map to set a row to

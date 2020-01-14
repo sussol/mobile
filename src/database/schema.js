@@ -10,6 +10,8 @@ import {
   ItemCategory,
   ItemDepartment,
   ItemStoreJoin,
+  IndicatorAttribute,
+  IndicatorValue,
   MasterList,
   MasterListItem,
   MasterListNameJoin,
@@ -22,6 +24,7 @@ import {
   Report,
   Period,
   PeriodSchedule,
+  ProgramIndicator,
   Requisition,
   RequisitionItem,
   Setting,
@@ -137,6 +140,8 @@ User.schema = {
 export const schema = {
   schema: [
     Address,
+    IndicatorAttribute,
+    IndicatorValue,
     Item,
     ItemBatch,
     ItemCategory,
@@ -154,6 +159,7 @@ export const schema = {
     Report,
     Period,
     PeriodSchedule,
+    ProgramIndicator,
     Requisition,
     RequisitionItem,
     Setting,
@@ -168,7 +174,7 @@ export const schema = {
     Unit,
     User,
   ],
-  schemaVersion: 14,
+  schemaVersion: 15,
 };
 
 export default schema;

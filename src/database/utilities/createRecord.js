@@ -5,10 +5,11 @@
 
 import { generateUUID } from 'react-native-database';
 
+import { UIDatabase } from '..';
 import { versionToInteger, formatDateAndTime } from '../../utilities';
 import { NUMBER_SEQUENCE_KEYS } from './constants';
 import { generalStrings } from '../../localization';
-import { SETTINGS_KEYS } from '../../settings/index';
+import { SETTINGS_KEYS } from '../../settings';
 
 // Get the next highest number in an existing number sequence.
 export const getNextNumber = (database, sequenceKey) => {
@@ -96,6 +97,21 @@ const createNumberToReuse = (database, numberSequence, number) => {
   });
 
   numberSequence.addNumberToReuse(numberToReuse);
+};
+
+const createIndicatorValue = (database, row, column, period) => {
+  const { defaultValue: value } = column;
+  const indicatorValue = database.create('IndicatorValue', {
+    id: generateUUID(),
+    storeId: UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_NAME_ID),
+    row,
+    column,
+    period,
+    value,
+  });
+  row.addIndicatorValue(indicatorValue);
+  column.addIndicatorValue(indicatorValue);
+  return indicatorValue;
 };
 
 /**
@@ -446,6 +462,8 @@ export const createRecord = (database, type, ...args) => {
       return createNumberToReuse(database, ...args);
     case 'ItemBatch':
       return createItemBatch(database, ...args);
+    case 'IndicatorValue':
+      return createIndicatorValue(database, ...args);
     case 'Requisition':
       return createRequisition(database, ...args);
     case 'RequisitionItem':

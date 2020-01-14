@@ -27,6 +27,12 @@ export const buttonStyles = {
     margin: 5,
     borderColor: SUSSOL_ORANGE,
   },
+  wideButton: {
+    width: 285,
+    marginLeft: 5,
+    marginBottom: 5,
+    marginTop: 5,
+  },
   disabledButton: {
     borderColor: WARMER_GREY,
   },
