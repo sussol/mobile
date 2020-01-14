@@ -122,7 +122,7 @@ const Menu = ({
       <View style={containerStyle}>
         <ModulesImage style={image} />
         <View>
-          {usingDispensary && <MenuButton text={navStrings.dispensary} />}
+          {usingDispensary && <MenuButton text={navStrings.dispensary} onPress={toDispensary} />}
           {usingDashboard && <MenuButton text={navStrings.dashboard} onPress={toDashboard} />}
         </View>
       </View>
