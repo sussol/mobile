@@ -16,10 +16,14 @@ import { getPageDispatchers } from './getPageDispatchers';
 export { getColumns, getPageInfoColumns, getPageInitialiser, getPageDispatchers };
 
 export {
+  createIndicatorValue,
+  getIndicatorValue,
+  updateIndicatorValue,
+  getIndicatorRow,
   getIndicatorRows,
+  getIndicatorColumn,
   getIndicatorColumns,
   getIndicatorTableRow,
   getIndicatorTableRows,
-  getIndicatorRowColumnValue,
   getIndicatorTableData,
 } from './getIndicatorTableData';
