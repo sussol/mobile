@@ -53,20 +53,12 @@ export const editBatchName = (value, rowKey, objectType, route) => (dispatch, ge
 };
 
 export const editIndicatorValue = (value, rowKey, columnKey, route) => (dispatch, getState) => {
-  const rowCode = rowKey;
-  const columnCode = columnKey;
-
   const { selectedIndicator: indicator, pageObject } = pageStateSelector(getState());
   const { period } = pageObject;
-
-  const [column] = getIndicatorColumns(indicator, columnCode);
-
-  const [row] = getIndicatorRows(indicator, rowCode);
-
+  const [row] = getIndicatorRows(indicator, rowKey);
+  const [column] = getIndicatorColumns(indicator, columnKey);
   const valueRecord = getIndicatorRowColumnValue(row, column, period);
-
   UIDatabase.write(() => UIDatabase.update('IndicatorValue', { ...valueRecord, value }));
-
   dispatch(refreshIndicatorRow(rowKey, route));
 };
 
