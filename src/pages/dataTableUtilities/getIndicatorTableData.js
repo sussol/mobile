@@ -76,9 +76,11 @@ const filterByValues = values => value => includesValue(values, value);
  * @param {Period} period
  */
 const initialiseRowColumnValue = (row, column, period) => {
-  UIDatabase.write(() => createRecord(UIDatabase, 'IndicatorValue', row, column, period));
-  return UIDatabase.objects('IndicatorValue')
-    .filtered('row == $0 AND column == $1 AND period == $2', row, column, period);
+  let record;
+  UIDatabase.write(() => {
+    record = createRecord(UIDatabase, 'IndicatorValue', row, column, period);
+  });
+  return record;
 };
 
 /**
