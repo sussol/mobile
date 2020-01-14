@@ -37,6 +37,37 @@ const COLUMNS = {
 };
 
 /**
+ * Returns a filter method for finding a subset of an array of IndicatorAttribute objects by period.
+ * @param {Array.<IndicatorAttribute>} filterPeriod
+ * @return {Func}
+ */
+const filterByPeriod = filterPeriod => ({ period }) => period.id === filterPeriod.id;
+
+/**
+ * Returns a find method for querying an array of indicatorValue for the index of a given object.
+ * @param {IndicatorValue} findValue
+ * @return {Func}
+ */
+const findByValue = findValue => value => findValue.id === value.id;
+
+/**
+ * Query if an IndicatorValue array contains a given object.
+ * @param {Array.<IndicatorValue>} values
+ * @param {IndicatorValue} value
+ */
+const includesValue = (values, value) => {
+  const result = values.findIndex(findByValue(value)) > 0;
+  return result;
+};
+
+/**
+ * Returns a filter method for getting the intersection of two arrays of IndicatorValue objects.
+ * @param {Array.<IndicatorValue>} values
+ * @return {Func}
+ */
+const filterByValues = values => value => includesValue(values, value);
+
+/**
  * Intialise a new indicator value.
  *
  * @param {IndicatorAttribute} row
@@ -44,81 +75,92 @@ const COLUMNS = {
  * @param {Period} period
  */
 const initialiseRowColumnValue = (row, column, period) => {
+  let record;
   UIDatabase.write(() => {
-    createRecord(UIDatabase, 'IndicatorValue', row, column, period);
+    record = createRecord(UIDatabase, 'IndicatorValue', row, column, period);
   });
+  return record;
 };
 
+/**
+ * Get indicator column by code.
+ * @param {ProgramIndicator} indicator
+ * @param {string} code
+ * @return {Array.<IndicatorAttribute>}
+ */
 const getIndicatorColumns = (indicator, code) =>
   indicator?.columns?.filter(({ code: columnCode }) => columnCode === code);
 
-const getIndicatorRows = (indicator, code) =>
-  indicator?.rows?.filter(({ id: rowCode }) => rowCode === code);
+/**
+ * Get indicator rows by id.
+ * @param {ProgramIndicator} indicator
+ * @param {string} id
+ * @return {Array.<IndicatorAttribute>}
+ */
+const getIndicatorRows = (indicator, id) =>
+  indicator?.rows?.filter(({ id: rowId }) => rowId === id);
 
 /**
- * Get value for indicator row, column tuple.
+ * Get value for indicator row, column attribute pair.
  *
  * @param {IndicatorAttribute} row
  * @param {IndicatorAttribute} column
  * @param {Period} period
- * @returns {IndicatorValue}
+ * @return {IndicatorValue}
  */
 const getIndicatorRowColumnValue = (row, column, period) => {
-  const columnValues = column.values.filtered('period == $0', period);
-  const rowValues = row.values.filter(({ period: valuePeriod }) => valuePeriod.ID === period.ID);
-  const columnValueIds = columnValues?.map(({ id }) => id);
-  const rowValueIds = rowValues?.map(({ id }) => id);
-  const [rowColumnValueId] = columnValueIds?.filter(id => rowValueIds.includes(id)) || [];
-  const rowColumnValue = column?.values?.find(({ id }) => id === rowColumnValueId);
-
-  if (!rowColumnValue) {
-    initialiseRowColumnValue(row, column, period);
-    return getIndicatorRowColumnValue(row, column, period);
-  }
-
-  return rowColumnValue;
+  const rowValues = row.values.filter(filterByPeriod(period));
+  const columnValues = column.values.filter(filterByPeriod(period));
+  const rowColumnValues = rowValues?.filter(filterByValues(columnValues));
+  const [rowColumnValue] = rowColumnValues;
+  return rowColumnValue || initialiseRowColumnValue(row, column, period);
 };
 
-// eslint-disable-next-line no-unused-vars
-const getIndicatorTableColumn = (columnCode, indicator, period) => {
-  const [column] = indicator.columns.filter(({ code }) => code === columnCode);
+const getIndicatorData = indicator => ({
+  rows: getIndicatorRows(indicator),
+  columns: getIndicatorColumns(indicator),
+});
+
+/**
+ * Get data table column for indicator column attribute.
+ * @param {IndicatorAttribute} column
+ * @return {object}
+ */
+const getIndicatorTableColumn = column => {
+  const { description: title, code: key } = column;
   return {
     ...COLUMN_INDICATOR_MUTABLE,
-    title: column.description,
-    key: column.code,
+    title,
+    key,
   };
 };
 
 /**
- * Get indicator data table columns.
- *
+ * Get data table columns for given indicator.
  * @param {ProgramIndicator} indicator
- * @param {Period} period
  * @returns {Array.<object>}
  */
-// eslint-disable-next-line no-unused-vars
-const getIndicatorTableColumns = (indicator, period) => {
+const getIndicatorTableColumns = indicator => {
   if (!indicator) return [];
-
-  const descriptionColumn = COLUMNS.DESCRIPTION;
-  const codeColumn = COLUMNS.CODE;
-  // eslint-disable-next-line no-unused-vars
-  const valueColumns = indicator.columns.map(({ code }) =>
-    getIndicatorTableColumn(code, indicator, period)
-  );
-
-  return [descriptionColumn, codeColumn, ...valueColumns];
+  const valueColumns = indicator.columns.map(column => getIndicatorTableColumn(column));
+  return [COLUMNS.DESCRIPTION, COLUMNS.CODE, ...valueColumns];
 };
 
-const getIndicatorTableRow = (rowId, indicator, period) => {
-  const [row] = indicator.rows.filter(({ id }) => id === rowId);
-  const { description, code } = row;
+/**
+ * Get data table row for indicator row attribute.
+ * @param {IndicatorAttribute} row
+ * @param {ProgramIndicator} indicator
+ * @param {Period} period
+ */
+const getIndicatorTableRow = (row, indicator, period) => {
+  const [rowObject] = indicator.rows.filter(({ id: rowId }) => rowId === row.id);
+  const { id, description, code } = rowObject;
   const values = indicator.columns.reduce((acc, column) => {
     const { code: key } = column;
-    const value = getIndicatorRowColumnValue(row, column, period);
+    const value = getIndicatorRowColumnValue(rowObject, column, period);
     return { ...acc, [key]: value.value };
   }, {});
-  return { id: rowId, description, code, ...values };
+  return { id, description, code, ...values };
 };
 
 /**
@@ -130,7 +172,7 @@ const getIndicatorTableRow = (rowId, indicator, period) => {
  */
 const getIndicatorTableRows = (indicator, period) => {
   if (!indicator) return [];
-  return indicator.rows.map(({ id }) => getIndicatorTableRow(id, indicator, period));
+  return indicator.rows.map(row => getIndicatorTableRow(row, indicator, period));
 };
 
 /**
@@ -149,8 +191,10 @@ const getIndicatorTableData = (indicator, period) => {
 export {
   getIndicatorRows,
   getIndicatorColumns,
+  getIndicatorRowColumnValue,
+  getIndicatorData,
   getIndicatorTableRow,
   getIndicatorTableRows,
-  getIndicatorRowColumnValue,
+  getIndicatorTableColumns,
   getIndicatorTableData,
 };

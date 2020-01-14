@@ -33,7 +33,12 @@ export const refreshIndicatorRow = (state, action) => {
   const rowIndex = indicatorRows.findIndex(({ id }) => id === rowKey);
 
   const newIndicatorRows = [...indicatorRows];
-  newIndicatorRows[rowIndex] = getIndicatorTableRow(rowKey, selectedIndicator, period);
+  newIndicatorRows[rowIndex] = getIndicatorTableRow(
+    indicatorRows[rowIndex],
+    selectedIndicator,
+    period
+  );
+
   return { ...state, indicatorRows: newIndicatorRows };
 };
 
