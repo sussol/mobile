@@ -14,7 +14,10 @@ import currency from 'currency.js';
 import { SimpleLabel } from './SimpleLabel';
 import { FlexRow } from './FlexRow';
 import { FlexView } from './FlexView';
-import { SUSSOL_ORANGE, APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from '../globalStyles/index';
+
+import { parsePositiveInteger } from '../utilities';
+
+import { SUSSOL_ORANGE, APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from '../globalStyles';
 
 /**
  * Renders a label and two text inputs, with a preceding $ and a decimal
@@ -37,21 +40,35 @@ export const CurrencyInputRow = ({
   textInputStyle,
   currencyAmount,
 }) => {
-  const dollarAmount = React.useRef(String(currencyAmount.dollars()));
-  const centAmount = React.useRef(String(currencyAmount.cents()));
+  React.useEffect(() => {
+    setAmounts({
+      dollarAmount: String(currencyAmount.dollars()),
+      centAmount: String(currencyAmount.cents()),
+    });
+  }, [currencyAmount]);
+
+  const [amounts, setAmounts] = React.useState({
+    dollarAmount: String(currencyAmount.dollars()),
+    centAmount: String(currencyAmount.cents()),
+  });
+
+  const { dollarAmount, centAmount } = amounts;
+
   const refsArray = React.useRef([React.useRef(), React.useRef()]);
 
   const onSubmit = nextIndex => () => refsArray.current[nextIndex]?.current?.focus();
 
-  const update = () => {
-    const fullValue = `${dollarAmount.current}.${centAmount.current}`;
+  const update = ({ centAmount: cents, dollarAmount: dollars }) => {
+    const fullValue = `${dollars}.${cents}`;
     onChangeText(currency(fullValue));
   };
 
-  const onChange = key => x => {
-    if (key === 'dollars') dollarAmount.current = x;
-    if (key === 'cents') centAmount.current = x;
-    update();
+  const onChange = key => newAmount => {
+    setAmounts(state => {
+      const newState = { ...state, [key]: String(parsePositiveInteger(newAmount)) };
+      update(newState);
+      return newState;
+    });
   };
 
   return (
@@ -64,22 +81,22 @@ export const CurrencyInputRow = ({
         <SimpleLabel text="$" size="large" />
         <TextInput
           ref={refsArray.current[0]}
-          value={dollarAmount.current}
+          value={dollarAmount}
           underlineColorAndroid={underlineColorAndroid}
           style={textInputStyle}
           selectTextOnFocus
-          onChangeText={onChange('dollars')}
+          onChangeText={onChange('dollarAmount')}
           editable={!isDisabled}
           onSubmitEditing={onSubmit(1)}
         />
         <SimpleLabel text="." size="large" />
         <TextInput
           ref={refsArray.current[1]}
-          value={centAmount.current}
+          value={centAmount}
           underlineColorAndroid={underlineColorAndroid}
           style={textInputStyle}
           selectTextOnFocus
-          onChangeText={onChange('cents')}
+          onChangeText={onChange('centAmount')}
           editable={!isDisabled}
           onSubmitEditing={onSubmit(0)}
         />

@@ -8,16 +8,28 @@ import currency from 'currency.js';
 export const selectPrescriptionSubTotal = ({ payment }) => {
   const { transaction } = payment;
   const { items = [] } = transaction || {};
-  const total = items.reduce((acc, { totalPrice }) => currency(totalPrice || 0).add(acc), 0);
+  const total = items.reduce(
+    (acc, { totalPrice }) => currency(totalPrice || 0).add(acc),
+    currency(0)
+  );
   return total;
 };
 
-export const selectPrescriptionTotal = ({ payment }) => {
+export const selectDiscountAmount = ({ payment }) => {
   const { insurancePolicy } = payment;
   const subtotal = selectPrescriptionSubTotal({ payment });
 
-  const insuranceDiscountRate = insurancePolicy ? (insurancePolicy.discountRate || 100) / 100 : 1;
-  const total = currency(subtotal).multiply(1 - insuranceDiscountRate);
+  const insuranceDiscountRate = insurancePolicy ? (insurancePolicy.discountRate || 100) / 100 : 0;
+  const discountAmount = currency(subtotal).multiply(insuranceDiscountRate);
+
+  return discountAmount;
+};
+
+export const selectPrescriptionTotal = ({ payment }) => {
+  const subtotal = selectPrescriptionSubTotal({ payment });
+  const insuranceAmount = selectDiscountAmount({ payment });
+
+  const total = subtotal?.subtract(insuranceAmount) ?? currency(0);
 
   return total;
 };
