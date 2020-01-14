@@ -9,24 +9,25 @@ import { ROUTES } from '../navigation/constants';
 
 import { CustomerInvoicePage } from './CustomerInvoicePage';
 import { CustomerInvoicesPage } from './CustomerInvoicesPage';
-import { MenuPage } from './MenuPage';
-import { SettingsPage } from './SettingsPage';
-import { PageContainer } from './PageContainer';
-import { CustomerRequisitionsPage } from './CustomerRequisitionsPage';
 import { CustomerRequisitionPage } from './CustomerRequisitionPage';
+import { CustomerRequisitionsPage } from './CustomerRequisitionsPage';
+import { DashboardPage } from './DashboardPage';
+import { MenuPage } from './MenuPage';
+import { PageContainer } from './PageContainer';
+import { RealmExplorer } from './RealmExplorer';
+import { SettingsPage } from './SettingsPage';
 import { StockPage } from './StockPage';
 import { StocktakeEditPage } from './StocktakeEditPage';
 import { StocktakeManagePage } from './StocktakeManagePage';
 import { StocktakesPage } from './StocktakesPage';
 import { SupplierInvoicePage } from './SupplierInvoicePage';
 import { SupplierInvoicesPage } from './SupplierInvoicesPage';
-import { SupplierRequisitionsPage } from './SupplierRequisitionsPage';
 import { SupplierRequisitionPage } from './SupplierRequisitionPage';
 import { DispensingPage } from './DispensingPage';
 import { PrescriptionPage } from './PrescriptionPage';
 import { PrescriptionsPage } from './PrescriptionsPage';
 import { PatientsPage } from './PatientsPage';
-import { RealmExplorer } from './RealmExplorer';
+
 import {
   checkForCustomerInvoiceError,
   checkForSupplierInvoiceError,
@@ -85,6 +86,7 @@ export const PAGES = {
   [ROUTES.PATIENTS]: props => <PageContainer page={PatientsPage} {...props} />,
 
   [ROUTES.SETTINGS]: props => <PageContainer page={SettingsPage} {...props} />,
+  [ROUTES.DASHBOARD]: props => <PageContainer page={DashboardPage} {...props} />,
 };
 
 export const FINALISABLE_PAGES = {

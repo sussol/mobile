@@ -43,4 +43,5 @@ export const ROUTES = {
   PATIENT: 'patient',
 
   SETTINGS: 'settings',
+  DASHBOARD: 'dashboard',
 };

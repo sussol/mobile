@@ -34,6 +34,10 @@ export { ToggleBar } from './ToggleBar';
 export { ValidationTextInput } from './ValidationTextInput';
 export { Wizard } from './Wizard';
 export { ResultRow } from './ResultRow';
+export { BarChart } from './BarChart';
+export { LineChart } from './LineChart';
+export { PieChart } from './PieChart';
+export { ReportTable } from './ReportTable';
 
 export * from './icons';
 

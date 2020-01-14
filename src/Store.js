@@ -23,6 +23,7 @@ const persistConfig = {
     'wizard',
     'payment',
     'insurance',
+    'dashboard',
   ],
 };
 
