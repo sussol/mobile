@@ -19,6 +19,7 @@ import globalStyles from '../globalStyles';
 import { useSyncListener } from '../hooks';
 
 import { ROUTES } from '../navigation/constants';
+import { generalStrings, tableStrings } from '../localization';
 
 /**
  * Renders a mSupply mobile page with Items and their stock levels.
@@ -86,6 +87,7 @@ export const Stock = ({
           onChangeText={onFilterData}
           value={searchTerm}
           onFocusOrBlur={selectedRow && onDeselectRow}
+          placeholder={`${generalStrings.search_by} ${tableStrings.name}, ${tableStrings.item_code}`}
         />
       </View>
 

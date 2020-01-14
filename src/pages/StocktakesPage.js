@@ -22,7 +22,7 @@ import { ROUTES } from '../navigation/constants';
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
 
-import { buttonStrings, modalStrings } from '../localization';
+import { buttonStrings, modalStrings, generalStrings, tableStrings } from '../localization';
 import globalStyles from '../globalStyles';
 
 import {
@@ -133,7 +133,11 @@ export const Stocktakes = ({
       <View style={pageTopSectionContainer}>
         <View style={pageTopLeftSectionContainer}>
           <ToggleBar toggles={toggles} />
-          <SearchBar onChangeText={onFilterData} value={searchTerm} />
+          <SearchBar
+            onChangeText={onFilterData}
+            value={searchTerm}
+            placeholder={`${generalStrings.search_by} ${tableStrings.name}`}
+          />
         </View>
         <View style={pageTopRightSectionContainer}>
           <PageButton text={buttonStrings.new_stocktake} onPress={onNewStocktake} />

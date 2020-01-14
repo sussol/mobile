@@ -5,7 +5,7 @@
   },
   "name": "mSupplyMobile",
   "//": "version must be in the format ${majorNumber}.${minorNumber}.${patchNumber}-rc${releaseCandidateNumber}",
-  "version": "3.1.1",
+  "version": "3.2.0-rc2",
   "private": false,
   "license": "MIT",
   "description": "Mobile app for use with the mSupply medical inventory control software",
@@ -72,6 +72,7 @@
     "react-native-popover-view": "^2.0.5",
     "react-native-reanimated": "^1.4.0",
     "react-native-screens": "^1.0.0-alpha.23",
+    "react-native-svg": "^9.13.6",
     "react-native-ui-components": "^0.5.0",
     "react-native-vector-icons": "6.6.0",
     "react-navigation": "^4.0.10",
@@ -87,7 +88,8 @@
     "reselect": "^4.0.0",
     "set-manipulator": "^0.3.1",
     "sussol-utilities": "^0.5.1",
-    "valid-url": "^1.0.9"
+    "valid-url": "^1.0.9",
+    "victory-native": "^33.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",

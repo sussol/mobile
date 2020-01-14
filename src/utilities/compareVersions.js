@@ -3,7 +3,7 @@ import { Client as BugsnagClient } from 'bugsnag-react-native';
 const bugsnagClient = new BugsnagClient();
 
 // versionToInteger logic is the same as ./android/app/build.gradle.
-const versionToInteger = version => {
+export const versionToInteger = version => {
   const [majorMinorPatch, provisional] = version.split('-');
   const [major, minor, patch] = majorMinorPatch.split('.');
   return (

@@ -6,7 +6,7 @@
 import { generateUUID } from 'react-native-database';
 
 import { UIDatabase } from '..';
-import { formatDateAndTime } from '../../utilities';
+import { versionToInteger, formatDateAndTime } from '../../utilities';
 import { NUMBER_SEQUENCE_KEYS } from './constants';
 import { generalStrings } from '../../localization';
 import { SETTINGS_KEYS } from '../../settings';
@@ -412,6 +412,38 @@ const createTransactionItem = (database, transaction, item) => {
 };
 
 /**
+ * Create a Message record. This will be sent to the server and requests tables
+ * when an app is upgraded from some version to another.
+ *
+ * @param {Realm}  database    App-wide database interface
+ * @param {String} fromVersion Which version the app is being upgraded from.
+ * @param {String} toVersion   Which version the app is being upgraded too.
+ */
+
+const createUpgradeMessage = (database, fromVersion, toVersion) => {
+  const syncSiteId = database.getSetting(SETTINGS_KEYS.SYNC_SITE_ID);
+
+  const body = {
+    fromVersion: versionToInteger(fromVersion),
+    toVersion: versionToInteger(toVersion),
+    fromVersionString: String(fromVersion),
+    toVersionString: String(toVersion),
+    syncSiteId: Number(syncSiteId),
+  };
+
+  const message = database.create('Message', {
+    id: generateUUID(),
+    type: 'mobile_upgrade',
+  });
+
+  message.body = body;
+
+  database.save('Message', message);
+
+  return message;
+};
+
+/**
  * Create a record of the given type, taking care of linkages, generating IDs, serial
  * numbers, current dates, and inserting sensible defaults.
  *
@@ -450,6 +482,8 @@ export const createRecord = (database, type, ...args) => {
       return createTransactionItem(database, ...args);
     case 'TransactionBatch':
       return createTransactionBatch(database, ...args);
+    case 'UpgradeMessage':
+      return createUpgradeMessage(database, ...args);
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }

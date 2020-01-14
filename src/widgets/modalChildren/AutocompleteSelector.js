@@ -31,7 +31,7 @@ export const AutocompleteSelector = ({
 }) => {
   const [queryText, setQueryText] = useState('');
 
-  const onChangeText = () => setQueryText(queryText);
+  const onChangeText = React.useCallback(inputValue => setQueryText(inputValue), []);
 
   /**
    * Filters a realm results object. Creates two realm results A, B

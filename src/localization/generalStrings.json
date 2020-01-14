@@ -17,12 +17,17 @@
     "exported_data": "Exported data file",
     "couldnt_export_data": "Couldn't export data",
     "sync_password": "Sync password",
-    "sync_url": "Sync url"
+    "sync_url": "Sync url",
+    "reports": "Reports",
+    "no_reports": "No Reports to show",
+    "search_by": "Search by"
   },
   "fr": {
     "stocktake": "Inventaire",
     "start_typing_to_search": "Tapez pour rechercher",
-    "not_available": "N/A"
+    "not_available": "N/A",
+    "reports": "Rapports",
+    "no_reports": "Aucun rapport à afficher"
   },
   "gil": {
     "stocktake": "Warebwai",

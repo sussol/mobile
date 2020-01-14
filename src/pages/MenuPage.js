@@ -26,6 +26,7 @@ import {
   gotoStocktakes,
   gotoRealmExplorer,
   gotoSettings,
+  gotoDashboard,
 } from '../navigation/actions';
 
 import globalStyles, { SHADOW_BORDER, GREY } from '../globalStyles';
@@ -49,6 +50,8 @@ const Menu = ({
   toSupplierRequisitions,
   toRealmExplorer,
   toSettings,
+  toDashboard,
+  usingDashboard,
   usingDispensary,
   usingModules,
   isAdmin,
@@ -60,7 +63,7 @@ const Menu = ({
 
   const MenuButton = useCallback(
     props => <Button style={menuButton} textStyle={buttonText} {...props} />,
-    [usingDispensary, usingModules]
+    [usingDashboard, usingDispensary, usingModules]
   );
 
   const CustomerSection = useCallback(
@@ -77,7 +80,7 @@ const Menu = ({
         </View>
       </View>
     ),
-    [usingDispensary, usingModules]
+    [usingDashboard, usingDispensary, usingModules]
   );
 
   const SupplierSection = useCallback(
@@ -94,7 +97,7 @@ const Menu = ({
         </View>
       </View>
     ),
-    [usingDispensary, usingModules]
+    [usingDashboard, usingDispensary, usingModules]
   );
 
   const StockSection = useCallback(
@@ -109,17 +112,20 @@ const Menu = ({
         </View>
       </View>
     ),
-    [usingDispensary, usingModules]
+    [usingDashboard, usingDispensary, usingModules]
   );
 
   const ModulesSection = useCallback(
     () => (
       <View style={containerStyle}>
         <ModulesImage style={image} />
-        <View>{usingDispensary && <MenuButton text="Dispensary" />}</View>
+        <View>
+          {usingDispensary && <MenuButton text={navStrings.dispensary} />}
+          {usingDashboard && <MenuButton text={navStrings.dashboard} onPress={toDashboard} />}
+        </View>
       </View>
     ),
-    [usingDispensary, usingModules]
+    [usingDashboard, usingDispensary, usingModules]
   );
 
   const AdminRow = useCallback(
@@ -229,14 +235,21 @@ const mapDispatchToProps = dispatch => ({
   toSupplierRequisitions: () => dispatch(gotoSupplierRequisitions()),
   toRealmExplorer: () => dispatch(gotoRealmExplorer()),
   toSettings: () => dispatch(gotoSettings()),
+  toDashboard: () => dispatch(gotoDashboard()),
   logout: () => dispatch(UserActions.logout()),
 });
 
 const mapStateToProps = state => {
   const { modules, user } = state;
   const { currentUser } = user;
-  const { usingDispensary } = modules;
-  return { usingDispensary, usingModules: usingDispensary, isAdmin: currentUser?.isAdmin };
+  const { usingDashboard, usingDispensary, usingVaccines, usingModules } = modules;
+  return {
+    usingDashboard,
+    usingDispensary,
+    usingVaccines,
+    usingModules,
+    isAdmin: currentUser?.isAdmin,
+  };
 };
 
 export const MenuPage = connect(mapStateToProps, mapDispatchToProps)(Menu);
@@ -257,7 +270,9 @@ Menu.propTypes = {
   toSupplierRequisitions: PropTypes.func.isRequired,
   toRealmExplorer: PropTypes.func.isRequired,
   toSettings: PropTypes.func.isRequired,
+  toDashboard: PropTypes.func.isRequired,
   isAdmin: PropTypes.bool,
   usingDispensary: PropTypes.bool.isRequired,
+  usingDashboard: PropTypes.bool.isRequired,
   usingModules: PropTypes.bool.isRequired,
 };

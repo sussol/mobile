@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -44,6 +45,7 @@ export const RECORD_TYPES = new SyncTranslator({
   MasterList: 'list_master',
   MasterListItem: 'list_master_line',
   MasterListNameJoin: 'list_master_name_join',
+  Message: 'message',
   Name: 'name',
   NameStoreJoin: 'name_store_join',
   NumberSequence: 'number',
@@ -52,6 +54,7 @@ export const RECORD_TYPES = new SyncTranslator({
   Period: 'period',
   PeriodSchedule: 'periodSchedule',
   ProgramIndicator: 'program_indicator',
+  Report: 'dashboard_store_report',
   Requisition: 'requisition',
   RequisitionItem: 'requisition_line',
   Stocktake: 'Stock_take',
