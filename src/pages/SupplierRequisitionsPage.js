@@ -23,7 +23,7 @@ import { createSupplierRequisition, gotoSupplierRequisition } from '../navigatio
 import { getItemLayout, PageActions, getPageDispatchers } from './dataTableUtilities';
 
 import globalStyles from '../globalStyles';
-import { buttonStrings, modalStrings } from '../localization';
+import { buttonStrings, modalStrings, generalStrings, tableStrings } from '../localization';
 
 /**
  * Renders a mSupply mobile page with a list of supplier requisitions.
@@ -149,7 +149,11 @@ export const SupplierRequisitions = ({
       <View style={pageTopSectionContainer}>
         <View style={pageTopLeftSectionContainer}>
           <ToggleBar toggles={toggles} />
-          <SearchBar onChangeText={onFilterData} value={searchTerm} />
+          <SearchBar
+            onChangeText={onFilterData}
+            value={searchTerm}
+            placeholder={`${generalStrings.search_by} ${tableStrings.requisition_number}`}
+          />
         </View>
         <View style={pageTopRightSectionContainer}>
           <PageButton text={buttonStrings.new_requisition} onPress={onNewRequisition} />

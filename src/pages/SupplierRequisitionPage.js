@@ -22,7 +22,13 @@ import { ROUTES } from '../navigation/constants';
 import { useRecordListener } from '../hooks';
 
 import globalStyles from '../globalStyles';
-import { buttonStrings, modalStrings, programStrings } from '../localization';
+import {
+  buttonStrings,
+  modalStrings,
+  programStrings,
+  generalStrings,
+  tableStrings,
+} from '../localization';
 import { UIDatabase } from '../database/index';
 import { SETTINGS_KEYS } from '../settings/index';
 
@@ -262,7 +268,11 @@ const SupplierRequisition = ({
       <View style={pageTopSectionContainer}>
         <View style={pageTopLeftSectionContainer}>
           <PageInfo columns={pageInfoColumns} isEditingDisabled={isFinalised} />
-          <SearchBar onChangeText={onFilterData} value={searchTerm} />
+          <SearchBar
+            onChangeText={onFilterData}
+            value={searchTerm}
+            placeholder={`${generalStrings.search_by} ${tableStrings.item_name}`}
+          />
         </View>
         <View style={pageTopRightSectionContainer}>
           {program ? <ProgramButtons /> : <GeneralButtons />}
