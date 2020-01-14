@@ -5,17 +5,26 @@
 
 import { createSelector } from 'reselect';
 import { mapIndicatorTableRows, mapIndicatorTableColumns } from '../getIndicatorTableData';
+import { pageStateSelector, pageObjectSelector } from './pageSelectors';
 
-const getIndicatorRows = pageState => pageState.indicatorRows;
-const getIndicatorColumns = pageState => pageState.indicatorColumns;
-const getPeriod = pageState => pageState.pageObject.period;
+export const selectIndicatorRows = createSelector(
+  [pageStateSelector],
+  pageState => pageState.indicatorRows
+);
+
+export const selectIndicatorColumns = createSelector(
+  [pageStateSelector],
+  pageState => pageState.indicatorColumns
+);
+
+export const selectPeriod = createSelector([pageObjectSelector], pageObject => pageObject.period);
 
 /**
  * Maps indicator rows to data table row objects.
  * @param {Array.<IndicatorAttribute>} indicatorRows
  */
-export const getIndicatorTableRows = createSelector(
-  [getIndicatorRows, getPeriod],
+export const selectIndicatorTableRows = createSelector(
+  [selectIndicatorRows, selectPeriod],
   (indicatorRows, period) => mapIndicatorTableRows(indicatorRows, period)
 );
 
@@ -23,6 +32,7 @@ export const getIndicatorTableRows = createSelector(
  * Maps indicator columns to data table column objects.
  * @param {Array.<IndicatorAttribute>} indicatorColumns
  */
-export const getIndicatorTableColumns = createSelector([getIndicatorColumns], indicatorColumns =>
-  mapIndicatorTableColumns(indicatorColumns)
+export const selectIndicatorTableColumns = createSelector(
+  [selectIndicatorColumns],
+  indicatorColumns => mapIndicatorTableColumns(indicatorColumns)
 );

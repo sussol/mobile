@@ -24,8 +24,8 @@ import {
 } from '../widgets';
 
 import {
-  getIndicatorTableColumns,
-  getIndicatorTableRows,
+  selectIndicatorTableColumns,
+  selectIndicatorTableRows,
 } from './dataTableUtilities/selectors/indicatorSelectors';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 import { ROUTES } from '../navigation/constants';
@@ -360,8 +360,8 @@ const mapStateToProps = state => {
   const { usingIndicators, showIndicators } = page;
 
   if (usingIndicators && showIndicators) {
-    const data = getIndicatorTableRows(page);
-    const columns = getIndicatorTableColumns(page);
+    const data = selectIndicatorTableRows(page);
+    const columns = selectIndicatorTableColumns(page);
     return {
       ...page,
       data,
