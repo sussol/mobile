@@ -13,9 +13,12 @@ export const PRESCRIBER_ACTIONS = {
   COMPLETE: 'Prescriber/complete',
   SET: 'Prescriber/set',
   FILTER: 'Prescriber/filter',
+  SORT: 'Prescriber/sort',
 };
 
 const filterData = searchTerm => ({ type: PRESCRIBER_ACTIONS.FILTER, payload: { searchTerm } });
+
+const sortData = sortKey => ({ type: PRESCRIBER_ACTIONS.SORT, payload: { sortKey } });
 
 const setPrescriber = prescriber => ({ type: PRESCRIBER_ACTIONS.SET, payload: { prescriber } });
 
@@ -63,4 +66,5 @@ export const PrescriberActions = {
   saveNewPrescriber,
   setPrescriber,
   filterData,
+  sortData,
 };

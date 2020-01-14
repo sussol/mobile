@@ -10,6 +10,9 @@ const prescriberInitialState = () => ({
   currentPrescriber: null,
   isEditingPrescriber: false,
   isCreatingPrescriber: false,
+  sortKey: 'firstName',
+  searchTerm: '',
+  isAscending: true,
 });
 
 export const PrescriberReducer = (state = prescriberInitialState(), action) => {
@@ -48,6 +51,16 @@ export const PrescriberReducer = (state = prescriberInitialState(), action) => {
       const { payload } = action;
       const { searchTerm } = payload;
       return { ...state, searchTerm };
+    }
+
+    case PRESCRIBER_ACTIONS.SORT: {
+      const { sortKey, isAscending } = state;
+      const { payload } = action;
+      const { sortKey: newSortKey } = payload;
+
+      const newIsAscending = sortKey === newSortKey ? !isAscending : true;
+      console.log(newIsAscending);
+      return { ...state, sortKey: newSortKey, isAscending: newIsAscending };
     }
 
     default: {
