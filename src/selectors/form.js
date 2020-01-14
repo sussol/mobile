@@ -20,12 +20,8 @@ export const selectCanSaveForm = ({ form }) => {
  *
  * @return {Object}
  */
-export const selectCompletedForm = ({ form }) => {
-  const canSaveForm = selectCanSaveForm({ form });
-  if (!canSaveForm) return null;
-
-  return Object.keys(form).reduce(
+export const selectCompletedForm = ({ form }) =>
+  Object.keys(form).reduce(
     (acc, formField) => ({ ...acc, [formField]: form[formField].value }),
     {}
   );
-};

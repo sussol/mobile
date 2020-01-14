@@ -20,14 +20,16 @@ import {
   selectPrescriptionSubTotal,
   selectPrescriptionTotal,
   selectCreditBeingUsed,
+  selectDiscountAmount,
 } from '../selectors/payment';
 import { DropDown } from './DropDown';
-import { selectPatientInsurancePolicies } from '../selectors/patient';
+import { selectPatientInsurancePolicies, selectAvailableCredit } from '../selectors/patient';
 import { UIDatabase } from '../database/index';
 import { FlexRow } from './FlexRow';
 import { CircleButton } from './CircleButton';
 import { PencilIcon, AddIcon } from './icons';
 import { InsuranceActions } from '../actions/InsuranceActions';
+import { selectInsuranceDiscountRate } from '../selectors/insurance';
 
 const paymentState = state => {
   const { insurance, payment, wizard } = state;
@@ -38,12 +40,16 @@ const paymentState = state => {
   const subtotal = selectPrescriptionSubTotal(state);
   const total = selectPrescriptionTotal(state);
   const creditUsed = selectCreditBeingUsed(state);
-
+  const availableCredit = selectAvailableCredit(state);
   const insurancePolicies = selectPatientInsurancePolicies(state);
   const paymentTypes = UIDatabase.objects('PaymentType');
+  const discountRate = selectInsuranceDiscountRate(state);
+  const discountAmount = selectDiscountAmount(state);
 
   return {
     currentInsurancePolicy,
+    discountRate,
+    discountAmount,
     subtotal,
     total,
     creditUsed,
@@ -54,6 +60,7 @@ const paymentState = state => {
     paymentTypes,
     paymentType,
     selectedInsurancePolicy,
+    availableCredit,
   };
 };
 
@@ -84,6 +91,9 @@ const PaymentSummaryComponent = ({
   selectedInsurancePolicy,
   editPolicy,
   newPolicy,
+  discountRate,
+  discountAmount,
+  availableCredit,
 }) => {
   const policyNumbers = React.useMemo(
     () => ['Select a policy..', ...insurancePolicies.map(p => p.policyNumber)],
@@ -137,12 +147,14 @@ const PaymentSummaryComponent = ({
           </FlexView>
 
           <FlexView flex={0.25}>
+            <NumberLabelRow text="Available Credit" isCurrency number={availableCredit.format()} />
             <NumberLabelRow
               size="small"
               text="Credit used"
               isCurrency
               number={creditUsed.format()}
             />
+
             <Text style={localStyles.errorMessageStyle}>
               {creditOverflow ? 'Not enough credit!' : ''}
             </Text>
@@ -150,8 +162,16 @@ const PaymentSummaryComponent = ({
         </FlexView>
 
         <FlexView flex={1}>
-          <Separator />
-          <NumberLabelRow size="small" text="Sub total" isCurrency number={subtotal.format()} />
+          <Separator marginBottom={20} />
+          <NumberLabelRow text="Sub total" isCurrency number={subtotal.format()} />
+
+          <NumberLabelRow text="Insurance discount rate" isPercentage number={discountRate} />
+          <NumberLabelRow
+            text="Insurance discount amount"
+            isCurrency
+            number={discountAmount.format()}
+          />
+          <Separator length="50%" marginTop={20} marginBottom={20} />
           <NumberLabelRow size="large" text="Total" isCurrency number={total.format()} />
         </FlexView>
       </FlexView>
@@ -175,6 +195,9 @@ PaymentSummaryComponent.propTypes = {
   paymentTypes: PropTypes.object.isRequired,
   choosePaymentType: PropTypes.func.isRequired,
   paymentType: PropTypes.object.isRequired,
+  discountRate: PropTypes.number.isRequired,
+  discountAmount: PropTypes.object.isRequired,
+  availableCredit: PropTypes.object.isRequired,
 };
 
 const localStyles = {

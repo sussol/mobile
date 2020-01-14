@@ -14,6 +14,9 @@ import { modalStrings } from '../localization/index';
 import { selectCanSaveForm, selectCompletedForm } from '../selectors/form';
 import { FormActions } from '../actions/FormActions';
 import { FormDateInput } from './FormDateInput';
+import { FormToggle } from './FormInputs/FormToggle';
+import { FormDropdown } from './FormInputs/FormDropdown';
+import { FormSlider } from './FormInputs/FormSlider';
 
 /**
  * Component which will manage and control a set of user inputs of a form.
@@ -59,7 +62,10 @@ const FormControlComponent = ({
 
   const formInputs = () =>
     inputConfig.map(
-      ({ type, key, isRequired, validator, initialValue, label, invalidMessage }, index) => {
+      (
+        { type, key, isRequired, validator, initialValue, label, invalidMessage, ...rest },
+        index
+      ) => {
         refs[index] = React.useRef();
         switch (type) {
           case 'text': {
@@ -89,6 +95,50 @@ const FormControlComponent = ({
                 onValidate={validator}
                 invalidMessage={invalidMessage}
                 onSubmit={nextFocus(index, key)}
+              />
+            );
+          }
+          case 'dropdown': {
+            const { options, optionKey } = rest;
+            return (
+              <FormDropdown
+                key={key}
+                isRequired={isRequired}
+                label={label}
+                value={completedForm?.[key] ?? initialValue}
+                onValueChange={value => onUpdateForm(key, value)}
+                options={options}
+                optionKey={optionKey}
+              />
+            );
+          }
+          case 'toggle': {
+            const { options, optionLabels } = rest;
+            return (
+              <FormToggle
+                options={options}
+                optionLabels={optionLabels}
+                value={completedForm?.[key] ?? initialValue}
+                onValueChange={value => onUpdateForm(key, value)}
+                key={key}
+                label={label}
+                isRequired={isRequired}
+              />
+            );
+          }
+          case 'slider': {
+            const { maximumValue, minimumValue, step } = rest;
+            return (
+              <FormSlider
+                ref={refs[index]}
+                maxmimumValue={maximumValue}
+                minimumValue={minimumValue}
+                step={step}
+                value={completedForm?.[key] ?? initialValue}
+                onValueChange={value => onUpdateForm(key, value)}
+                key={key}
+                label={label}
+                isRequired={isRequired}
               />
             );
           }
@@ -141,7 +191,6 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 const mapStateToProps = state => {
   const canSaveForm = selectCanSaveForm(state);
   const completedForm = selectCompletedForm(state);
-
   return { canSaveForm, completedForm };
 };
 

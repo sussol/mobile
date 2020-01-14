@@ -5,11 +5,12 @@
  */
 
 import React from 'react';
-import { StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { FlexRow } from './FlexRow';
+import { FlexView } from './FlexView';
+import { FlexColumn } from './FlexColumn';
 import { SimpleLabel } from './SimpleLabel';
 import { CircleButton } from './CircleButton';
 import { PencilIcon, HistoryIcon } from './icons';
@@ -18,8 +19,6 @@ import { selectCurrentPatient, selectPatientName } from '../selectors/patient';
 import { selectCurrentPrescriber, selectPrescriberName } from '../selectors/prescriber';
 import { PatientActions } from '../actions/PatientActions';
 import { PrescriberActions } from '../actions/PrescriberActions';
-
-import { WHITE, BLUE_WHITE } from '../globalStyles';
 
 const PrescriptionInfoComponent = ({
   currentPatient,
@@ -30,8 +29,6 @@ const PrescriptionInfoComponent = ({
   viewHistory,
   editPrescriber,
 }) => {
-  const { mainContainerStyles, leftContainerStyle } = localStyles;
-
   const editPatientCallback = React.useCallback(() => editPatient(currentPatient), [
     currentPatient,
   ]);
@@ -45,26 +42,42 @@ const PrescriptionInfoComponent = ({
   ]);
 
   return (
-    <FlexRow justifyContent="space-between" style={mainContainerStyles}>
-      <FlexRow alignItems="center" flex={1} style={leftContainerStyle}>
-        <SimpleLabel label="Patient" text={patientName} size="large" />
-        <CircleButton IconComponent={HistoryIcon} onPress={viewHistoryCallback} />
-        <CircleButton IconComponent={PencilIcon} onPress={editPatientCallback} />
-      </FlexRow>
-      {currentPrescriber && (
-        <FlexRow alignItems="center" justifyContent="flex-end" flex={1}>
-          <SimpleLabel label="Prescriber" text={prescriberName} size="large" />
-          <CircleButton IconComponent={PencilIcon} onPress={prescriberEditCallback} />
+    <FlexRow>
+      <FlexColumn flex={1}>
+        <FlexRow alignItems="center" justifyContent="">
+          <FlexView flex={3}>
+            <SimpleLabel label="Patient" size="small" />
+            <SimpleLabel text={patientName} size="medium" />
+          </FlexView>
+
+          <FlexRow flex={1}>
+            <CircleButton IconComponent={HistoryIcon} onPress={viewHistoryCallback} />
+            <CircleButton IconComponent={PencilIcon} onPress={editPatientCallback} />
+          </FlexRow>
         </FlexRow>
-      )}
+      </FlexColumn>
+
+      <FlexColumn alignItems="flex-start" flex={1}>
+        <FlexRow justifyContent="flex-start" alignItems="flex-end" reverse>
+          <FlexView flex={3} justifyContent="flex-end" alignItems="flex-end">
+            {currentPrescriber && (
+              <SimpleLabel label="Prescriber" size="small" labelAlign="right" />
+            )}
+            {currentPrescriber && (
+              <SimpleLabel text={prescriberName} size="medium" textAlign="right" />
+            )}
+          </FlexView>
+
+          <FlexRow flex={1} justifyContent="">
+            {currentPrescriber && (
+              <CircleButton IconComponent={PencilIcon} onPress={prescriberEditCallback} />
+            )}
+          </FlexRow>
+        </FlexRow>
+      </FlexColumn>
     </FlexRow>
   );
 };
-
-const localStyles = StyleSheet.create({
-  mainContainerStyle: { backgroundColor: WHITE, marginVertical: 10 },
-  leftContainerStyle: { borderRightWidth: 10, borderRightColor: BLUE_WHITE },
-});
 
 const mapDispatchToProps = dispatch => {
   const editPatient = patient => dispatch(PatientActions.editPatient(patient));

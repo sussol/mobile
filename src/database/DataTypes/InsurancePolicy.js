@@ -14,7 +14,7 @@ InsurancePolicy.schema = {
     policyNumberFamily: 'string',
     policyNumberPerson: 'string',
     type: 'string',
-    discountRate: 'float',
+    discountRate: 'double',
     isActive: { type: 'bool', default: true },
     expiryDate: 'date',
     enteredBy: { type: 'User', optional: true },

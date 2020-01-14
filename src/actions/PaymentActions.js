@@ -47,7 +47,7 @@ const validatePayment = amount => (dispatch, getState) => {
 
   batch(() => {
     dispatch(updatePayment(amount));
-    if (difference.value > availableCredit) dispatch(creditOverflow());
+    if (difference.value > availableCredit.value) dispatch(creditOverflow());
   });
 };
 

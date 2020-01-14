@@ -39,23 +39,27 @@ export const getNumberSequence = (database, sequenceKey) => {
   return sequenceResults[0];
 };
 
-const createInsurancePolicy = (
-  database,
-  patient,
-  policyNumberFamily,
-  policyNumberPerson,
-  type,
-  discountRate,
-  expiryDate,
-  insuranceProvider
-) => {
-  const policy = database.create('InsurancePolicy', {
-    id: generateUUID(),
+const createInsurancePolicy = (database, policyValues) => {
+  const {
     patient,
     policyNumberFamily,
     policyNumberPerson,
     type,
     discountRate,
+    insuranceProvider,
+  } = policyValues;
+
+  const expiryDate = moment(new Date())
+    .add(insuranceProvider.validityDays, 'days')
+    .toDate();
+
+  const policy = database.create('InsurancePolicy', {
+    id: generateUUID(),
+    discountRate,
+    patient,
+    policyNumberFamily,
+    policyNumberPerson,
+    type,
     expiryDate,
     insuranceProvider,
   });
