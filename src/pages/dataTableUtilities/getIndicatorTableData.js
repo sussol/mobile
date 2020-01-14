@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -90,7 +89,7 @@ const initialiseRowColumnValue = (row, column, period) => {
  * @return {Array.<IndicatorAttribute>}
  */
 const getIndicatorColumns = (indicator, code) =>
-    indicator?.columns?.filter(({ code: columnCode }) => columnCode === code);
+  indicator?.columns?.filter(({ code: columnCode }) => columnCode === code);
 
 /**
  * Get indicator rows by id.
@@ -99,7 +98,7 @@ const getIndicatorColumns = (indicator, code) =>
  * @return {Array.<IndicatorAttribute>}
  */
 const getIndicatorRows = (indicator, id) =>
-    indicator?.rows?.filter(({ id: rowId }) => rowId === id);
+  indicator?.rows?.filter(({ id: rowId }) => rowId === id);
 
 /**
  * Get value for indicator row, column attribute pair.
