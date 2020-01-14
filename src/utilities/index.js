@@ -19,6 +19,7 @@ export { debounce } from './underscoreMethods';
 export { getModalTitle, MODAL_KEYS } from './getModalTitle';
 export { checkIsObject } from './checkIsObject';
 
+// eslint-disable-next-line import/no-cycle
 export {
   checkForCustomerInvoiceError,
   checkForSupplierInvoiceError,

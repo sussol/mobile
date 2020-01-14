@@ -4,7 +4,7 @@
  */
 
 import { sortDataBy } from '../../../utilities';
-
+import { getIndicatorData } from '../getIndicatorTableData';
 /**
  * Sorts the current set of data by the provided
  * key and direction in action.
@@ -144,6 +144,26 @@ export const toggleShowFinalised = state => {
   return { ...state, data: sortedData, showFinalised: newShowFinalisedState, searchTerm: '' };
 };
 
+export const showIndicators = state => ({ ...state, showIndicators: true });
+
+export const hideIndicators = state => ({ ...state, showIndicators: false });
+
+export const selectIndicator = (state, action) => {
+  const { payload } = action;
+  const { indicatorCode } = payload;
+
+  const { pageObject, indicators } = state;
+  const { period } = pageObject;
+
+  const [selectedIndicator] = indicators.filter(({ code }) => code === indicatorCode);
+  const { columns: indicatorColumns, rows: indicatorRows } = getIndicatorData(
+    selectedIndicator,
+    period
+  );
+
+  return { ...state, selectedIndicator, indicatorColumns, indicatorRows };
+};
+
 /**
  * Filters backingData by the elements isLessThanThresholdMOS field.
  */
@@ -190,6 +210,9 @@ export const TableReducerLookup = {
   toggleStockOut,
   toggleShowFinalised,
   addRecord,
+  showIndicators,
+  selectIndicator,
+  hideIndicators,
   hideOverStocked,
   refreshData,
   filterData,

@@ -19,6 +19,7 @@ const recordTypesSynced = [
   'TransactionBatch',
   'InsurancePolicy',
   'Message',
+  'IndicatorValue',
 ];
 
 /**

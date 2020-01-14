@@ -1,3 +1,5 @@
+import { getIndicatorRows } from '../getIndicatorTableData';
+
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -21,6 +23,12 @@ export const refreshRow = (state, action) => {
   return { ...state, dataState: newDataState };
 };
 
+export const refreshIndicatorRow = state => {
+  const { selectedIndicator } = state;
+  return { ...state, indicatorRows: selectedIndicator.rows };
+};
+
 export const CellReducerLookup = {
   refreshRow,
+  refreshIndicatorRow,
 };

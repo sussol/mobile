@@ -125,6 +125,23 @@ const getOrCreateAddress = (database, line1, line2, line3, line4, zipCode) => {
 export const sanityCheckIncomingRecord = (recordType, record) => {
   if (!record.ID || record.ID.length < 1) return false; // Every record must have an ID.
   const requiredFields = {
+    IndicatorAttribute: {
+      canBeBlank: [
+        'code',
+        'description',
+        'index',
+        'is_required',
+        'value_type',
+        'default_value',
+        'axis',
+        'is_active',
+      ],
+      cannotBeBlank: ['indicator_ID'],
+    },
+    IndicatorValue: {
+      cannotBeBlank: ['facility_ID', 'period_ID', 'column_ID', 'row_ID', 'value'],
+      canBeBlank: [],
+    },
     Item: {
       cannotBeBlank: ['code', 'item_name'],
       canBeBlank: ['default_pack_size'],
@@ -276,6 +293,10 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     },
     Report: {
       cannotBeBlank: ['ID', 'title', 'type', 'json'],
+      canBeBlank: [],
+    },
+    ProgramIndicator: {
+      cannotBeBlank: ['code', 'program_ID', 'is_active'],
       canBeBlank: [],
     },
   };
@@ -773,6 +794,16 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         id: record.ID,
         name: record.name,
       });
+      break;
+    }
+    case 'ProgramIndicator': {
+      const indicator = database.update(recordType, {
+        id: record.ID,
+        code: record.code,
+        program: database.getOrCreate('MasterList', record.program_ID),
+        isActive: parseBoolean(record.isActive),
+      });
+      indicator.program.addIndicatorIfUnique(indicator);
       break;
     }
     case 'Options': {

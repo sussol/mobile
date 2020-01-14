@@ -90,6 +90,7 @@
     "redux-persist": "^6.0.0",
     "redux-persist-error-handler": "^0.1.1",
     "redux-thunk": "^2.3.0",
+    "reselect": "^4.0.0",
     "set-manipulator": "^0.3.1",
     "sussol-utilities": "^0.5.1",
     "valid-url": "^1.0.9",
