@@ -14,7 +14,15 @@ import {
   VictoryScatter,
 } from 'victory-native';
 
-import { APP_FONT_FAMILY, GREY, LIGHT_GREY, DARK_GREY, SUSSOL_ORANGE } from '../globalStyles';
+import {
+  APP_FONT_FAMILY,
+  GREY,
+  LIGHT_GREY,
+  DARK_GREY,
+  SUSSOL_ORANGE,
+  FINALISE_GREEN,
+  FINALISED_RED,
+} from '../globalStyles';
 
 export const LineChart = ({ width, height, data }) => {
   const renderYAxis = () => <VictoryAxis dependentAxis style={victoryStyles.axisY} />;
@@ -23,15 +31,7 @@ export const LineChart = ({ width, height, data }) => {
     return <VictoryAxis tickFormat={tickTruncate} style={victoryStyles.axisX} />;
   };
 
-  const {
-    padTop,
-    padBottom,
-    padLeft,
-    padRight,
-    dotSize,
-    dotStyle,
-    lineStyle,
-  } = victoryStyles.lineChart;
+  const { padTop, padBottom, padLeft, padRight, dotSize } = victoryStyles.lineChart;
 
   const padding = {
     top: height * padTop,
@@ -40,19 +40,27 @@ export const LineChart = ({ width, height, data }) => {
     right: width * padRight,
   };
 
+  const COLOURS = {
+    0: SUSSOL_ORANGE,
+    1: FINALISE_GREEN,
+    2: GREY,
+    3: FINALISED_RED,
+    4: LIGHT_GREY,
+  };
+
   return (
     <VictoryChart width={width} height={height} padding={padding}>
-      {data.map(({ values }) => (
-        <VictoryScatter size={dotSize} style={dotStyle} data={values} />
+      {data.map(({ values }, index) => (
+        <VictoryScatter size={dotSize} style={{ data: { fill: COLOURS[index] } }} data={values} />
       ))}
-      {data.map(({ values }) => (
-        <VictoryLine style={lineStyle} data={values} />
+      {data.map(({ values }, index) => (
+        <VictoryLine style={{ data: { stroke: COLOURS[index] } }} data={values} />
       ))}
-      {data.map(({ values, label }) => (
+      {data.map(({ values, label }, index) => (
         <VictoryLabel
           datum={{ x: values.length - 1, y: values[values.length - 1].y }}
           text={label}
-          style={victoryStyles.labelStyle}
+          style={{ fontFamily: APP_FONT_FAMILY, fontSize: 18, fill: COLOURS[index] }}
           textAnchor="middle"
         />
       ))}
@@ -86,12 +94,7 @@ const victoryStyles = {
     padRight: 0.05,
     dotSize: 3.5,
     dotStyle: { data: { fill: SUSSOL_ORANGE } },
-    lineStyle: { data: { stroke: SUSSOL_ORANGE } },
-  },
-  style: { fontFamily: APP_FONT_FAMILY, fill: GREY },
-  labelStyle: {
-    fontFamily: APP_FONT_FAMILY,
-    fill: DARK_GREY,
-    fontSize: 16,
+    lineStyle: { data: { stroke: GREY }, color: GREY },
+    labelStyle: { fontFamily: APP_FONT_FAMILY, fontSize: 18 },
   },
 };
