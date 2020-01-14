@@ -9,7 +9,7 @@ import { sortDataBy } from '../../utilities';
 import { recordKeyExtractor } from './utilities';
 import getColumns from './getColumns';
 import getPageInfoColumns from './getPageInfoColumns';
-import { getIndicatorTableData } from './getIndicatorTableData';
+import { getIndicatorData } from './getIndicatorTableData';
 
 import { ROUTES } from '../../navigation/constants';
 
@@ -368,7 +368,7 @@ const supplierRequisitionInitialiser = requisition => {
 
   const usingIndicators = !!indicators.length;
   const [selectedIndicator] = indicators;
-  const { columns: indicatorColumns, rows: indicatorRows } = getIndicatorTableData(
+  const { columns: indicatorColumns, rows: indicatorRows } = getIndicatorData(
     selectedIndicator,
     period
   );

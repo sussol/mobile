@@ -23,6 +23,10 @@ import {
   SearchBar,
 } from '../widgets';
 
+import {
+  selectIndicatorTableColumns,
+  selectIndicatorTableRows,
+} from './dataTableUtilities/selectors/indicatorSelectors';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 import { ROUTES } from '../navigation/constants';
 
@@ -352,15 +356,16 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 
 const mapStateToProps = state => {
   const { pages } = state;
-  const { usingIndicators, showIndicators, indicatorColumns, indicatorRows } = pages[
-    ROUTES.SUPPLIER_REQUISITION
-  ];
+  const page = pages[ROUTES.SUPPLIER_REQUISITION];
+  const { usingIndicators, showIndicators } = page;
 
   if (usingIndicators && showIndicators) {
+    const data = selectIndicatorTableRows(page);
+    const columns = selectIndicatorTableColumns(page);
     return {
-      ...pages[ROUTES.SUPPLIER_REQUISITION],
-      data: indicatorRows,
-      columns: indicatorColumns,
+      ...page,
+      data,
+      columns,
     };
   }
   return pages[ROUTES.SUPPLIER_REQUISITION];
@@ -385,7 +390,6 @@ SupplierRequisition.propTypes = {
   isAscending: PropTypes.bool.isRequired,
   searchTerm: PropTypes.string.isRequired,
   columns: PropTypes.array.isRequired,
-  indicatorColumns: PropTypes.array.isRequired,
   keyExtractor: PropTypes.func.isRequired,
   runWithLoadingIndicator: PropTypes.func.isRequired,
   dataState: PropTypes.object.isRequired,
@@ -399,6 +403,8 @@ SupplierRequisition.propTypes = {
   showIndicators: PropTypes.bool,
   selectedIndicator: PropTypes.object.isRequired,
   indicators: PropTypes.array.isRequired,
+  indicatorColumns: PropTypes.object.isRequired,
+  indicatorRows: PropTypes.object.isRequired,
   modalValue: PropTypes.any,
   refreshData: PropTypes.func.isRequired,
   onSelectNewItem: PropTypes.func.isRequired,

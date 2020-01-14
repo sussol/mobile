@@ -9,7 +9,7 @@ import Settings from '../../../settings/MobileAppSettings';
 import { createRecord } from '../../../database/utilities/index';
 import { closeModal } from './pageActions';
 import { ACTIONS } from './constants';
-import { pageObjectSelector } from '../selectors';
+import { pageObjectSelector } from '../selectors/pageSelectors';
 
 /**
  * Sorts the underlying data array by the key provided. Determines

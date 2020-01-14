@@ -6,13 +6,14 @@
 import { UIDatabase } from '../../../database';
 import { parsePositiveInteger, MODAL_KEYS } from '../../../utilities';
 import {
-  getIndicatorRows,
-  getIndicatorColumns,
-  getIndicatorRowColumnValue,
+  getIndicatorValue,
+  updateIndicatorValue,
+  getIndicatorRow,
+  getIndicatorColumn,
 } from '../getIndicatorTableData';
 import { ACTIONS } from './constants';
 import { openModal, closeModal } from './pageActions';
-import { pageStateSelector } from '../selectors';
+import { pageStateSelector } from '../selectors/pageSelectors';
 
 /**
  * Refreshes a row in the DataTable component.
@@ -26,9 +27,9 @@ export const refreshRow = (rowKey, route) => ({
   payload: { rowKey, route },
 });
 
-export const refreshIndicatorRow = (rowKey, route) => ({
+export const refreshIndicatorRow = route => ({
   type: 'refreshIndicatorRow',
-  payload: { rowKey, route },
+  payload: { route },
 });
 
 /**
@@ -53,13 +54,13 @@ export const editBatchName = (value, rowKey, objectType, route) => (dispatch, ge
 };
 
 export const editIndicatorValue = (value, rowKey, columnKey, route) => (dispatch, getState) => {
-  const { selectedIndicator: indicator, pageObject } = pageStateSelector(getState());
+  const { indicatorRows, indicatorColumns, pageObject } = pageStateSelector(getState());
   const { period } = pageObject;
-  const [row] = getIndicatorRows(indicator, rowKey);
-  const [column] = getIndicatorColumns(indicator, columnKey);
-  const valueRecord = getIndicatorRowColumnValue(row, column, period);
-  UIDatabase.write(() => UIDatabase.update('IndicatorValue', { ...valueRecord, value }));
-  dispatch(refreshIndicatorRow(rowKey, route));
+  const row = getIndicatorRow(indicatorRows, rowKey);
+  const column = getIndicatorColumn(indicatorColumns, columnKey);
+  const indicatorValue = getIndicatorValue(row, column, period);
+  updateIndicatorValue(indicatorValue, value);
+  dispatch(refreshIndicatorRow(route));
 };
 
 /**
