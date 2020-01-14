@@ -350,7 +350,6 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 };
 
 const mapStateToProps = state => {
-  // TODO: add indicator toggle flag to page state.
   const { pages } = state;
   const { usingIndicators, showIndicators, indicatorColumns, indicatorRows } = pages[
     ROUTES.SUPPLIER_REQUISITION
