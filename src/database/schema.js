@@ -168,9 +168,7 @@ export const schema = {
     RequisitionItem,
     Setting,
     Stocktake,
-    StocktakeItem,
-    Period,
-    PeriodSchedule,
+
     ProgramIndicator,
     StocktakeBatch,
     StocktakeItem,
