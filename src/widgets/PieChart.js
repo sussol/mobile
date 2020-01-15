@@ -10,6 +10,14 @@ import { VictoryLabel, VictoryPie } from 'victory-native';
 
 import { APP_FONT_FAMILY, GREY } from '../globalStyles';
 
+/**
+ * This page renders a PieChart graph
+ *
+ * @prop  {number}  width   Horizontal size of the graph container
+ * @prop  {number}  height  Vertical size of the graph container
+ * @prop  {array}   data    Contains labels, values and quantities to plot
+ */
+
 export const PieChart = ({ width, height, data }) => {
   const {
     padVertical,
