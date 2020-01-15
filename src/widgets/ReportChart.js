@@ -9,6 +9,12 @@ import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { PieChart, BarChart, LineChart, ReportTable } from './index';
 
+/**
+ * This page uses the incoming type of Report to render the corresponding component
+ *
+ * @prop  {Object}  report  Realm Report Object
+ */
+
 export const ReportChart = ({ report }) => {
   const [dimensions, setDimensions] = useState({ height: null, width: null });
   const { height, width } = dimensions;
