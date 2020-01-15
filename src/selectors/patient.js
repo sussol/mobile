@@ -14,10 +14,10 @@ export const selectPatientHistory = ({ patient }) => {
 
   // Create a query string `transaction.id == "{id} OR transaction.id == "{id}" ...`
   // finding all transaction batches for the patient.
-  const queryString = `(${transactions
-    .map(({ id }) => `transaction.id == "${id}"`)
-    .join(' OR ')}) AND type != "cash_in" AND type != "cash_out"`;
-  return queryString ? UIDatabase.objects('TransactionBatch').filtered(queryString) : [];
+  const inQuery = transactions.map(({ id }) => `transaction.id == "${id}"`).join(' OR ');
+  const baseQueryString = 'type != "cash_in" AND type != "cash_out"';
+  const fullQuery = `(${inQuery}) AND ${baseQueryString}`;
+  return inQuery ? UIDatabase.objects('TransactionBatch').filtered(fullQuery) : [];
 };
 
 export const selectSortedPatientHistory = ({ patient }) => {
