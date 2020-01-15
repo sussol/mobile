@@ -9,6 +9,14 @@ import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { ReportCell } from './ReportCell';
 
+/**
+ * This page receives data for an specific row to render on a Table report
+ * *
+ * @prop  {boolean}   isHeader    Indicates if the cell row is the table header or not
+ * @prop  {array}     rowData     Array containing the row data
+ * @prop  {number}    rowIndex    Indicates the index of the corresponding row
+ */
+
 export const ReportRow = ({ isHeader, rowData, rowIndex }) => {
   const headerStyle = isHeader ? localStyles.header : null;
   const rowStyle = StyleSheet.flatten([localStyles.container, headerStyle]);
