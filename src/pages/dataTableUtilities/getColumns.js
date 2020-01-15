@@ -25,8 +25,8 @@ const PAGE_COLUMN_WIDTHS = {
   [ROUTES.STOCK]: [1, 4, 1],
   [ROUTES.PRESCRIPTIONS]: [1.5, 2.5, 2, 1.5, 3, 1],
   [ROUTES.PRESCRIPTION]: [2, 4, 2, 2, 1],
-  [ROUTES.PRESCRIBERS]: [1, 3, 3],
-  [ROUTES.PATIENTS]: [1, 3, 3, 2, 1],
+  [ROUTES.PRESCRIBERS]: [1, 3, 3, 1],
+  [ROUTES.PATIENTS]: [1, 3, 3, 2, 1, 1, 1],
   stocktakeBatchEditModal: [1, 1, 1, 1, 1],
   stocktakeBatchEditModalWithReasons: [1, 1, 1, 1, 1, 1],
   regimenDataModal: [4, 1, 5],
@@ -40,12 +40,15 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.REGISTRATION_CODE,
     COLUMN_NAMES.FIRST_NAME,
     COLUMN_NAMES.LAST_NAME,
+    COLUMN_NAMES.PRESCRIBER_EDIT,
   ],
   [ROUTES.PATIENTS]: [
     COLUMN_NAMES.CODE,
     COLUMN_NAMES.FIRST_NAME,
     COLUMN_NAMES.LAST_NAME,
     COLUMN_NAMES.DATE_OF_BIRTH,
+    COLUMN_NAMES.PATIENT_HISTORY,
+    COLUMN_NAMES.PATIENT_EDIT,
     COLUMN_NAMES.DISPENSE,
   ],
   [ROUTES.CUSTOMER_INVOICE]: [
@@ -533,7 +536,7 @@ const COLUMNS = () => ({
     editable: false,
   },
 
-  // MISC COLUMNS
+  // ICON COLUMNS
 
   [COLUMN_NAMES.BATCHES]: {
     type: COLUMN_TYPES.ICON,
@@ -542,14 +545,7 @@ const COLUMNS = () => ({
     sortable: false,
     alignText: 'center',
     editable: false,
-  },
-  [COLUMN_NAMES.REASON]: {
-    type: COLUMN_TYPES.DROP_DOWN,
-    key: COLUMN_KEYS.REASON_TITLE,
-    title: tableStrings.reason,
-    alignText: 'center',
-    sortable: false,
-    editable: false,
+    icon: 'chevron_right',
   },
   [COLUMN_NAMES.DISPENSE]: {
     type: COLUMN_TYPES.ICON,
@@ -558,6 +554,7 @@ const COLUMNS = () => ({
     sortable: false,
     alignText: 'center',
     editable: false,
+    icon: 'chevron_right',
   },
   [COLUMN_NAMES.SELECT]: {
     type: COLUMN_TYPES.ICON,
@@ -565,6 +562,44 @@ const COLUMNS = () => ({
     title: 'SELECT',
     sortable: false,
     alignText: 'center',
+    editable: false,
+    icon: 'chevron_right',
+  },
+  [COLUMN_NAMES.PATIENT_HISTORY]: {
+    type: COLUMN_TYPES.ICON,
+    key: COLUMN_KEYS.PATIENT_HISTORY,
+    title: 'HISTORY',
+    sortable: false,
+    alignText: 'center',
+    editable: false,
+    icon: 'history',
+  },
+  [COLUMN_NAMES.PATIENT_EDIT]: {
+    type: COLUMN_TYPES.ICON,
+    key: COLUMN_KEYS.PATIENT_EDIT,
+    title: 'EDIT',
+    sortable: false,
+    alignText: 'center',
+    editable: false,
+    icon: 'pencil',
+  },
+  [COLUMN_NAMES.PRESCRIBER_EDIT]: {
+    type: COLUMN_TYPES.ICON,
+    key: COLUMN_KEYS.PRESCRIBER_EDIT,
+    title: 'EDIT',
+    sortable: false,
+    alignText: 'center',
+    editable: false,
+    icon: 'pencil',
+  },
+
+  // MISC COLUMNS
+  [COLUMN_NAMES.REASON]: {
+    type: COLUMN_TYPES.DROP_DOWN,
+    key: COLUMN_KEYS.REASON_TITLE,
+    title: tableStrings.reason,
+    alignText: 'center',
+    sortable: false,
     editable: false,
   },
 });
