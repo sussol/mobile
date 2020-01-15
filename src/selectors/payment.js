@@ -50,5 +50,5 @@ export const selectChangeRequired = state => {
 
   if (paymentAmount.value <= prescriptionTotal.value) return currency(0);
 
-  return prescriptionTotal.subtract(paymentAmount);
+  return paymentAmount.subtract(prescriptionTotal);
 };
