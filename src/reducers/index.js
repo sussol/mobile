@@ -19,6 +19,7 @@ import { WizardReducer } from './WizardReducer';
 import NavigationReducer from './NavigationReducer';
 import SyncReducer from './SyncReducer';
 import { DashboardReducer } from './DashboardReducer';
+import { DispensaryReducer } from './DispensaryReducer';
 
 export default combineReducers({
   user: UserReducer,
@@ -35,4 +36,5 @@ export default combineReducers({
   payment: PaymentReducer,
   insurance: InsuranceReducer,
   dashboard: DashboardReducer,
+  dispensary: DispensaryReducer,
 });
