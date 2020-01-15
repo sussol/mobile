@@ -270,6 +270,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     },
     ProgramIndicator: {
       cannotBeBlank: ['code', 'program_ID', 'is_active'],
+      canBeBlank: [],
     },
     Report: {
       cannotBeBlank: ['ID', 'title', 'type', 'json'],
