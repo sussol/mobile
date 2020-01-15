@@ -23,12 +23,14 @@ export const PrescriberReducer = (state = prescriberInitialState(), action) => {
       const { routeName } = action;
 
       if (routeName !== ROUTES.PRESCRIPTION) return state;
+
       return { ...state, currentPrescriber: null };
     }
 
     case PRESCRIBER_ACTIONS.EDIT: {
       const { payload } = action;
       const { prescriber } = payload;
+
       return { ...state, isEditingPrescriber: true, currentPrescriber: prescriber };
     }
 
@@ -37,19 +39,20 @@ export const PrescriberReducer = (state = prescriberInitialState(), action) => {
     }
 
     case PRESCRIBER_ACTIONS.COMPLETE: {
-      const { currentPrescriber } = state;
-      return { ...prescriberInitialState(), currentPrescriber };
+      return { ...prescriberInitialState() };
     }
 
     case PRESCRIBER_ACTIONS.SET: {
       const { payload } = action;
       const { prescriber } = payload;
+
       return { ...state, currentPrescriber: prescriber };
     }
 
     case PRESCRIBER_ACTIONS.FILTER: {
       const { payload } = action;
       const { searchTerm } = payload;
+
       return { ...state, searchTerm };
     }
 
@@ -59,7 +62,7 @@ export const PrescriberReducer = (state = prescriberInitialState(), action) => {
       const { sortKey: newSortKey } = payload;
 
       const newIsAscending = sortKey === newSortKey ? !isAscending : true;
-      console.log(newIsAscending);
+
       return { ...state, sortKey: newSortKey, isAscending: newIsAscending };
     }
 
