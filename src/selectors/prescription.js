@@ -10,3 +10,15 @@ export const selectHasItemsAndQuantity = ({ prescription }) => {
   const hasQuantity = totalQuantity > 0;
   return hasItems && hasQuantity;
 };
+
+export const selectPrescriptionPatient = ({ prescription }) => {
+  const { transaction } = prescription;
+  const { otherParty } = transaction;
+  return otherParty;
+};
+
+export const selectPrescriptionPrescriber = ({ prescription }) => {
+  const { transaction } = prescription;
+  const { prescriber } = transaction;
+  return prescriber;
+};
