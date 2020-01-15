@@ -19,8 +19,8 @@ import { generalStrings } from '../../localization';
  * This page receives all reports and renders a list of them
  * *
  * @prop  {Object}      reports         All reports available to be selected
- * @prop  {function}    currentReport   The current rendered report
- * @prop  {Object}      onPressItem     Function to be executed when an item is pressed
+ * @prop  {Object}      currentReport   The current rendered report
+ * @prop  {function}    onPressItem     Function to be executed when an item is pressed
  * @prop  {Object}      dimensions      Width and height of the graph container
  */
 
