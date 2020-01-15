@@ -11,6 +11,14 @@ import { VictoryChart, VictoryBar, VictoryAxis, VictoryLabel } from 'victory-nat
 
 import { APP_FONT_FAMILY, GREY, LIGHT_GREY, DARK_GREY, SUSSOL_ORANGE } from '../globalStyles';
 
+/**
+ * This page renders a BarChart graph
+ *
+ * @prop  {array}   data    Contains labels and x and y values to plot
+ * @prop  {number}  width   Horizontal size of the graph container
+ * @prop  {number}  height  Vertical size of the graph container
+ */
+
 export const BarChart = ({ data, width, height }) => {
   const renderYAxis = () => <VictoryAxis dependentAxis style={victoryStyles.axisY} />;
   const renderXAxis = () => {

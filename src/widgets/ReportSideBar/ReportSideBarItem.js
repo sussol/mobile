@@ -11,6 +11,18 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { GREY } from '../../globalStyles';
 
+/**
+ * This page renders one item of the list of available reports
+ * *
+ * @prop  {Object}      contentStyle  Style for the item content
+ * @prop  {Object}      iconStyle     Style for the report icon
+ * @prop  {function}    onPress       Function that executes on pressing the item
+ * @prop  {string}      content       Content of the corresponding report (mainly the report title)
+ * @prop  {string}      subContent    Information related with the content (see above)
+ * @prop  {string}      icon          Icon for the corresponding type of report
+ * @prop  {string}      id            ID of the report
+ */
+
 // Translations between icon props and names of FontAwesome icons.
 const TYPE_TO_ICON = {
   PieChart: 'pie-chart',

@@ -11,6 +11,13 @@ import PropTypes from 'prop-types';
 import { LIGHT_GREY } from '../../globalStyles';
 import { ReportRow } from './ReportRow';
 
+/**
+ * This page renders a Table report
+ *
+ * @prop  {array}   rows    Array with all values per row
+ * @prop  {array}   header  Array tha contains all header values for the table
+ */
+
 export const ReportTable = ({ rows, header }) => {
   const renderItem = ({ item, index }) => <ReportRow rowData={item} rowIndex={index} />;
 
