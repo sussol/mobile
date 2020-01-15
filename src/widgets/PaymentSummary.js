@@ -21,6 +21,7 @@ import {
   selectPrescriptionTotal,
   selectCreditBeingUsed,
   selectDiscountAmount,
+  selectChangeRequired,
 } from '../selectors/payment';
 import { DropDown } from './DropDown';
 import { selectPatientInsurancePolicies, selectAvailableCredit } from '../selectors/patient';
@@ -45,6 +46,7 @@ const paymentState = state => {
   const paymentTypes = UIDatabase.objects('PaymentType');
   const discountRate = selectInsuranceDiscountRate(state);
   const discountAmount = selectDiscountAmount(state);
+  const changeRequired = selectChangeRequired(state);
 
   return {
     currentInsurancePolicy,
@@ -61,6 +63,7 @@ const paymentState = state => {
     paymentType,
     selectedInsurancePolicy,
     availableCredit,
+    changeRequired,
   };
 };
 
@@ -94,6 +97,7 @@ const PaymentSummaryComponent = ({
   discountRate,
   discountAmount,
   availableCredit,
+  changeRequired,
 }) => {
   const policyNumbers = React.useMemo(
     () => ['Select a policy..', ...insurancePolicies.map(p => p.policyNumber)],
@@ -171,6 +175,7 @@ const PaymentSummaryComponent = ({
             isCurrency
             number={discountAmount.format()}
           />
+          <NumberLabelRow text="Change required" isCurrency number={changeRequired.format()} />
           <Separator length="50%" marginTop={20} marginBottom={20} />
           <NumberLabelRow size="large" text="Total" isCurrency number={total.format()} />
         </FlexView>
@@ -198,6 +203,7 @@ PaymentSummaryComponent.propTypes = {
   discountRate: PropTypes.number.isRequired,
   discountAmount: PropTypes.object.isRequired,
   availableCredit: PropTypes.object.isRequired,
+  changeRequired: PropTypes.object.isRequired,
 };
 
 const localStyles = {
