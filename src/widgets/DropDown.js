@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -51,13 +52,12 @@ export const localStyles = {
 
 DropDown.defaultProps = {
   style: {},
+  selectedValue: null,
 };
 
 DropDown.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
   values: PropTypes.array.isRequired,
-  selectedValue: PropTypes.string.isRequired,
+  selectedValue: PropTypes.string,
   onValueChange: PropTypes.func.isRequired,
-  // eslint-disable-next-line react/forbid-prop-types
   style: PropTypes.object,
 };

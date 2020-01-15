@@ -184,22 +184,28 @@ const PaymentSummaryComponent = ({
   );
 };
 
+PaymentSummaryComponent.defaultProps = {
+  paymentType: null,
+  selectedInsurancePolicy: null,
+  creditOverflow: false,
+};
+
 PaymentSummaryComponent.propTypes = {
   subtotal: PropTypes.object.isRequired,
   total: PropTypes.object.isRequired,
   updatePayment: PropTypes.func.isRequired,
   creditUsed: PropTypes.object.isRequired,
   paymentAmount: PropTypes.object.isRequired,
-  creditOverflow: PropTypes.bool.isRequired,
+  creditOverflow: PropTypes.bool,
   isComplete: PropTypes.bool.isRequired,
   insurancePolicies: PropTypes.object.isRequired,
   choosePolicy: PropTypes.func.isRequired,
-  selectedInsurancePolicy: PropTypes.object.isRequired,
+  selectedInsurancePolicy: PropTypes.object,
   editPolicy: PropTypes.func.isRequired,
   newPolicy: PropTypes.func.isRequired,
   paymentTypes: PropTypes.object.isRequired,
   choosePaymentType: PropTypes.func.isRequired,
-  paymentType: PropTypes.object.isRequired,
+  paymentType: PropTypes.object,
   discountRate: PropTypes.number.isRequired,
   discountAmount: PropTypes.object.isRequired,
   availableCredit: PropTypes.object.isRequired,

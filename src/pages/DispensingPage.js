@@ -271,6 +271,7 @@ export const DispensingPage = connect(mapStateToProps, mapDispatchToProps)(Dispe
 Dispensing.defaultProps = {
   currentPatient: null,
   currentPrescriber: null,
+  selectedInsurancePolicy: null,
 };
 
 Dispensing.propTypes = {
@@ -304,7 +305,7 @@ Dispensing.propTypes = {
   usingPatientsDataSet: PropTypes.bool.isRequired,
   usingPrescribersDataSet: PropTypes.bool.isRequired,
   viewingHistory: PropTypes.bool.isRequired,
-  selectedInsurancePolicy: PropTypes.object.isRequired,
+  selectedInsurancePolicy: PropTypes.object,
   insuranceModalOpen: PropTypes.bool.isRequired,
   cancelInsuranceEdit: PropTypes.func.isRequired,
   isCreatingInsurancePolicy: PropTypes.bool.isRequired,
