@@ -8,6 +8,13 @@ import { View, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { APP_FONT_FAMILY, BACKGROUND_COLOR } from '../../globalStyles';
 
+/**
+ * This page renders the incoming cell data of a Table report
+ * *
+ * @prop  {boolean}   even       Indicates if the cell index is even or odd to select the bkg color
+ * @prop  {string}    children   Data to show on the cell
+ */
+
 export const ReportCell = ({ even, children }) => {
   const backgroundColor = even ? { backgroundColor: 'white' } : null;
   return (
