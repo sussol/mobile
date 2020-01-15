@@ -24,6 +24,14 @@ import {
   FINALISED_RED,
 } from '../globalStyles';
 
+/**
+ * This page renders a LineChart graph
+ *
+ * @prop  {number}  width   Horizontal size of the graph container
+ * @prop  {number}  height  Vertical size of the graph container
+ * @prop  {array}   data    Contains labels and x and y values to plot
+ */
+
 export const LineChart = ({ width, height, data }) => {
   const renderYAxis = () => <VictoryAxis dependentAxis style={victoryStyles.axisY} />;
   const renderXAxis = () => {
