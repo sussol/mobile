@@ -24,6 +24,7 @@ import { FormControl } from '../widgets/FormControl';
 import { getFormInputConfig } from '../utilities/formInputConfigs';
 import { PatientHistoryModal } from '../widgets/modals/PatientHistory';
 import { InsuranceActions } from '../actions/InsuranceActions';
+import { UIDatabase } from '../database';
 
 const Dispensing = ({
   data,
@@ -62,11 +63,18 @@ const Dispensing = ({
   isCreatingInsurancePolicy,
   saveNewInsurancePolicy,
   saveInsurancePolicy,
+  viewPatientHistory,
 }) => {
   const getCellCallbacks = colKey => {
     switch (colKey) {
       case 'dispense':
         return gotoPrescription;
+      case 'patientHistory':
+        return viewPatientHistory;
+      case 'patientEdit':
+        return editPatient;
+      case 'prescriberEdit':
+        return editPrescriber;
       default:
         return null;
     }
@@ -236,12 +244,15 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.DISPENSARY),
   gotoPrescription: patientID => dispatch(createPrescription(patientID)),
 
-  editPrescriber: prescriber => dispatch(PrescriberActions.editPrescriber(prescriber)),
-  editPatient: patient => dispatch(PatientActions.editPatient(patient)),
+  editPrescriber: prescriber =>
+    dispatch(PrescriberActions.editPrescriber(UIDatabase.get('Prescriber', prescriber))),
+  editPatient: patient => dispatch(PatientActions.editPatient(UIDatabase.get('Name', patient))),
   createPatient: () => dispatch(PatientActions.createPatient()),
   cancelPatientEdit: () => dispatch(PatientActions.closeModal()),
   savePatient: patientDetails => dispatch(PatientActions.patientUpdate(patientDetails)),
   saveNewPatient: patientDetails => dispatch(PatientActions.saveNewPatient(patientDetails)),
+  viewPatientHistory: rowKey =>
+    dispatch(PatientActions.viewPatientHistory(UIDatabase.get('Name', rowKey))),
 
   createPrescriber: () => dispatch(PrescriberActions.createPrescriber()),
   cancelPrescriberEdit: () => dispatch(PrescriberActions.closeModal()),
@@ -299,4 +310,5 @@ Dispensing.propTypes = {
   isCreatingInsurancePolicy: PropTypes.bool.isRequired,
   saveNewInsurancePolicy: PropTypes.func.isRequired,
   saveInsurancePolicy: PropTypes.func.isRequired,
+  viewPatientHistory: PropTypes.func.isRequired,
 };
