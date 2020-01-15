@@ -7,7 +7,7 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 
-import { dataTableStyles } from '../../globalStyles';
+import { dataTableStyles, SUSSOL_ORANGE } from '../../globalStyles';
 
 import Row from './Row';
 import Cell from './Cell';
@@ -24,6 +24,8 @@ import {
   DisabledCheckedIcon,
   DisabledUncheckedIcon,
   ChevronRightIcon,
+  HistoryIcon,
+  PencilIcon,
 } from '../icons';
 import TextInputCell from './TextInputCell';
 
@@ -74,7 +76,7 @@ const DataTableRow = React.memo(
     const renderCells = useCallback(
       () =>
         // Map each column to an appropriate cell for a given row.
-        columns.map(({ key: columnKey, type, width, alignText }, index) => {
+        columns.map(({ key: columnKey, type, width, alignText, icon }, index) => {
           // Indicator if the right hand border should be removed from styles for this cell.
           const isLastCell = index === columns.length - 1;
 
@@ -202,10 +204,16 @@ const DataTableRow = React.memo(
               );
 
             case COLUMN_TYPES.ICON: {
+              const icons = {
+                chevron_right: ChevronRightIcon,
+                history: () => <HistoryIcon color={SUSSOL_ORANGE} />,
+                pencil: () => <PencilIcon color={SUSSOL_ORANGE} />,
+              };
+
               return (
                 <TouchableCell
                   key={columnKey}
-                  renderChildren={ChevronRightIcon}
+                  renderChildren={icons[icon]}
                   rowKey={rowKey}
                   columnKey={columnKey}
                   onPress={getCallback(columnKey)}
