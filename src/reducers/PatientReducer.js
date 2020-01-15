@@ -52,11 +52,13 @@ export const PatientReducer = (state = patientInitialState(), action) => {
     }
 
     case PATIENT_ACTIONS.VIEW_HISTORY: {
-      return { ...state, viewingHistory: true };
+      const { payload } = action;
+      const { patient } = payload;
+      return { ...state, currentPatient: patient, viewingHistory: true };
     }
 
     case PATIENT_ACTIONS.CLOSE_HISTORY: {
-      return { ...state, viewingHistory: false };
+      return { ...state, currentPatient: null, viewingHistory: false };
     }
 
     default: {

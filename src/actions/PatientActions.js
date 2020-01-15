@@ -63,7 +63,10 @@ const sortPatientHistory = sortKey => ({
   payload: { sortKey },
 });
 
-const viewPatientHistory = () => ({ type: PATIENT_ACTIONS.VIEW_HISTORY });
+const viewPatientHistory = patient => ({
+  type: PATIENT_ACTIONS.VIEW_HISTORY,
+  payload: { patient },
+});
 
 const closePatientHistory = () => ({ type: PATIENT_ACTIONS.CLOSE_HISTORY });
 
