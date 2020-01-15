@@ -32,31 +32,27 @@ const save = insurancePolicy => ({
   payload: { insurancePolicy },
 });
 
-const create = completedForm => (dispatch, getState) => {
+const update = completedForm => (dispatch, getState) => {
+  const { insurance } = getState();
+  const { currentInsurancePolicy } = insurance;
   const user = selectCurrentUser(getState());
   const patient = selectCurrentPatient(getState());
 
   const policyValues = { ...completedForm, patient, user };
-
   let insurancePolicy;
-  UIDatabase.write(() => {
-    insurancePolicy = createRecord(UIDatabase, 'InsurancePolicy', policyValues);
-  });
 
-  dispatch(save(insurancePolicy));
-};
-
-const update = completedForm => (dispatch, getState) => {
-  const { insurance } = getState();
-  const { currentInsurancePolicy } = insurance;
-
-  let insurancePolicy;
-  UIDatabase.write(() => {
-    insurancePolicy = UIDatabase.update('InsurancePolicy', {
-      ...currentInsurancePolicy,
-      ...completedForm,
+  if (currentInsurancePolicy) {
+    UIDatabase.write(() => {
+      insurancePolicy = UIDatabase.update('InsurancePolicy', {
+        ...currentInsurancePolicy,
+        ...completedForm,
+      });
     });
-  });
+  } else {
+    UIDatabase.write(() => {
+      insurancePolicy = createRecord(UIDatabase, 'InsurancePolicy', policyValues);
+    });
+  }
 
   dispatch(save(insurancePolicy));
 };
@@ -81,5 +77,4 @@ export const InsuranceActions = {
   edit,
   select,
   update,
-  create,
 };
