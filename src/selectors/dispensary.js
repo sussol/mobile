@@ -25,3 +25,12 @@ export const selectSortedAndFilteredData = ({ dispensary }) => {
 
   return newData;
 };
+
+export const selectDataSetInUse = ({ dispensary }) => {
+  const { dataSet } = dispensary;
+
+  const usingPatientsDataSet = dataSet === 'patient';
+  const usingPrescribersDataSet = dataSet === 'prescriber';
+
+  return [usingPatientsDataSet, usingPrescribersDataSet];
+};

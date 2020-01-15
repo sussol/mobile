@@ -15,3 +15,8 @@ export const selectSortedAndFilteredPrescribers = ({ prescriber }) => {
 
   return newData;
 };
+
+export const selectPrescriberModalOpen = ({ prescriber }) => {
+  const { isCreatingPrescriber, isEditingPrescriber } = prescriber;
+  return isCreatingPrescriber || isEditingPrescriber;
+};
