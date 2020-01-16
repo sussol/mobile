@@ -37,10 +37,6 @@ export const ROUTES = {
   DISPENSARY: 'dispensary',
   PRESCRIPTIONS: 'prescriptions',
   PRESCRIPTION: 'prescription',
-  PRESCRIBERS: 'prescribers',
-  PRESCRIBER: 'prescriber',
-  PATIENTS: 'patients',
-  PATIENT: 'patient',
 
   SETTINGS: 'settings',
   DASHBOARD: 'dashboard',
