@@ -26,7 +26,6 @@ import { SupplierRequisitionPage } from './SupplierRequisitionPage';
 import { SupplierRequisitionsPage } from './SupplierRequisitionsPage';
 import { DispensingPage } from './DispensingPage';
 import { PrescriptionPage } from './PrescriptionPage';
-import { PrescriptionsPage } from './PrescriptionsPage';
 
 import {
   checkForCustomerInvoiceError,
@@ -77,7 +76,6 @@ export const PAGES = {
     <PageContainer page={StocktakeEditPage} {...props} />
   ),
   [ROUTES.DISPENSARY]: props => <PageContainer page={DispensingPage} {...props} />,
-  [ROUTES.PRESCRIPTIONS]: props => <PageContainer page={PrescriptionsPage} {...props} />,
   [ROUTES.PRESCRIPTION]: props => <PageContainer page={PrescriptionPage} {...props} />,
 
   [ROUTES.SETTINGS]: props => <PageContainer page={SettingsPage} {...props} />,
