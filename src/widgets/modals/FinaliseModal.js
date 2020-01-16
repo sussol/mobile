@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 
 import { Client as BugsnagClient } from 'bugsnag-react-native';
 
-import { ConfirmModal } from './ConfirmModal';
+import { NewConfirmModal } from '../modalChildren';
 
 import { modalStrings } from '../../localization';
 
@@ -63,7 +63,7 @@ export const FinaliseModal = props => {
   };
 
   return (
-    <ConfirmModal
+    <NewConfirmModal
       isOpen={isOpen}
       questionText={errorText || modalStrings[finaliseText]}
       confirmText={modalStrings.confirm}

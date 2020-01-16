@@ -4,7 +4,7 @@
  */
 
 export { ByProgramModal } from './ByProgramModal';
-export { ConfirmModal } from './ConfirmModal';
+export { NewConfirmModal } from '../modalChildren';
 export { DataTablePageModal } from './DataTablePageModal';
 export { DemoUserModal } from './DemoUserModal';
 export { FinaliseModal } from './FinaliseModal';

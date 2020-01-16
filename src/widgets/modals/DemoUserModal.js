@@ -11,7 +11,7 @@ import { Button } from 'react-native-ui-components';
 import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { ConfirmModal } from './ConfirmModal';
+import { NewConfirmModal } from '../modalChildren';
 
 import { DemoSiteRequest } from '../../authentication';
 import { authStrings, generalStrings, demoUserModalStrings } from '../../localization';
@@ -208,7 +208,7 @@ export class DemoUserModal extends React.Component {
               />
             </View>
           </View>
-          <ConfirmModal
+          <NewConfirmModal
             isOpen={status === 'submitted'}
             questionText={demoUserModalStrings.confirmModalBody}
             onConfirm={this.onDemoSubmittedModalClose}
