@@ -16,10 +16,13 @@ import { CircleButton } from './CircleButton';
 import { PencilIcon, HistoryIcon } from './icons';
 
 import { selectPatientName } from '../selectors/patient';
-import { selectPrescriberName } from '../selectors/prescriber';
 import { PatientActions } from '../actions/PatientActions';
 import { PrescriberActions } from '../actions/PrescriberActions';
-import { selectPrescriptionPatient, selectPrescriptionPrescriber } from '../selectors/prescription';
+import {
+  selectPrescriptionPatient,
+  selectPrescriptionPrescriber,
+  selectPrescriberName,
+} from '../selectors/prescription';
 
 const PrescriptionInfoComponent = ({
   prescriptionPatient,

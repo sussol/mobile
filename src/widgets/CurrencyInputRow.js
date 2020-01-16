@@ -78,7 +78,7 @@ export const CurrencyInputRow = ({
       </FlexView>
 
       <FlexRow flex={3}>
-        <SimpleLabel text="$" size="large" />
+        <SimpleLabel label="$" size="large" />
         <TextInput
           ref={refsArray.current[0]}
           value={dollarAmount}
@@ -89,7 +89,7 @@ export const CurrencyInputRow = ({
           editable={!isDisabled}
           onSubmitEditing={onSubmit(1)}
         />
-        <SimpleLabel text="." size="large" />
+        <SimpleLabel label="." size="large" />
         <TextInput
           ref={refsArray.current[1]}
           value={centAmount}

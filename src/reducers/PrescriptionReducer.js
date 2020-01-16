@@ -4,7 +4,6 @@
  */
 
 import { ROUTES } from '../navigation/constants';
-import { UIDatabase } from '../database';
 
 import { PRESCRIPTION_ACTIONS } from '../actions/PrescriptionActions';
 
@@ -26,13 +25,7 @@ export const PrescriptionReducer = (state = initialState(), action) => {
       return { ...state, transaction };
     }
     case PRESCRIPTION_ACTIONS.REFRESH: {
-      const { transaction } = state;
-      const { id } = transaction;
-
-      return {
-        ...state,
-        transaction: UIDatabase.get('Transaction', id),
-      };
+      return { ...state };
     }
 
     default:

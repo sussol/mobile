@@ -15,13 +15,52 @@ export const PRESCRIPTION_ACTIONS = {
   REFRESH: 'Prescription/refresh',
 };
 
-const updateDirection = (id, newValue) => (_, getState) => {
+const refresh = () => ({ type: PRESCRIPTION_ACTIONS.REFRESH });
+
+const appendDirection = (id, newValue) => (dispatch, getState) => {
   const { prescription } = getState();
   const { transaction } = prescription;
   const { items } = transaction;
 
   const item = items.filtered('id == $0', id)[0];
-  item?.setItemDirection(UIDatabase, newValue);
+  const { note } = item;
+
+  item.setItemDirection(UIDatabase, `${note ?? ''} ${newValue}`);
+
+  dispatch(refresh());
+};
+
+const updateDirection = (id, newValue) => (dispatch, getState) => {
+  const { prescription } = getState();
+  const { transaction } = prescription;
+  const { items } = transaction;
+
+  const item = items.filtered('id == $0', id)[0];
+
+  // Split the value on spaces, creating 'words' and
+  // attempting to get the most recently entered 'word'.
+  const splitValue = newValue.split(' ');
+
+  // If the last value is a falsey, it is whitespace. Use the 'word' beforehand
+  // for the abbreviation lookup. If the input is only whitespace, will assign
+  // undefined and no Abbreviation will be found.
+  const whitespaceOffset = splitValue[splitValue.length - 1] ? 1 : 2;
+  const possibleAbbreviation = splitValue[splitValue.length - whitespaceOffset];
+
+  // Try to find if the most recent word is an Abbreviation.
+  const abbreviation = UIDatabase.get('Abbreviation', possibleAbbreviation, 'abbreviation');
+
+  // If and appreviation was found, remove the Abbreviation and replace it with the expansion.
+  // Otherwise, just assign the input as the note.
+  if (abbreviation) {
+    const withAbbreviation = splitValue.slice(0, splitValue.length - whitespaceOffset).join(' ');
+    const updateValue = `${withAbbreviation} ${abbreviation.expansion} `;
+
+    item.setItemDirection(UIDatabase, updateValue);
+  } else {
+    item.setItemDirection(UIDatabase, newValue);
+  }
+  dispatch(refresh());
 };
 
 const removeItem = id => (dispatch, getState) => {
@@ -34,10 +73,11 @@ const removeItem = id => (dispatch, getState) => {
   UIDatabase.write(() => {
     UIDatabase.delete('TransactionItem', item);
   });
-  dispatch({ type: PRESCRIPTION_ACTIONS.REFRESH });
+
+  dispatch(refresh());
 };
 
-const editQuantity = (id, quantity) => (_, getState) => {
+const editQuantity = (id, quantity) => (dispatch, getState) => {
   const { prescription } = getState();
   const { transaction } = prescription;
   const { items } = transaction;
@@ -78,7 +118,7 @@ const addItem = itemID => (dispatch, getState) => {
     });
   }
 
-  dispatch({ type: PRESCRIPTION_ACTIONS.REFRESH });
+  dispatch(refresh());
 };
 
 export const PrescriptionActions = {
@@ -87,4 +127,5 @@ export const PrescriptionActions = {
   editQuantity,
   removeItem,
   updateDirection,
+  appendDirection,
 };

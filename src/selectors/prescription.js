@@ -20,5 +20,11 @@ export const selectPrescriptionPatient = ({ prescription }) => {
 export const selectPrescriptionPrescriber = ({ prescription }) => {
   const { transaction } = prescription;
   const { prescriber } = transaction;
+
   return prescriber;
+};
+
+export const selectPrescriberName = ({ prescription }) => {
+  const currentPrescriber = selectPrescriptionPrescriber({ prescription });
+  return `${currentPrescriber?.firstName} ${currentPrescriber?.lastName}`.trim();
 };

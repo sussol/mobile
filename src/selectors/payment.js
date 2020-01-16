@@ -38,8 +38,17 @@ export const selectCreditBeingUsed = ({ payment }) => {
   const { paymentAmount } = payment;
 
   const prescriptionTotal = selectPrescriptionTotal({ payment });
-
   const creditBeingUsed = Math.max(prescriptionTotal.subtract(paymentAmount).value, 0);
 
   return currency(creditBeingUsed);
+};
+
+export const selectChangeRequired = state => {
+  const { payment } = state;
+  const { paymentAmount } = payment;
+  const prescriptionTotal = selectPrescriptionTotal(state);
+
+  if (paymentAmount.value <= prescriptionTotal.value) return currency(0);
+
+  return paymentAmount.subtract(prescriptionTotal);
 };

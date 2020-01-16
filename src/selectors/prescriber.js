@@ -5,16 +5,6 @@ import { UIDatabase } from '../database';
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-export const selectCurrentPrescriber = ({ prescriber }) => {
-  const { currentPrescriber } = prescriber;
-  return currentPrescriber;
-};
-
-export const selectPrescriberName = ({ prescriber }) => {
-  const currentPrescriber = selectCurrentPrescriber({ prescriber });
-  return `${currentPrescriber?.firstName} ${currentPrescriber?.lastName}`.trim();
-};
-
 export const selectSortedAndFilteredPrescribers = ({ prescriber }) => {
   const { searchTerm, sortKey, isAscending } = prescriber;
 
@@ -24,4 +14,9 @@ export const selectSortedAndFilteredPrescribers = ({ prescriber }) => {
     .sorted(sortKey, isAscending);
 
   return newData;
+};
+
+export const selectPrescriberModalOpen = ({ prescriber }) => {
+  const { isCreatingPrescriber, isEditingPrescriber } = prescriber;
+  return isCreatingPrescriber || isEditingPrescriber;
 };

@@ -8,3 +8,8 @@ export const selectInsuranceDiscountRate = ({ insurance }) => {
   const { discountRate = 0 } = selectedInsurancePolicy || {};
   return discountRate;
 };
+
+export const selectInsuranceModalOpen = ({ insurance }) => {
+  const { isCreatingInsurancePolicy, isEditingInsurancePolicy } = insurance;
+  return isCreatingInsurancePolicy || isEditingInsurancePolicy;
+};
