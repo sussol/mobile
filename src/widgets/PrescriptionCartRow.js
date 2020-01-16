@@ -6,7 +6,9 @@
 
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import currency from 'currency.js';
 
 import { CircleButton } from './CircleButton';
 import { DropdownRow } from './DropdownRow';
@@ -17,6 +19,7 @@ import { Separator } from './Separator';
 import { TouchableNoFeedback } from './DataTable';
 
 import { UIDatabase } from '../database';
+import { PrescriptionActions } from '../actions/PrescriptionActions';
 
 /**
  * Renders a row in the PrescriptionCart consisting of a `StepperRow`, `DropdownRow`,
@@ -24,32 +27,44 @@ import { UIDatabase } from '../database';
  *
  * Is passed all details needed as this is a simple layout and presentation component.
  *
- * @prop {Object} transactionItem    Underlying Transaction Item for this row.
- * @prop {Func}   onChangeQuantity   Callback for changing the quantity ordered.
- * @prop {Func}   onRemoveItem       Callback for deleting this item.
- * @prop {Func}   onOptionSelection  Callback for selecting a direction.
- * @prop {Bool}   isDisabled         Indicator if this component should be editable.
+ * @prop {Bool}   isDisabled        Indicator whether this line is disabled.
+ * @prop {String} itemName          The underlying Item's name for this line.
+ * @prop {String} itemCode          The underlying Item's code for this line.
+ * @prop {String} id                The underlying TransactionItem id for this line.
+ * @prop {String} note              This lines note/direction.
+ * @prop {Object} sellPrice         Currency object of the unit sell price.
+ * @prop {Object} item              Underlying Item object for this line.
+ * @prop {Number} totalQuantity     Total quantity of this item in the prescription.
+ * @prop {Number} availableQuantity Total available quantity for the underlying item.
+ * @prop {Func}   onChangeQuantity  Callback for editing the quantity for this item.
+ * @prop {Func}   onRemoveItem      Callback for removing an item from the cart.
+ * @prop {Func}   onChangeText      Callback for typing directions in the TextInput.
+ * @prop {Func}   onDirectionSelect Callback for selecting a direction from the dropdown.
  */
-export const PrescriptionCartRow = ({
-  transactionItem,
+const PrescriptionCartRowComponent = ({
+  isDisabled,
+  itemName,
+  itemCode,
+  id,
+  note,
+  sellPrice,
+  item,
+  totalQuantity,
+  availableQuantity,
   onChangeQuantity,
   onRemoveItem,
-  onOptionSelection,
-  isDisabled,
+  onChangeText,
+  onDirectionSelect,
 }) => {
-  const { itemName, totalQuantity, itemCode, totalPrice, id, note, item } = transactionItem;
   const itemDetails = React.useMemo(
     () => [
       { label: 'Code', text: itemCode },
-      { label: 'Price', text: totalPrice },
+      { label: 'Unit price', text: sellPrice },
     ],
-    [itemCode, totalPrice]
+    [itemCode]
   );
 
-  const removeItem = React.useCallback(() => onRemoveItem(id), [id]);
-  const onChangeValue = React.useCallback(quantity => onChangeQuantity(id, quantity), [id]);
-  const selectionCallback = React.useCallback(direction => onOptionSelection(id, direction), [id]);
-  const defaultDirections = React.useMemo(() => item.getDirectionExpansions(UIDatabase), [item.id]);
+  const defaultDirections = React.useMemo(() => item.getDirectionExpansions(UIDatabase), [id]);
 
   return (
     <>
@@ -58,8 +73,9 @@ export const PrescriptionCartRow = ({
           <StepperRow
             text={itemName}
             quantity={totalQuantity}
-            onChangeValue={onChangeValue}
+            onChangeValue={onChangeQuantity}
             isDisabled={isDisabled}
+            upperLimit={availableQuantity}
           />
           <DetailRow details={itemDetails} />
           <View style={{ height: 10 }} />
@@ -67,29 +83,42 @@ export const PrescriptionCartRow = ({
             isDisabled={isDisabled}
             currentOptionText={note}
             options={defaultDirections}
-            onSelection={selectionCallback}
+            onChangeText={onChangeText}
+            onSelection={onDirectionSelect}
             dropdownTitle="Directions"
             placeholder="Usage direction"
           />
         </View>
         <View style={localStyles.flexOne} />
-        <CircleButton IconComponent={CloseIcon} onPress={isDisabled ? null : removeItem} />
+        <CircleButton
+          size="small"
+          IconComponent={CloseIcon}
+          onPress={isDisabled ? null : onRemoveItem}
+        />
       </TouchableNoFeedback>
-      <Separator width={1} />
+      <Separator />
     </>
   );
 };
 
-PrescriptionCartRow.defaultProps = {
+PrescriptionCartRowComponent.defaultProps = {
   isDisabled: false,
 };
 
-PrescriptionCartRow.propTypes = {
-  transactionItem: PropTypes.object.isRequired,
+PrescriptionCartRowComponent.propTypes = {
   onChangeQuantity: PropTypes.func.isRequired,
   onRemoveItem: PropTypes.func.isRequired,
-  onOptionSelection: PropTypes.func.isRequired,
+  onChangeText: PropTypes.func.isRequired,
+  onDirectionSelect: PropTypes.func.isRequired,
   isDisabled: PropTypes.bool,
+  itemName: PropTypes.string.isRequired,
+  totalQuantity: PropTypes.number.isRequired,
+  itemCode: PropTypes.string.isRequired,
+  sellPrice: PropTypes.object.isRequired,
+  id: PropTypes.string.isRequired,
+  note: PropTypes.string.isRequired,
+  item: PropTypes.string.isRequired,
+  availableQuantity: PropTypes.number.isRequired,
 };
 
 const localStyles = StyleSheet.create({
@@ -104,3 +133,44 @@ const localStyles = StyleSheet.create({
     flex: 1,
   },
 });
+
+const mapStateToProps = (_, ownProps) => {
+  const { transactionItem } = ownProps;
+
+  const {
+    itemName,
+    totalQuantity,
+    itemCode,
+    sellPrice,
+    note,
+    item,
+    availableQuantity,
+  } = transactionItem;
+
+  return {
+    itemName,
+    totalQuantity,
+    itemCode,
+    availableQuantity,
+    sellPrice: currency(sellPrice).format({ formatWithSymbol: true }),
+    note,
+    item,
+  };
+};
+
+const mapStateToDispatch = (dispatch, ownProps) => {
+  const { transactionItem } = ownProps;
+  const { id } = transactionItem;
+
+  const onChangeQuantity = quantity => dispatch(PrescriptionActions.editQuantity(id, quantity));
+  const onRemoveItem = () => dispatch(PrescriptionActions.removeItem(id));
+  const onChangeText = direction => dispatch(PrescriptionActions.updateDirection(id, direction));
+  const onDirectionSelect = direction =>
+    dispatch(PrescriptionActions.appendDirection(id, direction));
+
+  return { onChangeQuantity, onRemoveItem, onChangeText, onDirectionSelect };
+};
+
+export const PrescriptionCartRow = React.memo(
+  connect(mapStateToProps, mapStateToDispatch)(PrescriptionCartRowComponent)
+);
