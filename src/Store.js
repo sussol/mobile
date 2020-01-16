@@ -24,6 +24,7 @@ const persistConfig = {
     'payment',
     'insurance',
     'dashboard',
+    'dispensary',
   ],
 };
 

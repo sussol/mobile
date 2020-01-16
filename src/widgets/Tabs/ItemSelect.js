@@ -6,7 +6,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 
 import { PageButton } from '../PageButton';
@@ -33,14 +32,7 @@ import { PrescriptionActions } from '../../actions/PrescriptionActions';
  * @prop {Func} nextTab        Callback for transitioning to the next step.
  * @prop {Func} updateQuantity Callback for updating an items quantity.
  */
-const ItemSelectComponent = ({
-  transaction,
-  chooseItem,
-  nextTab,
-  updateQuantity,
-  canProceed,
-  isComplete,
-}) => {
+const ItemSelectComponent = ({ transaction, chooseItem, nextTab, canProceed, isComplete }) => {
   const columns = React.useMemo(() => getColumns('itemSelect'), []);
   const disabledRows = UIDatabase.objects('Item').reduce(
     (acc, value) => ({ ...acc, [value.id]: value.totalQuantity <= 0 }),
@@ -74,13 +66,8 @@ const ItemSelectComponent = ({
           />
         </FlexView>
         <FlexColumn flex={15}>
-          <ScrollView>
-            <PrescriptionCart
-              items={transaction.items.slice()}
-              onChangeQuantity={updateQuantity}
-              isDisabled={isComplete}
-            />
-          </ScrollView>
+          <PrescriptionCart items={transaction.items} isDisabled={isComplete} />
+
           <PageButton
             isDisabled={!canProceed}
             text="Next"
@@ -114,7 +101,6 @@ ItemSelectComponent.propTypes = {
   transaction: PropTypes.object.isRequired,
   chooseItem: PropTypes.func.isRequired,
   nextTab: PropTypes.func.isRequired,
-  updateQuantity: PropTypes.func.isRequired,
   canProceed: PropTypes.bool.isRequired,
   isComplete: PropTypes.bool.isRequired,
 };

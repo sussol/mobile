@@ -1,4 +1,5 @@
 import Realm from 'realm';
+import currency from 'currency.js';
 import { complement } from 'set-manipulator';
 
 import { createRecord, getTotal } from '../utilities';
@@ -269,6 +270,10 @@ export class TransactionItem extends Realm.Object {
       database.save('TransactionBatch', batch);
     });
   };
+
+  get sellPrice() {
+    return currency(this.batches[0]?.sellPrice || 0);
+  }
 }
 
 TransactionItem.schema = {

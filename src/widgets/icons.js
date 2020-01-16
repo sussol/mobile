@@ -53,7 +53,9 @@ export const CancelIcon = React.memo(() => (
   <EntypoIcon name="cross" color={FINALISED_RED} size={25} />
 ));
 
-export const CloseIcon = React.memo(() => <IonIcon name="md-close" size={36} color="white" />);
+export const CloseIcon = ({ size, color }) => <IonIcon name="md-close" size={size} color={color} />;
+CloseIcon.defaultProps = { color: WHITE, size: 36 };
+CloseIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
 
 export const ExpandIcon = React.memo(() => (
   <FAIcon name="external-link" size={16} color={SUSSOL_ORANGE} />

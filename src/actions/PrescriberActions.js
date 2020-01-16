@@ -35,24 +35,21 @@ const updatePrescriber = completedForm => (dispatch, getState) => {
   const { prescriber } = getState();
   const { currentPrescriber } = prescriber;
 
-  UIDatabase.write(() => {
-    UIDatabase.update('Prescriber', {
-      ...currentPrescriber,
-      ...completedForm,
+  if (currentPrescriber) {
+    UIDatabase.write(() => {
+      UIDatabase.update('Prescriber', {
+        ...currentPrescriber,
+        ...completedForm,
+      });
     });
-  });
-
-  dispatch(closeModal());
-  dispatch(PageActions.refreshData(ROUTES.DISPENSARY));
-};
-
-const saveNewPrescriber = completedForm => dispatch => {
-  UIDatabase.write(() => {
-    UIDatabase.update('Prescriber', {
-      id: generateUUID(),
-      ...completedForm,
+  } else {
+    UIDatabase.write(() => {
+      UIDatabase.update('Prescriber', {
+        id: generateUUID(),
+        ...completedForm,
+      });
     });
-  });
+  }
 
   dispatch(closeModal());
   dispatch(PageActions.refreshData(ROUTES.DISPENSARY));
@@ -63,7 +60,6 @@ export const PrescriberActions = {
   updatePrescriber,
   editPrescriber,
   closeModal,
-  saveNewPrescriber,
   setPrescriber,
   filterData,
   sortData,

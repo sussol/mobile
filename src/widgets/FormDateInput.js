@@ -36,7 +36,9 @@ export const FormDateInput = React.forwardRef(
     },
     ref
   ) => {
-    const initialValue = onValidate(value) ? new Date(value) : new Date();
+    const initialValue = onValidate(value)
+      ? moment(value, 'DD/MM/YYYY')
+      : moment(new Date(), 'DD/MM/YYYY');
 
     const [inputState, setInputState] = React.useState({
       isValid: true,
