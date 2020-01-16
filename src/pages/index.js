@@ -23,10 +23,10 @@ import { StocktakesPage } from './StocktakesPage';
 import { SupplierInvoicePage } from './SupplierInvoicePage';
 import { SupplierInvoicesPage } from './SupplierInvoicesPage';
 import { SupplierRequisitionPage } from './SupplierRequisitionPage';
+import { SupplierRequisitionsPage } from './SupplierRequisitionsPage';
 import { DispensingPage } from './DispensingPage';
 import { PrescriptionPage } from './PrescriptionPage';
 import { PrescriptionsPage } from './PrescriptionsPage';
-import { PatientsPage } from './PatientsPage';
 
 import {
   checkForCustomerInvoiceError,
@@ -82,8 +82,6 @@ export const PAGES = {
   [ROUTES.PRESCRIPTION]: props => <PageContainer page={PrescriptionPage} {...props} />,
 
   [ROUTES.PRESCRIBERS]: props => <PageContainer page={PrescribersPage} {...props} />,
-
-  [ROUTES.PATIENTS]: props => <PageContainer page={PatientsPage} {...props} />,
 
   [ROUTES.SETTINGS]: props => <PageContainer page={SettingsPage} {...props} />,
   [ROUTES.DASHBOARD]: props => <PageContainer page={DashboardPage} {...props} />,
