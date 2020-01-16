@@ -10,63 +10,80 @@ import { View } from 'react-native';
 
 import { ToggleBar, DataTablePageView, SearchBar, PageButton } from '../widgets';
 import { DataTable, DataTableRow, DataTableHeaderRow } from '../widgets/DataTable';
-
-import globalStyles from '../globalStyles';
-import { PageActions, DATA_SET, getItemLayout, getPageDispatchers } from './dataTableUtilities';
-import { createPrescription } from '../navigation/actions';
-import { ROUTES } from '../navigation/constants';
+import { PatientHistoryModal } from '../widgets/modals/PatientHistory';
+import { FormControl } from '../widgets/FormControl';
 import ModalContainer from '../widgets/modals/ModalContainer';
+
+import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
+import { createPrescription } from '../navigation/actions';
+
+import { UIDatabase } from '../database';
+import { getFormInputConfig } from '../utilities/formInputConfigs';
 
 import { PatientActions } from '../actions/PatientActions';
 import { PrescriberActions } from '../actions/PrescriberActions';
-
-import { FormControl } from '../widgets/FormControl';
-import { getFormInputConfig } from '../utilities/formInputConfigs';
-import { PatientHistoryModal } from '../widgets/modals/PatientHistory';
 import { InsuranceActions } from '../actions/InsuranceActions';
+import { DispensaryActions } from '../actions/DispensaryActions';
+
+import { selectSortedAndFilteredData, selectDataSetInUse } from '../selectors/dispensary';
+import { selectPrescriberModalOpen } from '../selectors/prescriber';
+import { selectInsuranceModalOpen } from '../selectors/insurance';
+import { selectPatientModalOpen } from '../selectors/patient';
+
+import globalStyles from '../globalStyles';
 
 const Dispensing = ({
   data,
-  keyExtractor,
   columns,
   isAscending,
   sortKey,
-  dispatch,
-  dataSet,
-  onSortColumn,
   searchTerm,
-  onFilterData,
+  usingPatientsDataSet,
+  usingPrescribersDataSet,
+  // Misc. Callbacks
+  filter,
+  sort,
   gotoPrescription,
+  switchDataset,
+
+  // Patient variable
+  patientEditModalOpen,
+  currentPatient,
+  patientHistoryModalOpen,
+  // Patient callback
   editPatient,
-  patientModalOpen,
   createPatient,
   cancelPatientEdit,
   savePatient,
-  saveNewPatient,
-  isCreating,
-  currentPatient,
-  isCreatingPrescriber,
+  viewPatientHistory,
+
+  // Prescriber variables
   currentPrescriber,
+  prescriberModalOpen,
+  // Prescriber callbacks
   editPrescriber,
   createPrescriber,
   cancelPrescriberEdit,
   savePrescriber,
-  saveNewPrescriber,
-  prescriberModalOpen,
-  usingPatientsDataSet,
-  usingPrescribersDataSet,
-  viewingHistory,
-  selectedInsurancePolicy,
+
+  // Insurance variables
   insuranceModalOpen,
-  cancelInsuranceEdit,
+  selectedInsurancePolicy,
   isCreatingInsurancePolicy,
-  saveNewInsurancePolicy,
+  // Insurance callbacks
+  cancelInsuranceEdit,
   saveInsurancePolicy,
 }) => {
   const getCellCallbacks = colKey => {
     switch (colKey) {
       case 'dispense':
         return gotoPrescription;
+      case 'patientHistory':
+        return viewPatientHistory;
+      case 'patientEdit':
+        return editPatient;
+      case 'prescriberEdit':
+        return editPrescriber;
       default:
         return null;
     }
@@ -75,7 +92,7 @@ const Dispensing = ({
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
-      const rowKey = keyExtractor(item);
+      const rowKey = recordKeyExtractor(item);
       return (
         <DataTableRow
           rowData={data[index]}
@@ -96,7 +113,7 @@ const Dispensing = ({
         columns={columns}
         isAscending={isAscending}
         sortKey={sortKey}
-        onPress={onSortColumn}
+        onPress={sort}
       />
     ),
     [sortKey, isAscending, columns]
@@ -106,16 +123,16 @@ const Dispensing = ({
     () => [
       {
         text: 'Patients',
-        onPress: () => dispatch(PageActions.toggleDataSet(DATA_SET.PATIENTS, ROUTES.DISPENSARY)),
+        onPress: switchDataset,
         isOn: usingPatientsDataSet,
       },
       {
         text: 'Prescribers',
-        onPress: () => dispatch(PageActions.toggleDataSet(DATA_SET.PRESCRIBERS, ROUTES.DISPENSARY)),
+        onPress: switchDataset,
         isOn: usingPrescribersDataSet,
       },
     ],
-    [dataSet]
+    [usingPatientsDataSet, usingPrescribersDataSet, switchDataset]
   );
 
   const { pageTopSectionContainer } = globalStyles;
@@ -124,11 +141,7 @@ const Dispensing = ({
       <DataTablePageView>
         <View style={pageTopSectionContainer}>
           <ToggleBar toggles={toggles} />
-          <SearchBar
-            onChangeText={onFilterData}
-            value={searchTerm}
-            viewStyle={localStyles.searchBar}
-          />
+          <SearchBar onChangeText={filter} value={searchTerm} viewStyle={localStyles.searchBar} />
           <PageButton
             text={usingPatientsDataSet ? 'New Patient' : 'New Prescriber'}
             onPress={usingPatientsDataSet ? createPatient : createPrescriber}
@@ -138,13 +151,13 @@ const Dispensing = ({
           data={data}
           renderRow={renderRow}
           renderHeader={renderHeader}
-          keyExtractor={keyExtractor}
+          keyExtractor={recordKeyExtractor}
           getItemLayout={getItemLayout}
         />
       </DataTablePageView>
-      <ModalContainer title="Patient Details" noCancel fullScreen isVisible={patientModalOpen}>
+      <ModalContainer title="Patient Details" noCancel fullScreen isVisible={patientEditModalOpen}>
         <FormControl
-          onSave={isCreating ? saveNewPatient : savePatient}
+          onSave={savePatient}
           onCancel={cancelPatientEdit}
           inputConfig={getFormInputConfig('patient', currentPatient)}
         />
@@ -156,14 +169,14 @@ const Dispensing = ({
         isVisible={prescriberModalOpen}
       >
         <FormControl
-          onSave={isCreatingPrescriber ? saveNewPrescriber : savePrescriber}
+          onSave={savePrescriber}
           onCancel={cancelPrescriberEdit}
           inputConfig={getFormInputConfig('prescriber', currentPrescriber)}
         />
       </ModalContainer>
       <ModalContainer title="Insurance Policy" noCancel fullScreen isVisible={insuranceModalOpen}>
         <FormControl
-          onSave={isCreatingInsurancePolicy ? saveNewInsurancePolicy : saveInsurancePolicy}
+          onSave={saveInsurancePolicy}
           onCancel={cancelInsuranceEdit}
           inputConfig={getFormInputConfig(
             'insurancePolicy',
@@ -175,7 +188,7 @@ const Dispensing = ({
         title={`Patient History: ${currentPatient?.firstName} ${currentPatient?.lastName}`}
         onClose={cancelPatientEdit}
         fullScreen
-        isVisible={viewingHistory}
+        isVisible={patientHistoryModalOpen}
       >
         <PatientHistoryModal />
       </ModalContainer>
@@ -195,64 +208,65 @@ const localStyles = {
 };
 
 const mapStateToProps = state => {
-  const { pages, patient, payment, prescriber, insurance } = state;
-  const { dispensary } = pages;
-  const { insurancePolicy } = payment;
-  const { isCreating, isEditing, currentPatient, viewingHistory } = patient;
-  const { isCreatingPrescriber, isEditingPrescriber, currentPrescriber } = prescriber;
-  const {
-    isCreatingInsurancePolicy,
-    isEditingInsurancePolicy,
-    selectedInsurancePolicy,
-    currentInsurancePolicy,
-  } = insurance;
+  const { patient, prescriber, insurance, dispensary } = state;
+  const { sortKey, isAscending, searchTerm, columns } = dispensary;
 
-  const { dataSet } = dispensary;
-  const usingPatientsDataSet = dataSet === ROUTES.PATIENTS;
-  const usingPrescribersDataSet = dataSet === ROUTES.PRESCRIBERS;
+  const { currentPatient } = patient;
+  const { currentPrescriber } = prescriber;
+  const { isCreatingInsurancePolicy, selectedInsurancePolicy } = insurance;
+
+  const prescriberModalOpen = selectPrescriberModalOpen(state);
+  const [patientEditModalOpen, patientHistoryModalOpen] = selectPatientModalOpen(state);
+  const insuranceModalOpen = selectInsuranceModalOpen(state);
+  const data = selectSortedAndFilteredData(state);
+
+  const [usingPatientsDataSet, usingPrescribersDataSet] = selectDataSetInUse(state);
 
   return {
-    ...dispensary,
-    patientModalOpen: isCreating || isEditing,
-    prescriberModalOpen: isCreatingPrescriber || isEditingPrescriber,
-    insuranceModalOpen: isCreatingInsurancePolicy || isEditingInsurancePolicy,
-    isCreating,
-    currentPatient,
-    insurancePolicy,
-    viewingHistory,
-    isCreatingPrescriber,
-    isEditingPrescriber,
-    currentPrescriber,
     usingPatientsDataSet,
     usingPrescribersDataSet,
-    isCreatingInsurancePolicy,
-    isEditingInsurancePolicy,
+    data,
+    sortKey,
+    isAscending,
+    searchTerm,
+    columns,
+    // Patient
+    patientEditModalOpen,
+    currentPatient,
+    patientHistoryModalOpen,
+    // Prescriber
+    currentPrescriber,
+    prescriberModalOpen,
+    // Insurance
+    insuranceModalOpen,
     selectedInsurancePolicy,
-    currentInsurancePolicy,
+    isCreatingInsurancePolicy,
   };
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.DISPENSARY),
+const mapDispatchToProps = dispatch => ({
   gotoPrescription: patientID => dispatch(createPrescription(patientID)),
 
-  editPrescriber: prescriber => dispatch(PrescriberActions.editPrescriber(prescriber)),
-  editPatient: patient => dispatch(PatientActions.editPatient(patient)),
+  filter: searchTerm => dispatch(DispensaryActions.filter(searchTerm)),
+  sort: sortKey => dispatch(DispensaryActions.sort(sortKey)),
+  switchDataset: () => dispatch(DispensaryActions.switchDataSet()),
+
+  editPatient: patient => dispatch(PatientActions.editPatient(UIDatabase.get('Name', patient))),
   createPatient: () => dispatch(PatientActions.createPatient()),
   cancelPatientEdit: () => dispatch(PatientActions.closeModal()),
   savePatient: patientDetails => dispatch(PatientActions.patientUpdate(patientDetails)),
-  saveNewPatient: patientDetails => dispatch(PatientActions.saveNewPatient(patientDetails)),
+  viewPatientHistory: rowKey =>
+    dispatch(PatientActions.viewPatientHistory(UIDatabase.get('Name', rowKey))),
 
+  editPrescriber: prescriber =>
+    dispatch(PrescriberActions.editPrescriber(UIDatabase.get('Prescriber', prescriber))),
   createPrescriber: () => dispatch(PrescriberActions.createPrescriber()),
   cancelPrescriberEdit: () => dispatch(PrescriberActions.closeModal()),
   savePrescriber: prescriberDetails =>
     dispatch(PrescriberActions.updatePrescriber(prescriberDetails)),
-  saveNewPrescriber: prescriberDetails =>
-    dispatch(PrescriberActions.saveNewPrescriber(prescriberDetails)),
 
   cancelInsuranceEdit: () => dispatch(InsuranceActions.cancel()),
   saveInsurancePolicy: policyDetails => dispatch(InsuranceActions.update(policyDetails)),
-  saveNewInsurancePolicy: policyDetails => dispatch(InsuranceActions.create(policyDetails)),
 });
 
 export const DispensingPage = connect(mapStateToProps, mapDispatchToProps)(Dispensing);
@@ -260,43 +274,38 @@ export const DispensingPage = connect(mapStateToProps, mapDispatchToProps)(Dispe
 Dispensing.defaultProps = {
   currentPatient: null,
   currentPrescriber: null,
+  selectedInsurancePolicy: null,
 };
 
 Dispensing.propTypes = {
-  data: PropTypes.array.isRequired,
-  keyExtractor: PropTypes.func.isRequired,
+  data: PropTypes.object.isRequired,
   columns: PropTypes.array.isRequired,
   isAscending: PropTypes.bool.isRequired,
   sortKey: PropTypes.string.isRequired,
-  dispatch: PropTypes.func.isRequired,
-  dataSet: PropTypes.string.isRequired,
-  onSortColumn: PropTypes.func.isRequired,
+  sort: PropTypes.func.isRequired,
   searchTerm: PropTypes.string.isRequired,
-  onFilterData: PropTypes.func.isRequired,
+  filter: PropTypes.func.isRequired,
+  switchDataset: PropTypes.func.isRequired,
   gotoPrescription: PropTypes.func.isRequired,
   editPatient: PropTypes.func.isRequired,
-  patientModalOpen: PropTypes.bool.isRequired,
+  patientEditModalOpen: PropTypes.bool.isRequired,
   createPatient: PropTypes.func.isRequired,
   savePatient: PropTypes.func.isRequired,
   cancelPatientEdit: PropTypes.func.isRequired,
-  saveNewPatient: PropTypes.func.isRequired,
-  isCreating: PropTypes.bool.isRequired,
   currentPatient: PropTypes.object,
-  isCreatingPrescriber: PropTypes.bool.isRequired,
   currentPrescriber: PropTypes.object,
   editPrescriber: PropTypes.func.isRequired,
   createPrescriber: PropTypes.func.isRequired,
   cancelPrescriberEdit: PropTypes.func.isRequired,
   savePrescriber: PropTypes.func.isRequired,
-  saveNewPrescriber: PropTypes.func.isRequired,
   prescriberModalOpen: PropTypes.bool.isRequired,
   usingPatientsDataSet: PropTypes.bool.isRequired,
   usingPrescribersDataSet: PropTypes.bool.isRequired,
-  viewingHistory: PropTypes.bool.isRequired,
-  selectedInsurancePolicy: PropTypes.object.isRequired,
+  patientHistoryModalOpen: PropTypes.bool.isRequired,
+  selectedInsurancePolicy: PropTypes.object,
   insuranceModalOpen: PropTypes.bool.isRequired,
   cancelInsuranceEdit: PropTypes.func.isRequired,
   isCreatingInsurancePolicy: PropTypes.bool.isRequired,
-  saveNewInsurancePolicy: PropTypes.func.isRequired,
   saveInsurancePolicy: PropTypes.func.isRequired,
+  viewPatientHistory: PropTypes.func.isRequired,
 };

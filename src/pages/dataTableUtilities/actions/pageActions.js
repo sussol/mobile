@@ -8,8 +8,6 @@ import { MODAL_KEYS } from '../../../utilities';
 import { ACTIONS } from './constants';
 import { pageObjectSelector, pageStateSelector } from '../selectors/pageSelectors';
 
-const toggleDataSet = (dataSet, route) => ({ type: 'toggleDataSet', payload: { dataSet, route } });
-
 /**
  * Refreshes the underlying data array by slicing backingData.
  * BackingData is a live realm collection which side effects i.e.
@@ -208,5 +206,4 @@ export const PageActionsLookup = {
   closeAndRefresh,
   editPageObjectName,
   editPrescriber,
-  toggleDataSet,
 };

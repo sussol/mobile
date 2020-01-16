@@ -29,7 +29,9 @@ const mapDispatchToProps = dispatch => {
   return { completePrescription };
 };
 
-export const PrescriptionPage = connect(null, mapDispatchToProps)(Prescription);
+const mapStateToProps = () => ({});
+
+export const PrescriptionPage = connect(mapStateToProps, mapDispatchToProps)(Prescription);
 
 Prescription.propTypes = {
   transaction: PropTypes.object.isRequired,

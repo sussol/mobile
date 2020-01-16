@@ -5,30 +5,21 @@
  */
 
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
+import { StyleSheet, TextInput } from 'react-native';
 import PropTypes from 'prop-types';
 
-import { ChevronDownIcon, BurgerMenuIcon } from './icons';
-import { PopoverDropDown } from './PopoverDropDown';
+import { DropDown } from './DropDown';
+import { FlexRow } from './FlexRow';
 
-import { SUSSOL_ORANGE, APP_FONT_FAMILY, GREY } from '../globalStyles/index';
-import { FlexView } from './FlexView';
+import { SUSSOL_ORANGE, APP_FONT_FAMILY } from '../globalStyles';
 
 /**
- * Layout component rendering a DropdownPopover, a SimpleLabel and an optional
- * secondary Burger menu icon with onPress gesture handler.
- *
- * Renders in a 1/9 ratio.
- *
- * Uses important props from PopoverDropdown and SimpleLabel. See the individual
- * components for more detail.
+ * Layout component rendering a Dropdown and a TextInput.
  *
  * @prop {Text}   currentOptionText Text to display for the label text prop.
  * @prop {Array}  options           The options of the drop down. See PopoverDropdown.
  * @prop {Func}   onSelection       Callback when selecting a dropdown option.
  * @prop {String} dropdownTitle     The title of the drop down menu when opened.
- * @prop {Bool}   useSecondaryMenu  Indicator whether the secondary menu should show.
- * @prop {Number} iconSize          The size of the drop down icon.
  * @prop {String} placeholder       Placeholder string value, when no value has been chosen/entered.
  * @prop {Bool}   isDisabled        Indicator if this component should not be editable.
  */
@@ -37,51 +28,29 @@ export const DropdownRow = ({
   options,
   onSelection,
   dropdownTitle,
-  useSecondaryMenu,
-  secondaryCallback,
-  iconSize,
   placeholder,
   isDisabled,
-}) => {
-  const DropDownMenuIcon = React.useCallback(() => {
-    const iconColor = options.length && !isDisabled ? SUSSOL_ORANGE : GREY;
-    return <ChevronDownIcon color={iconColor} size={iconSize} />;
-  }, []);
+  onChangeText,
+}) => (
+  <FlexRow alignItems="center" justifyContent="center">
+    <DropDown
+      style={localStyles.dropDownStyle}
+      values={options}
+      onValueChange={onSelection}
+      headerValue={dropdownTitle}
+      isDisabled={!options.length}
+    />
 
-  const BurgerMenuButton = React.useCallback(
-    () =>
-      (
-        <TouchableOpacity onPress={secondaryCallback}>
-          <BurgerMenuIcon />
-        </TouchableOpacity>
-      )[useSecondaryMenu]
-  );
-
-  return (
-    <View style={localStyles.containerStyle}>
-      <FlexView flex={1}>
-        <PopoverDropDown
-          BaseComponent={DropDownMenuIcon}
-          options={options}
-          onSelection={onSelection}
-          title={dropdownTitle}
-          isDisabled={isDisabled}
-        />
-      </FlexView>
-      <FlexView flex={9}>
-        <TextInput
-          editable={!isDisabled}
-          onChangeText={onSelection}
-          value={currentOptionText}
-          underlineColorAndroid={SUSSOL_ORANGE}
-          style={localStyles.textInputStyle}
-          placeholder={placeholder}
-        />
-      </FlexView>
-      {useSecondaryMenu && <BurgerMenuButton />}
-    </View>
-  );
-};
+    <TextInput
+      editable={!isDisabled}
+      onChangeText={onChangeText}
+      value={currentOptionText}
+      underlineColorAndroid={SUSSOL_ORANGE}
+      style={localStyles.textInputStyle}
+      placeholder={placeholder}
+    />
+  </FlexRow>
+);
 
 const localStyles = StyleSheet.create({
   containerStyle: {
@@ -95,15 +64,18 @@ const localStyles = StyleSheet.create({
     flex: 1,
   },
   textInputStyle: {
-    flex: 1,
+    flex: 19,
     fontFamily: APP_FONT_FAMILY,
+  },
+  dropDownStyle: {
+    flex: 1,
+    marginBottom: 0,
+    marginLeft: 0,
+    marginTop: 0,
   },
 });
 
 DropdownRow.defaultProps = {
-  useSecondaryMenu: false,
-  secondaryCallback: null,
-  iconSize: 20,
   placeholder: '',
   currentOptionText: '',
   isDisabled: false,
@@ -114,9 +86,7 @@ DropdownRow.propTypes = {
   options: PropTypes.array.isRequired,
   onSelection: PropTypes.func.isRequired,
   dropdownTitle: PropTypes.string.isRequired,
-  useSecondaryMenu: PropTypes.bool,
-  secondaryCallback: PropTypes.func,
-  iconSize: PropTypes.number,
+  onChangeText: PropTypes.func.isRequired,
   placeholder: PropTypes.string,
   isDisabled: PropTypes.bool,
 };

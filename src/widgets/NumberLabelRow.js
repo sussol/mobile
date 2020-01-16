@@ -53,7 +53,7 @@ NumberLabelRow.defaultProps = {
 NumberLabelRow.propTypes = {
   size: PropTypes.string,
   text: PropTypes.string.isRequired,
-  number: PropTypes.number.isRequired,
+  number: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
   total: PropTypes.number,
   isCurrency: PropTypes.bool,
   isPercentage: PropTypes.bool,

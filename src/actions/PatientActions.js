@@ -17,7 +17,6 @@ export const PATIENT_ACTIONS = {
 };
 
 const closeModal = () => ({ type: PATIENT_ACTIONS.COMPLETE });
-
 const createPatient = () => ({ type: PATIENT_ACTIONS.PATIENT_CREATION });
 
 const editPatient = patient => ({
@@ -31,28 +30,25 @@ const patientUpdate = completedForm => (dispatch, getState) => {
   const { patient } = getState();
   const { currentPatient } = patient;
 
-  UIDatabase.write(() => {
-    UIDatabase.update('Name', {
-      ...currentPatient,
-      ...completedForm,
-      isPatient: true,
-      isVisible: true,
+  if (currentPatient) {
+    UIDatabase.write(() => {
+      UIDatabase.update('Name', {
+        ...currentPatient,
+        ...completedForm,
+        isPatient: true,
+        isVisible: true,
+      });
     });
-  });
-
-  dispatch(closeModal());
-  dispatch(PageActions.refreshData(ROUTES.DISPENSARY));
-};
-
-const saveNewPatient = completedForm => dispatch => {
-  UIDatabase.write(() => {
-    UIDatabase.update('Name', {
-      ...completedForm,
-      id: generateUUID(),
-      isPatient: true,
-      isVisible: true,
+  } else {
+    UIDatabase.write(() => {
+      UIDatabase.update('Name', {
+        ...completedForm,
+        id: generateUUID(),
+        isPatient: true,
+        isVisible: true,
+      });
     });
-  });
+  }
 
   dispatch(closeModal());
   dispatch(PageActions.refreshData(ROUTES.DISPENSARY));
@@ -63,7 +59,10 @@ const sortPatientHistory = sortKey => ({
   payload: { sortKey },
 });
 
-const viewPatientHistory = () => ({ type: PATIENT_ACTIONS.VIEW_HISTORY });
+const viewPatientHistory = patient => ({
+  type: PATIENT_ACTIONS.VIEW_HISTORY,
+  payload: { patient },
+});
 
 const closePatientHistory = () => ({ type: PATIENT_ACTIONS.CLOSE_HISTORY });
 
@@ -72,7 +71,6 @@ export const PatientActions = {
   patientUpdate,
   editPatient,
   closeModal,
-  saveNewPatient,
   sortPatientHistory,
   viewPatientHistory,
   closePatientHistory,

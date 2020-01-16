@@ -71,7 +71,7 @@ const simpleLabelStyles = size => ({
     color: DARKER_GREY,
     fontSize: FONT_SIZES[size],
   },
-  containerStyle: { flexDirection: 'row', alignItems: 'center' },
+  containerStyle: { flexDirection: 'row', flex: 1, alignItems: 'center' },
 });
 
 SimpleLabel.defaultProps = {

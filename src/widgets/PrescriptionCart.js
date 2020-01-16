@@ -5,16 +5,14 @@
  */
 
 import React from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { Text, ScrollView, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { PrescriptionCartRow } from './PrescriptionCartRow';
 
-import { recordKeyExtractor } from '../pages/dataTableUtilities';
-import { PrescriptionActions } from '../actions/PrescriptionActions';
-
-import { SUSSOL_ORANGE, WHITE } from '../globalStyles';
+import globalStyles, { WHITE } from '../globalStyles';
+import { FlexView } from './FlexView';
 
 /**
  * Layout container component for a prescriptions item cart.
@@ -28,37 +26,31 @@ import { SUSSOL_ORANGE, WHITE } from '../globalStyles';
  * @prop {Func}  onRemoveItem      Callback when this row is removed.
  * @prop {Bool}  isDisabled        Indicator if this component should not be editable.
  */
-const PrescriptionCartComponent = ({
-  items,
-  onChangeQuantity,
-  onOptionSelection,
-  onRemoveItem,
-  isDisabled,
-}) => {
+const PrescriptionCartComponent = ({ items, isDisabled }) => {
   const renderPrescriptionCartRow = React.useCallback(
     ({ item }) => (
-      <PrescriptionCartRow
-        onChangeQuantity={onChangeQuantity}
-        transactionItem={item}
-        onOptionSelection={onOptionSelection}
-        onRemoveItem={onRemoveItem}
-        isDisabled={isDisabled}
-      />
+      <PrescriptionCartRow key={item.id} transactionItem={item} isDisabled={isDisabled} />
     ),
-    [onChangeQuantity, isDisabled]
+    [isDisabled]
+  );
+
+  const PrescriptionRows = React.useMemo(
+    () => () => items.map(item => renderPrescriptionCartRow({ item })),
+    [items]
   );
 
   return (
-    <View style={localStyles.containerStyle}>
-      <Text style={localStyles.titleStyles}>Order</Text>
-      <View style={localStyles.flexNine}>
-        <FlatList
-          keyExtractor={recordKeyExtractor}
-          data={items}
-          renderItem={renderPrescriptionCartRow}
-        />
-      </View>
-    </View>
+    <ScrollView style={localStyles.containerStyle}>
+      {items.length ? (
+        PrescriptionRows()
+      ) : (
+        <FlexView flex={1} justifyContent="center" alignItems="center">
+          <Text style={{ ...globalStyles.textStyles, textAlign: 'center' }}>
+            Click on an item to add it
+          </Text>
+        </FlexView>
+      )}
+    </ScrollView>
   );
 };
 
@@ -68,9 +60,6 @@ PrescriptionCartComponent.defaultProps = {
 
 PrescriptionCartComponent.propTypes = {
   items: PropTypes.array.isRequired,
-  onChangeQuantity: PropTypes.func.isRequired,
-  onOptionSelection: PropTypes.func.isRequired,
-  onRemoveItem: PropTypes.func.isRequired,
   isDisabled: PropTypes.bool,
 };
 
@@ -78,26 +67,18 @@ const localStyles = StyleSheet.create({
   containerStyle: {
     elevation: 10,
     borderRadius: 5,
-    paddingHorizontal: 10,
-    flex: 1,
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    marginHorizontal: 50,
+    marginVertical: 30,
     backgroundColor: WHITE,
-    marginBottom: 10,
   },
-  titleStyles: {
-    color: SUSSOL_ORANGE,
-    fontSize: 24,
-    fontWeight: 'bold',
-    borderBottomWidth: 1,
-    borderBottomColor: SUSSOL_ORANGE,
-    marginVertical: 5,
-  },
-  flexNine: { flex: 9 },
 });
 
-const mapDispatchToProps = dispatch => ({
-  onRemoveItem: id => dispatch(PrescriptionActions.removeItem(id)),
-  onOptionSelection: (id, newValue) => dispatch(PrescriptionActions.updateDirection(id, newValue)),
-  dispatch,
-});
+const mapStateToProps = state => {
+  const { prescription } = state;
+  const { transaction } = prescription;
+  return { items: transaction.items };
+};
 
-export const PrescriptionCart = connect(null, mapDispatchToProps)(PrescriptionCartComponent);
+export const PrescriptionCart = connect(mapStateToProps)(PrescriptionCartComponent);

@@ -21,6 +21,7 @@ import {
   selectPrescriptionTotal,
   selectCreditBeingUsed,
   selectDiscountAmount,
+  selectChangeRequired,
 } from '../selectors/payment';
 import { DropDown } from './DropDown';
 import { selectPatientInsurancePolicies, selectAvailableCredit } from '../selectors/patient';
@@ -45,6 +46,7 @@ const paymentState = state => {
   const paymentTypes = UIDatabase.objects('PaymentType');
   const discountRate = selectInsuranceDiscountRate(state);
   const discountAmount = selectDiscountAmount(state);
+  const changeRequired = selectChangeRequired(state);
 
   return {
     currentInsurancePolicy,
@@ -61,6 +63,7 @@ const paymentState = state => {
     paymentType,
     selectedInsurancePolicy,
     availableCredit,
+    changeRequired,
   };
 };
 
@@ -94,6 +97,7 @@ const PaymentSummaryComponent = ({
   discountRate,
   discountAmount,
   availableCredit,
+  changeRequired,
 }) => {
   const policyNumbers = React.useMemo(
     () => ['Select a policy..', ...insurancePolicies.map(p => p.policyNumber)],
@@ -171,6 +175,7 @@ const PaymentSummaryComponent = ({
             isCurrency
             number={discountAmount.format()}
           />
+          <NumberLabelRow text="Change required" isCurrency number={changeRequired.format()} />
           <Separator length="50%" marginTop={20} marginBottom={20} />
           <NumberLabelRow size="large" text="Total" isCurrency number={total.format()} />
         </FlexView>
@@ -179,25 +184,32 @@ const PaymentSummaryComponent = ({
   );
 };
 
+PaymentSummaryComponent.defaultProps = {
+  paymentType: null,
+  selectedInsurancePolicy: null,
+  creditOverflow: false,
+};
+
 PaymentSummaryComponent.propTypes = {
   subtotal: PropTypes.object.isRequired,
   total: PropTypes.object.isRequired,
   updatePayment: PropTypes.func.isRequired,
   creditUsed: PropTypes.object.isRequired,
   paymentAmount: PropTypes.object.isRequired,
-  creditOverflow: PropTypes.bool.isRequired,
+  creditOverflow: PropTypes.bool,
   isComplete: PropTypes.bool.isRequired,
   insurancePolicies: PropTypes.object.isRequired,
   choosePolicy: PropTypes.func.isRequired,
-  selectedInsurancePolicy: PropTypes.object.isRequired,
+  selectedInsurancePolicy: PropTypes.object,
   editPolicy: PropTypes.func.isRequired,
   newPolicy: PropTypes.func.isRequired,
   paymentTypes: PropTypes.object.isRequired,
   choosePaymentType: PropTypes.func.isRequired,
-  paymentType: PropTypes.object.isRequired,
+  paymentType: PropTypes.object,
   discountRate: PropTypes.number.isRequired,
   discountAmount: PropTypes.object.isRequired,
   availableCredit: PropTypes.object.isRequired,
+  changeRequired: PropTypes.object.isRequired,
 };
 
 const localStyles = {
