@@ -369,11 +369,10 @@ const supplierRequisitionInitialiser = requisition => {
   const usingIndicators = !!indicators.length;
 
   const [selectedIndicator] = indicators;
-  const { columns: indicatorColumns, rows: indicatorRows } = usingIndicators
-    ? getIndicatorData(selectedIndicator, period)
-    : {};
-  // ?
-  // : {};
+  const { columns: indicatorColumns, rows: indicatorRows } = getIndicatorData(
+    selectedIndicator,
+    period
+  );
 
   return {
     pageObject: requisition,
