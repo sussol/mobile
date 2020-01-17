@@ -1,10 +1,11 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
@@ -13,14 +14,26 @@ import { MODAL_KEYS } from '../utilities';
 
 import { DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
-import { DataTablePageView, PageButton, PageInfo, SearchBar } from '../widgets';
+import {
+  DataTablePageView,
+  DropDown,
+  PageButton,
+  PageInfo,
+  SearchBar,
+  ToggleBar,
+} from '../widgets';
 import { ROUTES } from '../navigation/constants';
+
+import {
+  selectIndicatorTableColumns,
+  selectIndicatorTableRows,
+} from './dataTableUtilities/selectors/indicatorSelectors';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
 import { useRecordListener } from '../hooks';
 
 import globalStyles from '../globalStyles';
-import { buttonStrings, generalStrings, tableStrings } from '../localization';
+import { buttonStrings, generalStrings, programStrings, tableStrings } from '../localization';
 
 /**
  * Renders a mSupply mobile page with a customer requisition loaded for editing
@@ -44,6 +57,10 @@ export const CustomerRequisition = ({
   isAscending,
   modalKey,
   pageObject,
+  usingIndicators,
+  showIndicators,
+  selectedIndicator,
+  indicators,
   keyExtractor,
   modalValue,
   searchTerm,
@@ -54,6 +71,9 @@ export const CustomerRequisition = ({
   onFilterData,
   onCloseModal,
   onSortColumn,
+  onShowIndicators,
+  onHideIndicators,
+  onSelectIndicator,
   onEditSuppliedQuantity,
   route,
 }) => {
@@ -105,7 +125,7 @@ export const CustomerRequisition = ({
         />
       );
     },
-    [data, dataState]
+    [columns, data, dataState]
   );
 
   const renderHeader = useCallback(
@@ -117,8 +137,93 @@ export const CustomerRequisition = ({
         sortKey={sortKey}
       />
     ),
-    [sortKey, isAscending]
+    [columns, sortKey, isAscending]
   );
+
+  const ItemIndicatorToggles = useMemo(
+    () => [
+      {
+        text: programStrings.items,
+        isOn: !showIndicators,
+        onPress: onHideIndicators,
+      },
+      {
+        text: programStrings.indicators,
+        isOn: showIndicators,
+        onPress: onShowIndicators,
+      },
+    ],
+    [showIndicators]
+  );
+
+  const ItemIndicatorToggle = () => <ToggleBar toggles={ItemIndicatorToggles} />;
+
+  const ButtonSetSuppliedToRequested = useCallback(
+    () => (
+      <PageButton
+        style={globalStyles.topButton}
+        text={buttonStrings.use_requested_quantities}
+        onPress={onSetSuppliedToRequested}
+        isDisabled={isFinalised}
+      />
+    ),
+    [isFinalised]
+  );
+
+  const ButtonSetSuppliedToSuggested = useCallback(
+    () => (
+      <PageButton
+        style={globalStyles.topButton}
+        text={buttonStrings.use_suggested_quantities}
+        onPress={onSetSuppliedToSuggested}
+        isDisabled={isFinalised}
+      />
+    ),
+    [isFinalised]
+  );
+
+  const indicatorCodes = useMemo(() => indicators.map(indicator => indicator.code), [indicators]);
+  const selectedIndicatorCode = useMemo(() => selectedIndicator.code, [selectedIndicator]);
+
+  const IndicatorDropdown = useCallback(
+    () => (
+      <DropDown
+        values={indicatorCodes}
+        selectedValue={selectedIndicatorCode}
+        onValueChange={onSelectIndicator}
+      />
+    ),
+    [indicatorCodes, selectedIndicatorCode]
+  );
+
+  const TopRightButtons = useCallback(() => {
+    const { horizontalContainer, verticalContainer } = globalStyles;
+    if (!usingIndicators) {
+      return (
+        <View style={horizontalContainer}>
+          <ButtonSetSuppliedToRequested />
+          <ButtonSetSuppliedToSuggested />
+        </View>
+      );
+    }
+    if (!showIndicators) {
+      return (
+        <View style={verticalContainer}>
+          <ItemIndicatorToggle />
+          <View style={horizontalContainer}>
+            <ButtonSetSuppliedToRequested />
+            <ButtonSetSuppliedToSuggested />
+          </View>
+        </View>
+      );
+    }
+    return (
+      <View style={verticalContainer}>
+        <ItemIndicatorToggle />
+        <IndicatorDropdown />
+      </View>
+    );
+  }, [usingIndicators, showIndicators]);
 
   const {
     pageTopSectionContainer,
@@ -137,18 +242,7 @@ export const CustomerRequisition = ({
           />
         </View>
         <View style={pageTopRightSectionContainer}>
-          <PageButton
-            style={globalStyles.topButton}
-            text={buttonStrings.use_requested_quantities}
-            onPress={onSetSuppliedToRequested}
-            isDisabled={isFinalised}
-          />
-          <PageButton
-            style={globalStyles.topButton}
-            text={buttonStrings.use_suggested_quantities}
-            onPress={onSetSuppliedToSuggested}
-            isDisabled={isFinalised}
-          />
+          <TopRightButtons />
         </View>
       </View>
       <DataTable
@@ -178,6 +272,18 @@ const mapDispatchToProps = (dispatch, ownProps) =>
 const mapStateToProps = state => {
   const { pages } = state;
   const { customerRequisition } = pages;
+  const { usingIndicators, showIndicators } = customerRequisition;
+
+  if (usingIndicators && showIndicators) {
+    const data = selectIndicatorTableRows(customerRequisition);
+    const columns = selectIndicatorTableColumns(customerRequisition);
+    return {
+      ...customerRequisition,
+      data,
+      columns,
+    };
+  }
+
   return customerRequisition;
 };
 
@@ -188,6 +294,8 @@ export const CustomerRequisitionPage = connect(
 
 CustomerRequisition.defaultProps = {
   modalValue: null,
+  usingIndicators: false,
+  showIndicators: false,
 };
 
 CustomerRequisition.propTypes = {
@@ -209,6 +317,13 @@ CustomerRequisition.propTypes = {
   onFilterData: PropTypes.func.isRequired,
   onCloseModal: PropTypes.func.isRequired,
   onSortColumn: PropTypes.func.isRequired,
+  usingIndicators: PropTypes.bool,
+  showIndicators: PropTypes.bool,
+  indicators: PropTypes.array.isRequired,
+  selectedIndicator: PropTypes.object.isRequired,
   onEditSuppliedQuantity: PropTypes.func.isRequired,
+  onShowIndicators: PropTypes.func.isRequired,
+  onHideIndicators: PropTypes.func.isRequired,
+  onSelectIndicator: PropTypes.func.isRequired,
   route: PropTypes.string.isRequired,
 };
