@@ -1,5 +1,3 @@
-import { getIndicatorRows } from '../getIndicatorTableData';
-
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019

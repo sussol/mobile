@@ -4,7 +4,7 @@
  */
 
 import { sortDataBy } from '../../../utilities';
-import { getIndicatorData } from '../getIndicatorTableData';
+import { getIndicatorData } from '../../../database/utilities/getIndicatorData';
 /**
  * Sorts the current set of data by the provided
  * key and direction in action.

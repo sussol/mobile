@@ -6,11 +6,11 @@
 import { UIDatabase } from '../../../database';
 import { parsePositiveInteger, MODAL_KEYS } from '../../../utilities';
 import {
-  getIndicatorValue,
-  updateIndicatorValue,
   getIndicatorRow,
   getIndicatorColumn,
-} from '../getIndicatorTableData';
+  getRowColumnIndicatorValue,
+  updateIndicatorValue,
+} from '../../../database/utilities/getIndicatorData';
 import { ACTIONS } from './constants';
 import { openModal, closeModal } from './pageActions';
 import { pageStateSelector } from '../selectors/pageSelectors';
@@ -58,7 +58,7 @@ export const editIndicatorValue = (value, rowKey, columnKey, route) => (dispatch
   const { period } = pageObject;
   const row = getIndicatorRow(indicatorRows, rowKey);
   const column = getIndicatorColumn(indicatorColumns, columnKey);
-  const indicatorValue = getIndicatorValue(row, column, period);
+  const indicatorValue = getRowColumnIndicatorValue(row, column, period);
   updateIndicatorValue(indicatorValue, value);
   dispatch(refreshIndicatorRow(route));
 };
