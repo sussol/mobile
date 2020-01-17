@@ -7,6 +7,7 @@ import Realm from 'realm';
 import { complement } from 'set-manipulator';
 
 import { createRecord, getTotal } from '../utilities';
+import { getPeriodIndicatorValues } from '../utilities/getIndicatorData';
 import { UIDatabase } from '..';
 
 /**
@@ -79,6 +80,15 @@ export class Requisition extends Realm.Object {
   }
 
   /**
+   * Get if requisition is a response.
+   *
+   * @return  {boolean}
+   */
+  get isResponse() {
+    return this.type === 'response';
+  }
+
+  /**
    * Get name of user who entered requisition.
    *
    * @return  {string}
@@ -141,7 +151,17 @@ export class Requisition extends Realm.Object {
   }
 
   get indicators() {
-    return this.program?.indicators;
+    if (this.isRequest) return this.program?.indicators;
+    if (this.isResponse) {
+      const indicatorValues = getPeriodIndicatorValues(this.period);
+      console.log(new Set(indicatorValues.map(({ value }) => value)));
+      return getPeriodIndicatorValues(this.period).reduce(
+        (acc, { indicator }) =>
+          acc.some(({ id }) => id === indicator.id) ? acc : [...acc, indicator],
+        []
+      );
+    }
+    return null;
   }
 
   /**
