@@ -141,7 +141,7 @@ export class Requisition extends Realm.Object {
   }
 
   get indicators() {
-    return this.program?.indicators.slice() || [];
+    return this.program?.indicators;
   }
 
   /**

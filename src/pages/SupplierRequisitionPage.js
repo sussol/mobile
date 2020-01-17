@@ -392,6 +392,10 @@ SupplierRequisition.defaultProps = {
   showAll: false,
   usingIndicators: false,
   showIndicators: false,
+  selectedIndicator: null,
+  indicators: null,
+  indicatorColumns: null,
+  indicatorRows: null,
 };
 
 SupplierRequisition.propTypes = {
@@ -412,10 +416,10 @@ SupplierRequisition.propTypes = {
   showAll: PropTypes.bool,
   usingIndicators: PropTypes.bool,
   showIndicators: PropTypes.bool,
-  selectedIndicator: PropTypes.object.isRequired,
-  indicators: PropTypes.array.isRequired,
-  indicatorColumns: PropTypes.object.isRequired,
-  indicatorRows: PropTypes.object.isRequired,
+  selectedIndicator: PropTypes.object,
+  indicators: PropTypes.object,
+  indicatorColumns: PropTypes.object,
+  indicatorRows: PropTypes.object,
   modalValue: PropTypes.any,
   refreshData: PropTypes.func.isRequired,
   onSelectNewItem: PropTypes.func.isRequired,

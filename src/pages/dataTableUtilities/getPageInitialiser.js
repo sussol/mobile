@@ -365,8 +365,8 @@ const supplierRequisitionInitialiser = requisition => {
       ? sortedData
       : sortedData.filter(item => item.isLessThanThresholdMOS);
 
-  const usingIndicators = !!indicators.length;
-  const [selectedIndicator = null] = indicators;
+  const usingIndicators = !!indicators;
+  const [selectedIndicator = null] = indicators || [];
   const indicatorRows = selectedIndicator?.rows;
   const indicatorColumns = selectedIndicator?.columns;
 
