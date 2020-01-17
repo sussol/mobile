@@ -77,8 +77,13 @@ export const customerInvoicesInitialiser = () => {
  * @returns  {object}
  */
 const customerRequisitionInitialiser = requisition => {
-  const { items: backingData } = requisition;
+  const { indicators, items: backingData } = requisition;
   const sortedData = backingData.sorted('item.name').slice();
+
+  const usingIndicators = !!indicators;
+  const [selectedIndicator = null] = indicators || [];
+  const indicatorRows = selectedIndicator?.rows;
+  const indicatorColumns = selectedIndicator?.columns;
 
   return {
     pageObject: requisition,
@@ -92,6 +97,12 @@ const customerRequisitionInitialiser = requisition => {
     isAscending: true,
     modalKey: '',
     modalValue: null,
+    usingIndicators,
+    showIndicators: false,
+    selectedIndicator,
+    indicatorColumns,
+    indicatorRows,
+    indicators,
     route: ROUTES.CUSTOMER_REQUISITION,
     columns: getColumns(ROUTES.CUSTOMER_REQUISITION),
     getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_REQUISITION),
