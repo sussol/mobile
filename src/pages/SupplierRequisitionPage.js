@@ -206,7 +206,7 @@ const SupplierRequisition = ({
 
   const UseSuggestedQuantitiesButton = () => (
     <PageButton
-      style={usingIndicators ? globalStyles.wideButton : globalStyles.topButton}
+      style={program ? globalStyles.wideButton : globalStyles.topButton}
       text={buttonStrings.use_suggested_quantities}
       onPress={onSetRequestedToSuggested}
       isDisabled={isFinalised}
@@ -257,7 +257,7 @@ const SupplierRequisition = ({
           <UseSuggestedQuantitiesButton />
           <CreateAutomaticOrderButton />
         </View>
-        <View style={globalStyles.verticalContainer}>
+        <View style={verticalContainer}>
           <AddNewItemButton />
           <AddMasterListItemsButton />
         </View>
@@ -265,36 +265,41 @@ const SupplierRequisition = ({
     );
   }, [isFinalised]);
 
-  const ProgramButtons = useCallback(() => {
-    const { verticalContainer } = globalStyles;
+  const ProgramItemButtons = useCallback(() => (
+    <View style={globalStyles.verticalContainer}>
+      <UseSuggestedQuantitiesButton />
+      <ThresholdMOSToggle />
+    </View>
+  ));
 
-    const ProgramItemButtons = (
-      <>
-        <UseSuggestedQuantitiesButton isWide={true} />
-        <ThresholdMOSToggle />
-      </>
-    );
-
-    const { code: selectedIndicatorCode } = selectedIndicator;
+  const ProgramIndicatorButtons = useCallback(() => {
+    const selectedIndicatorCode = selectedIndicator?.code;
     const indicatorCodes = indicators.map(indicator => indicator.code);
-
-    const ProgramIndicatorButtons = (
+    return (
       <DropDown
         values={indicatorCodes}
         selectedValue={selectedIndicatorCode}
         onValueChange={onSelectIndicator}
       />
     );
+  }, [selectedIndicator, indicators]);
 
-    return (
-      <>
-        <View style={verticalContainer}>
+  const ProgramButtons = useCallback(() => {
+    if (usingIndicators) {
+      const Buttons = showIndicators ? ProgramIndicatorButtons : ProgramItemButtons;
+      return (
+        <View style={globalStyles.verticalContainer}>
           <ItemIndicatorToggle />
-          {showIndicators ? ProgramIndicatorButtons : ProgramItemButtons}
+          <Buttons />
         </View>
-      </>
+      );
+    }
+    return (
+      <View style={globalStyles.verticalContainer}>
+        <ProgramItemButtons />
+      </View>
     );
-  }, [showIndicators, selectedIndicator, showAll, isFinalised]);
+  }, [usingIndicators, showIndicators, selectedIndicator, showAll, isFinalised]);
 
   const {
     pageTopSectionContainer,

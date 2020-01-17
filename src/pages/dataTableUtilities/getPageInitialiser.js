@@ -9,7 +9,6 @@ import { sortDataBy } from '../../utilities';
 import { recordKeyExtractor } from './utilities';
 import getColumns from './getColumns';
 import getPageInfoColumns from './getPageInfoColumns';
-import { getIndicatorData } from './getIndicatorTableData';
 
 import { ROUTES } from '../../navigation/constants';
 
@@ -355,7 +354,7 @@ const supplierInvoicesInitialiser = () => {
  * @returns  {object}
  */
 const supplierRequisitionInitialiser = requisition => {
-  const { isFinalised, program, period, items: backingData, indicators } = requisition;
+  const { isFinalised, program, items: backingData, indicators } = requisition;
 
   const usingPrograms = !!program;
   const route = program ? ROUTES.SUPPLIER_REQUISITION_WITH_PROGRAM : ROUTES.SUPPLIER_REQUISITION;
@@ -367,11 +366,9 @@ const supplierRequisitionInitialiser = requisition => {
       : sortedData.filter(item => item.isLessThanThresholdMOS);
 
   const usingIndicators = !!indicators.length;
-  const [selectedIndicator] = indicators;
-  const { columns: indicatorColumns, rows: indicatorRows } = getIndicatorData(
-    selectedIndicator,
-    period
-  );
+  const [selectedIndicator = null] = indicators;
+  const indicatorRows = selectedIndicator?.rows;
+  const indicatorColumns = selectedIndicator?.columns;
 
   return {
     pageObject: requisition,
