@@ -17,6 +17,11 @@ export const selectIndicatorColumns = createSelector(
   pageState => pageState.indicatorColumns
 );
 
+export const selectIsRequestRequisition = createSelector(
+  [pageObjectSelector],
+  pageObject => pageObject.isRequest
+);
+
 export const selectPeriod = createSelector([pageObjectSelector], pageObject => pageObject.period);
 
 /**
@@ -33,6 +38,7 @@ export const selectIndicatorTableRows = createSelector(
  * @param {Array.<IndicatorAttribute>} indicatorColumns
  */
 export const selectIndicatorTableColumns = createSelector(
-  [selectIndicatorColumns],
-  indicatorColumns => mapIndicatorTableColumns(indicatorColumns)
+  [selectIndicatorColumns, selectIsRequestRequisition],
+  (indicatorColumns, isRequestRequisition) =>
+    mapIndicatorTableColumns(indicatorColumns, isRequestRequisition)
 );
