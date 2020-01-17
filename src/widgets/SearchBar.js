@@ -124,6 +124,7 @@ const defaultStyles = StyleSheet.create({
   },
   textInput: {
     height: 40,
+    flex: 1,
     fontSize: Dimensions.get('window').width / 80,
     fontFamily: APP_FONT_FAMILY,
     backgroundColor: 'rgba(0, 0, 0, 0)',
