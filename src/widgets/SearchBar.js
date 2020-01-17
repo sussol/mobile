@@ -7,11 +7,12 @@
 
 import React, { useCallback, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { Dimensions, StyleSheet, TextInput, View, TouchableOpacity } from 'react-native';
 
-import { StyleSheet, TextInput, View, TouchableOpacity } from 'react-native';
 import { MagnifyingGlassIcon, CancelIcon } from './icons';
-import { SUSSOL_ORANGE, APP_FONT_FAMILY } from '../globalStyles/index';
-import { debounce } from '../utilities/index';
+
+import { APP_FONT_FAMILY, SUSSOL_ORANGE, LIGHT_GREY } from '../globalStyles';
+import { debounce } from '../utilities';
 
 /**
  * Simple search bar - essentially a wrapper around a text input
@@ -43,6 +44,7 @@ export const SearchBarComponent = ({
   viewStyle,
   debounceTimeout,
   onFocusOrBlur,
+  placeholderTextColor,
   ...textInputProps
 }) => {
   const [textValue, setTextValue] = useState('');
@@ -81,7 +83,7 @@ export const SearchBarComponent = ({
         style={internalTextStyle}
         value={textValue}
         underlineColorAndroid="transparent"
-        placeholderTextColor={color}
+        placeholderTextColor={placeholderTextColor}
         placeholder={placeholder}
         onChangeText={onChangeTextCallback}
         autoFocus={autoFocus}
@@ -122,8 +124,7 @@ const defaultStyles = StyleSheet.create({
   },
   textInput: {
     height: 40,
-    fontSize: 20,
-    flex: 1,
+    fontSize: Dimensions.get('window').width / 80,
     fontFamily: APP_FONT_FAMILY,
     backgroundColor: 'rgba(0, 0, 0, 0)',
   },
@@ -138,6 +139,7 @@ SearchBarComponent.defaultProps = {
   placeholder: '',
   autoFocus: false,
   onFocusOrBlur: null,
+  placeholderTextColor: LIGHT_GREY,
 };
 
 SearchBarComponent.propTypes = {
@@ -150,4 +152,5 @@ SearchBarComponent.propTypes = {
   textInputStyle: PropTypes.object,
   viewStyle: PropTypes.object,
   onFocusOrBlur: PropTypes.func,
+  placeholderTextColor: PropTypes.string,
 };

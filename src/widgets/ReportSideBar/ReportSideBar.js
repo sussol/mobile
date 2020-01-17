@@ -15,6 +15,15 @@ import { DARKER_GREY, SUSSOL_ORANGE, WARMER_GREY, APP_FONT_FAMILY, GREY } from '
 
 import { generalStrings } from '../../localization';
 
+/**
+ * This page receives all reports and renders a list of them
+ * *
+ * @prop  {Object}      reports         All reports available to be selected
+ * @prop  {Object}      currentReport   The current rendered report
+ * @prop  {function}    onPressItem     Function to be executed when an item is pressed
+ * @prop  {Object}      dimensions      Width and height of the graph container
+ */
+
 export const ReportSideBar = ({ reports, currentReport, onPressItem, dimensions }) => {
   const renderItem = ({ item }) => {
     const { id, index, title, type, date } = item;

@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -7,12 +8,12 @@ import Realm from 'realm';
 
 import checkIsObject from '../utilities';
 /**
- * A Report.
+ * Dashboard Report.
  *
- * @property  {string}            id
- * @property  {string}            type
- * @property  {string}            title
- * @property  {string}            _data
+ * @property  {string}  id      Unique identifier for each Report
+ * @property  {string}  type    Defines if the chart is PieChart, BarChart, LineChart or Table.
+ * @property  {string}  title   Title of the Report
+ * @property  {string}  _data   Data for the chart defined by the type (see above)
  */
 
 export class Report extends Realm.Object {
@@ -22,7 +23,6 @@ export class Report extends Realm.Object {
    * @return  {Object}
    */
   get data() {
-    // eslint-disable-next-line no-underscore-dangle
     return JSON.parse(this._data);
   }
 
@@ -32,7 +32,6 @@ export class Report extends Realm.Object {
    * @param  {dataObject}  dataObject
    */
   set data(dataObject) {
-    // eslint-disable-next-line no-underscore-dangle
     this._data = checkIsObject(dataObject) ? JSON.stringify(dataObject) : JSON.stringify({});
   }
 }

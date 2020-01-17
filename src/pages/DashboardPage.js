@@ -19,6 +19,14 @@ import globalStyles from '../globalStyles';
 
 import { DashboardActions } from '../actions/index';
 
+/**
+ * This page receives all reports and renders a ReportSideBar and ReportChart components
+ * *
+ * @prop  {Object}    reports         All reports available to be selected
+ * @prop  {Object}    currentReport   The current rendered report
+ * @prop  {function}  switchReport    Function to switch between current and new selected report
+ */
+
 const DashboardPageComponent = ({ reports, currentReport, switchReport }) => {
   const { pageContentContainer, container, pageTopSectionContainer } = globalStyles;
   const pageContainer = StyleSheet.flatten([pageTopSectionContainer, { paddingHorizontal: 0 }]);
