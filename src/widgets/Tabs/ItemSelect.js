@@ -16,57 +16,59 @@ import { FlexRow } from '../FlexRow';
 import { FlexColumn } from '../FlexColumn';
 import { FlexView } from '../FlexView';
 
-import { UIDatabase } from '../../database';
 import { getColumns } from '../../pages/dataTableUtilities';
 
-import { selectHasItemsAndQuantity } from '../../selectors/prescription';
+import {
+  selectHasItemsAndQuantity,
+  selectItemSearchTerm,
+  selectFilteredAndSortedItems,
+  selectSelectedRows,
+} from '../../selectors/prescription';
 
 import { WizardActions } from '../../actions/WizardActions';
 import { PrescriptionActions } from '../../actions/PrescriptionActions';
+import { SearchBar } from '../SearchBar';
 
 /**
  * Layout component used for a tab within the prescription wizard.
  *
- * @prop {Func} transaction    Underlying realm Transaction for this script.
- * @prop {Func} chooseItem     Callback for selecting an item.
- * @prop {Func} nextTab        Callback for transitioning to the next step.
- * @prop {Func} updateQuantity Callback for updating an items quantity.
+ * @prop {Func}   chooseItem     Callback for selecting an item.
+ * @prop {Func}   nextTab        Callback for transitioning to the next step.
+ * @prop {Bool}   canProceed     Indicator whether this step is complete.
+ * @prop {Bool}   isComplete     Indicator whether the prescription is complete.
+ * @prop {String} itemSearchTerm String used for filtering items.
+ * @prop {Func}   filterItems    Callback for filtering items.
+ * @prop {Array}  items          Array of sorted and filtered items to choose from.
+ * @prop {Object} selectedItems  Object of itemID:bool key value pairs, indicating if selected.
  */
-const ItemSelectComponent = ({ transaction, chooseItem, nextTab, canProceed, isComplete }) => {
+const ItemSelectComponent = ({
+  chooseItem,
+  nextTab,
+  canProceed,
+  isComplete,
+  itemSearchTerm,
+  filterItems,
+  items,
+  selectedRows,
+}) => {
   const columns = React.useMemo(() => getColumns('itemSelect'), []);
-  const disabledRows = UIDatabase.objects('Item').reduce(
-    (acc, value) => ({ ...acc, [value.id]: value.totalQuantity <= 0 }),
-    {}
-  );
-
-  const selectedRows = transaction.items.reduce(
-    (acc, { item }) => ({ ...acc, [item.id]: true }),
-    {}
-  );
-
-  const itemSelection = React.useMemo(() => {
-    const sortedItems = UIDatabase.objects('Item').sorted('name');
-    const itemsWithStock = sortedItems.filtered('ANY batches.numberOfPacks > 0').slice();
-    const itemsWithoutStock = sortedItems.filtered('ALL batches.numberOfPacks == 0').slice();
-    return [...itemsWithStock, ...itemsWithoutStock];
-  }, []);
 
   return (
     <>
       <PrescriptionInfo />
       <FlexRow flex={1}>
         <FlexView flex={10}>
+          <SearchBar onChangeText={filterItems} value={itemSearchTerm} />
           <SimpleTable
-            data={itemSelection}
+            data={items}
             columns={columns}
-            disabledRows={disabledRows}
             selectedRows={selectedRows}
             selectRow={chooseItem}
             isDisabled={isComplete}
           />
         </FlexView>
         <FlexColumn flex={15}>
-          <PrescriptionCart items={transaction.items} isDisabled={isComplete} />
+          <PrescriptionCart isDisabled={isComplete} />
 
           <PageButton
             isDisabled={!canProceed}
@@ -84,25 +86,31 @@ const mapDispatchToProps = dispatch => {
   const chooseItem = itemID => dispatch(PrescriptionActions.addItem(itemID));
   const nextTab = () => dispatch(WizardActions.nextTab());
   const updateQuantity = (id, quantity) => dispatch(PrescriptionActions.editQuantity(id, quantity));
-  return { nextTab, chooseItem, updateQuantity };
+  const filterItems = searchTerm => dispatch(PrescriptionActions.filter(searchTerm));
+  return { filterItems, nextTab, chooseItem, updateQuantity };
 };
 
 const mapStateToProps = state => {
-  const { prescription, wizard } = state;
+  const { wizard } = state;
   const { isComplete } = wizard;
-  const { transaction } = prescription;
 
+  const itemSearchTerm = selectItemSearchTerm(state);
+  const items = selectFilteredAndSortedItems(state);
+  const selectedRows = selectSelectedRows(state);
   const canProceed = selectHasItemsAndQuantity(state);
 
-  return { transaction, canProceed, isComplete };
+  return { selectedRows, itemSearchTerm, items, canProceed, isComplete };
 };
 
 ItemSelectComponent.propTypes = {
-  transaction: PropTypes.object.isRequired,
   chooseItem: PropTypes.func.isRequired,
   nextTab: PropTypes.func.isRequired,
   canProceed: PropTypes.bool.isRequired,
   isComplete: PropTypes.bool.isRequired,
+  itemSearchTerm: PropTypes.string.isRequired,
+  filterItems: PropTypes.func.isRequired,
+  items: PropTypes.array.isRequired,
+  selectedRows: PropTypes.object.isRequired,
 };
 
 export const ItemSelect = connect(mapStateToProps, mapDispatchToProps)(ItemSelectComponent);
