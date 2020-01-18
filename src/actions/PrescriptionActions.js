@@ -13,9 +13,15 @@ import { WizardActions } from './WizardActions';
 
 export const PRESCRIPTION_ACTIONS = {
   REFRESH: 'Prescription/refresh',
+  FILTER: 'Prescription/filter',
 };
 
 const refresh = () => ({ type: PRESCRIPTION_ACTIONS.REFRESH });
+
+const filter = itemSearchTerm => ({
+  type: PRESCRIPTION_ACTIONS.FILTER,
+  payload: { itemSearchTerm },
+});
 
 const appendDirection = (id, newValue) => (dispatch, getState) => {
   const { prescription } = getState();
@@ -128,4 +134,5 @@ export const PrescriptionActions = {
   removeItem,
   updateDirection,
   appendDirection,
+  filter,
 };
