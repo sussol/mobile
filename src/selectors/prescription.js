@@ -12,13 +12,14 @@ export const selectHasItemsAndQuantity = ({ prescription }) => {
 };
 
 export const selectPrescriptionPatient = ({ prescription }) => {
-  const { transaction } = prescription;
+  const { transaction = {} } = prescription;
   const { otherParty } = transaction;
+
   return otherParty;
 };
 
 export const selectPrescriptionPrescriber = ({ prescription }) => {
-  const { transaction } = prescription;
+  const { transaction = {} } = prescription;
   const { prescriber } = transaction;
 
   return prescriber;
@@ -26,5 +27,12 @@ export const selectPrescriptionPrescriber = ({ prescription }) => {
 
 export const selectPrescriberName = ({ prescription }) => {
   const currentPrescriber = selectPrescriptionPrescriber({ prescription });
+
   return `${currentPrescriber?.firstName} ${currentPrescriber?.lastName}`.trim();
+};
+
+export const selectPatientName = state => {
+  const currentPatient = selectPrescriptionPatient(state);
+
+  return `${currentPatient?.firstName} ${currentPatient?.lastName}`.trim();
 };
