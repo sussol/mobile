@@ -3,6 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+import { createSelector } from 'reselect';
+
 export const selectHasItemsAndQuantity = ({ prescription }) => {
   const { transaction } = prescription;
   const { totalQuantity, items } = transaction;
@@ -35,4 +37,40 @@ export const selectPatientName = state => {
   const currentPatient = selectPrescriptionPatient(state);
 
   return `${currentPatient?.firstName} ${currentPatient?.lastName}`.trim();
+};
+
+export const selectItemSearchTerm = ({ prescription }) => {
+  const { itemSearchTerm } = prescription;
+
+  return itemSearchTerm;
+};
+
+export const selectItems = ({ prescription }) => {
+  const { items } = prescription;
+
+  return items;
+};
+
+export const selectFilteredAndSortedItems = createSelector(
+  [selectItemSearchTerm, selectItems],
+  (itemSearchTerm, items) => {
+    // Filter the items by the entered search term.
+    const filteredItems = items.filtered('name CONTAINS[c] $0', itemSearchTerm);
+
+    // Keep the items sorted alphabetically.
+    const sortedItems = filteredItems.sorted('name');
+
+    // Split the items by quantity - showing out-of-stock items at the end of the list.
+    const itemsWithStock = sortedItems.filtered('ANY batches.numberOfPacks > 0').slice();
+    const itemsWithoutStock = sortedItems.filtered('ALL batches.numberOfPacks == 0').slice();
+
+    return [...itemsWithStock, ...itemsWithoutStock];
+  }
+);
+
+export const selectSelectedRows = ({ prescription }) => {
+  const { transaction } = prescription;
+  const { items } = transaction;
+
+  return items.reduce((acc, { item }) => ({ ...acc, [item.id]: true }), {});
 };
