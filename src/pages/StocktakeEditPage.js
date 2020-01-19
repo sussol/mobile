@@ -16,7 +16,7 @@ import { DataTablePageModal } from '../widgets/modals';
 import { PageButton, PageInfo, DataTablePageView, SearchBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import { buttonStrings, generalStrings, tableStrings } from '../localization';
+import { buttonStrings, generalStrings } from '../localization';
 import globalStyles from '../globalStyles';
 import { useRecordListener, useNavigationFocus } from '../hooks/index';
 
@@ -164,7 +164,7 @@ export const StocktakeEdit = ({
           <SearchBar
             onChangeText={onFilterData}
             value={searchTerm}
-            placeholder={`${generalStrings.search_by} ${tableStrings.name}`}
+            placeholder={`${generalStrings.search_by} ${generalStrings.item_name} ${generalStrings.or} ${generalStrings.item_code}`}
           />
         </View>
         <View style={pageTopRightSectionContainer}>
