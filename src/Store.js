@@ -26,6 +26,7 @@ const persistConfig = {
     'dashboard',
     'dispensary',
     'modules',
+    'refund',
   ],
 };
 
