@@ -335,7 +335,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         period: database.getOrCreate('Period', record.period_ID),
         column: database.getOrCreate('IndicatorAttribute', record.column_ID),
         row: database.getOrCreate('IndicatorAttribute', record.row_ID),
-        value: record.value || '',
+        value: record.value ?? '',
       };
       database.update(recordType, internalRecord);
       break;
