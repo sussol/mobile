@@ -265,12 +265,15 @@ const SupplierRequisition = ({
     );
   }, [isFinalised]);
 
-  const ProgramItemButtons = useCallback(() => (
-    <View style={globalStyles.verticalContainer}>
-      <UseSuggestedQuantitiesButton />
-      <ThresholdMOSToggle />
-    </View>
-  ));
+  const ProgramItemButtons = useCallback(
+    () => (
+      <View style={globalStyles.verticalContainer}>
+        <UseSuggestedQuantitiesButton />
+        <ThresholdMOSToggle />
+      </View>
+    ),
+    [UseSuggestedQuantitiesButton, ThresholdMOSToggle]
+  );
 
   const ProgramIndicatorButtons = useCallback(() => {
     const selectedIndicatorCode = selectedIndicator?.code;
