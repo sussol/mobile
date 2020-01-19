@@ -44,6 +44,8 @@ import globalStyles, { textStyles, SUSSOL_ORANGE } from './globalStyles';
 import { UserActions } from './actions';
 import { debounce } from './utilities';
 import { prevRouteNameSelector } from './navigation/selectors';
+import { SupplierRefund } from './widgets/modalChildren/SupplierRefund';
+import ModalContainer from './widgets/modals/ModalContainer';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -278,6 +280,14 @@ class MSupplyMobileAppContainer extends React.Component {
           onAuthentication={this.onAuthentication}
         />
         {isLoading && this.renderLoadingIndicator()}
+        <ModalContainer
+          isVisible
+          onClose={() => console.log('close modal')}
+          title="title"
+          fullScreen
+        >
+          <SupplierRefund />
+        </ModalContainer>
       </View>
     );
   }
