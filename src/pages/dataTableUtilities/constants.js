@@ -70,6 +70,7 @@ export const COLUMN_NAMES = {
   DATE_OF_BIRTH: 'dateOfBirth',
   DIFFERENCE: 'difference',
   DISPENSE: 'dispense',
+  EDITABLE_BATCH_NAME: 'editableBatchName',
   EDITABLE_COMMENT: 'editableComment',
   EDITABLE_EXPIRY_DATE: 'editableExpiryDate',
   EDITABLE_REQUIRED_QUANTITY: 'editableRequiredQuantity',
