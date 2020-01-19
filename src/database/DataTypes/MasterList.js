@@ -27,6 +27,14 @@ export class MasterList extends Realm.Object {
   }
 
   /**
+   * Get all indicators currently active on this master list.
+   * @returns {Array.<ProgramIndicator>}
+   */
+  get activeIndicators() {
+    return this.program?.indicators.filter(indicator => indicator.isActive);
+  }
+
+  /**
    * Returns this master lists programSettings, which is stored
    * as a stringified object as an object
    */
