@@ -33,9 +33,11 @@ const PAGE_COLUMN_WIDTHS = {
   prescriberSelect: [3, 3, 1],
   itemSelect: [1, 3, 1],
   patientHistory: [1, 3, 1, 3],
+  supplierRefund: [1, 1, 1],
 };
 
 const PAGE_COLUMNS = {
+  supplierRefund: [COLUMN_NAMES.BATCH_NAME, COLUMN_NAMES.SUPPLIER, COLUMN_NAMES.TOTAL_QUANTITY],
   prescriber: [
     COLUMN_NAMES.REGISTRATION_CODE,
     COLUMN_NAMES.FIRST_NAME,
