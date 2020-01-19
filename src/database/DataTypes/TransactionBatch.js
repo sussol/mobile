@@ -146,6 +146,10 @@ export class TransactionBatch extends Realm.Object {
   toString() {
     return `${this?.itemBatch} in a ${this.transaction.type}`;
   }
+
+  get otherPartyName() {
+    return `${this.transaction?.otherParty?.name}`;
+  }
 }
 
 TransactionBatch.schema = {
