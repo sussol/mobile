@@ -73,6 +73,14 @@ export class MasterList extends Realm.Object {
   }
 
   /**
+   * Get all indicators currently active on this master list.
+   * @returns {Array.<ProgramIndicator>}
+   */
+  getActiveIndicators() {
+    return this.program?.indicators.filter(indicator => indicator.isActive);
+  }
+
+  /**
    * Find the current stores matching store tag object in this master lists program settings.
    * Program settings is a JSON object held as a string - example below.
    * @param  {string}  tags   Current stores tags field

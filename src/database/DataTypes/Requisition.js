@@ -140,8 +140,12 @@ export class Requisition extends Realm.Object {
     return (this.otherStoreName && this.otherStoreName.name) || '';
   }
 
+  /**
+   * Get all indicators associated with this requisition.
+   * @returns {Array.<ProgramIndicator>}
+   */
   get indicators() {
-    return this.program?.indicators;
+    return this.program?.getActiveindicators();
   }
 
   /**
