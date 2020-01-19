@@ -15,6 +15,7 @@ import { SYNC_TRANSACTION_COMPLETE } from '../sync/constants';
  *     usingDashboard: [bool],
  *     usingDispensary: [bool],
  *     usingVaccines: [bool],
+ *     usingCashRegister: [bool],
  *     usingModules: [bool],
  * }
  */
@@ -25,8 +26,15 @@ const modulesInitialState = () => {
   const usingDashboard = checkModule(SETTINGS_KEYS.DASHBOARD_MODULE);
   const usingDispensary = checkModule(SETTINGS_KEYS.DISPENSARY_MODULE);
   const usingVaccines = checkModule(SETTINGS_KEYS.VACCINE_MODULE);
-  const usingModules = usingDashboard || usingDispensary || usingVaccines;
-  const modules = { usingDashboard, usingDispensary, usingVaccines, usingModules };
+  const usingCashRegister = checkModule(SETTINGS_KEYS.CASH_REGISTER_MODULE);
+  const usingModules = usingDashboard || usingDispensary || usingVaccines || usingCashRegister;
+  const modules = {
+    usingDashboard,
+    usingDispensary,
+    usingVaccines,
+    usingCashRegister,
+    usingModules,
+  };
   return { ...modules };
 };
 
