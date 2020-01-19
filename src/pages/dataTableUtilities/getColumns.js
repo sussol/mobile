@@ -322,6 +322,16 @@ const COLUMNS = () => ({
     sortable: false,
     editable: false,
   },
+
+  [COLUMN_NAMES.BATCH_NAME]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.BATCH,
+    title: 'BATCH',
+    textAlign: 'left',
+    sortable: false,
+    editable: false,
+  },
+
   [COLUMN_NAMES.QUESTION]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.NAME,
