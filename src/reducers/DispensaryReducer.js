@@ -4,7 +4,8 @@
  */
 
 import { DISPENSARY_ACTIONS } from '../actions/DispensaryActions';
-import { getColumns } from '../pages/dataTableUtilities/index';
+import { getColumns } from '../pages/dataTableUtilities';
+import { UIDatabase } from '../database';
 
 const initialState = () => ({
   searchTerm: '',
@@ -12,6 +13,7 @@ const initialState = () => ({
   isAscending: true,
   dataSet: 'patient',
   columns: getColumns('patient'),
+  data: UIDatabase.objects('Patient'),
 });
 
 export const DispensaryReducer = (state = initialState(), action) => {
@@ -40,6 +42,7 @@ export const DispensaryReducer = (state = initialState(), action) => {
 
       const newDataSet = dataSet === 'patient' ? 'prescriber' : 'patient';
       const newColumns = getColumns(newDataSet);
+      const newData = UIDatabase.objects(newDataSet === 'patient' ? 'Patient' : 'Prescriber');
 
       return {
         ...state,
@@ -48,6 +51,7 @@ export const DispensaryReducer = (state = initialState(), action) => {
         sortKey: 'firstName',
         isAscending: true,
         searchTerm: '',
+        data: newData,
       };
     }
 

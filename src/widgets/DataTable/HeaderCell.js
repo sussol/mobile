@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { TouchableOpacity, Text, View, TouchableOpacityPropTypes } from 'react-native';
 
 import { getAdjustedStyle } from './utilities';
+import { debounce } from '../../utilities';
 /**
  * Simple component to be used in conjunction with HeaderRow component.
  *
@@ -38,7 +39,10 @@ const HeaderCell = React.memo(
     isLastCell,
     ...otherProps
   }) => {
-    const onPressCell = () => onPress(columnKey);
+    const onPressCell = React.useCallback(
+      debounce(() => onPress(columnKey), 300, true),
+      [columnKey, onPress]
+    );
 
     const Icon = () => {
       switch (sortDirection) {

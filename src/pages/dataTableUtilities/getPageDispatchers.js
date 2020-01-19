@@ -35,11 +35,7 @@ export const getPageDispatchers = (dispatch, props, dataType, route) => {
     onHideOverStocked: () => dispatch(BasePageActions.hideOverStocked(route)),
     onDeselectAll: () => dispatch(BasePageActions.deselectAll(route)),
     onSetRequestedToSuggested: () => dispatch(BasePageActions.setRequestedToSuggested(route)),
-    onSortColumn: debounce(
-      columnKey => dispatch(BasePageActions.sortData(columnKey, route)),
-      300,
-      true
-    ),
+    onSortColumn: columnKey => dispatch(BasePageActions.sortData(columnKey, route)),
 
     onEditIndicatorValue: (value, rowKey, columnKey) =>
       dispatch(BasePageActions.editIndicatorValue(value, rowKey, columnKey, route)),

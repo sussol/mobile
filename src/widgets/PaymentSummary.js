@@ -33,8 +33,9 @@ import { InsuranceActions } from '../actions/InsuranceActions';
 import { selectInsuranceDiscountRate } from '../selectors/insurance';
 
 const paymentState = state => {
-  const { insurance, payment, wizard } = state;
+  const { insurance, payment, wizard, modules } = state;
 
+  const { usingInsurance } = modules;
   const { isComplete } = wizard;
   const { paymentAmount, creditOverflow, paymentType } = payment;
   const { selectedInsurancePolicy, currentInsurancePolicy } = insurance;
@@ -64,6 +65,7 @@ const paymentState = state => {
     selectedInsurancePolicy,
     availableCredit,
     changeRequired,
+    usingInsurance,
   };
 };
 
@@ -98,6 +100,7 @@ const PaymentSummaryComponent = ({
   discountAmount,
   availableCredit,
   changeRequired,
+  usingInsurance,
 }) => {
   const policyNumbers = React.useMemo(
     () => ['Select a policy..', ...insurancePolicies.map(p => p.policyNumber)],
@@ -121,18 +124,20 @@ const PaymentSummaryComponent = ({
     <ScrollView>
       <FlexView flex={1} style={localStyles.container}>
         <Text style={localStyles.title}>Payment</Text>
-        <FlexRow flex={1}>
-          <DropDown
-            values={policyNumbers}
-            selectedValue={selectedInsurancePolicy?.policyNumber}
-            onValueChange={onSelectPolicy}
-            style={localStyles.dropdown}
-          />
-          {!!selectedInsurancePolicy && (
-            <CircleButton IconComponent={PencilIcon} onPress={editPolicy} />
-          )}
-          <CircleButton IconComponent={AddIcon} onPress={newPolicy} />
-        </FlexRow>
+        {usingInsurance && (
+          <FlexRow flex={1}>
+            <DropDown
+              values={policyNumbers}
+              selectedValue={selectedInsurancePolicy?.policyNumber}
+              onValueChange={onSelectPolicy}
+              style={localStyles.dropdown}
+            />
+            {!!selectedInsurancePolicy && (
+              <CircleButton IconComponent={PencilIcon} onPress={editPolicy} />
+            )}
+            <CircleButton IconComponent={AddIcon} onPress={newPolicy} />
+          </FlexRow>
+        )}
 
         <DropDown
           values={paymentTypeTitles}
@@ -210,6 +215,7 @@ PaymentSummaryComponent.propTypes = {
   discountAmount: PropTypes.object.isRequired,
   availableCredit: PropTypes.object.isRequired,
   changeRequired: PropTypes.object.isRequired,
+  usingInsurance: PropTypes.bool.isRequired,
 };
 
 const localStyles = {
