@@ -154,11 +154,11 @@ export const selectIndicator = (state, action) => {
 
   const { indicators } = state;
 
-  const [selectedIndicator] = indicators.filtered('code == $0', indicatorCode);
-  const indicatorColumns = selectedIndicator?.columns;
-  const indicatorRows = selectedIndicator?.rows;
+  const [currentIndicator] = indicators.filtered('code == $0', indicatorCode);
+  const indicatorColumns = currentIndicator?.columns;
+  const indicatorRows = currentIndicator?.rows;
 
-  return { ...state, selectedIndicator, indicatorColumns, indicatorRows };
+  return { ...state, currentIndicator, indicatorColumns, indicatorRows };
 };
 
 /**

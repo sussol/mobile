@@ -25,6 +25,8 @@ import {
 import { ROUTES } from '../navigation/constants';
 
 import {
+  selectIndicatorCodes,
+  selectCurrentIndicatorCode,
   selectIndicatorTableColumns,
   selectIndicatorTableRows,
 } from './dataTableUtilities/selectors/indicatorSelectors';
@@ -59,8 +61,8 @@ export const CustomerRequisition = ({
   pageObject,
   usingIndicators,
   showIndicators,
-  selectedIndicator,
-  indicators,
+  currentIndicatorCode,
+  indicatorCodes,
   keyExtractor,
   modalValue,
   searchTerm,
@@ -181,19 +183,15 @@ export const CustomerRequisition = ({
     ),
     [isFinalised]
   );
-
-  const indicatorCodes = useMemo(() => indicators.map(indicator => indicator.code), [indicators]);
-  const selectedIndicatorCode = useMemo(() => selectedIndicator.code, [selectedIndicator]);
-
   const IndicatorDropdown = useCallback(
     () => (
       <DropDown
         values={indicatorCodes}
-        selectedValue={selectedIndicatorCode}
+        selectedValue={currentIndicatorCode}
         onValueChange={onSelectIndicator}
       />
     ),
-    [indicatorCodes, selectedIndicatorCode]
+    [indicatorCodes, currentIndicatorCode]
   );
 
   const TopRightButtons = useCallback(() => {
@@ -268,12 +266,12 @@ const mapStateToProps = state => {
   const { usingIndicators, showIndicators } = customerRequisition;
 
   if (usingIndicators && showIndicators) {
-    const data = selectIndicatorTableRows(customerRequisition);
-    const columns = selectIndicatorTableColumns(customerRequisition);
     return {
       ...customerRequisition,
-      data,
-      columns,
+      indicatorCodes: selectIndicatorCodes(customerRequisition),
+      currentIndicatorCode: selectCurrentIndicatorCode(customerRequisition),
+      data: selectIndicatorTableRows(customerRequisition),
+      columns: selectIndicatorTableColumns(customerRequisition),
     };
   }
 
@@ -312,8 +310,8 @@ CustomerRequisition.propTypes = {
   onSortColumn: PropTypes.func.isRequired,
   usingIndicators: PropTypes.bool,
   showIndicators: PropTypes.bool,
-  indicators: PropTypes.array.isRequired,
-  selectedIndicator: PropTypes.object.isRequired,
+  indicatorCodes: PropTypes.array.isRequired,
+  currentIndicatorCode: PropTypes.object.isRequired,
   onEditSuppliedQuantity: PropTypes.func.isRequired,
   onShowIndicators: PropTypes.func.isRequired,
   onHideIndicators: PropTypes.func.isRequired,

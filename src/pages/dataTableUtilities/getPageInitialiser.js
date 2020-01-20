@@ -81,9 +81,9 @@ const customerRequisitionInitialiser = requisition => {
   const sortedData = backingData.sorted('item.name').slice();
 
   const usingIndicators = !!indicators;
-  const [selectedIndicator = null] = indicators || [];
-  const indicatorRows = selectedIndicator?.rows;
-  const indicatorColumns = selectedIndicator?.columns;
+  const [currentIndicator = null] = indicators || [];
+  const indicatorRows = currentIndicator?.rows;
+  const indicatorColumns = currentIndicator?.columns;
 
   return {
     pageObject: requisition,
@@ -99,7 +99,7 @@ const customerRequisitionInitialiser = requisition => {
     modalValue: null,
     usingIndicators,
     showIndicators: false,
-    selectedIndicator,
+    currentIndicator,
     indicatorColumns,
     indicatorRows,
     indicators,
@@ -377,9 +377,9 @@ const supplierRequisitionInitialiser = requisition => {
       : sortedData.filter(item => item.isLessThanThresholdMOS);
 
   const usingIndicators = !!indicators;
-  const [selectedIndicator = null] = indicators || [];
-  const indicatorRows = selectedIndicator?.rows;
-  const indicatorColumns = selectedIndicator?.columns;
+  const [currentIndicator = null] = indicators || [];
+  const indicatorRows = currentIndicator?.rows;
+  const indicatorColumns = currentIndicator?.columns;
 
   return {
     pageObject: requisition,
@@ -396,7 +396,7 @@ const supplierRequisitionInitialiser = requisition => {
     modalValue: null,
     usingIndicators,
     showIndicators: false,
-    selectedIndicator,
+    currentIndicator,
     indicatorColumns,
     indicatorRows,
     indicators,

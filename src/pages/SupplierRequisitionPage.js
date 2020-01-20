@@ -24,6 +24,8 @@ import {
 } from '../widgets';
 
 import {
+  selectIndicatorCodes,
+  selectCurrentIndicatorCode,
   selectIndicatorTableColumns,
   selectIndicatorTableRows,
 } from './dataTableUtilities/selectors/indicatorSelectors';
@@ -70,8 +72,8 @@ const SupplierRequisition = ({
   showAll,
   usingIndicators,
   showIndicators,
-  selectedIndicator,
-  indicators,
+  currentIndicatorCode,
+  indicatorCodes,
   keyExtractor,
   searchTerm,
   columns,
@@ -272,17 +274,16 @@ const SupplierRequisition = ({
     </View>
   ));
 
-  const ProgramIndicatorButtons = useCallback(() => {
-    const selectedIndicatorCode = selectedIndicator?.code;
-    const indicatorCodes = indicators.map(indicator => indicator.code);
-    return (
+  const ProgramIndicatorButtons = useCallback(
+    () => (
       <DropDown
         values={indicatorCodes}
-        selectedValue={selectedIndicatorCode}
+        selectedValue={currentIndicatorCode}
         onValueChange={onSelectIndicator}
       />
-    );
-  }, [selectedIndicator, indicators]);
+    ),
+    [currentIndicatorCode, indicatorCodes]
+  );
 
   const ProgramButtons = useCallback(() => {
     if (usingIndicators) {
@@ -299,7 +300,7 @@ const SupplierRequisition = ({
         <ProgramItemButtons />
       </View>
     );
-  }, [usingIndicators, showIndicators, selectedIndicator, showAll, isFinalised]);
+  }, [usingIndicators, showIndicators, showAll, isFinalised]);
 
   const {
     pageTopSectionContainer,
@@ -367,16 +368,16 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 
 const mapStateToProps = state => {
   const { pages } = state;
-  const page = pages[ROUTES.SUPPLIER_REQUISITION];
-  const { usingIndicators, showIndicators } = page;
+  const supplierRequisition = pages[ROUTES.SUPPLIER_REQUISITION];
+  const { usingIndicators, showIndicators } = supplierRequisition;
 
   if (usingIndicators && showIndicators) {
-    const data = selectIndicatorTableRows(page);
-    const columns = selectIndicatorTableColumns(page);
     return {
-      ...page,
-      data,
-      columns,
+      ...supplierRequisition,
+      indicatorCodes: selectIndicatorCodes(supplierRequisition),
+      currentIndicatorCode: selectCurrentIndicatorCode(supplierRequisition),
+      data: selectIndicatorTableRows(supplierRequisition),
+      columns: selectIndicatorTableColumns(supplierRequisition),
     };
   }
   return pages[ROUTES.SUPPLIER_REQUISITION];
@@ -392,8 +393,8 @@ SupplierRequisition.defaultProps = {
   showAll: false,
   usingIndicators: false,
   showIndicators: false,
-  selectedIndicator: null,
-  indicators: null,
+  indicatorCodes: [],
+  currentIndicatorCode: '',
   indicatorColumns: null,
   indicatorRows: null,
 };
@@ -416,8 +417,8 @@ SupplierRequisition.propTypes = {
   showAll: PropTypes.bool,
   usingIndicators: PropTypes.bool,
   showIndicators: PropTypes.bool,
-  selectedIndicator: PropTypes.object,
-  indicators: PropTypes.object,
+  currentIndicatorCode: PropTypes.string,
+  indicatorCodes: PropTypes.array,
   indicatorColumns: PropTypes.object,
   indicatorRows: PropTypes.object,
   modalValue: PropTypes.any,
