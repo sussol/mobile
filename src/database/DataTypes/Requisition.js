@@ -145,7 +145,7 @@ export class Requisition extends Realm.Object {
    * @returns {Array.<ProgramIndicator>}
    */
   get indicators() {
-    return this.program?.activeindicators;
+    return this.program?.activeIndicators;
   }
 
   /**
