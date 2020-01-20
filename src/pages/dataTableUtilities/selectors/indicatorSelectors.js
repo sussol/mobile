@@ -29,10 +29,7 @@ export const selectCurrentIndicator = createSelector(
 
 export const selectCurrentIndicatorCode = createSelector(
   [selectCurrentIndicator],
-  currentIndicator => {
-    console.log(currentIndicator);
-    return currentIndicator.code;
-  }
+  currentIndicator => currentIndicator.code
 );
 
 export const selectIndicatorCodes = createSelector([selectIndicators], indicators =>
