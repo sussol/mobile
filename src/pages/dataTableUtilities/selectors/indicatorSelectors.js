@@ -19,13 +19,18 @@ export const selectIndicatorColumns = createSelector(
 
 export const selectPeriod = createSelector([pageObjectSelector], pageObject => pageObject.period);
 
+export const selectSearchTerm = createSelector(
+  [pageStateSelector],
+  pageState => pageState.searchTerm
+);
+
 /**
  * Maps indicator rows to data table row objects.
  * @param {Array.<IndicatorAttribute>} indicatorRows
  */
 export const selectIndicatorTableRows = createSelector(
-  [selectIndicatorRows, selectPeriod],
-  (indicatorRows, period) => mapIndicatorTableRows(indicatorRows, period)
+  [selectIndicatorRows, selectPeriod, selectSearchTerm],
+  (indicatorRows, period, searchTerm) => mapIndicatorTableRows(indicatorRows, period, searchTerm)
 );
 
 /**

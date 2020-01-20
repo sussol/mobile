@@ -27,8 +27,10 @@ export const getPageDispatchers = (dispatch, props, dataType, route) => {
     toggleFinalised: () => dispatch(BasePageActions.toggleShowFinalised(route)),
     toggleStockOut: () => dispatch(BasePageActions.toggleStockOut(route)),
     onFilterData: debounce(value => dispatch(BasePageActions.filterData(value, route)), 75),
-    onShowIndicators: () => dispatch(BasePageActions.showIndicators(route)),
-    onHideIndicators: () => dispatch(BasePageActions.hideIndicators(route)),
+    onFilterIndicatorData: debounce(
+      value => dispatch(BasePageActions.filterIndicatorData(value, route)),
+      75
+    ),
     onToggleIndicators: () => {
       dispatch(BasePageActions.toggleIndicators(route));
       dispatch(BasePageActions.refreshData(route));
