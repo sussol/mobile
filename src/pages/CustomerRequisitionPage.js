@@ -7,7 +7,7 @@
 
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
@@ -183,6 +183,7 @@ export const CustomerRequisition = ({
     ),
     [isFinalised]
   );
+
   const IndicatorDropdown = useCallback(
     () => (
       <DropDown
@@ -194,24 +195,48 @@ export const CustomerRequisition = ({
     [indicatorCodes, currentIndicatorCode]
   );
 
-  const TopRightButtons = useCallback(() => {
-    const { horizontalContainer, verticalContainer } = globalStyles;
+  const ButtonsSetSupplied = useCallback(() => (
+    <>
+      <ButtonSetSuppliedToRequested />
+      <ButtonSetSuppliedToSuggested />
+    </>
+  ));
 
-    const ButtonsSetSupplied = (
-      <View style={horizontalContainer}>
-        <ButtonSetSuppliedToRequested />
-        <ButtonSetSuppliedToSuggested />
+  const TopRightItems = useCallback(() => (
+    <View style={globalStyles.horizontalContainer}>
+      <ButtonsSetSupplied />
+    </View>
+  ));
+
+  const TopRightToggleItems = useCallback(() => (
+    <>
+      <ItemIndicatorToggle />
+      <View style={localStyles.horizontalContainerToggles}>
+        <ButtonsSetSupplied />
       </View>
-    );
+    </>
+  ));
 
-    const TopButtons = usingIndicators ? <ItemIndicatorToggle /> : null;
-    const BottomButtons =
-      usingIndicators && showIndicators ? <IndicatorDropdown /> : <ButtonsSetSupplied />;
+  const TopRightToggleIndicators = useCallback(() => (
+    <>
+      <ItemIndicatorToggle />
+      <IndicatorDropdown />
+    </>
+  ));
+
+  const TopRightButtons = useCallback(() => {
+    const { verticalContainer } = globalStyles;
+
+    // eslint-disable-next-line no-nested-ternary
+    const Buttons = usingIndicators
+      ? showIndicators
+        ? TopRightToggleIndicators
+        : TopRightToggleItems
+      : TopRightItems;
 
     return (
       <View style={verticalContainer}>
-        <TopButtons />
-        <BottomButtons />
+        <Buttons />
       </View>
     );
   }, [usingIndicators, showIndicators]);
@@ -283,10 +308,19 @@ export const CustomerRequisitionPage = connect(
   mapDispatchToProps
 )(CustomerRequisition);
 
+const localStyles = StyleSheet.create({
+  horizontalContainerToggles: {
+    ...globalStyles.horizontalContainer,
+    paddingTop: 7.5,
+  },
+});
+
 CustomerRequisition.defaultProps = {
   modalValue: null,
   usingIndicators: false,
   showIndicators: false,
+  indicatorCodes: [],
+  currentIndicatorCode: '',
 };
 
 CustomerRequisition.propTypes = {
@@ -310,8 +344,8 @@ CustomerRequisition.propTypes = {
   onSortColumn: PropTypes.func.isRequired,
   usingIndicators: PropTypes.bool,
   showIndicators: PropTypes.bool,
-  indicatorCodes: PropTypes.array.isRequired,
-  currentIndicatorCode: PropTypes.object.isRequired,
+  indicatorCodes: PropTypes.array,
+  currentIndicatorCode: PropTypes.string,
   onEditSuppliedQuantity: PropTypes.func.isRequired,
   onShowIndicators: PropTypes.func.isRequired,
   onHideIndicators: PropTypes.func.isRequired,

@@ -276,11 +276,14 @@ const SupplierRequisition = ({
 
   const ProgramIndicatorButtons = useCallback(
     () => (
-      <DropDown
-        values={indicatorCodes}
-        selectedValue={currentIndicatorCode}
-        onValueChange={onSelectIndicator}
-      />
+      <>
+        <DropDown
+          values={indicatorCodes}
+          selectedValue={currentIndicatorCode}
+          onValueChange={onSelectIndicator}
+          style={globalStyles.pickerTall}
+        />
+      </>
     ),
     [currentIndicatorCode, indicatorCodes]
   );
@@ -295,11 +298,7 @@ const SupplierRequisition = ({
         </View>
       );
     }
-    return (
-      <View style={globalStyles.verticalContainer}>
-        <ProgramItemButtons />
-      </View>
-    );
+    return <ProgramItemButtons />;
   }, [usingIndicators, showIndicators, showAll, isFinalised]);
 
   const {
@@ -395,8 +394,6 @@ SupplierRequisition.defaultProps = {
   showIndicators: false,
   indicatorCodes: [],
   currentIndicatorCode: '',
-  indicatorColumns: null,
-  indicatorRows: null,
 };
 
 SupplierRequisition.propTypes = {
@@ -419,8 +416,6 @@ SupplierRequisition.propTypes = {
   showIndicators: PropTypes.bool,
   currentIndicatorCode: PropTypes.string,
   indicatorCodes: PropTypes.array,
-  indicatorColumns: PropTypes.object,
-  indicatorRows: PropTypes.object,
   modalValue: PropTypes.any,
   refreshData: PropTypes.func.isRequired,
   onSelectNewItem: PropTypes.func.isRequired,
