@@ -22,7 +22,7 @@ const PAGE_COLUMN_WIDTHS = {
   [ROUTES.STOCKTAKE_EDITOR_WITH_REASONS]: [1, 2.8, 1.2, 1.2, 1, 1, 0.8],
   [ROUTES.CUSTOMER_REQUISITIONS]: [1.5, 2, 1, 1, 1],
   [ROUTES.CUSTOMER_REQUISITION]: [2, 4, 1.5, 1.5, 2, 2, 2, 2],
-  [ROUTES.STOCK]: [1, 4, 1],
+  [ROUTES.STOCK]: [1, 4, 1, 1],
   [ROUTES.PRESCRIPTIONS]: [1.5, 2.5, 2, 1.5, 3, 1],
   [ROUTES.PRESCRIPTION]: [2, 4, 2, 2, 1],
   prescriber: [1, 3, 3, 1],
@@ -37,7 +37,11 @@ const PAGE_COLUMN_WIDTHS = {
 };
 
 const PAGE_COLUMNS = {
-  supplierRefund: [COLUMN_NAMES.BATCH_NAME, COLUMN_NAMES.SUPPLIER, COLUMN_NAMES.TOTAL_QUANTITY],
+  supplierRefund: [
+    COLUMN_NAMES.BATCH_NAME,
+    COLUMN_NAMES.TRANSACTION_BATCH_OTHER_PARTY,
+    COLUMN_NAMES.TOTAL_QUANTITY,
+  ],
   prescriber: [
     COLUMN_NAMES.REGISTRATION_CODE,
     COLUMN_NAMES.FIRST_NAME,
@@ -158,7 +162,12 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.REQUIRED_QUANTITY,
     COLUMN_NAMES.SUPPLIED_QUANTITY,
   ],
-  [ROUTES.STOCK]: [COLUMN_NAMES.CODE, COLUMN_NAMES.NAME, COLUMN_NAMES.TOTAL_QUANTITY],
+  [ROUTES.STOCK]: [
+    COLUMN_NAMES.CODE,
+    COLUMN_NAMES.NAME,
+    COLUMN_NAMES.TOTAL_QUANTITY,
+    COLUMN_NAMES.SELECT,
+  ],
   [ROUTES.PRESCRIPTIONS]: [
     COLUMN_NAMES.INVOICE_NUMBER,
     COLUMN_NAMES.PATIENT,
@@ -239,6 +248,16 @@ const COLUMNS = () => ({
   },
 
   // STRING COLUMNS
+
+  [COLUMN_NAMES.TRANSACTION_BATCH_OTHER_PARTY]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.TRANSACTION_BATCH_OTHER_PARTY,
+    title: tableStrings.supplier,
+    alignText: 'right',
+    sortable: true,
+    editable: false,
+  },
+
   [COLUMN_NAMES.PRESCRIBER]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.PRESCRIBER,
@@ -328,7 +347,7 @@ const COLUMNS = () => ({
     key: COLUMN_KEYS.BATCH,
     title: 'BATCH',
     textAlign: 'left',
-    sortable: false,
+    sortable: true,
     editable: false,
   },
 
@@ -368,6 +387,15 @@ const COLUMNS = () => ({
   },
 
   // NUMERIC COLUMNS
+
+  [COLUMN_NAMES.NUMBER_OF_PACKS]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.NUMBER_OF_PACKS,
+    title: tableStrings.available_stock,
+    alignText: 'right',
+    sortable: true,
+    editable: false,
+  },
 
   [COLUMN_NAMES.AVAILABLE_QUANTITY]: {
     type: COLUMN_TYPES.NUMERIC,
