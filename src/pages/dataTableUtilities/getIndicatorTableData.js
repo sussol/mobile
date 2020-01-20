@@ -38,44 +38,21 @@ const COLUMNS = {
 
 /**
  * Get data table row for indicator row attribute.
- * @param {IndicatorAttribute} row
+ * @param {Array.<IndicatorAttribute>} rows
  * @param {ProgramIndicator} indicator
  * @param {Period} period
  * @return {object}
  */
-const mapIndicatorTableRow = (row, period) => {
-  const { id, description, code, indicator } = row;
-  const values = indicator.columns.reduce((acc, column) => {
-    const { code: key } = column;
-    const value = getRowColumnIndicatorValue(row, column, period);
-    return { ...acc, [key]: value.value };
-  }, {});
-  return { id, description, code, ...values };
-};
-
-/**
- * Map indicator rows to data table row objects.
- * @param {Array.<IndicatorAttribute>} rows
- * @param {Period} period
- * @return {Array.<object>}
- */
-const mapIndicatorTableRows = (rows, period) => {
-  console.log(period);
-  const tableRows = rows.map(row => mapIndicatorTableRow(row, period));
-  console.log(tableRows);
-  return tableRows;
-};
-
-/**
- * Get indicator data table row objects.
- * @param {ProgramIndicator} indicator
- * @param {Period} period
- * @return {Array.<object>}
- */
-const getIndicatorTableRows = (indicator, period) => {
-  if (!indicator) return [];
-  return mapIndicatorTableRows(indicator.rows, period);
-};
+const mapIndicatorTableRows = (rows, period) =>
+  rows.map(row => {
+    const { id, description, code, indicator } = row;
+    const values = indicator.columns.reduce((acc, column) => {
+      const { code: key } = column;
+      const value = getRowColumnIndicatorValue(row, column, period);
+      return { ...acc, [key]: value.value };
+    }, {});
+    return { id, description, code, ...values };
+  });
 
 /**
  * Get data table column for indicator row attribute.
@@ -103,34 +80,4 @@ const mapIndicatorTableColumns = (indicatorColumns, isEditable) => {
   return [COLUMNS.DESCRIPTION, COLUMNS.CODE, ...valueColumns];
 };
 
-/**
- * Get indicator data table column objects.
- * @param {ProgramIndicator} indicator
- * @return {Array.<object>}
- */
-const getIndicatorTableColumns = indicator => {
-  if (!indicator) return [];
-  return mapIndicatorTableColumns(indicator.columns);
-};
-
-/**
- * Get indicator data table rows and columns.
- * @param {ProgramIndicator} indicator
- * @param {Period} period
- * @returns {object}
- */
-const getIndicatorTableData = (indicator, period) => {
-  const columns = getIndicatorTableColumns(indicator);
-  const rows = getIndicatorTableRows(indicator, period);
-  return { columns, rows };
-};
-
-export {
-  mapIndicatorTableRow,
-  mapIndicatorTableRows,
-  getIndicatorTableRows,
-  mapIndicatorTableColumn,
-  mapIndicatorTableColumns,
-  getIndicatorTableColumns,
-  getIndicatorTableData,
-};
+export { mapIndicatorTableRows, mapIndicatorTableColumns };
