@@ -80,8 +80,7 @@ const SupplierRequisition = ({
   onCheck,
   onUncheck,
   onSortColumn,
-  onShowIndicators,
-  onHideIndicators,
+  onToggleIndicators,
   onSelectIndicator,
   onEditIndicatorValue,
   onShowOverStocked,
@@ -212,12 +211,12 @@ const SupplierRequisition = ({
       {
         text: programStrings.items,
         isOn: !showIndicators,
-        onPress: onHideIndicators,
+        onPress: onToggleIndicators,
       },
       {
         text: programStrings.indicators,
         isOn: showIndicators,
-        onPress: onShowIndicators,
+        onPress: onToggleIndicators,
       },
     ],
     [showIndicators]
@@ -365,6 +364,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 const mapStateToProps = state => {
   const { pages } = state;
   const page = pages[ROUTES.SUPPLIER_REQUISITION];
+
   const { usingIndicators, showIndicators } = page;
 
   if (usingIndicators && showIndicators) {
@@ -428,8 +428,7 @@ SupplierRequisition.propTypes = {
   onCheck: PropTypes.func.isRequired,
   onUncheck: PropTypes.func.isRequired,
   onSortColumn: PropTypes.func.isRequired,
-  onShowIndicators: PropTypes.func.isRequired,
-  onHideIndicators: PropTypes.func.isRequired,
+  onToggleIndicators: PropTypes.func.isRequired,
   onShowOverStocked: PropTypes.func.isRequired,
   onHideOverStocked: PropTypes.func.isRequired,
   onSelectIndicator: PropTypes.func.isRequired,

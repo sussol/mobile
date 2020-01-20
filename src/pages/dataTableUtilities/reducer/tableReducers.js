@@ -144,9 +144,14 @@ export const toggleShowFinalised = state => {
   return { ...state, data: sortedData, showFinalised: newShowFinalisedState, searchTerm: '' };
 };
 
-export const showIndicators = state => ({ ...state, showIndicators: true });
-
-export const hideIndicators = state => ({ ...state, showIndicators: false });
+export const toggleIndicators = state => {
+  const { showIndicators } = state;
+  return {
+    ...state,
+    showIndicators: !showIndicators,
+    searchTerm: '',
+  };
+};
 
 export const selectIndicator = (state, action) => {
   const { payload } = action;
@@ -210,9 +215,8 @@ export const TableReducerLookup = {
   toggleStockOut,
   toggleShowFinalised,
   addRecord,
-  showIndicators,
+  toggleIndicators,
   selectIndicator,
-  hideIndicators,
   hideOverStocked,
   refreshData,
   filterData,

@@ -172,7 +172,12 @@ const mapIndicatorTableRow = (row, period) => {
  * @param {Period} period
  * @return {Array.<object>}
  */
-const mapIndicatorTableRows = (rows, period) => rows.map(row => mapIndicatorTableRow(row, period));
+const mapIndicatorTableRows = (rows, period, searchTerm) =>
+  rows
+    .map(row => mapIndicatorTableRow(row, period))
+    .filter(
+      ({ description, code }) => description.includes(searchTerm) || code.includes(searchTerm)
+    );
 
 /**
  * Get indicator data table row objects.
