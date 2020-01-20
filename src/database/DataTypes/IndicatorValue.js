@@ -17,9 +17,7 @@ import Realm from 'realm';
  */
 export class IndicatorValue extends Realm.Object {
   get indicator() {
-    const { indicator: rowIndicator } = this.row;
-    const { indicator: columnIndicator } = this.column;
-    return rowIndicator || columnIndicator;
+    return this.row.indicator ?? this.column.indicator;
   }
 }
 
