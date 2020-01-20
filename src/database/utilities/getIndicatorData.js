@@ -71,16 +71,9 @@ const getPeriodIndicatorValues = period =>
  * @return {IndicatorValue}
  */
 const getRowColumnIndicatorValue = (row, column, period) => {
-  const rowValues = row.values.filter(filterByPeriod(period));
-  console.log(row.values.map(({ id }) => id));
-  console.log(period.id);
-  console.log(row.id);
-  console.log(column.id);
-  console.log(rowValues.map(({ value }) => value));
-  const columnValues = column.values.filter(filterByPeriod(period));
-  const rowColumnValues = rowValues?.filter(filterByValues(columnValues));
+  const rowColumnValues = UIDatabase.objects('IndicatorValue').filtered('row.id = $0 AND column.id = $1 AND period.id = $2', row.id, column.id, period.id).slice();
   const [rowColumnValue] = rowColumnValues;
-  return rowColumnValue; // createIndicatorValue(row, column, period);
+  return rowColumnValue ?? createIndicatorValue(row, column, period);
 };
 
 /**
