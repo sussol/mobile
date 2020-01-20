@@ -31,7 +31,7 @@ export class MasterList extends Realm.Object {
    * @returns {Array.<ProgramIndicator>}
    */
   get activeIndicators() {
-    return this.program?.indicators.filter(indicator => indicator.isActive);
+    return this.indicators.filtered('isActive == true');
   }
 
   /**
