@@ -12,12 +12,12 @@ import { connect } from 'react-redux';
 import { getColumns, recordKeyExtractor, getItemLayout } from '../../pages/dataTableUtilities';
 import { DataTable, DataTableRow, DataTableHeaderRow } from '../DataTable';
 
-import { PatientActions } from '../../actions/PatientActions';
-
 import { WHITE } from '../../globalStyles';
-import { UIDatabase } from '../../database/index';
 
-const SupplierRefundComponent = ({ sortKey, onSortColumn, isAscending, data }) => {
+import { SupplierCreditActions } from '../../actions/SupplierCreditActions';
+import { selectSortFields, selectSortedBatches } from '../../selectors/supplierCredit';
+
+const SupplierCreditComponent = ({ onSortColumn, sortKey, isAscending, batches }) => {
   const columns = React.useMemo(() => getColumns('supplierRefund'), []);
 
   const renderHeader = React.useCallback(
@@ -63,7 +63,7 @@ const SupplierRefundComponent = ({ sortKey, onSortColumn, isAscending, data }) =
     <View style={localStyles.mainContainer}>
       <DataTable
         renderRow={renderRow}
-        data={data}
+        data={batches}
         renderHeader={renderHeader}
         keyExtractor={recordKeyExtractor}
         getItemLayout={getItemLayout}
@@ -73,24 +73,26 @@ const SupplierRefundComponent = ({ sortKey, onSortColumn, isAscending, data }) =
   );
 };
 
-const mapStateToProps = () => {
-  const data = UIDatabase.objects('TransactionBatch');
-  return { data };
+const mapStateToProps = state => {
+  const { sortKey, isAscending } = selectSortFields;
+  const batches = selectSortedBatches(state);
+
+  return { sortKey, isAscending, batches };
 };
 
 const mapDispatchToProps = dispatch => ({
-  onSortColumn: sortKey => dispatch(PatientActions.sortPatientHistory(sortKey)),
+  onSortColumn: sortKey => dispatch(SupplierCreditActions.sort(sortKey)),
 });
 
-export const SupplierRefund = connect(mapStateToProps, mapDispatchToProps)(SupplierRefundComponent);
+export const SupplierCredit = connect(mapStateToProps, mapDispatchToProps)(SupplierCreditComponent);
 
 const localStyles = {
   mainContainer: { backgroundColor: WHITE, flex: 1 },
 };
 
-SupplierRefundComponent.propTypes = {
+SupplierCreditComponent.propTypes = {
   sortKey: PropTypes.string.isRequired,
   onSortColumn: PropTypes.func.isRequired,
   isAscending: PropTypes.bool.isRequired,
-  data: PropTypes.array.isRequired,
+  batches: PropTypes.array.isRequired,
 };

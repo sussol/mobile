@@ -157,7 +157,7 @@ TransactionBatch.schema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
-    itemId: 'string?',
+    itemId: { type: 'string', optional: true },
     itemName: 'string?',
     itemBatch: 'ItemBatch?',
     batch: 'string?',
