@@ -198,29 +198,22 @@ export const CustomerRequisition = ({
 
   const TopRightButtons = useCallback(() => {
     const { horizontalContainer, verticalContainer } = globalStyles;
-    if (!usingIndicators) {
-      return (
-        <View style={horizontalContainer}>
-          <ButtonSetSuppliedToRequested />
-          <ButtonSetSuppliedToSuggested />
-        </View>
-      );
-    }
-    if (!showIndicators) {
-      return (
-        <View style={verticalContainer}>
-          <ItemIndicatorToggle />
-          <View style={horizontalContainer}>
-            <ButtonSetSuppliedToRequested />
-            <ButtonSetSuppliedToSuggested />
-          </View>
-        </View>
-      );
-    }
+
+    const ButtonsSetSupplied = (
+      <View style={horizontalContainer}>
+        <ButtonSetSuppliedToRequested />
+        <ButtonSetSuppliedToSuggested />
+      </View>
+    );
+
+    const TopButtons = usingIndicators ? <ItemIndicatorToggle /> : null;
+    const BottomButtons =
+      usingIndicators && showIndicators ? <IndicatorDropdown /> : <ButtonsSetSupplied />;
+
     return (
       <View style={verticalContainer}>
-        <ItemIndicatorToggle />
-        <IndicatorDropdown />
+        <TopButtons />
+        <BottomButtons />
       </View>
     );
   }, [usingIndicators, showIndicators]);
