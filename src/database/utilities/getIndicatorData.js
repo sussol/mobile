@@ -60,7 +60,7 @@ const updateIndicatorValue = (indicatorValue, value) => {
  * @param {*} period
  */
 const getPeriodIndicatorValues = period =>
-  UIDatabase.objects('IndicatorValue').filter(filterByPeriod(period));
+  UIDatabase.objects('IndicatorValue').filtered('period.id == $0', period.id);
 
 /**
  * Get value for indicator row, column attribute pair.
