@@ -80,7 +80,7 @@ const customerRequisitionInitialiser = requisition => {
   const { indicators, items: backingData } = requisition;
   const sortedData = backingData.sorted('item.name').slice();
 
-  const usingIndicators = !!indicators;
+  const usingIndicators = !!indicators?.length;
   const [currentIndicator = null] = indicators || [];
   const indicatorRows = currentIndicator?.rows;
   const indicatorColumns = currentIndicator?.columns;
@@ -376,7 +376,7 @@ const supplierRequisitionInitialiser = requisition => {
       ? sortedData
       : sortedData.filter(item => item.isLessThanThresholdMOS);
 
-  const usingIndicators = !!indicators;
+  const usingIndicators = !!indicators?.length;
   const [currentIndicator = null] = indicators || [];
   const indicatorRows = currentIndicator?.rows;
   const indicatorColumns = currentIndicator?.columns;
