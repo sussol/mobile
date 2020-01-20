@@ -16,7 +16,7 @@ import { PatientReducer } from './PatientReducer';
 import { PaymentReducer } from './PaymentReducer';
 import { PrescriberReducer } from './PrescriberReducer';
 import { PrescriptionReducer } from './PrescriptionReducer';
-import { RefundReducer } from './RefundReducer';
+import { SupplierCreditReducer } from './SupplierCreditReducer';
 import { UserReducer } from './UserReducer';
 import { WizardReducer } from './WizardReducer';
 import NavigationReducer from './NavigationReducer';
@@ -38,5 +38,5 @@ export default combineReducers({
   insurance: InsuranceReducer,
   dashboard: DashboardReducer,
   dispensary: DispensaryReducer,
-  refund: RefundReducer,
+  supplierCredit: SupplierCreditReducer,
 });
