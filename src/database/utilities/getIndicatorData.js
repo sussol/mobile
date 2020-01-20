@@ -52,20 +52,25 @@ const getRowColumnIndicatorValue = (row, column, period) => {
 
 /**
  * Find indicator row by id.
- * @param {Array.<IndicatorAttribute} indicatorRows
+ * @param {Realm.Results.<IndicatorAttribute} indicatorRows
  * @param {string} rowId
  * @return {IndicatorAttribute}
  */
-const getIndicatorRow = (indicatorRows, rowId) => indicatorRows.find(({ id }) => id === rowId);
+const getIndicatorRow = (indicatorRows, rowId) => {
+  const [indicatorRow] = indicatorRows.filtered('id == $0', rowId).slice();
+  return indicatorRow;
+};
 
 /**
  * Find indicator column by code.
- * @param {Array.<IndicatorAttribute>} indicatorColumns
+ * @param {Realm.Results.<IndicatorAttribute>} indicatorColumns
  * @param {string} columnCode
  * @return {IndicatorAttribute}
  */
-const getIndicatorColumn = (indicatorColumns, columnCode) =>
-  indicatorColumns.find(({ code }) => code === columnCode);
+const getIndicatorColumn = (indicatorColumns, columnCode) => {
+  const [indicatorColumn] = indicatorColumns.filtered('code == $0', columnCode).slice();
+  return indicatorColumn;
+};
 
 export {
   createIndicatorValue,
