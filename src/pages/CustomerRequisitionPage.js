@@ -246,6 +246,14 @@ export const CustomerRequisition = ({
     );
   }, [usingIndicators, showIndicators, indicatorCodes, currentIndicatorCode]);
 
+  const placeholderStrings = useMemo(
+    () => ({
+      name: showIndicators ? generalStrings.indicator_name : generalStrings.item_name,
+      code: showIndicators ? generalStrings.indicator_code : generalStrings.item_code,
+    }),
+    [showIndicators]
+  );
+
   const {
     pageTopSectionContainer,
     pageTopLeftSectionContainer,
@@ -259,7 +267,7 @@ export const CustomerRequisition = ({
           <SearchBar
             onChangeText={onFilterData}
             value={searchTerm}
-            placeholder={`${generalStrings.search_by} ${generalStrings.item_name} ${generalStrings.or} ${generalStrings.item_code}`}
+            placeholder={`${generalStrings.search_by} ${placeholderStrings.name} ${generalStrings.or} ${placeholderStrings.code}`}
           />
         </View>
         <View style={pageTopRightSectionContainer}>
