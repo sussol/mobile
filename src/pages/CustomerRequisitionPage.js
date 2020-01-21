@@ -207,21 +207,27 @@ export const CustomerRequisition = ({
     </View>
   ));
 
-  const TopRightToggleItems = useCallback(() => (
-    <>
-      <ItemIndicatorToggle />
-      <View style={localStyles.horizontalContainerToggles}>
-        <ButtonsSetSupplied />
-      </View>
-    </>
-  ));
+  const TopRightToggleItems = useCallback(
+    () => (
+      <>
+        <ItemIndicatorToggle />
+        <View style={localStyles.horizontalContainerToggles}>
+          <ButtonsSetSupplied />
+        </View>
+      </>
+    ),
+    [showIndicators]
+  );
 
-  const TopRightToggleIndicators = useCallback(() => (
-    <>
-      <ItemIndicatorToggle />
-      <IndicatorDropdown />
-    </>
-  ));
+  const TopRightToggleIndicators = useCallback(
+    () => (
+      <>
+        <ItemIndicatorToggle />
+        <IndicatorDropdown />
+      </>
+    ),
+    [showIndicators, indicatorCodes, currentIndicatorCode]
+  );
 
   const TopRightButtons = useCallback(() => {
     const { verticalContainer } = globalStyles;
@@ -238,7 +244,7 @@ export const CustomerRequisition = ({
         <Buttons />
       </View>
     );
-  }, [usingIndicators, showIndicators]);
+  }, [usingIndicators, showIndicators, indicatorCodes, currentIndicatorCode]);
 
   const {
     pageTopSectionContainer,

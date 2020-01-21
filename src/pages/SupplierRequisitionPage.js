@@ -281,7 +281,7 @@ const SupplierRequisition = ({
         />
       </>
     ),
-    [currentIndicatorCode, indicatorCodes]
+    [indicatorCodes, currentIndicatorCode]
   );
 
   const ProgramButtons = useCallback(() => {
@@ -295,7 +295,7 @@ const SupplierRequisition = ({
       );
     }
     return <ProgramItemButtons />;
-  }, [usingIndicators, showIndicators, showAll, isFinalised]);
+  }, [usingIndicators, showIndicators, showAll, indicatorCodes, currentIndicatorCode, isFinalised]);
 
   const {
     pageTopSectionContainer,
