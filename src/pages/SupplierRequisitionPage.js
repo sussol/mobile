@@ -35,13 +35,7 @@ import { ROUTES } from '../navigation/constants';
 import { useRecordListener } from '../hooks';
 
 import globalStyles from '../globalStyles';
-import {
-  buttonStrings,
-  modalStrings,
-  programStrings,
-  generalStrings,
-  tableStrings,
-} from '../localization';
+import { buttonStrings, modalStrings, programStrings, generalStrings } from '../localization';
 import { UIDatabase } from '../database/index';
 import { SETTINGS_KEYS } from '../settings/index';
 
@@ -267,12 +261,15 @@ const SupplierRequisition = ({
     );
   }, [isFinalised]);
 
-  const ProgramItemButtons = useCallback(() => (
-    <View style={globalStyles.verticalContainer}>
-      <UseSuggestedQuantitiesButton />
-      <ThresholdMOSToggle />
-    </View>
-  ));
+  const ProgramItemButtons = useCallback(
+    () => (
+      <View style={globalStyles.verticalContainer}>
+        <UseSuggestedQuantitiesButton />
+        <ThresholdMOSToggle />
+      </View>
+    ),
+    [UseSuggestedQuantitiesButton, ThresholdMOSToggle]
+  );
 
   const ProgramIndicatorButtons = useCallback(
     () => (
@@ -315,7 +312,7 @@ const SupplierRequisition = ({
           <SearchBar
             onChangeText={onFilterData}
             value={searchTerm}
-            placeholder={`${generalStrings.search_by} ${tableStrings.item_name}`}
+            placeholder={`${generalStrings.search_by} ${generalStrings.item_name} ${generalStrings.or} ${generalStrings.item_code}`}
           />
         </View>
         <View style={pageTopRightSectionContainer}>

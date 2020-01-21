@@ -28,13 +28,6 @@ const updateIndicatorValue = (indicatorValue, value) => {
 };
 
 /**
- * Get all indicator values for a given period.
- * @param {*} period
- */
-const getPeriodIndicatorValues = period =>
-  UIDatabase.objects('IndicatorValue').filtered('period.id == $0', period.id);
-
-/**
  * Get value for indicator row, column attribute pair.
  *
  * @param {IndicatorAttribute} row
@@ -42,12 +35,24 @@ const getPeriodIndicatorValues = period =>
  * @param {Period} period
  * @return {IndicatorValue}
  */
-const getRowColumnIndicatorValue = (row, column, period) => {
+const getIndicatorRowColumnValue = (row, column, period) => {
   const rowColumnValues = UIDatabase.objects('IndicatorValue')
     .filtered('row.id = $0 AND column.id = $1 AND period.id = $2', row.id, column.id, period.id)
     .slice();
   const [rowColumnValue] = rowColumnValues;
   return rowColumnValue ?? createIndicatorValue(row, column, period);
+};
+
+/**
+ * Get all indicator values for a given period.
+ * @param {Period} period
+ */
+const getIndicatorValuesByPeriod = period => {
+  const indicatorValues = UIDatabase.objects('IndicatorValue').filtered(
+    'period.id == $0',
+    period.id
+  );
+  return indicatorValues;
 };
 
 /**
@@ -72,11 +77,28 @@ const getIndicatorColumn = (indicatorColumns, columnCode) => {
   return indicatorColumn;
 };
 
+/**
+ * Map result set of indicator values to set of parent indicators.
+ * @param {Realm.Results.<IndicatorValue>} indicatorValues
+ */
+const getIndicatorsByValues = indicatorValues => {
+  const indicatorIds = indicatorValues.reduce(
+    (acc, { indicator }) =>
+      acc.some(indicatorId => indicatorId === indicator.id) ? acc : [...acc, indicator.id],
+    []
+  );
+  const indicators = UIDatabase.objects('ProgramIndicator').filtered(
+    indicatorIds.map(indicatorId => `id == "${indicatorId}"`).join(' OR ')
+  );
+  return indicators;
+};
+
 export {
   createIndicatorValue,
   updateIndicatorValue,
-  getPeriodIndicatorValues,
-  getRowColumnIndicatorValue,
+  getIndicatorRowColumnValue,
+  getIndicatorValuesByPeriod,
   getIndicatorRow,
   getIndicatorColumn,
+  getIndicatorsByValues,
 };

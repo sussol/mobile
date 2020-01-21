@@ -8,8 +8,8 @@ import { parsePositiveInteger, MODAL_KEYS } from '../../../utilities';
 import {
   getIndicatorRow,
   getIndicatorColumn,
-  getRowColumnIndicatorValue,
   updateIndicatorValue,
+  getIndicatorRowColumnValue,
 } from '../../../database/utilities/getIndicatorData';
 import { ACTIONS } from './constants';
 import { openModal, closeModal } from './pageActions';
@@ -58,7 +58,7 @@ export const editIndicatorValue = (value, rowKey, columnKey, route) => (dispatch
   const { period } = pageObject;
   const row = getIndicatorRow(indicatorRows, rowKey);
   const column = getIndicatorColumn(indicatorColumns, columnKey);
-  const indicatorValue = getRowColumnIndicatorValue(row, column, period);
+  const indicatorValue = getIndicatorRowColumnValue(row, column, period);
   updateIndicatorValue(indicatorValue, value);
   dispatch(refreshIndicatorRow(route));
 };

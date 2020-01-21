@@ -337,7 +337,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         period: database.getOrCreate('Period', record.period_ID),
         column: indicatorColumn,
         row: indicatorRow,
-        value: record.value || '',
+        value: record.value ?? '',
       });
       indicatorRow.addIndicatorValue(indicatorValue);
       indicatorColumn.addIndicatorValue(indicatorValue);

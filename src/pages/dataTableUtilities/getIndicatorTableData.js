@@ -4,7 +4,7 @@
  */
 
 import { COLUMN_TYPES } from './constants';
-import { getRowColumnIndicatorValue } from '../../database/utilities/getIndicatorData';
+import { getIndicatorRowColumnValue } from '../../database/utilities/getIndicatorData';
 
 const COLUMN_INDICATOR = {
   width: 1,
@@ -48,7 +48,7 @@ const mapIndicatorTableRows = (rows, period) =>
     const { id, description, code, indicator } = row;
     const values = indicator.columns.reduce((acc, column) => {
       const { code: key } = column;
-      const value = getRowColumnIndicatorValue(row, column, period);
+      const value = getIndicatorRowColumnValue(row, column, period);
       return { ...acc, [key]: value.value };
     }, {});
     return { id, description, code, ...values };

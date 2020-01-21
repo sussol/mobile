@@ -7,7 +7,6 @@ import Realm from 'realm';
 import { complement } from 'set-manipulator';
 
 import { createRecord, getTotal } from '../utilities';
-import { getPeriodIndicatorValues } from '../utilities/getIndicatorData';
 import { UIDatabase } from '..';
 
 /**
@@ -150,15 +149,13 @@ export class Requisition extends Realm.Object {
     return (this.otherStoreName && this.otherStoreName.name) || '';
   }
 
+  /**
+   * Get all indicators associated with this requisition.
+   * @returns {Array.<ProgramIndicator>}
+   */
   get indicators() {
-    if (this.isRequest) return this.program?.indicators;
-    if (this.isResponse) {
-      return getPeriodIndicatorValues(this.period).reduce(
-        (acc, { indicator }) =>
-          acc.some(({ id }) => id === indicator.id) ? acc : [...acc, indicator],
-        []
-      );
-    }
+    if (this.isRequest) return this.program?.activeIndicators;
+    if (this.isResponse) return this.period?.indicators;
     return null;
   }
 

@@ -4,6 +4,7 @@
  */
 
 import Realm from 'realm';
+import { getIndicatorValuesByPeriod, getIndicatorsByValues } from '../utilities/getIndicatorData';
 
 /**
  * A period is a simple start and end date. Grouped by periodSchedules
@@ -20,6 +21,11 @@ import Realm from 'realm';
  * @property  {string} requisitions   related requisitions
  */
 export class Period extends Realm.Object {
+  get indicators() {
+    const indicatorValues = getIndicatorValuesByPeriod(this);
+    return getIndicatorsByValues(indicatorValues);
+  }
+
   numberOfRequisitions() {
     return this.requisitions.length;
   }
