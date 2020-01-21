@@ -1,9 +1,11 @@
+/* eslint-disable max-classes-per-file */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 /* eslint-disable quote-props */
+/* eslint-disable max-classes-per-file */
 
 export const INTERNAL_TO_EXTERNAL = 0;
 export const EXTERNAL_TO_INTERNAL = 1;
@@ -32,6 +34,8 @@ class SyncTranslator {
 
 // Map of internal database object types to external record types.
 export const RECORD_TYPES = new SyncTranslator({
+  IndicatorAttribute: 'indicator_attribute',
+  IndicatorValue: 'indicator_value',
   Item: 'item',
   ItemStoreJoin: 'item_store_join',
   ItemBatch: 'item_line',
@@ -41,6 +45,7 @@ export const RECORD_TYPES = new SyncTranslator({
   MasterList: 'list_master',
   MasterListItem: 'list_master_line',
   MasterListNameJoin: 'list_master_name_join',
+  Message: 'message',
   Name: 'name',
   NameStoreJoin: 'name_store_join',
   NumberSequence: 'number',
@@ -48,6 +53,8 @@ export const RECORD_TYPES = new SyncTranslator({
   Options: 'options',
   Period: 'period',
   PeriodSchedule: 'periodSchedule',
+  ProgramIndicator: 'program_indicator',
+  Report: 'dashboard_store_report',
   Requisition: 'requisition',
   RequisitionItem: 'requisition_line',
   Stocktake: 'Stock_take',

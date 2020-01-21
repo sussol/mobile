@@ -33,6 +33,15 @@ import { ROUTES } from './constants';
 /**
  * Pushes the Settings page route onto the main navigation stack.
  */
+export const gotoDashboard = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.DASHBOARD,
+    params: { title: navStrings.dashboard },
+  });
+
+/**
+ * Pushes the Settings page route onto the main navigation stack.
+ */
 export const gotoSettings = () =>
   NavigationActions.navigate({
     routeName: ROUTES.SETTINGS,

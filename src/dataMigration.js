@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { compareVersions } from './utilities';
 import { SETTINGS_KEYS } from './settings';
 import packageJson from '../package.json';
+import { createRecord } from './database/utilities';
 
 const APP_VERSION_KEY = 'AppVersion';
 
@@ -46,6 +47,9 @@ export const migrateDataToVersion = async (database, settings) => {
         migration.migrate(database, settings);
       }
     }
+    database.write(() => {
+      createRecord(database, 'UpgradeMessage', fromVersion, toVersion);
+    });
   }
   // Record the new app version.
   AsyncStorage.setItem(APP_VERSION_KEY, toVersion);

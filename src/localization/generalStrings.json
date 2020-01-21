@@ -1,0 +1,63 @@
+{
+  "gb": {
+    "submit": "Submit",
+    "submitting": "Submitting...",
+    "submitted": "Submitted",
+    "stocktake": "Stocktake",
+    "start_typing_to_search": "Start typing to search",
+    "unfinalised": "Un-finalised",
+    "customerRequisitions": "Customer requisitions",
+    "supplierRequisitions": "Supplier requisitions",
+    "supplierInvoices": " Supplier invoices",
+    "customerInvoices": "Customer invoices",
+    "stocktakes": "Stocktakes",
+    "not_available": "N/A",
+    "new_details_saved": "New details have been saved",
+    "new_details_not_saved": "Password did not match. New details have not been saved.",
+    "exported_data": "Exported data file",
+    "couldnt_export_data": "Couldn't export data",
+    "sync_password": "Sync password",
+    "sync_url": "Sync url",
+    "reports": "Reports",
+    "no_reports": "No Reports to show",
+    "search_by": "Search by",
+    "invoice_number": "invoice number",
+    "requisition_number": "requisition number",
+    "item_name": "item name",
+    "item_code": "item code",
+    "customer": "customer",
+    "code": "code",
+    "name": "name",
+    "or": "or"
+  },
+  "fr": {
+    "stocktake": "Inventaire",
+    "start_typing_to_search": "Tapez pour rechercher",
+    "not_available": "N/A",
+    "reports": "Rapports",
+    "no_reports": "Aucun rapport à afficher",
+    "invoice_number": "numéro de facture",
+    "requisition_number": "numéro de réquisition",
+    "item_name": "nom de l'article",
+    "item_code": "code de l'article",
+    "customer": "cliente",
+    "code": "code",
+    "name": "nom",
+    "or": "ou"
+  },
+  "gil": {
+    "stocktake": "Warebwai",
+    "start_typing_to_search": "Taibinna ni kakaea",
+    "not_available": "N/A"
+  },
+  "tl": {
+    "stocktake": "Ajustamentu",
+    "start_typing_to_search": "Hakerek iha ne'e hodi buka-hetan",
+    "not_available": "N/A"
+  },
+  "la": {
+    "stocktake": "ກວດ​ກາ​ສິນ​ຄ້າ​ໃນ​ສາງ",
+    "start_typing_to_search": "ພິມ ເພື່ອ​ຄົ້ນ​ຫາ",
+    "not_available": "N/A"
+  }
+}

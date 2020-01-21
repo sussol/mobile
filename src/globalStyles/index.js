@@ -9,7 +9,6 @@ import { appStyles, COMPONENT_HEIGHT } from './appStyles';
 import { authStyles } from './authStyles';
 import { buttonStyles } from './buttonStyles';
 import { confirmModalStyles } from './confirmModalStyles';
-
 import { loadingIndicatorStyles } from './loadingIndicatorStyles';
 import { modalStyles } from './modalStyles';
 import { navigationStyles } from './navigationStyles';
@@ -22,6 +21,7 @@ import {
 } from './pageStyles';
 import { toggleBarStyles } from './toggleBarStyles';
 import { dataTableStyles, dataTableColors } from './dataTableStyles';
+import { dropDownStyles } from './dropDownStyles';
 
 export {
   BACKGROUND_COLOR,
@@ -38,9 +38,10 @@ export {
   SUSSOL_ORANGE,
   WARM_GREY,
   WARMER_GREY,
+  WHITE,
 } from './colors';
 
-export { APP_FONT_FAMILY } from './fonts';
+export { APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from './fonts';
 
 export { textStyles } from './textStyles';
 
@@ -64,4 +65,5 @@ export default StyleSheet.create({
   ...navigationStyles,
   ...pageStyles,
   ...toggleBarStyles,
+  ...dropDownStyles,
 });

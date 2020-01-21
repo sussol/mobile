@@ -15,10 +15,11 @@ import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtili
 import { gotoCustomerInvoice, createCustomerInvoice } from '../navigation/actions';
 
 import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets';
-import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
+import { DataTablePageModal } from '../widgets/modals';
+import { BottomConfirmModal } from '../widgets/bottomModals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import { buttonStrings, modalStrings } from '../localization';
+import { buttonStrings, modalStrings, generalStrings } from '../localization';
 import globalStyles from '../globalStyles';
 import { ROUTES } from '../navigation/constants';
 
@@ -127,7 +128,11 @@ export const CustomerInvoices = ({
       <View style={pageTopSectionContainer}>
         <View style={pageTopLeftSectionContainer}>
           <ToggleBar toggles={toggles} />
-          <SearchBar onChangeText={onFilterData} value={searchTerm} />
+          <SearchBar
+            onChangeText={onFilterData}
+            value={searchTerm}
+            placeholder={`${generalStrings.search_by} ${generalStrings.customer}`}
+          />
         </View>
         <View style={pageTopRightSectionContainer}>
           <PageButton text={buttonStrings.new_invoice} onPress={onNewCustomerInvoice} />

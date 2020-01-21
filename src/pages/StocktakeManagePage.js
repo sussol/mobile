@@ -12,11 +12,11 @@ import { connect } from 'react-redux';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 import { createStocktake, updateStocktake } from '../navigation/actions';
 
-import { BottomTextEditor } from '../widgets/modals';
 import { ToggleBar, DataTablePageView, SearchBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+import { BottomTextEditor } from '../widgets/bottomModals';
 
-import { buttonStrings, modalStrings } from '../localization';
+import { buttonStrings, modalStrings, generalStrings } from '../localization';
 import globalStyles from '../globalStyles';
 
 import { ROUTES } from '../navigation/constants';
@@ -116,7 +116,11 @@ export const StocktakeManage = ({
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
         <View style={pageTopLeftSectionContainer}>
-          <SearchBar onChangeText={onFilterData} value={searchTerm} />
+          <SearchBar
+            onChangeText={onFilterData}
+            value={searchTerm}
+            placeholder={`${generalStrings.search_by} ${generalStrings.item_name} ${generalStrings.or} ${generalStrings.item_code}`}
+          />
         </View>
 
         <View style={pageTopRightSectionContainer}>

@@ -3,14 +3,16 @@ import React, { useReducer, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
 
-import { PageContentModal } from './PageContentModal';
-import { AutocompleteSelector, ToggleBar, PageButton, TextEditor, Step } from '..';
+import { ToggleBar, PageButton, Step } from '..';
+import { AutocompleteSelector, TextEditor } from '../modalChildren';
+import ModalContainer from './ModalContainer';
+
 import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
+
 import { SETTINGS_KEYS } from '../../settings';
 import { getAllPrograms, getAllPeriodsForProgram } from '../../utilities';
 import { programStrings, navStrings } from '../../localization';
 import { UIDatabase } from '../../database';
-
 import {
   selectProgram,
   selectSupplier,
@@ -172,9 +174,9 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
       <TextEditor text={name} onEndEditing={value => dispatch(setName(value))} />
     );
     return (
-      <PageContentModal isOpen={isModalOpen} onClose={onCloseModal} coverScreen>
+      <ModalContainer isOpen={isModalOpen} onClose={onCloseModal} fullScreen>
         {currentKey !== 'name' ? <Selector /> : <Editor />}
-      </PageContentModal>
+      </ModalContainer>
     );
   };
 

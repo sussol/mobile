@@ -14,3 +14,5 @@ import getPageInitialiser from './getPageInitialiser';
 import { getPageDispatchers } from './getPageDispatchers';
 
 export { getColumns, getPageInfoColumns, getPageInitialiser, getPageDispatchers };
+
+export { mapIndicatorTableRows, mapIndicatorTableColumns } from './getIndicatorTableData';

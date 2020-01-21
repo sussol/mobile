@@ -3,15 +3,17 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { authStrings } from './authStrings';
-import { buttonStrings } from './buttonStrings';
-import { generalStrings } from './generalStrings';
-import { modalStrings } from './modalStrings';
-import { navStrings } from './navStrings';
-import { pageInfoStrings } from './pageInfoStrings';
-import { syncStrings } from './syncStrings';
-import { tableStrings } from './tableStrings';
-import { programStrings } from './programStrings';
+import {
+  authStrings,
+  buttonStrings,
+  generalStrings,
+  modalStrings,
+  navStrings,
+  pageInfoStrings,
+  programStrings,
+  syncStrings,
+  tableStrings,
+} from './index';
 
 export function setCurrentLanguage(language) {
   authStrings.setLanguage(language);

@@ -27,6 +27,14 @@ export class MasterList extends Realm.Object {
   }
 
   /**
+   * Get all indicators currently active on this master list.
+   * @returns {Array.<ProgramIndicator>}
+   */
+  get activeIndicators() {
+    return this.indicators.filtered('isActive == true');
+  }
+
+  /**
    * Returns this master lists programSettings, which is stored
    * as a stringified object as an object
    */
@@ -51,6 +59,25 @@ export class MasterList extends Realm.Object {
   addItemIfUnique(masterListItem) {
     if (this.items.filtered('id == $0', masterListItem.id).length > 0) return;
     this.addItem(masterListItem);
+  }
+
+  /**
+   * Add an indicator to this master list.
+   *
+   * @param {ProgramIndicator} programIndicator
+   */
+  addIndicator(programIndicator) {
+    this.indicators.push(programIndicator);
+  }
+
+  /**
+   * Add an indicator to this master list, if it has not already been added.
+   *
+   * @param {ProgramIndicator} programIndicator
+   */
+  addIndicatorIfUnique(programIndicator) {
+    if (this.indicators.filtered('id == $0', programIndicator.id).length > 0) return;
+    this.addIndicator(programIndicator);
   }
 
   /**
@@ -124,6 +151,7 @@ MasterList.schema = {
     name: { type: 'string', default: 'placeholderName' },
     note: { type: 'string', optional: true },
     items: { type: 'list', objectType: 'MasterListItem' },
+    indicators: { type: 'list', objectType: 'ProgramIndicator' },
     programSettings: { type: 'string', optional: true },
     isProgram: { type: 'bool', optional: true },
   },

@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -73,6 +74,16 @@ const safeGet = (record, path) => {
  */
 const generateSyncData = (settings, recordType, record) => {
   switch (recordType) {
+    case 'IndicatorValue': {
+      return {
+        ID: record.id,
+        facility_ID: settings.get(THIS_STORE_ID),
+        period_ID: record.period.id,
+        column_ID: record.column.id,
+        row_ID: record.row.id,
+        value: record.value,
+      };
+    }
     case 'ItemBatch': {
       return {
         ID: record.id,
@@ -220,6 +231,17 @@ const generateSyncData = (settings, recordType, record) => {
         is_from_inventory_adjustment: transaction.isInventoryAdjustment,
         donor_id: record.donor && record.donor.id,
         type: TRANSACTION_BATCH_TYPES.translate(transaction.type, INTERNAL_TO_EXTERNAL),
+      };
+    }
+    case 'Message': {
+      return {
+        ID: record.id,
+        fromStoreID: settings.get(THIS_STORE_ID),
+        body: record._body,
+        createdDate: getDateString(record.createdDate),
+        createdTime: getTimeString(record.createdTime),
+        status: record.status,
+        type: record.type,
       };
     }
     default:

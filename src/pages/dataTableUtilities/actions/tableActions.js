@@ -9,7 +9,7 @@ import Settings from '../../../settings/MobileAppSettings';
 import { createRecord } from '../../../database/utilities/index';
 import { closeModal } from './pageActions';
 import { ACTIONS } from './constants';
-import { pageObjectSelector } from '../selectors';
+import { pageObjectSelector } from '../selectors/pageSelectors';
 
 /**
  * Sorts the underlying data array by the key provided. Determines
@@ -51,6 +51,13 @@ export const addRecord = (record, route) => ({
  * finalising can make out of sync with the data array used for display.
  */
 export const refreshData = route => ({ type: ACTIONS.REFRESH_DATA, payload: { route } });
+
+export const toggleIndicators = route => ({ type: ACTIONS.TOGGLE_INDICATORS, payload: { route } });
+
+export const selectIndicator = (indicatorCode, route) => ({
+  type: ACTIONS.SELECT_INDICATOR,
+  payload: { indicatorCode, route },
+});
 
 /**
  * Hides all items which have current stock on hand greater than the
@@ -253,6 +260,8 @@ export const TableActionsLookup = {
   sortData,
   filterData,
   refreshData,
+  toggleIndicators,
+  selectIndicator,
   hideOverStocked,
   toggleShowFinalised,
   showOverStocked,

@@ -14,14 +14,15 @@ import { useSyncListener, useNavigationFocus } from '../hooks';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
 import { PageButton, DataTablePageView, SearchBar, ToggleBar } from '../widgets';
-import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
+import { DataTablePageModal } from '../widgets/modals';
+import { BottomConfirmModal } from '../widgets/bottomModals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import { ROUTES } from '../navigation/constants';
 
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
 
-import { buttonStrings, modalStrings } from '../localization';
+import { buttonStrings, modalStrings, generalStrings } from '../localization';
 import globalStyles from '../globalStyles';
 
 import {
@@ -132,7 +133,11 @@ export const Stocktakes = ({
       <View style={pageTopSectionContainer}>
         <View style={pageTopLeftSectionContainer}>
           <ToggleBar toggles={toggles} />
-          <SearchBar onChangeText={onFilterData} value={searchTerm} />
+          <SearchBar
+            onChangeText={onFilterData}
+            value={searchTerm}
+            placeholder={`${generalStrings.search_by} ${generalStrings.name}`}
+          />
         </View>
         <View style={pageTopRightSectionContainer}>
           <PageButton text={buttonStrings.new_stocktake} onPress={onNewStocktake} />

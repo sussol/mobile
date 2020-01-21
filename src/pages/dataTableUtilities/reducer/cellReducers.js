@@ -21,6 +21,12 @@ export const refreshRow = (state, action) => {
   return { ...state, dataState: newDataState };
 };
 
+export const refreshIndicatorRow = state => {
+  const { currentIndicator } = state;
+  return { ...state, indicatorRows: currentIndicator.rows };
+};
+
 export const CellReducerLookup = {
   refreshRow,
+  refreshIndicatorRow,
 };

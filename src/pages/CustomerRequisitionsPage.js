@@ -17,7 +17,7 @@ import { gotoCustomerRequisition } from '../navigation/actions';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
 import globalStyles from '../globalStyles';
-import { buttonStrings } from '../localization';
+import { buttonStrings, generalStrings } from '../localization';
 
 import { ROUTES } from '../navigation/constants';
 
@@ -102,7 +102,11 @@ export const CustomerRequisitions = ({
       <View style={pageTopSectionContainer}>
         <View style={pageTopLeftSectionContainer}>
           <PastCurrentToggleBar />
-          <SearchBar onChangeText={onFilterData} value={searchTerm} />
+          <SearchBar
+            onChangeText={onFilterData}
+            value={searchTerm}
+            placeholder={`${generalStrings.search_by} ${generalStrings.requisition_number}`}
+          />
         </View>
       </View>
       <DataTable

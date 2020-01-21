@@ -77,8 +77,13 @@ export const customerInvoicesInitialiser = () => {
  * @returns  {object}
  */
 const customerRequisitionInitialiser = requisition => {
-  const { items: backingData } = requisition;
+  const { indicators, items: backingData } = requisition;
   const sortedData = backingData.sorted('item.name').slice();
+
+  const usingIndicators = !!indicators?.length;
+  const [currentIndicator = null] = indicators || [];
+  const indicatorRows = currentIndicator?.rows;
+  const indicatorColumns = currentIndicator?.columns;
 
   return {
     pageObject: requisition,
@@ -92,6 +97,12 @@ const customerRequisitionInitialiser = requisition => {
     isAscending: true,
     modalKey: '',
     modalValue: null,
+    usingIndicators,
+    showIndicators: false,
+    currentIndicator,
+    indicatorColumns,
+    indicatorRows,
+    indicators,
     route: ROUTES.CUSTOMER_REQUISITION,
     columns: getColumns(ROUTES.CUSTOMER_REQUISITION),
     getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_REQUISITION),
@@ -354,15 +365,21 @@ const supplierInvoicesInitialiser = () => {
  * @returns  {object}
  */
 const supplierRequisitionInitialiser = requisition => {
-  const { program, items: backingData } = requisition;
+  const { isFinalised, program, items: backingData, indicators } = requisition;
 
   const usingPrograms = !!program;
   const route = program ? ROUTES.SUPPLIER_REQUISITION_WITH_PROGRAM : ROUTES.SUPPLIER_REQUISITION;
 
   const sortedData = backingData.sorted('item.name').slice();
-  const filteredData = usingPrograms
-    ? sortedData.filter(item => item.isLessThanThresholdMOS)
-    : sortedData;
+  const filteredData =
+    !usingPrograms || isFinalised
+      ? sortedData
+      : sortedData.filter(item => item.isLessThanThresholdMOS);
+
+  const usingIndicators = !!indicators?.length;
+  const [currentIndicator = null] = indicators || [];
+  const indicatorRows = currentIndicator?.rows;
+  const indicatorColumns = currentIndicator?.columns;
 
   return {
     pageObject: requisition,
@@ -377,7 +394,13 @@ const supplierRequisitionInitialiser = requisition => {
     modalKey: '',
     hasSelection: false,
     modalValue: null,
-    showAll: !usingPrograms,
+    usingIndicators,
+    showIndicators: false,
+    currentIndicator,
+    indicatorColumns,
+    indicatorRows,
+    indicators,
+    showAll: !usingPrograms || isFinalised,
     route: ROUTES.SUPPLIER_REQUISITION,
     columns: getColumns(route),
     getPageInfoColumns: getPageInfoColumns(route),

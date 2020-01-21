@@ -10,6 +10,8 @@ export const ACTIONS = {
   REFRESH_DATA: 'refreshData',
   ADD_ITEM: 'addItem',
   ADD_RECORD: 'addRecord',
+  TOGGLE_INDICATORS: 'toggleIndicators',
+  SELECT_INDICATOR: 'selectIndicator',
   HIDE_OVER_STOCKED: 'hideOverStocked',
   TOGGLE_STOCK_OUT: 'toggleStockOut',
   TOGGLE_SHOW_FINALISED: 'toggleShowFinalised',

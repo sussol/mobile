@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 /* eslint-disable camelcase */
 import {
   EXTERNAL_TO_INTERNAL,
@@ -13,6 +14,7 @@ import {
 import { CHANGE_TYPES, generateUUID } from '../database';
 import { deleteRecord } from '../database/utilities';
 import { SETTINGS_KEYS } from '../settings';
+import { checkIsObject } from '../utilities';
 
 const { THIS_STORE_ID, THIS_STORE_TAGS, THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
 
@@ -128,6 +130,23 @@ const getOrCreateAddress = (database, line1, line2, line3, line4, zipCode) => {
 export const sanityCheckIncomingRecord = (recordType, record) => {
   if (!record.ID || record.ID.length < 1) return false; // Every record must have an ID.
   const requiredFields = {
+    IndicatorAttribute: {
+      canBeBlank: [
+        'code',
+        'description',
+        'index',
+        'is_required',
+        'value_type',
+        'default_value',
+        'axis',
+        'is_active',
+      ],
+      cannotBeBlank: ['indicator_ID'],
+    },
+    IndicatorValue: {
+      cannotBeBlank: ['facility_ID', 'period_ID', 'column_ID', 'row_ID'],
+      canBeBlank: ['value'],
+    },
     Item: {
       cannotBeBlank: ['code', 'item_name'],
       canBeBlank: ['default_pack_size'],
@@ -249,14 +268,23 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: [],
       canBeBlank: ['units', 'comment', 'order_number'],
     },
+    ProgramIndicator: {
+      cannotBeBlank: ['code', 'program_ID', 'is_active'],
+      canBeBlank: [],
+    },
+    Report: {
+      cannotBeBlank: ['ID', 'title', 'type', 'json'],
+      canBeBlank: [],
+    },
   };
+
   if (!requiredFields[recordType]) return false; // Unsupported record type
   const hasAllNonBlankFields = requiredFields[recordType].cannotBeBlank.reduce(
     (containsAllFieldsSoFar, fieldName) =>
       containsAllFieldsSoFar &&
       record[fieldName] !== null && // Key must exist.
       record[fieldName] !== undefined && // Field may be undefined.
-      record[fieldName].length > 0, // Fidl must not be empty string.
+      record[fieldName].length > 0, // Field must not be empty string.
     true
   );
 
@@ -284,6 +312,37 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
   if (!sanityCheckIncomingRecord(recordType, record)) return; // Unsupported or malformed record.
   let internalRecord;
   switch (recordType) {
+    case 'IndicatorAttribute': {
+      const indicatorAttribute = database.update(recordType, {
+        id: record.ID,
+        indicator: database.getOrCreate('ProgramIndicator', record.indicator_ID),
+        description: record.description,
+        code: record.code,
+        index: parseNumber(record.index),
+        isRequired: parseBoolean(record.is_required),
+        valueType: record.value_type,
+        defaultValue: record?.default_value,
+        axis: record.axis,
+        isActive: parseBoolean(record.is_active),
+      });
+      indicatorAttribute.indicator.addIndicatorAttributeIfUnique(indicatorAttribute);
+      break;
+    }
+    case 'IndicatorValue': {
+      const indicatorColumn = database.getOrCreate('IndicatorAttribute', record.column_ID);
+      const indicatorRow = database.getOrCreate('IndicatorAttribute', record.row_ID);
+      const indicatorValue = database.update(recordType, {
+        id: record.ID,
+        storeId: record.facility_ID,
+        period: database.getOrCreate('Period', record.period_ID),
+        column: indicatorColumn,
+        row: indicatorRow,
+        value: record.value ?? '',
+      });
+      indicatorRow.addIndicatorValue(indicatorValue);
+      indicatorColumn.addIndicatorValue(indicatorValue);
+      break;
+    }
     case 'Item': {
       internalRecord = {
         id: record.ID,
@@ -493,6 +552,24 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       numberSequence.addNumberToReuse(numberToReuse);
       break;
     }
+    case 'Report': {
+      const { ID: id, title, type, json } = record;
+      try {
+        const parsedData = JSON.parse(json);
+        const shouldSetData = checkIsObject(parsedData);
+        internalRecord = {
+          id,
+          title,
+          type,
+          _data: shouldSetData ? JSON.stringify(parsedData.data) : null,
+        };
+        database.update(recordType, internalRecord);
+      } catch (error) {
+        // Throw to parent, for now
+        throw error;
+      }
+      break;
+    }
     case 'Requisition': {
       let status = REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
       let period;
@@ -693,6 +770,16 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         id: record.ID,
         name: record.name,
       });
+      break;
+    }
+    case 'ProgramIndicator': {
+      const indicator = database.update(recordType, {
+        id: record.ID,
+        code: record.code,
+        program: database.getOrCreate('MasterList', record.program_ID),
+        isActive: parseBoolean(record.is_active),
+      });
+      indicator.program.addIndicatorIfUnique(indicator);
       break;
     }
     case 'Options': {
