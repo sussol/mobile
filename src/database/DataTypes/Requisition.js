@@ -153,8 +153,6 @@ export class Requisition extends Realm.Object {
   get indicators() {
     if (this.isRequest) return this.program?.indicators;
     if (this.isResponse) {
-      const indicatorValues = getPeriodIndicatorValues(this.period);
-      console.log(new Set(indicatorValues.map(({ value }) => value)));
       return getPeriodIndicatorValues(this.period).reduce(
         (acc, { indicator }) =>
           acc.some(({ id }) => id === indicator.id) ? acc : [...acc, indicator],
