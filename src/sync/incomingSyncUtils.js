@@ -144,8 +144,8 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: ['indicator_ID'],
     },
     IndicatorValue: {
-      cannotBeBlank: ['facility_ID', 'period_ID', 'column_ID', 'row_ID', 'value'],
-      canBeBlank: [],
+      cannotBeBlank: ['facility_ID', 'period_ID', 'column_ID', 'row_ID'],
+      canBeBlank: ['value'],
     },
     Item: {
       cannotBeBlank: ['code', 'item_name'],
@@ -329,16 +329,18 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'IndicatorValue': {
-      const recordValue = (record.value && JSON.parse(record.value))?.value;
-      internalRecord = {
+      const indicatorColumn = database.getOrCreate('IndicatorAttribute', record.column_ID);
+      const indicatorRow = database.getOrCreate('IndicatorAttribute', record.row_ID);
+      const indicatorValue = database.update(recordType, {
         id: record.ID,
         storeId: record.facility_ID,
         period: database.getOrCreate('Period', record.period_ID),
-        column: database.getOrCreate('IndicatorAttribute', record.column_ID),
-        row: database.getOrCreate('IndicatorAttribute', record.row_ID),
-        value: recordValue || '',
-      };
-      database.update(recordType, internalRecord);
+        column: indicatorColumn,
+        row: indicatorRow,
+        value: record.value ?? '',
+      });
+      indicatorRow.addIndicatorValue(indicatorValue);
+      indicatorColumn.addIndicatorValue(indicatorValue);
       break;
     }
     case 'Item': {
