@@ -9,8 +9,6 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { UIDatabase } from '../database';
-
 import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
@@ -20,7 +18,6 @@ import { DataTablePageView, SearchBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { useSyncListener } from '../hooks';
 
-import { ROUTES } from '../navigation/constants';
 import { generalStrings } from '../localization';
 import { SupplierCreditActions } from '../actions/SupplierCreditActions';
 
@@ -115,18 +112,14 @@ export const Stock = ({
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  ...getPageDispatchers(dispatch, ownProps, '', ROUTES.STOCK),
+  ...getPageDispatchers(dispatch, ownProps, '', 'stock'),
   refund: rowKey => dispatch(SupplierCreditActions.createFromItem(rowKey)),
 });
 
 const mapStateToProps = state => {
   const { pages } = state;
-  console.log('#################################');
-  console.log('map state to props');
-  console.log('#################################');
   const { stock } = pages;
-  const { data } = stock;
-  return { ...stock, data: [...data] };
+  return stock;
 };
 
 export const StockPage = connect(mapStateToProps, mapDispatchToProps)(Stock);
@@ -149,4 +142,5 @@ Stock.propTypes = {
   onDeselectRow: PropTypes.func.isRequired,
   onFilterData: PropTypes.func.isRequired,
   onSortColumn: PropTypes.func.isRequired,
+  refund: PropTypes.func.isRequired,
 };

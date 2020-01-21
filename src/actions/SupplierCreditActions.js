@@ -5,7 +5,8 @@
 
 import { batch } from 'react-redux';
 import { createRecord, UIDatabase } from '../database';
-import { refreshRow } from '../pages/dataTableUtilities/actions/cellActions';
+import { refreshData } from '../pages/dataTableUtilities/actions/tableActions';
+import { ROUTES } from '../navigation/constants';
 
 export const SUPPLIER_CREDIT_ACTIONS = {
   CREATE_FROM_ITEM: 'SupplierCredit/createFromItem',
@@ -26,40 +27,50 @@ const create = () => (dispatch, getState) => {
 
   // Only work with the batches whose return amount is greater than 0.
   const batchesToReturn = batches.reduce(
-    (acc, batch) => (batch.returnAmount ? [...acc, batch] : acc),
+    (acc, itemBatch) => (batch.returnAmount ? [...acc, itemBatch] : acc),
     []
   );
-
+  console.log(batchesToReturn.length);
   // Group the batches with a return amount by supplier to make a credit for each
   // supplier grouping { supplierId1: [batch1, batch2, ... batchn], supplierId2: [...], ...}
-  const batchesGroupedBySupplier = batchesToReturn.reduce((groupings, batch) => {
-    const { id: suppliersId } = batch?.itemBatch.supplier;
-    const suppliersGrouping = groupings[suppliersId];
+  const batchesGroupedBySupplier = batchesToReturn.reduce((groupings, itemBatch) => {
+    const { id: suppliersId } = itemBatch?.itemBatch.supplier;
+    const suppliersGroup = groupings[suppliersId];
 
-    if (suppliersGrouping) return { ...groupings, [suppliersId]: suppliersGrouping.push(batch) };
-    return { ...groupings, [suppliersId]: [batch] };
+    if (suppliersGroup) return { ...groupings, [suppliersId]: suppliersGroup.push(itemBatch) };
+    return { ...groupings, [suppliersId]: [itemBatch] };
   }, {});
 
   UIDatabase.write(() => {
     Object.entries(batchesGroupedBySupplier).forEach(([supplierId, suppliersBatches]) => {
+      const returnSum = -suppliersBatches.reduce(
+        (total, { costPrice, returnAmount }) => total + costPrice * returnAmount,
+        0
+      );
+
       const newSupplierCredit = createRecord(
         UIDatabase,
         'SupplierCredit',
         currentUser,
         supplierId,
-        suppliersBatches
+        returnSum
       );
-      console.log('#################################');
-      console.log(newSupplierCredit.serialNumber);
-      console.log(newSupplierCredit.type);
-      console.log('#################################');
+
+      batches.forEach(itemBatch =>
+        createRecord(
+          UIDatabase,
+          'SupplierCreditLine',
+          newSupplierCredit,
+          itemBatch.itemBatch,
+          itemBatch.returnAmount
+        )
+      );
     });
   });
 
   batch(() => {
     dispatch(close());
-
-    dispatch({ type: 'refreshData', payload: { route: 'stock' } });
+    dispatch(refreshData(ROUTES.STOCK));
   });
 };
 

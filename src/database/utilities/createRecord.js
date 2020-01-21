@@ -235,36 +235,33 @@ const createPaymentLine = (database, payment, linkedTransaction, total) => {
   return receiptLine;
 };
 
-const createSupplierCreditLine = (database, supplierCredit, batch, returnAmount) => {
+const createSupplierCreditLine = (database, supplierCredit, itemBatch, returnAmount) => {
+  // Create a TransactionITem to link between the new TransactionBatch and Transaction.
   const transactionItem = createTransactionItem(
     database,
     supplierCredit,
-    batch.itemBatch.item,
+    itemBatch.item,
     -returnAmount
   );
 
-  const transactionBatch = createTransactionBatch(
-    database,
-    transactionItem,
-    batch.itemBatch,
-    false
-  );
+  // Create a TransactionBatch for the return amount
+  const transactionBatch = createTransactionBatch(database, transactionItem, itemBatch, false);
 
-  transactionBatch.total = -batch.itemBatch.sellPrice * returnAmount;
+  // Adjust the TransactionBatch total to the negative amount of the original cost.
+  transactionBatch.total = -itemBatch.sellPrice * returnAmount;
 
-  const originalBatch = database.get('ItemBatch', batch.itemBatch.id);
-
-  originalBatch.totalQuantity -= returnAmount;
+  // Adjust the quantity of the underlying ItemBatch.
+  itemBatch.totalQuantity -= returnAmount;
+  database.save('TransactionBatch', transactionBatch);
+  database.save('ItemBatch', itemBatch);
 };
 
-const createSupplierCredit = (database, user, supplierId, batches) => {
+const createSupplierCredit = (database, user, supplierId, returnAmount) => {
   const currentDate = new Date();
   const { SUPPLIER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
-  const returnSum = batches.reduce(
-    (total, { costPrice, returnAmount }) => total + costPrice * returnAmount,
-    0
-  );
 
+  // Create a supplier credit transaction with the negative of the sum of all
+  // the batches to be returned.
   const supplierCredit = database.create('Transaction', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, SUPPLIER_INVOICE_NUMBER),
@@ -272,17 +269,13 @@ const createSupplierCredit = (database, user, supplierId, batches) => {
     confirmDate: currentDate,
     type: 'supplier_credit',
     status: 'finalised',
-    comment: '',
+    comment: 'pop1',
     otherParty: database.get('Name', supplierId),
-    total: -returnSum,
+    total: returnAmount,
     enteredBy: user,
   });
 
-  const supplierCreditLines = batches.map(batch =>
-    createSupplierCreditLine(database, supplierCredit, batch, batch.returnAmount)
-  );
-
-  return [supplierCredit, supplierCreditLines];
+  return supplierCredit;
 };
 
 const createCustomerCredit = (database, user, patient, total) => {
@@ -817,6 +810,8 @@ export const createRecord = (database, type, ...args) => {
       return createSupplierCredit(database, ...args);
     case 'CustomerCreditLine':
       return createCustomerCreditLine(database, ...args);
+    case 'SupplierCreditLine':
+      return createSupplierCreditLine(database, ...args);
     case 'InsurancePolicy':
       return createInsurancePolicy(database, ...args);
     case 'CashIn':
