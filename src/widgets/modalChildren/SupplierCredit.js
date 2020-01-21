@@ -16,8 +16,18 @@ import { WHITE } from '../../globalStyles';
 
 import { SupplierCreditActions } from '../../actions/SupplierCreditActions';
 import { selectSortFields, selectSortedBatches } from '../../selectors/supplierCredit';
+import { FlexView } from '../FlexView';
+import PageButton from '../PageButton';
+import { FlexRow } from '../FlexRow';
 
-const SupplierCreditComponent = ({ onSortColumn, sortKey, isAscending, batches }) => {
+const SupplierCreditComponent = ({
+  onSortColumn,
+  sortKey,
+  isAscending,
+  batches,
+  onEditReturnAmount,
+  onSave,
+}) => {
   const columns = React.useMemo(() => getColumns('supplierRefund'), []);
 
   const renderHeader = React.useCallback(
@@ -32,14 +42,7 @@ const SupplierCreditComponent = ({ onSortColumn, sortKey, isAscending, batches }
     [sortKey, isAscending]
   );
 
-  const getCallback = React.useCallback(colKey => {
-    switch (colKey) {
-      case '':
-        return null;
-      default:
-        return null;
-    }
-  });
+  const getCallback = () => onEditReturnAmount;
 
   const renderRow = React.useCallback(
     listItem => {
@@ -69,6 +72,9 @@ const SupplierCreditComponent = ({ onSortColumn, sortKey, isAscending, batches }
         getItemLayout={getItemLayout}
         columns={columns}
       />
+      <FlexRow flex={1} alignItems="flex-end" justifyContent="flex-end">
+        <PageButton text="OK" onPress={onSave} />
+      </FlexRow>
     </View>
   );
 };
@@ -82,6 +88,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   onSortColumn: sortKey => dispatch(SupplierCreditActions.sort(sortKey)),
+  onSave: () => dispatch(SupplierCreditActions.create()),
+  onEditReturnAmount: (returnAmount, batchId) =>
+    dispatch(SupplierCreditActions.editReturnAmount(returnAmount, batchId)),
 });
 
 export const SupplierCredit = connect(mapStateToProps, mapDispatchToProps)(SupplierCreditComponent);

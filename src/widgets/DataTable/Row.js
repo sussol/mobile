@@ -44,8 +44,8 @@ import RefContext from './RefContext';
 const Row = React.memo(
   ({ rowData, rowState, rowKey, renderCells, style, onPress, debug, rowIndex }) => {
     if (debug) {
-      console.log('=================================');
-      console.log(`Row: ${rowKey}`);
+      // console.log('=================================');
+      // console.log(`Row: ${rowKey}`);
     }
 
     const { adjustToTop } = useContext(RefContext);

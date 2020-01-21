@@ -72,7 +72,9 @@ export class ItemBatch extends Realm.Object {
     if (quantity < 0) {
       throw new Error('Cannot set a negative item batch quantity');
     }
+    console.log(3);
     this.numberOfPacks = this.packSize ? quantity / this.packSize : 0;
+    console.log(4);
   }
 
   /**
@@ -102,6 +104,10 @@ export class ItemBatch extends Realm.Object {
    */
   toString() {
     return `${this.itemName} - Batch ${this.batch}`;
+  }
+
+  get otherPartyName() {
+    return `${this.supplier?.name || ''}`;
   }
 }
 

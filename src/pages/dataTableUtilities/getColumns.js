@@ -33,7 +33,7 @@ const PAGE_COLUMN_WIDTHS = {
   prescriberSelect: [3, 3, 1],
   itemSelect: [1, 3, 1],
   patientHistory: [1, 3, 1, 3],
-  supplierRefund: [1, 1, 1],
+  supplierRefund: [1, 1, 1, 1],
 };
 
 const PAGE_COLUMNS = {
@@ -41,6 +41,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.BATCH_NAME,
     COLUMN_NAMES.TRANSACTION_BATCH_OTHER_PARTY,
     COLUMN_NAMES.TOTAL_QUANTITY,
+    COLUMN_NAMES.REFUND_AMOUNT,
   ],
   prescriber: [
     COLUMN_NAMES.REGISTRATION_CODE,
@@ -388,13 +389,13 @@ const COLUMNS = () => ({
 
   // NUMERIC COLUMNS
 
-  [COLUMN_NAMES.NUMBER_OF_PACKS]: {
-    type: COLUMN_TYPES.NUMERIC,
-    key: COLUMN_KEYS.NUMBER_OF_PACKS,
-    title: tableStrings.available_stock,
+  [COLUMN_NAMES.REFUND_AMOUNT]: {
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
+    key: COLUMN_KEYS.RETURN_AMOUNT,
+    title: 'refund amount',
     alignText: 'right',
     sortable: true,
-    editable: false,
+    editable: true,
   },
 
   [COLUMN_NAMES.AVAILABLE_QUANTITY]: {

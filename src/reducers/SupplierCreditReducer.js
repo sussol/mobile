@@ -5,6 +5,7 @@
 
 import { SUPPLIER_CREDIT_ACTIONS } from '../actions/SupplierCreditActions';
 import { UIDatabase } from '../database/index';
+import { parsePositiveInteger } from '../utilities';
 
 const toBatchLookup = batches =>
   batches.reduce((acc, batch) => {
@@ -14,10 +15,10 @@ const toBatchLookup = batches =>
 
 const mapBatchToObject = batches =>
   batches.map(batch => ({
-    ...batch,
-    returnQuantity: 0,
-    otherPartyName: batch.transaction?.otherParty?.name,
+    returnAmount: 0,
     totalQuantity: batch.totalQuantity,
+    itemBatch: batch,
+    costPrice: batch.costPrice,
   }));
 
 const initialState = () => ({
@@ -32,16 +33,29 @@ export const SupplierCreditReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
+    case SUPPLIER_CREDIT_ACTIONS.EDIT_RETURN_AMOUNT: {
+      const { batches } = state;
+      const { payload } = action;
+      const { batchId, returnAmount } = payload;
+
+      const rowToEditIndex = batches.findIndex(({ id }) => id === batchId);
+      const newRow = {
+        ...batches[rowToEditIndex],
+        returnAmount: parsePositiveInteger(returnAmount),
+      };
+
+      batches[rowToEditIndex] = newRow;
+
+      return { ...state, batches: [...batches] };
+    }
+
     case SUPPLIER_CREDIT_ACTIONS.CREATE_FROM_ITEM: {
       const { payload } = action;
       const { itemId } = payload;
 
-      const batches = UIDatabase.objects('TransactionBatch').filtered(
-        'itemId == $0 && numberOfPacks > 0 && transaction.type == $1 &&' +
-          'transaction.otherParty.type != $2',
-        itemId,
-        'supplier_invoice',
-        'inventory_adjustment'
+      const batches = UIDatabase.objects('ItemBatch').filtered(
+        'item.id == $0 && numberOfPacks > 0',
+        itemId
       );
 
       return {
@@ -56,9 +70,10 @@ export const SupplierCreditReducer = (state = initialState(), action) => {
       const { payload } = action;
       const { transactionId } = payload;
 
-      const batches = UIDatabase.objects('TransactionBatch').filtered(
-        'transaction.id == $0 && numberOfPacks > 0',
-        transactionId
+      const batches = UIDatabase.objects('ItemBatch').filtered(
+        `${UIDatabase.get('Transaction', transactionId)
+          .getTransactionBatches.map(({ itemBatch }) => `'${itemBatch.id}'`)
+          .join(' OR ')} AND numberOfPacks > 0`
       );
 
       return {

@@ -81,10 +81,6 @@ export class TransactionBatch extends Realm.Object {
    * @param  {number}  quantity
    */
   setTotalQuantity(database, quantity) {
-    if (this.transaction.isFinalised) {
-      throw new Error('Cannot change quantity of batches in a finalised transaction');
-    }
-
     const difference = quantity - this.totalQuantity;
     this.numberOfPacks = this.packSize ? quantity / this.packSize : 0;
 

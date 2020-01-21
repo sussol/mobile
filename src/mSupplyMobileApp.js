@@ -44,8 +44,9 @@ import globalStyles, { textStyles, SUSSOL_ORANGE } from './globalStyles';
 import { UserActions } from './actions';
 import { debounce } from './utilities';
 import { prevRouteNameSelector } from './navigation/selectors';
-import { SupplierRefund } from './widgets/modalChildren/SupplierRefund';
+import { SupplierCredit } from './widgets/modalChildren/SupplierCredit';
 import ModalContainer from './widgets/modals/ModalContainer';
+import { SupplierCreditActions } from './actions/SupplierCreditActions';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -95,7 +96,19 @@ class MSupplyMobileAppContainer extends React.Component {
     };
   }
 
-  componentDidMount = () => BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
+  componentDidMount = () => {
+    UIDatabase.objects('TransactionBatch').forEach(batch => {
+      UIDatabase.write(() => {
+        UIDatabase.update('TransactionBatch', {
+          ...batch,
+          sellPrice: 10,
+          costPrice: 10,
+        });
+      });
+    });
+
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
+  };
 
   componentWillUnmount = () => {
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackEvent);
@@ -281,12 +294,12 @@ class MSupplyMobileAppContainer extends React.Component {
         />
         {isLoading && this.renderLoadingIndicator()}
         <ModalContainer
-          isVisible
-          onClose={() => console.log('close modal')}
+          isVisible={this.props.supplierCreditModalOpen}
+          onClose={this.props.closeSupplierCreditModal}
           title="title"
           fullScreen
         >
-          <SupplierRefund />
+          <SupplierCredit />
         </ModalContainer>
       </View>
     );
@@ -296,11 +309,14 @@ class MSupplyMobileAppContainer extends React.Component {
 const mapDispatchToProps = dispatch => {
   const openFinaliseModal = () => dispatch(FinaliseActions.openModal());
   const closeFinaliseModal = () => dispatch(FinaliseActions.closeModal());
-  return { dispatch, openFinaliseModal, closeFinaliseModal };
+  const closeSupplierCreditModal = () => dispatch(SupplierCreditActions.close());
+
+  return { dispatch, openFinaliseModal, closeFinaliseModal, closeSupplierCreditModal };
 };
 
 const mapStateToProps = state => {
-  const { finalise, nav: navigationState, sync: syncState } = state;
+  const { finalise, nav: navigationState, sync: syncState, supplierCredit } = state;
+  const { open: supplierCreditModalOpen } = supplierCredit;
   const { finaliseModalOpen } = finalise;
   const currentParams = getCurrentParams(navigationState);
   const currentTitle = currentParams && currentParams.title;
@@ -320,6 +336,7 @@ const mapStateToProps = state => {
     syncState,
     currentUser: state.user.currentUser,
     finaliseModalOpen,
+    supplierCreditModalOpen,
   };
 };
 

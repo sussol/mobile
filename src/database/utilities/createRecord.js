@@ -235,6 +235,56 @@ const createPaymentLine = (database, payment, linkedTransaction, total) => {
   return receiptLine;
 };
 
+const createSupplierCreditLine = (database, supplierCredit, batch, returnAmount) => {
+  const transactionItem = createTransactionItem(
+    database,
+    supplierCredit,
+    batch.itemBatch.item,
+    -returnAmount
+  );
+
+  const transactionBatch = createTransactionBatch(
+    database,
+    transactionItem,
+    batch.itemBatch,
+    false
+  );
+
+  transactionBatch.total = -batch.itemBatch.sellPrice * returnAmount;
+
+  const originalBatch = database.get('ItemBatch', batch.itemBatch.id);
+
+  originalBatch.totalQuantity -= returnAmount;
+};
+
+const createSupplierCredit = (database, user, supplierId, batches) => {
+  const currentDate = new Date();
+  const { SUPPLIER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+  const returnSum = batches.reduce(
+    (total, { costPrice, returnAmount }) => total + costPrice * returnAmount,
+    0
+  );
+
+  const supplierCredit = database.create('Transaction', {
+    id: generateUUID(),
+    serialNumber: getNextNumber(database, SUPPLIER_INVOICE_NUMBER),
+    entryDate: currentDate,
+    confirmDate: currentDate,
+    type: 'supplier_credit',
+    status: 'finalised',
+    comment: '',
+    otherParty: database.get('Name', supplierId),
+    total: -returnSum,
+    enteredBy: user,
+  });
+
+  const supplierCreditLines = batches.map(batch =>
+    createSupplierCreditLine(database, supplierCredit, batch, batch.returnAmount)
+  );
+
+  return [supplierCredit, supplierCreditLines];
+};
+
 const createCustomerCredit = (database, user, patient, total) => {
   const currentDate = new Date();
   const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
@@ -599,6 +649,7 @@ const createStocktakeBatch = (database, stocktakeItem, itemBatch) => {
  */
 const createSupplierInvoice = (database, supplier, user) => {
   const { SUPPLIER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+
   const currentDate = new Date();
 
   const invoice = database.create('Transaction', {
@@ -762,6 +813,8 @@ export const createRecord = (database, type, ...args) => {
       return createPaymentLine(database, ...args);
     case 'CustomerCredit':
       return createCustomerCredit(database, ...args);
+    case 'SupplierCredit':
+      return createSupplierCredit(database, ...args);
     case 'CustomerCreditLine':
       return createCustomerCreditLine(database, ...args);
     case 'InsurancePolicy':

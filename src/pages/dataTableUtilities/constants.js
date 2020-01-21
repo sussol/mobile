@@ -97,6 +97,7 @@ export const COLUMN_NAMES = {
   PRICE: 'price',
   QUESTION: 'question',
   REASON: 'reason',
+  RETURN_AMOUNT: 'returnAmount',
   REGISTRATION_CODE: 'registrationCode',
   REMOVE: 'remove',
   REQUIRED_QUANTITY: 'requiredQuantity',

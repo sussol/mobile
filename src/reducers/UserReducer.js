@@ -4,8 +4,9 @@
  */
 
 import { USER_ACTION_TYPES } from '../actions/UserActions';
+import { UIDatabase } from '../database/index';
 
-const initialState = () => ({ currentUser: null });
+const initialState = () => ({ currentUser: UIDatabase.objects('User')[0] });
 
 /**
  * Reducer for User state.

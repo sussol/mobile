@@ -9,6 +9,8 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { UIDatabase } from '../database';
+
 import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
@@ -20,6 +22,7 @@ import { useSyncListener } from '../hooks';
 
 import { ROUTES } from '../navigation/constants';
 import { generalStrings } from '../localization';
+import { SupplierCreditActions } from '../actions/SupplierCreditActions';
 
 /**
  * Renders a mSupply mobile page with Items and their stock levels.
@@ -48,14 +51,18 @@ export const Stock = ({
   onDeselectRow,
   onFilterData,
   onSortColumn,
+  refund,
 }) => {
   //  Refresh data on retrieving item or itembatch records from sync.
   useSyncListener(refreshData, ['Item', 'ItemBatch']);
+
+  console.log('stock refresh');
 
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
       const rowKey = keyExtractor(item);
+      console.log('re-rendering rows');
       return (
         <DataTableRow
           rowData={data[index]}
@@ -64,6 +71,7 @@ export const Stock = ({
           columns={columns}
           rowIndex={index}
           onPress={onSelectRow}
+          getCallback={() => x => refund(x)}
         />
       );
     },
@@ -106,14 +114,19 @@ export const Stock = ({
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) =>
-  getPageDispatchers(dispatch, ownProps, '', ROUTES.STOCK);
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  ...getPageDispatchers(dispatch, ownProps, '', ROUTES.STOCK),
+  refund: rowKey => dispatch(SupplierCreditActions.createFromItem(rowKey)),
+});
 
 const mapStateToProps = state => {
   const { pages } = state;
-
+  console.log('#################################');
+  console.log('map state to props');
+  console.log('#################################');
   const { stock } = pages;
-  return stock;
+  const { data } = stock;
+  return { ...stock, data: [...data] };
 };
 
 export const StockPage = connect(mapStateToProps, mapDispatchToProps)(Stock);
