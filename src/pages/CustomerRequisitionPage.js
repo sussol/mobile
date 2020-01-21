@@ -73,8 +73,7 @@ export const CustomerRequisition = ({
   onFilterData,
   onCloseModal,
   onSortColumn,
-  onShowIndicators,
-  onHideIndicators,
+  onToggleIndicators,
   onSelectIndicator,
   onEditSuppliedQuantity,
   route,
@@ -147,12 +146,12 @@ export const CustomerRequisition = ({
       {
         text: programStrings.items,
         isOn: !showIndicators,
-        onPress: onHideIndicators,
+        onPress: onToggleIndicators,
       },
       {
         text: programStrings.indicators,
         isOn: showIndicators,
-        onPress: onShowIndicators,
+        onPress: onToggleIndicators,
       },
     ],
     [showIndicators]
@@ -347,8 +346,7 @@ CustomerRequisition.propTypes = {
   indicatorCodes: PropTypes.array,
   currentIndicatorCode: PropTypes.string,
   onEditSuppliedQuantity: PropTypes.func.isRequired,
-  onShowIndicators: PropTypes.func.isRequired,
-  onHideIndicators: PropTypes.func.isRequired,
+  onToggleIndicators: PropTypes.func.isRequired,
   onSelectIndicator: PropTypes.func.isRequired,
   route: PropTypes.string.isRequired,
 };

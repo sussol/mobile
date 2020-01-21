@@ -43,8 +43,12 @@ const COLUMNS = {
  * @param {Period} period
  * @return {object}
  */
-const mapIndicatorTableRows = (rows, period) =>
-  rows.map(row => {
+const mapIndicatorTableRows = (rows, period, searchTerm) => {
+  const filteredRows = rows.filtered(
+    'description CONTAINS[c] $0 OR code CONTAINS[c] $0',
+    searchTerm
+  );
+  return filteredRows.map(row => {
     const { id, description, code, indicator } = row;
     const values = indicator.columns.reduce((acc, column) => {
       const { code: key } = column;
@@ -53,20 +57,6 @@ const mapIndicatorTableRows = (rows, period) =>
     }, {});
     return { id, description, code, ...values };
   });
-
-/**
- * Get data table column for indicator row attribute.
- * @param {IndicatorAttribute} column
- * @return {object}
- */
-const mapIndicatorTableColumn = (column, isEditable) => {
-  const tableColumn = isEditable ? COLUMN_INDICATOR_MUTABLE : COLUMN_INDICATOR_IMMUTABLE;
-  const { description: title, code: key } = column;
-  return {
-    ...tableColumn,
-    title,
-    key,
-  };
 };
 
 /**
@@ -76,7 +66,15 @@ const mapIndicatorTableColumn = (column, isEditable) => {
  * @return {Array.<object>}
  */
 const mapIndicatorTableColumns = (indicatorColumns, isEditable) => {
-  const valueColumns = indicatorColumns.map(column => mapIndicatorTableColumn(column, isEditable));
+  const valueColumns = indicatorColumns.map(column => {
+    const tableColumn = isEditable ? COLUMN_INDICATOR_MUTABLE : COLUMN_INDICATOR_IMMUTABLE;
+    const { description: title, code: key } = column;
+    return {
+      ...tableColumn,
+      title,
+      key,
+    };
+  });
   return [COLUMNS.DESCRIPTION, COLUMNS.CODE, ...valueColumns];
 };
 

@@ -15,12 +15,4 @@ import { getPageDispatchers } from './getPageDispatchers';
 
 export { getColumns, getPageInfoColumns, getPageInitialiser, getPageDispatchers };
 
-export {
-  mapIndicatorTableRow,
-  mapIndicatorTableRows,
-  getIndicatorTableRows,
-  mapIndicatorTableColumn,
-  mapIndicatorTableColumns,
-  getIndicatorTableColumns,
-  getIndicatorTableData,
-} from './getIndicatorTableData';
+export { mapIndicatorTableRows, mapIndicatorTableColumns } from './getIndicatorTableData';

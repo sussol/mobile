@@ -777,7 +777,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         id: record.ID,
         code: record.code,
         program: database.getOrCreate('MasterList', record.program_ID),
-        isActive: parseBoolean(record.isActive),
+        isActive: parseBoolean(record.is_active),
       });
       indicator.program.addIndicatorIfUnique(indicator);
       break;
