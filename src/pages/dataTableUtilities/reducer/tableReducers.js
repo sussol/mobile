@@ -4,7 +4,7 @@
  */
 
 import { sortDataBy } from '../../../utilities';
-import { getIndicatorData } from '../getIndicatorTableData';
+
 /**
  * Sorts the current set of data by the provided
  * key and direction in action.
@@ -172,16 +172,13 @@ export const selectIndicator = (state, action) => {
   const { payload } = action;
   const { indicatorCode } = payload;
 
-  const { pageObject, indicators } = state;
-  const { period } = pageObject;
+  const { indicators } = state;
 
-  const [selectedIndicator] = indicators.filter(({ code }) => code === indicatorCode);
-  const { columns: indicatorColumns, rows: indicatorRows } = getIndicatorData(
-    selectedIndicator,
-    period
-  );
+  const [currentIndicator] = indicators.filtered('code == $0', indicatorCode);
+  const indicatorColumns = currentIndicator?.columns;
+  const indicatorRows = currentIndicator?.rows;
 
-  return { ...state, selectedIndicator, indicatorColumns, indicatorRows };
+  return { ...state, currentIndicator, indicatorColumns, indicatorRows };
 };
 
 /**

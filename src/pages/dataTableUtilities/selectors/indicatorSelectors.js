@@ -7,6 +7,11 @@ import { createSelector } from 'reselect';
 import { mapIndicatorTableRows, mapIndicatorTableColumns } from '../getIndicatorTableData';
 import { pageStateSelector, pageObjectSelector } from './pageSelectors';
 
+export const selectIndicators = createSelector(
+  [pageStateSelector],
+  pageState => pageState.indicators
+);
+
 export const selectIndicatorRows = createSelector(
   [pageStateSelector],
   pageState => pageState.indicatorRows
@@ -15,6 +20,25 @@ export const selectIndicatorRows = createSelector(
 export const selectIndicatorColumns = createSelector(
   [pageStateSelector],
   pageState => pageState.indicatorColumns
+);
+
+export const selectCurrentIndicator = createSelector(
+  [pageStateSelector],
+  pageState => pageState.currentIndicator
+);
+
+export const selectCurrentIndicatorCode = createSelector(
+  [selectCurrentIndicator],
+  currentIndicator => currentIndicator.code
+);
+
+export const selectIndicatorCodes = createSelector([selectIndicators], indicators =>
+  indicators.map(indicator => indicator.code)
+);
+
+export const selectIsRequestRequisition = createSelector(
+  [pageObjectSelector],
+  pageObject => pageObject.isRequest
 );
 
 export const selectPeriod = createSelector([pageObjectSelector], pageObject => pageObject.period);
@@ -26,7 +50,7 @@ export const selectSearchTerm = createSelector(
 
 /**
  * Maps indicator rows to data table row objects.
- * @param {Array.<IndicatorAttribute>} indicatorRows
+ * @param {Realm.Results.<IndicatorAttribute>} indicatorRows
  */
 export const selectIndicatorTableRows = createSelector(
   [selectIndicatorRows, selectPeriod, selectSearchTerm],
@@ -35,9 +59,10 @@ export const selectIndicatorTableRows = createSelector(
 
 /**
  * Maps indicator columns to data table column objects.
- * @param {Array.<IndicatorAttribute>} indicatorColumns
+ * @param {Realm.Results.<IndicatorAttribute>} indicatorColumns
  */
 export const selectIndicatorTableColumns = createSelector(
-  [selectIndicatorColumns],
-  indicatorColumns => mapIndicatorTableColumns(indicatorColumns)
+  [selectIndicatorColumns, selectIsRequestRequisition],
+  (indicatorColumns, isRequestRequisition) =>
+    mapIndicatorTableColumns(indicatorColumns, isRequestRequisition)
 );

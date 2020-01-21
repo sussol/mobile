@@ -15,7 +15,11 @@ import Realm from 'realm';
  * @property  {IndicatorAttribute}  row
  * @property  {string}              value
  */
-export class IndicatorValue extends Realm.Object {}
+export class IndicatorValue extends Realm.Object {
+  get indicator() {
+    return this.row.indicator ?? this.column.indicator;
+  }
+}
 
 export default IndicatorValue;
 

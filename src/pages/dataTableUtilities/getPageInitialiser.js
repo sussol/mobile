@@ -77,8 +77,13 @@ export const customerInvoicesInitialiser = () => {
  * @returns  {object}
  */
 const customerRequisitionInitialiser = requisition => {
-  const { items: backingData } = requisition;
+  const { indicators, items: backingData } = requisition;
   const sortedData = backingData.sorted('item.name').slice();
+
+  const usingIndicators = !!indicators?.length;
+  const [currentIndicator = null] = indicators || [];
+  const indicatorRows = currentIndicator?.rows;
+  const indicatorColumns = currentIndicator?.columns;
 
   return {
     pageObject: requisition,
@@ -92,6 +97,12 @@ const customerRequisitionInitialiser = requisition => {
     isAscending: true,
     modalKey: '',
     modalValue: null,
+    usingIndicators,
+    showIndicators: false,
+    currentIndicator,
+    indicatorColumns,
+    indicatorRows,
+    indicators,
     route: ROUTES.CUSTOMER_REQUISITION,
     columns: getColumns(ROUTES.CUSTOMER_REQUISITION),
     getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_REQUISITION),
@@ -365,10 +376,10 @@ const supplierRequisitionInitialiser = requisition => {
       ? sortedData
       : sortedData.filter(item => item.isLessThanThresholdMOS);
 
-  const usingIndicators = !!indicators;
-  const [selectedIndicator = null] = indicators || [];
-  const indicatorRows = selectedIndicator?.rows;
-  const indicatorColumns = selectedIndicator?.columns;
+  const usingIndicators = !!indicators?.length;
+  const [currentIndicator = null] = indicators || [];
+  const indicatorRows = currentIndicator?.rows;
+  const indicatorColumns = currentIndicator?.columns;
 
   return {
     pageObject: requisition,
@@ -385,7 +396,7 @@ const supplierRequisitionInitialiser = requisition => {
     modalValue: null,
     usingIndicators,
     showIndicators: false,
-    selectedIndicator,
+    currentIndicator,
     indicatorColumns,
     indicatorRows,
     indicators,
