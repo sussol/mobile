@@ -20,6 +20,7 @@ export const COLUMN_KEYS = {
   BATCH: 'batch',
   CODE: 'code',
   COMMENT: 'comment',
+  CONFIRM_DATE: 'confirmDate',
   COUNTED_TOTAL_QUANTITY: 'countedTotalQuantity',
   CREATED_DATE: 'createdDate',
   DATE_OF_BIRTH: 'dateOfBirth',
@@ -53,7 +54,9 @@ export const COLUMN_KEYS = {
   STOCK_ON_HAND: 'stockOnHand',
   SUGGESTED_QUANTITY: 'suggestedQuantity',
   SUPPLIED_QUANTITY: 'suppliedQuantity',
+  TOTAL: 'total',
   TOTAL_QUANTITY: 'totalQuantity',
+  TYPE: 'type',
   UNIT: 'unitString',
   VALUE: 'value',
 };
@@ -64,6 +67,7 @@ export const COLUMN_NAMES = {
   BATCHES: 'batches',
   CODE: 'code',
   COMMENT: 'comment',
+  CONFIRM_DATE: 'confirmDate',
   COUNTED_TOTAL_QUANTITY: 'countedTotalQuantity',
   CREATED_DATE: 'createdDate',
   CUSTOMER: 'customer',
@@ -104,7 +108,9 @@ export const COLUMN_NAMES = {
   SUPPLIED_QUANTITY: 'suppliedQuantity',
   SUPPLIER: 'supplier',
   THEIR_STOCK_ON_HAND: 'theirStockOnHand',
+  TOTAL: 'total',
   TOTAL_QUANTITY: 'totalQuantity',
+  TRANSACT_TYPE: 'transactType',
   UNIT: 'unit',
 };
 
