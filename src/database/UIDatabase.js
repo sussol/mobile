@@ -127,6 +127,8 @@ class UIDatabase {
         return results.filtered('type == $0', 'receipt');
       case 'Payment':
         return results.filtered('type == $0', 'payment');
+      case 'CashTransaction':
+        return results.filtered('type == $0 OR type == $1', 'receipt', 'payment');
       case 'CustomerCredit':
         return results.filtered('type == $0', 'customer_credit');
       case 'Policy':
