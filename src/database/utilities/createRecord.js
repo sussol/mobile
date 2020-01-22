@@ -270,7 +270,7 @@ const createSupplierCredit = (database, user, supplierId, returnAmount) => {
     confirmDate: currentDate,
     type: 'supplier_credit',
     status: 'finalised',
-    comment: 'pop21',
+    comment: '',
     otherParty: database.get('Name', supplierId),
     total: returnAmount,
     enteredBy: user,
