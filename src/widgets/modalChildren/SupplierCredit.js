@@ -27,7 +27,7 @@ const SupplierCreditComponent = ({
   onEditReturnAmount,
   onSave,
 }) => {
-  const columns = React.useMemo(() => getColumns('supplierRefund'), []);
+  const columns = React.useMemo(() => getColumns('supplierCredit'), []);
 
   const renderHeader = React.useCallback(
     () => (
