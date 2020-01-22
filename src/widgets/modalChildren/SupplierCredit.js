@@ -80,7 +80,7 @@ const SupplierCreditComponent = ({
 };
 
 const mapStateToProps = state => {
-  const { sortKey, isAscending } = selectSortFields;
+  const { sortKey, isAscending } = selectSortFields(state);
   const batches = selectSortedBatches(state);
 
   return { sortKey, isAscending, batches };

@@ -41,7 +41,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.BATCH_NAME,
     COLUMN_NAMES.OTHER_PARTY_NAME,
     COLUMN_NAMES.TOTAL_QUANTITY,
-    COLUMN_NAMES.REFUND_AMOUNT,
+    COLUMN_NAMES.RETURN_AMOUNT,
   ],
   prescriber: [
     COLUMN_NAMES.REGISTRATION_CODE,
@@ -167,7 +167,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.CODE,
     COLUMN_NAMES.NAME,
     COLUMN_NAMES.TOTAL_QUANTITY,
-    COLUMN_NAMES.SELECT,
+    COLUMN_NAMES.RETURN,
   ],
   [ROUTES.PRESCRIPTIONS]: [
     COLUMN_NAMES.INVOICE_NUMBER,
@@ -388,10 +388,10 @@ const COLUMNS = () => ({
 
   // NUMERIC COLUMNS
 
-  [COLUMN_NAMES.REFUND_AMOUNT]: {
+  [COLUMN_NAMES.RETURN_AMOUNT]: {
     type: COLUMN_TYPES.EDITABLE_NUMERIC,
     key: COLUMN_KEYS.RETURN_AMOUNT,
-    title: 'refund amount',
+    title: 'RETURN AMOUNT',
     alignText: 'right',
     sortable: true,
     editable: true,
@@ -577,6 +577,16 @@ const COLUMNS = () => ({
   },
 
   // ICON COLUMNS
+
+  [COLUMN_NAMES.RETURN]: {
+    type: COLUMN_TYPES.ICON,
+    key: COLUMN_KEYS.RETURN,
+    title: 'RETURN',
+    sortable: false,
+    alignText: 'center',
+    editable: false,
+    icon: 'chevron_right',
+  },
 
   [COLUMN_NAMES.BATCHES]: {
     type: COLUMN_TYPES.ICON,
