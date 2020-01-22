@@ -7,26 +7,23 @@ import { SUPPLIER_CREDIT_ACTIONS } from '../actions/SupplierCreditActions';
 import { UIDatabase } from '../database/index';
 import { parsePositiveInteger } from '../utilities';
 
-const toBatchLookup = batches =>
-  batches.reduce((acc, batch) => {
-    const { id } = batch;
-    return { ...acc, [id]: batch };
-  }, {});
-
 const mapBatchToObject = batches =>
   batches.map(batch => ({
     returnAmount: 0,
+    id: batch.id,
     totalQuantity: batch.totalQuantity,
     itemBatch: batch,
+    otherPartyName: batch.otherPartyName,
+    batch: batch.batch,
     costPrice: batch.costPrice,
   }));
 
 const initialState = () => ({
   batches: [],
-  toBatchLookup: {},
   open: false,
   sortKey: 'otherPartyName',
   isAscending: true,
+  item: null,
 });
 
 export const SupplierCreditReducer = (state = initialState(), action) => {
@@ -62,25 +59,7 @@ export const SupplierCreditReducer = (state = initialState(), action) => {
         ...state,
         open: true,
         batches: mapBatchToObject(batches),
-        allBatches: toBatchLookup(batches),
-      };
-    }
-
-    case SUPPLIER_CREDIT_ACTIONS.CREATE_FROM_TRANSACTION: {
-      const { payload } = action;
-      const { transactionId } = payload;
-
-      const batches = UIDatabase.objects('ItemBatch').filtered(
-        `${UIDatabase.get('Transaction', transactionId)
-          .getTransactionBatches.map(({ itemBatch }) => `'${itemBatch.id}'`)
-          .join(' OR ')} AND numberOfPacks > 0`
-      );
-
-      return {
-        ...state,
-        open: true,
-        batches: mapBatchToObject(batches),
-        allBatches: toBatchLookup(batches),
+        item: UIDatabase.get('Item', itemId),
       };
     }
 

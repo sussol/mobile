@@ -39,7 +39,7 @@ const PAGE_COLUMN_WIDTHS = {
 const PAGE_COLUMNS = {
   supplierRefund: [
     COLUMN_NAMES.BATCH_NAME,
-    COLUMN_NAMES.TRANSACTION_BATCH_OTHER_PARTY,
+    COLUMN_NAMES.OTHER_PARTY_NAME,
     COLUMN_NAMES.TOTAL_QUANTITY,
     COLUMN_NAMES.REFUND_AMOUNT,
   ],
@@ -250,15 +250,14 @@ const COLUMNS = () => ({
 
   // STRING COLUMNS
 
-  [COLUMN_NAMES.TRANSACTION_BATCH_OTHER_PARTY]: {
+  [COLUMN_NAMES.OTHER_PARTY_NAME]: {
     type: COLUMN_TYPES.STRING,
-    key: COLUMN_KEYS.TRANSACTION_BATCH_OTHER_PARTY,
+    key: COLUMN_KEYS.OTHER_PARTY_NAME,
     title: tableStrings.supplier,
-    alignText: 'right',
+    alignText: 'left',
     sortable: true,
     editable: false,
   },
-
   [COLUMN_NAMES.PRESCRIBER]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.PRESCRIBER,

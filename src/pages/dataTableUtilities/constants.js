@@ -56,7 +56,6 @@ export const COLUMN_KEYS = {
   SUGGESTED_QUANTITY: 'suggestedQuantity',
   SUPPLIED_QUANTITY: 'suppliedQuantity',
   TOTAL_QUANTITY: 'totalQuantity',
-  TRANSACTION_BATCH_OTHER_PARTY: 'otherPartyName',
   UNIT: 'unitString',
   VALUE: 'value',
 };
@@ -90,6 +89,7 @@ export const COLUMN_NAMES = {
   NUMBER_OF_ITEMS: 'numberOfItems',
   NUMBER_OF_PACKS: 'numberOfPacks',
   OUR_STOCK_ON_HAND: 'ourStockOnHand',
+  OTHER_PARTY_NAME: 'otherPartyName',
   PATIENT_EDIT: 'patientEdit',
   PATIENT_HISTORY: 'patientHistory',
   PRESCRIBER: 'prescriber',
@@ -110,7 +110,6 @@ export const COLUMN_NAMES = {
   SUPPLIED_QUANTITY: 'suppliedQuantity',
   SUPPLIER: 'supplier',
   THEIR_STOCK_ON_HAND: 'theirStockOnHand',
-  TRANSACTION_BATCH_OTHER_PARTY: 'transactionBatchOtherParty',
   TOTAL_QUANTITY: 'totalQuantity',
   UNIT: 'unit',
 };
