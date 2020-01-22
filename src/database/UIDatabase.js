@@ -19,6 +19,7 @@ const translateToCoreDatabaseType = type => {
     case 'Receipt':
     case 'CustomerCredit':
     case 'Payment':
+    case 'CashTransaction':
       return 'Transaction';
     case 'Customer':
     case 'Supplier':
