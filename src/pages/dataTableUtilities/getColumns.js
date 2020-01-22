@@ -264,6 +264,14 @@ const COLUMNS = () => ({
     editable: false,
     alignText: 'left',
   },
+  [COLUMN_NAMES.NAME]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.NAME,
+    title: tableStrings.name,
+    alignText: 'left',
+    sortable: true,
+    editable: false,
+  },
   [COLUMN_NAMES.PAYMENT_NAME]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.OTHER_PARTY_NAME,
