@@ -27,10 +27,10 @@ const create = () => (dispatch, getState) => {
 
   // Only work with the batches whose return amount is greater than 0.
   const batchesToReturn = batches.reduce(
-    (acc, itemBatch) => (batch.returnAmount ? [...acc, itemBatch] : acc),
+    (acc, itemBatch) => (itemBatch.returnAmount ? [...acc, itemBatch] : acc),
     []
   );
-  console.log(batchesToReturn.length);
+
   // Group the batches with a return amount by supplier to make a credit for each
   // supplier grouping { supplierId1: [batch1, batch2, ... batchn], supplierId2: [...], ...}
   const batchesGroupedBySupplier = batchesToReturn.reduce((groupings, itemBatch) => {
