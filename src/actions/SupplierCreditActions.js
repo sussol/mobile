@@ -55,7 +55,7 @@ const create = () => (dispatch, getState) => {
         returnSum
       );
 
-      batches.forEach(itemBatch =>
+      suppliersBatches.forEach(itemBatch =>
         createRecord(
           UIDatabase,
           'SupplierCreditLine',
