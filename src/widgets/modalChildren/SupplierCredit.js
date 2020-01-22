@@ -18,6 +18,7 @@ import { SupplierCreditActions } from '../../actions/SupplierCreditActions';
 import { selectSortFields, selectSortedBatches } from '../../selectors/supplierCredit';
 
 import { WHITE } from '../../globalStyles';
+import { modalStrings } from '../../localization';
 
 const SupplierCreditComponent = ({
   onSortColumn,
@@ -72,7 +73,7 @@ const SupplierCreditComponent = ({
         columns={columns}
       />
       <FlexRow flex={1} alignItems="flex-end" justifyContent="flex-end">
-        <PageButton text="OK" onPress={onSave} />
+        <PageButton text={modalStrings.confirm} onPress={onSave} />
       </FlexRow>
     </View>
   );
