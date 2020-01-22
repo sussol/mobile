@@ -725,6 +725,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         enteredBy,
         otherParty,
         linkedRequisition,
+        option: database.getOrCreate('Options', record.optionID),
+        total: parseFloat(record.total),
       };
       const transaction = database.update(recordType, internalRecord);
       if (linkedRequisition) {
