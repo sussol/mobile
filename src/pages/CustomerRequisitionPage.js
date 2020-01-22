@@ -14,6 +14,7 @@ import { MODAL_KEYS } from '../utilities';
 
 import { DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+import { DATA_TABLE_DEFAULTS } from '../widgets/DataTable/constants';
 import {
   DataTablePageView,
   DropDown,
@@ -273,6 +274,11 @@ export const CustomerRequisition = ({
         keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}
         columns={columns}
+        windowSize={
+          showIndicators
+            ? DATA_TABLE_DEFAULTS.WINDOW_SIZE_SMALL
+            : DATA_TABLE_DEFAULTS.WINDOW_SIZE_MEDIUM
+        }
       />
       <DataTablePageModal
         fullScreen={false}

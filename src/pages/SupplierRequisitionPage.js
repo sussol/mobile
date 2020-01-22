@@ -14,6 +14,7 @@ import { MODAL_KEYS } from '../utilities';
 import { DataTablePageModal } from '../widgets/modals';
 import { BottomConfirmModal } from '../widgets/bottomModals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+import { DATA_TABLE_DEFAULTS } from '../widgets/DataTable/constants';
 import {
   DataTablePageView,
   DropDown,
@@ -30,6 +31,7 @@ import {
   selectIndicatorTableRows,
 } from './dataTableUtilities/selectors/indicatorSelectors';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
+
 import { ROUTES } from '../navigation/constants';
 
 import { useRecordListener } from '../hooks';
@@ -326,6 +328,11 @@ const SupplierRequisition = ({
         keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}
         columns={columns}
+        windowSize={
+          showIndicators
+            ? DATA_TABLE_DEFAULTS.WINDOW_SIZE_SMALL
+            : DATA_TABLE_DEFAULTS.WINDOW_SIZE_MEDIUM
+        }
       />
       <BottomConfirmModal
         isOpen={hasSelection}
