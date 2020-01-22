@@ -76,8 +76,6 @@ export const NewConfirmModal = props => {
   );
 };
 
-export default NewConfirmModal;
-
 /* eslint-disable react/require-default-props */
 NewConfirmModal.propTypes = {
   style: ViewPropTypes.style,
