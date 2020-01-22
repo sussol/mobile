@@ -248,11 +248,12 @@ const createSupplierCreditLine = (database, supplierCredit, itemBatch, returnAmo
   const transactionBatch = createTransactionBatch(database, transactionItem, itemBatch, false);
 
   // Adjust the TransactionBatch total to the negative amount of the original cost.
-  transactionBatch.total = -itemBatch.sellPrice * returnAmount;
+  transactionBatch.total = -transactionBatch.sellPrice * returnAmount;
+  transactionBatch.numberOfPacks = returnAmount;
+  database.save('TransactionBatch', transactionBatch);
 
   // Adjust the quantity of the underlying ItemBatch.
   itemBatch.totalQuantity -= returnAmount;
-  database.save('TransactionBatch', transactionBatch);
   database.save('ItemBatch', itemBatch);
 };
 
@@ -269,7 +270,7 @@ const createSupplierCredit = (database, user, supplierId, returnAmount) => {
     confirmDate: currentDate,
     type: 'supplier_credit',
     status: 'finalised',
-    comment: 'pop1',
+    comment: 'pop21',
     otherParty: database.get('Name', supplierId),
     total: returnAmount,
     enteredBy: user,
