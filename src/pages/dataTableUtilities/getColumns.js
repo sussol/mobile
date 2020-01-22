@@ -196,7 +196,7 @@ const PAGE_COLUMNS = {
   ],
   cashRegister: [
     COLUMN_NAMES.INVOICE_NUMBER,
-    COLUMN_NAMES.NAME,
+    COLUMN_NAMES.PAYMENT_NAME,
     COLUMN_NAMES.TRANSACT_TYPE,
     COLUMN_NAMES.OPTION,
     COLUMN_NAMES.COMMENT,
@@ -264,7 +264,7 @@ const COLUMNS = () => ({
     editable: false,
     alignText: 'left',
   },
-  [COLUMN_NAMES.NAME]: {
+  [COLUMN_NAMES.PAYMENT_NAME]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.OTHER_PARTY_NAME,
     title: tableStrings.name,
