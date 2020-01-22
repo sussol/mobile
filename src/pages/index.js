@@ -11,6 +11,7 @@ import { CustomerInvoicePage } from './CustomerInvoicePage';
 import { CustomerInvoicesPage } from './CustomerInvoicesPage';
 import { CustomerRequisitionPage } from './CustomerRequisitionPage';
 import { CustomerRequisitionsPage } from './CustomerRequisitionsPage';
+import { CashRegisterPage } from './CashRegisterPage';
 import { DashboardPage } from './DashboardPage';
 import { MenuPage } from './MenuPage';
 import { PageContainer } from './PageContainer';
@@ -75,6 +76,9 @@ export const PAGES = {
   [ROUTES.STOCKTAKE_EDITOR_WITH_REASONS]: props => (
     <PageContainer page={StocktakeEditPage} {...props} />
   ),
+
+  [ROUTES.CASH_REGISTER]: props => <PageContainer page={CashRegisterPage} {...props} />,
+
   [ROUTES.DISPENSARY]: props => <PageContainer page={DispensingPage} {...props} />,
   [ROUTES.PRESCRIPTION]: props => <PageContainer page={PrescriptionPage} {...props} />,
 

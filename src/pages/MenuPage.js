@@ -25,6 +25,7 @@ import {
   gotoStock,
   gotoStocktakes,
   gotoRealmExplorer,
+  goToCashRegister,
   gotoDispensingPage,
   gotoSettings,
   gotoDashboard,
@@ -244,7 +245,7 @@ const mapDispatchToProps = dispatch => ({
   toSettings: () => dispatch(gotoSettings()),
   toDispensary: () => dispatch(gotoDispensingPage()),
   toDashboard: () => dispatch(gotoDashboard()),
-  toCashRegister: () => null,
+  toCashRegister: () => dispatch(goToCashRegister()),
   logout: () => dispatch(UserActions.logout()),
 });
 
