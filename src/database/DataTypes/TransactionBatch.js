@@ -114,6 +114,7 @@ export class TransactionBatch extends Realm.Object {
     }
     // Must be a supplier invoice.
     if (!this.costPrice) return 0;
+    if (this.transaction?.type === 'supplier_credit') return -this.costPrice * this.numberOfPacks;
     return this.costPrice * this.numberOfPacks;
   }
 
