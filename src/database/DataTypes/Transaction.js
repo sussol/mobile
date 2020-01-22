@@ -153,6 +153,13 @@ export class Transaction extends Realm.Object {
   }
 
   /**
+   * @return {String} This transaction reason title, or an empty string.
+   */
+  get reasonTitle() {
+    return (this.option && this.option.title) || '';
+  }
+
+  /**
    * Set other party to this transaction.
    *
    * @param  {Name}  name
