@@ -40,7 +40,6 @@ export const SupplierCreditReducer = (state = initialState(), action) => {
         ...batches[rowToEditIndex],
         returnAmount: parsePositiveInteger(returnAmount),
       };
-
       batches[rowToEditIndex] = newRow;
 
       return { ...state, batches: [...batches] };

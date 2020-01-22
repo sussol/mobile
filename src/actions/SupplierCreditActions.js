@@ -10,7 +10,6 @@ import { ROUTES } from '../navigation/constants';
 
 export const SUPPLIER_CREDIT_ACTIONS = {
   CREATE_FROM_ITEM: 'SupplierCredit/createFromItem',
-  CREATE_FROM_TRANSACTION: 'SupplierCredit/createFromTransaction',
   CLOSE: 'SupplierCredit/close',
   SORT: 'SupplierCredit/sort',
   EDIT_RETURN_AMOUNT: 'SupplierCredit/editReturnAmount',
@@ -84,14 +83,8 @@ const createFromItem = itemId => ({
   payload: { itemId },
 });
 
-const createFromTransaction = transaction => ({
-  type: SUPPLIER_CREDIT_ACTIONS.CREATE_FROM_TRANSACTION,
-  payload: { transaction },
-});
-
 export const SupplierCreditActions = {
   createFromItem,
-  createFromTransaction,
   close,
   sort,
   editReturnAmount,
