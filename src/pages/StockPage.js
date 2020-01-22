@@ -53,6 +53,8 @@ export const Stock = ({
   //  Refresh data on retrieving item or itembatch records from sync.
   useSyncListener(refreshData, ['Item', 'ItemBatch']);
 
+  const refundCallback = React.useCallback(() => itemId => refund(itemId), []);
+
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
@@ -65,7 +67,7 @@ export const Stock = ({
           columns={columns}
           rowIndex={index}
           onPress={onSelectRow}
-          getCallback={() => x => refund(x)}
+          getCallback={refundCallback}
         />
       );
     },
