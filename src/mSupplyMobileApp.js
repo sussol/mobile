@@ -338,6 +338,7 @@ MSupplyMobileAppContainer.defaultProps = {
   currentUser: null,
   currentTitle: '',
   finaliseItem: null,
+  creditItemName: '',
 };
 
 MSupplyMobileAppContainer.propTypes = {
@@ -352,8 +353,8 @@ MSupplyMobileAppContainer.propTypes = {
   openFinaliseModal: PropTypes.func.isRequired,
   closeFinaliseModal: PropTypes.func.isRequired,
   closeSupplierCreditModal: PropTypes.func.isRequired,
-  supplierCreditModalOpen: PropTypes.func.isRequired,
-  creditItemName: PropTypes.string.isRequired,
+  supplierCreditModalOpen: PropTypes.bool.isRequired,
+  creditItemName: PropTypes.string,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MSupplyMobileAppContainer);
