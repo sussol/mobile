@@ -22,7 +22,6 @@ const DataTablePageReducerLookup = {
 
 export const DataTablePageReducer = (state, action) => {
   const { type } = action;
-  console.log(action, !DataTablePageReducerLookup[type]);
   if (!DataTablePageReducerLookup[type]) return state;
   return DataTablePageReducerLookup[type](state, action);
 };
