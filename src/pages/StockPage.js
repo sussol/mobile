@@ -53,13 +53,10 @@ export const Stock = ({
   //  Refresh data on retrieving item or itembatch records from sync.
   useSyncListener(refreshData, ['Item', 'ItemBatch']);
 
-  console.log('stock refresh');
-
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
       const rowKey = keyExtractor(item);
-      console.log('re-rendering rows');
       return (
         <DataTableRow
           rowData={data[index]}

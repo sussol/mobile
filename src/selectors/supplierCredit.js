@@ -29,3 +29,9 @@ export const selectSortedBatches = createSelector(
   [selectSortKey, selectIsAscending, selectCreditableBatches],
   (sortKey, isAscending, batches) => sortDataBy(batches, sortKey, isAscending)
 );
+
+export const selectItemName = ({ supplierCredit }) => {
+  const { item } = supplierCredit;
+  const { name } = item || {};
+  return name;
+};

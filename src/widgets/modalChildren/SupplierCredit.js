@@ -11,14 +11,13 @@ import { connect } from 'react-redux';
 
 import { getColumns, recordKeyExtractor, getItemLayout } from '../../pages/dataTableUtilities';
 import { DataTable, DataTableRow, DataTableHeaderRow } from '../DataTable';
-
-import { WHITE } from '../../globalStyles';
+import { FlexRow } from '../FlexRow';
+import { PageButton } from '../PageButton';
 
 import { SupplierCreditActions } from '../../actions/SupplierCreditActions';
 import { selectSortFields, selectSortedBatches } from '../../selectors/supplierCredit';
-import { FlexView } from '../FlexView';
-import PageButton from '../PageButton';
-import { FlexRow } from '../FlexRow';
+
+import { WHITE } from '../../globalStyles';
 
 const SupplierCreditComponent = ({
   onSortColumn,
@@ -104,4 +103,6 @@ SupplierCreditComponent.propTypes = {
   onSortColumn: PropTypes.func.isRequired,
   isAscending: PropTypes.bool.isRequired,
   batches: PropTypes.array.isRequired,
+  onEditReturnAmount: PropTypes.func.isRequired,
+  onSave: PropTypes.func.isRequired,
 };
