@@ -19,6 +19,7 @@ import ModalContainer from './ModalContainer';
 
 import { LANGUAGE_NAMES, LANGUAGE_CHOICE, authStrings, navStrings } from '../../localization';
 import { getModalTitle, MODAL_KEYS } from '../../utilities/index';
+import { setCurrencyLocalisation } from '../../localization/currency';
 
 export class LoginModal extends React.Component {
   constructor(props) {
@@ -115,6 +116,7 @@ export class LoginModal extends React.Component {
   onSelectLanguage = ({ item }) => {
     const { settings } = this.props;
     settings.set(SETTINGS_KEYS.CURRENT_LANGUAGE, item.code);
+    setCurrencyLocalisation(item.code);
     this.setState({ isLanguageModalOpen: false });
   };
 
