@@ -7,10 +7,9 @@
 import Realm from 'realm';
 
 import { parsePositiveInteger } from '../../utilities';
-
 import { UIDatabase } from '..';
-
 import { SETTINGS_KEYS } from '../../settings';
+import { createRecord } from '../utilities';
 
 /**
  * A requisition item (i.e. a requisition line).
@@ -164,8 +163,19 @@ export class RequisitionItem extends Realm.Object {
       throw new Error('Cannot set supplied quantity for Finalised or Request Requisition');
     }
 
-    const transactionItem = this.linkedTransactionItem;
-    if (!transactionItem) return;
+    let transactionItem = this.linkedTransactionItem;
+
+    // If there's no transactionItem - something has gone wrong - create one.
+    if (!transactionItem) {
+      database.write(() => {
+        transactionItem = createRecord(
+          database,
+          'TransactionItem',
+          this.requisition.linkedTransaction,
+          this.item
+        );
+      });
+    }
 
     // Update quantity of associated transaction item.
     transactionItem.setTotalQuantity(database, parsePositiveInteger(newValue));
