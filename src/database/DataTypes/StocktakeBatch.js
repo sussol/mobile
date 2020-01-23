@@ -1,3 +1,4 @@
+import currency from 'currency.js';
 import Realm from 'realm';
 
 import { createRecord } from '../utilities';
@@ -266,6 +267,14 @@ export class StocktakeBatch extends Realm.Object {
    */
   toString() {
     return `Stocktake batch representing ${this.itemBatch}`;
+  }
+
+  get costPriceString() {
+    return currency(this.costPrice || 0, { formatWithSymbol: true }).format();
+  }
+
+  get sellPriceString() {
+    return currency(this.sellPrice, { formatWithSymbol: true }).format();
   }
 }
 
