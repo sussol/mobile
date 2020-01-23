@@ -2,6 +2,7 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
+import currency from 'currency.js';
 
 import { UIDatabase } from '../../../database';
 import { parsePositiveInteger, MODAL_KEYS } from '../../../utilities';
@@ -50,6 +51,25 @@ export const editBatchName = (value, rowKey, objectType, route) => (dispatch, ge
     UIDatabase.write(() => UIDatabase.update(objectType, { ...objectToEdit, batch: value }));
 
     dispatch(refreshRow(rowKey, route));
+  }
+};
+
+export const editSellPrice = (value, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = pageStateSelector(getState());
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+  const objectDataType = objectToEdit.stocktake ? 'StocktakeBatch' : 'TransactionBatch';
+
+  const { itemBatch, sellPrice } = objectToEdit;
+
+  const valueAsCurrency = currency(value);
+
+  if (valueAsCurrency.value !== sellPrice) {
+    UIDatabase.write(() => {
+      UIDatabase.update(objectDataType, { ...objectToEdit, sellPrice: valueAsCurrency.value });
+      UIDatabase.update('ItemBatch', { ...itemBatch, sellPrice: valueAsCurrency.value });
+      dispatch(refreshRow(rowKey, route));
+    });
   }
 };
 
@@ -299,4 +319,5 @@ export const CellActionsLookup = {
   editStocktakeBatchName,
   editCountedQuantityWithReason,
   editStocktakeBatchCountedQuantityWithReason,
+  editSellPrice,
 };
