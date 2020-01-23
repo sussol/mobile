@@ -1,5 +1,6 @@
 import Realm from 'realm';
-import currency from 'currency.js';
+
+import currency from '../../localization/currency';
 
 /**
  * A transaction batch.

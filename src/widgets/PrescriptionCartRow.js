@@ -8,7 +8,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import currency from 'currency.js';
+import currency from '../localization/currency';
 
 import { CircleButton } from './CircleButton';
 import { DropdownRow } from './DropdownRow';

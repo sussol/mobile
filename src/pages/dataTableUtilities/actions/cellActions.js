@@ -2,8 +2,8 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
-import currency from 'currency.js';
 
+import currency from '../../../localization/currency';
 import { UIDatabase } from '../../../database';
 import { parsePositiveInteger, MODAL_KEYS } from '../../../utilities';
 import {

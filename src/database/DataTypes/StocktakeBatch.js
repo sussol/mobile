@@ -1,6 +1,6 @@
-import currency from 'currency.js';
 import Realm from 'realm';
 
+import currency from '../../localization/currency';
 import { createRecord } from '../utilities';
 
 /**
