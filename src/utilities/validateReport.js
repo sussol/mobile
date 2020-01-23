@@ -24,6 +24,7 @@ const tableReportSchema = {
         },
         formatters: {
           type: 'array',
+          items: { type: 'string' },
         },
       },
       required: ['header', 'rows', 'formatters'],
@@ -40,20 +41,26 @@ const otherReportSchema = {
     data: {
       type: 'array',
       items: {
-        label: { type: 'string' },
-        values: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              x: { type: ['string', 'number'] },
-              y: { type: ['string', 'number'] },
-            },
-            required: ['x', 'y'],
+        type: 'object',
+        properties: {
+          label: { type: 'string' },
+          values: {
+            type: 'array',
+            items: { $ref: '#/definitions/plotValues' },
           },
         },
         required: ['label', 'values'],
       },
+    },
+  },
+  definitions: {
+    plotValues: {
+      type: 'object',
+      properties: {
+        x: { type: ['string', 'number'] },
+        y: { type: ['string', 'number'] },
+      },
+      required: ['x', 'y'],
     },
   },
   required: ['name', 'data'],
