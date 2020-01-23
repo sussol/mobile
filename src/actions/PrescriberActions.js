@@ -4,8 +4,6 @@
  */
 
 import { UIDatabase, generateUUID } from '../database';
-import { PageActions } from '../pages/dataTableUtilities/actions';
-import { ROUTES } from '../navigation/constants';
 
 export const PRESCRIBER_ACTIONS = {
   EDIT: 'Prescriber/edit',
@@ -52,7 +50,6 @@ const updatePrescriber = completedForm => (dispatch, getState) => {
   }
 
   dispatch(closeModal());
-  dispatch(PageActions.refreshData(ROUTES.DISPENSARY));
 };
 
 export const PrescriberActions = {
