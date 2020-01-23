@@ -44,14 +44,12 @@ export const editBatchName = (value, rowKey, objectType, route) => (dispatch, ge
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
-  if (objectToEdit) {
-    const { batch } = objectToEdit;
+  const { batch } = objectToEdit;
 
-    if (value !== batch) {
-      UIDatabase.write(() => UIDatabase.update(objectType, { ...objectToEdit, batch: value }));
+  if (value !== batch) {
+    UIDatabase.write(() => UIDatabase.update(objectType, { ...objectToEdit, batch: value }));
 
-      dispatch(refreshRow(rowKey, route));
-    }
+    dispatch(refreshRow(rowKey, route));
   }
 };
 
@@ -83,14 +81,12 @@ export const editExpiryDate = (newDate, rowKey, objectType, route) => (dispatch,
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
-  if (objectToEdit) {
-    UIDatabase.write(() => {
-      objectToEdit.expiryDate = newDate;
-      UIDatabase.save(objectType, objectToEdit);
-    });
+  UIDatabase.write(() => {
+    objectToEdit.expiryDate = newDate;
+    UIDatabase.save(objectType, objectToEdit);
+  });
 
-    dispatch(refreshRow(rowKey, route));
-  }
+  dispatch(refreshRow(rowKey, route));
 };
 
 /**
@@ -113,13 +109,11 @@ export const editTotalQuantity = (value, rowKey, route) => (dispatch, getState) 
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
-  if (objectToEdit) {
-    UIDatabase.write(() => {
-      objectToEdit.setTotalQuantity(UIDatabase, parsePositiveInteger(value));
-    });
+  UIDatabase.write(() => {
+    objectToEdit.setTotalQuantity(UIDatabase, parsePositiveInteger(value));
+  });
 
-    dispatch(refreshRow(rowKey, route));
-  }
+  dispatch(refreshRow(rowKey, route));
 };
 
 /**
@@ -134,13 +128,9 @@ export const editSuppliedQuantity = (value, rowKey, route) => (dispatch, getStat
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
-  if (objectToEdit) {
-    UIDatabase.write(() =>
-      objectToEdit.setSuppliedQuantity(UIDatabase, parsePositiveInteger(value))
-    );
+  UIDatabase.write(() => objectToEdit.setSuppliedQuantity(UIDatabase, parsePositiveInteger(value)));
 
-    dispatch(refreshRow(rowKey, route));
-  }
+  dispatch(refreshRow(rowKey, route));
 };
 
 /**
@@ -155,14 +145,12 @@ export const editRequiredQuantity = (value, rowKey, objectType, route) => (dispa
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
-  if (objectToEdit) {
-    UIDatabase.write(() => {
-      objectToEdit.requiredQuantity = parsePositiveInteger(value);
-      UIDatabase.save(objectType, objectToEdit);
-    });
+  UIDatabase.write(() => {
+    objectToEdit.requiredQuantity = parsePositiveInteger(value);
+    UIDatabase.save(objectType, objectToEdit);
+  });
 
-    dispatch(refreshRow(rowKey, route));
-  }
+  dispatch(refreshRow(rowKey, route));
 };
 
 /**
@@ -182,11 +170,9 @@ export const editCountedQuantity = (value, rowKey, route) => (dispatch, getState
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
-  if (objectToEdit) {
-    objectToEdit.setCountedTotalQuantity(UIDatabase, parsePositiveInteger(value));
+  objectToEdit.setCountedTotalQuantity(UIDatabase, parsePositiveInteger(value));
 
-    dispatch(refreshRow(rowKey, route));
-  }
+  dispatch(refreshRow(rowKey, route));
 };
 
 /**
@@ -200,14 +186,12 @@ export const editStocktakeBatchCountedQuantity = (value, rowKey, route) => (disp
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
-  if (objectToEdit) {
-    UIDatabase.write(() => {
-      objectToEdit.countedTotalQuantity = parsePositiveInteger(value);
-      UIDatabase.save('StocktakeBatch', UIDatabase);
-    });
+  UIDatabase.write(() => {
+    objectToEdit.countedTotalQuantity = parsePositiveInteger(value);
+    UIDatabase.save('StocktakeBatch', UIDatabase);
+  });
 
-    dispatch(refreshRow(rowKey, route));
-  }
+  dispatch(refreshRow(rowKey, route));
 };
 
 /**
@@ -220,11 +204,9 @@ export const removeReason = (rowKey, route) => (dispatch, getState) => {
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
-  if (objectToEdit) {
-    objectToEdit.removeReason(UIDatabase);
+  objectToEdit.removeReason(UIDatabase);
 
-    dispatch(refreshRow(rowKey, route));
-  }
+  dispatch(refreshRow(rowKey, route));
 };
 
 /**
