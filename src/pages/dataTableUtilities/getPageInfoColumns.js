@@ -53,6 +53,8 @@ const PER_PAGE_INFO_COLUMNS = {
   ],
   stocktakeBatchEditModal: [['itemName']],
   stocktakeBatchEditModalWithReasons: [['itemName']],
+  stocktakeBatchEditModalWithPrices: [['itemName']],
+  stocktakeBatchEditModalWithReasonsAndPrices: [['itemName']],
 };
 
 const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({

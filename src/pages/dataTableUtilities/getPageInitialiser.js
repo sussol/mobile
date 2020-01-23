@@ -435,6 +435,8 @@ const pageInitialisers = {
   stock: stockInitialiser,
   stocktakeBatchEditModal: stocktakeBatchInitialiser,
   stocktakeBatchEditModalWithReasons: stocktakeBatchInitialiser,
+  stocktakeBatchEditModalWithPrices: stocktakeBatchInitialiser,
+  stocktakeBatchEditModalWithReasonsAndPrices: stocktakeBatchInitialiser,
   stocktakeEditor: stocktakeEditorInitialiser,
   stocktakeEditorWithReasons: stocktakeEditorWithReasonsInitialiser,
   stocktakeManager: stocktakeManagerInitialiser,
