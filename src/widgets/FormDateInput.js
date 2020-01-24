@@ -110,7 +110,7 @@ export const FormDateInput = React.forwardRef(
               onChange={onChangeDates}
               mode="date"
               display="spinner"
-              value={pickerSeedValue}
+              value={pickerSeedValue.toDate()}
             />
           )}
           <FormInvalidMessage isValid={isValid} message={invalidMessage} />

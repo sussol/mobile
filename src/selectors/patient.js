@@ -3,8 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import currency from 'currency.js';
-
+import currency from '../localization/currency';
 import { UIDatabase } from '../database';
 import { sortDataBy } from '../utilities';
 

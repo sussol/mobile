@@ -28,6 +28,7 @@ export const ROUTES = {
   SUPPLIER_INVOICES: 'supplierInvoices',
 
   STOCK: 'stock',
+  STOCK_WITH_CREDITS: 'stockWithCredits',
 
   STOCKTAKES: 'stocktakes',
   STOCKTAKE_MANAGER: 'stocktakeManager',
