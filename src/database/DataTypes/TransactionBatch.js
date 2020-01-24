@@ -145,7 +145,7 @@ export class TransactionBatch extends Realm.Object {
   }
 
   get otherPartyName() {
-    return `${this.transaction?.otherParty?.name}`;
+    return this.transaction?.otherParty?.name || '';
   }
 }
 

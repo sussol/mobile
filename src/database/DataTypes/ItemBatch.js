@@ -22,7 +22,7 @@ import Realm from 'realm';
  */
 export class ItemBatch extends Realm.Object {
   get otherPartyName() {
-    return `${this.supplier?.name || ''}`;
+    return this.supplier?.name || '';
   }
 
   /**
