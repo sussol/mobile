@@ -1,5 +1,4 @@
 /* eslint-disable react/forbid-prop-types */
-/* eslint-disable import/prefer-default-export */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -8,7 +7,7 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import { connect } from 'react-redux';
+import { connect, batch } from 'react-redux';
 
 import { MODAL_KEYS } from '../../utilities';
 import { usePageReducer } from '../../hooks';
@@ -23,6 +22,7 @@ import globalStyles from '../../globalStyles';
 import { UIDatabase } from '../../database';
 import ModalContainer from './ModalContainer';
 import { buttonStrings } from '../../localization/index';
+import { ROUTES } from '../../navigation/constants';
 
 import { selectUsingPayments } from '../../selectors/modules';
 
@@ -44,7 +44,7 @@ import { selectUsingPayments } from '../../selectors/modules';
  * @prop {Object} page the current routeName for this modal.
  *
  */
-export const StocktakeBatchModalComponent = ({ stocktakeItem, page }) => {
+export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: reduxDispatch }) => {
   const initialState = {
     page,
     pageObject: stocktakeItem,
@@ -81,9 +81,15 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page }) => {
   const onEditBatch = (value, rowKey, columnKey) =>
     dispatch(PageActions.editStocktakeBatchName(value, rowKey, columnKey));
   const onEditReason = rowKey =>
-    dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey));
+    batch(() => {
+      dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey));
+      reduxDispatch(PageActions.refreshRow(stocktakeItem.id, ROUTES.STOCKTAKE_EDITOR));
+    });
   const onEditCountedQuantity = (newValue, rowKey, columnKey) =>
-    dispatch(PageActions.editStocktakeBatchCountedQuantity(newValue, rowKey, columnKey));
+    batch(() => {
+      dispatch(PageActions.editStocktakeBatchCountedQuantity(newValue, rowKey, columnKey));
+      reduxDispatch(PageActions.refreshRow(stocktakeItem.id, ROUTES.STOCKTAKE_EDITOR));
+    });
   const onEditDate = (date, rowKey, columnKey) =>
     dispatch(PageActions.editTransactionBatchExpiryDate(date, rowKey, columnKey));
   const onEditSellPrice = (newValue, rowKey) =>
@@ -189,6 +195,7 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page }) => {
 StocktakeBatchModalComponent.propTypes = {
   stocktakeItem: PropTypes.object.isRequired,
   page: PropTypes.string.isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {

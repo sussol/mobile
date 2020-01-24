@@ -24,6 +24,8 @@ import {
 } from '../widgets';
 
 import {
+  selectIndicatorCodes,
+  selectCurrentIndicatorCode,
   selectIndicatorTableColumns,
   selectIndicatorTableRows,
 } from './dataTableUtilities/selectors/indicatorSelectors';
@@ -64,8 +66,8 @@ const SupplierRequisition = ({
   showAll,
   usingIndicators,
   showIndicators,
-  selectedIndicator,
-  indicators,
+  currentIndicatorCode,
+  indicatorCodes,
   keyExtractor,
   searchTerm,
   columns,
@@ -80,8 +82,7 @@ const SupplierRequisition = ({
   onCheck,
   onUncheck,
   onSortColumn,
-  onShowIndicators,
-  onHideIndicators,
+  onToggleIndicators,
   onSelectIndicator,
   onEditIndicatorValue,
   onShowOverStocked,
@@ -200,7 +201,7 @@ const SupplierRequisition = ({
 
   const UseSuggestedQuantitiesButton = () => (
     <PageButton
-      style={usingIndicators ? globalStyles.wideButton : globalStyles.topButton}
+      style={program ? globalStyles.wideButton : globalStyles.topButton}
       text={buttonStrings.use_suggested_quantities}
       onPress={onSetRequestedToSuggested}
       isDisabled={isFinalised}
@@ -212,12 +213,12 @@ const SupplierRequisition = ({
       {
         text: programStrings.items,
         isOn: !showIndicators,
-        onPress: onHideIndicators,
+        onPress: onToggleIndicators,
       },
       {
         text: programStrings.indicators,
         isOn: showIndicators,
-        onPress: onShowIndicators,
+        onPress: onToggleIndicators,
       },
     ],
     [showIndicators]
@@ -251,7 +252,7 @@ const SupplierRequisition = ({
           <UseSuggestedQuantitiesButton />
           <CreateAutomaticOrderButton />
         </View>
-        <View style={globalStyles.verticalContainer}>
+        <View style={verticalContainer}>
           <AddNewItemButton />
           <AddMasterListItemsButton />
         </View>
@@ -259,36 +260,42 @@ const SupplierRequisition = ({
     );
   }, [isFinalised]);
 
-  const ProgramButtons = useCallback(() => {
-    const { verticalContainer } = globalStyles;
-
-    const ProgramItemButtons = (
-      <>
-        <UseSuggestedQuantitiesButton isWide={true} />
+  const ProgramItemButtons = useCallback(
+    () => (
+      <View style={globalStyles.verticalContainer}>
+        <UseSuggestedQuantitiesButton />
         <ThresholdMOSToggle />
-      </>
-    );
+      </View>
+    ),
+    [UseSuggestedQuantitiesButton, ThresholdMOSToggle]
+  );
 
-    const { code: selectedIndicatorCode } = selectedIndicator;
-    const indicatorCodes = indicators.map(indicator => indicator.code);
-
-    const ProgramIndicatorButtons = (
-      <DropDown
-        values={indicatorCodes}
-        selectedValue={selectedIndicatorCode}
-        onValueChange={onSelectIndicator}
-      />
-    );
-
-    return (
+  const ProgramIndicatorButtons = useCallback(
+    () => (
       <>
-        <View style={verticalContainer}>
-          <ItemIndicatorToggle />
-          {showIndicators ? ProgramIndicatorButtons : ProgramItemButtons}
-        </View>
+        <DropDown
+          values={indicatorCodes}
+          selectedValue={currentIndicatorCode}
+          onValueChange={onSelectIndicator}
+          style={globalStyles.pickerTall}
+        />
       </>
-    );
-  }, [showIndicators, selectedIndicator, showAll, isFinalised]);
+    ),
+    [indicatorCodes, currentIndicatorCode]
+  );
+
+  const ProgramButtons = useCallback(() => {
+    if (usingIndicators) {
+      const Buttons = showIndicators ? ProgramIndicatorButtons : ProgramItemButtons;
+      return (
+        <View style={globalStyles.verticalContainer}>
+          <ItemIndicatorToggle />
+          <Buttons />
+        </View>
+      );
+    }
+    return <ProgramItemButtons />;
+  }, [usingIndicators, showIndicators, showAll, indicatorCodes, currentIndicatorCode, isFinalised]);
 
   const {
     pageTopSectionContainer,
@@ -356,16 +363,16 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 
 const mapStateToProps = state => {
   const { pages } = state;
-  const page = pages[ROUTES.SUPPLIER_REQUISITION];
-  const { usingIndicators, showIndicators } = page;
+  const supplierRequisition = pages[ROUTES.SUPPLIER_REQUISITION];
+  const { usingIndicators, showIndicators } = supplierRequisition;
 
   if (usingIndicators && showIndicators) {
-    const data = selectIndicatorTableRows(page);
-    const columns = selectIndicatorTableColumns(page);
     return {
-      ...page,
-      data,
-      columns,
+      ...supplierRequisition,
+      indicatorCodes: selectIndicatorCodes(supplierRequisition),
+      currentIndicatorCode: selectCurrentIndicatorCode(supplierRequisition),
+      data: selectIndicatorTableRows(supplierRequisition),
+      columns: selectIndicatorTableColumns(supplierRequisition),
     };
   }
   return pages[ROUTES.SUPPLIER_REQUISITION];
@@ -381,6 +388,8 @@ SupplierRequisition.defaultProps = {
   showAll: false,
   usingIndicators: false,
   showIndicators: false,
+  indicatorCodes: [],
+  currentIndicatorCode: '',
 };
 
 SupplierRequisition.propTypes = {
@@ -401,10 +410,8 @@ SupplierRequisition.propTypes = {
   showAll: PropTypes.bool,
   usingIndicators: PropTypes.bool,
   showIndicators: PropTypes.bool,
-  selectedIndicator: PropTypes.object.isRequired,
-  indicators: PropTypes.array.isRequired,
-  indicatorColumns: PropTypes.object.isRequired,
-  indicatorRows: PropTypes.object.isRequired,
+  currentIndicatorCode: PropTypes.string,
+  indicatorCodes: PropTypes.array,
   modalValue: PropTypes.any,
   refreshData: PropTypes.func.isRequired,
   onSelectNewItem: PropTypes.func.isRequired,
@@ -416,8 +423,7 @@ SupplierRequisition.propTypes = {
   onCheck: PropTypes.func.isRequired,
   onUncheck: PropTypes.func.isRequired,
   onSortColumn: PropTypes.func.isRequired,
-  onShowIndicators: PropTypes.func.isRequired,
-  onHideIndicators: PropTypes.func.isRequired,
+  onToggleIndicators: PropTypes.func.isRequired,
   onShowOverStocked: PropTypes.func.isRequired,
   onHideOverStocked: PropTypes.func.isRequired,
   onSelectIndicator: PropTypes.func.isRequired,

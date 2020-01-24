@@ -6,7 +6,7 @@
 # Deploy mobile app.
 
 APK_DIR="android/app/build/outputs/apk/release"
-APK_VERSION="mSupplyMobile-3_0_2-universal-release"
+APK_VERSION="mSupplyMobile-3_2_0-universal-release"
 PACKAGE="com.msupplymobile"
 
 echo "Rooting device..."
