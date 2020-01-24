@@ -30,11 +30,11 @@ const create = () => (dispatch, getState) => {
   // Group the batches with a return amount by supplier to make a credit for each
   // supplier grouping { supplierId1: [batch1, batch2, ... batchn], supplierId2: [...], ...}
   const batchesGroupedBySupplier = batchesToReturn.reduce((groupings, itemBatch) => {
-    const { id: suppliersId } = itemBatch?.itemBatch.supplier;
-    const suppliersGroup = groupings[suppliersId];
+    const { id: supplierId } = itemBatch?.itemBatch.supplier;
+    const suppliersGroup = groupings[supplierId];
 
-    if (suppliersGroup) return { ...groupings, [suppliersId]: suppliersGroup.push(itemBatch) };
-    return { ...groupings, [suppliersId]: [itemBatch] };
+    if (suppliersGroup) return { ...groupings, [supplierId]: suppliersGroup.push(itemBatch) };
+    return { ...groupings, [supplierId]: [itemBatch] };
   }, {});
 
   UIDatabase.write(() => {
