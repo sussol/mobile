@@ -235,6 +235,50 @@ const createPaymentLine = (database, payment, linkedTransaction, total) => {
   return receiptLine;
 };
 
+const createSupplierCreditLine = (database, supplierCredit, itemBatch, returnAmount) => {
+  // Create a TransactionITem to link between the new TransactionBatch and Transaction.
+  const transactionItem = createTransactionItem(
+    database,
+    supplierCredit,
+    itemBatch.item,
+    -returnAmount
+  );
+
+  // Create a TransactionBatch for the return amount
+  const transactionBatch = createTransactionBatch(database, transactionItem, itemBatch, false);
+
+  // Adjust the TransactionBatch total to the negative amount of the original cost.
+  transactionBatch.total = -transactionBatch.sellPrice * returnAmount;
+  transactionBatch.numberOfPacks = returnAmount;
+  database.save('TransactionBatch', transactionBatch);
+
+  // Adjust the quantity of the underlying ItemBatch.
+  itemBatch.totalQuantity -= returnAmount;
+  database.save('ItemBatch', itemBatch);
+};
+
+const createSupplierCredit = (database, user, supplierId, returnAmount) => {
+  const currentDate = new Date();
+  const { SUPPLIER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+
+  // Create a supplier credit transaction with the negative of the sum of all
+  // the batches to be returned.
+  const supplierCredit = database.create('Transaction', {
+    id: generateUUID(),
+    serialNumber: getNextNumber(database, SUPPLIER_INVOICE_NUMBER),
+    entryDate: currentDate,
+    confirmDate: currentDate,
+    type: 'supplier_credit',
+    status: 'finalised',
+    comment: '',
+    otherParty: database.get('Name', supplierId),
+    total: returnAmount,
+    enteredBy: user,
+  });
+
+  return supplierCredit;
+};
+
 const createCustomerCredit = (database, user, patient, total) => {
   const currentDate = new Date();
   const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
@@ -599,6 +643,7 @@ const createStocktakeBatch = (database, stocktakeItem, itemBatch) => {
  */
 const createSupplierInvoice = (database, supplier, user) => {
   const { SUPPLIER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+
   const currentDate = new Date();
 
   const invoice = database.create('Transaction', {
@@ -762,8 +807,12 @@ export const createRecord = (database, type, ...args) => {
       return createPaymentLine(database, ...args);
     case 'CustomerCredit':
       return createCustomerCredit(database, ...args);
+    case 'SupplierCredit':
+      return createSupplierCredit(database, ...args);
     case 'CustomerCreditLine':
       return createCustomerCreditLine(database, ...args);
+    case 'SupplierCreditLine':
+      return createSupplierCreditLine(database, ...args);
     case 'InsurancePolicy':
       return createInsurancePolicy(database, ...args);
     case 'CashIn':

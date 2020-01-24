@@ -4,12 +4,14 @@
  */
 
 import { ROUTES } from '../navigation/constants';
-
+import { UIDatabase } from '../database';
 import { PRESCRIPTION_ACTIONS } from '../actions/PrescriptionActions';
 
 const initialState = () => ({
   currentTab: 0,
   transaction: null,
+  items: UIDatabase.objects('Item'),
+  itemSearchTerm: '',
 });
 
 export const PrescriptionReducer = (state = initialState(), action) => {
@@ -26,6 +28,13 @@ export const PrescriptionReducer = (state = initialState(), action) => {
     }
     case PRESCRIPTION_ACTIONS.REFRESH: {
       return { ...state };
+    }
+
+    case PRESCRIPTION_ACTIONS.FILTER: {
+      const { payload } = action;
+      const { itemSearchTerm } = payload;
+
+      return { ...state, itemSearchTerm };
     }
 
     default:

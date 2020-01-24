@@ -25,7 +25,7 @@ import { PrescriberActions } from '../actions/PrescriberActions';
 import { InsuranceActions } from '../actions/InsuranceActions';
 import { DispensaryActions } from '../actions/DispensaryActions';
 
-import { selectSortedAndFilteredData, selectDataSetInUse } from '../selectors/dispensary';
+import { selectDataSetInUse, selectSortedData } from '../selectors/dispensary';
 import { selectPrescriberModalOpen } from '../selectors/prescriber';
 import { selectInsuranceModalOpen } from '../selectors/insurance';
 import { selectPatientModalOpen } from '../selectors/patient';
@@ -218,7 +218,7 @@ const mapStateToProps = state => {
   const prescriberModalOpen = selectPrescriberModalOpen(state);
   const [patientEditModalOpen, patientHistoryModalOpen] = selectPatientModalOpen(state);
   const insuranceModalOpen = selectInsuranceModalOpen(state);
-  const data = selectSortedAndFilteredData(state);
+  const data = selectSortedData(state);
 
   const [usingPatientsDataSet, usingPrescribersDataSet] = selectDataSetInUse(state);
 

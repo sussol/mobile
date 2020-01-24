@@ -9,10 +9,8 @@ import { sortDataBy } from '../../utilities';
 import { recordKeyExtractor } from './utilities';
 import getColumns from './getColumns';
 import getPageInfoColumns from './getPageInfoColumns';
-import { getIndicatorData } from './getIndicatorTableData';
 
 import { ROUTES } from '../../navigation/constants';
-import { DATA_SET } from './actions/index';
 
 /**
  * Gets data for initialising a customer invoice page from an associated transaction.
@@ -79,8 +77,13 @@ export const customerInvoicesInitialiser = () => {
  * @returns  {object}
  */
 const customerRequisitionInitialiser = requisition => {
-  const { items: backingData } = requisition;
+  const { indicators, items: backingData } = requisition;
   const sortedData = backingData.sorted('item.name').slice();
+
+  const usingIndicators = !!indicators?.length;
+  const [currentIndicator = null] = indicators || [];
+  const indicatorRows = currentIndicator?.rows;
+  const indicatorColumns = currentIndicator?.columns;
 
   return {
     pageObject: requisition,
@@ -94,6 +97,12 @@ const customerRequisitionInitialiser = requisition => {
     isAscending: true,
     modalKey: '',
     modalValue: null,
+    usingIndicators,
+    showIndicators: false,
+    currentIndicator,
+    indicatorColumns,
+    indicatorRows,
+    indicators,
     route: ROUTES.CUSTOMER_REQUISITION,
     columns: getColumns(ROUTES.CUSTOMER_REQUISITION),
     getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_REQUISITION),
@@ -144,8 +153,6 @@ const stockInitialiser = () => {
     isAscending: true,
     selectedRow: null,
     route: ROUTES.STOCK,
-    columns: getColumns(ROUTES.STOCK),
-    getPageInfoColumns: getPageInfoColumns(ROUTES.STOCK),
   };
 };
 
@@ -356,7 +363,7 @@ const supplierInvoicesInitialiser = () => {
  * @returns  {object}
  */
 const supplierRequisitionInitialiser = requisition => {
-  const { isFinalised, program, period, items: backingData, indicators } = requisition;
+  const { isFinalised, program, items: backingData, indicators } = requisition;
 
   const usingPrograms = !!program;
   const route = program ? ROUTES.SUPPLIER_REQUISITION_WITH_PROGRAM : ROUTES.SUPPLIER_REQUISITION;
@@ -367,12 +374,10 @@ const supplierRequisitionInitialiser = requisition => {
       ? sortedData
       : sortedData.filter(item => item.isLessThanThresholdMOS);
 
-  const usingIndicators = !!indicators.length;
-  const [selectedIndicator] = indicators;
-  const { columns: indicatorColumns, rows: indicatorRows } = getIndicatorData(
-    selectedIndicator,
-    period
-  );
+  const usingIndicators = !!indicators?.length;
+  const [currentIndicator = null] = indicators || [];
+  const indicatorRows = currentIndicator?.rows;
+  const indicatorColumns = currentIndicator?.columns;
 
   return {
     pageObject: requisition,
@@ -389,7 +394,7 @@ const supplierRequisitionInitialiser = requisition => {
     modalValue: null,
     usingIndicators,
     showIndicators: false,
-    selectedIndicator,
+    currentIndicator,
     indicatorColumns,
     indicatorRows,
     indicators,
@@ -429,108 +434,6 @@ const supplierRequisitionsInitialiser = () => {
   };
 };
 
-const prescriptionsInitialiser = () => {
-  const backingData = UIDatabase.objects('Prescription');
-  const filteredData = backingData.filtered('status != $0', 'finalised').slice();
-  const sortedData = sortDataBy(filteredData, 'serialNumber', false);
-
-  return {
-    backingData,
-    data: sortedData,
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    searchTerm: '',
-    filterDataKeys: ['otherParty.name'],
-    sortBy: 'serialNumber',
-    isAscending: false,
-    modalKey: '',
-    hasSelection: false,
-    route: ROUTES.PRESCRIPTIONS,
-    columns: getColumns(ROUTES.PRESCRIPTIONS),
-    getPageInfoColumns: getPageInfoColumns(ROUTES.PRESCRIPTIONS),
-  };
-};
-
-export const prescriptionInitialiser = transaction => {
-  const { items: backingData } = transaction;
-
-  const sortedData = backingData.sorted('item.name').slice();
-
-  return {
-    pageObject: transaction,
-    backingData,
-    data: sortedData,
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    searchTerm: '',
-    filterDataKeys: ['item.name', 'item.code'],
-    sortBy: 'itemName',
-    isAscending: true,
-    modalKey: '',
-    modalValue: null,
-    hasSelection: false,
-    route: ROUTES.PRESCRIPTION,
-    columns: getColumns(ROUTES.PRESCRIPTION),
-    getPageInfoColumns: getPageInfoColumns(ROUTES.PRESCRIPTION),
-  };
-};
-
-/**
- * Gets data for initialising a customer requisitions page.
- *
- * @returns  {object}
- */
-const prescribersInitialiser = () => {
-  const backingData = UIDatabase.objects('Prescriber');
-
-  return {
-    backingData,
-    data: backingData.sorted('firstName').slice(),
-    keyExtractor: recordKeyExtractor,
-    searchTerm: '',
-    filterDataKeys: ['serialNumber'],
-    sortBy: 'firstName',
-    isAscending: false,
-    route: ROUTES.PRESCRIBERS,
-    columns: getColumns(ROUTES.PRESCRIBERS),
-    getPageInfoColumns: getPageInfoColumns(ROUTES.PRESCRIBERS),
-  };
-};
-
-const patientsInitialiser = () => {
-  const backingData = UIDatabase.objects('Patient');
-
-  return {
-    backingData,
-    data: backingData.sorted('firstName').slice(),
-    keyExtractor: recordKeyExtractor,
-    searchTerm: '',
-    filterDataKeys: ['firstName', 'lastName', 'code'],
-    sortBy: 'firstName',
-    isAscending: false,
-    route: ROUTES.PATIENTS,
-    columns: getColumns(ROUTES.PATIENTS),
-    getPageInfoColumns: getPageInfoColumns(ROUTES.PATIENTS),
-  };
-};
-
-const dispensingInitialiser = () => {
-  const backingData = UIDatabase.objects('Patient');
-
-  return {
-    backingData,
-    data: backingData.sorted('firstName').slice(),
-    keyExtractor: recordKeyExtractor,
-    searchTerm: '',
-    filterDataKeys: ['firstName', 'lastName', 'code'],
-    sortKey: 'firstName',
-    isAscending: false,
-    route: ROUTES.DISPENSARY,
-    columns: getColumns(ROUTES.PATIENTS),
-    dataSet: DATA_SET.PATIENTS,
-  };
-};
-
 const pageInitialisers = {
   customerInvoice: customerInvoiceInitialiser,
   customerInvoices: customerInvoicesInitialiser,
@@ -539,6 +442,8 @@ const pageInitialisers = {
   stock: stockInitialiser,
   stocktakeBatchEditModal: stocktakeBatchInitialiser,
   stocktakeBatchEditModalWithReasons: stocktakeBatchInitialiser,
+  stocktakeBatchEditModalWithPrices: stocktakeBatchInitialiser,
+  stocktakeBatchEditModalWithReasonsAndPrices: stocktakeBatchInitialiser,
   stocktakeEditor: stocktakeEditorInitialiser,
   stocktakeEditorWithReasons: stocktakeEditorWithReasonsInitialiser,
   stocktakeManager: stocktakeManagerInitialiser,
@@ -547,11 +452,6 @@ const pageInitialisers = {
   supplierInvoices: supplierInvoicesInitialiser,
   supplierRequisition: supplierRequisitionInitialiser,
   supplierRequisitions: supplierRequisitionsInitialiser,
-  prescriptions: prescriptionsInitialiser,
-  prescription: prescriptionInitialiser,
-  prescribers: prescribersInitialiser,
-  patients: patientsInitialiser,
-  dispensary: dispensingInitialiser,
 };
 
 /**

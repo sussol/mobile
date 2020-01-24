@@ -30,6 +30,7 @@ const sortKeyToType = {
   firstName: 'string',
   lastName: 'string',
   registrationCode: 'string',
+  returnAmount: 'number',
 };
 
 /**

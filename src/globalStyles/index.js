@@ -21,6 +21,7 @@ import {
 } from './pageStyles';
 import { toggleBarStyles } from './toggleBarStyles';
 import { dataTableStyles, dataTableColors } from './dataTableStyles';
+import { dropDownStyles } from './dropDownStyles';
 
 export {
   BACKGROUND_COLOR,
@@ -64,4 +65,5 @@ export default StyleSheet.create({
   ...navigationStyles,
   ...pageStyles,
   ...toggleBarStyles,
+  ...dropDownStyles,
 });

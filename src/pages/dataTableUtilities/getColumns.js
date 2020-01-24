@@ -10,7 +10,7 @@ import { ROUTES } from '../../navigation/constants';
 
 const PAGE_COLUMN_WIDTHS = {
   [ROUTES.CUSTOMER_INVOICE]: [2, 4, 2, 2, 1],
-  [ROUTES.SUPPLIER_INVOICE]: [2, 4, 2, 2, 1],
+  [ROUTES.SUPPLIER_INVOICE]: [2, 4, 2, 2, 1, 1, 1],
   [ROUTES.SUPPLIER_INVOICES]: [1.5, 2.5, 2, 1.5, 3, 1],
   [ROUTES.CUSTOMER_INVOICES]: [1.5, 2.5, 2, 1.5, 3, 1],
   [ROUTES.SUPPLIER_REQUISITIONS]: [1.5, 2, 1, 1, 1, 1],
@@ -23,19 +23,29 @@ const PAGE_COLUMN_WIDTHS = {
   [ROUTES.CUSTOMER_REQUISITIONS]: [1.5, 2, 1, 1, 1],
   [ROUTES.CUSTOMER_REQUISITION]: [2, 4, 1.5, 1.5, 2, 2, 2, 2],
   [ROUTES.STOCK]: [1, 4, 1],
+  [ROUTES.STOCK_WITH_CREDITS]: [1, 4, 1, 1],
   [ROUTES.PRESCRIPTIONS]: [1.5, 2.5, 2, 1.5, 3, 1],
   [ROUTES.PRESCRIPTION]: [2, 4, 2, 2, 1],
   prescriber: [1, 3, 3, 1],
   patient: [1, 3, 3, 2, 1, 1, 1],
   stocktakeBatchEditModal: [1, 1, 1, 1, 1],
   stocktakeBatchEditModalWithReasons: [1, 1, 1, 1, 1, 1],
+  stocktakeBatchEditModalWithPrices: [1, 1, 1, 1, 1, 1, 1],
+  stocktakeBatchEditModalWithReasonsAndPrices: [1, 1, 1, 1, 1, 1, 1, 1],
   regimenDataModal: [4, 1, 5],
   prescriberSelect: [3, 3, 1],
   itemSelect: [1, 3, 1],
   patientHistory: [1, 3, 1, 3],
+  supplierCredit: [1, 1, 1, 1],
 };
 
 const PAGE_COLUMNS = {
+  supplierCredit: [
+    COLUMN_NAMES.BATCH_NAME,
+    COLUMN_NAMES.OTHER_PARTY_NAME,
+    COLUMN_NAMES.TOTAL_QUANTITY,
+    COLUMN_NAMES.RETURN_AMOUNT,
+  ],
   prescriber: [
     COLUMN_NAMES.REGISTRATION_CODE,
     COLUMN_NAMES.FIRST_NAME,
@@ -78,6 +88,8 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.ITEM_NAME,
     COLUMN_NAMES.EDITABLE_TOTAL_QUANTITY,
     COLUMN_NAMES.EDITABLE_EXPIRY_DATE,
+    COLUMN_NAMES.COST_PRICE,
+    COLUMN_NAMES.SELL_PRICE,
     COLUMN_NAMES.REMOVE,
   ],
   [ROUTES.SUPPLIER_INVOICES]: [
@@ -157,6 +169,12 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.SUPPLIED_QUANTITY,
   ],
   [ROUTES.STOCK]: [COLUMN_NAMES.CODE, COLUMN_NAMES.NAME, COLUMN_NAMES.TOTAL_QUANTITY],
+  [ROUTES.STOCK_WITH_CREDITS]: [
+    COLUMN_NAMES.CODE,
+    COLUMN_NAMES.NAME,
+    COLUMN_NAMES.TOTAL_QUANTITY,
+    COLUMN_NAMES.RETURN,
+  ],
   [ROUTES.PRESCRIPTIONS]: [
     COLUMN_NAMES.INVOICE_NUMBER,
     COLUMN_NAMES.PATIENT,
@@ -166,14 +184,33 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.REMOVE,
   ],
   stocktakeBatchEditModal: [
-    COLUMN_NAMES.BATCH_NAME,
+    COLUMN_NAMES.EDITABLE_BATCH_NAME,
     COLUMN_NAMES.EDITABLE_EXPIRY_DATE,
     COLUMN_NAMES.SNAPSHOT_TOTAL_QUANTITY,
     COLUMN_NAMES.COUNTED_TOTAL_QUANTITY,
     COLUMN_NAMES.DIFFERENCE,
   ],
   stocktakeBatchEditModalWithReasons: [
-    COLUMN_NAMES.BATCH_NAME,
+    COLUMN_NAMES.EDITABLE_BATCH_NAME,
+    COLUMN_NAMES.EDITABLE_EXPIRY_DATE,
+    COLUMN_NAMES.SNAPSHOT_TOTAL_QUANTITY,
+    COLUMN_NAMES.COUNTED_TOTAL_QUANTITY,
+    COLUMN_NAMES.DIFFERENCE,
+    COLUMN_NAMES.REASON,
+  ],
+  stocktakeBatchEditModalWithPrices: [
+    COLUMN_NAMES.EDITABLE_BATCH_NAME,
+    COLUMN_NAMES.COST_PRICE,
+    COLUMN_NAMES.SELL_PRICE,
+    COLUMN_NAMES.EDITABLE_EXPIRY_DATE,
+    COLUMN_NAMES.SNAPSHOT_TOTAL_QUANTITY,
+    COLUMN_NAMES.COUNTED_TOTAL_QUANTITY,
+    COLUMN_NAMES.DIFFERENCE,
+  ],
+  stocktakeBatchEditModalWithReasonsAndPrices: [
+    COLUMN_NAMES.EDITABLE_BATCH_NAME,
+    COLUMN_NAMES.COST_PRICE,
+    COLUMN_NAMES.SELL_PRICE,
     COLUMN_NAMES.EDITABLE_EXPIRY_DATE,
     COLUMN_NAMES.SNAPSHOT_TOTAL_QUANTITY,
     COLUMN_NAMES.COUNTED_TOTAL_QUANTITY,
@@ -237,6 +274,15 @@ const COLUMNS = () => ({
   },
 
   // STRING COLUMNS
+
+  [COLUMN_NAMES.OTHER_PARTY_NAME]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.OTHER_PARTY_NAME,
+    title: tableStrings.supplier,
+    alignText: 'left',
+    sortable: true,
+    editable: false,
+  },
   [COLUMN_NAMES.PRESCRIBER]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.PRESCRIBER,
@@ -320,6 +366,16 @@ const COLUMNS = () => ({
     sortable: false,
     editable: false,
   },
+
+  [COLUMN_NAMES.BATCH_NAME]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.BATCH,
+    title: 'BATCH',
+    textAlign: 'left',
+    sortable: true,
+    editable: false,
+  },
+
   [COLUMN_NAMES.QUESTION]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.NAME,
@@ -331,7 +387,7 @@ const COLUMNS = () => ({
 
   // EDITABLE STRING COLUMNS
 
-  [COLUMN_NAMES.BATCH_NAME]: {
+  [COLUMN_NAMES.EDITABLE_BATCH_NAME]: {
     type: COLUMN_TYPES.EDITABLE_STRING,
     key: COLUMN_KEYS.BATCH,
     title: tableStrings.batch_name,
@@ -356,6 +412,15 @@ const COLUMNS = () => ({
   },
 
   // NUMERIC COLUMNS
+
+  [COLUMN_NAMES.COST_PRICE]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.COST_PRICE,
+    title: 'COST PRICE',
+    alignText: 'right',
+    sortable: false,
+    editable: false,
+  },
 
   [COLUMN_NAMES.AVAILABLE_QUANTITY]: {
     type: COLUMN_TYPES.NUMERIC,
@@ -448,6 +513,24 @@ const COLUMNS = () => ({
 
   // EDITABLE NUMERIC COLUMNS
 
+  [COLUMN_NAMES.SELL_PRICE]: {
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
+    key: COLUMN_KEYS.SELL_PRICE,
+    title: 'SELL PRICE',
+    alignText: 'right',
+    sortable: false,
+    editable: true,
+  },
+
+  [COLUMN_NAMES.RETURN_AMOUNT]: {
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
+    key: COLUMN_KEYS.RETURN_AMOUNT,
+    title: 'RETURN AMOUNT',
+    alignText: 'right',
+    sortable: true,
+    editable: true,
+  },
+
   [COLUMN_NAMES.EDITABLE_REQUIRED_QUANTITY]: {
     type: COLUMN_TYPES.EDITABLE_NUMERIC,
     key: COLUMN_KEYS.REQUIRED_QUANTITY,
@@ -537,6 +620,16 @@ const COLUMNS = () => ({
   },
 
   // ICON COLUMNS
+
+  [COLUMN_NAMES.RETURN]: {
+    type: COLUMN_TYPES.ICON,
+    key: COLUMN_KEYS.RETURN,
+    title: 'RETURN',
+    sortable: false,
+    alignText: 'center',
+    editable: false,
+    icon: 'chevron_right',
+  },
 
   [COLUMN_NAMES.BATCHES]: {
     type: COLUMN_TYPES.ICON,

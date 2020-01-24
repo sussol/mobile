@@ -27,19 +27,21 @@ export const getPageDispatchers = (dispatch, props, dataType, route) => {
     toggleFinalised: () => dispatch(BasePageActions.toggleShowFinalised(route)),
     toggleStockOut: () => dispatch(BasePageActions.toggleStockOut(route)),
     onFilterData: debounce(value => dispatch(BasePageActions.filterData(value, route)), 75),
-    onShowIndicators: () => dispatch(BasePageActions.showIndicators(route)),
-    onHideIndicators: () => dispatch(BasePageActions.hideIndicators(route)),
+    onFilterIndicatorData: debounce(
+      value => dispatch(BasePageActions.filterIndicatorData(value, route)),
+      75
+    ),
+    onToggleIndicators: () => {
+      dispatch(BasePageActions.toggleIndicators(route));
+      dispatch(BasePageActions.refreshData(route));
+    },
     onSelectIndicator: indicatorCode =>
       dispatch(BasePageActions.selectIndicator(indicatorCode, route)),
     onShowOverStocked: () => dispatch(BasePageActions.showOverStocked(route)),
     onHideOverStocked: () => dispatch(BasePageActions.hideOverStocked(route)),
     onDeselectAll: () => dispatch(BasePageActions.deselectAll(route)),
     onSetRequestedToSuggested: () => dispatch(BasePageActions.setRequestedToSuggested(route)),
-    onSortColumn: debounce(
-      columnKey => dispatch(BasePageActions.sortData(columnKey, route)),
-      300,
-      true
-    ),
+    onSortColumn: columnKey => dispatch(BasePageActions.sortData(columnKey, route)),
 
     onEditIndicatorValue: (value, rowKey, columnKey) =>
       dispatch(BasePageActions.editIndicatorValue(value, rowKey, columnKey, route)),
@@ -98,6 +100,8 @@ export const getPageDispatchers = (dispatch, props, dataType, route) => {
       dispatch(BasePageActions.editTransactionBatchExpiryDate(date, rowKey, route)),
     onEditBatch: rowKey =>
       dispatch(BasePageActions.openModal(MODAL_KEYS.EDIT_STOCKTAKE_BATCH, rowKey, route)),
+    onEditSellPrice: (newValue, rowKey) =>
+      dispatch(BasePageActions.editSellPrice(newValue, rowKey, route)),
   };
 
   return dispatches;

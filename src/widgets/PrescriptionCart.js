@@ -59,7 +59,7 @@ PrescriptionCartComponent.defaultProps = {
 };
 
 PrescriptionCartComponent.propTypes = {
-  items: PropTypes.array.isRequired,
+  items: PropTypes.object.isRequired,
   isDisabled: PropTypes.bool,
 };
 

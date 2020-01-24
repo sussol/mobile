@@ -4,7 +4,7 @@
  */
 
 import { sortDataBy } from '../../../utilities';
-import { getIndicatorData } from '../getIndicatorTableData';
+
 /**
  * Sorts the current set of data by the provided
  * key and direction in action.
@@ -30,13 +30,28 @@ export const sortData = (state, action) => {
  * is held stable.
  */
 export const filterData = (state, action) => {
-  const { backingData, filterDataKeys, sortKey, isAscending } = state;
+  const {
+    backingData,
+    filterDataKeys,
+    sortKey,
+    isAscending,
+    usingIndicators,
+    showIndicators,
+  } = state;
   const { payload } = action;
-  const { searchTerm } = payload;
+
+  const searchTerm = payload.searchTerm?.trim();
+
+  // Indicator filtering is performed on component re-render.
+  if (usingIndicators && showIndicators) {
+    return {
+      ...state,
+      searchTerm,
+    };
+  }
 
   const queryString = filterDataKeys.map(filterTerm => `${filterTerm} CONTAINS[c] $0`).join(' OR ');
-
-  const filteredData = backingData.filtered(queryString, searchTerm.trim()).slice();
+  const filteredData = backingData.filtered(queryString, searchTerm).slice();
 
   return {
     ...state,
@@ -144,24 +159,26 @@ export const toggleShowFinalised = state => {
   return { ...state, data: sortedData, showFinalised: newShowFinalisedState, searchTerm: '' };
 };
 
-export const showIndicators = state => ({ ...state, showIndicators: true });
-
-export const hideIndicators = state => ({ ...state, showIndicators: false });
+export const toggleIndicators = state => {
+  const { showIndicators } = state;
+  return {
+    ...state,
+    showIndicators: !showIndicators,
+    searchTerm: '',
+  };
+};
 
 export const selectIndicator = (state, action) => {
   const { payload } = action;
   const { indicatorCode } = payload;
 
-  const { pageObject, indicators } = state;
-  const { period } = pageObject;
+  const { indicators } = state;
 
-  const [selectedIndicator] = indicators.filter(({ code }) => code === indicatorCode);
-  const { columns: indicatorColumns, rows: indicatorRows } = getIndicatorData(
-    selectedIndicator,
-    period
-  );
+  const [currentIndicator] = indicators.filtered('code == $0', indicatorCode);
+  const indicatorColumns = currentIndicator?.columns;
+  const indicatorRows = currentIndicator?.rows;
 
-  return { ...state, selectedIndicator, indicatorColumns, indicatorRows };
+  return { ...state, currentIndicator, indicatorColumns, indicatorRows };
 };
 
 /**
@@ -210,9 +227,8 @@ export const TableReducerLookup = {
   toggleStockOut,
   toggleShowFinalised,
   addRecord,
-  showIndicators,
+  toggleIndicators,
   selectIndicator,
-  hideIndicators,
   hideOverStocked,
   refreshData,
   filterData,

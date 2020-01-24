@@ -20,14 +20,30 @@
     "sync_url": "Sync url",
     "reports": "Reports",
     "no_reports": "No Reports to show",
-    "search_by": "Search by"
+    "search_by": "Search by",
+    "invoice_number": "invoice number",
+    "requisition_number": "requisition number",
+    "item_name": "item name",
+    "item_code": "item code",
+    "customer": "customer",
+    "code": "code",
+    "name": "name",
+    "or": "or"
   },
   "fr": {
     "stocktake": "Inventaire",
     "start_typing_to_search": "Tapez pour rechercher",
     "not_available": "N/A",
     "reports": "Rapports",
-    "no_reports": "Aucun rapport à afficher"
+    "no_reports": "Aucun rapport à afficher",
+    "invoice_number": "numéro de facture",
+    "requisition_number": "numéro de réquisition",
+    "item_name": "nom de l'article",
+    "item_code": "code de l'article",
+    "customer": "cliente",
+    "code": "code",
+    "name": "nom",
+    "or": "ou"
   },
   "gil": {
     "stocktake": "Warebwai",

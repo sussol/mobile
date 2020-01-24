@@ -25,6 +25,8 @@ const persistConfig = {
     'insurance',
     'dashboard',
     'dispensary',
+    'modules',
+    'supplierCredit',
   ],
 };
 

@@ -22,15 +22,16 @@ import { selectCurrentUser } from '../../selectors/user';
 import { selectCurrentPatient } from '../../selectors/patient';
 
 const mapStateToProps = state => {
-  const { payment, wizard } = state;
+  const { payment, wizard, modules } = state;
   const { transaction, paymentValid, paymentAmount } = payment;
   const { isComplete } = wizard;
 
+  const { usingPayments } = modules;
   const currentPatient = selectCurrentPatient(state);
   const currentUser = selectCurrentUser(state);
   const canConfirm = paymentValid || isComplete;
 
-  return { transaction, canConfirm, paymentAmount, currentUser, currentPatient };
+  return { transaction, canConfirm, paymentAmount, currentUser, currentPatient, usingPayments };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -44,6 +45,7 @@ const PrescriptionConfirmationComponent = ({
   currentPatient,
   paymentAmount,
   canConfirm,
+  usingPayments,
 }) => {
   const confirmPrescription = React.useCallback(
     () =>
@@ -55,7 +57,7 @@ const PrescriptionConfirmationComponent = ({
       <PrescriptionInfo />
       <FlexRow flex={1}>
         <PrescriptionSummary transaction={transaction} />
-        <PaymentSummary />
+        {usingPayments && <PaymentSummary />}
       </FlexRow>
       <PageButton
         style={{ alignSelf: 'flex-end' }}
@@ -73,6 +75,7 @@ PrescriptionConfirmationComponent.propTypes = {
   currentPatient: PropTypes.object.isRequired,
   paymentAmount: PropTypes.object.isRequired,
   canConfirm: PropTypes.bool.isRequired,
+  usingPayments: PropTypes.bool.isRequired,
 };
 
 export const PrescriptionConfirmation = connect(

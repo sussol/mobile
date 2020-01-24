@@ -3,14 +3,15 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+import currency from '../../../localization/currency';
 import { UIDatabase } from '../../../database';
 import { parsePositiveInteger, MODAL_KEYS } from '../../../utilities';
 import {
-  getIndicatorValue,
-  updateIndicatorValue,
   getIndicatorRow,
   getIndicatorColumn,
-} from '../getIndicatorTableData';
+  updateIndicatorValue,
+  getIndicatorRowColumnValue,
+} from '../../../database/utilities/getIndicatorData';
 import { ACTIONS } from './constants';
 import { openModal, closeModal } from './pageActions';
 import { pageStateSelector } from '../selectors/pageSelectors';
@@ -44,12 +45,34 @@ export const editBatchName = (value, rowKey, objectType, route) => (dispatch, ge
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
-  const { batch } = objectToEdit;
+  if (objectToEdit) {
+    const { batch } = objectToEdit;
 
-  if (value !== batch) {
-    UIDatabase.write(() => UIDatabase.update(objectType, { ...objectToEdit, batch: value }));
+    if (value !== batch) {
+      UIDatabase.write(() => UIDatabase.update(objectType, { ...objectToEdit, batch: value }));
 
-    dispatch(refreshRow(rowKey, route));
+      dispatch(refreshRow(rowKey, route));
+    }
+  }
+};
+
+export const editSellPrice = (value, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = pageStateSelector(getState());
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+  const objectDataType = objectToEdit.stocktake ? 'StocktakeBatch' : 'TransactionBatch';
+
+  const { itemBatch, sellPrice } = objectToEdit;
+
+  const valueAsCurrency = currency(value);
+  const { value: currencyValue } = valueAsCurrency;
+
+  if (currencyValue !== sellPrice) {
+    UIDatabase.write(() => {
+      UIDatabase.update(objectDataType, { ...objectToEdit, sellPrice: currencyValue });
+      UIDatabase.update('ItemBatch', { ...itemBatch, sellPrice: currencyValue });
+      dispatch(refreshRow(rowKey, route));
+    });
   }
 };
 
@@ -58,7 +81,7 @@ export const editIndicatorValue = (value, rowKey, columnKey, route) => (dispatch
   const { period } = pageObject;
   const row = getIndicatorRow(indicatorRows, rowKey);
   const column = getIndicatorColumn(indicatorColumns, columnKey);
-  const indicatorValue = getIndicatorValue(row, column, period);
+  const indicatorValue = getIndicatorRowColumnValue(row, column, period);
   updateIndicatorValue(indicatorValue, value);
   dispatch(refreshIndicatorRow(route));
 };
@@ -81,12 +104,14 @@ export const editExpiryDate = (newDate, rowKey, objectType, route) => (dispatch,
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
-  UIDatabase.write(() => {
-    objectToEdit.expiryDate = newDate;
-    UIDatabase.save(objectType, objectToEdit);
-  });
+  if (objectToEdit) {
+    UIDatabase.write(() => {
+      objectToEdit.expiryDate = newDate;
+      UIDatabase.save(objectType, objectToEdit);
+    });
 
-  dispatch(refreshRow(rowKey, route));
+    dispatch(refreshRow(rowKey, route));
+  }
 };
 
 /**
@@ -109,11 +134,13 @@ export const editTotalQuantity = (value, rowKey, route) => (dispatch, getState) 
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
-  UIDatabase.write(() => {
-    objectToEdit.setTotalQuantity(UIDatabase, parsePositiveInteger(value));
-  });
+  if (objectToEdit) {
+    UIDatabase.write(() => {
+      objectToEdit.setTotalQuantity(UIDatabase, parsePositiveInteger(value));
+    });
 
-  dispatch(refreshRow(rowKey, route));
+    dispatch(refreshRow(rowKey, route));
+  }
 };
 
 /**
@@ -128,7 +155,11 @@ export const editSuppliedQuantity = (value, rowKey, route) => (dispatch, getStat
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
-  UIDatabase.write(() => objectToEdit.setSuppliedQuantity(UIDatabase, parsePositiveInteger(value)));
+  if (objectToEdit) {
+    UIDatabase.write(() =>
+      objectToEdit.setSuppliedQuantity(UIDatabase, parsePositiveInteger(value))
+    );
+  }
 
   dispatch(refreshRow(rowKey, route));
 };
@@ -145,12 +176,14 @@ export const editRequiredQuantity = (value, rowKey, objectType, route) => (dispa
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
-  UIDatabase.write(() => {
-    objectToEdit.requiredQuantity = parsePositiveInteger(value);
-    UIDatabase.save(objectType, objectToEdit);
-  });
+  if (objectToEdit) {
+    UIDatabase.write(() => {
+      objectToEdit.requiredQuantity = parsePositiveInteger(value);
+      UIDatabase.save(objectType, objectToEdit);
+    });
 
-  dispatch(refreshRow(rowKey, route));
+    dispatch(refreshRow(rowKey, route));
+  }
 };
 
 /**
@@ -170,7 +203,9 @@ export const editCountedQuantity = (value, rowKey, route) => (dispatch, getState
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
-  objectToEdit.setCountedTotalQuantity(UIDatabase, parsePositiveInteger(value));
+  if (objectToEdit) {
+    objectToEdit.setCountedTotalQuantity(UIDatabase, parsePositiveInteger(value));
+  }
 
   dispatch(refreshRow(rowKey, route));
 };
@@ -186,10 +221,12 @@ export const editStocktakeBatchCountedQuantity = (value, rowKey, route) => (disp
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
-  UIDatabase.write(() => {
-    objectToEdit.countedTotalQuantity = parsePositiveInteger(value);
-    UIDatabase.save('StocktakeBatch', UIDatabase);
-  });
+  if (objectToEdit) {
+    UIDatabase.write(() => {
+      objectToEdit.countedTotalQuantity = parsePositiveInteger(value);
+      UIDatabase.save('StocktakeBatch', UIDatabase);
+    });
+  }
 
   dispatch(refreshRow(rowKey, route));
 };
@@ -204,7 +241,9 @@ export const removeReason = (rowKey, route) => (dispatch, getState) => {
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
-  objectToEdit.removeReason(UIDatabase);
+  if (objectToEdit) {
+    objectToEdit.removeReason(UIDatabase);
+  }
 
   dispatch(refreshRow(rowKey, route));
 };
@@ -299,4 +338,5 @@ export const CellActionsLookup = {
   editStocktakeBatchName,
   editCountedQuantityWithReason,
   editStocktakeBatchCountedQuantityWithReason,
+  editSellPrice,
 };

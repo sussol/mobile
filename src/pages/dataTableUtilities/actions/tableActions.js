@@ -52,9 +52,7 @@ export const addRecord = (record, route) => ({
  */
 export const refreshData = route => ({ type: ACTIONS.REFRESH_DATA, payload: { route } });
 
-export const showIndicators = route => ({ type: ACTIONS.SHOW_INDICATORS, payload: { route } });
-
-export const hideIndicators = route => ({ type: ACTIONS.HIDE_INDICATORS, payload: { route } });
+export const toggleIndicators = route => ({ type: ACTIONS.TOGGLE_INDICATORS, payload: { route } });
 
 export const selectIndicator = (indicatorCode, route) => ({
   type: ACTIONS.SELECT_INDICATOR,
@@ -262,8 +260,7 @@ export const TableActionsLookup = {
   sortData,
   filterData,
   refreshData,
-  showIndicators,
-  hideIndicators,
+  toggleIndicators,
   selectIndicator,
   hideOverStocked,
   toggleShowFinalised,
