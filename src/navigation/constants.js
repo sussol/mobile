@@ -39,6 +39,8 @@ export const ROUTES = {
   PRESCRIPTIONS: 'prescriptions',
   PRESCRIPTION: 'prescription',
 
+  CASH_REGISTER: 'cashRegister',
+
   SETTINGS: 'settings',
   DASHBOARD: 'dashboard',
 };

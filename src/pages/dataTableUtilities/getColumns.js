@@ -36,6 +36,7 @@ const PAGE_COLUMN_WIDTHS = {
   prescriberSelect: [3, 3, 1],
   itemSelect: [1, 3, 1],
   patientHistory: [1, 3, 1, 3],
+  [ROUTES.CASH_REGISTER]: [1, 1, 1, 1, 1, 1, 1, 1],
   supplierCredit: [1, 1, 1, 1],
 };
 
@@ -230,6 +231,16 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.TOTAL_QUANTITY,
     COLUMN_NAMES.PRESCRIBER,
   ],
+  cashRegister: [
+    COLUMN_NAMES.INVOICE_NUMBER,
+    COLUMN_NAMES.PAYMENT_NAME,
+    COLUMN_NAMES.TRANSACT_TYPE,
+    COLUMN_NAMES.OPTION,
+    COLUMN_NAMES.COMMENT,
+    COLUMN_NAMES.TOTAL,
+    COLUMN_NAMES.CONFIRM_DATE,
+    COLUMN_NAMES.STATUS,
+  ],
 };
 
 const COLUMNS = () => ({
@@ -307,6 +318,14 @@ const COLUMNS = () => ({
     sortable: true,
     editable: false,
   },
+  [COLUMN_NAMES.PAYMENT_NAME]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.OTHER_PARTY_NAME,
+    title: tableStrings.name,
+    alignText: 'left',
+    sortable: false,
+    editable: false,
+  },
   [COLUMN_NAMES.FIRST_NAME]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.FIRST_NAME,
@@ -359,10 +378,25 @@ const COLUMNS = () => ({
     sortable: false,
     editable: false,
   },
+  [COLUMN_NAMES.OPTION]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.REASON_TITLE,
+    title: tableStrings.reason,
+    alignText: 'center',
+    sortable: false,
+    editable: false,
+  },
   [COLUMN_NAMES.STATUS]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.STATUS,
     title: tableStrings.status,
+    sortable: false,
+    editable: false,
+  },
+  [COLUMN_NAMES.TRANSACT_TYPE]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.TYPE,
+    title: tableStrings.type,
     sortable: false,
     editable: false,
   },
@@ -510,6 +544,14 @@ const COLUMNS = () => ({
     sortable: true,
     editable: false,
   },
+  [COLUMN_NAMES.TOTAL]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.TOTAL,
+    title: tableStrings.total,
+    alignTest: 'right',
+    sortable: false,
+    editable: false,
+  },
 
   // EDITABLE NUMERIC COLUMNS
 
@@ -572,6 +614,14 @@ const COLUMNS = () => ({
     title: 'D.O.B',
     alignText: 'left',
     sortable: true,
+    editable: false,
+  },
+  [COLUMN_NAMES.CONFIRM_DATE]: {
+    type: COLUMN_TYPES.DATE,
+    key: COLUMN_KEYS.CONFIRM_DATE,
+    title: tableStrings.confirm_date,
+    alignText: 'left',
+    sortable: false,
     editable: false,
   },
   [COLUMN_NAMES.CREATED_DATE]: {

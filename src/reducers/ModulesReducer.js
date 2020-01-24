@@ -9,7 +9,6 @@ import { SYNC_TRANSACTION_COMPLETE } from '../sync/constants';
 
 /**
  * Simple reducer managing the stores current modules state.
-<<<<<<< HEAD
  *
  * State shape:
  * {
@@ -17,10 +16,11 @@ import { SYNC_TRANSACTION_COMPLETE } from '../sync/constants';
  *     usingDispensary: [bool],
  *     usingVaccines: [bool],
  *     usingCashRegister: [bool],
+ *     usingPayments: [bool],
+ *     usingSupplierCredits: [bool],
  *     usingModules: [bool],
+ *     usingInsurance: [bool],
  * }
-=======
->>>>>>> #feature-dispensary
  */
 
 const checkModule = key => UIDatabase.getSetting(key).toLowerCase() === 'true';
@@ -33,8 +33,14 @@ const initialState = () => {
   const usingPayments = checkModule(SETTINGS_KEYS.PAYMENT_MODULE);
   const usingSupplierCredits = checkModule(SETTINGS_KEYS.SUPPLIER_CREDIT_MODULE);
 
-  const usingModules = usingDashboard || usingDispensary || usingVaccines || usingCashRegister || usingPayments || usingSupplierCredits;
-  
+  const usingModules =
+    usingDashboard ||
+    usingDispensary ||
+    usingVaccines ||
+    usingCashRegister ||
+    usingPayments ||
+    usingSupplierCredits;
+
   const usingInsurance = UIDatabase.objects('InsuranceProvider').length > 0;
 
   return {
@@ -43,9 +49,9 @@ const initialState = () => {
     usingDispensary,
     usingVaccines,
     usingCashRegister,
+    usingSupplierCredits,
     usingModules,
     usingInsurance,
-    usingSupplierCredits,
   };
 };
 

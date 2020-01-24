@@ -51,6 +51,9 @@ const PER_PAGE_INFO_COLUMNS = {
     ['entryDate', 'enteredBy'],
     ['customer', 'transactionComment', 'prescriber'],
   ],
+  [ROUTES.CASH_REGISTER]: [
+    ['number', 'name', 'type', 'reason', 'comment', 'amount', 'confirmDate', 'status'],
+  ],
   stocktakeBatchEditModal: [['itemName']],
   stocktakeBatchEditModalWithReasons: [['itemName']],
   stocktakeBatchEditModalWithPrices: [['itemName']],
@@ -139,6 +142,36 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
     title: 'Prescriber',
     info: pageObject?.prescriber?.firstName,
     onPress: () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_PRESCRIBER, route)),
+  },
+  number: {
+    title: 'Number',
+    info: pageObject.number,
+    onPress: null,
+  },
+  name: {
+    title: 'Name',
+    info: pageObject.name,
+    onPress: null,
+  },
+  type: {
+    title: 'Type',
+    info: pageObject.type,
+    onPress: null,
+  },
+  reason: {
+    title: 'Defined Reason',
+    info: pageObject.reasonTitle,
+    onPress: null,
+  },
+  comment: {
+    title: 'Comment',
+    info: pageObject.comment,
+    onPress: null,
+  },
+  status: {
+    title: 'Status',
+    info: pageObject.status,
+    onPress: null,
   },
 });
 

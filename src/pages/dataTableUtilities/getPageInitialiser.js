@@ -12,6 +12,22 @@ import getPageInfoColumns from './getPageInfoColumns';
 
 import { ROUTES } from '../../navigation/constants';
 
+export const cashRegisterInitialiser = () => {
+  const backingData = UIDatabase.objects('CashTransaction');
+  const filteredData = backingData.slice();
+  const sortedData = sortDataBy(filteredData, 'invoiceNumber', false);
+  return {
+    backingData,
+    data: sortedData,
+    keyExtractor: recordKeyExtractor,
+    dataState: new Map(),
+    sortKey: 'invoiceNumber',
+    columns: getColumns(ROUTES.CASH_REGISTER),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.CASH_REGISTER),
+    route: ROUTES.CASH_REGISTER,
+  };
+};
+
 /**
  * Gets data for initialising a customer invoice page from an associated transaction.
  *
@@ -452,6 +468,12 @@ const pageInitialisers = {
   supplierInvoices: supplierInvoicesInitialiser,
   supplierRequisition: supplierRequisitionInitialiser,
   supplierRequisitions: supplierRequisitionsInitialiser,
+  prescriptions: prescriptionsInitialiser,
+  prescription: prescriptionInitialiser,
+  prescribers: prescribersInitialiser,
+  patients: patientsInitialiser,
+  dispensary: dispensingInitialiser,
+  cashRegister: cashRegisterInitialiser,
 };
 
 /**
