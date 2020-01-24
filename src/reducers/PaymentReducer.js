@@ -3,8 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2020
  */
 
-import currency from 'currency.js';
-
+import currency from '../localization/currency';
 import { ROUTES } from '../navigation';
 import { PAYMENT_ACTIONS } from '../actions/PaymentActions';
 import { WIZARD_ACTIONS } from '../actions/WizardActions';

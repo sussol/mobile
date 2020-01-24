@@ -31,6 +31,7 @@ const sortKeyToType = {
   lastName: 'string',
   registrationCode: 'string',
   invoiceNumber: 'number',
+  returnAmount: 'number',
 };
 
 /**

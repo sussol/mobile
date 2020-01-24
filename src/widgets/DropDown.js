@@ -8,7 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Picker } from 'react-native';
 
-import { DARKER_GREY, COMPONENT_HEIGHT, SUSSOL_ORANGE } from '../globalStyles';
+import globalStyles, { DARKER_GREY, SUSSOL_ORANGE } from '../globalStyles';
 
 /**
  * A single selection dropdown menu implemented as a simple light-weight wrapper over the
@@ -43,7 +43,7 @@ export const DropDown = React.memo(
         selectedValue={selectedValue}
         mode="dropdown"
         onValueChange={onValueChange}
-        style={{ ...localStyles.picker, ...localStyles.pickerText, ...style }}
+        style={{ ...globalStyles.picker, ...globalStyles.pickerText, ...style }}
         enabled={!isDisabled}
       >
         {headerValue ? withHeader : items}
@@ -53,19 +53,6 @@ export const DropDown = React.memo(
 );
 
 export default DropDown;
-
-export const localStyles = {
-  pickerText: {
-    color: SUSSOL_ORANGE,
-  },
-  picker: {
-    marginBottom: 45,
-    marginLeft: 8.5,
-    marginTop: 10,
-    height: COMPONENT_HEIGHT,
-    width: 285,
-  },
-};
 
 DropDown.defaultProps = {
   style: {},

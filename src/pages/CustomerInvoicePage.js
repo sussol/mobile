@@ -19,7 +19,7 @@ import { PageButton, PageInfo, SearchBar, DataTablePageView } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import { BottomConfirmModal } from '../widgets/bottomModals';
 
-import { buttonStrings, modalStrings, tableStrings, generalStrings } from '../localization';
+import { buttonStrings, modalStrings, generalStrings } from '../localization';
 import globalStyles from '../globalStyles';
 
 /**
@@ -151,7 +151,7 @@ export const CustomerInvoice = ({
           <SearchBar
             onChangeText={onFilterData}
             value={searchTerm}
-            placeholder={`${generalStrings.search_by} ${tableStrings.item_name}`}
+            placeholder={`${generalStrings.search_by} ${generalStrings.item_name} ${generalStrings.or} ${generalStrings.item_code}`}
           />
         </View>
         <View style={pageTopRightSectionContainer}>

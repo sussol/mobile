@@ -9,7 +9,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { TextInput, StyleSheet } from 'react-native';
 
-import currency from 'currency.js';
+import currency from '../localization/currency';
 
 import { SimpleLabel } from './SimpleLabel';
 import { FlexRow } from './FlexRow';

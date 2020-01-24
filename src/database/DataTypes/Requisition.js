@@ -79,6 +79,15 @@ export class Requisition extends Realm.Object {
   }
 
   /**
+   * Get if requisition is a response.
+   *
+   * @return  {boolean}
+   */
+  get isResponse() {
+    return this.type === 'response';
+  }
+
+  /**
    * Get name of user who entered requisition.
    *
    * @return  {string}
@@ -140,8 +149,14 @@ export class Requisition extends Realm.Object {
     return (this.otherStoreName && this.otherStoreName.name) || '';
   }
 
+  /**
+   * Get all indicators associated with this requisition.
+   * @returns {Array.<ProgramIndicator>}
+   */
   get indicators() {
-    return this.program?.indicators.slice() || [];
+    if (this.isRequest) return this.program?.activeIndicators;
+    if (this.isResponse) return this.period?.indicators;
+    return null;
   }
 
   /**

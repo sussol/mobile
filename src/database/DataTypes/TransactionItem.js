@@ -1,7 +1,7 @@
 import Realm from 'realm';
-import currency from 'currency.js';
 import { complement } from 'set-manipulator';
 
+import currency from '../../localization/currency';
 import { createRecord, getTotal } from '../utilities';
 
 /**

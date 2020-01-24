@@ -8,7 +8,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import currency from 'currency.js';
+import currency from '../localization/currency';
 
 import { CircleButton } from './CircleButton';
 import { DropdownRow } from './DropdownRow';
@@ -40,6 +40,7 @@ import { PrescriptionActions } from '../actions/PrescriptionActions';
  * @prop {Func}   onRemoveItem      Callback for removing an item from the cart.
  * @prop {Func}   onChangeText      Callback for typing directions in the TextInput.
  * @prop {Func}   onDirectionSelect Callback for selecting a direction from the dropdown.
+ * @prop {Func}   usingPayments     Indicator if the current store is using the payments module.
  */
 const PrescriptionCartRowComponent = ({
   isDisabled,
@@ -55,14 +56,13 @@ const PrescriptionCartRowComponent = ({
   onRemoveItem,
   onChangeText,
   onDirectionSelect,
+  usingPayments,
 }) => {
-  const itemDetails = React.useMemo(
-    () => [
-      { label: 'Code', text: itemCode },
-      { label: 'Unit price', text: sellPrice },
-    ],
-    [itemCode]
-  );
+  const itemDetails = React.useMemo(() => {
+    const details = [{ label: 'Code', text: itemCode }];
+    if (usingPayments) details.push({ label: 'Unit price', text: sellPrice });
+    return details;
+  }, [itemCode]);
 
   const defaultDirections = React.useMemo(() => item.getDirectionExpansions(UIDatabase), [id]);
 
@@ -103,6 +103,7 @@ const PrescriptionCartRowComponent = ({
 
 PrescriptionCartRowComponent.defaultProps = {
   isDisabled: false,
+  note: '',
 };
 
 PrescriptionCartRowComponent.propTypes = {
@@ -114,11 +115,12 @@ PrescriptionCartRowComponent.propTypes = {
   itemName: PropTypes.string.isRequired,
   totalQuantity: PropTypes.number.isRequired,
   itemCode: PropTypes.string.isRequired,
-  sellPrice: PropTypes.object.isRequired,
+  sellPrice: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
-  note: PropTypes.string.isRequired,
-  item: PropTypes.string.isRequired,
+  note: PropTypes.string,
+  item: PropTypes.object.isRequired,
   availableQuantity: PropTypes.number.isRequired,
+  usingPayments: PropTypes.bool.isRequired,
 };
 
 const localStyles = StyleSheet.create({
@@ -134,9 +136,11 @@ const localStyles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (_, ownProps) => {
+const mapStateToProps = (state, ownProps) => {
   const { transactionItem } = ownProps;
+  const { modules } = state;
 
+  const { usingPayments } = modules;
   const {
     itemName,
     totalQuantity,
@@ -145,9 +149,11 @@ const mapStateToProps = (_, ownProps) => {
     note,
     item,
     availableQuantity,
+    id,
   } = transactionItem;
 
   return {
+    usingPayments,
     itemName,
     totalQuantity,
     itemCode,
@@ -155,6 +161,7 @@ const mapStateToProps = (_, ownProps) => {
     sellPrice: currency(sellPrice).format({ formatWithSymbol: true }),
     note,
     item,
+    id,
   };
 };
 
@@ -171,6 +178,7 @@ const mapStateToDispatch = (dispatch, ownProps) => {
   return { onChangeQuantity, onRemoveItem, onChangeText, onDirectionSelect };
 };
 
-export const PrescriptionCartRow = React.memo(
-  connect(mapStateToProps, mapStateToDispatch)(PrescriptionCartRowComponent)
-);
+export const PrescriptionCartRow = connect(
+  mapStateToProps,
+  mapStateToDispatch
+)(PrescriptionCartRowComponent);

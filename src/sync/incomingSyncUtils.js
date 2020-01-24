@@ -139,8 +139,8 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: ['indicator_ID'],
     },
     IndicatorValue: {
-      cannotBeBlank: ['facility_ID', 'period_ID', 'column_ID', 'row_ID', 'value'],
-      canBeBlank: [],
+      cannotBeBlank: ['facility_ID', 'period_ID', 'column_ID', 'row_ID'],
+      canBeBlank: ['value'],
     },
     Item: {
       cannotBeBlank: ['code', 'item_name'],
@@ -360,6 +360,21 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         isActive: parseBoolean(record.isActive),
       });
       return;
+    }
+    case 'IndicatorValue': {
+      const indicatorColumn = database.getOrCreate('IndicatorAttribute', record.column_ID);
+      const indicatorRow = database.getOrCreate('IndicatorAttribute', record.row_ID);
+      const indicatorValue = database.update(recordType, {
+        id: record.ID,
+        storeId: record.facility_ID,
+        period: database.getOrCreate('Period', record.period_ID),
+        column: indicatorColumn,
+        row: indicatorRow,
+        value: record.value ?? '',
+      });
+      indicatorRow.addIndicatorValue(indicatorValue);
+      indicatorColumn.addIndicatorValue(indicatorValue);
+      break;
     }
     case 'Item': {
       internalRecord = {
@@ -804,7 +819,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         id: record.ID,
         code: record.code,
         program: database.getOrCreate('MasterList', record.program_ID),
-        isActive: parseBoolean(record.isActive),
+        isActive: parseBoolean(record.is_active),
       });
       indicator.program.addIndicatorIfUnique(indicator);
       break;

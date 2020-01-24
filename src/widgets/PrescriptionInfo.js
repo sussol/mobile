@@ -15,13 +15,13 @@ import { SimpleLabel } from './SimpleLabel';
 import { CircleButton } from './CircleButton';
 import { PencilIcon, HistoryIcon } from './icons';
 
-import { selectPatientName } from '../selectors/patient';
 import { PatientActions } from '../actions/PatientActions';
 import { PrescriberActions } from '../actions/PrescriberActions';
 import {
   selectPrescriptionPatient,
   selectPrescriptionPrescriber,
   selectPrescriberName,
+  selectPatientName,
 } from '../selectors/prescription';
 
 const PrescriptionInfoComponent = ({
@@ -94,6 +94,7 @@ const mapStateToProps = state => {
   const prescriptionPatient = selectPrescriptionPatient(state);
   const prescriptionPrescriber = selectPrescriptionPrescriber(state);
   const patientName = selectPatientName(state);
+
   const prescriberName = selectPrescriberName(state);
   return { prescriptionPatient, prescriptionPrescriber, patientName, prescriberName };
 };

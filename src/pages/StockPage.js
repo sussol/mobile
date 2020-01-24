@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
+import { getItemLayout, getPageDispatchers, getColumns } from './dataTableUtilities';
 
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import { ItemDetails } from '../widgets/bottomModals/ItemDetails';
@@ -18,8 +18,9 @@ import { DataTablePageView, SearchBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { useSyncListener } from '../hooks';
 
-import { ROUTES } from '../navigation/constants';
-import { generalStrings, tableStrings } from '../localization';
+import { generalStrings } from '../localization';
+import { SupplierCreditActions } from '../actions/SupplierCreditActions';
+import { selectUsingSupplierCredits } from '../selectors/modules';
 
 /**
  * Renders a mSupply mobile page with Items and their stock levels.
@@ -48,9 +49,12 @@ export const Stock = ({
   onDeselectRow,
   onFilterData,
   onSortColumn,
+  refund,
 }) => {
   //  Refresh data on retrieving item or itembatch records from sync.
   useSyncListener(refreshData, ['Item', 'ItemBatch']);
+
+  const refundCallback = React.useCallback(() => itemId => refund(itemId), []);
 
   const renderRow = useCallback(
     listItem => {
@@ -64,6 +68,7 @@ export const Stock = ({
           columns={columns}
           rowIndex={index}
           onPress={onSelectRow}
+          getCallback={refundCallback}
         />
       );
     },
@@ -87,7 +92,7 @@ export const Stock = ({
           onChangeText={onFilterData}
           value={searchTerm}
           onFocusOrBlur={selectedRow && onDeselectRow}
-          placeholder={`${generalStrings.search_by} ${tableStrings.name}, ${tableStrings.item_code}`}
+          placeholder={`${generalStrings.search_by} ${generalStrings.code} ${generalStrings.or} ${generalStrings.name}`}
         />
       </View>
 
@@ -106,14 +111,18 @@ export const Stock = ({
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) =>
-  getPageDispatchers(dispatch, ownProps, '', ROUTES.STOCK);
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  ...getPageDispatchers(dispatch, ownProps, '', 'stock'),
+  refund: rowKey => dispatch(SupplierCreditActions.createFromItem(rowKey)),
+});
 
 const mapStateToProps = state => {
   const { pages } = state;
-
   const { stock } = pages;
-  return stock;
+  const usingSupplierCredits = selectUsingSupplierCredits(state);
+  const columns = usingSupplierCredits ? getColumns('stockWithCredits') : getColumns('stock');
+
+  return { ...stock, columns };
 };
 
 export const StockPage = connect(mapStateToProps, mapDispatchToProps)(Stock);
@@ -136,4 +145,5 @@ Stock.propTypes = {
   onDeselectRow: PropTypes.func.isRequired,
   onFilterData: PropTypes.func.isRequired,
   onSortColumn: PropTypes.func.isRequired,
+  refund: PropTypes.func.isRequired,
 };

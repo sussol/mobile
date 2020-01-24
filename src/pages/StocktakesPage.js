@@ -22,7 +22,7 @@ import { ROUTES } from '../navigation/constants';
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
 
-import { buttonStrings, modalStrings, generalStrings, tableStrings } from '../localization';
+import { buttonStrings, modalStrings, generalStrings } from '../localization';
 import globalStyles from '../globalStyles';
 
 import {
@@ -136,7 +136,7 @@ export const Stocktakes = ({
           <SearchBar
             onChangeText={onFilterData}
             value={searchTerm}
-            placeholder={`${generalStrings.search_by} ${tableStrings.name}`}
+            placeholder={`${generalStrings.search_by} ${generalStrings.name}`}
           />
         </View>
         <View style={pageTopRightSectionContainer}>
