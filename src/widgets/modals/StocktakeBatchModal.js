@@ -1,5 +1,4 @@
 /* eslint-disable react/forbid-prop-types */
-/* eslint-disable import/prefer-default-export */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -8,6 +7,7 @@
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import { connect, batch } from 'react-redux';
 
 import { MODAL_KEYS } from '../../utilities';
 import { usePageReducer } from '../../hooks';
@@ -22,6 +22,7 @@ import globalStyles from '../../globalStyles';
 import { UIDatabase } from '../../database';
 import ModalContainer from './ModalContainer';
 import { buttonStrings } from '../../localization/index';
+import { ROUTES } from '../../navigation/constants';
 
 /**
  * Renders a stateful modal with a stocktake item and it's batches loaded
@@ -40,7 +41,7 @@ import { buttonStrings } from '../../localization/index';
  * @prop {Object} stocktakeItem The realm transaction object for this invoice.
  *
  */
-export const StocktakeBatchModal = ({ stocktakeItem }) => {
+export const StocktakeBatchModalComponent = ({ stocktakeItem, reduxDispatch }) => {
   const usingReasons = useMemo(
     () =>
       UIDatabase.objects('NegativeAdjustmentReason').length > 0 &&
@@ -84,9 +85,15 @@ export const StocktakeBatchModal = ({ stocktakeItem }) => {
   const onEditBatch = (value, rowKey, columnKey) =>
     dispatch(PageActions.editStocktakeBatchName(value, rowKey, columnKey));
   const onEditReason = rowKey =>
-    dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey));
+    batch(() => {
+      dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey));
+      reduxDispatch(PageActions.refreshRow(stocktakeItem.id, ROUTES.STOCKTAKE_EDITOR));
+    });
   const onEditCountedQuantity = (newValue, rowKey, columnKey) =>
-    dispatch(PageActions.editStocktakeBatchCountedQuantity(newValue, rowKey, columnKey));
+    batch(() => {
+      dispatch(PageActions.editStocktakeBatchCountedQuantity(newValue, rowKey, columnKey));
+      reduxDispatch(PageActions.refreshRow(stocktakeItem.id, ROUTES.STOCKTAKE_EDITOR));
+    });
   const onEditDate = (date, rowKey, columnKey) =>
     dispatch(PageActions.editTransactionBatchExpiryDate(date, rowKey, columnKey));
 
@@ -185,8 +192,15 @@ export const StocktakeBatchModal = ({ stocktakeItem }) => {
   );
 };
 
-StocktakeBatchModal.propTypes = {
+StocktakeBatchModalComponent.propTypes = {
   stocktakeItem: PropTypes.object.isRequired,
+  reduxDispatch: PropTypes.func.isRequired,
 };
 
-export default StocktakeBatchModal;
+const mapStateToProps = state => state;
+const mapDispatchToProps = dispatch => ({ reduxDispatch: dispatch });
+
+export const StocktakeBatchModal = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(StocktakeBatchModalComponent);
