@@ -21,13 +21,6 @@ import Realm from 'realm';
  */
 export class IndicatorAttribute extends Realm.Object {
   /**
-   * Get attribute title.
-   */
-  get title() {
-    return this.description;
-  }
-
-  /**
    * Get attribute key.
    */
   get key() {
