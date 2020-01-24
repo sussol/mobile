@@ -68,7 +68,7 @@ const mapIndicatorTableRows = (rows, period, searchTerm) => {
 const mapIndicatorTableColumns = (indicatorColumns, isEditable) => {
   const valueColumns = indicatorColumns.map(column => {
     const tableColumn = isEditable ? COLUMN_INDICATOR_MUTABLE : COLUMN_INDICATOR_IMMUTABLE;
-    const { description: title, code: key } = column;
+    const { title, key } = column;
     return {
       ...tableColumn,
       title,
