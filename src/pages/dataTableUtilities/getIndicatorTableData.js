@@ -3,8 +3,9 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { COLUMN_TYPES } from './constants';
+import { COLUMN_TYPES, COLUMN_NAMES, COLUMN_KEYS } from './constants';
 import { getIndicatorRowColumnValue } from '../../database/utilities/getIndicatorData';
+import { tableStrings } from '../../localization/index';
 
 const COLUMN_INDICATOR = {
   width: 1,
@@ -24,15 +25,15 @@ const COLUMN_INDICATOR_MUTABLE = {
 };
 
 const COLUMNS = {
-  DESCRIPTION: {
+  [COLUMN_NAMES.DESCRIPTION]: {
     ...COLUMN_INDICATOR_IMMUTABLE,
-    title: 'Description',
-    key: 'description',
+    title: tableStrings.description,
+    key: COLUMN_KEYS.description,
   },
-  CODE: {
+  [COLUMN_NAMES.CODE]: {
     ...COLUMN_INDICATOR_IMMUTABLE,
-    title: 'Code',
-    key: 'code',
+    title: tableStrings.code,
+    key: COLUMN_KEYS.code,
   },
 };
 
