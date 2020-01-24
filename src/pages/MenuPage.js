@@ -53,8 +53,10 @@ const Menu = ({
   toDispensary,
   toSettings,
   toDashboard,
+  toCashRegister,
   usingDashboard,
   usingDispensary,
+  usingCashRegister,
   usingModules,
   isAdmin,
 }) => {
@@ -65,7 +67,7 @@ const Menu = ({
 
   const MenuButton = useCallback(
     props => <Button style={menuButton} textStyle={buttonText} {...props} />,
-    [usingDashboard, usingDispensary, usingModules]
+    [usingDashboard, usingDispensary, usingCashRegister, usingModules]
   );
 
   const CustomerSection = useCallback(
@@ -82,7 +84,7 @@ const Menu = ({
         </View>
       </View>
     ),
-    [usingDashboard, usingDispensary, usingModules]
+    [usingDashboard, usingDispensary, usingCashRegister, usingModules]
   );
 
   const SupplierSection = useCallback(
@@ -99,7 +101,7 @@ const Menu = ({
         </View>
       </View>
     ),
-    [usingDashboard, usingDispensary, usingModules]
+    [usingDashboard, usingDispensary, usingCashRegister, usingModules]
   );
 
   const StockSection = useCallback(
@@ -114,7 +116,7 @@ const Menu = ({
         </View>
       </View>
     ),
-    [usingDashboard, usingDispensary, usingModules]
+    [usingDashboard, usingDispensary, usingCashRegister, usingModules]
   );
 
   const ModulesSection = useCallback(
@@ -124,10 +126,13 @@ const Menu = ({
         <View>
           {usingDispensary && <MenuButton text={navStrings.dispensary} onPress={toDispensary} />}
           {usingDashboard && <MenuButton text={navStrings.dashboard} onPress={toDashboard} />}
+          {usingCashRegister && (
+            <MenuButton text={navStrings.cash_register} onPress={toCashRegister} />
+          )}
         </View>
       </View>
     ),
-    [usingDashboard, usingDispensary, usingModules]
+    [usingDashboard, usingDispensary, usingCashRegister, usingModules]
   );
 
   const AdminRow = useCallback(
@@ -239,17 +244,25 @@ const mapDispatchToProps = dispatch => ({
   toSettings: () => dispatch(gotoSettings()),
   toDispensary: () => dispatch(gotoDispensingPage()),
   toDashboard: () => dispatch(gotoDashboard()),
+  toCashRegister: () => null,
   logout: () => dispatch(UserActions.logout()),
 });
 
 const mapStateToProps = state => {
   const { modules, user } = state;
   const { currentUser } = user;
-  const { usingDashboard, usingDispensary, usingVaccines, usingModules } = modules;
+  const {
+    usingDashboard,
+    usingDispensary,
+    usingVaccines,
+    usingCashRegister,
+    usingModules,
+  } = modules;
   return {
     usingDashboard,
     usingDispensary,
     usingVaccines,
+    usingCashRegister,
     usingModules,
     isAdmin: currentUser?.isAdmin,
   };
@@ -275,8 +288,10 @@ Menu.propTypes = {
   toDispensary: PropTypes.func.isRequired,
   toSettings: PropTypes.func.isRequired,
   toDashboard: PropTypes.func.isRequired,
+  toCashRegister: PropTypes.func.isRequired,
   isAdmin: PropTypes.bool,
   usingDispensary: PropTypes.bool.isRequired,
   usingDashboard: PropTypes.bool.isRequired,
+  usingCashRegister: PropTypes.bool.isRequired,
   usingModules: PropTypes.bool.isRequired,
 };

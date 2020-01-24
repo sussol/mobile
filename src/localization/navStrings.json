@@ -19,7 +19,8 @@
     "settings": "settings",
     "database_contents": "Database Contents",
     "dispensary": "Dispensary",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "cash_register": "Cash Register"
   },
   "fr": {
     "current_stock": "Stock actuel",
@@ -39,7 +40,8 @@
     "supplier_invoices": "Factures fournisseurs",
     "supplier_requisitions": "Factures réquisitions",
     "dispensary": "Dispensaire",
-    "dashboard": "Tableau de bord"
+    "dashboard": "Tableau de bord",
+    "cash_register": "Cash register"
   },
   "gil": {
     "current_stock": "Mwaitin am bwai n\naoraki ke am supply",
