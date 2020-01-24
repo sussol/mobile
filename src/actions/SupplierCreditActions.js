@@ -39,8 +39,8 @@ const create = () => (dispatch, getState) => {
 
   UIDatabase.write(() => {
     Object.entries(batchesGroupedBySupplier).forEach(([supplierId, suppliersBatches]) => {
-      const returnSum = -suppliersBatches.reduce(
-        (total, { costPrice, returnAmount }) => total + costPrice * returnAmount,
+      const returnSum = suppliersBatches.reduce(
+        (total, { costPrice, returnAmount }) => total - costPrice * returnAmount,
         0
       );
 
