@@ -52,6 +52,7 @@ export const SupplierInvoice = ({
   onEditDate,
   onAddTransactionBatch,
   route,
+  onEditSellPrice,
 }) => {
   // Listen for this transaction being finalised, so data can be refreshed and kept consistent.
   useRecordListener(refreshData, pageObject, 'Transaction');
@@ -73,6 +74,8 @@ export const SupplierInvoice = ({
       case 'remove':
         if (propName === 'onCheck') return onCheck;
         return onUncheck;
+      case 'sellPriceString':
+        return onEditSellPrice;
       default:
         return null;
     }
@@ -219,4 +222,5 @@ SupplierInvoice.propTypes = {
   onEditDate: PropTypes.func.isRequired,
   onAddTransactionBatch: PropTypes.func.isRequired,
   route: PropTypes.string.isRequired,
+  onEditSellPrice: PropTypes.func.isRequired,
 };

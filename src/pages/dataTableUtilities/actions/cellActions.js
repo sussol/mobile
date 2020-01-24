@@ -3,6 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+import currency from '../../../localization/currency';
 import { UIDatabase } from '../../../database';
 import { parsePositiveInteger, MODAL_KEYS } from '../../../utilities';
 import {
@@ -50,6 +51,26 @@ export const editBatchName = (value, rowKey, objectType, route) => (dispatch, ge
     UIDatabase.write(() => UIDatabase.update(objectType, { ...objectToEdit, batch: value }));
 
     dispatch(refreshRow(rowKey, route));
+  }
+};
+
+export const editSellPrice = (value, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = pageStateSelector(getState());
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+  const objectDataType = objectToEdit.stocktake ? 'StocktakeBatch' : 'TransactionBatch';
+
+  const { itemBatch, sellPrice } = objectToEdit;
+
+  const valueAsCurrency = currency(value);
+  const { value: currencyValue } = valueAsCurrency;
+
+  if (currencyValue !== sellPrice) {
+    UIDatabase.write(() => {
+      UIDatabase.update(objectDataType, { ...objectToEdit, sellPrice: currencyValue });
+      UIDatabase.update('ItemBatch', { ...itemBatch, sellPrice: currencyValue });
+      dispatch(refreshRow(rowKey, route));
+    });
   }
 };
 
@@ -299,4 +320,5 @@ export const CellActionsLookup = {
   editStocktakeBatchName,
   editCountedQuantityWithReason,
   editStocktakeBatchCountedQuantityWithReason,
+  editSellPrice,
 };

@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import currency from 'currency.js';
+import currency from '../localization/currency';
 
 export const selectPrescriptionSubTotal = ({ payment }) => {
   const { transaction } = payment;
