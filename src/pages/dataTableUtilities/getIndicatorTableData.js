@@ -3,9 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { COLUMN_TYPES, COLUMN_NAMES, COLUMN_KEYS } from './constants';
+import { COLUMN_TYPES } from './constants';
 import { getIndicatorRowColumnValue } from '../../database/utilities/getIndicatorData';
-import { tableStrings } from '../../localization/index';
 
 const COLUMN_INDICATOR = {
   width: 1,
@@ -25,15 +24,15 @@ const COLUMN_INDICATOR_MUTABLE = {
 };
 
 const COLUMNS = {
-  [COLUMN_NAMES.DESCRIPTION]: {
+  DESCRIPTION: {
     ...COLUMN_INDICATOR_IMMUTABLE,
-    title: tableStrings.description,
-    key: COLUMN_KEYS.DESCRIPTION,
+    title: 'Description',
+    key: 'description',
   },
-  [COLUMN_NAMES.CODE]: {
+  CODE: {
     ...COLUMN_INDICATOR_IMMUTABLE,
-    title: tableStrings.code,
-    key: COLUMN_KEYS.CODE,
+    title: 'Code',
+    key: 'code',
   },
 };
 
@@ -52,7 +51,7 @@ const mapIndicatorTableRows = (rows, period, searchTerm) => {
   return filteredRows.map(row => {
     const { id, description, code, indicator } = row;
     const values = indicator.columns.reduce((acc, column) => {
-      const { key } = column;
+      const { code: key } = column;
       const value = getIndicatorRowColumnValue(row, column, period);
       return { ...acc, [key]: value.value };
     }, {});
@@ -69,14 +68,14 @@ const mapIndicatorTableRows = (rows, period, searchTerm) => {
 const mapIndicatorTableColumns = (indicatorColumns, isEditable) => {
   const valueColumns = indicatorColumns.map(column => {
     const tableColumn = isEditable ? COLUMN_INDICATOR_MUTABLE : COLUMN_INDICATOR_IMMUTABLE;
-    const { description: title, key } = column;
+    const { description: title, code: key } = column;
     return {
       ...tableColumn,
       title,
       key,
     };
   });
-  return [COLUMNS[COLUMN_NAMES.DESCRIPTION], COLUMNS[COLUMN_NAMES.CODE], ...valueColumns];
+  return [COLUMNS.DESCRIPTION, COLUMNS.CODE, ...valueColumns];
 };
 
 export { mapIndicatorTableRows, mapIndicatorTableColumns };
