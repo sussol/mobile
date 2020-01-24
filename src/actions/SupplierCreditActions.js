@@ -25,10 +25,7 @@ const create = () => (dispatch, getState) => {
   const { currentUser } = user;
 
   // Only work with the batches whose return amount is greater than 0.
-  const batchesToReturn = batches.reduce(
-    (acc, itemBatch) => (itemBatch.returnAmount ? [...acc, itemBatch] : acc),
-    []
-  );
+  const batchesToReturn = batches.filter(({ returnAmount }) => returnAmount > 0);
 
   // Group the batches with a return amount by supplier to make a credit for each
   // supplier grouping { supplierId1: [batch1, batch2, ... batchn], supplierId2: [...], ...}
