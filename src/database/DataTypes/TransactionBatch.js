@@ -1,5 +1,7 @@
 import Realm from 'realm';
 
+import currency from '../../localization/currency';
+
 /**
  * A transaction batch.
  *
@@ -146,6 +148,14 @@ export class TransactionBatch extends Realm.Object {
 
   get otherPartyName() {
     return this.transaction?.otherParty?.name || '';
+  }
+
+  get costPriceString() {
+    return currency(this.costPrice ?? 0, { formatWithSymbol: true }).format();
+  }
+
+  get sellPriceString() {
+    return currency(this.sellPrice ?? 0, { formatWithSymbol: true }).format();
   }
 }
 

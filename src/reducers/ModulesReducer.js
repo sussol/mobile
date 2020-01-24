@@ -18,7 +18,10 @@ const initialState = () => {
   const usingDispensary = checkModule(SETTINGS_KEYS.DISPENSARY_MODULE);
   const usingVaccines = checkModule(SETTINGS_KEYS.VACCINE_MODULE);
   const usingPayments = checkModule(SETTINGS_KEYS.PAYMENT_MODULE);
+  const usingSupplierCredits = checkModule(SETTINGS_KEYS.SUPPLIER_CREDIT_MODULE);
+
   const usingModules = usingDashboard || usingDispensary || usingVaccines || usingPayments;
+
   const usingInsurance = UIDatabase.objects('InsuranceProvider').length > 0;
 
   return {
@@ -28,6 +31,7 @@ const initialState = () => {
     usingVaccines,
     usingModules,
     usingInsurance,
+    usingSupplierCredits,
   };
 };
 
