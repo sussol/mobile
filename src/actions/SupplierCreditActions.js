@@ -30,7 +30,7 @@ const create = () => (dispatch, getState) => {
   // Group the batches with a return amount by supplier to make a credit for each
   // supplier grouping { supplierId1: [batch1, batch2, ... batchn], supplierId2: [...], ...}
   const batchesGroupedBySupplier = batchesToReturn.reduce((groupings, itemBatch) => {
-    const { id: supplierId } = itemBatch?.itemBatch.supplier;
+    const { id: supplierId } = itemBatch.itemBatch?.supplier || {};
     const suppliersGroup = groupings[supplierId];
 
     if (suppliersGroup) return { ...groupings, [supplierId]: suppliersGroup.push(itemBatch) };
