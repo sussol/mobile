@@ -63,11 +63,12 @@ export const editSellPrice = (value, rowKey, route) => (dispatch, getState) => {
   const { itemBatch, sellPrice } = objectToEdit;
 
   const valueAsCurrency = currency(value);
+  const { value: currencyValue } = valueAsCurrency;
 
-  if (valueAsCurrency.value !== sellPrice) {
+  if (currencyValue !== sellPrice) {
     UIDatabase.write(() => {
-      UIDatabase.update(objectDataType, { ...objectToEdit, sellPrice: valueAsCurrency.value });
-      UIDatabase.update('ItemBatch', { ...itemBatch, sellPrice: valueAsCurrency.value });
+      UIDatabase.update(objectDataType, { ...objectToEdit, sellPrice: currencyValue });
+      UIDatabase.update('ItemBatch', { ...itemBatch, sellPrice: currencyValue });
       dispatch(refreshRow(rowKey, route));
     });
   }
