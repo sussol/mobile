@@ -167,14 +167,12 @@ export class RequisitionItem extends Realm.Object {
 
     // If there's no transactionItem - something has gone wrong - create one.
     if (!transactionItem) {
-      database.write(() => {
-        transactionItem = createRecord(
-          database,
-          'TransactionItem',
-          this.requisition.linkedTransaction,
-          this.item
-        );
-      });
+      transactionItem = createRecord(
+        database,
+        'TransactionItem',
+        this.requisition.linkedTransaction,
+        this.item
+      );
     }
 
     // Update quantity of associated transaction item.
