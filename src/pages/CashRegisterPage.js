@@ -13,14 +13,26 @@ import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 
 import { DataTablePageView, PageButton } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+import { DataTablePageModal } from '../widgets/modals';
 
+import { MODAL_KEYS } from '../utilities';
 import { ROUTES } from '../navigation/constants';
 
 import globalStyles from '../globalStyles';
 import { buttonStrings } from '../localization';
 
-export const CashRegister = ({ data, dataState, sortKey, keyExtractor, columns }) => {
+export const CashRegister = ({ dispatch, data, dataState, sortKey, keyExtractor, modalKey, columns, onNewCashTransaction, onCloseModal }) => {
   const getCallback = (_colKey, _propName) => null;
+
+  const getModalOnSelect = () => {
+    switch (modalKey) {
+      case MODAL_KEYS.CREATE_CASH_TRANSACTION:
+        return null;
+      default:
+        return null;
+    }
+  };
+
 
   const renderRow = useCallback(
     listItem => {
@@ -52,7 +64,7 @@ export const CashRegister = ({ data, dataState, sortKey, keyExtractor, columns }
     <PageButton
       style={globalStyles.topButton}
       text={buttonStrings.new_transaction}
-      onPress={null}
+      onPress={onNewCashTransaction}
     />
   );
 
@@ -79,6 +91,13 @@ export const CashRegister = ({ data, dataState, sortKey, keyExtractor, columns }
         getItemLayout={getItemLayout}
         columns={columns}
       />
+      <DataTablePageModal
+        isOpen={!!modalKey}
+        modalKey={modalKey}
+        onClose={onCloseModal}
+        onSelect={getModalOnSelect()}
+        dispatch={dispatch}
+      />
     </DataTablePageView>
   );
 };
@@ -101,6 +120,9 @@ CashRegister.propTypes = {
   data: PropTypes.array.isRequired,
   dataState: PropTypes.object.isRequired,
   sortKey: PropTypes.string.isRequired,
+  modalKey: PropTypes.string.isRequired,
   keyExtractor: PropTypes.func.isRequired,
   columns: PropTypes.array.isRequired,
+  onNewCashTransaction: PropTypes.func.isRequired,
+  onCloseModal: PropTypes.func.isRequired,
 };

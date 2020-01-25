@@ -22,6 +22,7 @@ export const cashRegisterInitialiser = () => {
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     sortKey: 'invoiceNumber',
+    modalKey: '',
     columns: getColumns(ROUTES.CASH_REGISTER),
     getPageInfoColumns: getPageInfoColumns(ROUTES.CASH_REGISTER),
     route: ROUTES.CASH_REGISTER,
