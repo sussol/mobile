@@ -556,14 +556,13 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       const { ID: id, title, type, json } = record;
       try {
         const parsedData = JSON.parse(json);
-        const shouldSetData = checkIsObject(parsedData);
-        const validatedReport = validateReport(parsedData, type);
-        if (validatedReport) {
+        const shouldSetData = checkIsObject(parsedData) ? validateReport(parsedData, type) : false;
+        if (shouldSetData) {
           internalRecord = {
             id,
             title,
             type,
-            _data: shouldSetData ? JSON.stringify(parsedData.data) : null,
+            _data: JSON.stringify(parsedData.data),
           };
           database.update(recordType, internalRecord);
         }
