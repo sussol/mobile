@@ -6,14 +6,18 @@
 
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 
-import { DataTablePageView } from '../widgets';
+import { DataTablePageView, PageButton } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { ROUTES } from '../navigation/constants';
+
+import globalStyles from '../globalStyles';
+import { buttonStrings } from '../localization';
 
 export const CashRegister = ({ data, dataState, sortKey, keyExtractor, columns }) => {
   const getCallback = (_colKey, _propName) => null;
@@ -44,8 +48,28 @@ export const CashRegister = ({ data, dataState, sortKey, keyExtractor, columns }
     [sortKey]
   );
 
+  const AddNewTransactionButton = () => (
+    <PageButton
+      style={globalStyles.topButton}
+      text={buttonStrings.new_transaction}
+      onPress={null}
+    />
+  );
+
+  const {
+    pageTopSectionContainer,
+    pageTopLeftSectionContainer,
+    pageTopRightSectionContainer,
+  } = globalStyles;
+
   return (
     <DataTablePageView>
+      <View style={pageTopSectionContainer}>
+        <View style={pageTopLeftSectionContainer} />
+        <View style={pageTopRightSectionContainer}>
+          <AddNewTransactionButton />
+        </View>
+      </View>
       <DataTable
         data={data}
         extraData={dataState}
