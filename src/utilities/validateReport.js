@@ -9,6 +9,15 @@
 import Ajv from 'ajv';
 
 // Expected json structure for Table reports
+/**
+ *   {
+ *      data: {
+ *        header: [...],
+ *        rows: [...],
+ *        formatters: [...],
+ *      },
+ *   }
+ */
 const tableReportSchema = {
   type: 'object',
   properties: {
@@ -17,6 +26,7 @@ const tableReportSchema = {
       properties: {
         header: {
           type: 'array',
+          items: { type: 'string' },
         },
         rows: {
           type: 'array',
@@ -27,14 +37,31 @@ const tableReportSchema = {
           items: { type: 'string' },
         },
       },
-      required: ['header', 'rows', 'formatters'],
+      required: ['header', 'rows'],
     },
   },
   required: ['data'],
 };
 
 // Expected json structure for BarChart, LineChart or PieChart reports
-const otherReportSchema = {
+/**
+{
+   "name": reportName,
+   "data":[
+      {
+         "label": labelValue,
+         "values":[
+            {
+               "x":"xValue",
+               "y":"yValue"
+            }
+         ]
+      }
+   ]
+}
+*/
+
+const defaultReportSchema = {
   type: 'object',
   properties: {
     name: { type: 'string' },
@@ -66,22 +93,14 @@ const otherReportSchema = {
   required: ['name', 'data'],
 };
 
+const REPORTS_SCHEMAS = {
+  Table: tableReportSchema,
+  PieChart: defaultReportSchema,
+  LineChart: defaultReportSchema,
+  BarChart: defaultReportSchema,
+};
+
 export const validateReport = (parsedData, type) => {
   const ajv = new Ajv({ coerceTypes: true });
-  switch (type) {
-    case 'Table': {
-      return ajv.validate(tableReportSchema, parsedData);
-    }
-    case 'BarChart': {
-      return ajv.validate(otherReportSchema, parsedData);
-    }
-    case 'LineChart': {
-      return ajv.validate(otherReportSchema, parsedData);
-    }
-    case 'PieChart': {
-      return ajv.validate(otherReportSchema, parsedData);
-    }
-    default:
-      return null;
-  }
+  return ajv.validate(REPORTS_SCHEMAS[type] || {}, parsedData);
 };
