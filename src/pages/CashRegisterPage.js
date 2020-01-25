@@ -23,6 +23,7 @@ import { buttonStrings } from '../localization';
 
 export const CashRegister = ({ dispatch, data, dataState, sortKey, keyExtractor, modalKey, columns, onNewCashTransaction, onCloseModal }) => {
   const getCallback = (_colKey, _propName) => null;
+  const onPressRow = _rowData => null;
 
   const getModalOnSelect = () => {
     switch (modalKey) {
@@ -37,6 +38,7 @@ export const CashRegister = ({ dispatch, data, dataState, sortKey, keyExtractor,
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
+      const { isFinalised } = item;
       const rowKey = keyExtractor(item);
       return (
         <DataTableRow
@@ -44,9 +46,10 @@ export const CashRegister = ({ dispatch, data, dataState, sortKey, keyExtractor,
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
           columns={columns}
+          isFinalised={isFinalised}
           getCallback={getCallback}
+          onPress={onPressRow}
           rowIndex={index}
-          onPress={null}
         />
       );
     },
