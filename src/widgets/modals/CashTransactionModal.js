@@ -7,12 +7,14 @@ import React, {useMemo, useState} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 import { UIDatabase } from '../../database';
+
 import { BottomModalContainer, BottomTextEditor } from '../bottomModals';
 import { GenericChoiceList } from '../modalChildren';
 import { PencilIcon, ChevronDownIcon } from '../icons';
 
 import globalStyles, { WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
 
+const placeholderName = "Choose a name";
 const placeholderTransactionType = "Choose a transaction type";
 const placeholderTransactionAmount = "Enter transaction amount";
 const placeholderReason = "Choose a reason";
@@ -21,6 +23,7 @@ const placeholderDescription = "Enter a description";
 const CASH_TRANSACTION_TYPES = ['Cash in', 'Cash out'];
 
 export const CashTransactionModal = () => {
+  const [name, setName] = useState(null);
   const [transactionType, setTransactionType] = useState(null);
   const [transactionAmount, setTransactionAmount] = useState(null);
   const [reason, setReason] = useState(null);
@@ -32,10 +35,16 @@ export const CashTransactionModal = () => {
   const [isTransactionAmountModalOpen, setIsTransactionAmountModalOpen] = useState(false);
   const [isReasonModalOpen, setIsReasonModalOpen] = useState(false);
   const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
+
+  const names = useMemo(() => UIDatabase.objects('Name').filtered('isVisible == true'));
   const transactionTypes = useMemo(() => CASH_TRANSACTION_TYPES.map(transactionType => ({ title: transactionType })));
   const reasons = useMemo(() => UIDatabase.objects('Options'));
+
   const onChangeText = text => setTextBuffer(text);
 
+  const onPressName = () => {
+    setIsNameModalOpen(true);
+  }
   const onPressTransactionAmount = () => {
     setIsTransactionAmountModalOpen(true);
     setTextBuffer(transactionAmount);
@@ -48,6 +57,12 @@ export const CashTransactionModal = () => {
     setIsDescriptionModalOpen(true);
     setTextBuffer(description);
   }
+
+  const onSubmitName = ({item}) => {
+      setName(item);
+      setIsNameModalOpen(false);
+  }
+
   const onSubmitTransactionType = ({item}) => {
     setTransactionType(item);
     setIsTransactionTypeModalOpen(false);
@@ -70,9 +85,9 @@ export const CashTransactionModal = () => {
 
   return (
     <View style={localStyles.modalContainerStyle}>
-        <TouchableOpacity style={localStyles.containerStyle}>
+        <TouchableOpacity style={localStyles.containerStyle} onPress={onPressName}>
         <View style={localStyles.textContainerStyle}>
-            <Text style={localStyles.textStyle}>Select a name</Text>
+            <Text style={localStyles.textStyle}>{name?.name ?? placeholderName}</Text>
         </View>
         <View style={localStyles.iconContainerStyle}>
             <ChevronDownIcon />
@@ -110,6 +125,9 @@ export const CashTransactionModal = () => {
             <PencilIcon />
         </View>
         </TouchableOpacity>
+        <BottomModalContainer isOpen={isNameModalOpen} modalStyle={localStyles.bottomModalContainerStyle}>
+            <GenericChoiceList data={names} keyToDisplay={'name'} onPress={onSubmitName} highlightValue={name?.name}/>
+        </BottomModalContainer>
         <BottomModalContainer isOpen={isTransactionTypeModalOpen} modalStyle={localStyles.bottomModalContainerStyle}>
             <GenericChoiceList data={transactionTypes} keyToDisplay={'title'} onPress={onSubmitTransactionType} highlightValue={transactionType?.title}/>
         </BottomModalContainer>
