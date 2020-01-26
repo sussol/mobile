@@ -147,6 +147,7 @@ export const CashTransactionModal = () => {
         />
         <BottomModalContainer isOpen={isReasonModalOpen} modalStyle={localStyles.bottomModalContainerStyle}>
             <GenericChoiceList data={reasons} keyToDisplay={'title'} onPress={onSubmitReason} highlightValue={reason?.title}/>
+        </BottomModalContainer>
         <BottomTextEditor
                 isOpen={isDescriptionModalOpen}
                 buttonText={'Confirm'}
