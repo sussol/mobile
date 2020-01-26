@@ -177,6 +177,7 @@ const localStyles = StyleSheet.create({
   },
   bottomModalContainerStyle: {
     height: 120,
+  },
   textContainerStyle: { width: '30%', justifyContent: 'center' },
   iconContainerStyle: { width: '5%', justifyContent: 'flex-end', alignItems: 'flex-end' },
   textStyle: { color: 'white' },
