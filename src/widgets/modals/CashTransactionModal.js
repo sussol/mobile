@@ -3,23 +3,32 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 import { BottomModalContainer, BottomTextEditor } from '../bottomModals';
+import { GenericChoiceList } from '../modalChildren';
 import { PencilIcon, ChevronDownIcon } from '../icons';
 
-export const CashTransactionModal = () => {
+import globalStyles, { WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
+
+const placeholderTransactionType = "Choose a transaction type";
 const placeholderTransactionAmount = "Enter transaction amount";
 const placeholderDescription = "Enter a description";
 
+const CASH_TRANSACTION_TYPES = ['Cash in', 'Cash out'];
 
+export const CashTransactionModal = () => {
+  const [transactionType, setTransactionType] = useState(null);
   const [transactionAmount, setTransactionAmount] = useState(null);
   const [description, setDescription] = useState(null)
+
   const [textBuffer, setTextBuffer] = useState('');
   const [isNameModalOpen, setIsNameModalOpen] = useState(false);
+  const [isTransactionTypeModalOpen, setIsTransactionTypeModalOpen] = useState(false);
   const [isTransactionAmountModalOpen, setIsTransactionAmountModalOpen] = useState(false);
   const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
+  const transactionTypes = useMemo(() => CASH_TRANSACTION_TYPES.map(transactionType => ({ title: transactionType })));
   const onChangeText = text => setTextBuffer(text);
 
   const onPressTransactionAmount = () => {
@@ -30,6 +39,11 @@ const placeholderDescription = "Enter a description";
     setIsDescriptionModalOpen(true);
     setTextBuffer(description);
   }
+  const onSubmitTransactionType = ({item}) => {
+    setTransactionType(item);
+    setIsTransactionTypeModalOpen(false);
+  }
+
   const onSubmitTransactionAmount = () => {
     setTransactionAmount(textBuffer);
     setIsTransactionAmountModalOpen(false);
@@ -50,9 +64,9 @@ const placeholderDescription = "Enter a description";
             <ChevronDownIcon />
         </View>
         </TouchableOpacity>
-        <TouchableOpacity style={localStyles.containerStyle}>
+        <TouchableOpacity style={localStyles.containerStyle} onPress={onPressTransactionType}>
         <View style={localStyles.textContainerStyle}>
-            <Text style={localStyles.textStyle}>Choose transaction type</Text>
+            <Text style={localStyles.textStyle}>{transactionType?.title ?? placeholderTransactionType}</Text>
         </View>
         <View style={localStyles.iconContainerStyle}>
             <ChevronDownIcon />
@@ -82,6 +96,9 @@ const placeholderDescription = "Enter a description";
             <PencilIcon />
         </View>
         </TouchableOpacity>
+        <BottomModalContainer isOpen={isTransactionTypeModalOpen} modalStyle={localStyles.bottomModalContainerStyle}>
+            <GenericChoiceList data={transactionTypes} keyToDisplay={'title'} onPress={onSubmitTransactionType} highlightValue={transactionType?.title}/>
+        </BottomModalContainer>
         <BottomTextEditor
                 isOpen={isTransactionAmountModalOpen}
                 buttonText={'Confirm'}
@@ -117,6 +134,8 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
     minHeight: '10%',
   },
+  bottomModalContainerStyle: {
+    height: 120,
   textContainerStyle: { width: '30%', justifyContent: 'center' },
   iconContainerStyle: { width: '5%', justifyContent: 'flex-end', alignItems: 'flex-end' },
   textStyle: { color: 'white' },
