@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, {useMemo, useState} from 'react';
+import React, { useMemo, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 import { UIDatabase } from '../../database';
@@ -15,11 +15,11 @@ import { PencilIcon, ChevronDownIcon } from '../icons';
 
 import globalStyles, { WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
 
-const placeholderName = "Choose a name";
-const placeholderTransactionType = "Choose a transaction type";
-const placeholderTransactionAmount = "Enter transaction amount";
-const placeholderReason = "Choose a reason";
-const placeholderDescription = "Enter a description";
+const placeholderName = 'Choose a name';
+const placeholderTransactionType = 'Choose a transaction type';
+const placeholderTransactionAmount = 'Enter transaction amount';
+const placeholderReason = 'Choose a reason';
+const placeholderDescription = 'Enter a description';
 
 const CASH_TRANSACTION_TYPES = ['Cash in', 'Cash out'];
 
@@ -28,7 +28,7 @@ export const CashTransactionModal = () => {
   const [transactionType, setTransactionType] = useState(null);
   const [transactionAmount, setTransactionAmount] = useState(null);
   const [reason, setReason] = useState(null);
-  const [description, setDescription] = useState(null)
+  const [description, setDescription] = useState(null);
 
   const [textBuffer, setTextBuffer] = useState('');
   const [isNameModalOpen, setIsNameModalOpen] = useState(false);
@@ -38,146 +38,177 @@ export const CashTransactionModal = () => {
   const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
 
   const names = useMemo(() => UIDatabase.objects('Name').filtered('isVisible == true'));
-  const transactionTypes = useMemo(() => CASH_TRANSACTION_TYPES.map(transactionType => ({ title: transactionType })));
+  const transactionTypes = useMemo(() => CASH_TRANSACTION_TYPES.map(type => ({ title: type })));
   const reasons = useMemo(() => UIDatabase.objects('Options'));
-  const isValidTransaction = useMemo(() => !!name && !!transactionType && !!transactionAmount && !!reason, [name, transactionType, transactionAmount, reason]);
+  const isValidTransaction = useMemo(
+    () => !!name && !!transactionType && !!transactionAmount && !!reason,
+    [name, transactionType, transactionAmount, reason]
+  );
 
   const onChangeText = text => setTextBuffer(text);
 
   const resetBottomModal = () => {
-      setIsNameModalOpen(false);
-      setIsTransactionTypeModalOpen(false);
-      setIsTransactionAmountModalOpen(false);
-      setIsReasonModalOpen(false);
-      setIsDescriptionModalOpen(false);
-  }
+    setIsNameModalOpen(false);
+    setIsTransactionTypeModalOpen(false);
+    setIsTransactionAmountModalOpen(false);
+    setIsReasonModalOpen(false);
+    setIsDescriptionModalOpen(false);
+  };
 
   const onPressName = () => {
     resetBottomModal();
     setIsNameModalOpen(true);
-  }
+  };
 
   const onPressTransactionType = () => {
     resetBottomModal();
     setIsTransactionTypeModalOpen(true);
-  }
+  };
 
   const onPressTransactionAmount = () => {
     resetBottomModal();
     setIsTransactionAmountModalOpen(true);
     setTextBuffer(transactionAmount);
-  }
+  };
 
   const onPressReason = () => {
     resetBottomModal();
     setIsReasonModalOpen(true);
-  }
+  };
 
   const onPressDescription = () => {
     resetBottomModal();
     setIsDescriptionModalOpen(true);
     setTextBuffer(description);
-  }
+  };
 
-  const onSubmitName = ({item}) => {
-      setName(item);
-      setIsNameModalOpen(false);
-  }
+  const onSubmitName = ({ item }) => {
+    setName(item);
+    setIsNameModalOpen(false);
+  };
 
-  const onSubmitTransactionType = ({item}) => {
+  const onSubmitTransactionType = ({ item }) => {
     setTransactionType(item);
     setIsTransactionTypeModalOpen(false);
-  }
+  };
 
   const onSubmitTransactionAmount = () => {
     setTransactionAmount(textBuffer);
     setIsTransactionAmountModalOpen(false);
-  }
+  };
 
-  const onSubmitReason = ({item}) => {
-      setReason(item);
-      setIsReasonModalOpen(false);
-  }
+  const onSubmitReason = ({ item }) => {
+    setReason(item);
+    setIsReasonModalOpen(false);
+  };
 
   const onSubmitDescription = () => {
     setDescription(textBuffer);
     setIsDescriptionModalOpen(false);
-  }
+  };
 
   return (
     <View style={localStyles.modalContainerStyle}>
-        <TouchableOpacity style={localStyles.containerStyle} onPress={onPressName}>
+      <TouchableOpacity style={localStyles.containerStyle} onPress={onPressName}>
         <View style={localStyles.textContainerStyle}>
-            <Text style={localStyles.textStyle}>{name?.name ?? placeholderName}</Text>
+          <Text style={localStyles.textStyle}>{name?.name ?? placeholderName}</Text>
         </View>
         <View style={localStyles.iconContainerStyle}>
-            <ChevronDownIcon />
+          <ChevronDownIcon />
         </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={localStyles.containerStyle} onPress={onPressTransactionType}>
+      </TouchableOpacity>
+      <TouchableOpacity style={localStyles.containerStyle} onPress={onPressTransactionType}>
         <View style={localStyles.textContainerStyle}>
-            <Text style={localStyles.textStyle}>{transactionType?.title ?? placeholderTransactionType}</Text>
+          <Text style={localStyles.textStyle}>
+            {transactionType?.title ?? placeholderTransactionType}
+          </Text>
         </View>
         <View style={localStyles.iconContainerStyle}>
-            <ChevronDownIcon />
+          <ChevronDownIcon />
         </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={localStyles.containerStyle} onPress={onPressTransactionAmount}>
+      </TouchableOpacity>
+      <TouchableOpacity style={localStyles.containerStyle} onPress={onPressTransactionAmount}>
         <View style={localStyles.textContainerStyle}>
-            <Text style={localStyles.textStyle}>{transactionAmount ?? placeholderTransactionAmount}</Text>
+          <Text style={localStyles.textStyle}>
+            {transactionAmount ?? placeholderTransactionAmount}
+          </Text>
         </View>
         <View style={localStyles.iconContainerStyle}>
-            <PencilIcon />
+          <PencilIcon />
         </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={localStyles.containerStyle} onPress={onPressReason}>
+      </TouchableOpacity>
+      <TouchableOpacity style={localStyles.containerStyle} onPress={onPressReason}>
         <View style={localStyles.textContainerStyle}>
-            <Text style={localStyles.textStyle}>{reason?.title ?? placeholderReason}</Text>
+          <Text style={localStyles.textStyle}>{reason?.title ?? placeholderReason}</Text>
         </View>
         <View style={localStyles.iconContainerStyle}>
-            <ChevronDownIcon />
+          <ChevronDownIcon />
         </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={localStyles.containerStyle} onPress={onPressDescription}>
+      </TouchableOpacity>
+      <TouchableOpacity style={localStyles.containerStyle} onPress={onPressDescription}>
         <View style={localStyles.textContainerStyle}>
-            <Text style={localStyles.textStyle}>{description ?? placeholderDescription}</Text>
+          <Text style={localStyles.textStyle}>{description ?? placeholderDescription}</Text>
         </View>
         <View style={localStyles.iconContainerStyle}>
-            <PencilIcon />
+          <PencilIcon />
         </View>
-        </TouchableOpacity>
-        <BottomModalContainer isOpen={isNameModalOpen} modalStyle={localStyles.bottomModalContainerStyle}>
-            <GenericChoiceList data={names} keyToDisplay={'name'} onPress={onSubmitName} highlightValue={name?.name}/>
-        </BottomModalContainer>
-        <BottomModalContainer isOpen={isTransactionTypeModalOpen} modalStyle={localStyles.bottomModalContainerStyle}>
-            <GenericChoiceList data={transactionTypes} keyToDisplay={'title'} onPress={onSubmitTransactionType} highlightValue={transactionType?.title}/>
-        </BottomModalContainer>
-        <BottomTextEditor
-                isOpen={isTransactionAmountModalOpen}
-                buttonText={'Confirm'}
-                value={textBuffer}
-                placeholder={placeholderTransactionAmount}
-                onChangeText={onChangeText}
-                onConfirm={onSubmitTransactionAmount}
+      </TouchableOpacity>
+      <BottomModalContainer
+        isOpen={isNameModalOpen}
+        modalStyle={localStyles.bottomModalContainerStyle}
+      >
+        <GenericChoiceList
+          data={names}
+          keyToDisplay="name"
+          onPress={onSubmitName}
+          highlightValue={name?.name}
         />
-        <BottomModalContainer isOpen={isReasonModalOpen} modalStyle={localStyles.bottomModalContainerStyle}>
-            <GenericChoiceList data={reasons} keyToDisplay={'title'} onPress={onSubmitReason} highlightValue={reason?.title}/>
-        </BottomModalContainer>
-        <BottomTextEditor
-                isOpen={isDescriptionModalOpen}
-                buttonText={'Confirm'}
-                value={textBuffer}
-                placeholder={placeholderDescription}
-                onChangeText={onChangeText}
-                onConfirm={onSubmitDescription}
+      </BottomModalContainer>
+      <BottomModalContainer
+        isOpen={isTransactionTypeModalOpen}
+        modalStyle={localStyles.bottomModalContainerStyle}
+      >
+        <GenericChoiceList
+          data={transactionTypes}
+          keyToDisplay="title"
+          onPress={onSubmitTransactionType}
+          highlightValue={transactionType?.title}
         />
-        <PageButton
-            text="OK"
-            onPress={null}
-            isDisabled={!isValidTransaction}
-            disabledColor={WARM_GREY}
-            style={localStyles.okButton}
-            textStyle={localStyles.pageButtonTextStyle}
+      </BottomModalContainer>
+      <BottomTextEditor
+        isOpen={isTransactionAmountModalOpen}
+        buttonText="Confirm"
+        value={textBuffer}
+        placeholder={placeholderTransactionAmount}
+        onChangeText={onChangeText}
+        onConfirm={onSubmitTransactionAmount}
+      />
+      <BottomModalContainer
+        isOpen={isReasonModalOpen}
+        modalStyle={localStyles.bottomModalContainerStyle}
+      >
+        <GenericChoiceList
+          data={reasons}
+          keyToDisplay="title"
+          onPress={onSubmitReason}
+          highlightValue={reason?.title}
+        />
+      </BottomModalContainer>
+      <BottomTextEditor
+        isOpen={isDescriptionModalOpen}
+        buttonText="Confirm"
+        value={textBuffer}
+        placeholder={placeholderDescription}
+        onChangeText={onChangeText}
+        onConfirm={onSubmitDescription}
+      />
+      <PageButton
+        text="OK"
+        onPress={null}
+        isDisabled={!isValidTransaction}
+        disabledColor={WARM_GREY}
+        style={localStyles.okButton}
+        textStyle={localStyles.pageButtonTextStyle}
       />
     </View>
   );
@@ -214,5 +245,5 @@ const localStyles = StyleSheet.create({
     ...globalStyles.buttonText,
     color: 'white',
     fontSize: 14,
-  }
+  },
 });
