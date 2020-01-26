@@ -25,15 +25,9 @@ export const CashRegister = ({ dispatch, data, dataState, sortKey, keyExtractor,
   const getCallback = (_colKey, _propName) => null;
   const onPressRow = _rowData => null;
 
-  const getModalOnSelect = () => {
-    switch (modalKey) {
-      case MODAL_KEYS.CREATE_CASH_TRANSACTION:
-        return null;
-      default:
-        return null;
-    }
+  const onCreateCashTransaction = transaction => {
+    // TODO: dispatch new cash transaction.
   };
-
 
   const renderRow = useCallback(
     listItem => {
@@ -98,7 +92,7 @@ export const CashRegister = ({ dispatch, data, dataState, sortKey, keyExtractor,
         isOpen={!!modalKey}
         modalKey={modalKey}
         onClose={onCloseModal}
-        onSelect={getModalOnSelect()}
+        onSelect={onCreateCashTransaction}
         dispatch={dispatch}
       />
     </DataTablePageView>

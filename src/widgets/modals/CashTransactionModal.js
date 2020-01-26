@@ -3,7 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
+import PropTypes from 'prop-types';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 import { UIDatabase } from '../../database';
@@ -23,7 +24,7 @@ const placeholderDescription = 'Enter a description';
 
 const CASH_TRANSACTION_TYPES = ['Cash in', 'Cash out'];
 
-export const CashTransactionModal = () => {
+export const CashTransactionModal = ({ onConfirm }) => {
   const [name, setName] = useState(null);
   const [transactionType, setTransactionType] = useState(null);
   const [transactionAmount, setTransactionAmount] = useState(null);
@@ -38,12 +39,16 @@ export const CashTransactionModal = () => {
   const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
 
   const names = useMemo(() => UIDatabase.objects('Name').filtered('isVisible == true'));
-  const transactionTypes = useMemo(() => CASH_TRANSACTION_TYPES.map(type => ({ title: type })));
+  const transactionTypes = useMemo(() =>
+    CASH_TRANSACTION_TYPES.map(type => ({ title: type }))
+  );
   const reasons = useMemo(() => UIDatabase.objects('Options'));
   const isValidTransaction = useMemo(
     () => !!name && !!transactionType && !!transactionAmount && !!reason,
     [name, transactionType, transactionAmount, reason]
   );
+
+  const onCreate = useCallback(() => onConfirm({ name, transactionType, transactionAmount, reason, description }), [name, transactionType, transactionAmount, reason, description]);
 
   const onChangeText = text => setTextBuffer(text);
 
@@ -204,7 +209,7 @@ export const CashTransactionModal = () => {
       />
       <PageButton
         text="OK"
-        onPress={null}
+        onPress={onCreate}
         isDisabled={!isValidTransaction}
         disabledColor={WARM_GREY}
         style={localStyles.okButton}
@@ -212,6 +217,12 @@ export const CashTransactionModal = () => {
       />
     </View>
   );
+};
+
+CashTransactionModal.defaultProps = {};
+
+CashTransactionModal.propTypes = {
+  onConfirm: PropTypes.func.isRequired,
 };
 
 const localStyles = StyleSheet.create({
