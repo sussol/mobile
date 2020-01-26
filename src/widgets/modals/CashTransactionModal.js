@@ -5,20 +5,40 @@
 
 import React, {useState} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { BottomTextEditor } from '../bottomModals';
+
+import { BottomModalContainer, BottomTextEditor } from '../bottomModals';
 import { PencilIcon, ChevronDownIcon } from '../icons';
 
 export const CashTransactionModal = () => {
-  const [description, setDescription] = useState('Enter a description');
-  
-  const [textBuffer, setTextBuffer] = useState('');
-  const [isTextEditorOpen, setIsTextEditorOpen] = useState(false);
+const placeholderTransactionAmount = "Enter transaction amount";
+const placeholderDescription = "Enter a description";
 
+
+  const [transactionAmount, setTransactionAmount] = useState(null);
+  const [description, setDescription] = useState(null)
+  const [textBuffer, setTextBuffer] = useState('');
+  const [isNameModalOpen, setIsNameModalOpen] = useState(false);
+  const [isTransactionAmountModalOpen, setIsTransactionAmountModalOpen] = useState(false);
+  const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
+  const onChangeText = text => setTextBuffer(text);
+
+  const onPressTransactionAmount = () => {
+    setIsTransactionAmountModalOpen(true);
+    setTextBuffer(transactionAmount);
+  }
   const onPressDescription = () => {
+    setIsDescriptionModalOpen(true);
     setTextBuffer(description);
-    setIsTextEditorOpen(true);
+  }
+  const onSubmitTransactionAmount = () => {
+    setTransactionAmount(textBuffer);
+    setIsTransactionAmountModalOpen(false);
   }
 
+  const onSubmitDescription = () => {
+    setDescription(textBuffer);
+    setIsDescriptionModalOpen(false);
+  }
 
   return (
     <View style={localStyles.modalContainerStyle}>
@@ -38,9 +58,9 @@ export const CashTransactionModal = () => {
             <ChevronDownIcon />
         </View>
         </TouchableOpacity>
-        <TouchableOpacity style={localStyles.containerStyle}>
+        <TouchableOpacity style={localStyles.containerStyle} onPress={onPressTransactionAmount}>
         <View style={localStyles.textContainerStyle}>
-            <Text style={localStyles.textStyle}>Enter transaction amount</Text>
+            <Text style={localStyles.textStyle}>{transactionAmount ?? placeholderTransactionAmount}</Text>
         </View>
         <View style={localStyles.iconContainerStyle}>
             <PencilIcon />
@@ -56,22 +76,27 @@ export const CashTransactionModal = () => {
         </TouchableOpacity>
         <TouchableOpacity style={localStyles.containerStyle} onPress={onPressDescription}>
         <View style={localStyles.textContainerStyle}>
-            <Text style={localStyles.textStyle}>{description}</Text>
+            <Text style={localStyles.textStyle}>{description ?? placeholderDescription}</Text>
         </View>
         <View style={localStyles.iconContainerStyle}>
             <PencilIcon />
         </View>
         </TouchableOpacity>
         <BottomTextEditor
-            isOpen={isTextEditorOpen}
-            buttonText={"Confirm"}
-            value={textBuffer}
-            placeholder={"Enter description"}
-            onConfirm={() => {
-                setDescription(textBuffer);
-                setIsTextEditorOpen(false);
-            }}
-            onChangeText={text => setTextBuffer(text)}
+                isOpen={isTransactionAmountModalOpen}
+                buttonText={'Confirm'}
+                value={textBuffer}
+                placeholder={placeholderTransactionAmount}
+                onChangeText={onChangeText}
+                onConfirm={onSubmitTransactionAmount}
+        />
+        <BottomTextEditor
+                isOpen={isDescriptionModalOpen}
+                buttonText={'Confirm'}
+                value={textBuffer}
+                placeholder={placeholderDescription}
+                onChangeText={onChangeText}
+                onConfirm={onSubmitDescription}
         />
     </View>
   );
