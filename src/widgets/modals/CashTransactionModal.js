@@ -10,6 +10,7 @@ import { UIDatabase } from '../../database';
 
 import { BottomModalContainer, BottomTextEditor } from '../bottomModals';
 import { GenericChoiceList } from '../modalChildren';
+import { PageButton } from '../PageButton';
 import { PencilIcon, ChevronDownIcon } from '../icons';
 
 import globalStyles, { WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
@@ -39,6 +40,7 @@ export const CashTransactionModal = () => {
   const names = useMemo(() => UIDatabase.objects('Name').filtered('isVisible == true'));
   const transactionTypes = useMemo(() => CASH_TRANSACTION_TYPES.map(transactionType => ({ title: transactionType })));
   const reasons = useMemo(() => UIDatabase.objects('Options'));
+  const isValidTransaction = useMemo(() => !!name && !!transactionType && !!transactionAmount && !!reason, [name, transactionType, transactionAmount, reason]);
 
   const onChangeText = text => setTextBuffer(text);
 
@@ -156,6 +158,14 @@ export const CashTransactionModal = () => {
                 onChangeText={onChangeText}
                 onConfirm={onSubmitDescription}
         />
+        <PageButton
+            text="OK"
+            onPress={null}
+            isDisabled={!isValidTransaction}
+            disabledColor={WARM_GREY}
+            style={localStyles.okButton}
+            textStyle={localStyles.pageButtonTextStyle}
+      />
     </View>
   );
 };
@@ -181,4 +191,15 @@ const localStyles = StyleSheet.create({
   textContainerStyle: { width: '30%', justifyContent: 'center' },
   iconContainerStyle: { width: '5%', justifyContent: 'flex-end', alignItems: 'flex-end' },
   textStyle: { color: 'white' },
+  okButton: {
+    ...globalStyles.button,
+    backgroundColor: SUSSOL_ORANGE,
+    alignSelf: 'center',
+    marginTop: 60,
+  },
+  pageButtonTextStyle: {
+    ...globalStyles.buttonText,
+    color: 'white',
+    fontSize: 14,
+  }
 });
