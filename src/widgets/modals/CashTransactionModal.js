@@ -44,24 +44,37 @@ export const CashTransactionModal = () => {
 
   const onChangeText = text => setTextBuffer(text);
 
+  const resetBottomModal = () => {
+      setIsNameModalOpen(false);
+      setIsTransactionTypeModalOpen(false);
+      setIsTransactionAmountModalOpen(false);
+      setIsReasonModalOpen(false);
+      setIsDescriptionModalOpen(false);
+  }
+
   const onPressName = () => {
+    resetBottomModal();
     setIsNameModalOpen(true);
   }
 
   const onPressTransactionType = () => {
+    resetBottomModal();
     setIsTransactionTypeModalOpen(true);
   }
 
   const onPressTransactionAmount = () => {
+    resetBottomModal();
     setIsTransactionAmountModalOpen(true);
     setTextBuffer(transactionAmount);
   }
 
   const onPressReason = () => {
+    resetBottomModal();
     setIsReasonModalOpen(true);
   }
 
   const onPressDescription = () => {
+    resetBottomModal();
     setIsDescriptionModalOpen(true);
     setTextBuffer(description);
   }
