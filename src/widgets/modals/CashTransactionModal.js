@@ -45,6 +45,11 @@ export const CashTransactionModal = () => {
   const onPressName = () => {
     setIsNameModalOpen(true);
   }
+
+  const onPressTransactionType = () => {
+    setIsTransactionTypeModalOpen(true);
+  }
+
   const onPressTransactionAmount = () => {
     setIsTransactionAmountModalOpen(true);
     setTextBuffer(transactionAmount);
@@ -53,6 +58,7 @@ export const CashTransactionModal = () => {
   const onPressReason = () => {
     setIsReasonModalOpen(true);
   }
+
   const onPressDescription = () => {
     setIsDescriptionModalOpen(true);
     setTextBuffer(description);
