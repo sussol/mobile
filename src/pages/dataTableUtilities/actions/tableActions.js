@@ -151,6 +151,22 @@ export const addItem = (item, addedItemType, route) => (dispatch, getState) => {
 };
 
 /**
+ * Creates a cash transaction for a given cash transaction object.
+ * @param {Object} cashTransaction Cash transaction object.
+ */
+export const addCashTransaction = (cashTransaction, route) => (dispatch, getState) => {
+  const { name, transactionType, transactionAmount, reason, description } = cashTransaction;
+
+  if (transactionType.code === 'cash_in') {
+    // Create cash in transaction.
+  }
+
+  if (transactionType.code === 'cash_out') {
+    // Create cash out transaction.
+  }
+}
+
+/**
  * Creates a transaction batch which will be associated with the current stores
  * pageObject.
  * use case: Pages which are batch-based i.e. SupplierInvoice page.
@@ -269,6 +285,7 @@ export const TableActionsLookup = {
   toggleStockOut,
   addMasterListItems,
   addItem,
+  addCashTransaction,
   addTransactionBatch,
   createAutomaticOrder,
   setRequestedToSuggested,

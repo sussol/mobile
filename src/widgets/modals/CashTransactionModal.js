@@ -22,7 +22,7 @@ const placeholderTransactionAmount = 'Enter transaction amount';
 const placeholderReason = 'Choose a reason';
 const placeholderDescription = 'Enter a description';
 
-const CASH_TRANSACTION_TYPES = ['Cash in', 'Cash out'];
+const CASH_TRANSACTION_TYPES = [{title: 'Cash in', code: 'cash_in'}, {title: 'Cash out', code: 'cash_out'}];
 
 export const CashTransactionModal = ({ onConfirm }) => {
   const [name, setName] = useState(null);
@@ -38,10 +38,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
   const [isReasonModalOpen, setIsReasonModalOpen] = useState(false);
   const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
 
-  const names = useMemo(() => UIDatabase.objects('Name').filtered('isVisible == true'));
-  const transactionTypes = useMemo(() =>
-    CASH_TRANSACTION_TYPES.map(type => ({ title: type }))
-  );
+  const names = useMemo(() => UIDatabase.objects('Name'));
   const reasons = useMemo(() => UIDatabase.objects('Options'));
   const isValidTransaction = useMemo(
     () => !!name && !!transactionType && !!transactionAmount && !!reason,
@@ -174,7 +171,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
         modalStyle={localStyles.bottomModalContainerStyle}
       >
         <GenericChoiceList
-          data={transactionTypes}
+          data={CASH_TRANSACTION_TYPES}
           keyToDisplay="title"
           onPress={onSubmitTransactionType}
           highlightValue={transactionType?.title}

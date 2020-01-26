@@ -21,13 +21,9 @@ import { ROUTES } from '../navigation/constants';
 import globalStyles from '../globalStyles';
 import { buttonStrings } from '../localization';
 
-export const CashRegister = ({ dispatch, data, dataState, sortKey, keyExtractor, modalKey, columns, onNewCashTransaction, onCloseModal }) => {
+export const CashRegister = ({ dispatch, data, dataState, sortKey, keyExtractor, modalKey, columns, onNewCashTransaction, onCloseModal, onAddCashTransaction }) => {
   const getCallback = (_colKey, _propName) => null;
   const onPressRow = _rowData => null;
-
-  const onCreateCashTransaction = transaction => {
-    // TODO: dispatch new cash transaction.
-  };
 
   const renderRow = useCallback(
     listItem => {
@@ -92,7 +88,7 @@ export const CashRegister = ({ dispatch, data, dataState, sortKey, keyExtractor,
         isOpen={!!modalKey}
         modalKey={modalKey}
         onClose={onCloseModal}
-        onSelect={onCreateCashTransaction}
+        onSelect={onAddCashTransaction}
         dispatch={dispatch}
       />
     </DataTablePageView>

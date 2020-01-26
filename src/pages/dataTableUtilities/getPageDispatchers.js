@@ -68,6 +68,7 @@ export const getPageDispatchers = (dispatch, props, dataType, route) => {
     onAddTransactionItem: item => dispatch(BasePageActions.addItem(item, 'TransactionItem', route)),
     onAddStocktakeItem: item => dispatch(BasePageActions.addItem(item, 'StocktakeItem', route)),
     onAddRequisitionItem: item => dispatch(BasePageActions.addItem(item, 'RequisitionItem', route)),
+    onAddCashTransaction: item => dispatch(BasePageActions.addCashTransaction(item, route)),
     onSelectNewItem: () => dispatch(BasePageActions.openModal(MODAL_KEYS.SELECT_ITEM, route)),
 
     // Master list
