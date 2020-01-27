@@ -21,6 +21,13 @@ import Realm from 'realm';
  */
 export class IndicatorAttribute extends Realm.Object {
   /**
+   * Get attribute key.
+   */
+  get key() {
+    return this.isColumn ? this.code : this.id;
+  }
+
+  /**
    * Get if an attribute is a row.
    */
   get isRow() {
