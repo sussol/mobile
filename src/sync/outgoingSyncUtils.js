@@ -101,6 +101,20 @@ const generateSyncData = (settings, recordType, record) => {
         donor_id: record.donor && record.donor.id,
       };
     }
+    case 'Name': {
+      return {
+        id: record.id,
+        type: record.type,
+        first: record.firstName,
+        last: record.lastName,
+        name: `${record.lastName}, ${record.firstName}`,
+        date_of_birth: getDateString(record.dateOfBirth),
+        code: record.code,
+        email: record.emailAddress,
+        supplying_store_id: settings.get(THIS_STORE_ID),
+        phone: record.phoneNumber,
+      };
+    }
     case 'NumberSequence': {
       const thisStoreId = settings.get(THIS_STORE_ID);
       return {
@@ -259,6 +273,21 @@ const generateSyncData = (settings, recordType, record) => {
         type: record.type,
       };
     }
+
+    case 'Prescriber': {
+      return {
+        ID: record.id,
+        last_name: record.lastName,
+        first_name: record.firstName,
+        registration_code: record.registrationCode,
+        email: record.emailAddress,
+        phone: record.phoneNumber,
+        active: record.isActive,
+        address1: record.address?.line1,
+        address2: record.address?.line2,
+      };
+    }
+
     default:
       throw new Error('Sync out record type not supported.');
   }
