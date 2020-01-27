@@ -16,7 +16,7 @@ import { PencilIcon, ChevronDownIcon } from '../icons';
 
 import globalStyles, { WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
 
-const placeholderSupplier = 'Choose a name';
+const placeholderName = 'Choose a name';
 const placeholderType = 'Choose a transaction type';
 const placeholderAmount = 'Enter transaction amount';
 const placeholderReason = 'Choose a reason';
@@ -28,14 +28,14 @@ const CASH_TRANSACTION_TYPES = [
 ];
 
 export const CashTransactionModal = ({ onConfirm }) => {
-  const [supplier, setSupplier] = useState(null);
+  const [name, setName] = useState(null);
   const [type, setType] = useState(null);
   const [amount, setAmount] = useState(null);
   const [reason, setReason] = useState(null);
   const [description, setDescription] = useState(null);
 
   const [textBuffer, setTextBuffer] = useState('');
-  const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
+  const [isNameModalOpen, setIsNameModalOpen] = useState(false);
   const [isTypeModalOpen, setIsTypeModalOpen] = useState(false);
   const [isAmountModalOpen, setIsAmountModalOpen] = useState(false);
   const [isReasonModalOpen, setIsReasonModalOpen] = useState(false);
@@ -43,15 +43,16 @@ export const CashTransactionModal = ({ onConfirm }) => {
 
   const names = useMemo(() => UIDatabase.objects('Name'));
   const reasons = useMemo(() => UIDatabase.objects('Options'));
-  const isValidTransaction = useMemo(() => !!supplier && !!type && !!amount && !!reason, [
-    supplier,
+
+  const isValidTransaction = useMemo(() => !!name && !!type && !!amount && !!reason, [
+    name,
     type,
     amount,
     reason,
   ]);
 
-  const onCreate = useCallback(() => onConfirm({ supplier, type, amount, reason, description }), [
-    supplier,
+  const onCreate = useCallback(() => onConfirm({ name, type, amount, reason, description }), [
+    name,
     type,
     amount,
     reason,
@@ -61,16 +62,16 @@ export const CashTransactionModal = ({ onConfirm }) => {
   const onChangeText = text => setTextBuffer(text);
 
   const resetBottomModal = () => {
-    setIsSupplierModalOpen(false);
+    setIsNameModalOpen(false);
     setIsTypeModalOpen(false);
     setIsAmountModalOpen(false);
     setIsReasonModalOpen(false);
     setIsDescriptionModalOpen(false);
   };
 
-  const onPressSupplier = () => {
+  const onPressName = () => {
     resetBottomModal();
-    setIsSupplierModalOpen(true);
+    setIsNameModalOpen(true);
   };
 
   const onPressType = () => {
@@ -95,9 +96,9 @@ export const CashTransactionModal = ({ onConfirm }) => {
     setTextBuffer(description);
   };
 
-  const onSubmitSupplier = ({ item }) => {
-    setSupplier(item);
-    setIsSupplierModalOpen(false);
+  const onSubmitName = ({ item }) => {
+    setName(item);
+    setIsNameModalOpen(false);
   };
 
   const onSubmitType = ({ item }) => {
@@ -122,9 +123,9 @@ export const CashTransactionModal = ({ onConfirm }) => {
 
   return (
     <View style={localStyles.modalContainerStyle}>
-      <TouchableOpacity style={localStyles.containerStyle} onPress={onPressSupplier}>
+      <TouchableOpacity style={localStyles.containerStyle} onPress={onPressName}>
         <View style={localStyles.textContainerStyle}>
-          <Text style={localStyles.textStyle}>{supplier?.name ?? placeholderSupplier}</Text>
+          <Text style={localStyles.textStyle}>{name?.name ?? placeholderName}</Text>
         </View>
         <View style={localStyles.iconContainerStyle}>
           <ChevronDownIcon />
@@ -163,14 +164,14 @@ export const CashTransactionModal = ({ onConfirm }) => {
         </View>
       </TouchableOpacity>
       <BottomModalContainer
-        isOpen={isSupplierModalOpen}
+        isOpen={isNameModalOpen}
         modalStyle={localStyles.bottomModalContainerStyle}
       >
         <GenericChoiceList
           data={names}
           keyToDisplay="name"
-          onPress={onSubmitSupplier}
-          highlightValue={supplier?.name}
+          onPress={onSubmitName}
+          highlightValue={name?.name}
         />
       </BottomModalContainer>
       <BottomModalContainer

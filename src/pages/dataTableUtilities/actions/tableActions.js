@@ -160,11 +160,15 @@ export const addCashTransaction = (cashTransaction, route) => (dispatch, getStat
   const { type } = cashTransaction;
 
   if (type.code === 'cash_in') {
-    // Create cash in transaction.
+    // Create receipt transaction and associated customer credit and receipt transaction batch.
+    UIDatabase.write(() => {
+      const [payment] = createRecord(UIDatabase, 'CashIn', currentUser, cashTransaction);
+      dispatch(addRecord(payment, route));
+    });
   }
 
   if (type.code === 'cash_out') {
-    // Create payment transaction and associated customer invoice, payment batch transaction.
+    // Create payment transaction and associated customer invoice, payment transaction batch.
     UIDatabase.write(() => {
       const [payment] = createRecord(UIDatabase, 'CashOut', currentUser, cashTransaction);
       dispatch(addRecord(payment, route));
