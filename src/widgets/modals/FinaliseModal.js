@@ -64,6 +64,7 @@ export const FinaliseModal = props => {
 
   return (
     <NewConfirmModal
+      finaliseItem={finaliseItem}
       isOpen={isOpen}
       questionText={errorText || modalStrings[finaliseText]}
       confirmText={modalStrings.confirm}
