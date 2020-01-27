@@ -133,23 +133,37 @@ const createPatient = (database, patientDetails) => {
   database.save('Patient', patient);
 };
 
-const createCashOut = (database, user, patient, amount) => {
-  const offsetInvoice = createOffsetCustomerInvoice(database, user, patient, amount);
-  const payment = createPayment(database, user, patient, amount);
-  const paymentLine = createPaymentLine(database, payment, offsetInvoice, amount);
+const createCashOut = (database, user, cashTransaction) => {
+  const { name, amount, reason, description } = cashTransaction;
 
-  return [offsetInvoice, payment, paymentLine];
+  // Create payment transaction.
+  const payment = createPayment(database, user, name, amount, reason, description);
+
+  // Create customer invoice of same monetary value to offset payment transaction.
+  const customerInvoice = createOffsetCustomerInvoice(database, user, name, amount);
+
+  // Create payment transaction batch.
+  const paymentLine = createPaymentLine(database, payment, customerInvoice, amount);
+
+  return [payment, customerInvoice, paymentLine];
 };
 
-const createCashIn = (database, user, patient, amount) => {
-  const customerCredit = createCustomerCredit(database, user, patient, -amount);
-  const receipt = createReceipt(database, user, patient, amount);
+const createCashIn = (database, user, cashTransaction) => {
+  const { name, amount, description } = cashTransaction;
+
+  // Create receipt transaction.
+  const receipt = createReceipt(database, user, name, amount, description);
+
+  // Create customer credit transaction.
+  const customerCredit = createCustomerCredit(database, user, name, amount);
+
+  // Create receipt transaction batch.
   const receiptLine = createReceiptLine(database, receipt, customerCredit, amount);
 
-  return [customerCredit, receipt, receiptLine];
+  return [receipt, customerCredit, receiptLine];
 };
 
-const createOffsetCustomerInvoice = (database, user, patient, amount) => {
+const createOffsetCustomerInvoice = (database, user, name, amount) => {
   const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
   const currentDate = new Date();
   const invoice = database.create('Transaction', {
@@ -159,8 +173,8 @@ const createOffsetCustomerInvoice = (database, user, patient, amount) => {
     confirmDate: currentDate,
     type: 'customer_invoice',
     status: 'finalised',
-    comment: '',
-    otherParty: patient,
+    comment: 'Offset for a cash-only transaction',
+    otherParty: name,
     total: amount,
     outstanding: amount,
     enteredBy: user,
@@ -169,7 +183,7 @@ const createOffsetCustomerInvoice = (database, user, patient, amount) => {
   return invoice;
 };
 
-const createReceipt = (database, user, patient, total) => {
+const createReceipt = (database, user, name, amount, description) => {
   const currentDate = new Date();
   const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
   const receipt = database.create('Transaction', {
@@ -179,22 +193,22 @@ const createReceipt = (database, user, patient, total) => {
     confirmDate: currentDate,
     type: 'receipt',
     status: 'finalised',
-    comment: '',
-    otherParty: patient,
+    comment: description,
+    otherParty: name,
     enteredBy: user,
-    total,
+    total: amount,
   });
 
   database.save('Transaction', receipt);
   return receipt;
 };
 
-const createReceiptLine = (database, receipt, linkedTransaction, total) => {
+const createReceiptLine = (database, receipt, customerCredit, amount) => {
   const receiptLine = database.create('TransactionBatch', {
     id: generateUUID(),
-    total,
+    total: amount,
     transaction: receipt,
-    linkedTransaction,
+    linkedTransaction: customerCredit,
     type: 'cash_in',
   });
 
@@ -202,7 +216,7 @@ const createReceiptLine = (database, receipt, linkedTransaction, total) => {
   return receiptLine;
 };
 
-const createPayment = (database, user, patient, total) => {
+const createPayment = (database, user, name, amount, reason, description) => {
   const currentDate = new Date();
   const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
   const payment = database.create('Transaction', {
@@ -212,22 +226,23 @@ const createPayment = (database, user, patient, total) => {
     confirmDate: currentDate,
     type: 'payment',
     status: 'finalised',
-    comment: '',
-    otherParty: patient,
+    otherParty: name,
     enteredBy: user,
-    total,
+    total: amount,
+    option: reason,
+    comment: description,
   });
 
   database.save('Transaction', payment);
   return payment;
 };
 
-const createPaymentLine = (database, payment, linkedTransaction, total) => {
+const createPaymentLine = (database, payment, invoice, amount) => {
   const receiptLine = database.create('TransactionBatch', {
     id: generateUUID(),
-    total,
+    total: amount,
     transaction: payment,
-    linkedTransaction,
+    linkedTransaction: invoice,
     type: 'cash_out',
   });
 
@@ -279,9 +294,13 @@ const createSupplierCredit = (database, user, supplierId, returnAmount) => {
   return supplierCredit;
 };
 
-const createCustomerCredit = (database, user, patient, total) => {
+const createCustomerCredit = (database, user, name, amount) => {
   const currentDate = new Date();
   const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+
+  // Customer credits have negative totals.
+  const creditAmount = -amount;
+
   const customerCredit = database.create('Transaction', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, CUSTOMER_INVOICE_NUMBER),
@@ -289,11 +308,11 @@ const createCustomerCredit = (database, user, patient, total) => {
     confirmDate: currentDate,
     type: 'customer_credit',
     status: 'finalised',
-    comment: '',
-    otherParty: patient,
+    comment: 'Offset for a cash-only transaction',
+    otherParty: name,
     enteredBy: user,
-    total,
-    outstanding: total,
+    total: creditAmount,
+    outstanding: creditAmount,
   });
 
   database.save('Transaction', customerCredit);

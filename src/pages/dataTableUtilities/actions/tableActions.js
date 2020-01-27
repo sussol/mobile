@@ -4,6 +4,7 @@
  */
 
 import { UIDatabase } from '../../../database/index';
+import { CASH_TRANSACTION_CODES } from '../../../utilities/modules/dispensary/constants';
 import { SETTINGS_KEYS } from '../../../settings';
 import Settings from '../../../settings/MobileAppSettings';
 import { createRecord } from '../../../database/utilities/index';
@@ -155,16 +156,27 @@ export const addItem = (item, addedItemType, route) => (dispatch, getState) => {
  * @param {Object} cashTransaction Cash transaction object.
  */
 export const addCashTransaction = (cashTransaction, route) => (dispatch, getState) => {
-  const { name, transactionType, transactionAmount, reason, description } = cashTransaction;
+  const { user } = getState();
+  const { currentUser } = user;
+  const { type: transactionType } = cashTransaction;
+  const { code: transactionCode } = transactionType;
 
-  if (transactionType.code === 'cash_in') {
-    // Create cash in transaction.
+  if (transactionCode === CASH_TRANSACTION_CODES.CASH_IN) {
+    // Create receipt transaction and associated customer credit and receipt transaction batch.
+    UIDatabase.write(() => {
+      const [payment] = createRecord(UIDatabase, 'CashIn', currentUser, cashTransaction);
+      dispatch(addRecord(payment, route));
+    });
   }
 
-  if (transactionType.code === 'cash_out') {
-    // Create cash out transaction.
+  if (transactionCode === CASH_TRANSACTION_CODES.CASH_OUT) {
+    // Create payment transaction and associated customer invoice, payment transaction batch.
+    UIDatabase.write(() => {
+      const [payment] = createRecord(UIDatabase, 'CashOut', currentUser, cashTransaction);
+      dispatch(addRecord(payment, route));
+    });
   }
-}
+};
 
 /**
  * Creates a transaction batch which will be associated with the current stores
