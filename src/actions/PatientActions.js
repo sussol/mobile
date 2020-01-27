@@ -3,9 +3,10 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+import { batch } from 'react-redux';
+
 import { UIDatabase, generateUUID } from '../database';
-import { PageActions } from '../pages/dataTableUtilities/actions';
-import { ROUTES } from '../navigation/constants';
+import { DispensaryActions } from './DispensaryActions';
 
 export const PATIENT_ACTIONS = {
   PATIENT_EDIT: 'Patient/patientEdit',
@@ -50,8 +51,10 @@ const patientUpdate = completedForm => (dispatch, getState) => {
     });
   }
 
-  dispatch(closeModal());
-  dispatch(PageActions.refreshData(ROUTES.DISPENSARY));
+  batch(() => {
+    dispatch(closeModal());
+    dispatch(DispensaryActions.refresh());
+  });
 };
 
 const sortPatientHistory = sortKey => ({
