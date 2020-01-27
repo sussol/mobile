@@ -155,13 +155,15 @@ export const addItem = (item, addedItemType, route) => (dispatch, getState) => {
  * @param {Object} cashTransaction Cash transaction object.
  */
 export const addCashTransaction = (cashTransaction, route) => (dispatch, getState) => {
-  const { name, transactionType, transactionAmount, reason, description } = cashTransaction;
+  const { user } = getState();
+  const { currentUser } = user;
+  const { type } = cashTransaction;
 
-  if (transactionType.code === 'cash_in') {
+  if (type.code === 'cash_in') {
     // Create cash in transaction.
   }
 
-  if (transactionType.code === 'cash_out') {
+  if (type.code === 'cash_out') {
     // Create cash out transaction.
   }
 }
