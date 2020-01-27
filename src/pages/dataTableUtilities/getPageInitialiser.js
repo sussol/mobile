@@ -468,11 +468,6 @@ const pageInitialisers = {
   supplierInvoices: supplierInvoicesInitialiser,
   supplierRequisition: supplierRequisitionInitialiser,
   supplierRequisitions: supplierRequisitionsInitialiser,
-  prescriptions: prescriptionsInitialiser,
-  prescription: prescriptionInitialiser,
-  prescribers: prescribersInitialiser,
-  patients: patientsInitialiser,
-  dispensary: dispensingInitialiser,
   cashRegister: cashRegisterInitialiser,
 };
 
