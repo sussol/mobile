@@ -100,16 +100,17 @@ export const SearchBarComponent = ({
 };
 
 /**
- * Only re-render this component when the value or onFocusOrBlur
+ * Only re-render this component when the value, placeholder or onFocusOrBlur
  * props change.
  */
 const propsAreEqual = (
-  { value: prevValue, onFocusOrBlur: prevOnFocusOrBlur },
-  { value: nextValue, onFocusOrBlur: nextOnFocusOrBlur }
+  { value: prevValue, placeholder: prevPlaceholder, onFocusOrBlur: prevOnFocusOrBlur },
+  { value: nextValue, placeholder: nextPlaceholder, onFocusOrBlur: nextOnFocusOrBlur }
 ) => {
   const valuesAreEqual = prevValue === nextValue;
+  const placeholdersAreEqual = prevPlaceholder === nextPlaceholder;
   const onFocusOrBlurAreEqual = prevOnFocusOrBlur === nextOnFocusOrBlur;
-  return valuesAreEqual && onFocusOrBlurAreEqual;
+  return valuesAreEqual && placeholdersAreEqual && onFocusOrBlurAreEqual;
 };
 
 export const SearchBar = React.memo(SearchBarComponent, propsAreEqual);
