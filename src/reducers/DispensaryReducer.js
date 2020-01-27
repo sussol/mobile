@@ -54,6 +54,14 @@ export const DispensaryReducer = (state = initialState(), action) => {
         data: newData,
       };
     }
+    case DISPENSARY_ACTIONS.REFRESH: {
+      const { dataSet } = state;
+
+      const objectType = dataSet === 'patient' ? 'Patient' : 'Prescriber';
+      const newData = UIDatabase.objects(objectType);
+
+      return { ...state, data: newData };
+    }
 
     default:
       return state;

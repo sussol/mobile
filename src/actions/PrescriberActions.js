@@ -3,7 +3,10 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+import { batch } from 'react-redux';
+
 import { UIDatabase, generateUUID } from '../database';
+import { DispensaryActions } from './DispensaryActions';
 
 export const PRESCRIBER_ACTIONS = {
   EDIT: 'Prescriber/edit',
@@ -49,7 +52,10 @@ const updatePrescriber = completedForm => (dispatch, getState) => {
     });
   }
 
-  dispatch(closeModal());
+  batch(() => {
+    dispatch(closeModal());
+    dispatch(DispensaryActions.refresh());
+  });
 };
 
 export const PrescriberActions = {
