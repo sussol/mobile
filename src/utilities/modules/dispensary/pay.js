@@ -29,6 +29,7 @@ import { UIDatabase } from '../../../database';
  * A script must be paid off in full, no partial payments.
  * Any amount overpaid must be gained in credit.
  *
+ * @param {User} currentUser   The currently logged in user.
  * @param {Name} patient       A Name that is a patient
  * @param {Transaction} script A Transaction that is a prescription
  * @param {Number} cashAmount  The cash amount being paid for the script.
@@ -48,15 +49,13 @@ export const pay = (currentUser, patient, script, cashAmount) => {
 
   // Determine if this is an under, exact or over payment
   const creditAmount = total - cashAmount;
-  const overpayAmount = cashAmount - total;
   const usingCredit = creditAmount > 0;
-  const usingOverpayment = overpayAmount > 0;
 
   if (creditAmount > availableCredit) throw new Error('Not enough credit');
 
   // Create a Receipt and ReceiptLine for every payment path.
-  const receipt = createRecord(UIDatabase, 'Receipt', currentUser, patient, cashAmount);
-  createRecord(UIDatabase, 'ReceiptLine', script, null, cashAmount);
+  const receipt = createRecord(UIDatabase, 'Receipt', currentUser, patient, cashAmount, script);
+  createRecord(UIDatabase, 'ReceiptLine', receipt, script, cashAmount);
 
   // When using credit, create a CustomerCreditLine and ReceiptLine for each
   // source of credit being used.
@@ -81,8 +80,6 @@ export const pay = (currentUser, patient, script, cashAmount) => {
   }
 
   if (usingCredit && creditToAllocate > 0) throw new Error('Credit not fully allocated');
-
-  if (usingOverpayment) createRecord(UIDatabase, 'CashIn', currentUser, patient, overpayAmount);
 
   // Ensure the script is finalised once paid.
   script.finalise(UIDatabase);
