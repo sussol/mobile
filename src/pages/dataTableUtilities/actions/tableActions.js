@@ -164,9 +164,13 @@ export const addCashTransaction = (cashTransaction, route) => (dispatch, getStat
   }
 
   if (type.code === 'cash_out') {
-    // Create cash out transaction.
+    // Create payment transaction and associated customer invoice, payment batch transaction.
+    UIDatabase.write(() => {
+      const [payment] = createRecord(UIDatabase, 'CashOut', currentUser, cashTransaction);
+      dispatch(addRecord(payment, route));
+    });
   }
-}
+};
 
 /**
  * Creates a transaction batch which will be associated with the current stores
