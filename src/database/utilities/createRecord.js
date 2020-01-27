@@ -203,12 +203,12 @@ const createReceipt = (database, user, name, amount, description) => {
   return receipt;
 };
 
-const createReceiptLine = (database, receipt, customerCredit, amount) => {
+const createReceiptLine = (database, receipt, linkedTransaction, amount) => {
   const receiptLine = database.create('TransactionBatch', {
     id: generateUUID(),
     total: amount,
     transaction: receipt,
-    linkedTransaction: customerCredit,
+    linkedTransaction,
     type: 'cash_in',
   });
 
