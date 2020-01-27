@@ -90,6 +90,7 @@ const TextInputCell = React.memo(
           underlineColorAndroid={underlineColor}
           keyboardType={keyboardType}
           blurOnSubmit={false}
+          selectTextOnFocus
         />
       </View>
     );

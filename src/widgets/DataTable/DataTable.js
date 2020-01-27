@@ -14,6 +14,7 @@ import {
   View,
 } from 'react-native';
 import RefContext from './RefContext';
+import DATA_TABLE_DEFAULTS from './constants';
 
 /**
  * Base DataTable component. Wrapper around VirtualizedList, providing
@@ -149,14 +150,14 @@ DataTable.propTypes = {
 };
 
 DataTable.defaultProps = {
-  renderHeader: null,
-  footerHeight: 200,
+  renderHeader: DATA_TABLE_DEFAULTS.RENDER_HEADER,
+  footerHeight: DATA_TABLE_DEFAULTS.FOOTER_HEIGHT,
   style: defaultStyles.virtualizedList,
   getItem: (items, index) => items[index],
   getItemCount: items => items.length,
-  initialNumToRender: 10,
-  removeClippedSubviews: true,
-  windowSize: 3,
+  initialNumToRender: DATA_TABLE_DEFAULTS.INITIAL_NUM_TO_RENDER,
+  removeClippedSubviews: DATA_TABLE_DEFAULTS.REMOVE_CLIPPED_SUBVIEWS,
+  windowSize: DATA_TABLE_DEFAULTS.WINDOW_SIZE_MEDIUM,
   columns: [],
 };
 

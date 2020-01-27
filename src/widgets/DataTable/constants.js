@@ -1,0 +1,14 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
+export const DATA_TABLE_DEFAULTS = {
+  RENDER_HEADER: null,
+  FOOTER_HEIGHT: 200,
+  INITIAL_NUM_TO_RENDER: 10,
+  REMOVE_CLIPPED_SUBVIEWS: true,
+  WINDOW_SIZE_SMALL: 1,
+  WINDOW_SIZE_MEDIUM: 3,
+  WINDOW_SIZE_LARGE: 5,
+};
