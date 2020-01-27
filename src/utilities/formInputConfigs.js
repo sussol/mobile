@@ -72,10 +72,10 @@ const FORM_INPUT_CONFIGS = seedObject => ({
   },
   [FORM_INPUT_KEYS.DATE_OF_BIRTH]: {
     type: 'date',
-    initialValue: moment(new Date()).format('DD/MM/YYYY'),
+    initialValue: new Date(),
     key: 'dateOfBirth',
     invalidMessage: 'Must be a date in the format DD/MM/YYYY',
-    isRequired: false,
+    isRequired: true,
     validator: input => moment(input, 'DD/MM/YYYY', null, true).isValid(),
     label: 'Date of birth:',
   },
