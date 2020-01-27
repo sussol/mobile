@@ -43,7 +43,7 @@ export const FormDateInput = React.forwardRef(
     const [inputState, setInputState] = React.useState({
       isValid: true,
       inputValue: moment(initialValue).format('DD/MM/YYYY'),
-      pickerSeedValue: initialValue,
+      pickerSeedValue: initialValue.toDate(),
       datePickerOpen: false,
     });
 
@@ -57,7 +57,7 @@ export const FormDateInput = React.forwardRef(
         datePickerOpen: pickerVisibility,
       };
       setInputState(newState);
-      onChangeDate(newValue);
+      onChangeDate(moment(newValue, 'DD/MM/YYYY').toDate());
     };
 
     // When changing the value of the input, check the new validity and set the new input.
@@ -110,7 +110,7 @@ export const FormDateInput = React.forwardRef(
               onChange={onChangeDates}
               mode="date"
               display="spinner"
-              value={pickerSeedValue.toDate()}
+              value={pickerSeedValue}
             />
           )}
           <FormInvalidMessage isValid={isValid} message={invalidMessage} />
