@@ -8,6 +8,10 @@ import PropTypes from 'prop-types';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 import { UIDatabase } from '../../database';
+import {
+  CASH_TRANSACTION_KEYS,
+  CASH_TRANSACTION_TYPES,
+} from '../../utilities/modules/dispensary/constants';
 
 import { BottomModalContainer, BottomTextEditor } from '../bottomModals';
 import { GenericChoiceList } from '../modalChildren';
@@ -21,11 +25,6 @@ const placeholderType = 'Choose a transaction type';
 const placeholderAmount = 'Enter transaction amount';
 const placeholderReason = 'Choose a reason';
 const placeholderDescription = 'Enter a description';
-
-const CASH_TRANSACTION_TYPES = [
-  { title: 'Cash in', code: 'cash_in' },
-  { title: 'Cash out', code: 'cash_out' },
-];
 
 export const CashTransactionModal = ({ onConfirm }) => {
   const [name, setName] = useState(null);
@@ -169,7 +168,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
       >
         <GenericChoiceList
           data={names}
-          keyToDisplay="name"
+          keyToDisplay={CASH_TRANSACTION_KEYS.NAME}
           onPress={onSubmitName}
           highlightValue={name?.name}
         />
@@ -180,7 +179,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
       >
         <GenericChoiceList
           data={CASH_TRANSACTION_TYPES}
-          keyToDisplay="title"
+          keyToDisplay={CASH_TRANSACTION_KEYS.TYPE}
           onPress={onSubmitType}
           highlightValue={type?.title}
         />
@@ -199,7 +198,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
       >
         <GenericChoiceList
           data={reasons}
-          keyToDisplay="title"
+          keyToDisplay={CASH_TRANSACTION_KEYS.REASON}
           onPress={onSubmitReason}
           highlightValue={reason?.title}
         />
