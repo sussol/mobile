@@ -23,6 +23,7 @@ import {
 } from '../modalChildren';
 
 import { ByProgramModal } from './ByProgramModal';
+import { CashTransactionModal } from './CashTransactionModal';
 import { RegimenDataModal } from './RegimenDataModal';
 import { StocktakeBatchModal } from './StocktakeBatchModal';
 
@@ -57,6 +58,8 @@ const DataTablePageModalComponent = ({
 }) => {
   const ModalContent = () => {
     switch (modalKey) {
+      case MODAL_KEYS.CREATE_CASH_TRANSACTION:
+        return <CashTransactionModal onConfirm={onSelect}/>;
       case MODAL_KEYS.SELECT_ITEM:
         return (
           <AutocompleteSelector

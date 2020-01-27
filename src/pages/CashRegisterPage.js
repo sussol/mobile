@@ -6,21 +6,29 @@
 
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 
-import { DataTablePageView } from '../widgets';
+import { DataTablePageView, PageButton } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+import { DataTablePageModal } from '../widgets/modals';
 
+import { MODAL_KEYS } from '../utilities';
 import { ROUTES } from '../navigation/constants';
 
-export const CashRegister = ({ data, dataState, sortKey, keyExtractor, columns }) => {
+import globalStyles from '../globalStyles';
+import { buttonStrings } from '../localization';
+
+export const CashRegister = ({ dispatch, data, dataState, sortKey, keyExtractor, modalKey, columns, onNewCashTransaction, onCloseModal, onAddCashTransaction }) => {
   const getCallback = (_colKey, _propName) => null;
+  const onPressRow = _rowData => null;
 
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
+      const { isFinalised } = item;
       const rowKey = keyExtractor(item);
       return (
         <DataTableRow
@@ -28,9 +36,10 @@ export const CashRegister = ({ data, dataState, sortKey, keyExtractor, columns }
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
           columns={columns}
+          isFinalised={isFinalised}
           getCallback={getCallback}
+          onPress={onPressRow}
           rowIndex={index}
-          onPress={null}
         />
       );
     },
@@ -44,8 +53,28 @@ export const CashRegister = ({ data, dataState, sortKey, keyExtractor, columns }
     [sortKey]
   );
 
+  const AddNewTransactionButton = () => (
+    <PageButton
+      style={globalStyles.topButton}
+      text={buttonStrings.new_transaction}
+      onPress={onNewCashTransaction}
+    />
+  );
+
+  const {
+    pageTopSectionContainer,
+    pageTopLeftSectionContainer,
+    pageTopRightSectionContainer,
+  } = globalStyles;
+
   return (
     <DataTablePageView>
+      <View style={pageTopSectionContainer}>
+        <View style={pageTopLeftSectionContainer} />
+        <View style={pageTopRightSectionContainer}>
+          <AddNewTransactionButton />
+        </View>
+      </View>
       <DataTable
         data={data}
         extraData={dataState}
@@ -54,6 +83,13 @@ export const CashRegister = ({ data, dataState, sortKey, keyExtractor, columns }
         keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}
         columns={columns}
+      />
+      <DataTablePageModal
+        isOpen={!!modalKey}
+        modalKey={modalKey}
+        onClose={onCloseModal}
+        onSelect={onAddCashTransaction}
+        dispatch={dispatch}
       />
     </DataTablePageView>
   );
@@ -77,6 +113,9 @@ CashRegister.propTypes = {
   data: PropTypes.array.isRequired,
   dataState: PropTypes.object.isRequired,
   sortKey: PropTypes.string.isRequired,
+  modalKey: PropTypes.string.isRequired,
   keyExtractor: PropTypes.func.isRequired,
   columns: PropTypes.array.isRequired,
+  onNewCashTransaction: PropTypes.func.isRequired,
+  onCloseModal: PropTypes.func.isRequired,
 };

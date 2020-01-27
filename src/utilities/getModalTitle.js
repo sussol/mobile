@@ -7,6 +7,7 @@ import { authStrings, modalStrings, buttonStrings } from '../localization';
 
 export const MODAL_KEYS = {
   CONFIRM_USER_PASSWORD: 'confirmUserPassword',
+  CREATE_CASH_TRANSACTION: 'createCashTransaction',
   SYNC_URL_EDIT: 'syncUrlEdit',
   SYNC_PASSWORD_EDIT: 'syncPasswordEdit',
   STOCKTAKE_COMMENT_EDIT: 'stocktakeCommentEdit',
@@ -36,6 +37,8 @@ export const getModalTitle = modalKey => {
   switch (modalKey) {
     default:
       return '';
+    case MODAL_KEYS.CREATE_CASH_TRANSACTION:
+      return modalStrings.create_cash_transaction;
     case MODAL_KEYS.SELECT_PRESCRIBER:
       return 'Select a prescriber';
     case MODAL_KEYS.SELECT_PATIENT:

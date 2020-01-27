@@ -5,6 +5,7 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "create": "Create",
+    "create_cash_transaction": "Create new cash transaction",
     "delete_these_invoices": "Are you sure you want to delete these invoices?",
     "delete_these_requisitions": "Are you sure you want to delete these requisitions?",
     "delete_these_stocktakes": "Are you sure you want to delete these stocktakes?",

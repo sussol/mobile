@@ -10,18 +10,20 @@ import { recordKeyExtractor } from './utilities';
 import getColumns from './getColumns';
 import getPageInfoColumns from './getPageInfoColumns';
 
+import { COLUMN_KEYS} from './constants';
 import { ROUTES } from '../../navigation/constants';
 
 export const cashRegisterInitialiser = () => {
   const backingData = UIDatabase.objects('CashTransaction');
   const filteredData = backingData.slice();
-  const sortedData = sortDataBy(filteredData, 'invoiceNumber', false);
+  const sortedData = sortDataBy(filteredData, COLUMN_KEYS.SERIAL_NUMBER, false);
   return {
     backingData,
     data: sortedData,
-    keyExtractor: recordKeyExtractor,
     dataState: new Map(),
-    sortKey: 'invoiceNumber',
+    sortKey: COLUMN_KEYS.SERIAL_NUMBER,
+    keyExtractor: recordKeyExtractor,
+    modalKey: '',
     columns: getColumns(ROUTES.CASH_REGISTER),
     getPageInfoColumns: getPageInfoColumns(ROUTES.CASH_REGISTER),
     route: ROUTES.CASH_REGISTER,
