@@ -78,7 +78,6 @@ export const CurrencyInputRow = ({
       </FlexView>
 
       <FlexRow flex={3}>
-        <SimpleLabel label="$" size="large" />
         <TextInput
           ref={refsArray.current[0]}
           value={dollarAmount}

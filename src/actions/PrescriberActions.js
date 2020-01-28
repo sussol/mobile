@@ -5,7 +5,7 @@
 
 import { batch } from 'react-redux';
 
-import { UIDatabase, generateUUID } from '../database';
+import { createRecord, UIDatabase } from '../database';
 import { DispensaryActions } from './DispensaryActions';
 
 export const PRESCRIBER_ACTIONS = {
@@ -37,19 +37,15 @@ const updatePrescriber = completedForm => (dispatch, getState) => {
   const { currentPrescriber } = prescriber;
 
   if (currentPrescriber) {
+    const { addressOne, addressTwo } = completedForm;
+    const { address } = currentPrescriber;
+
     UIDatabase.write(() => {
-      UIDatabase.update('Prescriber', {
-        ...currentPrescriber,
-        ...completedForm,
-      });
+      UIDatabase.update('Address', { ...address, line1: addressOne, line2: addressTwo });
+      UIDatabase.update('Prescriber', { ...currentPrescriber, ...completedForm });
     });
   } else {
-    UIDatabase.write(() => {
-      UIDatabase.update('Prescriber', {
-        id: generateUUID(),
-        ...completedForm,
-      });
-    });
+    UIDatabase.write(() => createRecord(UIDatabase, 'Prescriber', completedForm));
   }
 
   batch(() => {

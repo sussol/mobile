@@ -477,6 +477,7 @@ Transaction.schema = {
     outstanding: { type: 'float', optional: true },
     insurancePolicy: { type: 'InsurancePolicy', optional: true },
     option: { type: 'Options', optional: true },
+    linkedTransaction: { type: 'Transaction', optional: true },
   },
 };
 

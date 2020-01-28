@@ -10,16 +10,10 @@ const CURRENCY_CONFIGS = {
   DEFAULT: {
     decimal: '.',
     separator: ',',
-    pattern: '!#',
-    symbol: '$',
-    formatWithSymbol: true,
   },
   [LANGUAGE_CODES.FRENCH]: {
     decimal: ',',
     separator: '.',
-    pattern: '#!',
-    symbol: 'CFA',
-    formatWithSymbol: true,
   },
 };
 

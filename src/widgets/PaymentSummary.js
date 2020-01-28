@@ -156,13 +156,8 @@ const PaymentSummaryComponent = ({
           </FlexView>
 
           <FlexView flex={0.25}>
-            <NumberLabelRow text="Available Credit" isCurrency number={availableCredit.format()} />
-            <NumberLabelRow
-              size="small"
-              text="Credit used"
-              isCurrency
-              number={creditUsed.format()}
-            />
+            <NumberLabelRow text="Available Credit" number={availableCredit.format()} />
+            <NumberLabelRow size="small" text="Credit used" number={creditUsed.format()} />
 
             <Text style={localStyles.errorMessageStyle}>
               {creditOverflow ? 'Not enough credit!' : ''}
@@ -172,17 +167,17 @@ const PaymentSummaryComponent = ({
 
         <FlexView flex={1}>
           <Separator marginBottom={20} />
-          <NumberLabelRow text="Sub total" isCurrency number={subtotal.format()} />
+          <NumberLabelRow text="Sub total" number={subtotal.format()} />
 
-          <NumberLabelRow text="Insurance discount rate" isPercentage number={discountRate} />
-          <NumberLabelRow
-            text="Insurance discount amount"
-            isCurrency
-            number={discountAmount.format()}
-          />
-          <NumberLabelRow text="Change required" isCurrency number={changeRequired.format()} />
+          {usingInsurance && (
+            <NumberLabelRow text="Insurance discount rate" isPercentage number={discountRate} />
+          )}
+          {usingInsurance && (
+            <NumberLabelRow text="Insurance discount amount" number={discountAmount.format()} />
+          )}
+          <NumberLabelRow text="Change required" number={changeRequired.format()} />
           <Separator length="50%" marginTop={20} marginBottom={20} />
-          <NumberLabelRow size="large" text="Total" isCurrency number={total.format()} />
+          <NumberLabelRow size="large" text="Total" number={total.format()} />
         </FlexView>
       </FlexView>
     </ScrollView>
