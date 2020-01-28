@@ -14,6 +14,7 @@ import { MODAL_KEYS } from '../utilities';
 
 import { DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+import { DATA_TABLE_DEFAULTS } from '../widgets/DataTable/constants';
 import {
   DataTablePageView,
   DropDown,
@@ -246,6 +247,14 @@ export const CustomerRequisition = ({
     );
   }, [usingIndicators, showIndicators, indicatorCodes, currentIndicatorCode]);
 
+  const placeholderStrings = useMemo(
+    () => ({
+      name: showIndicators ? generalStrings.indicator_name : generalStrings.item_name,
+      code: showIndicators ? generalStrings.indicator_code : generalStrings.item_code,
+    }),
+    [showIndicators]
+  );
+
   const {
     pageTopSectionContainer,
     pageTopLeftSectionContainer,
@@ -259,7 +268,7 @@ export const CustomerRequisition = ({
           <SearchBar
             onChangeText={onFilterData}
             value={searchTerm}
-            placeholder={`${generalStrings.search_by} ${generalStrings.item_name} ${generalStrings.or} ${generalStrings.item_code}`}
+            placeholder={`${generalStrings.search_by} ${placeholderStrings.name} ${generalStrings.or} ${placeholderStrings.code}`}
           />
         </View>
         <View style={pageTopRightSectionContainer}>
@@ -273,6 +282,11 @@ export const CustomerRequisition = ({
         keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}
         columns={columns}
+        windowSize={
+          showIndicators
+            ? DATA_TABLE_DEFAULTS.WINDOW_SIZE_SMALL
+            : DATA_TABLE_DEFAULTS.WINDOW_SIZE_MEDIUM
+        }
       />
       <DataTablePageModal
         fullScreen={false}

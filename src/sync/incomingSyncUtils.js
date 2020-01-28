@@ -132,7 +132,6 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
   const requiredFields = {
     IndicatorAttribute: {
       canBeBlank: [
-        'code',
         'description',
         'index',
         'is_required',
@@ -141,7 +140,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
         'axis',
         'is_active',
       ],
-      cannotBeBlank: ['indicator_ID'],
+      cannotBeBlank: ['code', 'indicator_ID'],
     },
     IndicatorValue: {
       cannotBeBlank: ['facility_ID', 'period_ID', 'column_ID', 'row_ID'],
@@ -337,7 +336,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         period: database.getOrCreate('Period', record.period_ID),
         column: indicatorColumn,
         row: indicatorRow,
-        value: record.value ?? '',
+        _value: record.value ?? '',
       });
       indicatorRow.addIndicatorValue(indicatorValue);
       indicatorColumn.addIndicatorValue(indicatorValue);
