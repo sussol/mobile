@@ -5,6 +5,7 @@
 
 export const COLUMN_TYPES = {
   CHECKABLE: 'checkable',
+  CURRENCY: 'currency',
   EDITABLE_EXPIRY_DATE: 'editableExpiryDate',
   DATE: 'date',
   DROP_DOWN: 'dropdown',

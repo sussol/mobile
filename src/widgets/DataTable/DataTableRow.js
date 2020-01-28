@@ -7,6 +7,8 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 
+import currency from '../../localization/currency';
+
 import { dataTableStyles, SUSSOL_ORANGE } from '../../globalStyles';
 
 import Row from './Row';
@@ -154,6 +156,21 @@ const DataTableRow = React.memo(
                   isLastCell={isLastCell}
                 />
               );
+
+            case COLUMN_TYPES.CURRENCY: {
+              const value = currency(rowData[columnKey]).format(false);
+
+              return (
+                <Cell
+                  key={columnKey}
+                  value={value}
+                  width={width}
+                  viewStyle={cellContainer[cellAlignment]}
+                  textStyle={cellText[cellAlignment]}
+                  isLastCell={isLastCell}
+                />
+              );
+            }
 
             case COLUMN_TYPES.STRING: {
               const value = rowData[columnKey];
