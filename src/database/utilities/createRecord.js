@@ -110,9 +110,8 @@ const createPrescriber = (database, prescriberDetails) => {
  *  }
  */
 const createPatient = (database, patientDetails) => {
-  const { dateOfBirth, line1, line2 } = patientDetails;
-
-  const billingAddress = createAddress(database, { line1, line2 });
+  const { dateOfBirth, addressOne, addressTwo } = patientDetails;
+  const billingAddress = createAddress(database, { line1: addressOne, line2: addressTwo });
   const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
 
   const patient = database.create('Name', {
