@@ -14,7 +14,7 @@ import {
 import { CHANGE_TYPES, generateUUID } from '../database';
 import { deleteRecord } from '../database/utilities';
 import { SETTINGS_KEYS } from '../settings';
-import { checkIsObject } from '../utilities';
+import { validateReport } from '../utilities';
 
 const { THIS_STORE_ID, THIS_STORE_TAGS, THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
 
@@ -556,14 +556,15 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       const { ID: id, title, type, json } = record;
       try {
         const parsedData = JSON.parse(json);
-        const shouldSetData = checkIsObject(parsedData);
-        internalRecord = {
-          id,
-          title,
-          type,
-          _data: shouldSetData ? JSON.stringify(parsedData.data) : null,
-        };
-        database.update(recordType, internalRecord);
+        if (validateReport(parsedData, type)) {
+          internalRecord = {
+            id,
+            title,
+            type,
+            _data: JSON.stringify(parsedData.data),
+          };
+          database.update(recordType, internalRecord);
+        }
       } catch (error) {
         // Throw to parent, for now
         throw error;

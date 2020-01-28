@@ -57,6 +57,7 @@
   "dependencies": {
     "@react-native-community/async-storage": "^1.6.2",
     "@react-navigation/core": "^3.5.1",
+    "ajv": "^6.11.0",
     "bugsnag-react-native": "2.23.2",
     "prop-types": "^15.7.2",
     "react": "16.9.0",
