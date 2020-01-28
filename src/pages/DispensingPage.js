@@ -100,7 +100,6 @@ const Dispensing = ({
           getCallback={getCellCallbacks}
           columns={columns}
           rowIndex={index}
-          onPress={usingPatientsDataSet ? editPatient : editPrescriber}
         />
       );
     },
