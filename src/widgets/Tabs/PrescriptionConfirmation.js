@@ -21,6 +21,8 @@ import { PaymentSummary } from '../PaymentSummary';
 import { selectCurrentUser } from '../../selectors/user';
 import { selectCurrentPatient } from '../../selectors/patient';
 
+import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
+
 const mapStateToProps = state => {
   const { payment, wizard, modules } = state;
   const { transaction, paymentValid, paymentAmount } = payment;
@@ -29,7 +31,7 @@ const mapStateToProps = state => {
   const { usingPayments } = modules;
   const currentPatient = selectCurrentPatient(state);
   const currentUser = selectCurrentUser(state);
-  const canConfirm = paymentValid || isComplete;
+  const canConfirm = paymentValid && !isComplete;
 
   return { transaction, canConfirm, paymentAmount, currentUser, currentPatient, usingPayments };
 };
@@ -47,11 +49,16 @@ const PrescriptionConfirmationComponent = ({
   canConfirm,
   usingPayments,
 }) => {
-  const confirmPrescription = React.useCallback(
+  const runWithLoadingIndicator = useLoadingIndicator();
+
+  const confirm = React.useCallback(
     () =>
       UIDatabase.write(() => pay(currentUser, currentPatient, transaction, paymentAmount.value)),
-    []
+    [currentUser, currentPatient, transaction, paymentAmount.value]
   );
+
+  const confirmPrescription = React.useCallback(() => runWithLoadingIndicator(confirm), [confirm]);
+
   return (
     <FlexView flex={1}>
       <PrescriptionInfo />

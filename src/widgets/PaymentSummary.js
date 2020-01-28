@@ -169,8 +169,12 @@ const PaymentSummaryComponent = ({
           <Separator marginBottom={20} />
           <NumberLabelRow text="Sub total" number={subtotal.format()} />
 
-          <NumberLabelRow text="Insurance discount rate" isPercentage number={discountRate} />
-          <NumberLabelRow text="Insurance discount amount" number={discountAmount.format()} />
+          {usingInsurance && (
+            <NumberLabelRow text="Insurance discount rate" isPercentage number={discountRate} />
+          )}
+          {usingInsurance && (
+            <NumberLabelRow text="Insurance discount amount" number={discountAmount.format()} />
+          )}
           <NumberLabelRow text="Change required" number={changeRequired.format()} />
           <Separator length="50%" marginTop={20} marginBottom={20} />
           <NumberLabelRow size="large" text="Total" number={total.format()} />
