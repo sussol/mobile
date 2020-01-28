@@ -23,7 +23,7 @@ const createIndicatorValue = (row, column, period) => {
  */
 const updateIndicatorValue = (indicatorValue, value) => {
   UIDatabase.write(() => {
-    UIDatabase.update('IndicatorValue', { ...indicatorValue, value });
+    indicatorValue.value = value;
   });
 };
 

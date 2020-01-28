@@ -107,7 +107,7 @@ const createIndicatorValue = (database, row, column, period) => {
     row,
     column,
     period,
-    value,
+    _value: value,
   });
   row.addIndicatorValue(indicatorValue);
   column.addIndicatorValue(indicatorValue);

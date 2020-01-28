@@ -21,3 +21,9 @@ export const NUMBER_SEQUENCE_KEYS = {
   STOCKTAKE_SERIAL_NUMBER: 'stocktake_serial_number',
   SUPPLIER_INVOICE_NUMBER: 'supplier_invoice_serial_number',
 };
+
+export {
+  INDICATOR_CODES,
+  INDICATOR_COLUMN_CODES,
+  INDICATOR_VALUE_TYPES,
+} from './indicatorConstants';
