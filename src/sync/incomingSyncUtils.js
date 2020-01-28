@@ -14,7 +14,7 @@ import {
 import { CHANGE_TYPES, generateUUID } from '../database';
 import { deleteRecord } from '../database/utilities';
 import { SETTINGS_KEYS } from '../settings';
-import { checkIsObject, validateReport } from '../utilities';
+import { validateReport } from '../utilities';
 
 const { THIS_STORE_ID, THIS_STORE_TAGS, THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
 
@@ -556,8 +556,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       const { ID: id, title, type, json } = record;
       try {
         const parsedData = JSON.parse(json);
-        const shouldSetData = checkIsObject(parsedData) ? validateReport(parsedData, type) : false;
-        if (shouldSetData) {
+        if (validateReport(parsedData, type)) {
           internalRecord = {
             id,
             title,
