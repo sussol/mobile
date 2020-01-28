@@ -15,7 +15,7 @@ import {
   CASH_TRANSACTION_TYPES,
 } from '../../utilities/modules/dispensary/constants';
 
-import { BottomModalContainer, BottomTextEditor } from '../bottomModals';
+import { BottomModalContainer, BottomTextEditor, BottomCurrencyEditor } from '../bottomModals';
 import { GenericChoiceList } from '../modalChildren';
 import { PageButton } from '../PageButton';
 import { PencilIcon, ChevronDownIcon } from '../icons';
@@ -57,13 +57,10 @@ export const CashTransactionModal = ({ onConfirm }) => {
     reason,
   ]);
 
-  const onCreate = useCallback(() => onConfirm({ name, type, amount: amount.value, reason, description }), [
-    name,
-    type,
-    amount, 
-    reason,
-    description,
-  ]);
+  const onCreate = useCallback(
+    () => onConfirm({ name, type, amount: amount.value, reason, description }),
+    [name, type, amount, reason, description]
+  );
 
   const onChangeText = useMemo(() => text => setDescriptionBuffer(text));
   const onChangeAmount = useMemo(() => value => setAmountBuffer(value));
@@ -88,7 +85,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
 
   const onPressAmount = () => {
     resetBottomModal();
-    if (!!amount) {
+    if (amount) {
       setAmountBuffer(amount.format(false));
     }
     setIsAmountModalOpen(true);
@@ -101,7 +98,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
 
   const onPressDescription = () => {
     resetBottomModal();
-    if (!!description) {
+    if (description) {
       setDescriptionBuffer(description);
     }
     setIsDescriptionModalOpen(true);
@@ -202,10 +199,10 @@ export const CashTransactionModal = ({ onConfirm }) => {
           highlightValue={type?.title}
         />
       </BottomModalContainer>
-      <BottomTextEditor
+      <BottomCurrencyEditor
         isOpen={isAmountModalOpen}
         buttonText="Confirm"
-        value={textBuffer}
+        value={amountBuffer}
         placeholder={placeholderTextAmount}
         onChangeText={onChangeAmount}
         onConfirm={onSubmitAmount}
