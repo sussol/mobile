@@ -77,14 +77,13 @@ const createInsurancePolicy = (database, policyValues) => {
  * }
  */
 const createPrescriber = (database, prescriberDetails) => {
-  const { line1, line2 } = prescriberDetails;
-  const address = createAddress({ line1, line2 });
+  const { addressOne, addressTwo } = prescriberDetails;
+  const address = createAddress({ line1: addressOne, line2: addressTwo });
 
   const prescriber = database.create('Prescriber', {
     id: generateUUID(),
     ...prescriberDetails,
     address,
-
     // Defaults:
     isVisible: true,
     isActive: true,
@@ -107,22 +106,20 @@ const createAddress = (database, { line1, line2, line3, line4, zipCode } = {}) =
  * Creates a patient record. Patient details passed can be in the shape:
  *  {
  *    firstName, lastName, dateOfBirth, code, emailAddress,
- *    phoneNumber, line1, line2,
+ *    phoneNumber, addressOne, addressTwo, country
  *  }
  */
 const createPatient = (database, patientDetails) => {
   const { dateOfBirth, line1, line2 } = patientDetails;
 
   const billingAddress = createAddress(database, { line1, line2 });
-  const parsedDateOfBirth = moment(dateOfBirth, 'DD-MM-YYYY').toDate();
   const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
 
   const patient = database.create('Name', {
     id: generateUUID(),
     ...patientDetails,
     billingAddress,
-    dateOfBirth: parsedDateOfBirth,
-    // Defaults:
+    dateOfBirth,
     isVisible: true,
     isPatient: true,
     type: 'patient',
