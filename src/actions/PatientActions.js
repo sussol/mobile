@@ -5,7 +5,7 @@
 
 import { batch } from 'react-redux';
 
-import { UIDatabase, generateUUID } from '../database';
+import { createRecord, UIDatabase } from '../database';
 import { DispensaryActions } from './DispensaryActions';
 
 export const PATIENT_ACTIONS = {
@@ -32,22 +32,16 @@ const patientUpdate = completedForm => (dispatch, getState) => {
   const { currentPatient } = patient;
 
   if (currentPatient) {
+    const { addressOne, addressTwo } = completedForm;
+    const { address } = currentPatient;
+
     UIDatabase.write(() => {
-      UIDatabase.update('Name', {
-        ...currentPatient,
-        ...completedForm,
-        isPatient: true,
-        isVisible: true,
-      });
+      UIDatabase.update('Address', { ...address, line1: addressOne, line2: addressTwo });
+      UIDatabase.update('Name', { ...currentPatient, ...completedForm });
     });
   } else {
     UIDatabase.write(() => {
-      UIDatabase.update('Name', {
-        ...completedForm,
-        id: generateUUID(),
-        isPatient: true,
-        isVisible: true,
-      });
+      createRecord(UIDatabase, 'Patient', completedForm);
     });
   }
 
