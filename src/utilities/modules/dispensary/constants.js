@@ -9,12 +9,7 @@ export const CASH_TRANSACTION_KEYS = {
   REASON: 'title',
 };
 
-export const CASH_TRANSACTION_CODES = {
+export const CASH_TRANSACTION_TYPES = {
   CASH_IN: 'cash_in',
-  CASH_OUT: ' cash_out',
+  CASH_OUT: 'cash_out',
 };
-
-export const CASH_TRANSACTION_TYPES = [
-  { [CASH_TRANSACTION_KEYS.TYPE]: 'Cash in', code: CASH_TRANSACTION_CODES.CASH_IN },
-  { [CASH_TRANSACTION_KEYS.TYPE]: 'Cash out', code: CASH_TRANSACTION_CODES.CASH_OUT },
-];
