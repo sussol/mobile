@@ -69,6 +69,16 @@ const createInsurancePolicy = (database, policyValues) => {
   return policy;
 };
 
+const createAddress = (database, { line1, line2, line3, line4, zipCode } = {}) =>
+  database.create('Address', {
+    id: generateUUID(),
+    line1,
+    line2,
+    line3,
+    line4,
+    zipCode,
+  });
+
 /**
  * Creates a prescriber record. prescriberDetails can have the shape:
  * {
@@ -78,7 +88,7 @@ const createInsurancePolicy = (database, policyValues) => {
  */
 const createPrescriber = (database, prescriberDetails) => {
   const { addressOne, addressTwo } = prescriberDetails;
-  const address = createAddress({ line1: addressOne, line2: addressTwo });
+  const address = createAddress(database, { line1: addressOne, line2: addressTwo });
 
   const prescriber = database.create('Prescriber', {
     id: generateUUID(),
@@ -91,16 +101,6 @@ const createPrescriber = (database, prescriberDetails) => {
 
   database.save('Prescriber', prescriber);
 };
-
-const createAddress = (database, { line1, line2, line3, line4, zipCode } = {}) =>
-  database.create('Address', {
-    id: generateUUID(),
-    line1,
-    line2,
-    line3,
-    line4,
-    zipCode,
-  });
 
 /**
  * Creates a patient record. Patient details passed can be in the shape:
