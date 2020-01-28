@@ -4,7 +4,7 @@
  */
 
 import { UIDatabase } from '../../../database/index';
-import { CASH_TRANSACTION_CODES } from '../../../utilities/modules/dispensary/constants';
+import { CASH_TRANSACTION_TYPES } from '../../../utilities/modules/dispensary/constants';
 import { SETTINGS_KEYS } from '../../../settings';
 import Settings from '../../../settings/MobileAppSettings';
 import { createRecord } from '../../../database/utilities/index';
@@ -159,9 +159,8 @@ export const addCashTransaction = (cashTransaction, route) => (dispatch, getStat
   const { user } = getState();
   const { currentUser } = user;
   const { type: transactionType } = cashTransaction;
-  const { code: transactionCode } = transactionType;
 
-  if (transactionCode === CASH_TRANSACTION_CODES.CASH_IN) {
+  if (transactionType === CASH_TRANSACTION_TYPES.CASH_IN) {
     // Create receipt transaction and associated customer credit and receipt transaction batch.
     UIDatabase.write(() => {
       const [payment] = createRecord(UIDatabase, 'CashIn', currentUser, cashTransaction);
@@ -169,7 +168,7 @@ export const addCashTransaction = (cashTransaction, route) => (dispatch, getStat
     });
   }
 
-  if (transactionCode === CASH_TRANSACTION_CODES.CASH_OUT) {
+  if (transactionType === CASH_TRANSACTION_TYPES.CASH_OUT) {
     // Create payment transaction and associated customer invoice, payment transaction batch.
     UIDatabase.write(() => {
       const [payment] = createRecord(UIDatabase, 'CashOut', currentUser, cashTransaction);
