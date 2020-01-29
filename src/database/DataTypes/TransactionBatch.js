@@ -111,7 +111,7 @@ export class TransactionBatch extends Realm.Object {
    */
   get totalPrice() {
     if (!this.numberOfPacks) return 0;
-    if (this.type === 'customer_invoice') {
+    if (this.transaction.type === 'customer_invoice') {
       if (!this.sellPrice) return 0;
       return this.sellPrice * this.numberOfPacks;
     }
