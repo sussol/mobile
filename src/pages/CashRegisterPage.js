@@ -19,7 +19,7 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 import { DataTablePageModal } from '../widgets/modals';
 
 import { ROUTES } from '../navigation/constants';
-import { buttonStrings } from '../localization';
+import { buttonStrings, pageInfoStrings } from '../localization';
 import globalStyles from '../globalStyles';
 
 export const CashRegister = ({
@@ -87,7 +87,11 @@ export const CashRegister = ({
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
         <View style={{ ...pageTopLeftSectionContainer, ...{ flex: 1 } }}>
-          <SimpleLabel label="Current balance:" text={currentBalance} textAlign="left" />
+          <SimpleLabel
+            label={pageInfoStrings.current_balance}
+            text={currentBalance}
+            textAlign="left"
+          />
         </View>
         <View style={{ ...pageTopRightSectionContainer, ...{ flex: 4 } }}>
           <AddNewTransactionButton />
