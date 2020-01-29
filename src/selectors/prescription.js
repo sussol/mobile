@@ -80,7 +80,7 @@ export const selectTransactionCategoryName = ({ prescription }) => {
   const { transaction } = prescription;
   const { category } = transaction || {};
   const { name } = category || {};
-  return name || '';
+  return name ?? '';
 };
 
 export const selectTransactionComment = ({ prescription }) => {
