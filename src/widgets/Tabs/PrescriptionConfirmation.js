@@ -25,6 +25,7 @@ import { FlexColumn } from '../FlexColumn';
 
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 import { PrescriptionActions } from '../../actions/PrescriptionActions';
+import { selectPrescriptionTotal } from '../../selectors/payment';
 
 const mapStateToProps = state => {
   const { payment, wizard, modules } = state;
@@ -35,8 +36,17 @@ const mapStateToProps = state => {
   const currentPatient = selectCurrentPatient(state);
   const currentUser = selectCurrentUser(state);
   const canConfirm = paymentValid && !isComplete;
+  const total = selectPrescriptionTotal(state);
 
-  return { transaction, canConfirm, paymentAmount, currentUser, currentPatient, usingPayments };
+  return {
+    total,
+    transaction,
+    canConfirm,
+    paymentAmount,
+    currentUser,
+    currentPatient,
+    usingPayments,
+  };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -46,6 +56,7 @@ const mapDispatchToProps = dispatch => {
 };
 
 const PrescriptionConfirmationComponent = ({
+  total,
   transaction,
   currentUser,
   currentPatient,
@@ -58,7 +69,9 @@ const PrescriptionConfirmationComponent = ({
 
   const confirm = React.useCallback(
     () =>
-      UIDatabase.write(() => pay(currentUser, currentPatient, transaction, paymentAmount.value)),
+      UIDatabase.write(() =>
+        pay(currentUser, currentPatient, transaction, paymentAmount.value, total.value)
+      ),
     [currentUser, currentPatient, transaction, paymentAmount.value]
   );
 
@@ -95,6 +108,7 @@ PrescriptionConfirmationComponent.propTypes = {
   canConfirm: PropTypes.bool.isRequired,
   usingPayments: PropTypes.bool.isRequired,
   onDelete: PropTypes.func.isRequired,
+  total: PropTypes.number.isRequired,
 };
 
 export const PrescriptionConfirmation = connect(
