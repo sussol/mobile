@@ -20,7 +20,7 @@ import { ModalContainer } from './ModalContainer';
 import { LANGUAGE_NAMES, LANGUAGE_CHOICE, authStrings, navStrings } from '../../localization';
 import { getModalTitle, MODAL_KEYS } from '../../utilities/index';
 import { setCurrencyLocalisation } from '../../localization/currency';
-import { setDateLocale } from '../../localization/moment';
+import { setDateLocale } from '../../localization/utilities';
 
 export class LoginModal extends React.Component {
   constructor(props) {
