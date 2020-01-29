@@ -37,11 +37,9 @@ import { UIDatabase } from '../../../database';
 
 export const pay = (currentUser, patient, script, cashAmount) => {
   if (!patient.isPatient) throw new Error('Patient is not a patient');
-
   if (!script.isPrescription) throw new Error('Script is not a script');
   if (!(script.items.length > 0)) throw new Error('Script is empty');
   if (script.isFinalised) throw new Error('Script is finalised');
-
   if (cashAmount < 0) throw new Error('Cash amount is negative');
 
   const { total } = script;
@@ -54,7 +52,7 @@ export const pay = (currentUser, patient, script, cashAmount) => {
   if (creditAmount > availableCredit) throw new Error('Not enough credit');
 
   // Create a Receipt and ReceiptLine for every payment path.
-  const receipt = createRecord(UIDatabase, 'Receipt', currentUser, patient, cashAmount, script);
+  const receipt = createRecord(UIDatabase, 'Receipt', currentUser, patient, cashAmount, '');
   createRecord(UIDatabase, 'ReceiptLine', receipt, script, cashAmount);
 
   // When using credit, create a CustomerCreditLine and ReceiptLine for each

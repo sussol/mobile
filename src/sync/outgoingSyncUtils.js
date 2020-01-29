@@ -36,33 +36,6 @@ function getTimeString(date) {
 }
 
 /**
- * Tries to get a value that is known to potentially lead to crash.
- * If path on the record returns null, throw an error with prototype extended with
- * |canDeleteSyncOut| set to true to indicates that sync should continue.
- *
- * @param {object}  record  The object to get properties from.
- * @param {string}  path    The path on that object safely try.
- * @return {any}            Whatever variable was stored at path, if no error thrown.
- */
-const safeGet = (record, path) => {
-  const pathSegments = path.split('.');
-  let currentPath = 'record';
-  let nestedProp = record;
-  for (let i = 0; i < pathSegments.length; i += 1) {
-    const segment = pathSegments[i];
-    currentPath += `.${segment}`; // Build up path to know at what point potential errors occur.
-    try {
-      nestedProp = nestedProp[segment];
-    } catch (error) {
-      error.canDeleteSyncOut = true; // Safe to delete |syncOut|.
-      error.message = `Error on object getter on path "${currentPath}", original message: ${error.message}`;
-      throw error; // Bubble error to next handler.
-    }
-  }
-  return nestedProp;
-};
-
-/**
  * Turn an internal database object into data representing a record in the
  * mSupply primary server, ready for sync.
  *
@@ -211,6 +184,7 @@ const generateSyncData = (settings, recordType, record) => {
         mode: record.mode,
         prescriber_ID: record.prescriber && record.prescriber.id,
         total: String(record.totalPrice),
+        foreign_currency_total: String(record.totalPrice),
         their_ref: record.theirRef,
         confirm_date: getDateString(record.confirmDate),
         subtotal: String(record.totalPrice),
@@ -218,6 +192,7 @@ const generateSyncData = (settings, recordType, record) => {
         category_ID: record.category && record.category.id,
         confirm_time: getTimeString(record.confirmDate),
         store_ID: settings.get(THIS_STORE_ID),
+        linked_transaction_id: record.linkedTransaction?.id ?? '',
         requisition_ID:
           record.linkedRequisition && record.linkedRequisition.id
             ? record.linkedRequisition.id
@@ -231,7 +206,8 @@ const generateSyncData = (settings, recordType, record) => {
         transaction_ID: record.transaction.id,
         item_ID: record.itemId,
         batch: record.batch,
-        price_extension: String(record.totalPrice),
+        price_extension: String(record.total),
+        foreign_currency_price: String(record.total),
         note: record.note,
         cost_price: String(record.costPrice),
         sell_price: String(record.sellPrice),
@@ -239,12 +215,13 @@ const generateSyncData = (settings, recordType, record) => {
         pack_size: String(record.packSize),
         quantity: String(record.numberOfPacks),
         // |item_line_ID| can be null due to server merge bug in v3.83.
-        item_line_ID: safeGet(record, 'itemBatch.id'),
+        item_line_ID: record.itemBatch?.id ?? '',
         line_number: String(record.sortIndex),
         item_name: record.itemName,
         is_from_inventory_adjustment: transaction.isInventoryAdjustment,
         donor_id: record.donor && record.donor.id,
         type: record.type,
+        linked_transact_id: record.linkedTransaction?.id,
       };
     }
     case 'InsurancePolicy': {
@@ -273,7 +250,6 @@ const generateSyncData = (settings, recordType, record) => {
         type: record.type,
       };
     }
-
     case 'Prescriber': {
       return {
         ID: record.id,
@@ -287,7 +263,6 @@ const generateSyncData = (settings, recordType, record) => {
         address2: record.address?.line2,
       };
     }
-
     default:
       throw new Error('Sync out record type not supported.');
   }

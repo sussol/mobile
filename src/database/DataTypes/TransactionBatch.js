@@ -85,6 +85,7 @@ export class TransactionBatch extends Realm.Object {
   setTotalQuantity(database, quantity) {
     const difference = quantity - this.totalQuantity;
     this.numberOfPacks = this.packSize ? quantity / this.packSize : 0;
+    this.total = this.totalPrice;
 
     if (this.transaction.isConfirmed) {
       const inventoryDifference = this.transaction.isIncoming ? difference : -difference;

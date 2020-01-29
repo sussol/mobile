@@ -41,6 +41,7 @@ import Database from './database/BaseDatabase';
 import { UIDatabase } from './database';
 
 import globalStyles, { textStyles, SUSSOL_ORANGE } from './globalStyles';
+import { LoadingIndicatorContext } from './context/LoadingIndicatorContext';
 import { UserActions } from './actions';
 import { debounce } from './utilities';
 import { prevRouteNameSelector } from './navigation/selectors';
@@ -239,61 +240,63 @@ class MSupplyMobileAppContainer extends React.Component {
     }
 
     return (
-      <View style={globalStyles.appBackground}>
-        <NavigationBar
-          routeName={this.getCurrentRouteName(navigationState)}
-          onPressBack={this.getCanNavigateBack() ? this.handleBackEvent : null}
-          LeftComponent={this.getCanNavigateBack() ? this.renderPageTitle : null}
-          CentreComponent={this.renderLogo}
-          RightComponent={
-            finaliseItem && finaliseItem?.visibleButton
-              ? this.renderFinaliseButton
-              : this.renderSyncState
-          }
-        />
-        <ReduxNavigator
-          state={navigationState}
-          dispatch={dispatch}
-          screenProps={{
-            database: UIDatabase,
-            settings: Settings,
-            currentUser,
-            routeName: navigationState.routes[navigationState.index].routeName,
-            runWithLoadingIndicator: this.runWithLoadingIndicator,
-            isInAdminMode,
-          }}
-        />
-        <FinaliseModal
-          database={UIDatabase}
-          isOpen={finaliseModalOpen}
-          onClose={closeFinaliseModal}
-          finaliseItem={finaliseItem}
-          user={currentUser}
-          runWithLoadingIndicator={this.runWithLoadingIndicator}
-        />
-        <SyncModal
-          database={UIDatabase}
-          isOpen={syncModalIsOpen}
-          state={syncState}
-          onPressManualSync={this.synchronise}
-          onClose={() => this.setState({ syncModalIsOpen: false })}
-        />
-        <LoginModal
-          authenticator={this.userAuthenticator}
-          settings={Settings}
-          isAuthenticated={!!currentUser}
-          onAuthentication={this.onAuthentication}
-        />
-        {isLoading && this.renderLoadingIndicator()}
-        <ModalContainer
-          isVisible={supplierCreditModalOpen}
-          onClose={closeSupplierCreditModal}
-          title={`Available Credits for ${creditItemName}`}
-          fullScreen
-        >
-          <SupplierCredit />
-        </ModalContainer>
-      </View>
+      <LoadingIndicatorContext.Provider value={this.runWithLoadingIndicator}>
+        <View style={globalStyles.appBackground}>
+          <NavigationBar
+            routeName={this.getCurrentRouteName(navigationState)}
+            onPressBack={this.getCanNavigateBack() ? this.handleBackEvent : null}
+            LeftComponent={this.getCanNavigateBack() ? this.renderPageTitle : null}
+            CentreComponent={this.renderLogo}
+            RightComponent={
+              finaliseItem && finaliseItem?.visibleButton
+                ? this.renderFinaliseButton
+                : this.renderSyncState
+            }
+          />
+          <ReduxNavigator
+            state={navigationState}
+            dispatch={dispatch}
+            screenProps={{
+              database: UIDatabase,
+              settings: Settings,
+              currentUser,
+              routeName: navigationState.routes[navigationState.index].routeName,
+              runWithLoadingIndicator: this.runWithLoadingIndicator,
+              isInAdminMode,
+            }}
+          />
+          <FinaliseModal
+            database={UIDatabase}
+            isOpen={finaliseModalOpen}
+            onClose={closeFinaliseModal}
+            finaliseItem={finaliseItem}
+            user={currentUser}
+            runWithLoadingIndicator={this.runWithLoadingIndicator}
+          />
+          <SyncModal
+            database={UIDatabase}
+            isOpen={syncModalIsOpen}
+            state={syncState}
+            onPressManualSync={this.synchronise}
+            onClose={() => this.setState({ syncModalIsOpen: false })}
+          />
+          <LoginModal
+            authenticator={this.userAuthenticator}
+            settings={Settings}
+            isAuthenticated={!!currentUser}
+            onAuthentication={this.onAuthentication}
+          />
+          {isLoading && this.renderLoadingIndicator()}
+          <ModalContainer
+            isVisible={supplierCreditModalOpen}
+            onClose={closeSupplierCreditModal}
+            title={`Available Credits for ${creditItemName}`}
+            fullScreen
+          >
+            <SupplierCredit />
+          </ModalContainer>
+        </View>
+      </LoadingIndicatorContext.Provider>
     );
   }
 }

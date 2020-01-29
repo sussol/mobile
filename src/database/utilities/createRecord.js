@@ -69,30 +69,6 @@ const createInsurancePolicy = (database, policyValues) => {
   return policy;
 };
 
-/**
- * Creates a prescriber record. prescriberDetails can have the shape:
- * {
- *     firstName, lastName, registrationCode, line1, line2, isVisible,
- *     isActive, phoneNumber, mobileNumber, emailAddress
- * }
- */
-const createPrescriber = (database, prescriberDetails) => {
-  const { line1, line2 } = prescriberDetails;
-  const address = createAddress({ line1, line2 });
-
-  const prescriber = database.create('Prescriber', {
-    id: generateUUID(),
-    ...prescriberDetails,
-    address,
-
-    // Defaults:
-    isVisible: true,
-    isActive: true,
-  });
-
-  database.save('Prescriber', prescriber);
-};
-
 const createAddress = (database, { line1, line2, line3, line4, zipCode } = {}) =>
   database.create('Address', {
     id: generateUUID(),
@@ -104,25 +80,45 @@ const createAddress = (database, { line1, line2, line3, line4, zipCode } = {}) =
   });
 
 /**
+ * Creates a prescriber record. prescriberDetails can have the shape:
+ * {
+ *     firstName, lastName, registrationCode, line1, line2, isVisible,
+ *     isActive, phoneNumber, mobileNumber, emailAddress
+ * }
+ */
+const createPrescriber = (database, prescriberDetails) => {
+  const { addressOne, addressTwo } = prescriberDetails;
+  const address = createAddress(database, { line1: addressOne, line2: addressTwo });
+
+  const prescriber = database.create('Prescriber', {
+    id: generateUUID(),
+    ...prescriberDetails,
+    address,
+    // Defaults:
+    isVisible: true,
+    isActive: true,
+  });
+
+  database.save('Prescriber', prescriber);
+};
+
+/**
  * Creates a patient record. Patient details passed can be in the shape:
  *  {
  *    firstName, lastName, dateOfBirth, code, emailAddress,
- *    phoneNumber, line1, line2,
+ *    phoneNumber, addressOne, addressTwo, country
  *  }
  */
 const createPatient = (database, patientDetails) => {
-  const { dateOfBirth, line1, line2 } = patientDetails;
-
-  const billingAddress = createAddress(database, { line1, line2 });
-  const parsedDateOfBirth = moment(dateOfBirth, 'DD-MM-YYYY').toDate();
+  const { dateOfBirth, addressOne, addressTwo } = patientDetails;
+  const billingAddress = createAddress(database, { line1: addressOne, line2: addressTwo });
   const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
 
   const patient = database.create('Name', {
     id: generateUUID(),
     ...patientDetails,
     billingAddress,
-    dateOfBirth: parsedDateOfBirth,
-    // Defaults:
+    dateOfBirth,
     isVisible: true,
     isPatient: true,
     type: 'patient',
@@ -203,12 +199,12 @@ const createReceipt = (database, user, name, amount, description) => {
   return receipt;
 };
 
-const createReceiptLine = (database, receipt, customerCredit, amount) => {
+const createReceiptLine = (database, receipt, linkedTransaction, amount) => {
   const receiptLine = database.create('TransactionBatch', {
     id: generateUUID(),
     total: amount,
     transaction: receipt,
-    linkedTransaction: customerCredit,
+    linkedTransaction,
     type: 'cash_in',
   });
 
