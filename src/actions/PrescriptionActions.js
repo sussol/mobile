@@ -14,7 +14,58 @@ import { WizardActions } from './WizardActions';
 export const PRESCRIPTION_ACTIONS = {
   REFRESH: 'Prescription/refresh',
   FILTER: 'Prescription/filter',
+  OPEN_COMMENT_MODAL: 'Prescription/openCommentModal',
+  CLOSE_COMMENT_MODAL: 'Prescription/closeCommentModal',
 };
+
+const editTransactionCategory = newValue => (dispatch, getState) => {
+  const { prescription } = getState();
+  const { transaction } = prescription;
+
+  UIDatabase.write(() => {
+    UIDatabase.update('Transaction', {
+      ...transaction,
+      category: newValue,
+    });
+  });
+
+  dispatch(refresh());
+};
+
+const editPatientType = newValue => (dispatch, getState) => {
+  const { prescription } = getState();
+  const { transaction } = prescription;
+
+  UIDatabase.write(() => {
+    UIDatabase.update('Transaction', {
+      ...transaction,
+      user1: newValue,
+    });
+  });
+
+  dispatch(refresh());
+};
+
+const editComment = newValue => (dispatch, getState) => {
+  const { prescription } = getState();
+  const { transaction } = prescription;
+  const { comment } = transaction;
+
+  if (newValue !== comment) {
+    UIDatabase.write(() => {
+      UIDatabase.update('Transaction', {
+        ...transaction,
+        comment: newValue,
+      });
+    });
+
+    dispatch(closeCommentModal());
+  }
+};
+
+const closeCommentModal = () => ({ type: PRESCRIPTION_ACTIONS.CLOSE_COMMENT_MODAL });
+
+const openCommentModal = () => ({ type: PRESCRIPTION_ACTIONS.OPEN_COMMENT_MODAL });
 
 const refresh = () => ({ type: PRESCRIPTION_ACTIONS.REFRESH });
 
@@ -135,4 +186,9 @@ export const PrescriptionActions = {
   updateDirection,
   appendDirection,
   filter,
+  openCommentModal,
+  closeCommentModal,
+  editComment,
+  editPatientType,
+  editTransactionCategory,
 };
