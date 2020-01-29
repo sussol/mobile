@@ -22,6 +22,7 @@ import {
   selectTransactionCategoryName,
   selectPrescriptionCategories,
 } from '../selectors/prescription';
+import { selectUsingPrescriptionCategories, selectUsingPatientTypes } from '../selectors/modules';
 
 const PATIENT_TYPES = ['Inpatient', 'Outpatient'];
 
@@ -36,6 +37,8 @@ const PrescriptionExtraComponent = ({
   categoryName,
   patientType,
   prescriptionCategories,
+  usingPatientTypes,
+  usingPrescriptionCategories,
 }) => {
   const onCategorySelection = React.useCallback(
     (_, index) => onUpdateCategory(prescriptionCategories[index]),
@@ -58,16 +61,20 @@ const PrescriptionExtraComponent = ({
 
   return (
     <View style={localStyles.container}>
-      <DropDown
-        values={PATIENT_TYPES}
-        selectedValue={patientType}
-        onValueChange={onUpdatePatientType}
-      />
-      <DropDown
-        values={prescriptionCategories}
-        selectedValue={categoryName}
-        onValueChange={onCategorySelection}
-      />
+      {usingPatientTypes && (
+        <DropDown
+          values={PATIENT_TYPES}
+          selectedValue={patientType}
+          onValueChange={onUpdatePatientType}
+        />
+      )}
+      {usingPrescriptionCategories && (
+        <DropDown
+          values={prescriptionCategories}
+          selectedValue={categoryName}
+          onValueChange={onCategorySelection}
+        />
+      )}
       <PageInfo columns={pageInfoColumns} />
       <ModalContainer
         fullScreen
@@ -92,6 +99,8 @@ PrescriptionExtraComponent.propTypes = {
   categoryName: PropTypes.string.isRequired,
   patientType: PropTypes.string.isRequired,
   prescriptionCategories: PropTypes.array.isRequired,
+  usingPatientTypes: PropTypes.bool.isRequired,
+  usingPrescriptionCategories: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -101,8 +110,18 @@ const mapStateToProps = state => {
   const categoryName = selectTransactionCategoryName(state);
   const patientType = selectPatientType(state);
   const prescriptionCategories = selectPrescriptionCategories(state);
+  const usingPrescriptionCategories = selectUsingPrescriptionCategories(state);
+  const usingPatientTypes = selectUsingPatientTypes(state);
 
-  return { commentModalOpen, comment, categoryName, patientType, prescriptionCategories };
+  return {
+    commentModalOpen,
+    comment,
+    categoryName,
+    patientType,
+    prescriptionCategories,
+    usingPatientTypes,
+    usingPrescriptionCategories,
+  };
 };
 
 const mapDispatchToProps = dispatch => {
