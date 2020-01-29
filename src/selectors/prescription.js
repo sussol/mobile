@@ -4,6 +4,7 @@
  */
 
 import { createSelector } from 'reselect';
+import { UIDatabase } from '../database';
 
 export const selectHasItemsAndQuantity = ({ prescription }) => {
   const { transaction } = prescription;
@@ -74,3 +75,25 @@ export const selectSelectedRows = ({ prescription }) => {
 
   return items.reduce((acc, { item }) => ({ ...acc, [item.id]: true }), {});
 };
+
+export const selectTransactionCategoryName = ({ prescription }) => {
+  const { transaction } = prescription;
+  const { category } = transaction || {};
+  const { name } = category || {};
+  return name || '';
+};
+
+export const selectTransactionComment = ({ prescription }) => {
+  const { transaction } = prescription;
+  const { comment } = transaction;
+  return comment;
+};
+
+export const selectPatientType = ({ prescription }) => {
+  const { transaction } = prescription;
+  const { user1 } = transaction;
+  return user1 || '';
+};
+
+export const selectPrescriptionCategories = () =>
+  UIDatabase.objects('PrescriptionCategory').map(({ name }) => name);
