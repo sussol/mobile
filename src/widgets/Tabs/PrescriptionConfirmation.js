@@ -20,6 +20,8 @@ import { FinaliseActions } from '../../actions/FinaliseActions';
 import { PaymentSummary } from '../PaymentSummary';
 import { selectCurrentUser } from '../../selectors/user';
 import { selectCurrentPatient } from '../../selectors/patient';
+import { PrescriptionExtra } from '../PrescriptionExtra';
+import { FlexColumn } from '../FlexColumn';
 
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 
@@ -62,16 +64,24 @@ const PrescriptionConfirmationComponent = ({
   return (
     <FlexView flex={1}>
       <PrescriptionInfo />
+
       <FlexRow flex={1}>
-        <PrescriptionSummary transaction={transaction} />
-        {usingPayments && <PaymentSummary />}
+        <FlexColumn flex={1}>
+          <PrescriptionExtra />
+          <PrescriptionSummary transaction={transaction} />
+        </FlexColumn>
+
+        <FlexColumn flex={1}>
+          {usingPayments && <PaymentSummary />}
+
+          <PageButton
+            style={{ alignSelf: 'flex-end' }}
+            isDisabled={!canConfirm}
+            text="Complete"
+            onPress={confirmPrescription}
+          />
+        </FlexColumn>
       </FlexRow>
-      <PageButton
-        style={{ alignSelf: 'flex-end' }}
-        isDisabled={!canConfirm}
-        text="Complete"
-        onPress={confirmPrescription}
-      />
     </FlexView>
   );
 };

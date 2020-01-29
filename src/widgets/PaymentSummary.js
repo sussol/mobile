@@ -122,7 +122,7 @@ const PaymentSummaryComponent = ({
 
   return (
     <ScrollView>
-      <FlexView flex={1} style={localStyles.container}>
+      <FlexView style={localStyles.container}>
         <Text style={localStyles.title}>Payment</Text>
         {usingInsurance && (
           <FlexRow flex={1}>
