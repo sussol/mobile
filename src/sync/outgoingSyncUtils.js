@@ -193,6 +193,7 @@ const generateSyncData = (settings, recordType, record) => {
         confirm_time: getTimeString(record.confirmDate),
         store_ID: settings.get(THIS_STORE_ID),
         linked_transaction_id: record.linkedTransaction?.id ?? '',
+        user1: record.user1,
         requisition_ID:
           record.linkedRequisition && record.linkedRequisition.id
             ? record.linkedRequisition.id
