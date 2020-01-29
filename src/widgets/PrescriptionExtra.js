@@ -82,7 +82,7 @@ const PrescriptionExtraComponent = ({
         isVisible={commentModalOpen}
         title={modalStrings.edit_the_prescription_comment}
       >
-        <TextEditor onEndEditing={x => onEditComment(x)} text={comment} />
+        <TextEditor onEndEditing={onEditComment} text={comment} />
       </ModalContainer>
     </View>
   );
