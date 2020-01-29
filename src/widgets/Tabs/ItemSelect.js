@@ -50,6 +50,7 @@ const ItemSelectComponent = ({
   filterItems,
   items,
   selectedRows,
+  onDelete,
 }) => {
   const columns = React.useMemo(() => getColumns('itemSelect'), []);
 
@@ -70,12 +71,10 @@ const ItemSelectComponent = ({
         <FlexColumn flex={15}>
           <PrescriptionCart isDisabled={isComplete} />
 
-          <PageButton
-            isDisabled={!canProceed}
-            text="Next"
-            onPress={nextTab}
-            style={{ alignSelf: 'flex-end' }}
-          />
+          <FlexRow justifyContent="flex-end">
+            <PageButton text="Cancel" onPress={onDelete} />
+            <PageButton isDisabled={!canProceed} text="Next" onPress={nextTab} />
+          </FlexRow>
         </FlexColumn>
       </FlexRow>
     </>
@@ -87,13 +86,13 @@ const mapDispatchToProps = dispatch => {
   const nextTab = () => dispatch(WizardActions.nextTab());
   const updateQuantity = (id, quantity) => dispatch(PrescriptionActions.editQuantity(id, quantity));
   const filterItems = searchTerm => dispatch(PrescriptionActions.filter(searchTerm));
-  return { filterItems, nextTab, chooseItem, updateQuantity };
+  const onDelete = () => dispatch(PrescriptionActions.cancelPrescription());
+  return { onDelete, filterItems, nextTab, chooseItem, updateQuantity };
 };
 
 const mapStateToProps = state => {
   const { wizard } = state;
   const { isComplete } = wizard;
-
   const itemSearchTerm = selectItemSearchTerm(state);
   const items = selectFilteredAndSortedItems(state);
   const selectedRows = selectSelectedRows(state);
@@ -111,6 +110,7 @@ ItemSelectComponent.propTypes = {
   filterItems: PropTypes.func.isRequired,
   items: PropTypes.array.isRequired,
   selectedRows: PropTypes.object.isRequired,
+  onDelete: PropTypes.func.isRequired,
 };
 
 export const ItemSelect = connect(mapStateToProps, mapDispatchToProps)(ItemSelectComponent);
