@@ -7,13 +7,15 @@ import React, { useCallback, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
+import currency from '../../localization/currency';
+
 import { UIDatabase } from '../../database';
 import {
   CASH_TRANSACTION_KEYS,
   CASH_TRANSACTION_TYPES,
 } from '../../utilities/modules/dispensary/constants';
 
-import { BottomModalContainer, BottomTextEditor } from '../bottomModals';
+import { BottomModalContainer, BottomTextEditor, BottomCurrencyEditor } from '../bottomModals';
 import { GenericChoiceList } from '../modalChildren';
 import { PageButton } from '../PageButton';
 import { PencilIcon, ChevronDownIcon } from '../icons';
@@ -21,20 +23,24 @@ import { PencilIcon, ChevronDownIcon } from '../icons';
 import globalStyles, { WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
 import { ToggleBar } from '../ToggleBar';
 
-const placeholderName = 'Choose a name';
-const placeholderAmount = 'Enter transaction amount';
-const placeholderReason = 'Choose a reason';
-const placeholderReasonDisabled = 'N/A';
-const placeholderDescription = 'Enter a description';
+const placeholderTextName = 'Choose a name';
+const placeholderTextAmount = 'Enter transaction amount';
+const placeholderTextReason = 'Choose a reason';
+const placeholderTextReasonDisabled = 'N/A';
+const placeholderTextDescription = 'Enter a description';
+
+const defaultTextAmount = '0.00';
+const defaultTextDescription = '';
 
 export const CashTransactionModal = ({ onConfirm }) => {
   const [name, setName] = useState(null);
+  const [isCashIn, setIsCashIn] = useState(true);
   const [amount, setAmount] = useState(null);
   const [reason, setReason] = useState(null);
   const [description, setDescription] = useState(null);
 
-  const [isCashIn, setIsCashIn] = useState(true);
-  const [textBuffer, setTextBuffer] = useState('');
+  const [amountBuffer, setAmountBuffer] = useState(defaultTextAmount);
+  const [descriptionBuffer, setDescriptionBuffer] = useState(defaultTextDescription);
 
   const [isNameModalOpen, setIsNameModalOpen] = useState(false);
   const [isAmountModalOpen, setIsAmountModalOpen] = useState(false);
@@ -55,15 +61,13 @@ export const CashTransactionModal = ({ onConfirm }) => {
     isCashIn,
   ]);
 
-  const onCreate = useCallback(() => onConfirm({ name, amount, type, reason, description }), [
-    name,
-    type,
-    amount,
-    reason,
-    description,
-  ]);
+  const onCreate = useCallback(
+    () => onConfirm({ name, type, amount: amount.value, reason, description }),
+    [name, type, amount, reason, description]
+  );
 
-  const onChangeText = text => setTextBuffer(text);
+  const onChangeText = useMemo(() => text => setDescriptionBuffer(text));
+  const onChangeAmount = useMemo(() => value => setAmountBuffer(value));
 
   const resetBottomModal = () => {
     setIsNameModalOpen(false);
@@ -79,8 +83,10 @@ export const CashTransactionModal = ({ onConfirm }) => {
 
   const onPressAmount = () => {
     resetBottomModal();
+    if (amount) {
+      setAmountBuffer(amount.format(false));
+    }
     setIsAmountModalOpen(true);
-    setTextBuffer(amount);
   };
 
   const onPressReason = () => {
@@ -90,30 +96,36 @@ export const CashTransactionModal = ({ onConfirm }) => {
 
   const onPressDescription = () => {
     resetBottomModal();
+    if (description) {
+      setDescriptionBuffer(description);
+    }
     setIsDescriptionModalOpen(true);
-    setTextBuffer(description);
   };
 
-  const onSubmitName = ({ item }) => {
-    setName(item);
+  const onSubmitName = ({ item: nameItem }) => {
+    setName(nameItem);
     setIsNameModalOpen(false);
   };
 
   const onSubmitAmount = () => {
-    setAmount(parseFloat(textBuffer));
+    setAmount(currency(amountBuffer));
     setIsAmountModalOpen(false);
   };
 
-  const onSubmitReason = ({ item }) => {
-    setReason(item);
+  const onSubmitReason = ({ item: reasonItem }) => {
+    setReason(reasonItem);
     setIsReasonModalOpen(false);
   };
 
   const onSubmitDescription = () => {
-    setDescription(textBuffer);
+    setDescription(descriptionBuffer);
     setIsDescriptionModalOpen(false);
   };
 
+  const nameText = useMemo(() => name?.name ?? placeholderTextName, [name]);
+  const amountText = useMemo(() => amount?.format(false) ?? placeholderTextAmount, [amount]);
+  const reasonText = useMemo(() => reason?.title ?? placeholderTextReason, [reason]);
+  const descriptionText = useMemo(() => description ?? placeholderTextDescription, [description]);
   const toggleTransactionType = () => setIsCashIn(!isCashIn);
 
   const toggles = useMemo(
@@ -129,14 +141,14 @@ export const CashTransactionModal = ({ onConfirm }) => {
       isCashIn ? (
         <TouchableOpacity style={localStyles.containerStyle}>
           <View style={localStyles.textContainerStyle}>
-            <Text style={localStyles.textStyle}>{placeholderReasonDisabled}</Text>
+            <Text style={localStyles.textStyle}>{placeholderTextReasonDisabled}</Text>
           </View>
           <View style={localStyles.iconContainerStyle} />
         </TouchableOpacity>
       ) : (
         <TouchableOpacity style={localStyles.containerStyle} onPress={onPressReason}>
           <View style={localStyles.textContainerStyle}>
-            <Text style={localStyles.textStyle}>{reason?.title ?? placeholderReason}</Text>
+            <Text style={localStyles.textStyle}>{reasonText}</Text>
           </View>
           <View style={localStyles.iconContainerStyle}>
             <ChevronDownIcon />
@@ -151,7 +163,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
       <ToggleBar toggles={toggles} />
       <TouchableOpacity style={localStyles.containerStyle} onPress={onPressName}>
         <View style={localStyles.textContainerStyle}>
-          <Text style={localStyles.textStyle}>{name?.name ?? placeholderName}</Text>
+          <Text style={localStyles.textStyle}>{nameText}</Text>
         </View>
         <View style={localStyles.iconContainerStyle}>
           <ChevronDownIcon />
@@ -159,7 +171,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
       </TouchableOpacity>
       <TouchableOpacity style={localStyles.containerStyle} onPress={onPressAmount}>
         <View style={localStyles.textContainerStyle}>
-          <Text style={localStyles.textStyle}>{amount ?? placeholderAmount}</Text>
+          <Text style={localStyles.textStyle}>{amountText}</Text>
         </View>
         <View style={localStyles.iconContainerStyle}>
           <PencilIcon />
@@ -168,7 +180,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
       <PressReason />
       <TouchableOpacity style={localStyles.containerStyle} onPress={onPressDescription}>
         <View style={localStyles.textContainerStyle}>
-          <Text style={localStyles.textStyle}>{description ?? placeholderDescription}</Text>
+          <Text style={localStyles.textStyle}>{descriptionText}</Text>
         </View>
         <View style={localStyles.iconContainerStyle}>
           <PencilIcon />
@@ -185,12 +197,12 @@ export const CashTransactionModal = ({ onConfirm }) => {
           highlightValue={name?.name}
         />
       </BottomModalContainer>
-      <BottomTextEditor
+      <BottomCurrencyEditor
         isOpen={isAmountModalOpen}
         buttonText="Confirm"
-        value={textBuffer}
-        placeholder={placeholderAmount}
-        onChangeText={onChangeText}
+        value={amountBuffer}
+        placeholder={placeholderTextAmount}
+        onChangeText={onChangeAmount}
         onConfirm={onSubmitAmount}
       />
       <BottomModalContainer
@@ -207,8 +219,8 @@ export const CashTransactionModal = ({ onConfirm }) => {
       <BottomTextEditor
         isOpen={isDescriptionModalOpen}
         buttonText="Confirm"
-        value={textBuffer}
-        placeholder={placeholderDescription}
+        value={descriptionBuffer}
+        placeholder={placeholderTextDescription}
         onChangeText={onChangeText}
         onConfirm={onSubmitDescription}
       />

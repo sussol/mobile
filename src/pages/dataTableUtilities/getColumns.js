@@ -537,7 +537,7 @@ const COLUMNS = () => ({
     editable: false,
   },
   [COLUMN_NAMES.TOTAL]: {
-    type: COLUMN_TYPES.NUMERIC,
+    type: COLUMN_TYPES.CURRENCY,
     key: COLUMN_KEYS.TOTAL,
     title: tableStrings.total,
     alignTest: 'right',
