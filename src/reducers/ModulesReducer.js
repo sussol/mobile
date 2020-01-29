@@ -32,6 +32,7 @@ const initialState = () => {
   const usingCashRegister = checkModule(SETTINGS_KEYS.CASH_REGISTER_MODULE);
   const usingPayments = checkModule(SETTINGS_KEYS.PAYMENT_MODULE);
   const usingSupplierCredits = checkModule(SETTINGS_KEYS.SUPPLIER_CREDIT_MODULE);
+  const usingPatientTypes = checkModule(SETTINGS_KEYS.PATIENT_TYPES);
 
   const usingModules =
     usingDashboard ||
@@ -42,6 +43,8 @@ const initialState = () => {
     usingSupplierCredits;
 
   const usingInsurance = UIDatabase.objects('InsuranceProvider').length > 0;
+  const usingPrescriptionCategories = UIDatabase.objects('PrescriptionCategory'.length > 0);
+  const usingPaymentTypes = UIDatabase.objects('PaymentType').length > 0;
 
   return {
     usingPayments,
@@ -52,6 +55,9 @@ const initialState = () => {
     usingSupplierCredits,
     usingModules,
     usingInsurance,
+    usingPrescriptionCategories,
+    usingPaymentTypes,
+    usingPatientTypes,
   };
 };
 
