@@ -43,7 +43,7 @@ const initialState = () => {
     usingSupplierCredits;
 
   const usingInsurance = UIDatabase.objects('InsuranceProvider').length > 0;
-  const usingPrescriptionCategories = UIDatabase.objects('PrescriptionCategory'.length > 0);
+  const usingPrescriptionCategories = UIDatabase.objects('PrescriptionCategory').length > 0;
   const usingPaymentTypes = UIDatabase.objects('PaymentType').length > 0;
 
   return {
