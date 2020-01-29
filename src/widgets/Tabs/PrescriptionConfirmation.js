@@ -20,8 +20,11 @@ import { FinaliseActions } from '../../actions/FinaliseActions';
 import { PaymentSummary } from '../PaymentSummary';
 import { selectCurrentUser } from '../../selectors/user';
 import { selectCurrentPatient } from '../../selectors/patient';
+import { PrescriptionExtra } from '../PrescriptionExtra';
+import { FlexColumn } from '../FlexColumn';
 
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
+import { PrescriptionActions } from '../../actions/PrescriptionActions';
 
 const mapStateToProps = state => {
   const { payment, wizard, modules } = state;
@@ -38,7 +41,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   const openFinaliseModal = () => dispatch(FinaliseActions.openModal());
-  return { openFinaliseModal };
+  const onDelete = () => dispatch(PrescriptionActions.cancelPrescription());
+  return { onDelete, openFinaliseModal };
 };
 
 const PrescriptionConfirmationComponent = ({
@@ -48,6 +52,7 @@ const PrescriptionConfirmationComponent = ({
   paymentAmount,
   canConfirm,
   usingPayments,
+  onDelete,
 }) => {
   const runWithLoadingIndicator = useLoadingIndicator();
 
@@ -62,16 +67,22 @@ const PrescriptionConfirmationComponent = ({
   return (
     <FlexView flex={1}>
       <PrescriptionInfo />
+
       <FlexRow flex={1}>
-        <PrescriptionSummary transaction={transaction} />
-        {usingPayments && <PaymentSummary />}
+        <FlexColumn flex={1}>
+          <PrescriptionExtra />
+          <PrescriptionSummary transaction={transaction} />
+        </FlexColumn>
+
+        <FlexColumn flex={1}>
+          {usingPayments && <PaymentSummary />}
+
+          <FlexRow justifyContent="flex-end">
+            <PageButton text="Cancel" onPress={onDelete} />
+            <PageButton isDisabled={!canConfirm} text="Complete" onPress={confirmPrescription} />
+          </FlexRow>
+        </FlexColumn>
       </FlexRow>
-      <PageButton
-        style={{ alignSelf: 'flex-end' }}
-        isDisabled={!canConfirm}
-        text="Complete"
-        onPress={confirmPrescription}
-      />
     </FlexView>
   );
 };
@@ -83,6 +94,7 @@ PrescriptionConfirmationComponent.propTypes = {
   paymentAmount: PropTypes.object.isRequired,
   canConfirm: PropTypes.bool.isRequired,
   usingPayments: PropTypes.bool.isRequired,
+  onDelete: PropTypes.func.isRequired,
 };
 
 export const PrescriptionConfirmation = connect(

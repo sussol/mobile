@@ -27,6 +27,7 @@ export const SETTINGS_KEYS = {
   CASH_REGISTER_MODULE: 'usesCashRegisterModule',
   PAYMENT_MODULE: 'usesPaymentModule',
   SUPPLIER_CREDIT_MODULE: 'usesSupplierCreditModule',
+  PATIENT_TYPES: 'usesPatientTypes',
 };
 
 export const STORE_CUSTOM_DATA_KEYS = {

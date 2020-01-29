@@ -6,6 +6,7 @@
 
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 
 import currency from '../../localization/currency';
 
@@ -212,7 +213,7 @@ const DataTableRow = React.memo(
               return (
                 <Cell
                   key={columnKey}
-                  value={rowData[columnKey] && rowData[columnKey].toDateString()}
+                  value={moment(rowData[columnKey] && rowData[columnKey]).format('ll')}
                   width={width}
                   viewStyle={cellContainer[cellAlignment]}
                   textStyle={cellText[cellAlignment]}

@@ -478,6 +478,7 @@ Transaction.schema = {
     insurancePolicy: { type: 'InsurancePolicy', optional: true },
     option: { type: 'Options', optional: true },
     linkedTransaction: { type: 'Transaction', optional: true },
+    user1: { type: 'string', optional: true },
   },
 };
 
