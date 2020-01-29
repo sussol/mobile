@@ -47,6 +47,9 @@ export const PrescriptionReducer = (state = initialState(), action) => {
       return { ...state, commentModalOpen: false };
     }
 
+    case PRESCRIPTION_ACTIONS.DELETE:
+      return { ...state, transaction: null };
+
     default: {
       return state;
     }

@@ -9,6 +9,7 @@ import { PAYMENT_ACTIONS } from '../actions/PaymentActions';
 import { WIZARD_ACTIONS } from '../actions/WizardActions';
 import { selectPrescriptionTotal } from '../selectors/payment';
 import { INSURANCE_ACTIONS } from '../actions/InsuranceActions';
+import { PRESCRIPTION_ACTIONS } from '../actions/PrescriptionActions';
 
 const initialState = () => ({
   transaction: null,
@@ -29,6 +30,10 @@ export const PaymentReducer = (state = initialState(), action) => {
       if (routeName !== ROUTES.PRESCRIPTION) return state;
       const { transaction } = params;
       return { ...state, transaction };
+    }
+
+    case PRESCRIPTION_ACTIONS.DELETE: {
+      return { ...state, transaction: null };
     }
 
     case WIZARD_ACTIONS.NEXT_TAB: {
