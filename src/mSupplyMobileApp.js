@@ -57,7 +57,7 @@ const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 class MSupplyMobileAppContainer extends React.Component {
   handleBackEvent = debounce(
     () => {
-      const { dispatch, prevRouteName } = this.props;
+      const { dispatch, prevRouteName, currentRouteName } = this.props;
       const { syncModalIsOpen } = this.state;
 
       // If finalise or sync modals are open, close them rather than navigating.
@@ -340,6 +340,7 @@ const mapStateToProps = state => {
   }
 
   return {
+    currentRouteName,
     currentTitle,
     prevRouteName: prevRouteNameSelector(state),
     finaliseItem,
@@ -373,6 +374,7 @@ MSupplyMobileAppContainer.propTypes = {
   closeSupplierCreditModal: PropTypes.func.isRequired,
   supplierCreditModalOpen: PropTypes.bool.isRequired,
   creditItemName: PropTypes.string,
+  currentRouteName: PropTypes.string.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MSupplyMobileAppContainer);
