@@ -14,7 +14,7 @@ import {
   View,
 } from 'react-native';
 import RefContext from './RefContext';
-import DATA_TABLE_DEFAULTS from './constants';
+import { DATA_TABLE_DEFAULTS } from './constants';
 
 /**
  * Base DataTable component. Wrapper around VirtualizedList, providing
