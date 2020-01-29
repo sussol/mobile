@@ -8,22 +8,22 @@ import { UIDatabase } from '../database';
 
 export const selectHasItemsAndQuantity = ({ prescription }) => {
   const { transaction } = prescription;
-  const { totalQuantity, items } = transaction;
+  const { totalQuantity = 0, items = [] } = transaction || {};
   const hasItems = items.length > 0;
   const hasQuantity = totalQuantity > 0;
   return hasItems && hasQuantity;
 };
 
 export const selectPrescriptionPatient = ({ prescription }) => {
-  const { transaction = {} } = prescription;
-  const { otherParty } = transaction;
+  const { transaction } = prescription;
+  const { otherParty } = transaction || {};
 
   return otherParty;
 };
 
 export const selectPrescriptionPrescriber = ({ prescription }) => {
-  const { transaction = {} } = prescription;
-  const { prescriber } = transaction;
+  const { transaction } = prescription;
+  const { prescriber } = transaction || {};
 
   return prescriber;
 };
@@ -71,7 +71,7 @@ export const selectFilteredAndSortedItems = createSelector(
 
 export const selectSelectedRows = ({ prescription }) => {
   const { transaction } = prescription;
-  const { items } = transaction;
+  const { items = [] } = transaction || {};
 
   return items.reduce((acc, { item }) => ({ ...acc, [item.id]: true }), {});
 };
@@ -85,14 +85,14 @@ export const selectTransactionCategoryName = ({ prescription }) => {
 
 export const selectTransactionComment = ({ prescription }) => {
   const { transaction } = prescription;
-  const { comment } = transaction;
-  return comment;
+  const { comment } = transaction || {};
+  return comment ?? '';
 };
 
 export const selectPatientType = ({ prescription }) => {
   const { transaction } = prescription;
-  const { user1 } = transaction;
-  return user1 || '';
+  const { user1 } = transaction || {};
+  return user1 ?? '';
 };
 
 export const selectPrescriptionCategories = () =>

@@ -23,7 +23,7 @@ export const PrescriptionSummary = ({ transaction }) => (
   <View style={localStyles.containerStyle}>
     <Text style={localStyles.titleStyle}>Item Details</Text>
     <FlatList
-      data={transaction.items}
+      data={transaction?.items ?? []}
       ItemSeparatorComponent={Separator}
       renderItem={PrescriptionSummaryRow}
     />

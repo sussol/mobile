@@ -5,6 +5,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 import { batch } from 'react-redux';
+import { NavigationActions } from 'react-navigation';
 
 import { UIDatabase, createRecord } from '../database';
 
@@ -16,6 +17,23 @@ export const PRESCRIPTION_ACTIONS = {
   FILTER: 'Prescription/filter',
   OPEN_COMMENT_MODAL: 'Prescription/openCommentModal',
   CLOSE_COMMENT_MODAL: 'Prescription/closeCommentModal',
+  DELETE: 'Prescription/delete',
+};
+
+const deletePrescription = () => ({ type: PRESCRIPTION_ACTIONS.DELETE });
+
+const cancelPrescription = () => (dispatch, getState) => {
+  const { prescription } = getState();
+  const { transaction } = prescription;
+
+  UIDatabase.write(() => {
+    UIDatabase.delete('Transaction', transaction);
+  });
+
+  batch(() => {
+    dispatch(NavigationActions.back());
+    dispatch(deletePrescription());
+  });
 };
 
 const editTransactionCategory = newValue => (dispatch, getState) => {
@@ -191,4 +209,6 @@ export const PrescriptionActions = {
   editComment,
   editPatientType,
   editTransactionCategory,
+  cancelPrescription,
+  deletePrescription,
 };
