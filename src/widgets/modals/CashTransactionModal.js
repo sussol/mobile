@@ -19,38 +19,43 @@ import { PageButton } from '../PageButton';
 import { PencilIcon, ChevronDownIcon } from '../icons';
 
 import globalStyles, { WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
+import { ToggleBar } from '../ToggleBar';
 
 const placeholderName = 'Choose a name';
-const placeholderType = 'Choose a transaction type';
 const placeholderAmount = 'Enter transaction amount';
 const placeholderReason = 'Choose a reason';
+const placeholderReasonDisabled = 'N/A';
 const placeholderDescription = 'Enter a description';
 
 export const CashTransactionModal = ({ onConfirm }) => {
   const [name, setName] = useState(null);
-  const [type, setType] = useState(null);
   const [amount, setAmount] = useState(null);
   const [reason, setReason] = useState(null);
   const [description, setDescription] = useState(null);
 
+  const [isCashIn, setIsCashIn] = useState(true);
   const [textBuffer, setTextBuffer] = useState('');
+
   const [isNameModalOpen, setIsNameModalOpen] = useState(false);
-  const [isTypeModalOpen, setIsTypeModalOpen] = useState(false);
   const [isAmountModalOpen, setIsAmountModalOpen] = useState(false);
   const [isReasonModalOpen, setIsReasonModalOpen] = useState(false);
   const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
 
   const names = useMemo(() => UIDatabase.objects('Name'));
   const reasons = useMemo(() => UIDatabase.objects('Options'));
+  const type = useMemo(
+    () => (isCashIn ? CASH_TRANSACTION_TYPES.CASH_IN : CASH_TRANSACTION_TYPES.CASH_OUT),
+    [isCashIn]
+  );
 
-  const isValidTransaction = useMemo(() => !!name && !!type && !!amount && !!reason, [
+  const isValidTransaction = useMemo(() => !!name && !!amount && (isCashIn || !!reason), [
     name,
-    type,
     amount,
     reason,
+    isCashIn,
   ]);
 
-  const onCreate = useCallback(() => onConfirm({ name, type, amount, reason, description }), [
+  const onCreate = useCallback(() => onConfirm({ name, amount, type, reason, description }), [
     name,
     type,
     amount,
@@ -62,7 +67,6 @@ export const CashTransactionModal = ({ onConfirm }) => {
 
   const resetBottomModal = () => {
     setIsNameModalOpen(false);
-    setIsTypeModalOpen(false);
     setIsAmountModalOpen(false);
     setIsReasonModalOpen(false);
     setIsDescriptionModalOpen(false);
@@ -71,11 +75,6 @@ export const CashTransactionModal = ({ onConfirm }) => {
   const onPressName = () => {
     resetBottomModal();
     setIsNameModalOpen(true);
-  };
-
-  const onPressType = () => {
-    resetBottomModal();
-    setIsTypeModalOpen(true);
   };
 
   const onPressAmount = () => {
@@ -100,11 +99,6 @@ export const CashTransactionModal = ({ onConfirm }) => {
     setIsNameModalOpen(false);
   };
 
-  const onSubmitType = ({ item }) => {
-    setType(item);
-    setIsTypeModalOpen(false);
-  };
-
   const onSubmitAmount = () => {
     setAmount(parseFloat(textBuffer));
     setIsAmountModalOpen(false);
@@ -120,19 +114,44 @@ export const CashTransactionModal = ({ onConfirm }) => {
     setIsDescriptionModalOpen(false);
   };
 
+  const toggleTransactionType = () => setIsCashIn(!isCashIn);
+
+  const toggles = useMemo(
+    () => [
+      { text: 'Cash in', onPress: toggleTransactionType, isOn: isCashIn },
+      { text: 'Cash out', onPress: toggleTransactionType, isOn: !isCashIn },
+    ],
+    [isCashIn]
+  );
+
+  const PressReason = useCallback(
+    () =>
+      isCashIn ? (
+        <TouchableOpacity style={localStyles.containerStyle}>
+          <View style={localStyles.textContainerStyle}>
+            <Text style={localStyles.textStyle}>{placeholderReasonDisabled}</Text>
+          </View>
+          <View style={localStyles.iconContainerStyle} />
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity style={localStyles.containerStyle} onPress={onPressReason}>
+          <View style={localStyles.textContainerStyle}>
+            <Text style={localStyles.textStyle}>{reason?.title ?? placeholderReason}</Text>
+          </View>
+          <View style={localStyles.iconContainerStyle}>
+            <ChevronDownIcon />
+          </View>
+        </TouchableOpacity>
+      ),
+    [isCashIn, reason]
+  );
+
   return (
     <View style={localStyles.modalContainerStyle}>
+      <ToggleBar toggles={toggles} />
       <TouchableOpacity style={localStyles.containerStyle} onPress={onPressName}>
         <View style={localStyles.textContainerStyle}>
           <Text style={localStyles.textStyle}>{name?.name ?? placeholderName}</Text>
-        </View>
-        <View style={localStyles.iconContainerStyle}>
-          <ChevronDownIcon />
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity style={localStyles.containerStyle} onPress={onPressType}>
-        <View style={localStyles.textContainerStyle}>
-          <Text style={localStyles.textStyle}>{type?.title ?? placeholderType}</Text>
         </View>
         <View style={localStyles.iconContainerStyle}>
           <ChevronDownIcon />
@@ -146,14 +165,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
           <PencilIcon />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity style={localStyles.containerStyle} onPress={onPressReason}>
-        <View style={localStyles.textContainerStyle}>
-          <Text style={localStyles.textStyle}>{reason?.title ?? placeholderReason}</Text>
-        </View>
-        <View style={localStyles.iconContainerStyle}>
-          <ChevronDownIcon />
-        </View>
-      </TouchableOpacity>
+      <PressReason />
       <TouchableOpacity style={localStyles.containerStyle} onPress={onPressDescription}>
         <View style={localStyles.textContainerStyle}>
           <Text style={localStyles.textStyle}>{description ?? placeholderDescription}</Text>
@@ -171,17 +183,6 @@ export const CashTransactionModal = ({ onConfirm }) => {
           keyToDisplay={CASH_TRANSACTION_KEYS.NAME}
           onPress={onSubmitName}
           highlightValue={name?.name}
-        />
-      </BottomModalContainer>
-      <BottomModalContainer
-        isOpen={isTypeModalOpen}
-        modalStyle={localStyles.bottomModalContainerStyle}
-      >
-        <GenericChoiceList
-          data={CASH_TRANSACTION_TYPES}
-          keyToDisplay={CASH_TRANSACTION_KEYS.TYPE}
-          onPress={onSubmitType}
-          highlightValue={type?.title}
         />
       </BottomModalContainer>
       <BottomTextEditor
