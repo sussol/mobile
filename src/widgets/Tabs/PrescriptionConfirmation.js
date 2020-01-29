@@ -24,6 +24,7 @@ import { PrescriptionExtra } from '../PrescriptionExtra';
 import { FlexColumn } from '../FlexColumn';
 
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
+import { PrescriptionActions } from '../../actions/PrescriptionActions';
 
 const mapStateToProps = state => {
   const { payment, wizard, modules } = state;
@@ -40,7 +41,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   const openFinaliseModal = () => dispatch(FinaliseActions.openModal());
-  return { openFinaliseModal };
+  const onDelete = () => dispatch(PrescriptionActions.cancelPrescription());
+  return { onDelete, openFinaliseModal };
 };
 
 const PrescriptionConfirmationComponent = ({
@@ -50,6 +52,7 @@ const PrescriptionConfirmationComponent = ({
   paymentAmount,
   canConfirm,
   usingPayments,
+  onDelete,
 }) => {
   const runWithLoadingIndicator = useLoadingIndicator();
 
@@ -74,12 +77,10 @@ const PrescriptionConfirmationComponent = ({
         <FlexColumn flex={1}>
           {usingPayments && <PaymentSummary />}
 
-          <PageButton
-            style={{ alignSelf: 'flex-end' }}
-            isDisabled={!canConfirm}
-            text="Complete"
-            onPress={confirmPrescription}
-          />
+          <FlexRow justifyContent="flex-end">
+            <PageButton text="Cancel" onPress={onDelete} />
+            <PageButton isDisabled={!canConfirm} text="Complete" onPress={confirmPrescription} />
+          </FlexRow>
         </FlexColumn>
       </FlexRow>
     </FlexView>
@@ -93,6 +94,7 @@ PrescriptionConfirmationComponent.propTypes = {
   paymentAmount: PropTypes.object.isRequired,
   canConfirm: PropTypes.bool.isRequired,
   usingPayments: PropTypes.bool.isRequired,
+  onDelete: PropTypes.func.isRequired,
 };
 
 export const PrescriptionConfirmation = connect(

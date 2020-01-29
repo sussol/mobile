@@ -12,9 +12,11 @@ import { connect } from 'react-redux';
 import { SearchBar } from '../SearchBar';
 import { PageButton } from '../PageButton';
 import { FlexRow } from '../FlexRow';
+import { FlexView } from '../FlexView';
 import { PrescriptionInfo } from '../PrescriptionInfo';
 import { DataTable, DataTableRow, DataTableHeaderRow } from '../DataTable';
 
+import { selectPrescriptionPrescriber } from '../../selectors/prescription';
 import { debounce } from '../../utilities';
 import { PrescriberActions } from '../../actions/PrescriberActions';
 import { PrescriptionActions } from '../../actions/PrescriptionActions';
@@ -36,6 +38,7 @@ import { selectSortedAndFilteredPrescribers } from '../../selectors/prescriber';
  */
 const PrescriberSelectComponent = ({
   choosePrescriber,
+  onCancelPrescription,
   prescribers,
   onFilterData,
   onSortData,
@@ -44,6 +47,7 @@ const PrescriberSelectComponent = ({
   isAscending,
   createPrescriber,
   isComplete,
+  currentPrescriber,
 }) => {
   const columns = React.useMemo(() => getColumns('prescriberSelect'), []);
 
@@ -78,7 +82,7 @@ const PrescriberSelectComponent = ({
   );
 
   return (
-    <>
+    <FlexView>
       <PrescriptionInfo />
       <FlexRow>
         <SearchBar
@@ -88,6 +92,7 @@ const PrescriberSelectComponent = ({
         />
         <PageButton text="Add Prescriber" onPress={createPrescriber} />
       </FlexRow>
+
       <DataTable
         data={prescribers}
         renderRow={renderRow}
@@ -95,7 +100,16 @@ const PrescriberSelectComponent = ({
         keyExtractor={item => item.id}
         getItemLayout={getItemLayout}
       />
-    </>
+
+      <FlexRow justifyContent="flex-end" alignItems="flex-end">
+        <PageButton text="Cancel" onPress={() => onCancelPrescription()} />
+        <PageButton
+          text="OK"
+          onPress={() => choosePrescriber(currentPrescriber)}
+          isDisabled={!currentPrescriber}
+        />
+      </FlexRow>
+    </FlexView>
   );
 };
 
@@ -118,8 +132,9 @@ const mapDispatchToProps = dispatch => {
   const onFilterData = searchTerm => dispatch(PrescriberActions.filterData(searchTerm));
   const onSortData = sortKey => dispatch(PrescriberActions.sortData(sortKey));
   const createPrescriber = () => dispatch(PrescriberActions.createPrescriber());
+  const onCancelPrescription = () => dispatch(PrescriptionActions.cancelPrescription());
 
-  return { onSortData, choosePrescriber, onFilterData, createPrescriber };
+  return { onSortData, onCancelPrescription, choosePrescriber, onFilterData, createPrescriber };
 };
 
 const mapStateToProps = state => {
@@ -127,9 +142,10 @@ const mapStateToProps = state => {
   const { searchTerm, sortKey, isAscending } = prescriber;
   const { isComplete } = wizard;
 
+  const currentPrescriber = selectPrescriptionPrescriber(state);
   const prescribers = selectSortedAndFilteredPrescribers(state);
 
-  return { prescribers, searchTerm, isComplete, sortKey, isAscending };
+  return { prescribers, searchTerm, isComplete, sortKey, isAscending, currentPrescriber };
 };
 
 PrescriberSelectComponent.defaultProps = {
@@ -147,6 +163,8 @@ PrescriberSelectComponent.propTypes = {
   onSortData: PropTypes.func.isRequired,
   sortKey: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
+  onCancelPrescription: PropTypes.func.isRequired,
+  currentPrescriber: PropTypes.func.isRequired,
 };
 
 export const PrescriberSelect = connect(
