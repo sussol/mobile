@@ -1,0 +1,139 @@
+/* eslint-disable react/forbid-prop-types */
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+
+import { DropDown } from './DropDown';
+import { PageInfo } from './PageInfo';
+import { TextEditor } from './modalChildren';
+import { ModalContainer } from './modals/ModalContainer';
+
+import { PrescriptionActions } from '../actions/PrescriptionActions';
+import { pageInfoStrings, modalStrings } from '../localization';
+import {
+  selectTransactionComment,
+  selectPatientType,
+  selectTransactionCategoryName,
+  selectPrescriptionCategories,
+} from '../selectors/prescription';
+
+const PATIENT_TYPES = ['Inpatient', 'Outpatient'];
+
+const PrescriptionExtraComponent = ({
+  onOpenCommentModal,
+  onEditComment,
+  onCloseCommentModal,
+  onUpdatePatientType,
+  onUpdateCategory,
+  commentModalOpen,
+  comment,
+  categoryName,
+  patientType,
+  prescriptionCategories,
+}) => {
+  const onCategorySelection = React.useCallback(
+    (_, index) => onUpdateCategory(prescriptionCategories[index]),
+    []
+  );
+
+  const pageInfoColumns = React.useMemo(
+    () => [
+      [
+        {
+          title: `${pageInfoStrings.comment}:`,
+          info: comment,
+          onPress: onOpenCommentModal,
+          editableType: 'text',
+        },
+      ],
+    ],
+    [comment, onOpenCommentModal]
+  );
+
+  return (
+    <View style={localStyles.container}>
+      <DropDown
+        values={PATIENT_TYPES}
+        selectedValue={patientType}
+        onValueChange={onUpdatePatientType}
+      />
+      <DropDown
+        values={prescriptionCategories}
+        selectedValue={categoryName}
+        onValueChange={onCategorySelection}
+      />
+      <PageInfo columns={pageInfoColumns} />
+      <ModalContainer
+        fullScreen
+        onClose={onCloseCommentModal}
+        isVisible={commentModalOpen}
+        title={modalStrings.edit_the_prescription_comment}
+      >
+        <TextEditor onEndEditing={x => onEditComment(x)} text={comment} />
+      </ModalContainer>
+    </View>
+  );
+};
+
+PrescriptionExtraComponent.propTypes = {
+  onOpenCommentModal: PropTypes.func.isRequired,
+  onEditComment: PropTypes.func.isRequired,
+  onCloseCommentModal: PropTypes.func.isRequired,
+  onUpdatePatientType: PropTypes.func.isRequired,
+  onUpdateCategory: PropTypes.func.isRequired,
+  commentModalOpen: PropTypes.bool.isRequired,
+  comment: PropTypes.string.isRequired,
+  categoryName: PropTypes.string.isRequired,
+  patientType: PropTypes.string.isRequired,
+  prescriptionCategories: PropTypes.array.isRequired,
+};
+
+const mapStateToProps = state => {
+  const { prescription } = state;
+  const { commentModalOpen } = prescription;
+  const comment = selectTransactionComment(state);
+  const categoryName = selectTransactionCategoryName(state);
+  const patientType = selectPatientType(state);
+  const prescriptionCategories = selectPrescriptionCategories(state);
+
+  return { commentModalOpen, comment, categoryName, patientType, prescriptionCategories };
+};
+
+const mapDispatchToProps = dispatch => {
+  const onOpenCommentModal = () => dispatch(PrescriptionActions.openCommentModal());
+  const onEditComment = newValue => dispatch(PrescriptionActions.editComment(newValue));
+  const onCloseCommentModal = () => dispatch(PrescriptionActions.closeCommentModal());
+  const onUpdatePatientType = newValue => dispatch(PrescriptionActions.editPatientType(newValue));
+  const onUpdateCategory = newValue =>
+    dispatch(PrescriptionActions.editTransactionCategory(newValue));
+
+  return {
+    onOpenCommentModal,
+    onEditComment,
+    onCloseCommentModal,
+    onUpdatePatientType,
+    onUpdateCategory,
+  };
+};
+
+const localStyles = StyleSheet.create({
+  container: {
+    elevation: 5,
+    backgroundColor: 'white',
+    borderRadius: 5,
+    marginHorizontal: 50,
+    marginBottom: 10,
+    padding: 10,
+  },
+});
+
+export const PrescriptionExtra = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PrescriptionExtraComponent);
