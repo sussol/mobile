@@ -15,8 +15,9 @@ import {
   CASH_TRANSACTION_TYPES,
 } from '../../utilities/modules/dispensary/constants';
 
+import { ModalContainer } from './ModalContainer';
 import { BottomModalContainer, BottomTextEditor, BottomCurrencyEditor } from '../bottomModals';
-import { GenericChoiceList } from '../modalChildren';
+import { GenericChoiceList, AutocompleteSelector } from '../modalChildren';
 import { PageButton } from '../PageButton';
 import { PencilIcon, ChevronDownIcon } from '../icons';
 
@@ -102,7 +103,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
     setIsDescriptionModalOpen(true);
   };
 
-  const onSubmitName = ({ item: nameItem }) => {
+  const onSubmitName = nameItem => {
     setName(nameItem);
     setIsNameModalOpen(false);
   };
@@ -160,80 +161,79 @@ export const CashTransactionModal = ({ onConfirm }) => {
   );
 
   return (
-    <View style={localStyles.modalContainerStyle}>
-      <ToggleBar toggles={toggles} />
-      <TouchableOpacity style={localStyles.containerStyle} onPress={onPressName}>
-        <View style={localStyles.textContainerStyle}>
-          <Text style={localStyles.textStyle}>{nameText}</Text>
-        </View>
-        <View style={localStyles.iconContainerStyle}>
-          <ChevronDownIcon />
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity style={localStyles.containerStyle} onPress={onPressAmount}>
-        <View style={localStyles.textContainerStyle}>
-          <Text style={localStyles.textStyle}>{amountText}</Text>
-        </View>
-        <View style={localStyles.iconContainerStyle}>
-          <PencilIcon />
-        </View>
-      </TouchableOpacity>
-      <PressReason />
-      <TouchableOpacity style={localStyles.containerStyle} onPress={onPressDescription}>
-        <View style={localStyles.textContainerStyle}>
-          <Text style={localStyles.textStyle}>{descriptionText}</Text>
-        </View>
-        <View style={localStyles.iconContainerStyle}>
-          <PencilIcon />
-        </View>
-      </TouchableOpacity>
-      <BottomModalContainer
-        isOpen={isNameModalOpen}
-        modalStyle={localStyles.bottomModalContainerStyle}
-      >
-        <GenericChoiceList
-          data={names}
-          keyToDisplay={CASH_TRANSACTION_KEYS.NAME}
-          onPress={onSubmitName}
-          highlightValue={name?.name}
+    <>
+      <View style={localStyles.modalContainerStyle}>
+        <ToggleBar toggles={toggles} />
+        <TouchableOpacity style={localStyles.containerStyle} onPress={onPressName}>
+          <View style={localStyles.textContainerStyle}>
+            <Text style={localStyles.textStyle}>{nameText}</Text>
+          </View>
+          <View style={localStyles.iconContainerStyle}>
+            <ChevronDownIcon />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity style={localStyles.containerStyle} onPress={onPressAmount}>
+          <View style={localStyles.textContainerStyle}>
+            <Text style={localStyles.textStyle}>{amountText}</Text>
+          </View>
+          <View style={localStyles.iconContainerStyle}>
+            <PencilIcon />
+          </View>
+        </TouchableOpacity>
+        <PressReason />
+        <TouchableOpacity style={localStyles.containerStyle} onPress={onPressDescription}>
+          <View style={localStyles.textContainerStyle}>
+            <Text style={localStyles.textStyle}>{descriptionText}</Text>
+          </View>
+          <View style={localStyles.iconContainerStyle}>
+            <PencilIcon />
+          </View>
+        </TouchableOpacity>
+        <BottomCurrencyEditor
+          isOpen={isAmountModalOpen}
+          buttonText="Confirm"
+          value={amountBuffer}
+          placeholder={placeholderTextAmount}
+          onChangeText={onChangeAmount}
+          onConfirm={onSubmitAmount}
         />
-      </BottomModalContainer>
-      <BottomCurrencyEditor
-        isOpen={isAmountModalOpen}
-        buttonText="Confirm"
-        value={amountBuffer}
-        placeholder={placeholderTextAmount}
-        onChangeText={onChangeAmount}
-        onConfirm={onSubmitAmount}
-      />
-      <BottomModalContainer
-        isOpen={isReasonModalOpen}
-        modalStyle={localStyles.bottomModalContainerStyle}
-      >
-        <GenericChoiceList
-          data={reasons}
-          keyToDisplay={CASH_TRANSACTION_KEYS.REASON}
-          onPress={onSubmitReason}
-          highlightValue={reason?.title}
+        <BottomModalContainer
+          isOpen={isReasonModalOpen}
+          modalStyle={localStyles.bottomModalContainerStyle}
+        >
+          <GenericChoiceList
+            data={reasons}
+            keyToDisplay={CASH_TRANSACTION_KEYS.REASON}
+            onPress={onSubmitReason}
+            highlightValue={reason?.title}
+          />
+        </BottomModalContainer>
+        <BottomTextEditor
+          isOpen={isDescriptionModalOpen}
+          buttonText="Confirm"
+          value={descriptionBuffer}
+          placeholder={placeholderTextDescription}
+          onChangeText={onChangeText}
+          onConfirm={onSubmitDescription}
         />
-      </BottomModalContainer>
-      <BottomTextEditor
-        isOpen={isDescriptionModalOpen}
-        buttonText="Confirm"
-        value={descriptionBuffer}
-        placeholder={placeholderTextDescription}
-        onChangeText={onChangeText}
-        onConfirm={onSubmitDescription}
-      />
-      <PageButton
-        text="OK"
-        onPress={onCreate}
-        isDisabled={!isValidTransaction}
-        disabledColor={WARM_GREY}
-        style={localStyles.okButton}
-        textStyle={localStyles.pageButtonTextStyle}
-      />
-    </View>
+        <PageButton
+          text="OK"
+          onPress={onCreate}
+          isDisabled={!isValidTransaction}
+          disabledColor={WARM_GREY}
+          style={localStyles.okButton}
+          textStyle={localStyles.pageButtonTextStyle}
+        />
+      </View>
+      <ModalContainer title={placeholderTextName} isVisible={isNameModalOpen}>
+        <AutocompleteSelector
+          options={names}
+          queryString="name CONTAINS[c] $0"
+          sortKeyString="name"
+          onSelect={onSubmitName}
+        />
+      </ModalContainer>
+    </>
   );
 };
 
