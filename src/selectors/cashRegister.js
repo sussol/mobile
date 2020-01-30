@@ -12,10 +12,7 @@ import currency from '../localization/currency';
  * Derives current balance from cash register transactions.
  * @return {Number}
  */
-export const selectTransactions = createSelector(
-  [pageStateSelector],
-  pageState => pageState.backingData
-);
+export const selectTransactions = createSelector([pageStateSelector], pageState => pageState.data);
 
 export const selectReceipts = createSelector([selectTransactions], transactions =>
   transactions.filter(({ type }) => type === 'receipt')
