@@ -13,8 +13,12 @@ import { FlexView } from './FlexView';
 import { NumberLabelRow } from './NumberLabelRow';
 import { Separator } from './Separator';
 import { CurrencyInputRow } from './CurrencyInputRow';
+import { FlexRow } from './FlexRow';
+import { CircleButton } from './CircleButton';
+import { PencilIcon, AddIcon } from './icons';
+import { DropDown } from './DropDown';
 
-import { FINALISED_RED, SUSSOL_ORANGE, APP_FONT_FAMILY } from '../globalStyles';
+import { UIDatabase } from '../database';
 import { PaymentActions } from '../actions/PaymentActions';
 import {
   selectPrescriptionSubTotal,
@@ -23,14 +27,13 @@ import {
   selectDiscountAmount,
   selectChangeRequired,
 } from '../selectors/payment';
-import { DropDown } from './DropDown';
 import { selectPatientInsurancePolicies, selectAvailableCredit } from '../selectors/patient';
-import { UIDatabase } from '../database/index';
-import { FlexRow } from './FlexRow';
-import { CircleButton } from './CircleButton';
-import { PencilIcon, AddIcon } from './icons';
+
 import { InsuranceActions } from '../actions/InsuranceActions';
 import { selectInsuranceDiscountRate } from '../selectors/insurance';
+
+import { dispensingStrings } from '../localization';
+import { FINALISED_RED, SUSSOL_ORANGE, APP_FONT_FAMILY } from '../globalStyles';
 
 const paymentState = state => {
   const { insurance, payment, wizard, modules } = state;
@@ -103,7 +106,7 @@ const PaymentSummaryComponent = ({
   usingInsurance,
 }) => {
   const policyNumbers = React.useMemo(
-    () => ['Select a policy..', ...insurancePolicies.map(p => p.policyNumber)],
+    () => [dispensingStrings.select_a_policy, ...insurancePolicies.map(p => p.policyNumber)],
     [insurancePolicies]
   );
   const onSelectPolicy = React.useCallback(
@@ -123,7 +126,7 @@ const PaymentSummaryComponent = ({
   return (
     <ScrollView>
       <FlexView flex={1} style={localStyles.container}>
-        <Text style={localStyles.title}>Payment</Text>
+        <Text style={localStyles.title}>{dispensingStrings.payment}</Text>
         {usingInsurance && (
           <FlexRow flex={1}>
             <DropDown
@@ -156,28 +159,45 @@ const PaymentSummaryComponent = ({
           </FlexView>
 
           <FlexView flex={0.25}>
-            <NumberLabelRow text="Available Credit" number={availableCredit.format()} />
-            <NumberLabelRow size="small" text="Credit used" number={creditUsed.format()} />
+            <NumberLabelRow
+              text={dispensingStrings.available_credit}
+              number={availableCredit.format()}
+            />
+            <NumberLabelRow
+              size="small"
+              text={dispensingStrings.credit_used}
+              number={creditUsed.format()}
+            />
 
             <Text style={localStyles.errorMessageStyle}>
-              {creditOverflow ? 'Not enough credit!' : ''}
+              {creditOverflow ? dispensingStrings.not_enough_credit : ' '}
             </Text>
           </FlexView>
         </FlexView>
 
         <FlexView flex={1}>
           <Separator marginBottom={20} />
-          <NumberLabelRow text="Sub total" number={subtotal.format()} />
+          <NumberLabelRow text={dispensingStrings.subtotal} number={subtotal.format()} />
 
           {usingInsurance && (
-            <NumberLabelRow text="Insurance discount rate" isPercentage number={discountRate} />
+            <NumberLabelRow
+              text={dispensingStrings.insurance_discount_rate}
+              isPercentage
+              number={discountRate}
+            />
           )}
           {usingInsurance && (
-            <NumberLabelRow text="Insurance discount amount" number={discountAmount.format()} />
+            <NumberLabelRow
+              text={dispensingStrings.insurance_discount_amount}
+              number={discountAmount.format()}
+            />
           )}
-          <NumberLabelRow text="Change required" number={changeRequired.format()} />
+          <NumberLabelRow
+            text={dispensingStrings.change_required}
+            number={changeRequired.format()}
+          />
           <Separator length="50%" marginTop={20} marginBottom={20} />
-          <NumberLabelRow size="large" text="Total" number={total.format()} />
+          <NumberLabelRow size="large" text={dispensingStrings.total} number={total.format()} />
         </FlexView>
       </FlexView>
     </ScrollView>
