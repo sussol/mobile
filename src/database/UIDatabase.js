@@ -38,6 +38,8 @@ const translateToCoreDatabaseType = type => {
       return 'InsurancePolicy';
     case 'Provider':
       return 'InsuranceProvider';
+    case 'PrescriptionCategory':
+      return 'TransactionCategory';
     default:
       return type;
   }
@@ -182,6 +184,8 @@ class UIDatabase {
           null,
           'finalised'
         );
+      case 'PrescriptionCategory':
+        return results.filtered('type == $0', 'prescription');
       default:
         return results;
     }

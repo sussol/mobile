@@ -30,18 +30,6 @@ import { ROUTES } from './constants';
  *
  */
 
-export const gotoPatients = () =>
-  NavigationActions.navigate({
-    routeName: ROUTES.PATIENTS,
-    params: { title: 'Patients' },
-  });
-
-export const gotoPrescribers = () =>
-  NavigationActions.navigate({
-    routeName: ROUTES.PRESCRIBERS,
-    params: { title: 'Prescribers' },
-  });
-
 /**
  * Action creator which first creates a prescription, and then navigates to it
  * for editing.
@@ -92,11 +80,21 @@ export const gotoPrescriptions = () =>
     params: { title: 'Prescriptions' },
   });
 
-export const gotoDispensingPage = () =>
-  NavigationActions.navigate({
-    routeName: ROUTES.DISPENSARY,
-    params: { title: 'Dispensary' },
+export const gotoDispensingPage = () => dispatch => {
+  UIDatabase.write(() => {
+    UIDatabase.delete(
+      'Transaction',
+      UIDatabase.objects('Prescription').filtered('status != $0', 'finalised')
+    );
   });
+
+  dispatch(
+    NavigationActions.navigate({
+      routeName: ROUTES.DISPENSARY,
+      params: { title: 'Dispensary' },
+    })
+  );
+};
 
 /**
  * Pushes the Settings page route onto the main navigation stack.
@@ -132,13 +130,21 @@ export const gotoRealmExplorer = () =>
 /**
  * Pushes the Customer Invoices route onto the main navigation stack.
  */
-export const gotoCustomerInvoices = () =>
-  NavigationActions.navigate({
-    routeName: ROUTES.CUSTOMER_INVOICES,
-    params: {
-      title: navStrings.customer_invoices,
-    },
+export const gotoCustomerInvoices = () => dispatch => {
+  UIDatabase.write(() => {
+    UIDatabase.delete(
+      'Transaction',
+      UIDatabase.objects('Prescription').filtered('status != $0', 'finalised')
+    );
   });
+
+  dispatch(
+    NavigationActions.navigate({
+      routeName: ROUTES.CUSTOMER_INVOICES,
+      params: { title: navStrings.customer_invoices },
+    })
+  );
+};
 
 /**
  * Pushes the Customer Requisitions route onto the main navigation stack.

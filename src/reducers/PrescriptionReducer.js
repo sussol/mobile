@@ -12,6 +12,7 @@ const initialState = () => ({
   transaction: null,
   items: UIDatabase.objects('Item'),
   itemSearchTerm: '',
+  commentModalOpen: false,
 });
 
 export const PrescriptionReducer = (state = initialState(), action) => {
@@ -26,6 +27,7 @@ export const PrescriptionReducer = (state = initialState(), action) => {
 
       return { ...state, transaction };
     }
+
     case PRESCRIPTION_ACTIONS.REFRESH: {
       return { ...state };
     }
@@ -37,7 +39,19 @@ export const PrescriptionReducer = (state = initialState(), action) => {
       return { ...state, itemSearchTerm };
     }
 
-    default:
+    case PRESCRIPTION_ACTIONS.OPEN_COMMENT_MODAL: {
+      return { ...state, commentModalOpen: true };
+    }
+
+    case PRESCRIPTION_ACTIONS.CLOSE_COMMENT_MODAL: {
+      return { ...state, commentModalOpen: false };
+    }
+
+    case PRESCRIPTION_ACTIONS.DELETE:
+      return { ...state, transaction: null };
+
+    default: {
       return state;
+    }
   }
 };
