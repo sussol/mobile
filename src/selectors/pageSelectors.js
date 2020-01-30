@@ -9,7 +9,9 @@
 export const pageStateSelector = state => {
   const { pages = {} } = state;
   const { currentRoute = '' } = pages || {};
-  return pages[currentRoute] || state;
+  const pageState = pages[currentRoute] || state;
+  const { data = [] } = pageState;
+  return { ...pageState, data };
 };
 
 /**
