@@ -23,14 +23,14 @@ export const selectPayments = createSelector([selectTransactions], transactions 
 );
 
 export const selectReceiptsTotal = createSelector([selectReceipts], receipts =>
-  receipts.reduce((acc, { total }) => acc + total, 0)
+  receipts.reduce((acc, { total }) => acc.add(total), currency(0))
 );
 
 export const selectPaymentsTotal = createSelector([selectPayments], payments =>
-  payments.reduce((acc, { total }) => acc + total, 0)
+  payments.reduce((acc, { total }) => acc.add(total), currency(0))
 );
 
 export const selectBalance = createSelector(
   [selectReceiptsTotal, selectPaymentsTotal],
-  (receiptsTotal, paymentsTotal) => currency(receiptsTotal - paymentsTotal).format(false)
+  (receiptsTotal, paymentsTotal) => receiptsTotal.subtract(paymentsTotal).format()
 );
