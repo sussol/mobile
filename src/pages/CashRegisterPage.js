@@ -36,9 +36,6 @@ export const CashRegister = ({
   onCloseModal,
   onAddCashTransaction,
 }) => {
-  // eslint-disable-next-line no-unused-vars
-  const getCallback = _ => null;
-
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
@@ -51,7 +48,7 @@ export const CashRegister = ({
           rowKey={rowKey}
           columns={columns}
           isFinalised={isFinalised}
-          getCallback={getCallback}
+          getCallback={() => ({})}
           rowIndex={index}
         />
       );
