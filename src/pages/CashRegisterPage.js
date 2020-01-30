@@ -39,9 +39,6 @@ export const CashRegister = ({
   // eslint-disable-next-line no-unused-vars
   const getCallback = _ => null;
 
-  // eslint-disable-next-line no-unused-vars
-  const onPressRow = _ => null;
-
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
@@ -55,7 +52,6 @@ export const CashRegister = ({
           columns={columns}
           isFinalised={isFinalised}
           getCallback={getCallback}
-          onPress={onPressRow}
           rowIndex={index}
         />
       );
