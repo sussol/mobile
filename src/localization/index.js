@@ -15,6 +15,7 @@ import programStringsJSON from './programStrings.json';
 import syncStringsJSON from './syncStrings.json';
 import tableStringsJSON from './tableStrings.json';
 import validationStringsJSON from './validationStrings.json';
+import formInputStringsJSON from './formInputStrings.json';
 
 export const authStrings = new LocalizedStrings(authStringsJSON);
 export const buttonStrings = new LocalizedStrings(buttonStringsJSON);
@@ -27,6 +28,7 @@ export const programStrings = new LocalizedStrings(programStringsJSON);
 export const syncStrings = new LocalizedStrings(syncStringsJSON);
 export const tableStrings = new LocalizedStrings(tableStringsJSON);
 export const validationStrings = new LocalizedStrings(validationStringsJSON);
+export const formInputStrings = new LocalizedStrings(formInputStringsJSON);
 
 export const LANGUAGE_CODES = {
   ENGLISH: 'gb',
