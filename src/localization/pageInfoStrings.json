@@ -11,7 +11,8 @@
     "stocktake_name": "Stocktake Name",
     "supplier": "Supplier",
     "their_ref": "Their Ref",
-    "by_batch": "By batch"
+    "by_batch": "By batch",
+    "current_balance": "Current balance"
   },
   "fr": {
     "address": "Addresse",
@@ -25,7 +26,8 @@
     "stocktake_name": "Nom du relevé d'inventaire",
     "supplier": "Fournisseur",
     "their_ref": "Leur référence",
-    "by_batch": "Par lot"
+    "by_batch": "Par lot",
+    "current_balance": "Solde de caisse actuel"
   },
   "gil": {
     "address": "Am tabo",

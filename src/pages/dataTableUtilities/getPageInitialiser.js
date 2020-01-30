@@ -10,7 +10,7 @@ import { recordKeyExtractor } from './utilities';
 import getColumns from './getColumns';
 import getPageInfoColumns from './getPageInfoColumns';
 
-import { COLUMN_KEYS} from './constants';
+import { COLUMN_KEYS } from './constants';
 import { ROUTES } from '../../navigation/constants';
 
 export const cashRegisterInitialiser = () => {

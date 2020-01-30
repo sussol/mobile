@@ -4,27 +4,38 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { pageStateSelector } from '../selectors/pageSelectors';
+import { selectBalance } from '../selectors/cashRegister';
+
 import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 
 import { DataTablePageView, PageButton } from '../widgets';
+import { SimpleLabel } from '../widgets/SimpleLabel';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import { DataTablePageModal } from '../widgets/modals';
 
-import { MODAL_KEYS } from '../utilities';
 import { ROUTES } from '../navigation/constants';
-
+import { buttonStrings, pageInfoStrings } from '../localization';
 import globalStyles from '../globalStyles';
-import { buttonStrings } from '../localization';
 
-export const CashRegister = ({ dispatch, data, dataState, sortKey, keyExtractor, modalKey, columns, onNewCashTransaction, onCloseModal, onAddCashTransaction }) => {
-  const getCallback = (_colKey, _propName) => null;
-  const onPressRow = _rowData => null;
-
+export const CashRegister = ({
+  dispatch,
+  data,
+  dataState,
+  sortKey,
+  keyExtractor,
+  modalKey,
+  columns,
+  currentBalance,
+  onNewCashTransaction,
+  onCloseModal,
+  onAddCashTransaction,
+}) => {
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
@@ -37,8 +48,7 @@ export const CashRegister = ({ dispatch, data, dataState, sortKey, keyExtractor,
           rowKey={rowKey}
           columns={columns}
           isFinalised={isFinalised}
-          getCallback={getCallback}
-          onPress={onPressRow}
+          getCallback={() => ({})}
           rowIndex={index}
         />
       );
@@ -67,11 +77,20 @@ export const CashRegister = ({ dispatch, data, dataState, sortKey, keyExtractor,
     pageTopRightSectionContainer,
   } = globalStyles;
 
+  const topLeftContainerStyle = useMemo(() => ({ ...pageTopLeftSectionContainer, flex: 1 }));
+  const topRightContainerStyle = useMemo(() => ({ ...pageTopRightSectionContainer, flex: 4 }));
+
   return (
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
-        <View style={pageTopLeftSectionContainer} />
-        <View style={pageTopRightSectionContainer}>
+        <View style={topLeftContainerStyle}>
+          <SimpleLabel
+            label={pageInfoStrings.current_balance}
+            text={currentBalance}
+            textAlign="left"
+          />
+        </View>
+        <View style={topRightContainerStyle}>
           <AddNewTransactionButton />
         </View>
       </View>
@@ -100,9 +119,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 const mapStateToProps = state => {
-  const { pages } = state;
-  const { cashRegister } = pages;
-  return cashRegister;
+  const pageState = pageStateSelector(state);
+  const currentBalance = selectBalance(state);
+  return { ...pageState, currentBalance };
 };
 
 export const CashRegisterPage = connect(mapStateToProps, mapDispatchToProps)(CashRegister);
@@ -110,12 +129,15 @@ export const CashRegisterPage = connect(mapStateToProps, mapDispatchToProps)(Cas
 CashRegister.defaultProps = {};
 
 CashRegister.propTypes = {
+  dispatch: PropTypes.func.isRequired,
   data: PropTypes.array.isRequired,
   dataState: PropTypes.object.isRequired,
   sortKey: PropTypes.string.isRequired,
   modalKey: PropTypes.string.isRequired,
   keyExtractor: PropTypes.func.isRequired,
   columns: PropTypes.array.isRequired,
+  currentBalance: PropTypes.string.isRequired,
   onNewCashTransaction: PropTypes.func.isRequired,
   onCloseModal: PropTypes.func.isRequired,
+  onAddCashTransaction: PropTypes.func.isRequired,
 };

@@ -122,10 +122,6 @@ export const CashTransactionModal = ({ onConfirm }) => {
     setIsDescriptionModalOpen(false);
   };
 
-  const nameText = useMemo(() => name?.name ?? placeholderTextName, [name]);
-  const amountText = useMemo(() => amount?.format(false) ?? placeholderTextAmount, [amount]);
-  const reasonText = useMemo(() => reason?.title ?? placeholderTextReason, [reason]);
-  const descriptionText = useMemo(() => description ?? placeholderTextDescription, [description]);
   const toggleTransactionType = () => setIsCashIn(!isCashIn);
 
   const toggles = useMemo(
@@ -135,6 +131,11 @@ export const CashTransactionModal = ({ onConfirm }) => {
     ],
     [isCashIn]
   );
+
+  const nameText = useMemo(() => name?.name ?? placeholderTextName, [name]);
+  const amountText = useMemo(() => amount?.format(false) ?? placeholderTextAmount, [amount]);
+  const reasonText = useMemo(() => reason?.title ?? placeholderTextReason, [reason]);
+  const descriptionText = useMemo(() => description ?? placeholderTextDescription, [description]);
 
   const PressReason = useCallback(
     () =>
