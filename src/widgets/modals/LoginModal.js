@@ -15,11 +15,12 @@ import { SETTINGS_KEYS, getAppVersion } from '../../settings';
 import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
 import { Flag } from '..';
 import { GenericChoiceList } from '../modalChildren/GenericChoiceList';
-import ModalContainer from './ModalContainer';
+import { ModalContainer } from './ModalContainer';
 
 import { LANGUAGE_NAMES, LANGUAGE_CHOICE, authStrings, navStrings } from '../../localization';
 import { getModalTitle, MODAL_KEYS } from '../../utilities/index';
 import { setCurrencyLocalisation } from '../../localization/currency';
+import { setDateLocale } from '../../localization/utilities';
 
 export class LoginModal extends React.Component {
   constructor(props) {
@@ -117,6 +118,7 @@ export class LoginModal extends React.Component {
     const { settings } = this.props;
     settings.set(SETTINGS_KEYS.CURRENT_LANGUAGE, item.code);
     setCurrencyLocalisation(item.code);
+    setDateLocale(item.code);
     this.setState({ isLanguageModalOpen: false });
   };
 

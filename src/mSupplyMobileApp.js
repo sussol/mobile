@@ -46,9 +46,10 @@ import { UserActions } from './actions';
 import { debounce } from './utilities';
 import { prevRouteNameSelector } from './navigation/selectors';
 import { SupplierCredit } from './widgets/modalChildren/SupplierCredit';
-import ModalContainer from './widgets/modals/ModalContainer';
+import { ModalContainer } from './widgets/modals/ModalContainer';
 import { SupplierCreditActions } from './actions/SupplierCreditActions';
 import { selectItemName } from './selectors/supplierCredit';
+import { PrescriptionActions } from './actions/PrescriptionActions';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -56,16 +57,29 @@ const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 class MSupplyMobileAppContainer extends React.Component {
   handleBackEvent = debounce(
     () => {
-      const { dispatch, prevRouteName } = this.props;
+      const { dispatch, prevRouteName, currentRouteName } = this.props;
       const { syncModalIsOpen } = this.state;
+
       // If finalise or sync modals are open, close them rather than navigating.
       if (syncModalIsOpen) {
         this.setState({ syncModalIsOpen: false });
         return true;
       }
       // If we are on base screen (e.g. home), back button should close app as we can't go back.
-      if (!this.getCanNavigateBack()) BackHandler.exitApp();
-      else dispatch({ ...NavigationActions.back(), payload: { prevRouteName } });
+      if (!this.getCanNavigateBack()) {
+        BackHandler.exitApp();
+      } else {
+        dispatch({ ...NavigationActions.back(), payload: { prevRouteName } });
+      }
+      if (currentRouteName === ROUTES.PRESCRIPTION) {
+        UIDatabase.write(() => {
+          UIDatabase.delete(
+            'Transaction',
+            UIDatabase.objects('Prescription').filtered('status != $0', 'finalised')
+          );
+          dispatch(PrescriptionActions.deletePrescription());
+        });
+      }
 
       return true;
     },
@@ -118,6 +132,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
   getCanNavigateBack = () => {
     const { navigationState } = this.props;
+
     return navigationState.index !== 0;
   };
 
@@ -325,6 +340,7 @@ const mapStateToProps = state => {
   }
 
   return {
+    currentRouteName,
     currentTitle,
     prevRouteName: prevRouteNameSelector(state),
     finaliseItem,
@@ -358,6 +374,7 @@ MSupplyMobileAppContainer.propTypes = {
   closeSupplierCreditModal: PropTypes.func.isRequired,
   supplierCreditModalOpen: PropTypes.bool.isRequired,
   creditItemName: PropTypes.string,
+  currentRouteName: PropTypes.string.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MSupplyMobileAppContainer);

@@ -78,8 +78,8 @@ const localStyles = StyleSheet.create({
 
 const mapStateToProps = state => {
   const { prescription } = state;
-  const { transaction } = prescription;
-  return { items: transaction.items };
+  const { transaction } = prescription || {};
+  return { items: transaction?.items ?? [] };
 };
 
 export const PrescriptionCart = connect(mapStateToProps)(PrescriptionCartComponent);

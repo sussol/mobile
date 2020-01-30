@@ -31,17 +31,18 @@ import { selectPatientInsurancePolicies, selectAvailableCredit } from '../select
 
 import { InsuranceActions } from '../actions/InsuranceActions';
 import { selectInsuranceDiscountRate } from '../selectors/insurance';
+import { selectUsingPaymentTypes } from '../selectors/modules';
 
 import { dispensingStrings } from '../localization';
 import { FINALISED_RED, SUSSOL_ORANGE, APP_FONT_FAMILY } from '../globalStyles';
 
 const paymentState = state => {
   const { insurance, payment, wizard, modules } = state;
-
   const { usingInsurance } = modules;
   const { isComplete } = wizard;
   const { paymentAmount, creditOverflow, paymentType } = payment;
   const { selectedInsurancePolicy, currentInsurancePolicy } = insurance;
+
   const subtotal = selectPrescriptionSubTotal(state);
   const total = selectPrescriptionTotal(state);
   const creditUsed = selectCreditBeingUsed(state);
@@ -51,8 +52,10 @@ const paymentState = state => {
   const discountRate = selectInsuranceDiscountRate(state);
   const discountAmount = selectDiscountAmount(state);
   const changeRequired = selectChangeRequired(state);
+  const usingPaymentTypes = selectUsingPaymentTypes(state);
 
   return {
+    usingPaymentTypes,
     currentInsurancePolicy,
     discountRate,
     discountAmount,
@@ -104,6 +107,7 @@ const PaymentSummaryComponent = ({
   availableCredit,
   changeRequired,
   usingInsurance,
+  usingPaymentTypes,
 }) => {
   const policyNumbers = React.useMemo(
     () => [dispensingStrings.select_a_policy, ...insurancePolicies.map(p => p.policyNumber)],
@@ -125,7 +129,7 @@ const PaymentSummaryComponent = ({
 
   return (
     <ScrollView>
-      <FlexView flex={1} style={localStyles.container}>
+      <FlexView style={localStyles.container}>
         <Text style={localStyles.title}>{dispensingStrings.payment}</Text>
         {usingInsurance && (
           <FlexRow flex={1}>
@@ -142,12 +146,14 @@ const PaymentSummaryComponent = ({
           </FlexRow>
         )}
 
-        <DropDown
-          values={paymentTypeTitles}
-          selectedValue={paymentType?.title}
-          onValueChange={onSelectPaymentType}
-          style={localStyles.dropdown}
-        />
+        {usingPaymentTypes && (
+          <DropDown
+            values={paymentTypeTitles}
+            selectedValue={paymentType?.title}
+            onValueChange={onSelectPaymentType}
+            style={localStyles.dropdown}
+          />
+        )}
 
         <FlexView flex={1}>
           <FlexView flex={0.25}>
@@ -231,6 +237,7 @@ PaymentSummaryComponent.propTypes = {
   availableCredit: PropTypes.object.isRequired,
   changeRequired: PropTypes.object.isRequired,
   usingInsurance: PropTypes.bool.isRequired,
+  usingPaymentTypes: PropTypes.bool.isRequired,
 };
 
 const localStyles = {

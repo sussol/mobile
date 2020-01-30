@@ -33,20 +33,20 @@ import { UIDatabase } from '../../../database';
  * @param {Name} patient       A Name that is a patient
  * @param {Transaction} script A Transaction that is a prescription
  * @param {Number} cashAmount  The cash amount being paid for the script.
+ * @param {Number} scriptTotal The total amount of the script.
  */
 
-export const pay = (currentUser, patient, script, cashAmount) => {
+export const pay = (currentUser, patient, script, cashAmount, scriptTotal) => {
   if (!patient.isPatient) throw new Error('Patient is not a patient');
   if (!script.isPrescription) throw new Error('Script is not a script');
   if (!(script.items.length > 0)) throw new Error('Script is empty');
   if (script.isFinalised) throw new Error('Script is finalised');
   if (cashAmount < 0) throw new Error('Cash amount is negative');
 
-  const { total } = script;
   const { availableCredit } = patient;
 
   // Determine if this is an under, exact or over payment
-  const creditAmount = total - cashAmount;
+  const creditAmount = scriptTotal - cashAmount;
   const usingCredit = creditAmount > 0;
 
   if (creditAmount > availableCredit) throw new Error('Not enough credit');

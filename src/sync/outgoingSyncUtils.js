@@ -173,6 +173,8 @@ const generateSyncData = (settings, recordType, record) => {
       };
     }
     case 'Transaction': {
+      const isCashReconciliation = record.type === 'payment' || record.type === 'receipt';
+      const total = String(isCashReconciliation ? record.total : record.totalPrice);
       return {
         ID: record.id,
         name_ID: record.otherParty && record.otherParty.id,
@@ -183,16 +185,17 @@ const generateSyncData = (settings, recordType, record) => {
         status: STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
         mode: record.mode,
         prescriber_ID: record.prescriber && record.prescriber.id,
-        total: String(record.totalPrice),
-        foreign_currency_total: String(record.totalPrice),
+        total,
+        foreign_currency_total: total,
         their_ref: record.theirRef,
         confirm_date: getDateString(record.confirmDate),
-        subtotal: String(record.totalPrice),
+        subtotal: total,
         user_ID: record.enteredBy && record.enteredBy.id,
         category_ID: record.category && record.category.id,
         confirm_time: getTimeString(record.confirmDate),
         store_ID: settings.get(THIS_STORE_ID),
         linked_transaction_id: record.linkedTransaction?.id ?? '',
+        user1: record.user1,
         requisition_ID:
           record.linkedRequisition && record.linkedRequisition.id
             ? record.linkedRequisition.id

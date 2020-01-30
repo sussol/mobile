@@ -14,7 +14,7 @@ import {
 } from '../../../database/utilities/getIndicatorData';
 import { ACTIONS } from './constants';
 import { openModal, closeModal } from './pageActions';
-import { pageStateSelector } from '../selectors/pageSelectors';
+import { pageStateSelector } from '../../../selectors/pageSelectors';
 
 /**
  * Refreshes a row in the DataTable component.

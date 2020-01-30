@@ -20,8 +20,12 @@ import { FinaliseActions } from '../../actions/FinaliseActions';
 import { PaymentSummary } from '../PaymentSummary';
 import { selectCurrentUser } from '../../selectors/user';
 import { selectCurrentPatient } from '../../selectors/patient';
+import { PrescriptionExtra } from '../PrescriptionExtra';
+import { FlexColumn } from '../FlexColumn';
 
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
+import { PrescriptionActions } from '../../actions/PrescriptionActions';
+import { selectPrescriptionTotal } from '../../selectors/payment';
 
 const mapStateToProps = state => {
   const { payment, wizard, modules } = state;
@@ -32,28 +36,42 @@ const mapStateToProps = state => {
   const currentPatient = selectCurrentPatient(state);
   const currentUser = selectCurrentUser(state);
   const canConfirm = paymentValid && !isComplete;
+  const total = selectPrescriptionTotal(state);
 
-  return { transaction, canConfirm, paymentAmount, currentUser, currentPatient, usingPayments };
+  return {
+    total,
+    transaction,
+    canConfirm,
+    paymentAmount,
+    currentUser,
+    currentPatient,
+    usingPayments,
+  };
 };
 
 const mapDispatchToProps = dispatch => {
   const openFinaliseModal = () => dispatch(FinaliseActions.openModal());
-  return { openFinaliseModal };
+  const onDelete = () => dispatch(PrescriptionActions.cancelPrescription());
+  return { onDelete, openFinaliseModal };
 };
 
 const PrescriptionConfirmationComponent = ({
+  total,
   transaction,
   currentUser,
   currentPatient,
   paymentAmount,
   canConfirm,
   usingPayments,
+  onDelete,
 }) => {
   const runWithLoadingIndicator = useLoadingIndicator();
 
   const confirm = React.useCallback(
     () =>
-      UIDatabase.write(() => pay(currentUser, currentPatient, transaction, paymentAmount.value)),
+      UIDatabase.write(() =>
+        pay(currentUser, currentPatient, transaction, paymentAmount.value, total.value)
+      ),
     [currentUser, currentPatient, transaction, paymentAmount.value]
   );
 
@@ -62,16 +80,22 @@ const PrescriptionConfirmationComponent = ({
   return (
     <FlexView flex={1}>
       <PrescriptionInfo />
+
       <FlexRow flex={1}>
-        <PrescriptionSummary transaction={transaction} />
-        {usingPayments && <PaymentSummary />}
+        <FlexColumn flex={1}>
+          <PrescriptionExtra />
+          <PrescriptionSummary transaction={transaction} />
+        </FlexColumn>
+
+        <FlexColumn flex={1}>
+          {usingPayments && <PaymentSummary />}
+
+          <FlexRow justifyContent="flex-end">
+            <PageButton text="Cancel" onPress={onDelete} />
+            <PageButton isDisabled={!canConfirm} text="Complete" onPress={confirmPrescription} />
+          </FlexRow>
+        </FlexColumn>
       </FlexRow>
-      <PageButton
-        style={{ alignSelf: 'flex-end' }}
-        isDisabled={!canConfirm}
-        text="Complete"
-        onPress={confirmPrescription}
-      />
     </FlexView>
   );
 };
@@ -83,6 +107,8 @@ PrescriptionConfirmationComponent.propTypes = {
   paymentAmount: PropTypes.object.isRequired,
   canConfirm: PropTypes.bool.isRequired,
   usingPayments: PropTypes.bool.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  total: PropTypes.number.isRequired,
 };
 
 export const PrescriptionConfirmation = connect(
