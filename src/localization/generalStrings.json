@@ -28,7 +28,9 @@
     "customer": "customer",
     "code": "code",
     "name": "name",
-    "or": "or"
+    "or": "or",
+    "expiry_date": "Expiry date",
+    "quantity": "Quantity"
   },
   "fr": {
     "stocktake": "Inventaire",

@@ -24,6 +24,8 @@ import {
   selectPatientName,
 } from '../selectors/prescription';
 
+import { dispensingStrings } from '../localization';
+
 const PrescriptionInfoComponent = ({
   prescriptionPatient,
   prescriptionPrescriber,
@@ -50,7 +52,7 @@ const PrescriptionInfoComponent = ({
       <FlexColumn flex={1}>
         <FlexRow alignItems="center" justifyContent="">
           <FlexView flex={3}>
-            <SimpleLabel label="Patient" size="small" />
+            <SimpleLabel label={dispensingStrings.patient} size="small" />
             <SimpleLabel text={patientName} size="medium" />
           </FlexView>
 
@@ -65,7 +67,7 @@ const PrescriptionInfoComponent = ({
         <FlexRow justifyContent="flex-start" alignItems="flex-end" reverse>
           <FlexView flex={3} justifyContent="flex-end" alignItems="flex-end">
             {prescriptionPrescriber && (
-              <SimpleLabel label="Prescriber" size="small" labelAlign="right" />
+              <SimpleLabel label={dispensingStrings.prescriber} size="small" labelAlign="right" />
             )}
             {prescriptionPrescriber && (
               <SimpleLabel text={prescriberName} size="medium" textAlign="right" />

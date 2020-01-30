@@ -31,6 +31,7 @@ import { selectInsuranceModalOpen } from '../selectors/insurance';
 import { selectPatientModalOpen } from '../selectors/patient';
 
 import globalStyles from '../globalStyles';
+import { dispensingStrings } from '../localization';
 
 const Dispensing = ({
   data,
@@ -121,12 +122,12 @@ const Dispensing = ({
   const toggles = useMemo(
     () => [
       {
-        text: 'Patients',
+        text: dispensingStrings.patients,
         onPress: switchDataset,
         isOn: usingPatientsDataSet,
       },
       {
-        text: 'Prescribers',
+        text: dispensingStrings.prescribers,
         onPress: switchDataset,
         isOn: usingPrescribersDataSet,
       },
@@ -142,7 +143,11 @@ const Dispensing = ({
           <ToggleBar toggles={toggles} />
           <SearchBar onChangeText={filter} value={searchTerm} viewStyle={localStyles.searchBar} />
           <PageButton
-            text={usingPatientsDataSet ? 'New Patient' : 'New Prescriber'}
+            text={
+              usingPatientsDataSet
+                ? `${dispensingStrings.new} ${dispensingStrings.patient}`
+                : `${dispensingStrings.new} ${dispensingStrings.prescriber}`
+            }
             onPress={usingPatientsDataSet ? createPatient : createPrescriber}
           />
         </View>
@@ -154,7 +159,12 @@ const Dispensing = ({
           getItemLayout={getItemLayout}
         />
       </DataTablePageView>
-      <ModalContainer title="Patient Details" noCancel fullScreen isVisible={patientEditModalOpen}>
+      <ModalContainer
+        title={`${dispensingStrings.patient} ${dispensingStrings.details}`}
+        noCancel
+        fullScreen
+        isVisible={patientEditModalOpen}
+      >
         <FormControl
           onSave={savePatient}
           onCancel={cancelPatientEdit}
@@ -162,7 +172,7 @@ const Dispensing = ({
         />
       </ModalContainer>
       <ModalContainer
-        title="Prescriber Details"
+        title={`${dispensingStrings.prescriber} ${dispensingStrings.details}`}
         noCancel
         fullScreen
         isVisible={prescriberModalOpen}
@@ -173,7 +183,12 @@ const Dispensing = ({
           inputConfig={getFormInputConfig('prescriber', currentPrescriber)}
         />
       </ModalContainer>
-      <ModalContainer title="Insurance Policy" noCancel fullScreen isVisible={insuranceModalOpen}>
+      <ModalContainer
+        title={`${dispensingStrings.insurance_policy}`}
+        noCancel
+        fullScreen
+        isVisible={insuranceModalOpen}
+      >
         <FormControl
           onSave={saveInsurancePolicy}
           onCancel={cancelInsuranceEdit}
@@ -184,7 +199,7 @@ const Dispensing = ({
         />
       </ModalContainer>
       <ModalContainer
-        title={`Patient History: ${currentPatient?.firstName} ${currentPatient?.lastName}`}
+        title={`${dispensingStrings.patient} ${dispensingStrings.history} - ${currentPatient?.firstName} ${currentPatient?.lastName}`}
         onClose={cancelPatientEdit}
         fullScreen
         isVisible={patientHistoryModalOpen}

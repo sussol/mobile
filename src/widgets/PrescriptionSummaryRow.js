@@ -12,6 +12,8 @@ import { DetailRow } from './DetailRow';
 import { SimpleLabel } from './SimpleLabel';
 import { TouchableNoFeedback } from './DataTable';
 
+import { dispensingStrings } from '../localization';
+
 /**
  * Simple layout component for primary use within the PrescriptionSummary
  * component.
@@ -32,7 +34,7 @@ export const PrescriptionSummaryRow = ({ item }) => {
       <View style={localStyles.marginFive} />
       <DetailRow details={details} />
       <View style={localStyles.marginFive} />
-      <SimpleLabel label="Directions" text={note} />
+      <SimpleLabel label={dispensingStrings.directions} text={note} />
     </TouchableNoFeedback>
   );
 };
