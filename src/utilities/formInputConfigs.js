@@ -4,7 +4,9 @@
  */
 
 import moment from 'moment';
-import { UIDatabase } from '../database/index';
+import { UIDatabase } from '../database';
+
+import { formInputStrings } from '../localization';
 
 /**
  * File contains constants and config objects which declaritively define
@@ -51,8 +53,8 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     key: 'firstName',
     validator: input => input.length > 0,
     isRequired: true,
-    label: 'First name:',
-    invalidMessage: 'need to be x',
+    label: formInputStrings.first_name,
+    invalidMessage: formInputStrings.must_not_be_empty,
   },
   [FORM_INPUT_KEYS.LAST_NAME]: {
     type: 'text',
@@ -60,7 +62,8 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     key: 'lastName',
     validator: input => input.length > 0,
     isRequired: true,
-    label: 'Last name:',
+    label: formInputStrings.last_name,
+    invalidMessage: formInputStrings.must_not_be_empty,
   },
   [FORM_INPUT_KEYS.CODE]: {
     type: 'text',
@@ -68,30 +71,31 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     key: 'code',
     validator: input => input.length > 0 && input.length < 20,
     isRequired: true,
-    label: 'Code:',
+    label: formInputStrings.code,
+    invalidMessage: `${formInputStrings.must_not_be_empty} ${formInputStrings.and} ${formInputStrings.less_than_20_characters}`,
   },
   [FORM_INPUT_KEYS.DATE_OF_BIRTH]: {
     type: 'date',
     initialValue: new Date(),
     key: 'dateOfBirth',
-    invalidMessage: 'Must be a date in the format DD/MM/YYYY',
+    invalidMessage: formInputStrings.must_be_a_date,
     isRequired: true,
     validator: input => moment(input, 'DD/MM/YYYY', null, true).isValid(),
-    label: 'Date of birth:',
+    label: formInputStrings.date_of_birth,
   },
   [FORM_INPUT_KEYS.EMAIL]: {
     type: 'text',
     initialValue: '',
     key: 'emailAddress',
     isRequired: false,
-    label: 'Email:',
+    label: formInputStrings.email,
   },
   [FORM_INPUT_KEYS.PHONE]: {
     type: 'text',
     initialValue: '',
     key: 'phoneNumber',
     isRequired: false,
-    label: 'Phone:',
+    label: formInputStrings.phone,
   },
   [FORM_INPUT_KEYS.COUNTRY]: {
     type: 'text',
@@ -99,7 +103,8 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     key: 'country',
     validator: input => input.length < 20,
     isRequired: false,
-    label: 'Country:',
+    invalidMessage: `${formInputStrings.must_be} ${formInputStrings.less_than_20_characters}`,
+    label: formInputStrings.country,
   },
   [FORM_INPUT_KEYS.ADDRESS_ONE]: {
     type: 'text',
@@ -107,7 +112,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     key: 'addressOne',
     validator: input => input.length < 50,
     isRequired: false,
-    label: 'Address 1:',
+    label: formInputStrings.address_one,
   },
   [FORM_INPUT_KEYS.ADDRESS_TWO]: {
     type: 'text',
@@ -115,7 +120,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     key: 'addressTwo',
     validator: input => input.length < 50,
     isRequired: false,
-    label: 'Address 2:',
+    label: formInputStrings.address_two,
   },
   [FORM_INPUT_KEYS.REGISTRATION_CODE]: {
     type: 'text',
@@ -123,7 +128,8 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     key: 'registrationCode',
     validator: input => input.length < 50,
     isRequired: true,
-    label: 'Registration code:',
+    label: formInputStrings.registration_code,
+    invalidMessage: `${formInputStrings.must_not_be_empty} ${formInputStrings.and} ${formInputStrings.less_than_50_characters}`,
   },
   [FORM_INPUT_KEYS.POLICY_NUMBER_PERSON]: {
     type: 'text',
@@ -138,9 +144,8 @@ const FORM_INPUT_CONFIGS = seedObject => ({
         seedObject?.id ?? ''
       ).length === 0,
     isRequired: true,
-    invalidMessage:
-      'Must be between 0 and 50 characters, and must be a unique personal policy number',
-    label: 'Person policy number:',
+    invalidMessage: formInputStrings.unique_personal_policy,
+    label: formInputStrings.personal_policy_number,
   },
   [FORM_INPUT_KEYS.POLICY_NUMBER_FAMILY]: {
     type: 'text',
@@ -148,13 +153,14 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     key: 'policyNumberFamily',
     validator: input => input.length > 0 && input.length < 50,
     isRequired: true,
-    label: 'Family policy number:',
+    invalidMessage: formInputStrings.must_be_between_0_and_50,
+    label: formInputStrings.family_policy_number,
   },
   [FORM_INPUT_KEYS.POLICY_PROVIDER]: {
     type: 'dropdown',
     initialValue: UIDatabase.objects('InsuranceProvider')[0],
     key: 'insuranceProvider',
-    label: 'Policy provider:',
+    label: formInputStrings.policy_provider,
     options: UIDatabase.objects('InsuranceProvider'),
     optionKey: 'name',
   },
@@ -163,16 +169,16 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     initialValue: true,
     key: 'isActive',
     options: [true, false],
-    optionLabels: ['Yes', 'No'],
-    label: 'Is Active:',
+    optionLabels: [formInputStrings.yes, formInputStrings.no],
+    label: formInputStrings.is_active,
   },
   [FORM_INPUT_KEYS.POLICY_TYPE]: {
     type: 'toggle',
     initialValue: 'personal',
     key: 'type',
     options: ['personal', 'business'],
-    optionLabels: ['Personal', 'Business'],
-    label: 'Policy Type:',
+    optionLabels: [formInputStrings.personal, formInputStrings.business],
+    label: formInputStrings.policy_type,
   },
   [FORM_INPUT_KEYS.DISCOUNT_RATE]: {
     type: 'slider',
@@ -181,7 +187,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     maximumValue: 100,
     minimumValue: 0,
     step: 0.1,
-    label: 'Discount Rate:',
+    label: formInputStrings.discount_rate,
   },
 });
 
