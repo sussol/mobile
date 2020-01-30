@@ -21,7 +21,7 @@ import { GenericChoiceList, AutocompleteSelector } from '../modalChildren';
 import { PageButton } from '../PageButton';
 import { PencilIcon, ChevronDownIcon } from '../icons';
 
-import globalStyles, { WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
+import globalStyles, { WARM_GREY, SUSSOL_ORANGE, COMPONENT_HEIGHT } from '../../globalStyles';
 import { ToggleBar } from '../ToggleBar';
 
 const placeholderTextName = 'Choose a name';
@@ -163,7 +163,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
   return (
     <>
       <View style={localStyles.modalContainerStyle}>
-        <ToggleBar toggles={toggles} />
+        <ToggleBar style={localStyles.toggleBarStyle} toggles={toggles} />
         <TouchableOpacity style={localStyles.containerStyle} onPress={onPressName}>
           <View style={localStyles.textContainerStyle}>
             <Text style={localStyles.textStyle}>{nameText}</Text>
@@ -263,6 +263,7 @@ const localStyles = StyleSheet.create({
   },
   textContainerStyle: { width: '30%', justifyContent: 'center' },
   iconContainerStyle: { width: '5%', justifyContent: 'flex-end', alignItems: 'flex-end' },
+  toggleBarStyle: { marginBottom: COMPONENT_HEIGHT },
   textStyle: { color: 'white' },
   okButton: {
     ...globalStyles.button,
