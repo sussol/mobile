@@ -4,7 +4,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
@@ -80,17 +80,20 @@ export const CashRegister = ({
     pageTopRightSectionContainer,
   } = globalStyles;
 
+  const topLeftContainerStyle = useMemo(() => ({ ...pageTopLeftSectionContainer, flex: 1 }));
+  const topRightContainerStyle = useMemo(() => ({ ...pageTopRightSectionContainer, flex: 4 }));
+
   return (
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
-        <View style={{ ...pageTopLeftSectionContainer, ...{ flex: 1 } }}>
+        <View style={topLeftContainerStyle}>
           <SimpleLabel
             label={pageInfoStrings.current_balance}
             text={currentBalance}
             textAlign="left"
           />
         </View>
-        <View style={{ ...pageTopRightSectionContainer, ...{ flex: 4 } }}>
+        <View style={topRightContainerStyle}>
           <AddNewTransactionButton />
         </View>
       </View>
