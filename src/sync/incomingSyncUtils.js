@@ -16,7 +16,7 @@ import { deleteRecord, createRecord } from '../database/utilities';
 import { SETTINGS_KEYS } from '../settings';
 import { checkIsObject } from '../utilities';
 
-const { THIS_STORE_ID, THIS_STORE_TAGS, THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
+const { THIS_STORE_ID, THIS_STORE_TAGS, THIS_STORE_CODE, THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
 
 /**
  * Returns the number string as a float, or null if none passed.
@@ -705,11 +705,11 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'Store': {
-      const { tags, custom_data } = record;
+      const { tags, custom_data, code } = record;
       const customData = parseJsonString(custom_data);
       if (settings.get(THIS_STORE_ID) === record.ID) {
         database.update('Setting', { key: THIS_STORE_TAGS, value: tags });
-
+        database.update('Setting', { key: THIS_STORE_CODE, value: code });
         database.update('Setting', {
           key: THIS_STORE_CUSTOM_DATA,
           value: customData ?? '',
