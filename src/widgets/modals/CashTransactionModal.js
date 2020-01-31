@@ -108,6 +108,8 @@ export const CashTransactionModal = ({ onConfirm }) => {
     setIsNameModalOpen(false);
   };
 
+  const onCloseName = () => setIsNameModalOpen(false);
+
   const onSubmitAmount = () => {
     setAmount(currency(amountBuffer));
     setIsAmountModalOpen(false);
@@ -225,7 +227,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
           textStyle={localStyles.pageButtonTextStyle}
         />
       </View>
-      <ModalContainer title={placeholderTextName} isVisible={isNameModalOpen}>
+      <ModalContainer title={placeholderTextName} isVisible={isNameModalOpen} onClose={onCloseName}>
         <AutocompleteSelector
           options={names}
           queryString="name CONTAINS[c] $0"
