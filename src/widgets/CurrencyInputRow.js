@@ -18,6 +18,7 @@ import { FlexView } from './FlexView';
 import { parsePositiveInteger } from '../utilities';
 
 import { SUSSOL_ORANGE, APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from '../globalStyles';
+import { dispensingStrings } from '../localization';
 
 /**
  * Renders a label and two text inputs, with a preceding $ and a decimal
@@ -88,7 +89,7 @@ export const CurrencyInputRow = ({
           editable={!isDisabled}
           onSubmitEditing={onSubmit(1)}
         />
-        <SimpleLabel label="." size="large" />
+        <SimpleLabel label={dispensingStrings.decimal_point} size="large" />
         <TextInput
           ref={refsArray.current[1]}
           value={centAmount}
@@ -115,7 +116,7 @@ const localStyles = StyleSheet.create({
 
 CurrencyInputRow.defaultProps = {
   isDisabled: false,
-  label: 'Payment Amount',
+  label: dispensingStrings.payment_amount,
   underlineColorAndroid: SUSSOL_ORANGE,
   size: 'large',
   textInputStyle: localStyles.textInputStyle,

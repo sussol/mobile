@@ -10,9 +10,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { PrescriptionCartRow } from './PrescriptionCartRow';
+import { FlexView } from './FlexView';
 
 import globalStyles, { WHITE } from '../globalStyles';
-import { FlexView } from './FlexView';
+import { dispensingStrings } from '../localization';
 
 /**
  * Layout container component for a prescriptions item cart.
@@ -46,7 +47,7 @@ const PrescriptionCartComponent = ({ items, isDisabled }) => {
       ) : (
         <FlexView flex={1} justifyContent="center" alignItems="center">
           <Text style={{ ...globalStyles.textStyles, textAlign: 'center' }}>
-            Click on an item to add it
+            {dispensingStrings.click_on_an_item_to_add_it}
           </Text>
         </FlexView>
       )}

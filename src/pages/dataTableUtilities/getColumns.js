@@ -297,7 +297,7 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.PRESCRIBER]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.PRESCRIBER,
-    title: 'PRESCRIBER',
+    title: tableStrings.prescriber,
     alignText: 'right',
     sortable: false,
     editable: false,
@@ -329,7 +329,7 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.FIRST_NAME]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.FIRST_NAME,
-    title: 'FIRST NAME',
+    title: tableStrings.first_name,
     alignText: 'left',
     sortable: true,
     editable: false,
@@ -337,7 +337,7 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.LAST_NAME]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.LAST_NAME,
-    title: 'LAST NAME',
+    title: tableStrings.last_name,
     alignText: 'left',
     sortable: true,
     editable: false,
@@ -359,7 +359,7 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.PATIENT]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.OTHER_PARTY_NAME,
-    title: 'PATIENT',
+    title: tableStrings.patient,
     sortable: true,
     editable: false,
   },
@@ -396,7 +396,7 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.BATCH_NAME]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.BATCH,
-    title: 'BATCH',
+    title: tableStrings.batch_name,
     textAlign: 'left',
     sortable: true,
     editable: false,
@@ -405,7 +405,7 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.QUESTION]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.NAME,
-    title: 'question',
+    title: tableStrings.question,
     textAlign: 'left',
     sortable: false,
     editable: false,
@@ -431,7 +431,7 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.EDITABLE_VALUE]: {
     type: COLUMN_TYPES.EDITABLE_STRING,
     key: COLUMN_KEYS.VALUE,
-    title: 'value',
+    title: tableStrings.value,
     textAlign: 'right',
     sortable: false,
     editable: true,
@@ -442,7 +442,7 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.COST_PRICE]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.COST_PRICE,
-    title: 'COST PRICE',
+    title: tableStrings.cost_price,
     alignText: 'right',
     sortable: false,
     editable: false,
@@ -550,7 +550,7 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.SELL_PRICE]: {
     type: COLUMN_TYPES.EDITABLE_NUMERIC,
     key: COLUMN_KEYS.SELL_PRICE,
-    title: 'SELL PRICE',
+    title: tableStrings.sell_price,
     alignText: 'right',
     sortable: false,
     editable: true,
@@ -559,7 +559,7 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.RETURN_AMOUNT]: {
     type: COLUMN_TYPES.EDITABLE_NUMERIC,
     key: COLUMN_KEYS.RETURN_AMOUNT,
-    title: 'RETURN AMOUNT',
+    title: tableStrings.return_amount,
     alignText: 'right',
     sortable: true,
     editable: true,
@@ -603,7 +603,7 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.DATE_OF_BIRTH]: {
     type: COLUMN_TYPES.DATE,
     key: COLUMN_KEYS.DATE_OF_BIRTH,
-    title: 'D.O.B',
+    title: tableStrings.dob,
     alignText: 'left',
     sortable: true,
     editable: false,
@@ -666,7 +666,7 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.RETURN]: {
     type: COLUMN_TYPES.ICON,
     key: COLUMN_KEYS.RETURN,
-    title: 'RETURN',
+    title: tableStrings.return,
     sortable: false,
     alignText: 'center',
     editable: false,
@@ -685,7 +685,7 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.DISPENSE]: {
     type: COLUMN_TYPES.ICON,
     key: COLUMN_KEYS.DISPENSE,
-    title: 'DISPENSE',
+    title: tableStrings.dispense,
     sortable: false,
     alignText: 'center',
     editable: false,
@@ -694,7 +694,7 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.SELECT]: {
     type: COLUMN_TYPES.ICON,
     key: COLUMN_KEYS.SELECT,
-    title: 'SELECT',
+    title: tableStrings.select,
     sortable: false,
     alignText: 'center',
     editable: false,
@@ -703,7 +703,7 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.PATIENT_HISTORY]: {
     type: COLUMN_TYPES.ICON,
     key: COLUMN_KEYS.PATIENT_HISTORY,
-    title: 'HISTORY',
+    title: tableStrings.history,
     sortable: false,
     alignText: 'center',
     editable: false,
@@ -712,7 +712,7 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.PATIENT_EDIT]: {
     type: COLUMN_TYPES.ICON,
     key: COLUMN_KEYS.PATIENT_EDIT,
-    title: 'EDIT',
+    title: tableStrings.edit,
     sortable: false,
     alignText: 'center',
     editable: false,
@@ -721,7 +721,7 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.PRESCRIBER_EDIT]: {
     type: COLUMN_TYPES.ICON,
     key: COLUMN_KEYS.PRESCRIBER_EDIT,
-    title: 'EDIT',
+    title: tableStrings.edit,
     sortable: false,
     alignText: 'center',
     editable: false,

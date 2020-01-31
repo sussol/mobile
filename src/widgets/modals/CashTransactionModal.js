@@ -8,16 +8,17 @@ import PropTypes from 'prop-types';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 import moment from 'moment';
-
 import currency from '../../localization/currency';
 
 import { UIDatabase } from '../../database';
+
 import { NAME_TYPE_KEYS } from '../../database/utilities/constants';
 import {
   CASH_TRANSACTION_KEYS,
   CASH_TRANSACTION_TYPES,
 } from '../../utilities/modules/dispensary/constants';
 
+import { ToggleBar } from '../ToggleBar';
 import { ModalContainer } from './ModalContainer';
 import { BottomModalContainer, BottomTextEditor, BottomCurrencyEditor } from '../bottomModals';
 import { GenericChoiceList, AutocompleteSelector } from '../modalChildren';
@@ -25,16 +26,7 @@ import { PageButton } from '../PageButton';
 import { PencilIcon, ChevronDownIcon } from '../icons';
 
 import globalStyles, { WARM_GREY, SUSSOL_ORANGE, COMPONENT_HEIGHT } from '../../globalStyles';
-import { ToggleBar } from '../ToggleBar';
-
-const placeholderTextName = 'Choose a name';
-const placeholderTextAmount = 'Enter transaction amount';
-const placeholderTextReason = 'Choose a reason';
-const placeholderTextReasonDisabled = 'N/A';
-const placeholderTextDescription = 'Enter a description';
-
-const defaultTextAmount = '0.00';
-const defaultTextDescription = '';
+import { buttonStrings, dispensingStrings, generalStrings } from '../../localization';
 
 export const CashTransactionModal = ({ onConfirm }) => {
   const [name, setName] = useState(null);
@@ -43,8 +35,8 @@ export const CashTransactionModal = ({ onConfirm }) => {
   const [reason, setReason] = useState(null);
   const [description, setDescription] = useState(null);
 
-  const [amountBuffer, setAmountBuffer] = useState(defaultTextAmount);
-  const [descriptionBuffer, setDescriptionBuffer] = useState(defaultTextDescription);
+  const [amountBuffer, setAmountBuffer] = useState(currency(0).format());
+  const [descriptionBuffer, setDescriptionBuffer] = useState('');
 
   const [isNameModalOpen, setIsNameModalOpen] = useState(false);
   const [isAmountModalOpen, setIsAmountModalOpen] = useState(false);
@@ -80,10 +72,12 @@ export const CashTransactionModal = ({ onConfirm }) => {
   const renderNameRightText = useCallback(({ type: nameType, dateOfBirth }) => {
     switch (nameType) {
       case NAME_TYPE_KEYS.FACILITY:
-        return 'Type: Facility';
+        return `${dispensingStrings.type}: ${dispensingStrings.facility}`;
       case NAME_TYPE_KEYS.PATIENT:
-        return `Type: Patient \n D.O.B: ${
-          dateOfBirth ? moment(dateOfBirth).format('DD/MM/YYYY') : 'N/A'
+        return `${dispensingStrings.type}: ${dispensingStrings.patient} \n ${
+          dispensingStrings.date_of_birth
+        }: ${
+          dateOfBirth ? moment(dateOfBirth).format('DD/MM/YYYY') : generalStrings.not_available
         }`;
       default:
         return '';
@@ -145,27 +139,30 @@ export const CashTransactionModal = ({ onConfirm }) => {
     setIsDescriptionModalOpen(false);
   };
 
+  const nameText = useMemo(() => name?.name ?? dispensingStrings.choose_a_name, [name]);
+  const amountText = useMemo(() => amount?.format(false) ?? dispensingStrings.enter_the_amount, [
+    amount,
+  ]);
+  const reasonText = useMemo(() => reason?.title ?? dispensingStrings.choose_a_reason, [reason]);
+  const descriptionText = useMemo(() => description ?? dispensingStrings.enter_a_description, [
+    description,
+  ]);
   const toggleTransactionType = () => setIsCashIn(!isCashIn);
 
   const toggles = useMemo(
     () => [
-      { text: 'Cash in', onPress: toggleTransactionType, isOn: isCashIn },
-      { text: 'Cash out', onPress: toggleTransactionType, isOn: !isCashIn },
+      { text: dispensingStrings.cash_in, onPress: toggleTransactionType, isOn: isCashIn },
+      { text: dispensingStrings.cash_out, onPress: toggleTransactionType, isOn: !isCashIn },
     ],
     [isCashIn]
   );
-
-  const nameText = useMemo(() => name?.name ?? placeholderTextName, [name]);
-  const amountText = useMemo(() => amount?.format(false) ?? placeholderTextAmount, [amount]);
-  const reasonText = useMemo(() => reason?.title ?? placeholderTextReason, [reason]);
-  const descriptionText = useMemo(() => description ?? placeholderTextDescription, [description]);
 
   const PressReason = useCallback(
     () =>
       isCashIn ? (
         <TouchableOpacity style={localStyles.containerStyle}>
           <View style={localStyles.textContainerStyle}>
-            <Text style={localStyles.textStyle}>{placeholderTextReasonDisabled}</Text>
+            <Text style={localStyles.textStyle}>{generalStrings.not_available}</Text>
           </View>
           <View style={localStyles.iconContainerStyle} />
         </TouchableOpacity>
@@ -213,9 +210,9 @@ export const CashTransactionModal = ({ onConfirm }) => {
         </TouchableOpacity>
         <BottomCurrencyEditor
           isOpen={isAmountModalOpen}
-          buttonText="Confirm"
+          buttonText={buttonStrings.confirm}
           value={amountBuffer}
-          placeholder={placeholderTextAmount}
+          placeholder={dispensingStrings.enter_the_amount}
           onChangeText={onChangeAmount}
           onConfirm={onSubmitAmount}
         />
@@ -232,14 +229,14 @@ export const CashTransactionModal = ({ onConfirm }) => {
         </BottomModalContainer>
         <BottomTextEditor
           isOpen={isDescriptionModalOpen}
-          buttonText="Confirm"
+          buttonText={buttonStrings.confirm}
           value={descriptionBuffer}
-          placeholder={placeholderTextDescription}
+          placeholder={dispensingStrings.enter_a_description}
           onChangeText={onChangeText}
           onConfirm={onSubmitDescription}
         />
         <PageButton
-          text="OK"
+          text={buttonStrings.confirm}
           onPress={onCreate}
           isDisabled={!isValidTransaction}
           disabledColor={WARM_GREY}
@@ -247,7 +244,11 @@ export const CashTransactionModal = ({ onConfirm }) => {
           textStyle={localStyles.pageButtonTextStyle}
         />
       </View>
-      <ModalContainer title={placeholderTextName} isVisible={isNameModalOpen} onClose={onCloseName}>
+      <ModalContainer
+        title={dispensingStrings.choose_a_name}
+        isVisible={isNameModalOpen}
+        onClose={onCloseName}
+      >
         <AutocompleteSelector
           options={names}
           queryString="name CONTAINS[c] $0"

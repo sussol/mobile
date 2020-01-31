@@ -16,7 +16,7 @@ import { formatExpiryDate } from '../../utilities';
 
 import { PageInfo, CloseIcon } from '..';
 
-import { tableStrings, generalStrings } from '../../localization/index';
+import { tableStrings, generalStrings } from '../../localization';
 import { DARKER_GREY, SUSSOL_ORANGE } from '../../globalStyles';
 
 /**
@@ -30,12 +30,12 @@ import { DARKER_GREY, SUSSOL_ORANGE } from '../../globalStyles';
  */
 export const ItemDetailsComponent = ({ isOpen, item, onClose, ...modalProps }) => {
   const headers = {
-    batch: 'Batch',
-    expiryDate: 'Expiry',
-    numberOfPacks: 'Quantity',
-    category: 'Category',
-    department: 'Department',
-    usage: 'Monthly Usage',
+    batch: tableStrings.batch_name,
+    expiryDate: generalStrings.expiry_date,
+    numberOfPacks: generalStrings.quantity,
+    category: tableStrings.category,
+    department: tableStrings.department,
+    usage: tableStrings.monthly_usage_s,
   };
 
   const formatters = {

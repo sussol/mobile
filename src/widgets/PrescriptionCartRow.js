@@ -20,6 +20,7 @@ import { TouchableNoFeedback } from './DataTable';
 
 import { UIDatabase } from '../database';
 import { PrescriptionActions } from '../actions/PrescriptionActions';
+import { dispensingStrings } from '../localization';
 
 /**
  * Renders a row in the PrescriptionCart consisting of a `StepperRow`, `DropdownRow`,
@@ -59,8 +60,8 @@ const PrescriptionCartRowComponent = ({
   usingPayments,
 }) => {
   const itemDetails = React.useMemo(() => {
-    const details = [{ label: 'Code', text: itemCode }];
-    if (usingPayments) details.push({ label: 'Unit price', text: sellPrice });
+    const details = [{ label: dispensingStrings.code, text: itemCode }];
+    if (usingPayments) details.push({ label: dispensingStrings.unit_price, text: sellPrice });
     return details;
   }, [itemCode]);
 
@@ -85,8 +86,8 @@ const PrescriptionCartRowComponent = ({
             options={defaultDirections}
             onChangeText={onChangeText}
             onSelection={onDirectionSelect}
-            dropdownTitle="Directions"
-            placeholder="Usage direction"
+            dropdownTitle={dispensingStrings.directions}
+            placeholder={dispensingStrings.usage_directions}
           />
         </View>
         <View style={localStyles.flexOne} />

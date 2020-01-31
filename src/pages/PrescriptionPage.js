@@ -16,8 +16,14 @@ import { PrescriptionConfirmation } from '../widgets/Tabs/PrescriptionConfirmati
 import { useRecordListener } from '../hooks';
 import { WizardActions } from '../actions/WizardActions';
 
+import { dispensingStrings } from '../localization';
+
 const tabs = [PrescriberSelect, ItemSelect, PrescriptionConfirmation];
-const titles = ['Select the Prescriber', 'Select items', 'Finalise'];
+const titles = [
+  dispensingStrings.select_the_prescriber,
+  dispensingStrings.select_items,
+  dispensingStrings.finalise,
+];
 
 export const Prescription = ({ transaction, completePrescription }) => {
   useRecordListener(completePrescription, transaction, 'Transaction');
