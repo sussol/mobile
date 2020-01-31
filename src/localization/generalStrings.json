@@ -34,10 +34,11 @@
   },
   "fr": {
     "submit": "Soumettre",
+    "submitting": "En cours d'enregistrement",
     "submitted": "Soumise",
     "stocktake": "Inventaire",
     "start_typing_to_search": "Tapez pour rechercher",
-    "unfinalised": "Non finalisé",
+    "unfinalised": "Non finalisées",
     "customerRequisitions": "Réquisitions client",
     "supplierRequisitions": "Réquisition fournisseur",
     "supplierInvoices": "Factures fournisseur",
