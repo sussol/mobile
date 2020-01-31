@@ -7,6 +7,8 @@
 /* eslint-disable quote-props */
 /* eslint-disable max-classes-per-file */
 
+import { NAME_TYPE_KEYS } from '../database/utilities/constants';
+
 export const INTERNAL_TO_EXTERNAL = 0;
 export const EXTERNAL_TO_INTERNAL = 1;
 
@@ -102,12 +104,12 @@ export const TRANSACTION_TYPES = new SyncTranslator({
 });
 
 export const NAME_TYPES = new SyncTranslator({
-  inventory_adjustment: 'invad',
-  facility: 'facility',
-  patient: 'patient',
-  build: 'build',
-  store: 'store',
-  repack: 'repack',
+  [NAME_TYPE_KEYS.INVENTORY_ADJUSTMENT]: 'invad',
+  [NAME_TYPE_KEYS.FACILITY]: 'facility',
+  [NAME_TYPE_KEYS.PATIENT]: 'patient',
+  [NAME_TYPE_KEYS.BUILD]: 'build',
+  [NAME_TYPE_KEYS.STORE]: 'store',
+  [NAME_TYPE_KEYS.REPACK]: 'repack',
 });
 
 /**
