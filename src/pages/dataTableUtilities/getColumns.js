@@ -36,7 +36,7 @@ const PAGE_COLUMN_WIDTHS = {
   prescriberSelect: [3, 3, 1],
   itemSelect: [1, 3, 1],
   patientHistory: [1, 3, 1, 3],
-  [ROUTES.CASH_REGISTER]: [1, 1, 1, 1, 1, 1, 1, 1],
+  [ROUTES.CASH_REGISTER]: [1, 1, 1, 1, 1, 1, 1],
   supplierCredit: [1, 1, 1, 1],
 };
 
@@ -239,7 +239,6 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.COMMENT,
     COLUMN_NAMES.TOTAL,
     COLUMN_NAMES.CONFIRM_DATE,
-    COLUMN_NAMES.STATUS,
   ],
 };
 
