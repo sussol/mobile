@@ -7,9 +7,12 @@ import React, { useCallback, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
+import moment from 'moment';
+
 import currency from '../../localization/currency';
 
 import { UIDatabase } from '../../database';
+import { NAME_TYPE_KEYS } from '../../database/utilities/constants';
 import {
   CASH_TRANSACTION_KEYS,
   CASH_TRANSACTION_TYPES,
@@ -48,7 +51,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
   const [isReasonModalOpen, setIsReasonModalOpen] = useState(false);
   const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
 
-  const names = useMemo(() => UIDatabase.objects('Name'));
+  const names = useMemo(() => UIDatabase.objects('Name').filtered('isVisible == true'));
   const reasons = useMemo(() => UIDatabase.objects('Options'));
   const type = useMemo(
     () => (isCashIn ? CASH_TRANSACTION_TYPES.CASH_IN : CASH_TRANSACTION_TYPES.CASH_OUT),
@@ -69,6 +72,23 @@ export const CashTransactionModal = ({ onConfirm }) => {
 
   const onChangeText = useMemo(() => text => setDescriptionBuffer(text));
   const onChangeAmount = useMemo(() => value => setAmountBuffer(value));
+
+  const renderNameLeftText = useCallback(({ firstName, lastName, name: fullName, isPatient }) =>
+    isPatient ? `${lastName}, ${firstName}` : `${fullName}`
+  );
+
+  const renderNameRightText = useCallback(({ type: nameType, dateOfBirth }) => {
+    switch (nameType) {
+      case NAME_TYPE_KEYS.FACILITY:
+        return 'Type: Facility';
+      case NAME_TYPE_KEYS.PATIENT:
+        return `Type: Patient \n D.O.B: ${
+          dateOfBirth ? moment(dateOfBirth).format('DD/MM/YYYY') : 'N/A'
+        }`;
+      default:
+        return '';
+    }
+  });
 
   const resetBottomModal = () => {
     setIsNameModalOpen(false);
@@ -232,6 +252,8 @@ export const CashTransactionModal = ({ onConfirm }) => {
           options={names}
           queryString="name CONTAINS[c] $0"
           sortKeyString="name"
+          renderLeftText={renderNameLeftText}
+          renderRightText={renderNameRightText}
           onSelect={onSubmitName}
         />
       </ModalContainer>
