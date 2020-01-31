@@ -10,12 +10,11 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import { connect } from 'react-redux';
-
 import {
   BackHandler,
   Image,
+  AppState,
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
@@ -109,14 +108,30 @@ class MSupplyMobileAppContainer extends React.Component {
       isInitialised,
       isLoading: false,
       syncModalIsOpen: false,
+      appState: null,
     };
   }
 
-  componentDidMount = () => BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
+  componentDidMount = () => {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
+    AppState.addEventListener('change', this.onAppStateChange);
+  };
 
   componentWillUnmount = () => {
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackEvent);
+    AppState.removeEventListener('change', this.onAppStateChange);
     this.scheduler.clearAll();
+  };
+
+  onAppStateChange = nextAppState => {
+    const { appState } = this.state;
+    const { dispatch } = this.props;
+    if (nextAppState?.match(/inactive|background/)) dispatch(UserActions.setTime());
+    if (appState?.match(/inactive|background/) && nextAppState === 'active') {
+      dispatch(UserActions.active());
+    }
+
+    this.setState({ appState: nextAppState });
   };
 
   onAuthentication = user => {
