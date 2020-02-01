@@ -21,7 +21,7 @@ import { debounce } from '../../utilities';
 import { PrescriberActions } from '../../actions/PrescriberActions';
 import { PrescriptionActions } from '../../actions/PrescriptionActions';
 import { getItemLayout, getColumns } from '../../pages/dataTableUtilities';
-import { selectSortedAndFilteredPrescribers } from '../../selectors/prescriber';
+import { selectSortedPrescribers } from '../../selectors/prescriber';
 
 /**
  * Layout component used for a tab within the prescription wizard.
@@ -143,7 +143,7 @@ const mapStateToProps = state => {
   const { isComplete } = wizard;
 
   const currentPrescriber = selectPrescriptionPrescriber(state);
-  const prescribers = selectSortedAndFilteredPrescribers(state);
+  const prescribers = selectSortedPrescribers(state);
 
   return { prescribers, searchTerm, isComplete, sortKey, isAscending, currentPrescriber };
 };
