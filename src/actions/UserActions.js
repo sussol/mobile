@@ -20,10 +20,10 @@ const active = () => (dispatch, getState) => {
   const { user } = getState();
   const { time } = user;
 
-  const tenMinutesLater = moment(time).add(3, 'minutes');
+  const threeMinutesLater = moment(time).add(3, 'minutes');
   const timeNow = moment();
 
-  if (tenMinutesLater.isBefore(timeNow)) return dispatch(logout());
+  if (threeMinutesLater.isBefore(timeNow)) return dispatch(logout());
   return dispatch(setTime());
 };
 
