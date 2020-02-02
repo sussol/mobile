@@ -25,6 +25,7 @@ export const selectPageState = createSelector([pageStateSelector], pageState => 
     columns: [],
     keyExtractor: recordKeyExtractor,
     modalKey: '',
+    searchTerm: '',
     sortKey: '',
   };
 });
@@ -36,6 +37,11 @@ export const selectTransactionType = createSelector(
   pageState => pageState.transactionType
 );
 
+export const selectSearchTerm = createSelector(
+  [selectPageState],
+  pageState => pageState.searchTerm
+);
+
 export const selectPayments = createSelector([selectTransactions], transactions =>
   transactions.filter(({ type }) => type === 'payment')
 );
@@ -44,9 +50,9 @@ export const selectReceipts = createSelector([selectTransactions], transactions 
   transactions.filter(({ type }) => type === 'receipt')
 );
 
-export const selectTransactionData = createSelector(
-  [selectTransactionType, selectTransactions, selectPayments, selectReceipts],
-  (transactionType, transactions, payments, receipts) => {
+export const selectToggledTransactions = createSelector(
+  [selectTransactions, selectPayments, selectReceipts, selectTransactionType],
+  (transactions, payments, receipts, transactionType) => {
     switch (transactionType) {
       case 'payment':
         return payments;
@@ -58,9 +64,12 @@ export const selectTransactionData = createSelector(
   }
 );
 
+export const selectFilteredTransactions = createSelector([selectToggledTransactions, selectSearchTerm], (transactions, searchTerm) => transactions.filter(({ otherParty }) => otherParty.name.includes(searchTerm)));
+
 export const selectPaymentsTotal = createSelector([selectPayments], payments =>
   payments.reduce((acc, { total }) => acc.add(total), currency(0))
 );
+
 export const selectReceiptsTotal = createSelector([selectReceipts], receipts =>
   receipts.reduce((acc, { total }) => acc.add(total), currency(0))
 );

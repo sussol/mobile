@@ -21,6 +21,7 @@ export const cashRegisterInitialiser = () => {
     backingData,
     data: sortedData,
     dataState: new Map(),
+    searchTerm: '',
     sortKey: COLUMN_KEYS.SERIAL_NUMBER,
     keyExtractor: recordKeyExtractor,
     modalKey: '',

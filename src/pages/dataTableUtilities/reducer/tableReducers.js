@@ -3,6 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+import { ROUTES } from '../../../navigation/constants';
 import { sortDataBy } from '../../../utilities';
 
 /**
@@ -39,15 +40,37 @@ export const filterData = (state, action) => {
     showIndicators,
   } = state;
   const { payload } = action;
+  const { route } = payload;
 
   const searchTerm = payload.searchTerm?.trim();
 
-  // Indicator filtering is performed on component re-render.
-  if (usingIndicators && showIndicators) {
-    return {
-      ...state,
-      searchTerm,
-    };
+  // Data filtering may be deferred to state-to-prop selectors.
+  switch (route) {
+    case ROUTES.CASH_REGISTER: {
+      return {
+        ...state,
+        searchTerm,
+      }
+    }
+    case ROUTES.SUPPLIER_REQUISITION: {
+      if (usingIndicators && showIndicators) {
+        return {
+          ...state,
+          searchTerm,
+        };
+      }
+      break;
+    }
+    case ROUTES.CUSTOMER_REQUISITION: {
+      if (usingIndicators && showIndicators) {
+        return {
+          ...state,
+          searchTerm,
+        };
+      }
+      break;
+    }
+    default:
   }
 
   const queryString = filterDataKeys.map(filterTerm => `${filterTerm} CONTAINS[c] $0`).join(' OR ');
