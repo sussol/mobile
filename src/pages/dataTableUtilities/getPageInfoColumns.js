@@ -52,7 +52,7 @@ const PER_PAGE_INFO_COLUMNS = {
     ['customer', 'transactionComment', 'prescriber'],
   ],
   [ROUTES.CASH_REGISTER]: [
-    ['number', 'name', 'type', 'reason', 'comment', 'amount', 'confirmDate', 'status'],
+    ['number', 'name', 'type', 'reason', 'comment', 'amount', 'confirmDate'],
   ],
   stocktakeBatchEditModal: [['itemName']],
   stocktakeBatchEditModalWithReasons: [['itemName']],
