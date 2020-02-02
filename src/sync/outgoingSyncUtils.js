@@ -5,6 +5,7 @@
  */
 
 import { Client as BugsnagClient } from 'bugsnag-react-native';
+import moment from 'moment';
 
 import {
   INTERNAL_TO_EXTERNAL,
@@ -81,7 +82,7 @@ const generateSyncData = (settings, recordType, record) => {
         first: record.firstName,
         last: record.lastName,
         name: record.name,
-        date_of_birth: getDateString(record.dateOfBirth),
+        date_of_birth: moment(record.dateOfBirth).format(),
         code: record.code,
         email: record.emailAddress,
         supplying_store_id: settings.get(THIS_STORE_ID),
@@ -176,6 +177,7 @@ const generateSyncData = (settings, recordType, record) => {
     case 'Transaction': {
       const isCashReconciliation = record.type === 'payment' || record.type === 'receipt';
       const total = String(isCashReconciliation ? record.total : record.totalPrice);
+
       return {
         ID: record.id,
         name_ID: record.otherParty && record.otherParty.id,
