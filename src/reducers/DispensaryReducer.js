@@ -6,6 +6,7 @@
 import { DISPENSARY_ACTIONS } from '../actions/DispensaryActions';
 import { getColumns } from '../pages/dataTableUtilities';
 import { UIDatabase } from '../database';
+import { ROUTES } from '../navigation';
 
 const initialState = () => ({
   searchTerm: '',
@@ -20,6 +21,13 @@ export const DispensaryReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
+    case 'Navigation/NAVIGATE': {
+      const { routeName } = action;
+
+      if (routeName === ROUTES.DISPENSARY) return initialState();
+      return state;
+    }
+
     case DISPENSARY_ACTIONS.FILTER: {
       const { payload } = action;
       const { searchTerm } = payload;

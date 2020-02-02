@@ -7,7 +7,7 @@
     "choose_a_name": "Choose a name",
     "choose_a_reason": "Choose a reason",
     "click_on_an_item_to_add_it": "Click on an item to add it",
-    "credit_user": "Credit used",
+    "credit_used": "Credit used",
     "decimal_point": ".",
     "details": "Details",
     "directions": "Directions",
@@ -33,7 +33,9 @@
     "subtotal": "Subtotal",
     "total": "Total",
     "unit_price": "Unit price",
-    "usage_directions": "Usage directions"
+    "usage_directions": "Usage directions",
+    "search_by_last_name_first_name": "Search by Last Name, First Name",
+    "no_history_for_this_patient": "There is no history available for this patient."
   },
   "fr": {
     "available_credit": "Crédit disponible",
