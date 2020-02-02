@@ -141,7 +141,12 @@ const Dispensing = ({
       <DataTablePageView>
         <View style={pageTopSectionContainer}>
           <ToggleBar toggles={toggles} />
-          <SearchBar onChangeText={filter} value={searchTerm} viewStyle={localStyles.searchBar} />
+          <SearchBar
+            onChangeText={filter}
+            value={searchTerm}
+            viewStyle={localStyles.searchBar}
+            placeholder={dispensingStrings.search_by_last_name_first_name}
+          />
           <PageButton
             text={
               usingPatientsDataSet
