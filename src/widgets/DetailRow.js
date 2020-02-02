@@ -9,6 +9,7 @@ import { View } from 'react-native';
 import PropTypes from 'prop-types';
 
 import { SimpleLabel } from './SimpleLabel';
+import { FlexView } from './FlexView';
 
 /**
  * Simple layout component render sequential SimpleLabel components
@@ -22,9 +23,9 @@ export const DetailRow = ({ details }) => {
   const Details = React.useCallback(
     () =>
       details.map(({ label, text }) => (
-        <View key={label} style={{ flex: 1 }}>
+        <FlexView key={`${label}${text}`} flex={1}>
           <SimpleLabel label={label} size="small" text={text} />
-        </View>
+        </FlexView>
       )),
     [details]
   );

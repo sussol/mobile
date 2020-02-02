@@ -21,7 +21,8 @@ import { debounce } from '../../utilities';
 import { PrescriberActions } from '../../actions/PrescriberActions';
 import { PrescriptionActions } from '../../actions/PrescriptionActions';
 import { getItemLayout, getColumns } from '../../pages/dataTableUtilities';
-import { selectSortedAndFilteredPrescribers } from '../../selectors/prescriber';
+import { selectSortedPrescribers } from '../../selectors/prescriber';
+import { dispensingStrings } from '../../localization';
 
 /**
  * Layout component used for a tab within the prescription wizard.
@@ -89,6 +90,7 @@ const PrescriberSelectComponent = ({
           viewStyle={localStyles.searchBar}
           onChangeText={onFilterData}
           value={searchTerm}
+          placeholder={dispensingStrings.search_by_last_name_first_name}
         />
         <PageButton text="Add Prescriber" onPress={createPrescriber} />
       </FlexRow>
@@ -143,7 +145,7 @@ const mapStateToProps = state => {
   const { isComplete } = wizard;
 
   const currentPrescriber = selectPrescriptionPrescriber(state);
-  const prescribers = selectSortedAndFilteredPrescribers(state);
+  const prescribers = selectSortedPrescribers(state);
 
   return { prescribers, searchTerm, isComplete, sortKey, isAscending, currentPrescriber };
 };
@@ -151,6 +153,7 @@ const mapStateToProps = state => {
 PrescriberSelectComponent.defaultProps = {
   searchTerm: '',
   isComplete: false,
+  currentPrescriber: null,
 };
 
 PrescriberSelectComponent.propTypes = {
@@ -164,7 +167,7 @@ PrescriberSelectComponent.propTypes = {
   sortKey: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   onCancelPrescription: PropTypes.func.isRequired,
-  currentPrescriber: PropTypes.func.isRequired,
+  currentPrescriber: PropTypes.object,
 };
 
 export const PrescriberSelect = connect(
