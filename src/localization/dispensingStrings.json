@@ -33,7 +33,8 @@
     "subtotal": "Subtotal",
     "total": "Total",
     "unit_price": "Unit price",
-    "usage_directions": "Usage directions"
+    "usage_directions": "Usage directions",
+    "search_by_last_name_first_name": "Search by Last Name, First Name"
   },
   "fr": {
     "available_credit": "Crédit disponible",
