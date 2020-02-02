@@ -6,7 +6,7 @@
 import { SHADOW_BORDER, BLUE_WHITE, BACKGROUND_COLOR } from './colors';
 
 export const PAGE_CONTENT_PADDING_HORIZONTAL = 20;
-export const FULL_SCREEN_MODAL_MARGIN = 8;
+export const FULL_SCREEN_MODAL_MARGIN = 1;
 
 export const pageStyles = {
   pageContentContainer: {
