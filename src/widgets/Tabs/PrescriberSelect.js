@@ -153,6 +153,7 @@ const mapStateToProps = state => {
 PrescriberSelectComponent.defaultProps = {
   searchTerm: '',
   isComplete: false,
+  currentPrescriber: null,
 };
 
 PrescriberSelectComponent.propTypes = {
@@ -166,7 +167,7 @@ PrescriberSelectComponent.propTypes = {
   sortKey: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   onCancelPrescription: PropTypes.func.isRequired,
-  currentPrescriber: PropTypes.func.isRequired,
+  currentPrescriber: PropTypes.func,
 };
 
 export const PrescriberSelect = connect(
