@@ -21,6 +21,7 @@ const translateToCoreDatabaseType = type => {
     case 'Payment':
     case 'CashTransaction':
       return 'Transaction';
+    case 'CashTransactionName':
     case 'Customer':
     case 'Supplier':
     case 'InternalSupplier':
@@ -133,10 +134,9 @@ class UIDatabase {
       case 'CashTransaction':
         return results.filtered('type == $0 OR type == $1', 'receipt', 'payment');
       case 'CashTransactionName':
-        return results.filtered(
-          'isActive == $0 && (isSupplier == $0 || isCustomer == $0 || isPatient == $0) && id != $0',
-          true
-        );
+        return results
+          .filtered('isVisible == true && id != $0', thisStoreNameId)
+          .filtered('isSupplier == true || isCustomer == true || isPatient == true');
       case 'CustomerCredit':
         return results.filtered('type == $0', 'customer_credit');
       case 'Policy':
