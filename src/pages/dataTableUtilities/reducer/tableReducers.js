@@ -159,6 +159,12 @@ export const toggleShowFinalised = state => {
   return { ...state, data: sortedData, showFinalised: newShowFinalisedState, searchTerm: '' };
 };
 
+export const toggleTransactionType = state => {
+  const { transactionType } = state;
+  const newTransactionType = transactionType === 'payment' ? 'receipt' : 'payment';
+  return { ...state, transactionType: newTransactionType };
+};
+
 export const toggleIndicators = state => {
   const { showIndicators } = state;
   return {
@@ -226,6 +232,7 @@ export const addRecord = state => {
 export const TableReducerLookup = {
   toggleStockOut,
   toggleShowFinalised,
+  toggleTransactionType,
   addRecord,
   toggleIndicators,
   selectIndicator,

@@ -101,6 +101,11 @@ export const toggleStockOut = route => ({
   payload: { route },
 });
 
+export const toggleTransactionType = route => ({
+  type: ACTIONS.TOGGLE_TRANSACTION_TYPE,
+  payload: { route },
+});
+
 /**
  * Adds all items from master lists, according to the type of pageObject.
  * i.e. a CustomerInvoice adds items from all of the custoemrs masterlists.
@@ -291,6 +296,7 @@ export const TableActionsLookup = {
   selectIndicator,
   hideOverStocked,
   toggleShowFinalised,
+  toggleTransactionType,
   showOverStocked,
   showStockOut,
   toggleStockOut,

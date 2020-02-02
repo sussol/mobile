@@ -15,6 +15,7 @@ export const ACTIONS = {
   HIDE_OVER_STOCKED: 'hideOverStocked',
   TOGGLE_STOCK_OUT: 'toggleStockOut',
   TOGGLE_SHOW_FINALISED: 'toggleShowFinalised',
+  TOGGLE_TRANSACTION_TYPE: 'toggleTransactionType',
   REFRESH_DATA_WITH_FINALISED_TOGGLE: 'refreshDataWithFinalisedToggle',
   FILTER_DATA_WITH_FINALISED_TOGGLE: 'filterDataWithFinalisedToggle',
   FILTER_DATA_WITH_OVER_STOCK_TOGGLE: 'filterDataWithOverStockToggle',
