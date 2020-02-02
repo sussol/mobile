@@ -74,7 +74,10 @@ const PatientHistory = ({ sortKey, onSortColumn, isAscending, data }) => {
 
 const mapStateToProps = state => {
   const { patient } = state;
-  return { ...patient, data: selectSortedPatientHistory(state) };
+  const { isAscending, sortKey } = patient;
+  const data = selectSortedPatientHistory(state);
+
+  return { isAscending, sortKey, data };
 };
 
 const mapDispatchToProps = dispatch => ({
