@@ -125,7 +125,7 @@ const localStyles = StyleSheet.create({
     marginLeft: PAGE_CONTENT_PADDING_HORIZONTAL,
     marginRight: PAGE_CONTENT_PADDING_HORIZONTAL,
     marginBottom: PAGE_CONTENT_PADDING_HORIZONTAL,
-    marginTop: 56,
+    marginTop: 36,
     opacity: 0.94,
     paddingBottom: 10,
   },
