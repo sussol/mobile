@@ -8,6 +8,7 @@ export const ACTIONS = {
   SORT_DATA: 'sortData',
   FILTER_DATA: 'filterData',
   REFRESH_DATA: 'refreshData',
+  REFRESH_CASH_REGISTER: 'refreshCashRegister',
   ADD_ITEM: 'addItem',
   ADD_RECORD: 'addRecord',
   TOGGLE_INDICATORS: 'toggleIndicators',

@@ -128,6 +128,15 @@ export const refreshData = state => {
 };
 
 /**
+ * Override for refreshData for cash register. Filtering and sorting is deferred to state-to-prop
+ * selectors.
+ */
+export const refreshCashRegister = state => {
+  const { backingData } = state;
+  return { ...state, data: backingData, modalKey: '' };
+};
+
+/**
  * Override for refreshData for pages which use a finalised toggle,
  * which will display either finalised records, or unfinalised.
  */
@@ -238,6 +247,7 @@ export const TableReducerLookup = {
   selectIndicator,
   hideOverStocked,
   refreshData,
+  refreshCashRegister,
   filterData,
   sortData,
   refreshDataWithFinalisedToggle,
