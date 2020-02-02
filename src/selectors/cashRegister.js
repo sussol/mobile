@@ -19,6 +19,7 @@ export const selectPageState = createSelector([pageStateSelector], pageState => 
   return {
     ...pageState,
     backingData: [],
+    data: [],
     dataState: new Map(),
     transactionType: 'payment',
     columns: [],
@@ -28,10 +29,7 @@ export const selectPageState = createSelector([pageStateSelector], pageState => 
   };
 });
 
-export const selectTransactions = createSelector(
-  [selectPageState],
-  pageState => pageState.backingData
-);
+export const selectTransactions = createSelector([selectPageState], pageState => pageState.data);
 
 export const selectTransactionType = createSelector(
   [selectPageState],
