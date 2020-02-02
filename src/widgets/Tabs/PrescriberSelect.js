@@ -167,7 +167,7 @@ PrescriberSelectComponent.propTypes = {
   sortKey: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   onCancelPrescription: PropTypes.func.isRequired,
-  currentPrescriber: PropTypes.func,
+  currentPrescriber: PropTypes.object,
 };
 
 export const PrescriberSelect = connect(
