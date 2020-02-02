@@ -11,10 +11,10 @@ import { recordKeyExtractor } from '../pages/dataTableUtilities';
 import currency from '../localization/currency';
 
 export const selectPageState = createSelector([pageStateSelector], pageState => {
-  const currentRoute = pageState?.pages?.currentRoute;
-  if (currentRoute === ROUTES.CASH_REGISTER) {
+  if (pageState?.route === ROUTES.CASH_REGISTER) {
     return pageState;
   }
+
   // Handle page component rendering during navigation to root.
   return {
     ...pageState,
@@ -34,7 +34,7 @@ export const selectTransactions = createSelector(
 );
 
 export const selectTransactionType = createSelector(
-  [pageStateSelector],
+  [selectPageState],
   pageState => pageState.transactionType
 );
 
