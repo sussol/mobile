@@ -71,6 +71,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
 
   const renderNameRightText = useCallback(({ type: nameType, dateOfBirth }) => {
     switch (nameType) {
+      case NAME_TYPE_KEYS.STORE:
       case NAME_TYPE_KEYS.FACILITY:
         return `${dispensingStrings.type}: ${dispensingStrings.facility}`;
       case NAME_TYPE_KEYS.PATIENT:
