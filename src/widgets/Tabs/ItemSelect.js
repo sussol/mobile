@@ -28,6 +28,7 @@ import {
 import { WizardActions } from '../../actions/WizardActions';
 import { PrescriptionActions } from '../../actions/PrescriptionActions';
 import { SearchBar } from '../SearchBar';
+import { generalStrings } from '../../localization';
 
 /**
  * Layout component used for a tab within the prescription wizard.
@@ -59,7 +60,11 @@ const ItemSelectComponent = ({
       <PrescriptionInfo />
       <FlexRow flex={1}>
         <FlexView flex={10}>
-          <SearchBar onChangeText={filterItems} value={itemSearchTerm} />
+          <SearchBar
+            onChangeText={filterItems}
+            value={itemSearchTerm}
+            placeholder={`${generalStrings.search_by} ${generalStrings.item_name}`}
+          />
           <SimpleTable
             data={items}
             columns={columns}

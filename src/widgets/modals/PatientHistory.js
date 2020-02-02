@@ -5,16 +5,20 @@
  */
 
 import React from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { getColumns, recordKeyExtractor, getItemLayout } from '../../pages/dataTableUtilities';
+
 import { DataTable, DataTableRow, DataTableHeaderRow } from '../DataTable';
+import { FlexRow } from '../FlexRow';
+
 import { selectSortedPatientHistory } from '../../selectors/patient';
 import { PatientActions } from '../../actions/PatientActions';
 
-import { WHITE } from '../../globalStyles';
+import { WHITE, APP_FONT_FAMILY } from '../../globalStyles';
+import { dispensingStrings } from '../../localization';
 
 const PatientHistory = ({ sortKey, onSortColumn, isAscending, data }) => {
   const columns = React.useMemo(() => getColumns('patientHistory'), []);
@@ -60,14 +64,22 @@ const PatientHistory = ({ sortKey, onSortColumn, isAscending, data }) => {
 
   return (
     <View style={localStyles.mainContainer}>
-      <DataTable
-        renderRow={renderRow}
-        data={data}
-        renderHeader={renderHeader}
-        keyExtractor={recordKeyExtractor}
-        getItemLayout={getItemLayout}
-        columns={getColumns('patientHistory')}
-      />
+      {data.length ? (
+        <DataTable
+          renderRow={renderRow}
+          data={data}
+          renderHeader={renderHeader}
+          keyExtractor={recordKeyExtractor}
+          getItemLayout={getItemLayout}
+          columns={getColumns('patientHistory')}
+        />
+      ) : (
+        <FlexRow alignItems="center" justifyContent="center" flex={1}>
+          <Text style={localStyles.placeholder}>
+            {dispensingStrings.no_history_for_this_patient}
+          </Text>
+        </FlexRow>
+      )}
     </View>
   );
 };
@@ -88,6 +100,7 @@ export const PatientHistoryModal = connect(mapStateToProps, mapDispatchToProps)(
 
 const localStyles = {
   mainContainer: { backgroundColor: WHITE, flex: 1 },
+  placeholder: { fontFamily: APP_FONT_FAMILY, fontSize: 20 },
 };
 
 PatientHistory.propTypes = {

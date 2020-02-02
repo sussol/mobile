@@ -25,7 +25,12 @@ import { FlexColumn } from '../FlexColumn';
 
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 import { PrescriptionActions } from '../../actions/PrescriptionActions';
-import { selectPrescriptionTotal } from '../../selectors/payment';
+import {
+  selectPrescriptionTotal,
+  selectDiscountAmount,
+  selectPrescriptionSubTotal,
+} from '../../selectors/payment';
+import { selectInsuranceDiscountRate } from '../../selectors/insurance';
 
 const mapStateToProps = state => {
   const { payment, wizard, modules } = state;
@@ -37,8 +42,14 @@ const mapStateToProps = state => {
   const currentUser = selectCurrentUser(state);
   const canConfirm = paymentValid && !isComplete;
   const total = selectPrescriptionTotal(state);
+  const subtotal = selectPrescriptionSubTotal(state);
+  const discountAmount = selectDiscountAmount(state);
+  const discountRate = selectInsuranceDiscountRate(state);
 
   return {
+    subtotal,
+    discountAmount,
+    discountRate,
     total,
     transaction,
     canConfirm,
@@ -57,6 +68,9 @@ const mapDispatchToProps = dispatch => {
 
 const PrescriptionConfirmationComponent = ({
   total,
+  subtotal,
+  discountAmount,
+  discountRate,
   transaction,
   currentUser,
   currentPatient,
@@ -70,7 +84,16 @@ const PrescriptionConfirmationComponent = ({
   const confirm = React.useCallback(
     () =>
       UIDatabase.write(() =>
-        pay(currentUser, currentPatient, transaction, paymentAmount.value, total.value)
+        pay(
+          currentUser,
+          currentPatient,
+          transaction,
+          paymentAmount.value,
+          total.value,
+          subtotal.value,
+          discountAmount.value,
+          discountRate
+        )
       ),
     [currentUser, currentPatient, transaction, paymentAmount.value]
   );
@@ -100,6 +123,11 @@ const PrescriptionConfirmationComponent = ({
   );
 };
 
+PrescriptionConfirmationComponent.defaultProps = {
+  discountAmount: null,
+  discountRate: 0,
+};
+
 PrescriptionConfirmationComponent.propTypes = {
   transaction: PropTypes.object.isRequired,
   currentUser: PropTypes.object.isRequired,
@@ -108,7 +136,10 @@ PrescriptionConfirmationComponent.propTypes = {
   canConfirm: PropTypes.bool.isRequired,
   usingPayments: PropTypes.bool.isRequired,
   onDelete: PropTypes.func.isRequired,
-  total: PropTypes.number.isRequired,
+  total: PropTypes.object.isRequired,
+  subtotal: PropTypes.object.isRequired,
+  discountAmount: PropTypes.object,
+  discountRate: PropTypes.number,
 };
 
 export const PrescriptionConfirmation = connect(
