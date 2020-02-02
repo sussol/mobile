@@ -235,7 +235,7 @@ const generateSyncData = (settings, recordType, record) => {
         ID: record.id,
         insuranceProviderID: record.insuranceProvider.id,
         nameID: record.patient.id,
-        isActive: record.isActive,
+        isActive: String(record.isActive),
         policyNumberFamily: record.policyNumberFamily,
         policyNumberPerson: record.policyNumberPerson,
         type: record.type,
