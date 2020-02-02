@@ -203,6 +203,9 @@ const generateSyncData = (settings, recordType, record) => {
           record.linkedRequisition && record.linkedRequisition.id
             ? record.linkedRequisition.id
             : undefined,
+        nameInsuranceJoinID: record?.insurancePolicy?.id,
+        insuranceDiscountAmount: String(record?.insuranceDiscountAmount),
+        insuranceDiscountRate: String(record?.insuranceDiscountRate),
       };
     }
     case 'TransactionBatch': {
@@ -235,7 +238,7 @@ const generateSyncData = (settings, recordType, record) => {
         ID: record.id,
         insuranceProviderID: record.insuranceProvider.id,
         nameID: record.patient.id,
-        isActive: record.isActive,
+        isActive: String(record.isActive),
         policyNumberFamily: record.policyNumberFamily,
         policyNumberPerson: record.policyNumberPerson,
         type: record.type,
