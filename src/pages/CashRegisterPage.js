@@ -9,8 +9,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { pageStateSelector } from '../selectors/pageSelectors';
-import { selectBalance, selectTransactionData } from '../selectors/cashRegister';
+import { selectPageState, selectBalance, selectTransactionData } from '../selectors/cashRegister';
 
 import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 
@@ -134,7 +133,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 const mapStateToProps = state => {
-  const pageState = pageStateSelector(state);
+  const pageState = selectPageState(state);
   const data = selectTransactionData(state);
   const currentBalance = selectBalance(state);
 

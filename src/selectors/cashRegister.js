@@ -6,13 +6,32 @@
 import { createSelector } from 'reselect';
 import { pageStateSelector } from './pageSelectors';
 
+import { ROUTES } from '../navigation/constants';
+import { recordKeyExtractor } from '../pages/dataTableUtilities';
 import currency from '../localization/currency';
 
-/**
- * Derives current balance from cash register transactions.
- * @return {Number}
- */
-export const selectTransactions = createSelector([pageStateSelector], pageState => pageState.data);
+export const selectPageState = createSelector([pageStateSelector], pageState => {
+  const currentRoute = pageState?.pages?.currentRoute;
+  if (currentRoute === ROUTES.CASH_REGISTER) {
+    return pageState;
+  }
+  // Handle page component rendering during navigation to root.
+  return {
+    ...pageState,
+    backingData: [],
+    dataState: new Map(),
+    transactionType: 'payment',
+    columns: [],
+    keyExtractor: recordKeyExtractor,
+    modalKey: '',
+    sortKey: '',
+  };
+});
+
+export const selectTransactions = createSelector(
+  [selectPageState],
+  pageState => pageState.backingData
+);
 
 export const selectTransactionType = createSelector(
   [pageStateSelector],
