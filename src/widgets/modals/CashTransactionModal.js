@@ -43,7 +43,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
   const [isReasonModalOpen, setIsReasonModalOpen] = useState(false);
   const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
 
-  const names = useMemo(() => UIDatabase.objects('Name').filtered('isVisible == true'));
+  const names = useMemo(() => UIDatabase.objects('CashTransactionName'));
   const reasons = useMemo(() => UIDatabase.objects('Options'));
   const type = useMemo(
     () => (isCashIn ? CASH_TRANSACTION_TYPES.CASH_IN : CASH_TRANSACTION_TYPES.CASH_OUT),

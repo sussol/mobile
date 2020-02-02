@@ -132,6 +132,11 @@ class UIDatabase {
         return results.filtered('type == $0', 'payment');
       case 'CashTransaction':
         return results.filtered('type == $0 OR type == $1', 'receipt', 'payment');
+      case 'CashTransactionName':
+        return results.filtered(
+          'isActive == $0 && (isSupplier == $0 || isCustomer == $0 || isPatient == $0) && id != $0',
+          true
+        );
       case 'CustomerCredit':
         return results.filtered('type == $0', 'customer_credit');
       case 'Policy':
