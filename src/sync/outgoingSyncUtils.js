@@ -86,6 +86,7 @@ const generateSyncData = (settings, recordType, record) => {
         email: record.emailAddress,
         supplying_store_id: settings.get(THIS_STORE_ID),
         phone: record.phoneNumber,
+        customer: String(record.isCustomer),
       };
     }
     case 'NumberSequence': {
