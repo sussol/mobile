@@ -48,7 +48,7 @@ NavigationBar.defaultProps = {
 };
 
 const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 20 : 0;
-const HEADER_HEIGHT = Platform.OS === 'ios' ? 44 : 56;
+const HEADER_HEIGHT = Platform.OS === 'ios' ? 36 : 36;
 
 const sectionStyle = {
   flex: 1,
