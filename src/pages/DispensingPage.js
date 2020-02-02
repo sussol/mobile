@@ -12,7 +12,7 @@ import { ToggleBar, DataTablePageView, SearchBar, PageButton } from '../widgets'
 import { DataTable, DataTableRow, DataTableHeaderRow } from '../widgets/DataTable';
 import { PatientHistoryModal } from '../widgets/modals/PatientHistory';
 import { FormControl } from '../widgets/FormControl';
-import ModalContainer from '../widgets/modals/ModalContainer';
+import { ModalContainer } from '../widgets/modals/ModalContainer';
 
 import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
 import { createPrescription } from '../navigation/actions';
@@ -199,7 +199,7 @@ const Dispensing = ({
         />
       </ModalContainer>
       <ModalContainer
-        title={`${dispensingStrings.patient} ${dispensingStrings.history} - ${currentPatient?.firstName} ${currentPatient?.lastName}`}
+        title={`${dispensingStrings.patient} ${dispensingStrings.history} - ${currentPatient?.name}`}
         onClose={cancelPatientEdit}
         fullScreen
         isVisible={patientHistoryModalOpen}

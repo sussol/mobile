@@ -80,7 +80,7 @@ const generateSyncData = (settings, recordType, record) => {
         type: record.type,
         first: record.firstName,
         last: record.lastName,
-        name: `${record.lastName}, ${record.firstName}`,
+        name: record.name,
         date_of_birth: getDateString(record.dateOfBirth),
         code: record.code,
         email: record.emailAddress,
