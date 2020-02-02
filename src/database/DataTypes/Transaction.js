@@ -479,6 +479,8 @@ Transaction.schema = {
     option: { type: 'Options', optional: true },
     linkedTransaction: { type: 'Transaction', optional: true },
     user1: { type: 'string', optional: true },
+    insuranceDiscountRate: { type: 'double', optional: true },
+    insuranceDiscountAmount: { type: 'double', optional: true },
   },
 };
 
