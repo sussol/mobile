@@ -9,7 +9,11 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { selectPageState, selectBalance, selectFilteredTransactions } from '../selectors/cashRegister';
+import {
+  selectPageState,
+  selectBalance,
+  selectFilteredTransactions,
+} from '../selectors/cashRegister';
 
 import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 
@@ -21,7 +25,7 @@ import { DataTablePageModal } from '../widgets/modals';
 
 import { ROUTES } from '../navigation/constants';
 import { buttonStrings, generalStrings, pageInfoStrings } from '../localization';
-import globalStyles from '../globalStyles';
+import globalStyles, { WHITE } from '../globalStyles';
 
 export const CashRegister = ({
   dispatch,
@@ -107,7 +111,7 @@ export const CashRegister = ({
               label={pageInfoStrings.current_balance}
               text={currentBalance}
               textAlign="right"
-          />
+              textBackground={WHITE}
             />
             <AddNewTransactionButton />
           </View>

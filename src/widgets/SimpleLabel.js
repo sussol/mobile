@@ -23,31 +23,37 @@ import {
  * @prop {String} size   The size of the label: "small", "medium" or "large"
  *
  */
-export const SimpleLabel = React.memo(({ label, text, size, labelAlign, textAlign }) => {
-  // Ensure null is set rather than any other nullish value as null is a node, but "" is not.
-  const usingText = text || null;
-  const usingLabel = label || null;
-  const styles = React.useMemo(() => simpleLabelStyles(size), [size]);
-  const { labelStyle, textStyle, containerStyle } = styles;
-  return (
-    <View style={containerStyle}>
-      {usingLabel && (
-        <Text
-          numberOfLines={2}
-          ellipsizeMode="tail"
-          style={{ ...labelStyle, textAlign: labelAlign }}
-        >
-          {`${label}  `}
-        </Text>
-      )}
-      {usingText && (
-        <Text numberOfLines={2} ellipsizeMode="tail" style={{ ...textStyle, textAlign }}>
-          {text}
-        </Text>
-      )}
-    </View>
-  );
-});
+export const SimpleLabel = React.memo(
+  ({ label, text, size, labelAlign, textAlign, labelBackground, textBackground }) => {
+    // Ensure null is set rather than any other nullish value as null is a node, but "" is not.
+    const usingText = text || null;
+    const usingLabel = label || null;
+    const styles = React.useMemo(() => simpleLabelStyles(size), [size]);
+    const { labelStyle, textStyle, containerStyle } = styles;
+    return (
+      <View style={containerStyle}>
+        {usingLabel && (
+          <Text
+            numberOfLines={2}
+            ellipsizeMode="tail"
+            style={{ ...labelStyle, textAlign: labelAlign, backgroundColor: labelBackground }}
+          >
+            {`${label}  `}
+          </Text>
+        )}
+        {usingText && (
+          <Text
+            numberOfLines={2}
+            ellipsizeMode="tail"
+            style={{ ...textStyle, textAlign, backgroundColor: textBackground }}
+          >
+            {text}
+          </Text>
+        )}
+      </View>
+    );
+  }
+);
 
 const FONT_SIZES = {
   small: APP_GENERAL_FONT_SIZE,
@@ -80,6 +86,8 @@ SimpleLabel.defaultProps = {
   label: '',
   labelAlign: 'left',
   textAlign: 'left',
+  labelBackground: 'transparent',
+  textBackground: 'transparent',
 };
 
 SimpleLabel.propTypes = {
@@ -88,4 +96,6 @@ SimpleLabel.propTypes = {
   label: PropTypes.string,
   labelAlign: PropTypes.string,
   textAlign: PropTypes.string,
+  labelBackground: PropTypes.string,
+  textBackground: PropTypes.string,
 };
