@@ -110,9 +110,17 @@ const createPrescriber = (database, prescriberDetails) => {
  *  }
  */
 const createPatient = (database, patientDetails) => {
-  const { dateOfBirth, addressOne, addressTwo } = patientDetails;
+  const { PATIENT_CODE } = NUMBER_SEQUENCE_KEYS;
+  const { dateOfBirth, addressOne, addressTwo, lastName, firstName } = patientDetails;
+
   const billingAddress = createAddress(database, { line1: addressOne, line2: addressTwo });
+
   const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
+  const thisStoreCode = database.getSetting(SETTINGS_KEYS.THIS_STORE_CODE);
+  const patientSequenceNumber = getNextNumber(database, PATIENT_CODE);
+  const uniqueCode = `${thisStoreCode}${String(patientSequenceNumber)}`;
+
+  const fullName = `${lastName}, ${firstName}`;
 
   const patient = database.create('Name', {
     id: generateUUID(),
@@ -122,8 +130,10 @@ const createPatient = (database, patientDetails) => {
     isVisible: true,
     isPatient: true,
     type: 'patient',
+    code: uniqueCode,
     supplyingStoreId: thisStoreId,
     isCustomer: true,
+    name: fullName,
   });
 
   database.save('Patient', patient);

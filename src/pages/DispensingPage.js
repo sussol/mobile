@@ -141,7 +141,12 @@ const Dispensing = ({
       <DataTablePageView>
         <View style={pageTopSectionContainer}>
           <ToggleBar toggles={toggles} />
-          <SearchBar onChangeText={filter} value={searchTerm} viewStyle={localStyles.searchBar} />
+          <SearchBar
+            onChangeText={filter}
+            value={searchTerm}
+            viewStyle={localStyles.searchBar}
+            placeholder={dispensingStrings.search_by_last_name_first_name}
+          />
           <PageButton
             text={
               usingPatientsDataSet
@@ -199,7 +204,7 @@ const Dispensing = ({
         />
       </ModalContainer>
       <ModalContainer
-        title={`${dispensingStrings.patient} ${dispensingStrings.history} - ${currentPatient?.firstName} ${currentPatient?.lastName}`}
+        title={`${dispensingStrings.patient} ${dispensingStrings.history} - ${currentPatient?.name}`}
         onClose={cancelPatientEdit}
         fullScreen
         isVisible={patientHistoryModalOpen}

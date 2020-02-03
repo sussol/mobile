@@ -39,6 +39,8 @@
     "stocktake": "Relevé d'inventaire",
     "supplier_invoices": "Factures fournisseurs",
     "supplier_requisitions": "Factures réquisitions",
+    "settings": "réglages",
+    "database_contents": "Contenus de la base de données",
     "dispensary": "Dispensaire",
     "dashboard": "Tableau de bord",
     "cash_register": "Cash register"
