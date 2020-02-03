@@ -13,6 +13,7 @@ import { SimpleLabel } from './SimpleLabel';
 import { TouchableNoFeedback } from './DataTable';
 
 import { dispensingStrings } from '../localization';
+import currency from '../localization/currency';
 
 /**
  * Simple layout component for primary use within the PrescriptionSummary
@@ -24,7 +25,7 @@ import { dispensingStrings } from '../localization';
  * @param {Object} item A TransactionItem record to display details for.
  */
 export const PrescriptionSummaryRow = ({ item }) => {
-  const { itemName, itemCode, totalQuantity, note } = item;
+  const { itemName, itemCode, totalQuantity, note, totalPrice } = item;
 
   const details = [{ label: 'Code', text: itemCode }];
 
@@ -35,6 +36,8 @@ export const PrescriptionSummaryRow = ({ item }) => {
       <DetailRow details={details} />
       <View style={localStyles.marginFive} />
       <SimpleLabel label={dispensingStrings.directions} text={note} />
+      <View style={localStyles.marginFive} />
+      <SimpleLabel label="Price" text={currency(totalPrice).format()} />
     </TouchableNoFeedback>
   );
 };
