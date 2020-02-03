@@ -53,6 +53,11 @@ export const addRecord = (record, route) => ({
  */
 export const refreshData = route => ({ type: ACTIONS.REFRESH_DATA, payload: { route } });
 
+export const refreshCashRegister = route => ({
+  type: ACTIONS.REFRESH_CASH_REGISTER,
+  payload: { route },
+});
+
 export const toggleIndicators = route => ({ type: ACTIONS.TOGGLE_INDICATORS, payload: { route } });
 
 export const selectIndicator = (indicatorCode, route) => ({
@@ -98,6 +103,11 @@ export const toggleShowFinalised = route => ({
  */
 export const toggleStockOut = route => ({
   type: ACTIONS.TOGGLE_STOCK_OUT,
+  payload: { route },
+});
+
+export const toggleTransactionType = route => ({
+  type: ACTIONS.TOGGLE_TRANSACTION_TYPE,
   payload: { route },
 });
 
@@ -163,18 +173,19 @@ export const addCashTransaction = (cashTransaction, route) => (dispatch, getStat
   if (transactionType === CASH_TRANSACTION_TYPES.CASH_IN) {
     // Create receipt transaction and associated customer credit and receipt transaction batch.
     UIDatabase.write(() => {
-      const [payment] = createRecord(UIDatabase, 'CashIn', currentUser, cashTransaction);
-      dispatch(addRecord(payment, route));
+      createRecord(UIDatabase, 'CashIn', currentUser, cashTransaction);
     });
   }
 
   if (transactionType === CASH_TRANSACTION_TYPES.CASH_OUT) {
     // Create payment transaction and associated customer invoice, payment transaction batch.
     UIDatabase.write(() => {
-      const [payment] = createRecord(UIDatabase, 'CashOut', currentUser, cashTransaction);
-      dispatch(addRecord(payment, route));
+      createRecord(UIDatabase, 'CashOut', currentUser, cashTransaction);
     });
   }
+
+  dispatch(refreshCashRegister(route));
+  dispatch(closeModal(route));
 };
 
 /**
@@ -287,10 +298,12 @@ export const TableActionsLookup = {
   sortData,
   filterData,
   refreshData,
+  refreshCashRegister,
   toggleIndicators,
   selectIndicator,
   hideOverStocked,
   toggleShowFinalised,
+  toggleTransactionType,
   showOverStocked,
   showStockOut,
   toggleStockOut,

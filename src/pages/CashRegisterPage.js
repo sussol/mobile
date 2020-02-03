@@ -9,13 +9,17 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { pageStateSelector } from '../selectors/pageSelectors';
-import { selectBalance } from '../selectors/cashRegister';
+import {
+  selectCashRegisterState,
+  selectBalance,
+  selectTransactionData,
+} from '../selectors/cashRegister';
 
 import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 
 import { DataTablePageView, PageButton } from '../widgets';
 import { SimpleLabel } from '../widgets/SimpleLabel';
+import { ToggleBar } from '../widgets/ToggleBar';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import { DataTablePageModal } from '../widgets/modals';
 
@@ -32,9 +36,11 @@ export const CashRegister = ({
   modalKey,
   columns,
   currentBalance,
+  transactionType,
   onNewCashTransaction,
   onCloseModal,
   onAddCashTransaction,
+  onToggleTransactionType,
 }) => {
   const renderRow = useCallback(
     listItem => {
@@ -65,16 +71,25 @@ export const CashRegister = ({
 
   const AddNewTransactionButton = () => (
     <PageButton
-      style={globalStyles.topButton}
+      style={globalStyles.wideButton}
       text={buttonStrings.new_transaction}
       onPress={onNewCashTransaction}
     />
+  );
+
+  const toggles = useMemo(
+    () => [
+      { text: 'Payments', onPress: onToggleTransactionType, isOn: transactionType === 'payment' },
+      { text: 'Receipts', onPress: onToggleTransactionType, isOn: transactionType === 'receipt' },
+    ],
+    [transactionType]
   );
 
   const {
     pageTopSectionContainer,
     pageTopLeftSectionContainer,
     pageTopRightSectionContainer,
+    verticalContainer,
   } = globalStyles;
 
   const topLeftContainerStyle = useMemo(() => ({ ...pageTopLeftSectionContainer, flex: 1 }));
@@ -91,7 +106,10 @@ export const CashRegister = ({
           />
         </View>
         <View style={topRightContainerStyle}>
-          <AddNewTransactionButton />
+          <View style={verticalContainer}>
+            <ToggleBar toggles={toggles} />
+            <AddNewTransactionButton />
+          </View>
         </View>
       </View>
       <DataTable
@@ -119,9 +137,11 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 const mapStateToProps = state => {
-  const pageState = pageStateSelector(state);
+  const pageState = selectCashRegisterState(state);
+  const data = selectTransactionData(state);
   const currentBalance = selectBalance(state);
-  return { ...pageState, currentBalance };
+
+  return { ...pageState, data, currentBalance };
 };
 
 export const CashRegisterPage = connect(mapStateToProps, mapDispatchToProps)(CashRegister);
@@ -137,6 +157,8 @@ CashRegister.propTypes = {
   keyExtractor: PropTypes.func.isRequired,
   columns: PropTypes.array.isRequired,
   currentBalance: PropTypes.string.isRequired,
+  transactionType: PropTypes.string.isRequired,
+  onToggleTransactionType: PropTypes.func.isRequired,
   onNewCashTransaction: PropTypes.func.isRequired,
   onCloseModal: PropTypes.func.isRequired,
   onAddCashTransaction: PropTypes.func.isRequired,

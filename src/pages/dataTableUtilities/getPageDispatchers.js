@@ -35,6 +35,7 @@ export const getPageDispatchers = (dispatch, props, dataType, route) => {
       dispatch(BasePageActions.toggleIndicators(route));
       dispatch(BasePageActions.refreshData(route));
     },
+    onToggleTransactionType: () => dispatch(BasePageActions.toggleTransactionType(route)),
     onSelectIndicator: indicatorCode =>
       dispatch(BasePageActions.selectIndicator(indicatorCode, route)),
     onShowOverStocked: () => dispatch(BasePageActions.showOverStocked(route)),
@@ -53,7 +54,8 @@ export const getPageDispatchers = (dispatch, props, dataType, route) => {
       dispatch(BasePageActions.openModal(MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM, route)),
     onEditReason: rowKey =>
       dispatch(BasePageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey, route)),
-    onNewCashTransaction: () => dispatch(BasePageActions.openModal(MODAL_KEYS.CREATE_CASH_TRANSACTION, route)),
+    onNewCashTransaction: () =>
+      dispatch(BasePageActions.openModal(MODAL_KEYS.CREATE_CASH_TRANSACTION, route)),
     onNewCustomerInvoice: () =>
       dispatch(BasePageActions.openModal(MODAL_KEYS.SELECT_CUSTOMER, route)),
     onNewPrescription: () => dispatch(BasePageActions.openModal(MODAL_KEYS.SELECT_PATIENT, route)),
