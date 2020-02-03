@@ -17,6 +17,7 @@ export const SETTINGS_KEYS = {
   THIS_STORE_ID: 'ThisStoreId',
   THIS_STORE_NAME_ID: 'ThisStoreNameId',
   THIS_STORE_TAGS: 'ThisStoreTags',
+  THIS_STORE_CODE: 'ThisStoreCode',
   THIS_STORE_CUSTOM_DATA: 'ThisStoreCustomData',
   CONSUMPTION_LOOKBACK_PERIOD: 'monthlyConsumptionLookBackPeriod',
   CONSUMPTION_ENFORCE_LOOKBACK: 'monthlyConsumptionEnforceLookBackPeriod',

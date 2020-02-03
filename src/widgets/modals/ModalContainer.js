@@ -19,14 +19,23 @@ import {
 /**
  * A modal that can be displayed over the page content container, rendering any children
  * about two thirds of the way up, and a cross in the top right to close.
- * @prop {Bool}             fullScreen Force the modal to cover the entire screen.
- * @prop {Bool}             isVisible  Whether the modal is open.
- * @prop {Func}             onClose    A function to call if the close x is pressed.
- * @prop {String}           title      The title to show in within the modal.
- * @prop {React.Element}    children   The components to render within the modal.
- * @prop {Bool}             noCancel   Indicator that the close button should not display.
+ * @prop {Bool}             fullScreen      Force the modal to cover the entire screen.
+ * @prop {Bool}             isVisible       Whether the modal is open.
+ * @prop {Func}             onClose         A function to call if the close x is pressed.
+ * @prop {String}           title           The title to show in within the modal.
+ * @prop {React.Element}    children        The components to render within the modal.
+ * @prop {Bool}             noCancel        Indicator that the close button should not display.
+ * @prop {String}           backgroundColor BackgroundColor of the modal container.
  */
-export const ModalContainer = ({ fullScreen, isVisible, onClose, title, children, noCancel }) => {
+export const ModalContainer = ({
+  fullScreen,
+  isVisible,
+  onClose,
+  title,
+  children,
+  noCancel,
+  backgroundColor,
+}) => {
   const {
     contentContainer,
     modalContainer,
@@ -40,8 +49,17 @@ export const ModalContainer = ({ fullScreen, isVisible, onClose, title, children
     fullScreenContentContainer,
   } = localStyles;
 
-  const internalChildrenContainer = fullScreen ? fullScreenChildrenContainer : childrenContainer;
-  const internalContentContainer = fullScreen ? fullScreenContentContainer : contentContainer;
+  const wrapStyle = style => ({ ...style, backgroundColor });
+
+  const internalChildrenContainer = React.useMemo(
+    () => wrapStyle(fullScreen ? fullScreenChildrenContainer : childrenContainer),
+    [backgroundColor]
+  );
+
+  const internalContentContainer = React.useMemo(
+    () => wrapStyle(fullScreen ? fullScreenContentContainer : contentContainer),
+    [backgroundColor]
+  );
 
   const CloseButton = React.useCallback(
     () => (
@@ -88,6 +106,7 @@ ModalContainer.defaultProps = {
   title: '',
   noCancel: false,
   onClose: null,
+  backgroundColor: DARKER_GREY,
 };
 
 ModalContainer.propTypes = {
@@ -97,29 +116,26 @@ ModalContainer.propTypes = {
   title: PropTypes.string,
   children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
   noCancel: PropTypes.bool,
+  backgroundColor: PropTypes.string,
 };
 
 const localStyles = StyleSheet.create({
-  modalContainer: { backgroundColor: DARKER_GREY },
-
   contentContainer: {
     flex: 1,
-    backgroundColor: DARKER_GREY,
     marginLeft: PAGE_CONTENT_PADDING_HORIZONTAL,
     marginRight: PAGE_CONTENT_PADDING_HORIZONTAL,
     marginBottom: PAGE_CONTENT_PADDING_HORIZONTAL,
-    marginTop: 56,
+    marginTop: 36,
     opacity: 0.94,
     paddingBottom: 10,
   },
   fullScreenContentContainer: {
     flex: 1,
-    backgroundColor: DARKER_GREY,
     marginLeft: FULL_SCREEN_MODAL_MARGIN,
     marginRight: FULL_SCREEN_MODAL_MARGIN,
     marginBottom: FULL_SCREEN_MODAL_MARGIN,
     marginTop: FULL_SCREEN_MODAL_MARGIN,
-    opacity: 0.94,
+
     paddingBottom: 10,
   },
   fullScreenChildrenContainer: {
