@@ -179,7 +179,7 @@ const Menu = ({
         </View>
       </View>
     ),
-    [usingModules]
+    [usingModules, usingDashboard, usingDispensary, usingCashRegister]
   );
 
   const OriginalLayout = useCallback(
@@ -218,7 +218,7 @@ const styles = {
     alignItems: 'center',
     borderColor: SHADOW_BORDER,
     backgroundColor: 'white',
-    marginTop: 30,
+    marginBottom: 10,
     flex: 1,
     borderWidth: 1,
   },

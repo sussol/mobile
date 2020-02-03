@@ -1,20 +1,39 @@
-import { UIDatabase } from '../database';
-
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
+import { createSelector } from 'reselect';
 
-export const selectSortedAndFilteredPrescribers = ({ prescriber }) => {
-  const { searchTerm, sortKey, isAscending } = prescriber;
+import { UIDatabase } from '../database';
 
-  const queryString = 'firstName CONTAINS[c] $0 OR lastName CONTAINS[c] $0';
-  const newData = UIDatabase.objects('Prescriber')
-    .filtered(queryString, searchTerm)
-    .sorted(sortKey, isAscending);
+export const selectSortKey = ({ prescriber }) => {
+  const { sortKey } = prescriber;
+  return sortKey;
+};
+
+export const selectIsAscending = ({ prescriber }) => {
+  const { isAscending } = prescriber;
+  return isAscending;
+};
+
+export const selectSearchTerm = ({ prescriber }) => {
+  const { searchTerm } = prescriber;
+  return searchTerm;
+};
+
+export const selectFilteredPrescribers = createSelector([selectSearchTerm], searchTerm => {
+  const [lastName, firstName] = searchTerm.split(',').map(name => name.trim());
+
+  const queryString = 'lastName BEGINSWITH[c] $0 AND firstName BEGINSWITH[c] $1';
+  const newData = UIDatabase.objects('Prescriber').filtered(queryString, lastName, firstName);
 
   return newData;
-};
+});
+
+export const selectSortedPrescribers = createSelector(
+  [selectSortKey, selectIsAscending, selectFilteredPrescribers],
+  (sortKey, isAscending, prescribers) => prescribers.sorted(sortKey, isAscending)
+);
 
 export const selectPrescriberModalOpen = ({ prescriber }) => {
   const { isCreatingPrescriber, isEditingPrescriber } = prescriber;

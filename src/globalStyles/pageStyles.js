@@ -6,16 +6,12 @@
 import { SHADOW_BORDER, BLUE_WHITE, BACKGROUND_COLOR } from './colors';
 
 export const PAGE_CONTENT_PADDING_HORIZONTAL = 20;
-export const PAGE_CONTENT_PADDING_TOP = 10;
-export const PAGE_CONTENT_PADDING_BOTTOM = 20;
-export const FULL_SCREEN_MODAL_MARGIN = 8;
+export const FULL_SCREEN_MODAL_MARGIN = 1;
 
 export const pageStyles = {
   pageContentContainer: {
     flex: 1,
-    paddingTop: PAGE_CONTENT_PADDING_TOP,
     paddingHorizontal: PAGE_CONTENT_PADDING_HORIZONTAL,
-    paddingBottom: PAGE_CONTENT_PADDING_BOTTOM,
     backgroundColor: BACKGROUND_COLOR,
   },
   container: {
