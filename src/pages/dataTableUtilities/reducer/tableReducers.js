@@ -133,7 +133,7 @@ export const refreshData = state => {
  */
 export const refreshCashRegister = state => {
   const { backingData } = state;
-  return { ...state, data: backingData, modalKey: '' };
+  return { ...state, data: backingData };
 };
 
 /**

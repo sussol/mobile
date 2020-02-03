@@ -175,7 +175,6 @@ export const addCashTransaction = (cashTransaction, route) => (dispatch, getStat
     UIDatabase.write(() => {
       createRecord(UIDatabase, 'CashIn', currentUser, cashTransaction);
     });
-    dispatch(refreshCashRegister(route));
   }
 
   if (transactionType === CASH_TRANSACTION_TYPES.CASH_OUT) {
@@ -183,8 +182,10 @@ export const addCashTransaction = (cashTransaction, route) => (dispatch, getStat
     UIDatabase.write(() => {
       createRecord(UIDatabase, 'CashOut', currentUser, cashTransaction);
     });
-    dispatch(refreshCashRegister(route));
   }
+
+  dispatch(refreshCashRegister(route));
+  dispatch(closeModal(route));
 };
 
 /**
