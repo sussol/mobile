@@ -114,12 +114,19 @@ class MSupplyMobileAppContainer extends React.Component {
 
   componentDidMount = () => {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
-    AppState.addEventListener('change', this.onAppStateChange);
+
+    if (!__DEV__) {
+      AppState.addEventListener('change', this.onAppStateChange);
+    }
   };
 
   componentWillUnmount = () => {
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackEvent);
-    AppState.removeEventListener('change', this.onAppStateChange);
+
+    if (!__DEV__) {
+      AppState.removeEventListener('change', this.onAppStateChange);
+    }
+
     this.scheduler.clearAll();
   };
 
