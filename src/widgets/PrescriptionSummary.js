@@ -8,9 +8,12 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import PropTypes from 'prop-types';
 
+import { UIDatabase } from '../database';
+
 import { Separator } from './Separator';
 import { PrescriptionSummaryRow } from './PrescriptionSummaryRow';
 
+import { recordKeyExtractor } from '../pages/dataTableUtilities';
 import { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles';
 
 /**
@@ -23,9 +26,10 @@ export const PrescriptionSummary = ({ transaction }) => (
   <View style={localStyles.containerStyle}>
     <Text style={localStyles.titleStyle}>Item Details</Text>
     <FlatList
-      data={transaction?.items ?? []}
+      data={transaction?.getTransactionBatches(UIDatabase) ?? []}
       ItemSeparatorComponent={Separator}
       renderItem={PrescriptionSummaryRow}
+      keyExtractor={recordKeyExtractor}
     />
   </View>
 );
