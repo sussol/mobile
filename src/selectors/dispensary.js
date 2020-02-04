@@ -45,7 +45,7 @@ export const selectFilteredData = createSelector(
       .split(/,|-d/)
       .map(name => name.trim());
 
-    const birthYearDate = moment(birthYearString || new Date(null), 'Y', null, true).toDate();
+    const birthYearDate = moment(birthYearString || new Date(1900, 0, 0), 'Y', null, true).toDate();
 
     const queryString = 'firstName BEGINSWITH[c] $0 AND lastName BEGINSWITH[c] $1';
     const newData = data.filtered(queryString, firstName, lastName, birthYearDate);
