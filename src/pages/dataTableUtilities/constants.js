@@ -71,6 +71,7 @@ export const COLUMN_NAMES = {
   AVAILABLE_QUANTITY: 'availableQuantity',
   BATCH_NAME: 'batch',
   BATCHES: 'batches',
+  CASH_REASON: 'cashReason',
   CODE: 'code',
   COMMENT: 'comment',
   CONFIRM_DATE: 'confirmDate',
