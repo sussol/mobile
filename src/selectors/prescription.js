@@ -106,9 +106,7 @@ export const selectPatientType = ({ prescription }) => {
 export const selectPrescriptionCategories = () =>
   UIDatabase.objects('PrescriptionCategory').map(({ name }) => name);
 
-export const selectSelectedRows = ({ prescription }) => {
-  const { transaction } = prescription;
-  const { items = [] } = transaction || {};
-
-  return items.reduce((acc, { item }) => ({ ...acc, [item.id]: true }), {});
-};
+export const selectSelectedRows = createSelector(
+  [selectPrescriptionItems, selectNumberOfItems],
+  items => items.reduce((acc, { item }) => ({ ...acc, [item.id]: true }), {})
+);
