@@ -7,6 +7,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { ToastAndroid } from 'react-native';
 
 import { PageButton } from '../PageButton';
 import { PrescriptionInfo } from '../PrescriptionInfo';
@@ -28,7 +29,8 @@ import {
 import { WizardActions } from '../../actions/WizardActions';
 import { PrescriptionActions } from '../../actions/PrescriptionActions';
 import { SearchBar } from '../SearchBar';
-import { generalStrings } from '../../localization';
+
+import { dispensingStrings, generalStrings } from '../../localization';
 
 /**
  * Layout component used for a tab within the prescription wizard.
@@ -40,7 +42,8 @@ import { generalStrings } from '../../localization';
  * @prop {String} itemSearchTerm String used for filtering items.
  * @prop {Func}   filterItems    Callback for filtering items.
  * @prop {Array}  items          Array of sorted and filtered items to choose from.
- * @prop {Object} selectedItems  Object of itemID:bool key value pairs, indicating if selected.
+ * @prop {Object} selectedRows   Object of itemID:bool key value pairs, indicating if selected.
+ * @prop {Func}   onDelete       Callback for removing a row from the prescription.
  */
 const ItemSelectComponent = ({
   chooseItem,
@@ -54,6 +57,10 @@ const ItemSelectComponent = ({
   onDelete,
 }) => {
   const columns = React.useMemo(() => getColumns('itemSelect'), []);
+  const showToast = React.useCallback(
+    () => ToastAndroid.show(dispensingStrings.must_order_one_to_continue, ToastAndroid.LONG),
+    []
+  );
 
   return (
     <>
@@ -78,7 +85,7 @@ const ItemSelectComponent = ({
 
           <FlexRow justifyContent="flex-end">
             <PageButton text="Cancel" onPress={onDelete} />
-            <PageButton isDisabled={!canProceed} text="Next" onPress={nextTab} />
+            <PageButton text="Next" onPress={canProceed ? nextTab : showToast} />
           </FlexRow>
         </FlexColumn>
       </FlexRow>
