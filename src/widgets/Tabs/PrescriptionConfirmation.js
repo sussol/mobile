@@ -126,10 +126,11 @@ const PrescriptionConfirmationComponent = ({
 PrescriptionConfirmationComponent.defaultProps = {
   discountAmount: null,
   discountRate: 0,
+  transaction: null,
 };
 
 PrescriptionConfirmationComponent.propTypes = {
-  transaction: PropTypes.object.isRequired,
+  transaction: PropTypes.object,
   currentUser: PropTypes.object.isRequired,
   currentPatient: PropTypes.object.isRequired,
   paymentAmount: PropTypes.object.isRequired,
