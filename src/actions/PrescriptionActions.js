@@ -163,6 +163,8 @@ const editQuantity = (id, quantity) => (dispatch, getState) => {
     itemToUpdate.setTotalQuantity(UIDatabase, quantity);
     UIDatabase.save('TransactionItem', itemToUpdate);
   });
+
+  dispatch(refresh());
 };
 
 const assignPrescriber = prescriber => (dispatch, getState) => {
