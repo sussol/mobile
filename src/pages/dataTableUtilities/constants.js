@@ -101,7 +101,7 @@ export const COLUMN_NAMES = {
   OUR_STOCK_ON_HAND: 'ourStockOnHand',
   PATIENT_EDIT: 'patientEdit',
   PATIENT_HISTORY: 'patientHistory',
-  PAYMENT_NAME: 'name',
+  PAYMENT_NAME: 'paymentName',
   PRESCRIBER_EDIT: 'prescriberEdit',
   PRESCRIBER: 'prescriber',
   PRICE: 'price',
