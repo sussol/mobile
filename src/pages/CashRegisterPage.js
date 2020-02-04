@@ -32,11 +32,13 @@ export const CashRegister = ({
   data,
   dataState,
   sortKey,
+  isAscending,
   keyExtractor,
   modalKey,
   columns,
   currentBalance,
   transactionType,
+  onSortColumn,
   onNewCashTransaction,
   onCloseModal,
   onAddCashTransaction,
@@ -64,9 +66,14 @@ export const CashRegister = ({
 
   const renderHeader = useCallback(
     () => (
-      <DataTableHeaderRow columns={columns} onPress={null} isAscending={true} sortKey={sortKey} />
+      <DataTableHeaderRow
+        columns={columns}
+        onPress={onSortColumn}
+        isAscending={isAscending}
+        sortKey={sortKey}
+      />
     ),
-    [sortKey]
+    [isAscending, sortKey]
   );
 
   const AddNewTransactionButton = () => (
@@ -153,11 +160,13 @@ CashRegister.propTypes = {
   data: PropTypes.array.isRequired,
   dataState: PropTypes.object.isRequired,
   sortKey: PropTypes.string.isRequired,
+  isAscending: PropTypes.bool.isRequired,
   modalKey: PropTypes.string.isRequired,
   keyExtractor: PropTypes.func.isRequired,
   columns: PropTypes.array.isRequired,
   currentBalance: PropTypes.string.isRequired,
   transactionType: PropTypes.string.isRequired,
+  onSortColumn: PropTypes.func.isRequired,
   onToggleTransactionType: PropTypes.func.isRequired,
   onNewCashTransaction: PropTypes.func.isRequired,
   onCloseModal: PropTypes.func.isRequired,

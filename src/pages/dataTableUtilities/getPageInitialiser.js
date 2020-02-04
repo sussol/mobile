@@ -22,6 +22,7 @@ export const cashRegisterInitialiser = () => {
     data: sortedData,
     dataState: new Map(),
     sortKey: COLUMN_KEYS.SERIAL_NUMBER,
+    isAscending: true,
     keyExtractor: recordKeyExtractor,
     modalKey: '',
     columns: getColumns(ROUTES.CASH_REGISTER),
