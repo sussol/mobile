@@ -11,8 +11,6 @@ import moment from 'moment';
 import currency from '../../localization/currency';
 
 import { UIDatabase } from '../../database';
-
-import { NAME_TYPE_KEYS } from '../../database/utilities/constants';
 import {
   CASH_TRANSACTION_KEYS,
   CASH_TRANSACTION_TYPES,
@@ -69,20 +67,19 @@ export const CashTransactionModal = ({ onConfirm }) => {
     isPatient ? `${lastName}, ${firstName}` : `${fullName}`
   );
 
-  const renderNameRightText = useCallback(({ type: nameType, dateOfBirth }) => {
-    switch (nameType) {
-      case NAME_TYPE_KEYS.STORE:
-      case NAME_TYPE_KEYS.FACILITY:
-        return `${dispensingStrings.type}: ${dispensingStrings.facility}`;
-      case NAME_TYPE_KEYS.PATIENT:
-        return `${dispensingStrings.type}: ${dispensingStrings.patient} \n ${
-          dispensingStrings.date_of_birth
-        }: ${
+  const renderNameRightText = useCallback(({ isCustomer, isSupplier, isPatient, dateOfBirth }) => {
+    if (isCustomer) {
+      if (isPatient) {
+        return `${dispensingStrings.patient} \n ${dispensingStrings.date_of_birth}: ${
           dateOfBirth ? moment(dateOfBirth).format('DD/MM/YYYY') : generalStrings.not_available
         }`;
-      default:
-        return '';
+      }
+      return dispensingStrings.customer;
     }
+    if (isSupplier) {
+      return dispensingStrings.supplier;
+    }
+    return '';
   });
 
   const resetBottomModal = () => {
