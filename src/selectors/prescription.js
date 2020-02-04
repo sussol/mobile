@@ -110,3 +110,9 @@ export const selectSelectedRows = createSelector(
   [selectPrescriptionItems, selectNumberOfItems],
   items => items.reduce((acc, { item }) => ({ ...acc, [item.id]: true }), {})
 );
+
+export const selectPrescriptionIsFinalised = ({ prescription }) => {
+  const { transaction } = prescription;
+  const { isFinalised = false } = transaction ?? {};
+  return isFinalised;
+};
