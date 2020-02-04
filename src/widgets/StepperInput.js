@@ -3,9 +3,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { TextInput, View, StyleSheet } from 'react-native';
 
-import { APP_FONT_FAMILY } from '../globalStyles/index';
+import { parsePositiveInteger } from '../utilities';
+
 import { CircleButton } from './CircleButton';
 import { AddIcon, MinusIcon } from './icons';
+
+import { APP_FONT_FAMILY } from '../globalStyles';
 
 /**
  * Input component which will update a numerical value. The `value` passed will be
@@ -26,82 +29,82 @@ import { AddIcon, MinusIcon } from './icons';
  * @prop {Bool}          isDisabled     Indicator if this component should be editable.
  *
  */
-export const StepperInput = ({
-  value,
-  onChangeText,
-  lowerLimit,
-  upperLimit,
-  textInputStyle,
-  isDisabled,
-}) => {
-  const [, setCurrentValueState] = React.useState(Number(value));
-  const currentValue = React.useRef(Number(value));
-  const currentAdjustmentAmount = React.useRef(1);
-  const valueAdjustmentInterval = React.useRef();
-  const adjustmentIncreaseInterval = React.useRef();
+export const StepperInput = React.memo(
+  ({ value, onChangeText, lowerLimit, upperLimit, textInputStyle, isDisabled }) => {
+    const [, setCurrentValueState] = React.useState(Number(value));
+    const currentValue = React.useRef(Number(value));
+    const currentAdjustmentAmount = React.useRef(1);
+    const valueAdjustmentInterval = React.useRef();
+    const adjustmentIncreaseInterval = React.useRef();
 
-  const parseNumber = number => Math.max(Math.min(number, upperLimit), lowerLimit);
+    const parseNumber = number =>
+      Math.max(Math.min(parsePositiveInteger(number), upperLimit), lowerLimit);
 
-  const onUpdate = newValue => {
-    const updateValue = parseNumber(newValue);
-    currentValue.current = updateValue;
-    setCurrentValueState(updateValue);
-    onChangeText(updateValue);
-  };
+    const onUpdate = newValue => {
+      const updateValue = parseNumber(newValue);
+      currentValue.current = updateValue;
+      setCurrentValueState(updateValue);
+    };
 
-  const decrementValue = () => onUpdate(currentValue.current - currentAdjustmentAmount.current);
-  const incrementValue = () => onUpdate(currentValue.current + currentAdjustmentAmount.current);
+    const decrementValue = () => onUpdate(currentValue.current - currentAdjustmentAmount.current);
+    const incrementValue = () => onUpdate(currentValue.current + currentAdjustmentAmount.current);
 
-  const inreaseIncrement = () => {
-    currentAdjustmentAmount.current *= 2;
-  };
+    const inreaseIncrement = () => {
+      currentAdjustmentAmount.current *= 2;
+    };
 
-  const onStartingLongPress = isIncrement => {
-    if (!valueAdjustmentInterval.current) {
-      valueAdjustmentInterval.current = setInterval(
-        isIncrement ? incrementValue : decrementValue,
-        50
-      );
-    }
+    const onStartingLongPress = isIncrement => {
+      if (isIncrement) incrementValue();
+      else decrementValue();
 
-    if (!adjustmentIncreaseInterval.current) {
-      adjustmentIncreaseInterval.current = setInterval(inreaseIncrement, 500);
-    }
-  };
+      if (!valueAdjustmentInterval.current) {
+        valueAdjustmentInterval.current = setInterval(
+          isIncrement ? incrementValue : decrementValue,
+          50
+        );
+      }
 
-  const onEndLongPress = () => {
-    clearInterval(valueAdjustmentInterval.current);
-    clearInterval(adjustmentIncreaseInterval.current);
+      if (!adjustmentIncreaseInterval.current) {
+        adjustmentIncreaseInterval.current = setInterval(inreaseIncrement, 500);
+      }
+    };
 
-    valueAdjustmentInterval.current = null;
-    adjustmentIncreaseInterval.current = null;
-    currentAdjustmentAmount.current = 1;
-  };
+    const onEndLongPress = () => {
+      clearInterval(valueAdjustmentInterval.current);
+      clearInterval(adjustmentIncreaseInterval.current);
 
-  const onStartDecrementPress = () => onStartingLongPress(false);
-  const onStartIncrementPress = () => onStartingLongPress(true);
+      valueAdjustmentInterval.current = null;
+      adjustmentIncreaseInterval.current = null;
+      currentAdjustmentAmount.current = 1;
 
-  return (
-    <View style={localStyles.row}>
-      <CircleButton
-        IconComponent={MinusIcon}
-        onPressIn={isDisabled ? null : onStartDecrementPress}
-        onPressOut={isDisabled ? null : onEndLongPress}
-      />
-      <TextInput
-        editable={!isDisabled}
-        onChangeText={onUpdate}
-        value={String(currentValue.current)}
-        style={textInputStyle}
-      />
-      <CircleButton
-        IconComponent={AddIcon}
-        onPressIn={isDisabled ? null : onStartIncrementPress}
-        onPressOut={isDisabled ? null : onEndLongPress}
-      />
-    </View>
-  );
-};
+      onChangeText(currentValue.current);
+    };
+
+    const onStartDecrementPress = () => onStartingLongPress(false);
+    const onStartIncrementPress = () => onStartingLongPress(true);
+
+    return (
+      <View style={localStyles.row}>
+        <CircleButton
+          IconComponent={MinusIcon}
+          onPressIn={isDisabled ? null : onStartDecrementPress}
+          onPressOut={isDisabled ? null : onEndLongPress}
+        />
+        <TextInput
+          editable={!isDisabled}
+          onChangeText={onUpdate}
+          value={String(currentValue.current)}
+          style={textInputStyle}
+        />
+        <CircleButton
+          IconComponent={AddIcon}
+          onPressIn={isDisabled ? null : onStartIncrementPress}
+          onPressOut={isDisabled ? null : onEndLongPress}
+        />
+      </View>
+    );
+  }
+);
 
 const localStyles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
@@ -110,7 +113,6 @@ const localStyles = StyleSheet.create({
     width: 100,
     textAlign: 'center',
     fontSize: 24,
-
     fontFamily: APP_FONT_FAMILY,
   },
 });

@@ -55,4 +55,5 @@ const localStyles = StyleSheet.create({
   },
 });
 
-PrescriptionSummary.propTypes = { transaction: PropTypes.object.isRequired };
+PrescriptionSummary.defaultProps = { transaction: null };
+PrescriptionSummary.propTypes = { transaction: PropTypes.object };
