@@ -3,9 +3,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { TextInput, View, StyleSheet } from 'react-native';
 
-import { APP_FONT_FAMILY } from '../globalStyles/index';
+import { parsePositiveInteger } from '../utilities';
+
 import { CircleButton } from './CircleButton';
 import { AddIcon, MinusIcon } from './icons';
+
+import { APP_FONT_FAMILY } from '../globalStyles';
 
 /**
  * Input component which will update a numerical value. The `value` passed will be
@@ -40,7 +43,8 @@ export const StepperInput = ({
   const valueAdjustmentInterval = React.useRef();
   const adjustmentIncreaseInterval = React.useRef();
 
-  const parseNumber = number => Math.max(Math.min(number, upperLimit), lowerLimit);
+  const parseNumber = number =>
+    Math.max(Math.min(parsePositiveInteger(number), upperLimit), lowerLimit);
 
   const onUpdate = newValue => {
     const updateValue = parseNumber(newValue);
