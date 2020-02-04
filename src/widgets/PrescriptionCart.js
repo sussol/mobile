@@ -14,6 +14,7 @@ import { FlexView } from './FlexView';
 
 import globalStyles, { WHITE } from '../globalStyles';
 import { dispensingStrings } from '../localization';
+import { selectPrescriptionItems } from '../selectors/prescription';
 
 /**
  * Layout container component for a prescriptions item cart.
@@ -22,9 +23,6 @@ import { dispensingStrings } from '../localization';
  * a transactionItems quantity.
  *
  * @prop {Array} items             The current prescriptions items
- * @prop {Func}  onChangeQuantity  Callback when an items quantity is updated.
- * @prop {Func}  onOptionSelection Callback when an option in the dropdown is selected.
- * @prop {Func}  onRemoveItem      Callback when this row is removed.
  * @prop {Bool}  isDisabled        Indicator if this component should not be editable.
  */
 const PrescriptionCartComponent = ({ items, isDisabled }) => {
@@ -60,7 +58,7 @@ PrescriptionCartComponent.defaultProps = {
 };
 
 PrescriptionCartComponent.propTypes = {
-  items: PropTypes.object.isRequired,
+  items: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
   isDisabled: PropTypes.bool,
 };
 
@@ -77,9 +75,8 @@ const localStyles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  const { prescription } = state;
-  const { transaction } = prescription || {};
-  return { items: transaction?.items ?? [] };
+  const items = selectPrescriptionItems(state);
+  return { items };
 };
 
 export const PrescriptionCart = connect(mapStateToProps)(PrescriptionCartComponent);

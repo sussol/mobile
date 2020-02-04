@@ -265,17 +265,23 @@ export class TransactionItem extends Realm.Object {
   }
 
   /**
-   * Sets the item direction for the underlying transaction batch.
+   * Sets the item direction to be the same for all underlying
+   * TransactionBatches.
    */
   setItemDirection = (database, newDirection) => {
-    const batch = this.batches[0];
-    if (!batch) return;
-    database.write(() => {
-      batch.note = newDirection;
-      database.save('TransactionBatch', batch);
+    if (!this.batches.length) return;
+    this.batches.forEach(batch => {
+      database.write(() => {
+        batch.note = newDirection;
+        database.save('TransactionBatch', batch);
+      });
     });
   };
 
+  /**
+   * The sell price of a TransactionItem could vary depending on it's batches.
+   * Just taking the first batches sell price.
+   */
   get sellPrice() {
     return currency(this.batches[0]?.sellPrice || 0);
   }
