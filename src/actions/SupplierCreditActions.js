@@ -61,6 +61,8 @@ const create = () => (dispatch, getState) => {
           itemBatch.returnAmount
         )
       );
+
+      UIDatabase.save('Transaction', newSupplierCredit);
     });
   });
 
