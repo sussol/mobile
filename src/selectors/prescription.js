@@ -69,12 +69,20 @@ export const selectFilteredAndSortedItems = createSelector(
   }
 );
 
-export const selectSelectedRows = ({ prescription }) => {
-  const { transaction } = prescription;
-  const { items = [] } = transaction || {};
-
-  return items.reduce((acc, { item }) => ({ ...acc, [item.id]: true }), {});
+export const selectNumberOfItems = ({ prescription }) => {
+  const { transaction } = prescription || {};
+  return transaction?.items.length || 0;
 };
+
+export const selectPrescription = ({ prescription }) => prescription.transaction;
+
+export const selectPrescriptionItems = createSelector(
+  [selectPrescription, selectNumberOfItems],
+  prescription => {
+    const { items } = prescription ?? {};
+    return items || [];
+  }
+);
 
 export const selectTransactionCategoryName = ({ prescription }) => {
   const { transaction } = prescription;
@@ -97,3 +105,14 @@ export const selectPatientType = ({ prescription }) => {
 
 export const selectPrescriptionCategories = () =>
   UIDatabase.objects('PrescriptionCategory').map(({ name }) => name);
+
+export const selectSelectedRows = createSelector(
+  [selectPrescriptionItems, selectNumberOfItems],
+  items => items.reduce((acc, { item }) => ({ ...acc, [item.id]: true }), {})
+);
+
+export const selectPrescriptionIsFinalised = ({ prescription }) => {
+  const { transaction } = prescription;
+  const { isFinalised = false } = transaction ?? {};
+  return isFinalised;
+};

@@ -31,6 +31,7 @@ import {
   selectPrescriptionSubTotal,
 } from '../../selectors/payment';
 import { selectInsuranceDiscountRate } from '../../selectors/insurance';
+import { selectPrescriptionIsFinalised } from '../../selectors/prescription';
 
 const mapStateToProps = state => {
   const { payment, wizard, modules } = state;
@@ -45,6 +46,7 @@ const mapStateToProps = state => {
   const subtotal = selectPrescriptionSubTotal(state);
   const discountAmount = selectDiscountAmount(state);
   const discountRate = selectInsuranceDiscountRate(state);
+  const isFinalised = selectPrescriptionIsFinalised(state);
 
   return {
     subtotal,
@@ -57,6 +59,7 @@ const mapStateToProps = state => {
     currentUser,
     currentPatient,
     usingPayments,
+    isFinalised,
   };
 };
 
@@ -78,6 +81,7 @@ const PrescriptionConfirmationComponent = ({
   canConfirm,
   usingPayments,
   onDelete,
+  isFinalised,
 }) => {
   const runWithLoadingIndicator = useLoadingIndicator();
 
@@ -114,7 +118,7 @@ const PrescriptionConfirmationComponent = ({
           {usingPayments && <PaymentSummary />}
 
           <FlexRow justifyContent="flex-end">
-            <PageButton text="Cancel" onPress={onDelete} />
+            <PageButton text="Cancel" onPress={onDelete} isDisabled={isFinalised} />
             <PageButton isDisabled={!canConfirm} text="Complete" onPress={confirmPrescription} />
           </FlexRow>
         </FlexColumn>
@@ -126,10 +130,11 @@ const PrescriptionConfirmationComponent = ({
 PrescriptionConfirmationComponent.defaultProps = {
   discountAmount: null,
   discountRate: 0,
+  transaction: null,
 };
 
 PrescriptionConfirmationComponent.propTypes = {
-  transaction: PropTypes.object.isRequired,
+  transaction: PropTypes.object,
   currentUser: PropTypes.object.isRequired,
   currentPatient: PropTypes.object.isRequired,
   paymentAmount: PropTypes.object.isRequired,
@@ -140,6 +145,7 @@ PrescriptionConfirmationComponent.propTypes = {
   subtotal: PropTypes.object.isRequired,
   discountAmount: PropTypes.object,
   discountRate: PropTypes.number,
+  isFinalised: PropTypes.bool.isRequired,
 };
 
 export const PrescriptionConfirmation = connect(
