@@ -514,9 +514,10 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
     }
     case 'Name': {
       const isPatient = record.type === 'patient';
+      const name = isPatient ? `${record.last}, ${record.first}` : record.name;
       internalRecord = {
         id: record.ID,
-        name: record.name,
+        name,
         code: record.code,
         phoneNumber: record.phone,
         billingAddress: getOrCreateAddress(

@@ -22,3 +22,12 @@ export const NUMBER_SEQUENCE_KEYS = {
   SUPPLIER_INVOICE_NUMBER: 'supplier_invoice_serial_number',
   PATIENT_CODE: 'patient_code',
 };
+
+export const NAME_TYPE_KEYS = {
+  INVENTORY_ADJUSTMENT: 'inventory_adjustment',
+  FACILITY: 'facility',
+  PATIENT: 'patient',
+  BUILD: 'build',
+  STORE: 'store',
+  REPACK: 'repack',
+};

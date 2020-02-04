@@ -185,9 +185,9 @@ export class LoginModal extends React.Component {
                 editable={authStatus !== 'authenticating'}
                 returnKeyType="done"
                 selectTextOnFocus
-                onChangeText={text =>
-                  this.setState({ password: text, authStatus: 'unauthenticated' })
-                }
+                onChangeText={text => {
+                  this.setState({ password: text, authStatus: 'unauthenticated' });
+                }}
                 onSubmitEditing={() => {
                   if (this.passwordInputRef) this.passwordInputRef.blur();
                   if (this.canAttemptLogin) this.onLogin();
