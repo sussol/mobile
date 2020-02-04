@@ -63,7 +63,7 @@ const localStyles = StyleSheet.create({
 });
 
 StepperRow.defaultProps = {
-  lowerLimit: 1,
+  lowerLimit: 0,
   upperLimit: 99999,
   labelSize: 'small',
   isDisabled: false,
