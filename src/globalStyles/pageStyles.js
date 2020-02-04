@@ -40,6 +40,7 @@ export const pageStyles = {
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
   },
+  pageTopViewContainer: { paddingHorizontal: 10, paddingVertical: 10 },
 };
 
 export default pageStyles;

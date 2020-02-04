@@ -23,6 +23,7 @@ import { PrescriptionActions } from '../../actions/PrescriptionActions';
 import { getItemLayout, getColumns } from '../../pages/dataTableUtilities';
 import { selectSortedPrescribers } from '../../selectors/prescriber';
 import { dispensingStrings } from '../../localization';
+import globalStyles from '../../globalStyles';
 
 /**
  * Layout component used for a tab within the prescription wizard.
@@ -82,17 +83,19 @@ const PrescriberSelectComponent = ({
     [columns, sortKey, isAscending]
   );
 
+  const { pageTopViewContainer } = globalStyles;
+
   return (
-    <FlexView>
+    <FlexView style={pageTopViewContainer}>
       <PrescriptionInfo />
-      <FlexRow>
+      <FlexRow style={{ marginBottom: 7 }}>
         <SearchBar
           viewStyle={localStyles.searchBar}
           onChangeText={onFilterData}
           value={searchTerm}
           placeholder={dispensingStrings.search_by_last_name_first_name}
         />
-        <PageButton text="Add Prescriber" onPress={createPrescriber} />
+        <PageButton text="Add Prescriber" onPress={createPrescriber} style={{ marginLeft: 5 }} />
       </FlexRow>
 
       <DataTable
@@ -104,7 +107,11 @@ const PrescriberSelectComponent = ({
       />
 
       <FlexRow justifyContent="flex-end" alignItems="flex-end">
-        <PageButton text="Cancel" onPress={() => onCancelPrescription()} />
+        <PageButton
+          text="Cancel"
+          onPress={() => onCancelPrescription()}
+          style={{ marginRight: 7 }}
+        />
         <PageButton
           text="OK"
           onPress={() => choosePrescriber(currentPrescriber)}
@@ -117,11 +124,12 @@ const PrescriberSelectComponent = ({
 
 const localStyles = StyleSheet.create({
   searchBar: {
-    borderBottomWidth: 1,
-    flexDirection: 'row',
     alignItems: 'center',
+    borderBottomWidth: 1,
     flex: 1,
+    flexDirection: 'row',
     flexGrow: 1,
+    marginHorizontal: 5,
   },
 });
 
