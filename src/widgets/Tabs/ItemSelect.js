@@ -31,6 +31,9 @@ import { PrescriptionActions } from '../../actions/PrescriptionActions';
 import { SearchBar } from '../SearchBar';
 
 import { dispensingStrings, generalStrings } from '../../localization';
+import globalStyles from '../../globalStyles';
+
+const { pageTopViewContainer } = globalStyles;
 
 /**
  * Layout component used for a tab within the prescription wizard.
@@ -63,7 +66,7 @@ const ItemSelectComponent = ({
   );
 
   return (
-    <>
+    <FlexView style={pageTopViewContainer}>
       <PrescriptionInfo />
       <FlexRow flex={1}>
         <FlexView flex={10}>
@@ -78,18 +81,19 @@ const ItemSelectComponent = ({
             selectedRows={selectedRows}
             selectRow={chooseItem}
             isDisabled={isComplete}
+            style={{ marginTop: 3 }}
           />
         </FlexView>
         <FlexColumn flex={15}>
           <PrescriptionCart isDisabled={isComplete} />
 
           <FlexRow justifyContent="flex-end">
-            <PageButton text="Cancel" onPress={onDelete} />
+            <PageButton text="Cancel" onPress={onDelete} style={{ marginRight: 7 }} />
             <PageButton text="Next" onPress={canProceed ? nextTab : showToast} />
           </FlexRow>
         </FlexColumn>
       </FlexRow>
-    </>
+    </FlexView>
   );
 };
 

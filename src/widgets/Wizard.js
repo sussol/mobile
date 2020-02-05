@@ -13,7 +13,7 @@ import { WizardActions } from '../actions/WizardActions';
 import { selectCurrentTab } from '../selectors/wizard';
 
 import { PAGE_CONTENT_PADDING_HORIZONTAL } from '../globalStyles/pageStyles';
-import { BLUE_WHITE, SHADOW_BORDER } from '../globalStyles/colors';
+import { BACKGROUND_COLOR, BLUE_WHITE, SHADOW_BORDER } from '../globalStyles/colors';
 
 /**
  * Layout component for a Tracker and TabNavigator, displaying steps
@@ -21,7 +21,7 @@ import { BLUE_WHITE, SHADOW_BORDER } from '../globalStyles/colors';
  * for individual component implementation.
  */
 const WizardComponent = ({ tabs, titles, currentTab, switchTab }) => (
-  <>
+  <View style={localStyles.container}>
     <View style={localStyles.stepperContainer}>
       <Stepper
         numberOfSteps={tabs.length}
@@ -33,10 +33,11 @@ const WizardComponent = ({ tabs, titles, currentTab, switchTab }) => (
     <DataTablePageView>
       <TabNavigator tabs={tabs} currentTabIndex={currentTab} />
     </DataTablePageView>
-  </>
+  </View>
 );
 
 const localStyles = StyleSheet.create({
+  container: { backgroundColor: BACKGROUND_COLOR, flex: 1 },
   stepperContainer: {
     backgroundColor: BLUE_WHITE,
     borderColor: SHADOW_BORDER,
