@@ -103,8 +103,7 @@ export const selectPatientType = ({ prescription }) => {
   return user1 ?? '';
 };
 
-export const selectPrescriptionCategories = () =>
-  UIDatabase.objects('PrescriptionCategory').map(({ name }) => name);
+export const selectPrescriptionCategories = () => UIDatabase.objects('PrescriptionCategory');
 
 export const selectSelectedRows = createSelector(
   [selectPrescriptionItems, selectNumberOfItems],
