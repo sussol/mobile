@@ -482,7 +482,7 @@ const createInventoryAdjustment = (database, user, date, isAddition) => {
  * @param  {string}     batchString
  * @return {ItemBatch}
  */
-const createItemBatch = (database, item, batchString) => {
+const createItemBatch = (database, item, batchString, supplier) => {
   // Handle cross-reference items.
   const { realItem } = item;
 
@@ -494,6 +494,7 @@ const createItemBatch = (database, item, batchString) => {
     numberOfPacks: 0,
     costPrice: realItem.defaultPrice ? realItem.defaultPrice : 0,
     sellPrice: realItem.defaultPrice ? realItem.defaultPrice : 0,
+    supplier,
   });
 
   realItem.addBatch(itemBatch);
@@ -637,13 +638,14 @@ const createStocktakeItem = (database, stocktake, item) => {
  * @return  {StocktakeBatch}
  */
 const createStocktakeBatch = (database, stocktakeItem, itemBatch) => {
-  const { numberOfPacks, packSize, expiryDate, batch, costPrice, sellPrice } = itemBatch;
+  const { numberOfPacks, supplier, packSize, expiryDate, batch, costPrice, sellPrice } = itemBatch;
 
   const stocktakeBatch = database.create('StocktakeBatch', {
     id: generateUUID(),
     stocktake: stocktakeItem.stocktake,
     itemBatch,
     snapshotNumberOfPacks: numberOfPacks,
+    supplier,
     packSize,
     expiryDate,
     batch,
