@@ -460,7 +460,7 @@ export class Transaction extends Realm.Object {
     // Finding the totalPrice propogates through `TransactionItem` records down to the batch
     // level, deriving the full cost of the Transaction. Cash transactions and credits are
     // created finalised, having their total already set.
-    if (!this.isCashTransaction || !this.isCredit) {
+    if (!(this.isCashTransaction || this.isCredit)) {
       this.total = this.totalPrice;
     }
 
