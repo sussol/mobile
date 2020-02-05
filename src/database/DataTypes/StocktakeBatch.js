@@ -226,6 +226,7 @@ export class StocktakeBatch extends Realm.Object {
     // Update the item batch details.
     this.itemBatch.batch = this.batch;
     this.itemBatch.expiryDate = this.expiryDate;
+    this.itemBatch.sellPrice = this.sellPrice;
 
     // Make inventory adjustments if there is a difference to apply.
     if (this.difference !== 0) {
