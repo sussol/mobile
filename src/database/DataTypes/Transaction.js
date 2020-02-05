@@ -120,6 +120,10 @@ export class Transaction extends Realm.Object {
     return this.type === 'payment' || this.type === 'receipt';
   }
 
+  get isCredit() {
+    return this.type === 'supplier_credit' || this.type === 'customer_credit';
+  }
+
   /**
    * Get if transaction is an external supplier invoice.
    *
@@ -454,9 +458,9 @@ export class Transaction extends Realm.Object {
     if (!this.isConfirmed) this.confirm(database);
 
     // Finding the totalPrice propogates through `TransactionItem` records down to the batch
-    // level, deriving the full cost of the Transaction. Cash transactions do not use the Item
-    // level, so the total can't be derived the same.
-    if (!this.isCashTransaction) {
+    // level, deriving the full cost of the Transaction. Cash transactions and credits are
+    // created finalised, having their total already set.
+    if (!this.isCashTransaction || !this.isCredit) {
       this.total = this.totalPrice;
     }
 
