@@ -450,6 +450,7 @@ export class Transaction extends Realm.Object {
     if (!this.isConfirmed) this.confirm(database);
 
     this.status = 'finalised';
+    this.total = this.totalPrice;
     database.save('Transaction', this);
   }
 }
