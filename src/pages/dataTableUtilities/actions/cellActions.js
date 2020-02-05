@@ -62,7 +62,7 @@ export const editSellPrice = (value, rowKey, route) => (dispatch, getState) => {
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
   const objectDataType = objectToEdit.stocktake ? 'StocktakeBatch' : 'TransactionBatch';
 
-  const { itemBatch, sellPrice } = objectToEdit;
+  const { sellPrice } = objectToEdit;
 
   const valueAsCurrency = currency(value);
   const { value: currencyValue } = valueAsCurrency;
@@ -70,7 +70,6 @@ export const editSellPrice = (value, rowKey, route) => (dispatch, getState) => {
   if (currencyValue !== sellPrice) {
     UIDatabase.write(() => {
       UIDatabase.update(objectDataType, { ...objectToEdit, sellPrice: currencyValue });
-      UIDatabase.update('ItemBatch', { ...itemBatch, sellPrice: currencyValue });
       dispatch(refreshRow(rowKey, route));
     });
   }
