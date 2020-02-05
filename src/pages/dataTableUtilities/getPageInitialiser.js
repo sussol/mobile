@@ -223,6 +223,7 @@ const stocktakeBatchInitialiser = stocktakeItem => ({
   modalValue: null,
   columns: getColumns(ROUTES.CUSTOMER_INVOICE),
   getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_INVOICE),
+  suppliers: UIDatabase.objects('Supplier'),
 });
 
 /**
