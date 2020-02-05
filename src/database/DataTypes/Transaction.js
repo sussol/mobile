@@ -116,6 +116,14 @@ export class Transaction extends Realm.Object {
     return this.mode === 'dispensary' && this.type === 'customer_invoice';
   }
 
+  get isCashTransaction() {
+    return this.type === 'payment' || this.type === 'receipt';
+  }
+
+  get isCredit() {
+    return this.type === 'supplier_credit' || this.type === 'customer_credit';
+  }
+
   /**
    * Get if transaction is an external supplier invoice.
    *
@@ -448,6 +456,13 @@ export class Transaction extends Realm.Object {
       this.pruneRedundantBatchesAndItems(database);
     }
     if (!this.isConfirmed) this.confirm(database);
+
+    // Finding the totalPrice propogates through `TransactionItem` records down to the batch
+    // level, deriving the full cost of the Transaction. Cash transactions and credits are
+    // created finalised, having their total already set.
+    if (!(this.isCashTransaction || this.isCredit)) {
+      this.total = this.totalPrice;
+    }
 
     this.status = 'finalised';
     database.save('Transaction', this);
