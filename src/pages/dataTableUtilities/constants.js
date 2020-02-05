@@ -127,6 +127,7 @@ export const COLUMN_NAMES = {
   TOTAL_QUANTITY: 'totalQuantity',
   TRANSACT_TYPE: 'transactType',
   UNIT: 'unit',
+  EDIT_SUPPLIER: 'editSupplier',
 };
 
 export default { COLUMN_TYPES, COLUMN_NAMES, COLUMN_KEYS };
