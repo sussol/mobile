@@ -3,6 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 import { createSelector } from 'reselect';
+import moment from 'moment';
 
 export const selectSortKey = ({ dispensary }) => {
   const { sortKey } = dispensary;
@@ -29,23 +30,6 @@ export const selectData = ({ dispensary }) => {
   return data;
 };
 
-export const selectFilteredData = createSelector(
-  [selectData, selectSearchTerm],
-  (data, searchTerm) => {
-    const [firstName, lastName] = searchTerm.split(',').map(name => name.trim());
-
-    const queryString = 'firstName BEGINSWITH[c] $0 AND lastName BEGINSWITH[c] $1';
-    const newData = data.filtered(queryString, firstName, lastName);
-
-    return newData;
-  }
-);
-
-export const selectSortedData = createSelector(
-  [selectFilteredData, selectIsAscending, selectSortKey],
-  (data, isAscending, sortKey) => data.sorted(sortKey, isAscending)
-);
-
 export const selectDataSetInUse = ({ dispensary }) => {
   const dataSet = selectDataSet({ dispensary });
   const usingPatientsDataSet = dataSet === 'patient';
@@ -53,3 +37,28 @@ export const selectDataSetInUse = ({ dispensary }) => {
 
   return [usingPatientsDataSet, usingPrescribersDataSet];
 };
+
+export const selectFilteredData = createSelector(
+  [selectData, selectSearchTerm, selectDataSetInUse],
+  (data, searchTerm, [usingPatientsDataSet]) => {
+    const [names, birthYearString] = searchTerm.split(/-d/).map(name => name.trim());
+    const [lastName, firstName] = names.split(/,/).map(name => name.trim());
+
+    const birthYearDate = moment(birthYearString || new Date(1900, 0, 0), 'Y', null, true);
+    const filterByBirthDate = usingPatientsDataSet && birthYearDate.isValid();
+
+    let filteredData = lastName ? data.filtered('lastName BEGINSWITH[c] $0', lastName) : data;
+    filteredData = firstName
+      ? filteredData.filtered('firstName BEGINSWITH[c] $0', firstName)
+      : filteredData;
+
+    return filterByBirthDate
+      ? filteredData.filtered('dateOfBirth >= $0', birthYearDate.toDate())
+      : filteredData;
+  }
+);
+
+export const selectSortedData = createSelector(
+  [selectFilteredData, selectIsAscending, selectSortKey],
+  (data, isAscending, sortKey) => data.sorted(sortKey, isAscending)
+);

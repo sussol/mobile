@@ -36,7 +36,16 @@ import { UIDatabase } from '../../../database';
  * @param {Number} scriptTotal The total amount of the script.
  */
 
-export const pay = (currentUser, patient, script, cashAmount, scriptTotal) => {
+export const pay = (
+  currentUser,
+  patient,
+  script,
+  cashAmount,
+  scriptTotal,
+  subtotal,
+  discountAmount,
+  discountRate
+) => {
   if (!patient.isPatient) throw new Error('Patient is not a patient');
   if (!script.isPrescription) throw new Error('Script is not a script');
   if (!(script.items.length > 0)) throw new Error('Script is empty');
@@ -80,5 +89,8 @@ export const pay = (currentUser, patient, script, cashAmount, scriptTotal) => {
   if (usingCredit && creditToAllocate > 0) throw new Error('Credit not fully allocated');
 
   // Ensure the script is finalised once paid.
+  script.subtotal = subtotal;
+  script.insuranceDiscountAmount = discountAmount;
+  script.insuranceDiscountRate = discountRate;
   script.finalise(UIDatabase);
 };

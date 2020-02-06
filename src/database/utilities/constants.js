@@ -20,4 +20,20 @@ export const NUMBER_SEQUENCE_KEYS = {
   REQUISITION_REQUESTER_REFERENCE: 'requisition_requester_reference',
   STOCKTAKE_SERIAL_NUMBER: 'stocktake_serial_number',
   SUPPLIER_INVOICE_NUMBER: 'supplier_invoice_serial_number',
+  PATIENT_CODE: 'patient_code',
 };
+
+export const NAME_TYPE_KEYS = {
+  INVENTORY_ADJUSTMENT: 'inventory_adjustment',
+  FACILITY: 'facility',
+  PATIENT: 'patient',
+  BUILD: 'build',
+  STORE: 'store',
+  REPACK: 'repack',
+};
+
+export {
+  INDICATOR_CODES,
+  INDICATOR_COLUMN_CODES,
+  INDICATOR_VALUE_TYPES,
+} from './indicatorConstants';

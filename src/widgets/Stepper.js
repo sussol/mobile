@@ -1,10 +1,10 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/no-array-index-key */
 import React from 'react';
-import { View, Text, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity, StyleSheet } from 'react-native';
 import { PropTypes } from 'prop-types';
 
-import { WHITE, SUSSOL_ORANGE, GREY, APP_FONT_FAMILY } from '../globalStyles';
+import { WHITE, SUSSOL_ORANGE, GREY, APP_FONT_FAMILY, SHADOW_BORDER } from '../globalStyles';
 
 const { height, width } = Dimensions.get('window');
 
@@ -79,7 +79,7 @@ StepperNumber.propTypes = {
 };
 
 export const Stepper = ({ numberOfSteps, currentStep, titles, onPress }) => (
-  <View style={{ flexDirection: 'row' }}>
+  <View style={localStyles.container}>
     {Array.from({ length: numberOfSteps }).map((_, i) => (
       <StepperNumber
         onPress={onPress}
@@ -92,6 +92,16 @@ export const Stepper = ({ numberOfSteps, currentStep, titles, onPress }) => (
     ))}
   </View>
 );
+
+const localStyles = StyleSheet.create({
+  container: {
+    borderColor: SHADOW_BORDER,
+    borderWidth: 1,
+    flexDirection: 'row',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+});
 
 Stepper.propTypes = {
   numberOfSteps: PropTypes.number.isRequired,

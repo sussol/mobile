@@ -14,6 +14,7 @@ import { MODAL_KEYS } from '../utilities';
 import { DataTablePageModal } from '../widgets/modals';
 import { BottomConfirmModal } from '../widgets/bottomModals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+import { DATA_TABLE_DEFAULTS } from '../widgets/DataTable/constants';
 import {
   DataTablePageView,
   DropDown,
@@ -30,6 +31,7 @@ import {
   selectIndicatorTableRows,
 } from '../selectors/indicatorSelectors';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
+
 import { ROUTES } from '../navigation/constants';
 
 import { useRecordListener } from '../hooks';
@@ -297,6 +299,14 @@ const SupplierRequisition = ({
     return <ProgramItemButtons />;
   }, [usingIndicators, showIndicators, showAll, indicatorCodes, currentIndicatorCode, isFinalised]);
 
+  const placeholderStrings = useMemo(
+    () => ({
+      name: showIndicators ? generalStrings.indicator_name : generalStrings.item_name,
+      code: showIndicators ? generalStrings.indicator_code : generalStrings.item_code,
+    }),
+    [showIndicators]
+  );
+
   const {
     pageTopSectionContainer,
     pageTopLeftSectionContainer,
@@ -311,7 +321,7 @@ const SupplierRequisition = ({
           <SearchBar
             onChangeText={onFilterData}
             value={searchTerm}
-            placeholder={`${generalStrings.search_by} ${generalStrings.item_name} ${generalStrings.or} ${generalStrings.item_code}`}
+            placeholder={`${generalStrings.search_by} ${placeholderStrings.name} ${generalStrings.or} ${placeholderStrings.code}`}
           />
         </View>
         <View style={pageTopRightSectionContainer}>
@@ -326,6 +336,11 @@ const SupplierRequisition = ({
         keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}
         columns={columns}
+        windowSize={
+          showIndicators
+            ? DATA_TABLE_DEFAULTS.WINDOW_SIZE_SMALL
+            : DATA_TABLE_DEFAULTS.WINDOW_SIZE_MEDIUM
+        }
       />
       <BottomConfirmModal
         isOpen={hasSelection}

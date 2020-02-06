@@ -23,95 +23,98 @@ import { getItemLayout, recordKeyExtractor } from '../pages/dataTableUtilities';
  * to trigger styling effects on selected rows.
  */
 export const SimpleTable = React.memo(
-  React.forwardRef(({ data, columns, selectRow, selectedRows, disabledRows, isDisabled }, ref) => {
-    const {
-      cellText,
-      cellContainer,
-      selectedRow: selectedRowStyle,
-      alternateRow: alternateRowStyle,
-      row: basicRowStyle,
-      headerRow,
-      headerCells,
-    } = dataTableStyles;
-    const renderCells = useCallback(
-      rowData => {
-        const { id } = rowData;
+  React.forwardRef(
+    ({ data, columns, selectRow, selectedRows, disabledRows, isDisabled, style }, ref) => {
+      const {
+        cellText,
+        cellContainer,
+        selectedRow: selectedRowStyle,
+        alternateRow: alternateRowStyle,
+        row: basicRowStyle,
+        headerRow,
+        headerCells,
+      } = dataTableStyles;
+      const renderCells = useCallback(
+        rowData => {
+          const { id } = rowData;
 
-        return columns.map(({ key, width, alignText }, index) => {
-          const disabledStyle = disabledRows?.[id] || isDisabled ? { color: GREY } : {};
-          const textStyle = { ...cellText[alignText], ...disabledStyle };
+          return columns.map(({ key, width, alignText }, index) => {
+            const disabledStyle = disabledRows?.[id] || isDisabled ? { color: GREY } : {};
+            const textStyle = { ...cellText[alignText], ...disabledStyle };
+            return (
+              <Cell
+                value={rowData[key]}
+                viewStyle={cellContainer[alignText]}
+                textStyle={textStyle}
+                isLastCell={index === columns.length - 1}
+                width={width}
+                key={`${id}${key}`}
+              />
+            );
+          });
+        },
+        [disabledRows, isDisabled]
+      );
+
+      const renderRow = useCallback(
+        ({ item, index }) => {
+          const { id } = item;
+          const isRowDisabled = disabledRows?.[id] || isDisabled;
+          const isSelected = selectedRows?.[id];
+          const rowStyle = isSelected
+            ? selectedRowStyle
+            : (index % 2 === 0 && alternateRowStyle) || basicRowStyle;
+
           return (
-            <Cell
-              value={rowData[key]}
-              viewStyle={cellContainer[alignText]}
-              textStyle={textStyle}
-              isLastCell={index === columns.length - 1}
-              width={width}
-              key={`${id}${key}`}
+            <SimpleRow
+              rowData={item}
+              rowIndex={index}
+              rowKey={id}
+              style={rowStyle}
+              renderCells={renderCells}
+              onPress={isRowDisabled ? null : selectRow}
+              isSelected={isSelected}
             />
           );
-        });
-      },
-      [disabledRows, isDisabled]
-    );
+        },
+        [selectedRows, disabledRows, selectRow, isDisabled]
+      );
 
-    const renderRow = useCallback(
-      ({ item, index }) => {
-        const { id } = item;
-        const isRowDisabled = disabledRows?.[id] || isDisabled;
-        const isSelected = selectedRows?.[id];
-        const rowStyle = isSelected
-          ? selectedRowStyle
-          : (index % 2 === 0 && alternateRowStyle) || basicRowStyle;
+      const renderHeaderCells = useCallback(
+        () =>
+          columns.map(({ title, width, alignText }, index) => (
+            <HeaderCell
+              key={title}
+              title={title}
+              containerStyle={headerCells[alignText]}
+              textStyle={cellText[alignText]}
+              isLastCell={index === columns.length - 1}
+              width={width}
+            />
+          )),
+        [columns]
+      );
 
-        return (
-          <SimpleRow
-            rowData={item}
-            rowIndex={index}
-            rowKey={id}
-            style={rowStyle}
-            renderCells={renderCells}
-            onPress={isRowDisabled ? null : selectRow}
-            isSelected={isSelected}
-          />
-        );
-      },
-      [selectedRows, disabledRows, selectRow, isDisabled]
-    );
+      const renderHeaders = useCallback(
+        () => <HeaderRow style={headerRow} columns={columns} renderCells={renderHeaderCells} />,
+        [columns]
+      );
 
-    const renderHeaderCells = useCallback(
-      () =>
-        columns.map(({ title, width, alignText }, index) => (
-          <HeaderCell
-            key={title}
-            title={title}
-            containerStyle={headerCells[alignText]}
-            textStyle={cellText[alignText]}
-            isLastCell={index === columns.length - 1}
-            width={width}
-          />
-        )),
-      [columns]
-    );
-
-    const renderHeaders = useCallback(
-      () => <HeaderRow style={headerRow} columns={columns} renderCells={renderHeaderCells} />,
-      [columns]
-    );
-
-    return (
-      <FlatList
-        ref={ref}
-        data={data}
-        keyExtractor={recordKeyExtractor}
-        getItemLayout={getItemLayout}
-        renderItem={renderRow}
-        stickyHeaderIndices={[0]}
-        ListHeaderComponent={renderHeaders}
-        extraData={selectedRows}
-      />
-    );
-  })
+      return (
+        <FlatList
+          ref={ref}
+          data={data}
+          keyExtractor={recordKeyExtractor}
+          getItemLayout={getItemLayout}
+          renderItem={renderRow}
+          stickyHeaderIndices={[0]}
+          ListHeaderComponent={renderHeaders}
+          extraData={selectedRows}
+          style={style}
+        />
+      );
+    }
+  )
 );
 
 SimpleTable.defaultProps = {
@@ -119,6 +122,7 @@ SimpleTable.defaultProps = {
   disabledRows: null,
   selectRow: null,
   isDisabled: false,
+  style: null,
 };
 
 SimpleTable.propTypes = {
@@ -128,6 +132,7 @@ SimpleTable.propTypes = {
   selectedRows: PropTypes.object,
   disabledRows: PropTypes.object,
   isDisabled: PropTypes.bool,
+  style: PropTypes.object,
 };
 
 const SimpleRow = React.memo(({ rowData, style, rowKey, renderCells, onPress }) => {

@@ -278,7 +278,6 @@ const DataTableRow = React.memo(
         onPress={onPress}
         style={rowStyle}
         renderCells={renderCells}
-        debug
         rowKey={rowKey}
         rowData={rowData}
         rowState={rowState}

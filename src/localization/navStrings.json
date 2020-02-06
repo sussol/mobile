@@ -39,9 +39,11 @@
     "stocktake": "Relevé d'inventaire",
     "supplier_invoices": "Factures fournisseurs",
     "supplier_requisitions": "Factures réquisitions",
+    "settings": "réglages",
+    "database_contents": "Contenus de la base de données",
     "dispensary": "Dispensaire",
     "dashboard": "Tableau de bord",
-    "cash_register": "Cash register"
+    "cash_register": "Caisse enregistreuse"
   },
   "gil": {
     "current_stock": "Mwaitin am bwai n\naoraki ke am supply",

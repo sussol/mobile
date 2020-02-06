@@ -175,7 +175,6 @@ export const addCashTransaction = (cashTransaction, route) => (dispatch, getStat
     UIDatabase.write(() => {
       createRecord(UIDatabase, 'CashIn', currentUser, cashTransaction);
     });
-    dispatch(refreshCashRegister(route));
   }
 
   if (transactionType === CASH_TRANSACTION_TYPES.CASH_OUT) {
@@ -183,8 +182,10 @@ export const addCashTransaction = (cashTransaction, route) => (dispatch, getStat
     UIDatabase.write(() => {
       createRecord(UIDatabase, 'CashOut', currentUser, cashTransaction);
     });
-    dispatch(refreshCashRegister(route));
   }
+
+  dispatch(refreshCashRegister(route));
+  dispatch(closeModal(route));
 };
 
 /**
@@ -195,10 +196,17 @@ export const addCashTransaction = (cashTransaction, route) => (dispatch, getStat
  */
 export const addTransactionBatch = (item, route) => (dispatch, getState) => {
   const pageObject = pageObjectSelector(getState());
+  const { serialNumber, otherParty } = pageObject;
 
   UIDatabase.write(() => {
     const transItem = createRecord(UIDatabase, 'TransactionItem', pageObject, item);
-    const itemBatch = createRecord(UIDatabase, 'ItemBatch', item, '');
+    const itemBatch = createRecord(
+      UIDatabase,
+      'ItemBatch',
+      item,
+      `supplier_invoice${serialNumber}`,
+      otherParty
+    );
     const addedBatch = createRecord(UIDatabase, 'TransactionBatch', transItem, itemBatch);
     dispatch(addRecord(addedBatch, route));
   });

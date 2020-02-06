@@ -110,9 +110,17 @@ const createPrescriber = (database, prescriberDetails) => {
  *  }
  */
 const createPatient = (database, patientDetails) => {
-  const { dateOfBirth, addressOne, addressTwo } = patientDetails;
+  const { PATIENT_CODE } = NUMBER_SEQUENCE_KEYS;
+  const { dateOfBirth, addressOne, addressTwo, lastName, firstName } = patientDetails;
+
   const billingAddress = createAddress(database, { line1: addressOne, line2: addressTwo });
+
   const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
+  const thisStoreCode = database.getSetting(SETTINGS_KEYS.THIS_STORE_CODE);
+  const patientSequenceNumber = getNextNumber(database, PATIENT_CODE);
+  const uniqueCode = `${thisStoreCode}${String(patientSequenceNumber)}`;
+
+  const fullName = `${lastName}, ${firstName}`;
 
   const patient = database.create('Name', {
     id: generateUUID(),
@@ -122,8 +130,10 @@ const createPatient = (database, patientDetails) => {
     isVisible: true,
     isPatient: true,
     type: 'patient',
+    code: uniqueCode,
     supplyingStoreId: thisStoreId,
     isCustomer: true,
+    name: fullName,
   });
 
   database.save('Patient', patient);
@@ -171,7 +181,7 @@ const createOffsetCustomerInvoice = (database, user, name, amount) => {
     status: 'finalised',
     comment: 'Offset for a cash-only transaction',
     otherParty: name,
-    total: amount,
+    subtotal: amount,
     outstanding: amount,
     enteredBy: user,
   });
@@ -192,7 +202,7 @@ const createReceipt = (database, user, name, amount, description) => {
     comment: description,
     otherParty: name,
     enteredBy: user,
-    total: amount,
+    subtotal: amount,
   });
 
   database.save('Transaction', receipt);
@@ -224,7 +234,7 @@ const createPayment = (database, user, name, amount, reason, description) => {
     status: 'finalised',
     otherParty: name,
     enteredBy: user,
-    total: amount,
+    subtotal: amount,
     option: reason,
     comment: description,
   });
@@ -283,7 +293,7 @@ const createSupplierCredit = (database, user, supplierId, returnAmount) => {
     status: 'finalised',
     comment: '',
     otherParty: database.get('Name', supplierId),
-    total: returnAmount,
+    subtotal: returnAmount,
     enteredBy: user,
   });
 
@@ -307,7 +317,7 @@ const createCustomerCredit = (database, user, name, amount) => {
     comment: 'Offset for a cash-only transaction',
     otherParty: name,
     enteredBy: user,
-    total: creditAmount,
+    subtotal: creditAmount,
     outstanding: creditAmount,
   });
 
@@ -432,7 +442,7 @@ const createIndicatorValue = (database, row, column, period) => {
     row,
     column,
     period,
-    value,
+    _value: value,
   });
   row.addIndicatorValue(indicatorValue);
   column.addIndicatorValue(indicatorValue);
@@ -472,7 +482,7 @@ const createInventoryAdjustment = (database, user, date, isAddition) => {
  * @param  {string}     batchString
  * @return {ItemBatch}
  */
-const createItemBatch = (database, item, batchString) => {
+const createItemBatch = (database, item, batchString, supplier) => {
   // Handle cross-reference items.
   const { realItem } = item;
 
@@ -484,6 +494,7 @@ const createItemBatch = (database, item, batchString) => {
     numberOfPacks: 0,
     costPrice: realItem.defaultPrice ? realItem.defaultPrice : 0,
     sellPrice: realItem.defaultPrice ? realItem.defaultPrice : 0,
+    supplier,
   });
 
   realItem.addBatch(itemBatch);
@@ -627,13 +638,14 @@ const createStocktakeItem = (database, stocktake, item) => {
  * @return  {StocktakeBatch}
  */
 const createStocktakeBatch = (database, stocktakeItem, itemBatch) => {
-  const { numberOfPacks, packSize, expiryDate, batch, costPrice, sellPrice } = itemBatch;
+  const { numberOfPacks, supplier, packSize, expiryDate, batch, costPrice, sellPrice } = itemBatch;
 
   const stocktakeBatch = database.create('StocktakeBatch', {
     id: generateUUID(),
     stocktake: stocktakeItem.stocktake,
     itemBatch,
     snapshotNumberOfPacks: numberOfPacks,
+    supplier,
     packSize,
     expiryDate,
     batch,

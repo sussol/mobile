@@ -4,41 +4,23 @@
  */
 
 import { createSelector } from 'reselect';
-import { pageStateSelector } from './pageSelectors';
 
-import { ROUTES } from '../navigation/constants';
-import { recordKeyExtractor } from '../pages/dataTableUtilities';
 import currency from '../localization/currency';
 
-export const selectPageState = createSelector([pageStateSelector], pageState => {
-  if (pageState?.route === ROUTES.CASH_REGISTER) {
-    return pageState;
-  }
+export const selectCashRegisterState = state => state.pages.cashRegister;
 
-  // Handle page component rendering during navigation to root.
-  return {
-    ...pageState,
-    backingData: [],
-    data: [],
-    dataState: new Map(),
-    transactionType: 'payment',
-    columns: [],
-    keyExtractor: recordKeyExtractor,
-    modalKey: '',
-    searchTerm: '',
-    sortKey: '',
-  };
-});
-
-export const selectTransactions = createSelector([selectPageState], pageState => pageState.data);
+export const selectTransactions = createSelector(
+  [selectCashRegisterState],
+  pageState => pageState.data
+);
 
 export const selectTransactionType = createSelector(
-  [selectPageState],
+  [selectCashRegisterState],
   pageState => pageState.transactionType
 );
 
 export const selectSearchTerm = createSelector(
-  [selectPageState],
+  [selectCashRegisterState],
   pageState => pageState.searchTerm
 );
 
@@ -64,7 +46,11 @@ export const selectToggledTransactions = createSelector(
   }
 );
 
-export const selectFilteredTransactions = createSelector([selectToggledTransactions, selectSearchTerm], (transactions, searchTerm) => transactions.filter(({ otherParty }) => otherParty.name.includes(searchTerm)));
+export const selectFilteredTransactions = createSelector(
+  [selectToggledTransactions, selectSearchTerm],
+  (transactions, searchTerm) =>
+    transactions.filter(({ otherParty }) => otherParty.name.includes(searchTerm))
+);
 
 export const selectPaymentsTotal = createSelector([selectPayments], payments =>
   payments.reduce((acc, { total }) => acc.add(total), currency(0))

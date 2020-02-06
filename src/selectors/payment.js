@@ -4,14 +4,12 @@
  */
 
 import currency from '../localization/currency';
+import { UIDatabase } from '../database';
 
 export const selectPrescriptionSubTotal = ({ payment }) => {
   const { transaction } = payment;
-  const { items = [] } = transaction || {};
-  const total = items.reduce(
-    (acc, { totalPrice }) => currency(totalPrice || 0).add(acc),
-    currency(0)
-  );
+  const batches = transaction?.getTransactionBatches(UIDatabase) || [];
+  const total = batches.reduce((acc, { totalPrice }) => acc.add(totalPrice), currency(0));
   return total;
 };
 

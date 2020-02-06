@@ -21,7 +21,9 @@ import { debounce } from '../../utilities';
 import { PrescriberActions } from '../../actions/PrescriberActions';
 import { PrescriptionActions } from '../../actions/PrescriptionActions';
 import { getItemLayout, getColumns } from '../../pages/dataTableUtilities';
-import { selectSortedAndFilteredPrescribers } from '../../selectors/prescriber';
+import { selectSortedPrescribers } from '../../selectors/prescriber';
+import { dispensingStrings } from '../../localization';
+import globalStyles from '../../globalStyles';
 
 /**
  * Layout component used for a tab within the prescription wizard.
@@ -81,16 +83,19 @@ const PrescriberSelectComponent = ({
     [columns, sortKey, isAscending]
   );
 
+  const { pageTopViewContainer } = globalStyles;
+
   return (
-    <FlexView>
+    <FlexView style={pageTopViewContainer}>
       <PrescriptionInfo />
-      <FlexRow>
+      <FlexRow style={{ marginBottom: 7 }}>
         <SearchBar
           viewStyle={localStyles.searchBar}
           onChangeText={onFilterData}
           value={searchTerm}
+          placeholder={dispensingStrings.search_by_last_name_first_name}
         />
-        <PageButton text="Add Prescriber" onPress={createPrescriber} />
+        <PageButton text="Add Prescriber" onPress={createPrescriber} style={{ marginLeft: 5 }} />
       </FlexRow>
 
       <DataTable
@@ -102,7 +107,11 @@ const PrescriberSelectComponent = ({
       />
 
       <FlexRow justifyContent="flex-end" alignItems="flex-end">
-        <PageButton text="Cancel" onPress={() => onCancelPrescription()} />
+        <PageButton
+          text="Cancel"
+          onPress={() => onCancelPrescription()}
+          style={{ marginRight: 7 }}
+        />
         <PageButton
           text="OK"
           onPress={() => choosePrescriber(currentPrescriber)}
@@ -115,11 +124,12 @@ const PrescriberSelectComponent = ({
 
 const localStyles = StyleSheet.create({
   searchBar: {
-    borderBottomWidth: 1,
-    flexDirection: 'row',
     alignItems: 'center',
+    borderBottomWidth: 1,
     flex: 1,
+    flexDirection: 'row',
     flexGrow: 1,
+    marginHorizontal: 5,
   },
 });
 
@@ -143,7 +153,7 @@ const mapStateToProps = state => {
   const { isComplete } = wizard;
 
   const currentPrescriber = selectPrescriptionPrescriber(state);
-  const prescribers = selectSortedAndFilteredPrescribers(state);
+  const prescribers = selectSortedPrescribers(state);
 
   return { prescribers, searchTerm, isComplete, sortKey, isAscending, currentPrescriber };
 };
@@ -151,6 +161,7 @@ const mapStateToProps = state => {
 PrescriberSelectComponent.defaultProps = {
   searchTerm: '',
   isComplete: false,
+  currentPrescriber: null,
 };
 
 PrescriberSelectComponent.propTypes = {
@@ -164,7 +175,7 @@ PrescriberSelectComponent.propTypes = {
   sortKey: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   onCancelPrescription: PropTypes.func.isRequired,
-  currentPrescriber: PropTypes.func.isRequired,
+  currentPrescriber: PropTypes.object,
 };
 
 export const PrescriberSelect = connect(

@@ -5,6 +5,7 @@
  */
 
 import { Client as BugsnagClient } from 'bugsnag-react-native';
+import moment from 'moment';
 
 import {
   INTERNAL_TO_EXTERNAL,
@@ -80,12 +81,13 @@ const generateSyncData = (settings, recordType, record) => {
         type: record.type,
         first: record.firstName,
         last: record.lastName,
-        name: `${record.lastName}, ${record.firstName}`,
-        date_of_birth: getDateString(record.dateOfBirth),
+        name: record.name,
+        date_of_birth: moment(record.dateOfBirth).format(),
         code: record.code,
         email: record.emailAddress,
         supplying_store_id: settings.get(THIS_STORE_ID),
         phone: record.phoneNumber,
+        customer: String(record.isCustomer),
       };
     }
     case 'NumberSequence': {
@@ -173,8 +175,6 @@ const generateSyncData = (settings, recordType, record) => {
       };
     }
     case 'Transaction': {
-      const isCashReconciliation = record.type === 'payment' || record.type === 'receipt';
-      const total = String(isCashReconciliation ? record.total : record.totalPrice);
       return {
         ID: record.id,
         name_ID: record.otherParty && record.otherParty.id,
@@ -185,21 +185,21 @@ const generateSyncData = (settings, recordType, record) => {
         status: STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
         mode: record.mode,
         prescriber_ID: record.prescriber && record.prescriber.id,
-        total,
-        foreign_currency_total: total,
+        total: String(record.total),
+        foreign_currency_total: String(record.total),
         their_ref: record.theirRef,
         confirm_date: getDateString(record.confirmDate),
-        subtotal: total,
+        subtotal: String(record.subtotal),
         user_ID: record.enteredBy && record.enteredBy.id,
         category_ID: record.category && record.category.id,
         confirm_time: getTimeString(record.confirmDate),
         store_ID: settings.get(THIS_STORE_ID),
         linked_transaction_id: record.linkedTransaction?.id ?? '',
         user1: record.user1,
-        requisition_ID:
-          record.linkedRequisition && record.linkedRequisition.id
-            ? record.linkedRequisition.id
-            : undefined,
+        requisition_ID: record.linkedRequisition?.id ?? '',
+        nameInsuranceJoinID: record?.insurancePolicy?.id,
+        insuranceDiscountAmount: String(record?.insuranceDiscountAmount),
+        insuranceDiscountRate: String(record?.insuranceDiscountRate),
       };
     }
     case 'TransactionBatch': {
@@ -232,7 +232,7 @@ const generateSyncData = (settings, recordType, record) => {
         ID: record.id,
         insuranceProviderID: record.insuranceProvider.id,
         nameID: record.patient.id,
-        isActive: record.isActive,
+        isActive: String(record.isActive),
         policyNumberFamily: record.policyNumberFamily,
         policyNumberPerson: record.policyNumberPerson,
         type: record.type,

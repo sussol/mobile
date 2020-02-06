@@ -2,7 +2,7 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
-
+import { batch as reduxBatch } from 'react-redux';
 import currency from '../../../localization/currency';
 import { UIDatabase } from '../../../database';
 import { parsePositiveInteger, MODAL_KEYS } from '../../../utilities';
@@ -62,7 +62,7 @@ export const editSellPrice = (value, rowKey, route) => (dispatch, getState) => {
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
   const objectDataType = objectToEdit.stocktake ? 'StocktakeBatch' : 'TransactionBatch';
 
-  const { itemBatch, sellPrice } = objectToEdit;
+  const { sellPrice } = objectToEdit;
 
   const valueAsCurrency = currency(value);
   const { value: currencyValue } = valueAsCurrency;
@@ -70,10 +70,23 @@ export const editSellPrice = (value, rowKey, route) => (dispatch, getState) => {
   if (currencyValue !== sellPrice) {
     UIDatabase.write(() => {
       UIDatabase.update(objectDataType, { ...objectToEdit, sellPrice: currencyValue });
-      UIDatabase.update('ItemBatch', { ...itemBatch, sellPrice: currencyValue });
       dispatch(refreshRow(rowKey, route));
     });
   }
+};
+
+export const editBatchSupplier = (supplier, batch, route) => dispatch => {
+  UIDatabase.write(() => {
+    UIDatabase.update('StocktakeBatch', {
+      ...batch,
+      supplier,
+    });
+  });
+
+  reduxBatch(() => {
+    dispatch(refreshRow(batch.id, route));
+    dispatch(closeModal(route));
+  });
 };
 
 export const editIndicatorValue = (value, rowKey, columnKey, route) => (dispatch, getState) => {
@@ -339,4 +352,5 @@ export const CellActionsLookup = {
   editCountedQuantityWithReason,
   editStocktakeBatchCountedQuantityWithReason,
   editSellPrice,
+  editBatchSupplier,
 };

@@ -57,6 +57,10 @@ export class Transaction extends Realm.Object {
     database.delete('TransactionItem', this.items);
   }
 
+  get total() {
+    return this.subtotal - this.insuranceDiscountAmount;
+  }
+
   /**
    * Get if transaction is finalised.
    *
@@ -114,6 +118,14 @@ export class Transaction extends Realm.Object {
 
   get isPrescription() {
     return this.mode === 'dispensary' && this.type === 'customer_invoice';
+  }
+
+  get isCashTransaction() {
+    return this.type === 'payment' || this.type === 'receipt';
+  }
+
+  get isCredit() {
+    return this.type === 'supplier_credit' || this.type === 'customer_credit';
   }
 
   /**
@@ -449,6 +461,13 @@ export class Transaction extends Realm.Object {
     }
     if (!this.isConfirmed) this.confirm(database);
 
+    // Finding the totalPrice propogates through `TransactionItem` records down to the batch
+    // level, deriving the full cost of the Transaction. Cash transactions and credits are
+    // created finalised, having their total already set.
+    if (!(this.isCashTransaction || this.isCredit)) {
+      this.subtotal = this.totalPrice;
+    }
+
     this.status = 'finalised';
     database.save('Transaction', this);
   }
@@ -473,12 +492,14 @@ Transaction.schema = {
     mode: { type: 'string', default: 'store' },
     prescriber: { type: 'Prescriber', optional: true },
     linkedRequisition: { type: 'Requisition', optional: true },
-    total: { type: 'float', optional: true },
+    subtotal: { type: 'float', optional: true },
     outstanding: { type: 'float', optional: true },
     insurancePolicy: { type: 'InsurancePolicy', optional: true },
     option: { type: 'Options', optional: true },
     linkedTransaction: { type: 'Transaction', optional: true },
     user1: { type: 'string', optional: true },
+    insuranceDiscountRate: { type: 'double', optional: true },
+    insuranceDiscountAmount: { type: 'double', optional: true },
   },
 };
 

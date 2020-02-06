@@ -23,6 +23,14 @@ import globalStyles, { DARKER_GREY, SUSSOL_ORANGE } from '../globalStyles';
  */
 export const DropDown = React.memo(
   ({ values, selectedValue, onValueChange, style, headerValue, isDisabled }) => {
+    const onChange = React.useCallback(
+      (value, index) => {
+        if (headerValue && index === 0) return;
+        onValueChange(value, index - 1);
+      },
+      [onValueChange]
+    );
+
     const header = React.useMemo(
       () => (
         <Picker.Item key={headerValue} label={headerValue} enabled={false} color={DARKER_GREY} />
@@ -34,7 +42,7 @@ export const DropDown = React.memo(
         values.map(value => (
           <Picker.Item key={value} label={value} value={value} color={SUSSOL_ORANGE} />
         )),
-      []
+      [values]
     );
     const withHeader = React.useMemo(() => [header, ...items], [header, items]);
 
@@ -42,7 +50,7 @@ export const DropDown = React.memo(
       <Picker
         selectedValue={selectedValue}
         mode="dropdown"
-        onValueChange={onValueChange}
+        onValueChange={onChange}
         style={{ ...globalStyles.picker, ...globalStyles.pickerText, ...style }}
         enabled={!isDisabled}
       >

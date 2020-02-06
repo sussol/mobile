@@ -25,8 +25,17 @@ import { FlexColumn } from '../FlexColumn';
 
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 import { PrescriptionActions } from '../../actions/PrescriptionActions';
-import { selectPrescriptionTotal } from '../../selectors/payment';
+import {
+  selectPrescriptionTotal,
+  selectDiscountAmount,
+  selectPrescriptionSubTotal,
+} from '../../selectors/payment';
+import { selectInsuranceDiscountRate } from '../../selectors/insurance';
+import { selectPrescriptionIsFinalised } from '../../selectors/prescription';
 
+import globalStyles from '../../globalStyles';
+
+const { pageTopViewContainer } = globalStyles;
 const mapStateToProps = state => {
   const { payment, wizard, modules } = state;
   const { transaction, paymentValid, paymentAmount } = payment;
@@ -37,8 +46,15 @@ const mapStateToProps = state => {
   const currentUser = selectCurrentUser(state);
   const canConfirm = paymentValid && !isComplete;
   const total = selectPrescriptionTotal(state);
+  const subtotal = selectPrescriptionSubTotal(state);
+  const discountAmount = selectDiscountAmount(state);
+  const discountRate = selectInsuranceDiscountRate(state);
+  const isFinalised = selectPrescriptionIsFinalised(state);
 
   return {
+    subtotal,
+    discountAmount,
+    discountRate,
     total,
     transaction,
     canConfirm,
@@ -46,6 +62,7 @@ const mapStateToProps = state => {
     currentUser,
     currentPatient,
     usingPayments,
+    isFinalised,
   };
 };
 
@@ -57,6 +74,9 @@ const mapDispatchToProps = dispatch => {
 
 const PrescriptionConfirmationComponent = ({
   total,
+  subtotal,
+  discountAmount,
+  discountRate,
   transaction,
   currentUser,
   currentPatient,
@@ -64,13 +84,23 @@ const PrescriptionConfirmationComponent = ({
   canConfirm,
   usingPayments,
   onDelete,
+  isFinalised,
 }) => {
   const runWithLoadingIndicator = useLoadingIndicator();
 
   const confirm = React.useCallback(
     () =>
       UIDatabase.write(() =>
-        pay(currentUser, currentPatient, transaction, paymentAmount.value, total.value)
+        pay(
+          currentUser,
+          currentPatient,
+          transaction,
+          paymentAmount.value,
+          total.value,
+          subtotal.value,
+          discountAmount.value,
+          discountRate
+        )
       ),
     [currentUser, currentPatient, transaction, paymentAmount.value]
   );
@@ -78,10 +108,10 @@ const PrescriptionConfirmationComponent = ({
   const confirmPrescription = React.useCallback(() => runWithLoadingIndicator(confirm), [confirm]);
 
   return (
-    <FlexView flex={1}>
+    <FlexView flex={1} style={pageTopViewContainer}>
       <PrescriptionInfo />
 
-      <FlexRow flex={1}>
+      <FlexRow flex={1} style={{ marginBottom: 7, marginTop: 10 }}>
         <FlexColumn flex={1}>
           <PrescriptionExtra />
           <PrescriptionSummary transaction={transaction} />
@@ -91,7 +121,12 @@ const PrescriptionConfirmationComponent = ({
           {usingPayments && <PaymentSummary />}
 
           <FlexRow justifyContent="flex-end">
-            <PageButton text="Cancel" onPress={onDelete} />
+            <PageButton
+              text="Cancel"
+              onPress={onDelete}
+              isDisabled={isFinalised}
+              style={{ marginRight: 7 }}
+            />
             <PageButton isDisabled={!canConfirm} text="Complete" onPress={confirmPrescription} />
           </FlexRow>
         </FlexColumn>
@@ -100,15 +135,25 @@ const PrescriptionConfirmationComponent = ({
   );
 };
 
+PrescriptionConfirmationComponent.defaultProps = {
+  discountAmount: null,
+  discountRate: 0,
+  transaction: null,
+};
+
 PrescriptionConfirmationComponent.propTypes = {
-  transaction: PropTypes.object.isRequired,
+  transaction: PropTypes.object,
   currentUser: PropTypes.object.isRequired,
   currentPatient: PropTypes.object.isRequired,
   paymentAmount: PropTypes.object.isRequired,
   canConfirm: PropTypes.bool.isRequired,
   usingPayments: PropTypes.bool.isRequired,
   onDelete: PropTypes.func.isRequired,
-  total: PropTypes.number.isRequired,
+  total: PropTypes.object.isRequired,
+  subtotal: PropTypes.object.isRequired,
+  discountAmount: PropTypes.object,
+  discountRate: PropTypes.number,
+  isFinalised: PropTypes.bool.isRequired,
 };
 
 export const PrescriptionConfirmation = connect(

@@ -15,7 +15,7 @@ import { TextEditor } from './modalChildren';
 import { ModalContainer } from './modals/ModalContainer';
 
 import { PrescriptionActions } from '../actions/PrescriptionActions';
-import { pageInfoStrings, modalStrings } from '../localization';
+import { pageInfoStrings, modalStrings, dispensingStrings } from '../localization';
 import {
   selectTransactionComment,
   selectPatientType,
@@ -40,9 +40,13 @@ const PrescriptionExtraComponent = ({
   usingPatientTypes,
   usingPrescriptionCategories,
 }) => {
-  const onCategorySelection = React.useCallback(
-    (_, index) => onUpdateCategory(prescriptionCategories[index]),
-    []
+  const onCategorySelection = React.useCallback((_, index) => {
+    onUpdateCategory(prescriptionCategories[index]);
+  }, []);
+
+  const prescriptionCategoryNames = React.useMemo(
+    () => prescriptionCategories.map(({ name }) => name),
+    [prescriptionCategories]
   );
 
   const pageInfoColumns = React.useMemo(
@@ -63,6 +67,7 @@ const PrescriptionExtraComponent = ({
     <View style={localStyles.container}>
       {usingPatientTypes && (
         <DropDown
+          headerValue={dispensingStrings.select_a_patient_type}
           values={PATIENT_TYPES}
           selectedValue={patientType}
           onValueChange={onUpdatePatientType}
@@ -70,7 +75,8 @@ const PrescriptionExtraComponent = ({
       )}
       {usingPrescriptionCategories && (
         <DropDown
-          values={prescriptionCategories}
+          headerValue={dispensingStrings.select_a_prescription_category}
+          values={prescriptionCategoryNames}
           selectedValue={categoryName}
           onValueChange={onCategorySelection}
         />
@@ -98,7 +104,7 @@ PrescriptionExtraComponent.propTypes = {
   comment: PropTypes.string.isRequired,
   categoryName: PropTypes.string.isRequired,
   patientType: PropTypes.string.isRequired,
-  prescriptionCategories: PropTypes.array.isRequired,
+  prescriptionCategories: PropTypes.object.isRequired,
   usingPatientTypes: PropTypes.bool.isRequired,
   usingPrescriptionCategories: PropTypes.bool.isRequired,
 };

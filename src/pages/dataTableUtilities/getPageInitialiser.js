@@ -12,6 +12,7 @@ import getPageInfoColumns from './getPageInfoColumns';
 
 import { COLUMN_KEYS } from './constants';
 import { ROUTES } from '../../navigation/constants';
+import { SETTINGS_KEYS } from '../../settings';
 
 export const cashRegisterInitialiser = () => {
   const backingData = UIDatabase.objects('CashTransaction');
@@ -23,6 +24,7 @@ export const cashRegisterInitialiser = () => {
     dataState: new Map(),
     searchTerm: '',
     sortKey: COLUMN_KEYS.SERIAL_NUMBER,
+    isAscending: true,
     keyExtractor: recordKeyExtractor,
     modalKey: '',
     columns: getColumns(ROUTES.CASH_REGISTER),
@@ -211,19 +213,28 @@ const stocktakesInitialiser = () => {
  * @param    {StocktakeItem}  stocktakeItem
  * @returns  {object}
  */
-const stocktakeBatchInitialiser = stocktakeItem => ({
-  pageObject: stocktakeItem,
-  backingData: stocktakeItem.batches,
-  data: stocktakeItem.batches.slice(),
-  keyExtractor: recordKeyExtractor,
-  dataState: new Map(),
-  sortKey: 'itemName',
-  isAscending: true,
-  modalKey: '',
-  modalValue: null,
-  columns: getColumns(ROUTES.CUSTOMER_INVOICE),
-  getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_INVOICE),
-});
+const stocktakeBatchInitialiser = stocktakeItem => {
+  const thisStoreNameId = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_NAME_ID);
+  const suppliers = UIDatabase.objects('Name').filtered(
+    '(isVisible == true AND isSupplier == true AND id != $0) OR (type == "inventory_adjustment")',
+    thisStoreNameId
+  );
+
+  return {
+    pageObject: stocktakeItem,
+    backingData: stocktakeItem.batches,
+    data: stocktakeItem.batches.slice(),
+    keyExtractor: recordKeyExtractor,
+    dataState: new Map(),
+    sortKey: 'itemName',
+    isAscending: true,
+    modalKey: '',
+    modalValue: null,
+    columns: getColumns(ROUTES.CUSTOMER_INVOICE),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_INVOICE),
+    suppliers,
+  };
+};
 
 /**
  * Gets data for initialising a manage stocktake page from an associated stocktake item.

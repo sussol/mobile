@@ -10,8 +10,8 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 import {
-  selectPageState,
   selectBalance,
+  selectCashRegisterState,
   selectFilteredTransactions,
 } from '../selectors/cashRegister';
 
@@ -33,12 +33,14 @@ export const CashRegister = ({
   dataState,
   searchTerm,
   sortKey,
+  isAscending,
   keyExtractor,
   modalKey,
   columns,
   currentBalance,
   transactionType,
   onFilterData,
+  onSortColumn,
   onNewCashTransaction,
   onCloseModal,
   onAddCashTransaction,
@@ -66,9 +68,14 @@ export const CashRegister = ({
 
   const renderHeader = useCallback(
     () => (
-      <DataTableHeaderRow columns={columns} onPress={null} isAscending={true} sortKey={sortKey} />
+      <DataTableHeaderRow
+        columns={columns}
+        onPress={onSortColumn}
+        isAscending={isAscending}
+        sortKey={sortKey}
+      />
     ),
-    [sortKey]
+    [isAscending, sortKey]
   );
 
   const AddNewTransactionButton = () => (
@@ -142,7 +149,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 const mapStateToProps = state => {
-  const pageState = selectPageState(state);
+  const pageState = selectCashRegisterState(state);
   const data = selectFilteredTransactions(state);
   const currentBalance = selectBalance(state);
 
@@ -159,12 +166,14 @@ CashRegister.propTypes = {
   dataState: PropTypes.object.isRequired,
   searchTerm: PropTypes.string.isRequired,
   sortKey: PropTypes.string.isRequired,
+  isAscending: PropTypes.bool.isRequired,
   modalKey: PropTypes.string.isRequired,
   keyExtractor: PropTypes.func.isRequired,
   columns: PropTypes.array.isRequired,
   currentBalance: PropTypes.string.isRequired,
   transactionType: PropTypes.string.isRequired,
   onFilterData: PropTypes.func.isRequired,
+  onSortColumn: PropTypes.func.isRequired,
   onToggleTransactionType: PropTypes.func.isRequired,
   onNewCashTransaction: PropTypes.func.isRequired,
   onCloseModal: PropTypes.func.isRequired,

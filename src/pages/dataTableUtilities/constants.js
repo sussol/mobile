@@ -26,6 +26,7 @@ export const COLUMN_KEYS = {
   COUNTED_TOTAL_QUANTITY: 'countedTotalQuantity',
   CREATED_DATE: 'createdDate',
   DATE_OF_BIRTH: 'dateOfBirth',
+  DESCRIPTION: 'description',
   DIFFERENCE: 'difference',
   DISPENSE: 'dispense',
   ENTRY_DATE: 'entryDate',
@@ -71,6 +72,7 @@ export const COLUMN_NAMES = {
   AVAILABLE_QUANTITY: 'availableQuantity',
   BATCH_NAME: 'batch',
   BATCHES: 'batches',
+  CASH_REASON: 'cashReason',
   CODE: 'code',
   COMMENT: 'comment',
   CONFIRM_DATE: 'confirmDate',
@@ -79,6 +81,7 @@ export const COLUMN_NAMES = {
   CREATED_DATE: 'createdDate',
   CUSTOMER: 'customer',
   DATE_OF_BIRTH: 'dateOfBirth',
+  DESCRIPTION: 'description',
   DIFFERENCE: 'difference',
   DISPENSE: 'dispense',
   EDITABLE_BATCH_NAME: 'editableBatchName',
@@ -101,6 +104,7 @@ export const COLUMN_NAMES = {
   OUR_STOCK_ON_HAND: 'ourStockOnHand',
   PATIENT_EDIT: 'patientEdit',
   PATIENT_HISTORY: 'patientHistory',
+  PAYMENT_NAME: 'paymentName',
   PRESCRIBER_EDIT: 'prescriberEdit',
   PRESCRIBER: 'prescriber',
   PRICE: 'price',
@@ -125,6 +129,7 @@ export const COLUMN_NAMES = {
   TOTAL_QUANTITY: 'totalQuantity',
   TRANSACT_TYPE: 'transactType',
   UNIT: 'unit',
+  EDIT_SUPPLIER: 'editSupplier',
 };
 
 export default { COLUMN_TYPES, COLUMN_NAMES, COLUMN_KEYS };

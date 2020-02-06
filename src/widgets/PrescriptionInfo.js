@@ -104,10 +104,11 @@ const mapStateToProps = state => {
 PrescriptionInfoComponent.defaultProps = {
   prescriberName: '',
   prescriptionPrescriber: null,
+  prescriptionPatient: null,
 };
 
 PrescriptionInfoComponent.propTypes = {
-  prescriptionPatient: PropTypes.object.isRequired,
+  prescriptionPatient: PropTypes.object,
   patientName: PropTypes.string.isRequired,
   prescriberName: PropTypes.string,
   prescriptionPrescriber: PropTypes.object,

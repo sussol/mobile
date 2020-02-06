@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect, batch } from 'react-redux';
 
-import { MODAL_KEYS } from '../../utilities';
+import { MODAL_KEYS, getModalTitle } from '../../utilities';
 import { usePageReducer } from '../../hooks';
 import { getItemLayout } from '../../pages/dataTableUtilities';
 
@@ -20,11 +20,12 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../DataTable';
 import globalStyles from '../../globalStyles';
 
 import { UIDatabase } from '../../database';
-import ModalContainer from './ModalContainer';
-import { buttonStrings } from '../../localization/index';
+import { ModalContainer } from './ModalContainer';
+import { buttonStrings } from '../../localization';
 import { ROUTES } from '../../navigation/constants';
 
 import { selectUsingPayments } from '../../selectors/modules';
+import { AutocompleteSelector } from '../modalChildren';
 
 /**
  * Renders a stateful modal with a stocktake item and it's batches loaded
@@ -64,6 +65,7 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: re
     PageActions,
     columns,
     getPageInfoColumns,
+    suppliers,
   } = state;
 
   const { stocktake = {} } = stocktakeItem;
@@ -75,6 +77,9 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: re
       ? UIDatabase.objects('PositiveAdjustmentReason')
       : UIDatabase.objects('NegativeAdjustmentReason');
 
+  const onEditSupplier = value => dispatch(PageActions.editBatchSupplier(value, modalValue));
+  const onSelectSupplier = rowKey =>
+    dispatch(PageActions.openModal('selectItemBatchSupplier', rowKey));
   const onCloseModal = () => dispatch(PageActions.closeModal());
   const onApplyReason = ({ item }) => dispatch(PageActions.applyReason(item));
   const onAddBatch = () => dispatch(PageActions.addStocktakeBatch());
@@ -109,6 +114,8 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: re
         return onEditReason;
       case 'sellPriceString':
         return onEditSellPrice;
+      case 'otherPartyName':
+        return onSelectSupplier;
       default:
         return null;
     }
@@ -180,13 +187,24 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: re
         fullScreen={modalKey === MODAL_KEYS.ENFORCE_STOCKTAKE_REASON}
         isVisible={!!modalKey}
         onClose={onCloseModal}
+        title={getModalTitle(modalKey)}
       >
-        <GenericChoiceList
-          data={reasonsSelection}
-          highlightValue={(modalValue && modalValue.reasonTitle) || ''}
-          keyToDisplay="title"
-          onPress={onApplyReason}
-        />
+        {modalKey === MODAL_KEYS.SELECT_ITEM_BATCH_SUPPLIER ? (
+          <AutocompleteSelector
+            options={suppliers}
+            onSelect={onEditSupplier}
+            sortKeyString="name"
+            queryString="name contains[c] $0"
+            renderRightText={({ code }) => code}
+          />
+        ) : (
+          <GenericChoiceList
+            data={reasonsSelection}
+            highlightValue={(modalValue && modalValue.reasonTitle) || ''}
+            keyToDisplay="title"
+            onPress={onApplyReason}
+          />
+        )}
       </ModalContainer>
     </DataTablePageView>
   );
