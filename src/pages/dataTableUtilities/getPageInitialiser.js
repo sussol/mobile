@@ -215,7 +215,7 @@ const stocktakesInitialiser = () => {
 const stocktakeBatchInitialiser = stocktakeItem => {
   const thisStoreNameId = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_NAME_ID);
   const suppliers = UIDatabase.objects('Name').filtered(
-    '(isVisible == true AND isSupplier == true) AND id != $0 OR (type == "inventory_adjustment")',
+    '(isVisible == true AND isSupplier == true AND id != $0) OR (type == "inventory_adjustment")',
     thisStoreNameId
   );
 
