@@ -33,6 +33,9 @@ import {
 import { selectInsuranceDiscountRate } from '../../selectors/insurance';
 import { selectPrescriptionIsFinalised } from '../../selectors/prescription';
 
+import globalStyles from '../../globalStyles';
+
+const { pageTopViewContainer } = globalStyles;
 const mapStateToProps = state => {
   const { payment, wizard, modules } = state;
   const { transaction, paymentValid, paymentAmount } = payment;
@@ -105,10 +108,10 @@ const PrescriptionConfirmationComponent = ({
   const confirmPrescription = React.useCallback(() => runWithLoadingIndicator(confirm), [confirm]);
 
   return (
-    <FlexView flex={1}>
+    <FlexView flex={1} style={pageTopViewContainer}>
       <PrescriptionInfo />
 
-      <FlexRow flex={1}>
+      <FlexRow flex={1} style={{ marginBottom: 7, marginTop: 10 }}>
         <FlexColumn flex={1}>
           <PrescriptionExtra />
           <PrescriptionSummary transaction={transaction} />
@@ -118,7 +121,12 @@ const PrescriptionConfirmationComponent = ({
           {usingPayments && <PaymentSummary />}
 
           <FlexRow justifyContent="flex-end">
-            <PageButton text="Cancel" onPress={onDelete} isDisabled={isFinalised} />
+            <PageButton
+              text="Cancel"
+              onPress={onDelete}
+              isDisabled={isFinalised}
+              style={{ marginRight: 7 }}
+            />
             <PageButton isDisabled={!canConfirm} text="Complete" onPress={confirmPrescription} />
           </FlexRow>
         </FlexColumn>
