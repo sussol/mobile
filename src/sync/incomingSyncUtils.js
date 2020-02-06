@@ -14,7 +14,7 @@ import {
 import { CHANGE_TYPES } from '../database';
 import { deleteRecord, createRecord } from '../database/utilities';
 import { SETTINGS_KEYS } from '../settings';
-import { checkIsObject } from '../utilities';
+import { validateReport } from '../utilities';
 
 const { THIS_STORE_ID, THIS_STORE_TAGS, THIS_STORE_CODE, THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
 
@@ -127,7 +127,6 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
   const requiredFields = {
     IndicatorAttribute: {
       canBeBlank: [
-        'code',
         'description',
         'index',
         'is_required',
@@ -136,7 +135,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
         'axis',
         'is_active',
       ],
-      cannotBeBlank: ['indicator_ID'],
+      cannotBeBlank: ['code', 'indicator_ID'],
     },
     IndicatorValue: {
       cannotBeBlank: ['facility_ID', 'period_ID', 'column_ID', 'row_ID'],
@@ -370,7 +369,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         period: database.getOrCreate('Period', record.period_ID),
         column: indicatorColumn,
         row: indicatorRow,
-        value: record.value ?? '',
+        _value: record.value ?? '',
       });
       indicatorRow.addIndicatorValue(indicatorValue);
       indicatorColumn.addIndicatorValue(indicatorValue);
@@ -596,14 +595,15 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       const { ID: id, title, type, json } = record;
       try {
         const parsedData = JSON.parse(json);
-        const shouldSetData = checkIsObject(parsedData);
-        internalRecord = {
-          id,
-          title,
-          type,
-          _data: shouldSetData ? JSON.stringify(parsedData.data) : null,
-        };
-        database.update(recordType, internalRecord);
+        if (validateReport(parsedData, type)) {
+          internalRecord = {
+            id,
+            title,
+            type,
+            _data: JSON.stringify(parsedData.data),
+          };
+          database.update(recordType, internalRecord);
+        }
       } catch (error) {
         // Throw to parent, for now
         throw error;
