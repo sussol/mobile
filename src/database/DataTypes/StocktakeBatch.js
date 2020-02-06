@@ -30,6 +30,10 @@ export class StocktakeBatch extends Realm.Object {
     }
   }
 
+  get otherPartyName() {
+    return this.supplier?.name ?? '';
+  }
+
   /**
    * Get snapshot of total quantity in batch.
    *
@@ -227,6 +231,7 @@ export class StocktakeBatch extends Realm.Object {
     this.itemBatch.batch = this.batch;
     this.itemBatch.expiryDate = this.expiryDate;
     this.itemBatch.sellPrice = this.sellPrice;
+    this.itemBatch.supplier = this.supplier;
 
     // Make inventory adjustments if there is a difference to apply.
     if (this.difference !== 0) {
@@ -295,6 +300,7 @@ StocktakeBatch.schema = {
     countedNumberOfPacks: { type: 'double', optional: true },
     sortIndex: { type: 'int', optional: true },
     option: { type: 'Options', optional: true },
+    supplier: { type: 'Name', optional: true },
   },
 };
 

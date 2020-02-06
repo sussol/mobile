@@ -20,6 +20,7 @@ export const MODAL_KEYS = {
   SELECT_CUSTOMER: 'selectCustomer',
   SELECT_PATIENT: 'selectPatient',
   SELECT_PRESCRIBER: 'selectPrescriber',
+  SELECT_ITEM_BATCH_SUPPLIER: 'selectItemBatchSupplier',
   SELECT_INTERNAL_SUPPLIER: 'selectInternalSupplier',
   SELECT_EXTERNAL_SUPPLIER: 'selectExternalSupplier',
   SELECT_LANGUAGE: 'selectLanguage',
@@ -61,6 +62,7 @@ export const getModalTitle = modalKey => {
       return modalStrings.edit_their_reference;
     case MODAL_KEYS.SELECT_CUSTOMER:
       return modalStrings.search_for_the_customer;
+    case MODAL_KEYS.SELECT_ITEM_BATCH_SUPPLIER:
     case MODAL_KEYS.SELECT_EXTERNAL_SUPPLIER:
     case MODAL_KEYS.SELECT_INTERNAL_SUPPLIER:
       return modalStrings.search_for_the_supplier;

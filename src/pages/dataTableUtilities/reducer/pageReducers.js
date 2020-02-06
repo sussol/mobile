@@ -40,6 +40,7 @@ export const openModal = (state, action) => {
       return { ...state, modalKey, modalValue: name };
     }
 
+    case MODAL_KEYS.SELECT_ITEM_BATCH_SUPPLIER:
     case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
     case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
     case MODAL_KEYS.STOCKTAKE_REASON: {

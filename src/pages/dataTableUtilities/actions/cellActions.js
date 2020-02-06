@@ -2,7 +2,7 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
-
+import { batch as reduxBatch } from 'react-redux';
 import currency from '../../../localization/currency';
 import { UIDatabase } from '../../../database';
 import { parsePositiveInteger, MODAL_KEYS } from '../../../utilities';
@@ -73,6 +73,20 @@ export const editSellPrice = (value, rowKey, route) => (dispatch, getState) => {
       dispatch(refreshRow(rowKey, route));
     });
   }
+};
+
+export const editBatchSupplier = (supplier, batch, route) => dispatch => {
+  UIDatabase.write(() => {
+    UIDatabase.update('StocktakeBatch', {
+      ...batch,
+      supplier,
+    });
+  });
+
+  reduxBatch(() => {
+    dispatch(refreshRow(batch.id, route));
+    dispatch(closeModal(route));
+  });
 };
 
 export const editIndicatorValue = (value, rowKey, columnKey, route) => (dispatch, getState) => {
@@ -338,4 +352,5 @@ export const CellActionsLookup = {
   editCountedQuantityWithReason,
   editStocktakeBatchCountedQuantityWithReason,
   editSellPrice,
+  editBatchSupplier,
 };

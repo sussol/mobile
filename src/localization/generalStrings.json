@@ -46,6 +46,7 @@
     "stocktakes": "Inventaires",
     "not_available": "N/A",
     "new_details_saved": "Nouvelles informations ont été sauvées",
+    "new_details_not_saved": "Les mots de passe ne correspondre pas. Les nouvelles informations n'ont pas été sauvegardées.",
     "exported_data": "Fichier de données exporté",
     "couldnt_export_data": "Les données n'ont pu être exportées",
     "sync_password": "Mot de passe pour la synchro",
