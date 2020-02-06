@@ -26,7 +26,7 @@ export const DropDown = React.memo(
     const onChange = React.useCallback(
       (value, index) => {
         if (headerValue && index === 0) return;
-        onValueChange(value, index);
+        onValueChange(value, index - 1);
       },
       [onValueChange]
     );

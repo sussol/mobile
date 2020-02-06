@@ -115,7 +115,7 @@ const PaymentSummaryComponent = ({
 
   const onSelectPolicy = React.useCallback(
     (_, index) => {
-      choosePolicy(insurancePolicies[index - 1]);
+      choosePolicy(insurancePolicies[index]);
     },
     [choosePolicy, insurancePolicies]
   );
