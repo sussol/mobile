@@ -117,6 +117,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     key: 'addressOne',
     validator: input => input.length < 50,
     isRequired: false,
+    invalidMessage: `${formInputStrings.must_be} ${formInputStrings.less_than_50_characters}`,
     label: formInputStrings.address_one,
   },
   [FORM_INPUT_KEYS.ADDRESS_TWO]: {
@@ -126,15 +127,16 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     validator: input => input.length < 50,
     isRequired: false,
     label: formInputStrings.address_two,
+    invalidMessage: `${formInputStrings.must_be} ${formInputStrings.less_than_50_characters}`,
   },
   [FORM_INPUT_KEYS.REGISTRATION_CODE]: {
     type: 'text',
     initialValue: '',
     key: 'registrationCode',
-    validator: input => input.length < 50,
+    validator: input => input.length > 0 && input.length < 50,
     isRequired: true,
     label: formInputStrings.registration_code,
-    invalidMessage: `${formInputStrings.must_not_be_empty} ${formInputStrings.and} ${formInputStrings.less_than_50_characters}`,
+    invalidMessage: formInputStrings.must_be_between_0_and_50,
   },
   [FORM_INPUT_KEYS.POLICY_NUMBER_PERSON]: {
     type: 'text',
