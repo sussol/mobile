@@ -41,16 +41,20 @@ export const selectDataSetInUse = ({ dispensary }) => {
 export const selectFilteredData = createSelector(
   [selectData, selectSearchTerm, selectDataSetInUse],
   (data, searchTerm, [usingPatientsDataSet]) => {
-    const [lastName, firstName, birthYearString] = searchTerm
-      .split(/,|-d/)
-      .map(name => name.trim());
+    const [names, birthYearString] = searchTerm.split(/-d/).map(name => name.trim());
+    const [lastName, firstName] = names.split(/,/).map(name => name.trim());
 
-    const birthYearDate = moment(birthYearString || new Date(1900, 0, 0), 'Y', null, true).toDate();
+    const birthYearDate = moment(birthYearString || new Date(1900, 0, 0), 'Y', null, true);
+    const filterByBirthDate = usingPatientsDataSet && birthYearDate.isValid();
 
-    const queryString = 'firstName BEGINSWITH[c] $0 AND lastName BEGINSWITH[c] $1';
-    const newData = data.filtered(queryString, firstName, lastName, birthYearDate);
+    let filteredData = lastName ? data.filtered('lastName BEGINSWITH[c] $0', lastName) : data;
+    filteredData = firstName
+      ? filteredData.filtered('firstName BEGINSWITH[c] $0', firstName)
+      : filteredData;
 
-    return usingPatientsDataSet ? newData.filtered('dateOfBirth >= $0', birthYearDate) : newData;
+    return filterByBirthDate
+      ? filteredData.filtered('dateOfBirth >= $0', birthYearDate.toDate())
+      : filteredData;
   }
 );
 
