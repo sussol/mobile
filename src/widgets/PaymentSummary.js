@@ -120,9 +120,10 @@ const PaymentSummaryComponent = ({
     [choosePolicy, insurancePolicies]
   );
 
-  const paymentTypeTitles = React.useMemo(() => paymentTypes.map(({ title }) => title), [
-    paymentTypes,
-  ]);
+  const paymentTypeTitles = React.useMemo(
+    () => paymentTypes.map(({ description }) => description),
+    [paymentTypes]
+  );
 
   const onSelectPaymentType = React.useCallback(
     (_, index) => choosePaymentType(paymentTypes[index]),
