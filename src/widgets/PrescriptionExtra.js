@@ -15,7 +15,7 @@ import { TextEditor } from './modalChildren';
 import { ModalContainer } from './modals/ModalContainer';
 
 import { PrescriptionActions } from '../actions/PrescriptionActions';
-import { pageInfoStrings, modalStrings } from '../localization';
+import { pageInfoStrings, modalStrings, dispensingStrings } from '../localization';
 import {
   selectTransactionComment,
   selectPatientType,
@@ -67,6 +67,7 @@ const PrescriptionExtraComponent = ({
     <View style={localStyles.container}>
       {usingPatientTypes && (
         <DropDown
+          headerValue={dispensingStrings.select_a_patient_type}
           values={PATIENT_TYPES}
           selectedValue={patientType}
           onValueChange={onUpdatePatientType}
@@ -74,6 +75,7 @@ const PrescriptionExtraComponent = ({
       )}
       {usingPrescriptionCategories && (
         <DropDown
+          headerValue={dispensingStrings.select_a_prescription_category}
           values={prescriptionCategoryNames}
           selectedValue={categoryName}
           onValueChange={onCategorySelection}

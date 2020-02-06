@@ -109,19 +109,21 @@ const PaymentSummaryComponent = ({
   usingInsurance,
   usingPaymentTypes,
 }) => {
-  const policyNumbers = React.useMemo(
-    () => [dispensingStrings.select_a_policy, ...insurancePolicies.map(p => p.policyNumber)],
-    [insurancePolicies]
-  );
+  const policyNumbers = React.useMemo(() => insurancePolicies.map(policy => policy.policyNumber), [
+    insurancePolicies,
+  ]);
+
   const onSelectPolicy = React.useCallback(
     (_, index) => {
-      choosePolicy(insurancePolicies[index - 1]);
+      choosePolicy(insurancePolicies[index]);
     },
     [choosePolicy, insurancePolicies]
   );
+
   const paymentTypeTitles = React.useMemo(() => paymentTypes.map(({ title }) => title), [
     paymentTypes,
   ]);
+
   const onSelectPaymentType = React.useCallback(
     (_, index) => choosePaymentType(paymentTypes[index]),
     [choosePaymentType]
@@ -134,6 +136,7 @@ const PaymentSummaryComponent = ({
         {usingInsurance && (
           <FlexRow flex={1}>
             <DropDown
+              headerValue={dispensingStrings.select_a_policy}
               values={policyNumbers}
               selectedValue={selectedInsurancePolicy?.policyNumber}
               onValueChange={onSelectPolicy}
@@ -148,6 +151,7 @@ const PaymentSummaryComponent = ({
 
         {usingPaymentTypes && (
           <DropDown
+            headerValue={dispensingStrings.select_a_payment_type}
             values={paymentTypeTitles}
             selectedValue={paymentType?.title}
             onValueChange={onSelectPaymentType}
