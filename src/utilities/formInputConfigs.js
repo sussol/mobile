@@ -80,7 +80,12 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     key: 'dateOfBirth',
     invalidMessage: formInputStrings.must_be_a_date,
     isRequired: true,
-    validator: input => moment(input, 'DD/MM/YYYY', null, true).isValid(),
+    validator: input => {
+      const inputDate = moment(input, 'DD/MM/YYYY', null, true);
+      const isValid = inputDate.isValid();
+      const isDateOfBirth = inputDate.isSameOrBefore(new Date());
+      return isValid && isDateOfBirth;
+    },
     label: formInputStrings.date_of_birth,
   },
   [FORM_INPUT_KEYS.EMAIL]: {
