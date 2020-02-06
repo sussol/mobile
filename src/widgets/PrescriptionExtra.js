@@ -40,9 +40,13 @@ const PrescriptionExtraComponent = ({
   usingPatientTypes,
   usingPrescriptionCategories,
 }) => {
-  const onCategorySelection = React.useCallback(
-    (_, index) => onUpdateCategory(prescriptionCategories[index]),
-    []
+  const onCategorySelection = React.useCallback((_, index) => {
+    onUpdateCategory(prescriptionCategories[index]);
+  }, []);
+
+  const prescriptionCategoryNames = React.useMemo(
+    () => prescriptionCategories.map(({ name }) => name),
+    [prescriptionCategories]
   );
 
   const pageInfoColumns = React.useMemo(
@@ -70,7 +74,7 @@ const PrescriptionExtraComponent = ({
       )}
       {usingPrescriptionCategories && (
         <DropDown
-          values={prescriptionCategories}
+          values={prescriptionCategoryNames}
           selectedValue={categoryName}
           onValueChange={onCategorySelection}
         />
@@ -98,7 +102,7 @@ PrescriptionExtraComponent.propTypes = {
   comment: PropTypes.string.isRequired,
   categoryName: PropTypes.string.isRequired,
   patientType: PropTypes.string.isRequired,
-  prescriptionCategories: PropTypes.array.isRequired,
+  prescriptionCategories: PropTypes.object.isRequired,
   usingPatientTypes: PropTypes.bool.isRequired,
   usingPrescriptionCategories: PropTypes.bool.isRequired,
 };
