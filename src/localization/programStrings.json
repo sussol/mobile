@@ -48,7 +48,7 @@
     "threshold_mos": "Seuil MDS",
     "max_orders_per_period": "Commandes max. par période",
     "requisitions": "Réquisition(s)",
-    "details": "Détails",
+    "details": "Détail",
     "general": "Général",
     "order": "commande",
     "not_applicable": "Pas applicable",
@@ -61,7 +61,7 @@
     "program_stocktake": "Inventaire par\n programme",
     "general_order": "Commande Générale",
     "emergency_order": "Commande d'urgence",
-    "max_items": "Aticles max."
+    "max_items": "Articles max."
   },
   "gil": {
     "select_a_program": "Select a program",
