@@ -285,7 +285,6 @@ export class StocktakeItem extends Realm.Object {
     const inventoryAdjustmentName = database
       .objects('Name')
       .filtered('type == "inventory_adjustment"')[0];
-    console.log(inventoryAdjustmentName);
     const batchString = `stocktake_${this.stocktake.serialNumber}`;
     const itemBatch = createRecord(
       database,
