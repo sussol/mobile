@@ -57,6 +57,10 @@ export class Transaction extends Realm.Object {
     database.delete('TransactionItem', this.items);
   }
 
+  get total() {
+    return this.subtotal - this.insuranceDiscountAmount;
+  }
+
   /**
    * Get if transaction is finalised.
    *
@@ -461,7 +465,7 @@ export class Transaction extends Realm.Object {
     // level, deriving the full cost of the Transaction. Cash transactions and credits are
     // created finalised, having their total already set.
     if (!(this.isCashTransaction || this.isCredit)) {
-      this.total = this.totalPrice;
+      this.subtotal = this.totalPrice;
     }
 
     this.status = 'finalised';
@@ -488,7 +492,7 @@ Transaction.schema = {
     mode: { type: 'string', default: 'store' },
     prescriber: { type: 'Prescriber', optional: true },
     linkedRequisition: { type: 'Requisition', optional: true },
-    total: { type: 'float', optional: true },
+    subtotal: { type: 'float', optional: true },
     outstanding: { type: 'float', optional: true },
     insurancePolicy: { type: 'InsurancePolicy', optional: true },
     option: { type: 'Options', optional: true },

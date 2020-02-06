@@ -742,7 +742,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         otherParty,
         linkedRequisition,
         option: database.getOrCreate('Options', record.optionID),
-        total: parseFloat(record.total),
+        subtotal: parseFloat(record.subtotal),
         user1: record.user1,
       };
       const transaction = database.update(recordType, internalRecord);

@@ -90,7 +90,6 @@ export const pay = (
 
   // Ensure the script is finalised once paid.
   script.subtotal = subtotal;
-  script.total = subtotal;
   script.insuranceDiscountAmount = discountAmount;
   script.insuranceDiscountRate = discountRate;
   script.finalise(UIDatabase);

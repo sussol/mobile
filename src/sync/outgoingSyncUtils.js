@@ -189,7 +189,7 @@ const generateSyncData = (settings, recordType, record) => {
         foreign_currency_total: String(record.total),
         their_ref: record.theirRef,
         confirm_date: getDateString(record.confirmDate),
-        subtotal: String(record.total),
+        subtotal: String(record.subtotal),
         user_ID: record.enteredBy && record.enteredBy.id,
         category_ID: record.category && record.category.id,
         confirm_time: getTimeString(record.confirmDate),

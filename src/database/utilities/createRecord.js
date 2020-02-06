@@ -181,7 +181,7 @@ const createOffsetCustomerInvoice = (database, user, name, amount) => {
     status: 'finalised',
     comment: 'Offset for a cash-only transaction',
     otherParty: name,
-    total: amount,
+    subtotal: amount,
     outstanding: amount,
     enteredBy: user,
   });
@@ -202,7 +202,7 @@ const createReceipt = (database, user, name, amount, description) => {
     comment: description,
     otherParty: name,
     enteredBy: user,
-    total: amount,
+    subtotal: amount,
   });
 
   database.save('Transaction', receipt);
@@ -234,7 +234,7 @@ const createPayment = (database, user, name, amount, reason, description) => {
     status: 'finalised',
     otherParty: name,
     enteredBy: user,
-    total: amount,
+    subtotal: amount,
     option: reason,
     comment: description,
   });
@@ -293,7 +293,7 @@ const createSupplierCredit = (database, user, supplierId, returnAmount) => {
     status: 'finalised',
     comment: '',
     otherParty: database.get('Name', supplierId),
-    total: returnAmount,
+    subtotal: returnAmount,
     enteredBy: user,
   });
 
@@ -317,7 +317,7 @@ const createCustomerCredit = (database, user, name, amount) => {
     comment: 'Offset for a cash-only transaction',
     otherParty: name,
     enteredBy: user,
-    total: creditAmount,
+    subtotal: creditAmount,
     outstanding: creditAmount,
   });
 
