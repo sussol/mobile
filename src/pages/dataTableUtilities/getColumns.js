@@ -28,9 +28,9 @@ const PAGE_COLUMN_WIDTHS = {
   [ROUTES.PRESCRIPTION]: [2, 4, 2, 2, 1],
   prescriber: [1, 3, 3, 1],
   patient: [1, 3, 3, 2, 1, 1, 1],
-  stocktakeBatchEditModal: [1, 1, 1, 1, 1],
-  stocktakeBatchEditModalWithReasons: [1, 1, 1, 1, 1, 1],
-  stocktakeBatchEditModalWithPrices: [1, 1, 1, 1, 1, 1, 1],
+  stocktakeBatchEditModal: [1, 3, 1, 1, 1, 1],
+  stocktakeBatchEditModalWithReasons: [1, 3, 1, 1, 1, 1, 1],
+  stocktakeBatchEditModalWithPrices: [1, 3, 1, 1, 1, 1, 1],
   stocktakeBatchEditModalWithReasonsAndPrices: [1, 3, 1, 1, 1, 1.5, 1.5, 1.5, 1],
   regimenDataModal: [4, 1, 5],
   prescriberSelect: [3, 3, 1],
@@ -186,6 +186,7 @@ const PAGE_COLUMNS = {
   ],
   stocktakeBatchEditModal: [
     COLUMN_NAMES.EDITABLE_BATCH_NAME,
+    COLUMN_NAMES.EDIT_SUPPLIER,
     COLUMN_NAMES.EDITABLE_EXPIRY_DATE,
     COLUMN_NAMES.SNAPSHOT_TOTAL_QUANTITY,
     COLUMN_NAMES.COUNTED_TOTAL_QUANTITY,
@@ -193,6 +194,7 @@ const PAGE_COLUMNS = {
   ],
   stocktakeBatchEditModalWithReasons: [
     COLUMN_NAMES.EDITABLE_BATCH_NAME,
+    COLUMN_NAMES.EDIT_SUPPLIER,
     COLUMN_NAMES.EDITABLE_EXPIRY_DATE,
     COLUMN_NAMES.SNAPSHOT_TOTAL_QUANTITY,
     COLUMN_NAMES.COUNTED_TOTAL_QUANTITY,
@@ -201,6 +203,7 @@ const PAGE_COLUMNS = {
   ],
   stocktakeBatchEditModalWithPrices: [
     COLUMN_NAMES.EDITABLE_BATCH_NAME,
+    COLUMN_NAMES.EDIT_SUPPLIER,
     COLUMN_NAMES.COST_PRICE,
     COLUMN_NAMES.SELL_PRICE,
     COLUMN_NAMES.EDITABLE_EXPIRY_DATE,
