@@ -33,6 +33,7 @@ const translateToCoreDatabaseType = type => {
       return 'Requisition';
     case 'NegativeAdjustmentReason':
     case 'PositiveAdjustmentReason':
+      return 'Options';
     case 'Policy':
       return 'InsurancePolicy';
     case 'Provider':
