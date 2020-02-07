@@ -17,6 +17,8 @@ import {
   syncStrings,
   tableStrings,
   LANGUAGE_CODES,
+  formInputStrings,
+  dispensingStrings,
 } from './index';
 
 const DATE_CONFIGS = {
@@ -37,6 +39,8 @@ export function setCurrentLanguage(language) {
   tableStrings.setLanguage(language);
   syncStrings.setLanguage(language);
   programStrings.setLanguage(language);
+  formInputStrings.setLanguage(language);
+  dispensingStrings.setLanguage(language);
 }
 
 export default setCurrentLanguage;
