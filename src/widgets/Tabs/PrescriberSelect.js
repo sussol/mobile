@@ -22,7 +22,7 @@ import { PrescriberActions } from '../../actions/PrescriberActions';
 import { PrescriptionActions } from '../../actions/PrescriptionActions';
 import { getItemLayout, getColumns } from '../../pages/dataTableUtilities';
 import { selectSortedPrescribers } from '../../selectors/prescriber';
-import { dispensingStrings } from '../../localization';
+import { buttonStrings, dispensingStrings } from '../../localization';
 import globalStyles from '../../globalStyles';
 
 /**
@@ -95,7 +95,11 @@ const PrescriberSelectComponent = ({
           value={searchTerm}
           placeholder={dispensingStrings.search_by_last_name_first_name}
         />
-        <PageButton text="Add Prescriber" onPress={createPrescriber} style={{ marginLeft: 5 }} />
+        <PageButton
+          text={`${dispensingStrings.new} ${dispensingStrings.prescriber}`}
+          onPress={createPrescriber}
+          style={{ marginLeft: 5 }}
+        />
       </FlexRow>
 
       <DataTable
@@ -108,12 +112,12 @@ const PrescriberSelectComponent = ({
 
       <FlexRow justifyContent="flex-end" alignItems="flex-end">
         <PageButton
-          text="Cancel"
+          text={buttonStrings.cancel}
           onPress={() => onCancelPrescription()}
           style={{ marginRight: 7 }}
         />
         <PageButton
-          text="OK"
+          text={buttonStrings.confirm}
           onPress={() => choosePrescriber(currentPrescriber)}
           isDisabled={!currentPrescriber}
         />

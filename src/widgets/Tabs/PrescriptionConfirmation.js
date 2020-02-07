@@ -33,6 +33,7 @@ import {
 import { selectInsuranceDiscountRate } from '../../selectors/insurance';
 import { selectPrescriptionIsFinalised } from '../../selectors/prescription';
 
+import { buttonStrings } from '../../localization';
 import globalStyles from '../../globalStyles';
 
 const { pageTopViewContainer } = globalStyles;
@@ -122,12 +123,16 @@ const PrescriptionConfirmationComponent = ({
 
           <FlexRow justifyContent="flex-end">
             <PageButton
-              text="Cancel"
+              text={buttonStrings.cancel}
               onPress={onDelete}
               isDisabled={isFinalised}
               style={{ marginRight: 7 }}
             />
-            <PageButton isDisabled={!canConfirm} text="Complete" onPress={confirmPrescription} />
+            <PageButton
+              isDisabled={!canConfirm}
+              text={buttonStrings.confirm}
+              onPress={confirmPrescription}
+            />
           </FlexRow>
         </FlexColumn>
       </FlexRow>
