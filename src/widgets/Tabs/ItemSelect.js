@@ -89,7 +89,7 @@ const ItemSelectComponent = ({
 
           <FlexRow justifyContent="flex-end">
             <PageButton text={buttonStrings.cancel} onPress={onDelete} style={{ marginRight: 7 }} />
-            <PageButton text={buttonStrings.confirm} onPress={canProceed ? nextTab : showToast} />
+            <PageButton text={buttonStrings.next} onPress={canProceed ? nextTab : showToast} />
           </FlexRow>
         </FlexColumn>
       </FlexRow>

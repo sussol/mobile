@@ -117,7 +117,7 @@ const PrescriberSelectComponent = ({
           style={{ marginRight: 7 }}
         />
         <PageButton
-          text={buttonStrings.confirm}
+          text={buttonStrings.next}
           onPress={() => choosePrescriber(currentPrescriber)}
           isDisabled={!currentPrescriber}
         />
