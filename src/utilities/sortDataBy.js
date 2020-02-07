@@ -32,6 +32,9 @@ const sortKeyToType = {
   registrationCode: 'string',
   invoiceNumber: 'number',
   returnAmount: 'number',
+  total: 'number',
+  reasonTitle: 'string',
+  confirmDate: 'date',
 };
 
 /**
