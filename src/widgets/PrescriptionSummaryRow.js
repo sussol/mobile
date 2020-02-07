@@ -12,7 +12,7 @@ import { DetailRow } from './DetailRow';
 import { SimpleLabel } from './SimpleLabel';
 import { TouchableNoFeedback } from './DataTable';
 
-import { dispensingStrings } from '../localization';
+import { generalStrings, dispensingStrings } from '../localization';
 import currency from '../localization/currency';
 
 /**
@@ -25,13 +25,15 @@ import currency from '../localization/currency';
  * @param {Object} item A TransactionItem record to display details for.
  */
 export const PrescriptionSummaryRow = ({ item }) => {
-  const { itemName, itemCode, totalQuantity, note, totalPrice } = item;
+  const { itemName, itemCode, totalQuantity, note, totalPrice, batch } = item;
 
   const details = [{ label: 'Code', text: itemCode }];
 
   return (
     <TouchableNoFeedback style={localStyles.mainContainer}>
       <NumberLabelRow text={itemName} number={totalQuantity} />
+      <View style={localStyles.marginFive} />
+      <SimpleLabel label={generalStrings.batch_name} text={batch} />
       <View style={localStyles.marginFive} />
       <DetailRow details={details} />
       <View style={localStyles.marginFive} />
