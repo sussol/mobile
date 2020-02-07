@@ -120,13 +120,14 @@ const PaymentSummaryComponent = ({
     [choosePolicy, insurancePolicies]
   );
 
-  const paymentTypeTitles = React.useMemo(() => paymentTypes.map(({ title }) => title), [
-    paymentTypes,
-  ]);
+  const paymentTypeTitles = React.useMemo(
+    () => paymentTypes.map(({ description }) => description),
+    [paymentTypes]
+  );
 
   const onSelectPaymentType = React.useCallback(
     (_, index) => choosePaymentType(paymentTypes[index]),
-    [choosePaymentType]
+    [choosePaymentType, paymentTypes]
   );
 
   return (
@@ -153,7 +154,7 @@ const PaymentSummaryComponent = ({
           <DropDown
             headerValue={dispensingStrings.select_a_payment_type}
             values={paymentTypeTitles}
-            selectedValue={paymentType?.title}
+            selectedValue={paymentType?.description}
             onValueChange={onSelectPaymentType}
             style={localStyles.dropdown}
           />

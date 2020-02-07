@@ -53,6 +53,7 @@ export const RECORD_TYPES = new SyncTranslator({
   NumberSequence: 'number',
   NumberToReuse: 'number_reuse',
   Options: 'options',
+  PaymentType: 'paymentType',
   Period: 'period',
   PeriodSchedule: 'periodSchedule',
   ProgramIndicator: 'program_indicator',

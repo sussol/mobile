@@ -298,6 +298,10 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: ['code', 'program_ID', 'is_active'],
       canBeBlank: [],
     },
+    PaymentType: {
+      cannotBeBlank: ['code', 'description'],
+      canBeBlank: [],
+    },
   };
 
   if (!requiredFields[recordType]) return false; // Unsupported record type
@@ -874,6 +878,14 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         item,
         priority: Number(record.priority),
         directions: record.directions,
+      });
+      break;
+    }
+    case 'PaymentType': {
+      database.update(recordType, {
+        id: record.ID,
+        code: record.code,
+        description: record.description,
       });
       break;
     }

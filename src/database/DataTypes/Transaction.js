@@ -500,6 +500,7 @@ Transaction.schema = {
     user1: { type: 'string', optional: true },
     insuranceDiscountRate: { type: 'double', optional: true },
     insuranceDiscountAmount: { type: 'double', optional: true },
+    paymentType: { type: 'PaymentType', optional: true },
   },
 };
 

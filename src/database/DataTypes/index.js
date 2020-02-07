@@ -32,6 +32,7 @@ export { NameStoreJoin } from './NameStoreJoin';
 export { NumberSequence } from './NumberSequence';
 export { NumberToReuse } from './NumberToReuse';
 export { Options } from './Options';
+export { PaymentType } from './PaymentType';
 export { Period } from './Period';
 export { PeriodSchedule } from './PeriodSchedule';
 export { ProgramIndicator } from './ProgramIndicator';

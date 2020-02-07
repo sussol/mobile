@@ -30,7 +30,7 @@ const choosePaymentType = paymentType => (dispatch, getState) => {
   UIDatabase.write(() => {
     UIDatabase.update('Transaction', {
       ...transaction,
-      option: paymentType,
+      paymentType,
     });
   });
 
