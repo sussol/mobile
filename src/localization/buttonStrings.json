@@ -1,5 +1,6 @@
 {
   "gb": {
+    "cancel": "Cancel",
     "add_batch": "Add Batch",
     "add_master_list_items": "Add Master List Items",
     "all_items_selected": "All Items Selected",
@@ -24,6 +25,7 @@
     "view_regimen_data": "View Regimen Data"
   },
   "fr": {
+    "cancel": "Annuler",
     "add_batch": "Ajouter un lot",
     "add_master_list_items": "Ajouter à partir des\nlistes maîtres",
     "all_items_selected": "Tout les articles sélectionnés",
