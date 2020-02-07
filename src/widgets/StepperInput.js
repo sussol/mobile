@@ -60,7 +60,7 @@ export const StepperInput = React.memo(
       if (!valueAdjustmentInterval.current) {
         valueAdjustmentInterval.current = setInterval(
           isIncrement ? incrementValue : decrementValue,
-          50
+          150
         );
       }
 
