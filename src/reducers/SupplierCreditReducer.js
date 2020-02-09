@@ -24,6 +24,7 @@ const initialState = () => ({
   sortKey: 'otherPartyName',
   isAscending: true,
   item: null,
+  title: '',
 });
 
 export const SupplierCreditReducer = (state = initialState(), action) => {
@@ -59,6 +60,24 @@ export const SupplierCreditReducer = (state = initialState(), action) => {
         open: true,
         batches: mapBatchToObject(batches),
         item: UIDatabase.get('Item', itemId),
+        title: `Available Credits for  ${UIDatabase.get('Item', itemId).name}`,
+      };
+    }
+
+    case SUPPLIER_CREDIT_ACTIONS.CREATE_FROM_INVOICE: {
+      const { payload } = action;
+      const { invoice } = payload;
+
+      const { serialNumber } = invoice;
+      const transactionBatches = invoice.getTransactionBatches(UIDatabase);
+      const itemBatches = transactionBatches.map(({ itemBatch }) => itemBatch);
+
+      return {
+        ...state,
+        open: true,
+        batches: mapBatchToObject(itemBatches),
+        item: UIDatabase.objects('Item')[0],
+        title: `Supplier Credit for Supplier Invoice ${serialNumber}`,
       };
     }
 
