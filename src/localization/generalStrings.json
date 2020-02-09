@@ -33,7 +33,8 @@
     "name": "name",
     "or": "or",
     "expiry_date": "Expiry date",
-    "quantity": "Quantity"
+    "quantity": "Quantity",
+    "batch_name": "Batch name"
   },
   "fr": {
     "price": "Prix",
@@ -69,7 +70,8 @@
     "name": "nom",
     "or": "ou",
     "expiry_date": "date d'expiration",
-    "quantity": "Quantité"
+    "quantity": "Quantité",
+    "batch_name": "Nom du lot"
   },
   "gil": {
     "stocktake": "Warebwai",

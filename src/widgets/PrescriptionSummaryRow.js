@@ -26,11 +26,13 @@ import { formInputStrings, generalStrings, dispensingStrings } from '../localiza
  * @param {Object} item A TransactionItem record to display details for.
  */
 export const PrescriptionSummaryRow = ({ item }) => {
-  const { itemName, itemCode, totalQuantity, note, totalPrice } = item;
+  const { itemName, itemCode, totalQuantity, note, totalPrice, batch } = item;
 
   return (
     <TouchableNoFeedback style={localStyles.mainContainer}>
       <NumberLabelRow text={itemName} number={totalQuantity} />
+      <View style={localStyles.marginFive} />
+      <SimpleLabel label={generalStrings.batch_name} text={batch} />
       <View style={localStyles.marginFive} />
       <SimpleLabel label={formInputStrings.code} text={itemCode} />
       <View style={localStyles.marginFive} />
