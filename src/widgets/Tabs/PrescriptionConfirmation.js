@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
 import { PrescriptionSummary } from '../PrescriptionSummary';
 import { PrescriptionInfo } from '../PrescriptionInfo';
 import { FlexView } from '../FlexView';
-import { PageButton } from '../PageButton';
 import { FlexRow } from '../FlexRow';
 
 import { UIDatabase } from '../../database';
@@ -35,6 +34,7 @@ import { selectPrescriptionIsFinalised } from '../../selectors/prescription';
 
 import { buttonStrings } from '../../localization';
 import globalStyles from '../../globalStyles';
+import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 
 const { pageTopViewContainer } = globalStyles;
 const mapStateToProps = state => {
@@ -122,13 +122,14 @@ const PrescriptionConfirmationComponent = ({
           {usingPayments && <PaymentSummary />}
 
           <FlexRow justifyContent="flex-end">
-            <PageButton
+            <PageButtonWithOnePress
               text={buttonStrings.cancel}
               onPress={onDelete}
               isDisabled={isFinalised}
+              debounceTimer={3000}
               style={{ marginRight: 7 }}
             />
-            <PageButton
+            <PageButtonWithOnePress
               isDisabled={!canConfirm}
               text={buttonStrings.confirm}
               onPress={confirmPrescription}

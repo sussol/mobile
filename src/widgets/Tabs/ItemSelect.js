@@ -30,8 +30,9 @@ import { WizardActions } from '../../actions/WizardActions';
 import { PrescriptionActions } from '../../actions/PrescriptionActions';
 import { SearchBar } from '../SearchBar';
 
-import { buttonStrings, dispensingStrings, generalStrings } from '../../localization';
+import { dispensingStrings, generalStrings } from '../../localization';
 import globalStyles from '../../globalStyles';
+import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 
 const { pageTopViewContainer } = globalStyles;
 
@@ -88,8 +89,12 @@ const ItemSelectComponent = ({
           <PrescriptionCart isDisabled={isComplete} />
 
           <FlexRow justifyContent="flex-end">
-            <PageButton text={buttonStrings.cancel} onPress={onDelete} style={{ marginRight: 7 }} />
-            <PageButton text={buttonStrings.next} onPress={canProceed ? nextTab : showToast} />
+            <PageButtonWithOnePress text="Cancel" onPress={onDelete} style={{ marginRight: 7 }} />
+            <PageButton
+              debounceTimer={1000}
+              text="Next"
+              onPress={canProceed ? nextTab : showToast}
+            />
           </FlexRow>
         </FlexColumn>
       </FlexRow>

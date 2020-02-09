@@ -10,27 +10,28 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 import {
-  selectCashRegisterState,
   selectBalance,
-  selectTransactionData,
+  selectCashRegisterState,
+  selectFilteredTransactions,
 } from '../selectors/cashRegister';
 
 import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 
-import { DataTablePageView, PageButton } from '../widgets';
+import { DataTablePageView, PageButton, SearchBar } from '../widgets';
 import { SimpleLabel } from '../widgets/SimpleLabel';
 import { ToggleBar } from '../widgets/ToggleBar';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import { DataTablePageModal } from '../widgets/modals';
 
 import { ROUTES } from '../navigation/constants';
-import { buttonStrings, pageInfoStrings } from '../localization';
-import globalStyles from '../globalStyles';
+import { buttonStrings, generalStrings, pageInfoStrings } from '../localization';
+import globalStyles, { WHITE } from '../globalStyles';
 
 export const CashRegister = ({
   dispatch,
   data,
   dataState,
+  searchTerm,
   sortKey,
   isAscending,
   keyExtractor,
@@ -38,6 +39,7 @@ export const CashRegister = ({
   columns,
   currentBalance,
   transactionType,
+  onFilterData,
   onSortColumn,
   onNewCashTransaction,
   onCloseModal,
@@ -99,22 +101,25 @@ export const CashRegister = ({
     verticalContainer,
   } = globalStyles;
 
-  const topLeftContainerStyle = useMemo(() => ({ ...pageTopLeftSectionContainer, flex: 1 }));
-  const topRightContainerStyle = useMemo(() => ({ ...pageTopRightSectionContainer, flex: 4 }));
-
   return (
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
-        <View style={topLeftContainerStyle}>
-          <SimpleLabel
-            label={pageInfoStrings.current_balance}
-            text={currentBalance}
-            textAlign="left"
+        <View style={pageTopLeftSectionContainer}>
+          <ToggleBar toggles={toggles} />
+          <SearchBar
+            onChangeText={onFilterData}
+            value={searchTerm}
+            placeholder={`${generalStrings.search_by} ${generalStrings.name}`}
           />
         </View>
-        <View style={topRightContainerStyle}>
+        <View style={pageTopRightSectionContainer}>
           <View style={verticalContainer}>
-            <ToggleBar toggles={toggles} />
+            <SimpleLabel
+              label={pageInfoStrings.current_balance}
+              text={currentBalance}
+              textAlign="right"
+              textBackground={WHITE}
+            />
             <AddNewTransactionButton />
           </View>
         </View>
@@ -145,7 +150,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
 const mapStateToProps = state => {
   const pageState = selectCashRegisterState(state);
-  const data = selectTransactionData(state);
+  const data = selectFilteredTransactions(state);
   const currentBalance = selectBalance(state);
 
   return { ...pageState, data, currentBalance };
@@ -159,6 +164,7 @@ CashRegister.propTypes = {
   dispatch: PropTypes.func.isRequired,
   data: PropTypes.array.isRequired,
   dataState: PropTypes.object.isRequired,
+  searchTerm: PropTypes.string.isRequired,
   sortKey: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   modalKey: PropTypes.string.isRequired,
@@ -166,6 +172,7 @@ CashRegister.propTypes = {
   columns: PropTypes.array.isRequired,
   currentBalance: PropTypes.string.isRequired,
   transactionType: PropTypes.string.isRequired,
+  onFilterData: PropTypes.func.isRequired,
   onSortColumn: PropTypes.func.isRequired,
   onToggleTransactionType: PropTypes.func.isRequired,
   onNewCashTransaction: PropTypes.func.isRequired,
