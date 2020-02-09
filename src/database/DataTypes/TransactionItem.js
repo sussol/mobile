@@ -1,7 +1,6 @@
 import Realm from 'realm';
 import { complement } from 'set-manipulator';
 
-import currency from '../../localization/currency';
 import { createRecord, getTotal } from '../utilities';
 
 /**
@@ -277,14 +276,6 @@ export class TransactionItem extends Realm.Object {
       });
     });
   };
-
-  /**
-   * The sell price of a TransactionItem could vary depending on it's batches.
-   * Just taking the first batches sell price.
-   */
-  get sellPrice() {
-    return currency(this.batches[0]?.sellPrice || 0);
-  }
 }
 
 TransactionItem.schema = {
