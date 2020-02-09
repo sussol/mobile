@@ -24,6 +24,7 @@ import { getItemLayout, getColumns } from '../../pages/dataTableUtilities';
 import { selectSortedPrescribers } from '../../selectors/prescriber';
 import { dispensingStrings } from '../../localization';
 import globalStyles from '../../globalStyles';
+import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 
 /**
  * Layout component used for a tab within the prescription wizard.
@@ -107,12 +108,13 @@ const PrescriberSelectComponent = ({
       />
 
       <FlexRow justifyContent="flex-end" alignItems="flex-end">
-        <PageButton
+        <PageButtonWithOnePress
           text="Cancel"
           onPress={() => onCancelPrescription()}
           style={{ marginRight: 7 }}
         />
         <PageButton
+          debounceTimer={1000}
           text="OK"
           onPress={() => choosePrescriber(currentPrescriber)}
           isDisabled={!currentPrescriber}

@@ -32,6 +32,7 @@ import { SearchBar } from '../SearchBar';
 
 import { dispensingStrings, generalStrings } from '../../localization';
 import globalStyles from '../../globalStyles';
+import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 
 const { pageTopViewContainer } = globalStyles;
 
@@ -88,8 +89,12 @@ const ItemSelectComponent = ({
           <PrescriptionCart isDisabled={isComplete} />
 
           <FlexRow justifyContent="flex-end">
-            <PageButton text="Cancel" onPress={onDelete} style={{ marginRight: 7 }} />
-            <PageButton text="Next" onPress={canProceed ? nextTab : showToast} />
+            <PageButtonWithOnePress text="Cancel" onPress={onDelete} style={{ marginRight: 7 }} />
+            <PageButton
+              debounceTimer={1000}
+              text="Next"
+              onPress={canProceed ? nextTab : showToast}
+            />
           </FlexRow>
         </FlexColumn>
       </FlexRow>
