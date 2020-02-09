@@ -5,11 +5,12 @@
 
 import { batch } from 'react-redux';
 import { createRecord, UIDatabase } from '../database';
+import { getCurrentRouteName } from '../navigation/selectors';
 import { refreshData } from '../pages/dataTableUtilities/actions/tableActions';
-import { ROUTES } from '../navigation/constants';
 
 export const SUPPLIER_CREDIT_ACTIONS = {
   CREATE_FROM_ITEM: 'SupplierCredit/createFromItem',
+  CREATE_FROM_INVOICE: 'SupplierCredit/createFromInvoice',
   CLOSE: 'SupplierCredit/close',
   SORT: 'SupplierCredit/sort',
   EDIT_RETURN_AMOUNT: 'SupplierCredit/editReturnAmount',
@@ -21,6 +22,7 @@ const close = () => ({ type: SUPPLIER_CREDIT_ACTIONS.CLOSE });
 
 const create = () => (dispatch, getState) => {
   const { supplierCredit, user } = getState();
+  const currentRouteName = getCurrentRouteName(getState().nav);
   const { batches } = supplierCredit;
   const { currentUser } = user;
 
@@ -68,7 +70,7 @@ const create = () => (dispatch, getState) => {
 
   batch(() => {
     dispatch(close());
-    dispatch(refreshData(ROUTES.STOCK));
+    dispatch(refreshData(currentRouteName));
   });
 };
 
@@ -82,10 +84,16 @@ const createFromItem = itemId => ({
   payload: { itemId },
 });
 
+const createFromInvoice = invoice => ({
+  type: SUPPLIER_CREDIT_ACTIONS.CREATE_FROM_INVOICE,
+  payload: { invoice },
+});
+
 export const SupplierCreditActions = {
   createFromItem,
   close,
   sort,
   editReturnAmount,
   create,
+  createFromInvoice,
 };
