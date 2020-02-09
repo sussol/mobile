@@ -7,13 +7,14 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
+
+import currency from '../localization/currency';
+
 import { NumberLabelRow } from './NumberLabelRow';
-import { DetailRow } from './DetailRow';
 import { SimpleLabel } from './SimpleLabel';
 import { TouchableNoFeedback } from './DataTable';
 
-import { dispensingStrings } from '../localization';
-import currency from '../localization/currency';
+import { formInputStrings, generalStrings, dispensingStrings } from '../localization';
 
 /**
  * Simple layout component for primary use within the PrescriptionSummary
@@ -27,17 +28,15 @@ import currency from '../localization/currency';
 export const PrescriptionSummaryRow = ({ item }) => {
   const { itemName, itemCode, totalQuantity, note, totalPrice } = item;
 
-  const details = [{ label: 'Code', text: itemCode }];
-
   return (
     <TouchableNoFeedback style={localStyles.mainContainer}>
       <NumberLabelRow text={itemName} number={totalQuantity} />
       <View style={localStyles.marginFive} />
-      <DetailRow details={details} />
+      <SimpleLabel label={formInputStrings.code} text={itemCode} />
       <View style={localStyles.marginFive} />
       <SimpleLabel label={dispensingStrings.directions} text={note} />
       <View style={localStyles.marginFive} />
-      <SimpleLabel label="Price" text={currency(totalPrice).format()} />
+      <SimpleLabel label={generalStrings.price} text={currency(totalPrice).format()} />
     </TouchableNoFeedback>
   );
 };

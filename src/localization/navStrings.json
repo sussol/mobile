@@ -20,7 +20,8 @@
     "database_contents": "Database Contents",
     "dispensary": "Dispensary",
     "dashboard": "Dashboard",
-    "cash_register": "Cash Register"
+    "cash_register": "Cash Register",
+    "prescription": "Prescription"
   },
   "fr": {
     "current_stock": "Stock actuel",
@@ -43,7 +44,8 @@
     "database_contents": "Contenus de la base de données",
     "dispensary": "Dispensaire",
     "dashboard": "Tableau de bord",
-    "cash_register": "Caisse enregistreuse"
+    "cash_register": "Caisse enregistreuse",
+    "prescription": "Ordonnance"
   },
   "gil": {
     "current_stock": "Mwaitin am bwai n\naoraki ke am supply",

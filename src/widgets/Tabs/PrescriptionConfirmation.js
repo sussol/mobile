@@ -32,6 +32,7 @@ import {
 import { selectInsuranceDiscountRate } from '../../selectors/insurance';
 import { selectPrescriptionIsFinalised } from '../../selectors/prescription';
 
+import { buttonStrings } from '../../localization';
 import globalStyles from '../../globalStyles';
 import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 
@@ -122,7 +123,7 @@ const PrescriptionConfirmationComponent = ({
 
           <FlexRow justifyContent="flex-end">
             <PageButtonWithOnePress
-              text="Cancel"
+              text={buttonStrings.cancel}
               onPress={onDelete}
               isDisabled={isFinalised}
               debounceTimer={3000}
@@ -130,7 +131,7 @@ const PrescriptionConfirmationComponent = ({
             />
             <PageButtonWithOnePress
               isDisabled={!canConfirm}
-              text="Complete"
+              text={buttonStrings.confirm}
               onPress={confirmPrescription}
             />
           </FlexRow>

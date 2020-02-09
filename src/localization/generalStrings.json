@@ -1,5 +1,6 @@
 {
   "gb": {
+    "price": "Price",
     "submit": "Submit",
     "submitting": "Submitting...",
     "submitted": "Submitted",
@@ -35,6 +36,7 @@
     "quantity": "Quantity"
   },
   "fr": {
+    "price": "Prix",
     "submit": "Soumettre",
     "submitting": "En cours d'enregistrement",
     "submitted": "Soumise",
