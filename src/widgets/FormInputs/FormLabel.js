@@ -11,11 +11,12 @@ import PropTypes from 'prop-types';
 import { FlexView } from '../FlexView';
 
 import { SUSSOL_ORANGE, APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from '../../globalStyles';
+import { formInputStrings } from '../../localization';
 
 export const FormLabel = ({ isRequired, value, textStyle, isRequiredStyle }) => (
   <FlexView flex={1}>
     <Text style={textStyle}>{value}</Text>
-    {(isRequired && <Text style={isRequiredStyle}>is required</Text>) || null}
+    {(isRequired && <Text style={isRequiredStyle}>{formInputStrings.is_required}</Text>) || null}
   </FlexView>
 );
 

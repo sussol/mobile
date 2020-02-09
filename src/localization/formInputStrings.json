@@ -19,7 +19,7 @@
     "must_be_between_0_and_50": "Must be between 0 and 50 characters.",
     "must_be": "Must be",
     "must_not_be_empty": "Must not be empty",
-    "no": "no",
+    "no": "No",
     "personal_policy_number": "Personal policy number",
     "personal": "Personal",
     "phone": "Phone",
@@ -27,7 +27,8 @@
     "policy_type": "Policy type",
     "registration_code": "Registration code",
     "unique_personal_policy": "Must be a unique personal policy number between 0 and 50 characters.",
-    "yes": "yes"
+    "yes": "Yes",
+    "is_required": "Is required"
   },
   "fr": {
     "address_one": "Addresse 1",
@@ -57,7 +58,8 @@
     "policy_type": "Type de police",
     "registration_code": "Code d'enregistrement",
     "unique_personal_policy": "Doit être un no de police personnelle unique entre 0 et 50 caractères",
-    "yes": "Oui"
+    "yes": "Oui",
+    "is_required": "Est requis"
   },
   "gil": {},
   "tl": {},

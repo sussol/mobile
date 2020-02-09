@@ -1,5 +1,6 @@
 {
   "gb": {
+    "price": "Price",
     "submit": "Submit",
     "submitting": "Submitting...",
     "submitted": "Submitted",
@@ -36,6 +37,7 @@
     "batch_name": "Batch name"
   },
   "fr": {
+    "price": "Prix",
     "submit": "Soumettre",
     "submitting": "En cours d'enregistrement",
     "submitted": "Soumise",

@@ -60,14 +60,14 @@ export const createPrescription = patientID => (dispatch, getState) => {
 export const goToCashRegister = () =>
   NavigationActions.navigate({
     routeName: ROUTES.CASH_REGISTER,
-    params: { title: 'Cash Register' },
+    params: { title: navStrings.cash_register },
   });
 
 export const gotoPrescription = prescription =>
   NavigationActions.navigate({
     routeName: ROUTES.PRESCRIPTION,
     params: {
-      title: `Prescription ${prescription.serialNumber}`,
+      title: `${navStrings.prescription} ${prescription.serialNumber}`,
       transaction: prescription,
       patient: prescription.otherParty,
       pageObject: prescription,
@@ -91,7 +91,7 @@ export const gotoDispensingPage = () => dispatch => {
   dispatch(
     NavigationActions.navigate({
       routeName: ROUTES.DISPENSARY,
-      params: { title: 'Dispensary' },
+      params: { title: navStrings.dispensary },
     })
   );
 };
