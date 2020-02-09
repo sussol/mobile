@@ -61,6 +61,7 @@ export const SupplierCreditReducer = (state = initialState(), action) => {
         batches: mapBatchToObject(batches),
         item: UIDatabase.get('Item', itemId),
         title: `Available Credits for  ${UIDatabase.get('Item', itemId).name}`,
+        type: 'supplierCreditFromItem',
       };
     }
 
@@ -78,6 +79,7 @@ export const SupplierCreditReducer = (state = initialState(), action) => {
         batches: mapBatchToObject(itemBatches),
         item: UIDatabase.objects('Item')[0],
         title: `Supplier Credit for Supplier Invoice ${serialNumber}`,
+        type: 'supplierCreditFromInvoice',
       };
     }
 
