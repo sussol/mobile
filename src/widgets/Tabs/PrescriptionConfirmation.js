@@ -7,6 +7,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { NavigationActions } from 'react-navigation';
 
 import { PrescriptionSummary } from '../PrescriptionSummary';
 import { PrescriptionInfo } from '../PrescriptionInfo';
@@ -70,7 +71,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   const openFinaliseModal = () => dispatch(FinaliseActions.openModal());
   const onDelete = () => dispatch(PrescriptionActions.cancelPrescription());
-  return { onDelete, openFinaliseModal };
+  const goBack = () => dispatch(NavigationActions.back());
+  return { goBack, onDelete, openFinaliseModal };
 };
 
 const PrescriptionConfirmationComponent = ({
@@ -86,25 +88,34 @@ const PrescriptionConfirmationComponent = ({
   usingPayments,
   onDelete,
   isFinalised,
+  goBack,
 }) => {
   const runWithLoadingIndicator = useLoadingIndicator();
 
-  const confirm = React.useCallback(
-    () =>
-      UIDatabase.write(() =>
-        pay(
-          currentUser,
-          currentPatient,
-          transaction,
-          paymentAmount.value,
-          total.value,
-          subtotal.value,
-          discountAmount.value,
-          discountRate
-        )
-      ),
-    [currentUser, currentPatient, transaction, paymentAmount.value]
-  );
+  const confirm = React.useCallback(() => {
+    UIDatabase.write(() =>
+      pay(
+        currentUser,
+        currentPatient,
+        transaction,
+        paymentAmount.value,
+        total.value,
+        subtotal.value,
+        discountAmount.value,
+        discountRate
+      )
+    );
+    goBack();
+  }, [
+    currentUser,
+    currentPatient,
+    transaction,
+    paymentAmount.value,
+    subtotal.value,
+    total.value,
+    discountAmount.value,
+    discountRate,
+  ]);
 
   const confirmPrescription = React.useCallback(() => runWithLoadingIndicator(confirm), [confirm]);
 
@@ -160,6 +171,7 @@ PrescriptionConfirmationComponent.propTypes = {
   discountAmount: PropTypes.object,
   discountRate: PropTypes.number,
   isFinalised: PropTypes.bool.isRequired,
+  goBack: PropTypes.func.isRequired,
 };
 
 export const PrescriptionConfirmation = connect(
