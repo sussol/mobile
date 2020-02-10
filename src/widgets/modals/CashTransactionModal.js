@@ -60,11 +60,13 @@ export const CashTransactionModal = ({ onConfirm }) => {
     [name, type, amount, reason, description]
   );
 
-  const onChangeText = useMemo(() => text => setDescriptionBuffer(text));
-  const onChangeAmount = useMemo(() => value => setAmountBuffer(value));
+  const onChangeText = useMemo(() => text => setDescriptionBuffer(text), []);
+  const onChangeAmount = useMemo(() => value => setAmountBuffer(value), []);
 
-  const renderNameLeftText = useCallback(({ firstName, lastName, name: fullName, isPatient }) =>
-    isPatient ? `${lastName}, ${firstName}` : `${fullName}`
+  const renderNameLeftText = useCallback(
+    ({ firstName, lastName, name: fullName, isPatient }) =>
+      isPatient ? `${lastName}, ${firstName}` : `${fullName}`,
+    []
   );
 
   const renderNameRightText = useCallback(({ isCustomer, isSupplier, isPatient, dateOfBirth }) => {
@@ -80,7 +82,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
       return dispensingStrings.supplier;
     }
     return '';
-  });
+  }, []);
 
   const resetBottomModal = () => {
     setIsNameModalOpen(false);
