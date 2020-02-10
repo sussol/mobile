@@ -47,7 +47,7 @@ export const selectColumns = createSelector([selectType], type => getColumns(typ
 
 export const selectInvoice = ({ supplierCredit }) => {
   const { invoice } = supplierCredit;
-  return invoice || {};
+  return invoice ?? {};
 };
 
 export const selectTitle = createSelector(
@@ -64,5 +64,5 @@ export const selectTitle = createSelector(
 export const selectCategoryName = ({ supplierCredit }) => {
   const { category } = supplierCredit;
   const { name } = category || {};
-  return name || '';
+  return name ?? '';
 };
