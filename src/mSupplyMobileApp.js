@@ -48,6 +48,7 @@ import { SupplierCredit } from './widgets/modalChildren/SupplierCredit';
 import { ModalContainer } from './widgets/modals/ModalContainer';
 import { SupplierCreditActions } from './actions/SupplierCreditActions';
 import { PrescriptionActions } from './actions/PrescriptionActions';
+import { selectTitle } from './selectors/supplierCredit';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -369,7 +370,7 @@ const mapStateToProps = state => {
     currentUser: state.user.currentUser,
     finaliseModalOpen,
     supplierCreditModalOpen,
-    creditTitle: state.supplierCredit?.title,
+    creditTitle: selectTitle(state),
   };
 };
 
