@@ -129,7 +129,6 @@ export const COLUMN_NAMES = {
   THEIR_STOCK_ON_HAND: 'theirStockOnHand',
   TOTAL: 'total',
   TOTAL_QUANTITY: 'totalQuantity',
-  TRANSACT_TYPE: 'transactType',
   UNIT: 'unit',
   EDIT_SUPPLIER: 'editSupplier',
 };
