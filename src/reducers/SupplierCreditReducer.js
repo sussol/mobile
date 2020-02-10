@@ -78,7 +78,7 @@ export const SupplierCreditReducer = (state = initialState(), action) => {
       const { payload } = action;
       const { invoice } = payload;
 
-      const transactionBatches = invoice.getTransactionBatches(UIDatabase);
+      const transactionBatches = invoice?.getTransactionBatches(UIDatabase) ?? [];
       const itemBatches = transactionBatches.map(({ itemBatch }) => itemBatch);
 
       return {
