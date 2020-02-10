@@ -49,7 +49,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
   );
 
   const isValidTransaction = useMemo(
-    () => !!name && !!amount && amount > 0 && (isCashIn || !!reason),
+    () => !!name && !!amount && currency(amount) > currency(0) && (isCashIn || !!reason),
     [name, amount, reason, isCashIn]
   );
 
