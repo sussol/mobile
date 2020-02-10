@@ -6,6 +6,7 @@
 export const CASH_TRANSACTION_KEYS = {
   NAME: 'name',
   TYPE: 'title',
+  PAYMENT_TYPE: 'description',
   REASON: 'title',
 };
 

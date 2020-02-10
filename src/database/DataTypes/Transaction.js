@@ -171,6 +171,10 @@ export class Transaction extends Realm.Object {
     return (this.option && this.option.title) || '';
   }
 
+  get paymentTypeTitle() {
+    return this.paymentType?.description ?? '';
+  }
+
   /**
    * Set other party to this transaction.
    *
