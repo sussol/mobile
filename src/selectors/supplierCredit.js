@@ -63,6 +63,6 @@ export const selectTitle = createSelector(
 
 export const selectCategoryName = ({ supplierCredit }) => {
   const { category } = supplierCredit;
-  const { name } = category;
-  return name;
+  const { name } = category || {};
+  return name || '';
 };
