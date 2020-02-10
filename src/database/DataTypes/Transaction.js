@@ -171,7 +171,7 @@ export class Transaction extends Realm.Object {
     return (this.option && this.option.title) || '';
   }
 
-  get paymentTypeTitle() {
+  get paymentTypeDescription() {
     return this.paymentType?.description ?? '';
   }
 

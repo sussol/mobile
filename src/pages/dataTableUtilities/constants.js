@@ -43,7 +43,7 @@ export const COLUMN_KEYS = {
   OUR_STOCK_ON_HAND: 'ourStockOnHand',
   PATIENT_EDIT: 'patientEdit',
   PATIENT_HISTORY: 'patientHistory',
-  PAYMENT_TYPE_TITLE: 'paymentTypeTitle',
+  PAYMENT_TYPE_TITLE: 'paymentTypeDescription',
   PRESCRIBER_EDIT: 'prescriberEdit',
   PRESCRIBER: 'prescriber',
   PRICE: 'price',
