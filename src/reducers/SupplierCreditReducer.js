@@ -67,7 +67,7 @@ export const SupplierCreditReducer = (state = initialState(), action) => {
 
       return {
         ...state,
-        batches: mapBatchToObject(item.batches.filtered('numberOfPacks > 0')),
+        batches: mapBatchToObject(item?.batches?.filtered('numberOfPacks > 0') ?? []),
         open: true,
         item,
         type: 'supplierCreditFromItem',
