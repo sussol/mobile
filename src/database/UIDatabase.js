@@ -28,6 +28,8 @@ const translateToCoreDatabaseType = type => {
     case 'ExternalSupplier':
     case 'Patient':
       return 'Name';
+    case 'CashTransactionReason':
+      return 'Options';
     case 'RequestRequisition':
     case 'ResponseRequisition':
       return 'Requisition';
@@ -136,6 +138,8 @@ class UIDatabase {
         return results
           .filtered('isVisible == true && id != $0', thisStoreNameId)
           .filtered('isSupplier == true || isCustomer == true || isPatient == true');
+      case 'CashTransactionReason':
+        return results.filtered('type == $0', 'newCashOutTransaction');
       case 'CustomerCredit':
         return results.filtered('type == $0', 'customer_credit');
       case 'Policy':
