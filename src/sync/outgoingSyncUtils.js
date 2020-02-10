@@ -200,6 +200,7 @@ const generateSyncData = (settings, recordType, record) => {
         nameInsuranceJoinID: record?.insurancePolicy?.id,
         insuranceDiscountAmount: String(record?.insuranceDiscountAmount),
         insuranceDiscountRate: String(record?.insuranceDiscountRate),
+        paymentTypeID: record?.paymentType?.id ?? '',
       };
     }
     case 'TransactionBatch': {
