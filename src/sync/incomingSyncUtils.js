@@ -535,7 +535,6 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         type: NAME_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
         isCustomer: parseBoolean(record.customer),
         isSupplier: parseBoolean(record.supplier),
-        isVisible: isPatient, // Patients default visibility to true, regardless of nameStoreJoin.
         isManufacturer: parseBoolean(record.manufacturer),
         supplyingStoreId: record.supplying_store_id,
         isPatient,
@@ -543,6 +542,9 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         lastName: record.last,
         dateOfBirth: parseDate(record.date_of_birth),
       };
+
+      if (isPatient) internalRecord.isVisible = true;
+
       database.update(recordType, internalRecord);
       break;
     }
