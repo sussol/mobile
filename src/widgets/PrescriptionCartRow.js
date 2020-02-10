@@ -33,7 +33,7 @@ import { dispensingStrings } from '../localization';
  * @prop {String} itemCode          The underlying Item's code for this line.
  * @prop {String} id                The underlying TransactionItem id for this line.
  * @prop {String} note              This lines note/direction.
- * @prop {Object} sellPrice         Currency object of the unit sell price.
+ * @prop {Object} price             String representation of this items price.
  * @prop {Object} item              Underlying Item object for this line.
  * @prop {Number} totalQuantity     Total quantity of this item in the prescription.
  * @prop {Number} availableQuantity Total available quantity for the underlying item.
@@ -49,7 +49,7 @@ const PrescriptionCartRowComponent = ({
   itemCode,
   id,
   note,
-  sellPrice,
+  totalPrice,
   item,
   totalQuantity,
   availableQuantity,
@@ -61,9 +61,9 @@ const PrescriptionCartRowComponent = ({
 }) => {
   const itemDetails = React.useMemo(() => {
     const details = [{ label: dispensingStrings.code, text: itemCode }];
-    if (usingPayments) details.push({ label: dispensingStrings.unit_price, text: sellPrice });
+    if (usingPayments) details.push({ label: dispensingStrings.unit_price, text: totalPrice });
     return details;
-  }, [itemCode]);
+  }, [itemCode, totalPrice]);
 
   const defaultDirections = React.useMemo(() => item.getDirectionExpansions(UIDatabase), [id]);
 
@@ -116,7 +116,7 @@ PrescriptionCartRowComponent.propTypes = {
   itemName: PropTypes.string.isRequired,
   totalQuantity: PropTypes.number.isRequired,
   itemCode: PropTypes.string.isRequired,
-  sellPrice: PropTypes.string.isRequired,
+  totalPrice: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
   note: PropTypes.string,
   item: PropTypes.object.isRequired,
@@ -146,7 +146,7 @@ const mapStateToProps = (state, ownProps) => {
     itemName,
     totalQuantity,
     itemCode,
-    sellPrice,
+    totalPrice,
     note,
     item,
     availableQuantity,
@@ -159,7 +159,7 @@ const mapStateToProps = (state, ownProps) => {
     totalQuantity,
     itemCode,
     availableQuantity,
-    sellPrice: currency(sellPrice).format({ formatWithSymbol: true }),
+    price: currency(totalPrice).format(),
     note,
     item,
     id,

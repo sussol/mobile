@@ -1,5 +1,6 @@
 {
   "gb": {
+    "price": "Price",
     "submit": "Submit",
     "submitting": "Submitting...",
     "submitted": "Submitted",
@@ -33,9 +34,11 @@
     "or": "or",
     "expiry_date": "Expiry date",
     "quantity": "Quantity",
-    "to": "to"
+    "to": "to",
+    "batch_name": "Batch name"
   },
   "fr": {
+    "price": "Prix",
     "submit": "Soumettre",
     "submitting": "En cours d'enregistrement",
     "submitted": "Soumise",
@@ -69,7 +72,8 @@
     "or": "ou",
     "expiry_date": "date d'expiration",
     "quantity": "Quantité",
-    "to": "à"
+    "to": "à",
+    "batch_name": "Nom du lot"
   },
   "gil": {
     "stocktake": "Warebwai",

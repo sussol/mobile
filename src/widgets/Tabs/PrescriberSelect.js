@@ -22,8 +22,9 @@ import { PrescriberActions } from '../../actions/PrescriberActions';
 import { PrescriptionActions } from '../../actions/PrescriptionActions';
 import { getItemLayout, getColumns } from '../../pages/dataTableUtilities';
 import { selectSortedPrescribers } from '../../selectors/prescriber';
-import { dispensingStrings } from '../../localization';
+import { buttonStrings, dispensingStrings } from '../../localization';
 import globalStyles from '../../globalStyles';
+import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 
 /**
  * Layout component used for a tab within the prescription wizard.
@@ -95,7 +96,11 @@ const PrescriberSelectComponent = ({
           value={searchTerm}
           placeholder={dispensingStrings.search_by_last_name_first_name}
         />
-        <PageButton text="Add Prescriber" onPress={createPrescriber} style={{ marginLeft: 5 }} />
+        <PageButton
+          text={`${dispensingStrings.new} ${dispensingStrings.prescriber}`}
+          onPress={createPrescriber}
+          style={{ marginLeft: 5 }}
+        />
       </FlexRow>
 
       <DataTable
@@ -107,13 +112,14 @@ const PrescriberSelectComponent = ({
       />
 
       <FlexRow justifyContent="flex-end" alignItems="flex-end">
-        <PageButton
-          text="Cancel"
+        <PageButtonWithOnePress
+          text={buttonStrings.cancel}
           onPress={() => onCancelPrescription()}
           style={{ marginRight: 7 }}
         />
         <PageButton
-          text="OK"
+          text={buttonStrings.next}
+          debounceTimer={1000}
           onPress={() => choosePrescriber(currentPrescriber)}
           isDisabled={!currentPrescriber}
         />
