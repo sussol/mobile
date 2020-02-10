@@ -48,12 +48,10 @@ export const CashTransactionModal = ({ onConfirm }) => {
     [isCashIn]
   );
 
-  const isValidTransaction = useMemo(() => !!name && !!amount && (isCashIn || !!reason), [
-    name,
-    amount,
-    reason,
-    isCashIn,
-  ]);
+  const isValidTransaction = useMemo(
+    () => !!name && !!amount && amount > 0 && (isCashIn || !!reason),
+    [name, amount, reason, isCashIn]
+  );
 
   const onCreate = useCallback(
     () => onConfirm({ name, type, amount: amount.value, reason, description }),
