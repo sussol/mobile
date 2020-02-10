@@ -41,6 +41,7 @@ const translateToCoreDatabaseType = type => {
     case 'Provider':
       return 'InsuranceProvider';
     case 'PrescriptionCategory':
+    case 'SupplierCreditCategory':
       return 'TransactionCategory';
     default:
       return type;
@@ -152,7 +153,7 @@ class UIDatabase {
         return results.filtered('isActive == $0', true);
       case 'Customer':
         return results.filtered(
-          'isVisible == true AND isCustomer == true AND id != $0',
+          'isVisible == true AND isCustomer == true AND id != $0 AND isPatient == false',
           thisStoreNameId
         );
       case 'Supplier':
@@ -184,14 +185,16 @@ class UIDatabase {
         return results.filtered('type == $0 && isActive == true', 'positiveInventoryAdjustment');
       case 'Prescription':
         return results.filtered(
-          'type == $0 AND mode == $1 AND (linkedRequisition == $2 OR status == $3)',
+          'type == $0 AND otherParty.type == $1 AND (linkedRequisition == $2 OR status == $3)',
           'customer_invoice',
-          'dispensary',
+          'patient',
           null,
           'finalised'
         );
       case 'PrescriptionCategory':
         return results.filtered('type == $0', 'prescription');
+      case 'SupplierCreditCategory':
+        return results.filtered('type == $0', 'supplier_credit');
       default:
         return results;
     }

@@ -27,3 +27,8 @@ export const selectUsingPrescriptionCategories = ({ modules }) => {
   const { usingPrescriptionCategories } = modules;
   return usingPrescriptionCategories;
 };
+
+export const selectUsingSupplierCreditCategories = ({ modules }) => {
+  const { usingSupplierCreditCategories } = modules;
+  return usingSupplierCreditCategories;
+};

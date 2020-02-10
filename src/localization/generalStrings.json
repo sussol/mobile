@@ -34,6 +34,7 @@
     "or": "or",
     "expiry_date": "Expiry date",
     "quantity": "Quantity",
+    "to": "to",
     "batch_name": "Batch name"
   },
   "fr": {
@@ -71,6 +72,7 @@
     "or": "ou",
     "expiry_date": "date d'expiration",
     "quantity": "Quantité",
+    "to": "à",
     "batch_name": "Nom du lot"
   },
   "gil": {
