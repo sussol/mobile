@@ -36,7 +36,7 @@ const PAGE_COLUMN_WIDTHS = {
   prescriberSelect: [3, 3, 1],
   itemSelect: [1, 3, 1],
   patientHistory: [1, 3, 1, 3],
-  [ROUTES.CASH_REGISTER]: [1, 2, 1, 1, 1, 1, 1],
+  [ROUTES.CASH_REGISTER]: [1, 2, 1, 1, 1.5, 2],
   supplierCredit: [1, 1, 1, 1],
 };
 
@@ -236,11 +236,10 @@ const PAGE_COLUMNS = {
   cashRegister: [
     COLUMN_NAMES.INVOICE_NUMBER,
     COLUMN_NAMES.PAYMENT_NAME,
-    COLUMN_NAMES.TRANSACT_TYPE,
     COLUMN_NAMES.CASH_REASON,
-    COLUMN_NAMES.COMMENT,
     COLUMN_NAMES.TOTAL,
     COLUMN_NAMES.CONFIRM_DATE,
+    COLUMN_NAMES.COMMENT,
   ],
 };
 
@@ -324,7 +323,7 @@ const COLUMNS = () => ({
     key: COLUMN_KEYS.OTHER_PARTY_NAME,
     title: tableStrings.name,
     alignText: 'left',
-    sortable: false,
+    sortable: true,
     editable: false,
   },
   [COLUMN_NAMES.FIRST_NAME]: {
@@ -383,21 +382,14 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.REASON_TITLE,
     title: tableStrings.reason,
-    alignText: 'center',
-    sortable: false,
+    alignText: 'left',
+    sortable: true,
     editable: false,
   },
   [COLUMN_NAMES.STATUS]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.STATUS,
     title: tableStrings.status,
-    sortable: false,
-    editable: false,
-  },
-  [COLUMN_NAMES.TRANSACT_TYPE]: {
-    type: COLUMN_TYPES.STRING,
-    key: COLUMN_KEYS.TYPE,
-    title: tableStrings.type,
     sortable: false,
     editable: false,
   },
@@ -550,7 +542,7 @@ const COLUMNS = () => ({
     key: COLUMN_KEYS.TOTAL,
     title: tableStrings.total,
     alignTest: 'right',
-    sortable: false,
+    sortable: true,
     editable: false,
   },
 
@@ -622,7 +614,7 @@ const COLUMNS = () => ({
     key: COLUMN_KEYS.CONFIRM_DATE,
     title: tableStrings.confirm_date,
     alignText: 'left',
-    sortable: false,
+    sortable: true,
     editable: false,
   },
   [COLUMN_NAMES.CREATED_DATE]: {
@@ -751,7 +743,7 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.DROP_DOWN,
     key: COLUMN_KEYS.REASON_TITLE,
     title: tableStrings.reason,
-    alignText: 'center',
+    alignText: 'left',
     sortable: false,
     editable: false,
   },
