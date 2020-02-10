@@ -38,6 +38,7 @@ const translateToCoreDatabaseType = type => {
     case 'Provider':
       return 'InsuranceProvider';
     case 'PrescriptionCategory':
+    case 'SupplierCreditCategory':
       return 'TransactionCategory';
     default:
       return type;
@@ -187,6 +188,8 @@ class UIDatabase {
         );
       case 'PrescriptionCategory':
         return results.filtered('type == $0', 'prescription');
+      case 'SupplierCreditCategory':
+        return results.filtered('type == $0', 'supplier_credit');
       default:
         return results;
     }
