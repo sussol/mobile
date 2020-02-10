@@ -151,12 +151,16 @@ export const refreshData = state => {
 };
 
 /**
- * Override for refreshData for cash register. Filtering and sorting is deferred to state-to-prop
+ * Override for refreshData for cash register. Filtering is deferred to state-to-prop
  * selectors.
  */
 export const refreshCashRegister = state => {
-  const { backingData } = state;
-  return { ...state, data: backingData };
+  const { backingData, sortKey, isAscending } = state;
+
+  const backingDataArray = backingData.slice();
+  const data = sortKey ? sortDataBy(backingDataArray, sortKey, isAscending) : backingDataArray;
+
+  return { ...state, data };
 };
 
 /**

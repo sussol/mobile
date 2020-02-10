@@ -4,6 +4,8 @@
  */
 import { createSelector } from 'reselect';
 import { sortDataBy } from '../utilities';
+import { getColumns } from '../pages/dataTableUtilities';
+import { dispensingStrings, generalStrings } from '../localization';
 
 const selectSortKey = ({ supplierCredit }) => {
   const { sortKey } = supplierCredit;
@@ -15,7 +17,7 @@ const selectIsAscending = ({ supplierCredit }) => {
   return isAscending;
 };
 
-const selectCreditableBatches = ({ supplierCredit }) => {
+export const selectCreditableBatches = ({ supplierCredit }) => {
   const { batches } = supplierCredit;
   return batches;
 };
@@ -34,4 +36,33 @@ export const selectItemName = ({ supplierCredit }) => {
   const { item } = supplierCredit;
   const { name } = item || {};
   return name;
+};
+
+export const selectType = ({ supplierCredit }) => {
+  const { type } = supplierCredit;
+  return type;
+};
+
+export const selectColumns = createSelector([selectType], type => getColumns(type));
+
+export const selectInvoice = ({ supplierCredit }) => {
+  const { invoice } = supplierCredit;
+  return invoice ?? {};
+};
+
+export const selectTitle = createSelector(
+  [selectType, selectInvoice, selectItemName],
+  (type, invoice, itemName) => {
+    if (type === 'supplierCreditFromItem') {
+      return `${dispensingStrings.available_credits_for} ${itemName}`;
+    }
+    const { serialNumber, otherPartyName } = invoice;
+    return `${dispensingStrings.supplier_credit_for_supplier_invoice} ${serialNumber} ${generalStrings.to} ${otherPartyName}`;
+  }
+);
+
+export const selectCategoryName = ({ supplierCredit }) => {
+  const { category } = supplierCredit;
+  const { name } = category || {};
+  return name ?? '';
 };

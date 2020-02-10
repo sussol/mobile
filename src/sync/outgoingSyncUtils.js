@@ -76,6 +76,8 @@ const generateSyncData = (settings, recordType, record) => {
       };
     }
     case 'Name': {
+      if (!record.isPatient) return false;
+
       return {
         id: record.id,
         type: record.type,
@@ -264,6 +266,7 @@ const generateSyncData = (settings, recordType, record) => {
         active: record.isActive,
         address1: record.address?.line1,
         address2: record.address?.line2,
+        store_ID: settings.get(THIS_STORE_ID),
       };
     }
     default:

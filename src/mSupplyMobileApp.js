@@ -47,8 +47,8 @@ import { prevRouteNameSelector } from './navigation/selectors';
 import { SupplierCredit } from './widgets/modalChildren/SupplierCredit';
 import { ModalContainer } from './widgets/modals/ModalContainer';
 import { SupplierCreditActions } from './actions/SupplierCreditActions';
-import { selectItemName } from './selectors/supplierCredit';
 import { PrescriptionActions } from './actions/PrescriptionActions';
+import { selectTitle } from './selectors/supplierCredit';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -262,7 +262,7 @@ class MSupplyMobileAppContainer extends React.Component {
       closeFinaliseModal,
       closeSupplierCreditModal,
       supplierCreditModalOpen,
-      creditItemName,
+      creditTitle,
     } = this.props;
     const { isInAdminMode, isInitialised, isLoading, syncModalIsOpen } = this.state;
 
@@ -327,7 +327,7 @@ class MSupplyMobileAppContainer extends React.Component {
           <ModalContainer
             isVisible={supplierCreditModalOpen}
             onClose={closeSupplierCreditModal}
-            title={`Available Credits for ${creditItemName}`}
+            title={creditTitle}
             fullScreen
           >
             <SupplierCredit />
@@ -350,7 +350,6 @@ const mapStateToProps = state => {
   const { finalise, nav: navigationState, sync: syncState, supplierCredit } = state;
   const { open: supplierCreditModalOpen } = supplierCredit;
   const { finaliseModalOpen } = finalise;
-  const creditItemName = selectItemName(state);
   const currentParams = getCurrentParams(navigationState);
   const currentTitle = currentParams && currentParams.title;
   const currentRouteName = getCurrentRouteName(navigationState);
@@ -371,7 +370,7 @@ const mapStateToProps = state => {
     currentUser: state.user.currentUser,
     finaliseModalOpen,
     supplierCreditModalOpen,
-    creditItemName,
+    creditTitle: selectTitle(state),
   };
 };
 
@@ -379,7 +378,7 @@ MSupplyMobileAppContainer.defaultProps = {
   currentUser: null,
   currentTitle: '',
   finaliseItem: null,
-  creditItemName: '',
+  creditTitle: '',
 };
 
 MSupplyMobileAppContainer.propTypes = {
@@ -395,8 +394,8 @@ MSupplyMobileAppContainer.propTypes = {
   closeFinaliseModal: PropTypes.func.isRequired,
   closeSupplierCreditModal: PropTypes.func.isRequired,
   supplierCreditModalOpen: PropTypes.bool.isRequired,
-  creditItemName: PropTypes.string,
   currentRouteName: PropTypes.string.isRequired,
+  creditTitle: PropTypes.string,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MSupplyMobileAppContainer);
