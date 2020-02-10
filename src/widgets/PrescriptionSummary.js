@@ -15,6 +15,7 @@ import { PrescriptionSummaryRow } from './PrescriptionSummaryRow';
 
 import { recordKeyExtractor } from '../pages/dataTableUtilities';
 import { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles';
+import { dispensingStrings } from '../localization';
 
 /**
  * Simple layout component, rendering a title and a list of summary
@@ -24,7 +25,7 @@ import { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles';
  */
 export const PrescriptionSummary = ({ transaction }) => (
   <View style={localStyles.containerStyle}>
-    <Text style={localStyles.titleStyle}>Item Details</Text>
+    <Text style={localStyles.titleStyle}>{dispensingStrings.item_details}</Text>
     <FlatList
       data={transaction?.getTransactionBatches(UIDatabase) ?? []}
       ItemSeparatorComponent={Separator}

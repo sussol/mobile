@@ -49,7 +49,9 @@
     "must_order_one_to_continue": "Must choose an item and order at least one to continue",
     "available_credits_for": "Available credits for",
     "supplier_credit_for_supplier_invoice": "Supplier credit for supplier invoice",
-    "select_a_supplier_credit_category": "Select a supplier credit category"
+    "select_a_supplier_credit_category": "Select a supplier credit category",
+    "patient_detail": "Patient Detail",
+    "item_details": "Item Details"
   },
   "fr": {
     "available_credit": "Crédit disponible",
@@ -79,8 +81,8 @@
     "patients": "Patients",
     "payment_amount": "Montant du paiement",
     "payment": "Paiement",
-    "payments": "Paiments",
-    "receipts": "Reçus",
+    "payments": "Paiements",
+    "receipts": "Recettes",
     "prescriber": "Prescripteur",
     "prescribers": "Prescripteurs",
     "select_a_policy": "Sélectionnez une police d'assurance",
@@ -100,8 +102,9 @@
     "must_order_one_to_continue": "Vous devez choisir un article et en commander au moins une unité pour continuer",
     "available_credits_for": "Crédit disponible pour",
     "supplier_credit_for_supplier_invoice": "Crédit fournisseur pour la facture fournisseur",
-    "select_a_prescription_category": "Sélectionnez une catégorie de prescription",
-    "select_a_supplier_credit_category": "Sélectionnez une catégorie de crédit fournisseur"
+    "select_a_supplier_credit_category": "Sélectionnez une catégorie de crédit fournisseur",
+    "patient_detail": "Détail du patient",
+    "item_details": "Détail des articles"
   },
   "gil": {},
   "tl": {},

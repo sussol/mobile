@@ -165,7 +165,7 @@ const Dispensing = ({
         />
       </DataTablePageView>
       <ModalContainer
-        title={`${dispensingStrings.patient} ${dispensingStrings.details}`}
+        title={`${dispensingStrings.patient_detail}`}
         noCancel
         fullScreen
         isVisible={patientEditModalOpen}
