@@ -37,13 +37,20 @@ const PAGE_COLUMN_WIDTHS = {
   itemSelect: [1, 3, 1],
   patientHistory: [1, 3, 1, 3],
   [ROUTES.CASH_REGISTER]: [1, 2, 1, 1, 1.5, 2],
-  supplierCredit: [1, 1, 1, 1],
+  supplierCreditFromItem: [1, 1, 1, 1],
+  supplierCreditFromInvoice: [1, 1, 1, 1],
 };
 
 const PAGE_COLUMNS = {
-  supplierCredit: [
+  supplierCreditFromItem: [
     COLUMN_NAMES.BATCH_NAME,
     COLUMN_NAMES.OTHER_PARTY_NAME,
+    COLUMN_NAMES.TOTAL_QUANTITY,
+    COLUMN_NAMES.RETURN_AMOUNT,
+  ],
+  supplierCreditFromInvoice: [
+    COLUMN_NAMES.BATCH_NAME,
+    COLUMN_NAMES.ITEM_NAME,
     COLUMN_NAMES.TOTAL_QUANTITY,
     COLUMN_NAMES.RETURN_AMOUNT,
   ],
