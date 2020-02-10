@@ -16,6 +16,7 @@ const mapBatchToObject = batches =>
     otherPartyName: batch.otherPartyName,
     batch: batch.batch,
     costPrice: batch.costPrice,
+    itemName: batch.itemName,
   }));
 
 const initialState = () => ({

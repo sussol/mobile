@@ -257,7 +257,7 @@ const localStyles = {
   title: {
     color: SUSSOL_ORANGE,
     fontFamily: APP_FONT_FAMILY,
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
     borderBottomWidth: 1,
     borderBottomColor: SUSSOL_ORANGE,

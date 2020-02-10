@@ -35,7 +35,8 @@
     "expiry_date": "Expiry date",
     "quantity": "Quantity",
     "to": "to",
-    "batch_name": "Batch name"
+    "batch_name": "Batch name",
+    "save": "Save"
   },
   "fr": {
     "price": "Prix",
@@ -73,7 +74,8 @@
     "expiry_date": "date d'expiration",
     "quantity": "Quantité",
     "to": "à",
-    "batch_name": "Nom du lot"
+    "batch_name": "Nom du lot",
+    "save": "Sauvegarder"
   },
   "gil": {
     "stocktake": "Warebwai",

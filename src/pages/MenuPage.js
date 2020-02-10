@@ -202,8 +202,8 @@ const Menu = ({
 };
 
 const styles = {
-  moduleTopRow: { flex: 9 },
-  originalTopRow: { flex: 9, flexDirection: 'row' },
+  moduleTopRow: { flex: 19 },
+  originalTopRow: { flex: 19, flexDirection: 'row' },
   moduleRow: { flex: 1, flexDirection: 'row' },
   image: { height: 150, width: 150, marginBottom: 30 },
   bottomIcon: { color: GREY },
@@ -218,14 +218,14 @@ const styles = {
     alignItems: 'center',
     borderColor: SHADOW_BORDER,
     backgroundColor: 'white',
-    marginBottom: 10,
+    marginBottom: 5,
     flex: 1,
     borderWidth: 1,
   },
   moduleContainer: {
     justifyContent: 'center',
     flexDirection: 'row',
-    marginHorizontal: 15,
+    marginHorizontal: 5,
   },
   originalContainer: {
     justifyContent: 'flex-start',
