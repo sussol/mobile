@@ -151,7 +151,7 @@ export const SupplierInvoice = ({
               isDisabled={isFinalised}
             />
           ) : (
-            <PageButton text="Refund" onPress={refund} />
+            <PageButton text={buttonStrings.new_supplier_credit} onPress={refund} />
           )}
         </View>
       </View>
