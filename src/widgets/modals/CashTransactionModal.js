@@ -52,8 +52,8 @@ export const CashTransactionModal = ({ onConfirm }) => {
   const reasons = useMemo(() => UIDatabase.objects('CashTransactionReason'), []);
 
   const isValidTransaction = useMemo(
-    () => !!name && !!amount && !!paymentType && (isCashIn || !!reason),
-    [name, amount, paymentType, reason, isCashIn]
+    () => !!name && !!amount && currency(amount) > currency(0) && (isCashIn || !!reason),
+    [name, amount, reason, isCashIn]
   );
 
   const onCreate = useCallback(
