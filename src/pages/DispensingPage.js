@@ -150,7 +150,7 @@ const Dispensing = ({
           <PageButton
             text={
               usingPatientsDataSet
-                ? `${dispensingStrings.new} ${dispensingStrings.patient}`
+                ? `${dispensingStrings.new_patient}`
                 : `${dispensingStrings.new} ${dispensingStrings.prescriber}`
             }
             onPress={usingPatientsDataSet ? createPatient : createPrescriber}
