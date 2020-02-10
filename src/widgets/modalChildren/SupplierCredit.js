@@ -23,7 +23,7 @@ import {
 } from '../../selectors/supplierCredit';
 
 import { WHITE } from '../../globalStyles';
-import { modalStrings } from '../../localization';
+import { modalStrings, dispensingStrings } from '../../localization';
 import { DropDown } from '../DropDown';
 import { selectUsingSupplierCreditCategories } from '../../selectors/modules';
 import { UIDatabase } from '../../database/index';
@@ -41,6 +41,7 @@ const SupplierCreditComponent = ({
   onEditCategory,
 }) => {
   const categories = React.useMemo(() => UIDatabase.objects('SupplierCreditCategory'), []);
+  const categoryNames = React.useMemo(() => categories.map(({ name }) => name), []);
   const onSelectCategory = React.useCallback((_, index) => {
     onEditCategory(categories[index]);
   }, []);
@@ -81,7 +82,8 @@ const SupplierCreditComponent = ({
     <View style={localStyles.mainContainer}>
       {usingSupplierCreditCategories && (
         <DropDown
-          values={categories}
+          headerValue={dispensingStrings.select_a_supplier_credit_category}
+          values={categoryNames}
           selectedValue={categoryName}
           onValueChange={onSelectCategory}
         />
