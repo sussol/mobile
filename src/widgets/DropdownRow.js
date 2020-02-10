@@ -68,7 +68,7 @@ const localStyles = StyleSheet.create({
     fontFamily: APP_FONT_FAMILY,
   },
   dropDownStyle: {
-    flex: 1,
+    flex: 2,
     marginBottom: 0,
     marginLeft: 0,
     marginTop: 0,

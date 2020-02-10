@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 import { ValidationTextInput } from './ValidationTextInput';
 import { PageButton } from './PageButton';
 
-import globalStyles, { SUSSOL_ORANGE, WHITE } from '../globalStyles/index';
-import { modalStrings } from '../localization/index';
+import globalStyles, { SUSSOL_ORANGE, WHITE } from '../globalStyles';
+import { modalStrings, generalStrings } from '../localization';
 import { selectCanSaveForm, selectCompletedForm } from '../selectors/form';
 import { FormActions } from '../actions/FormActions';
 import { FormDateInput } from './FormDateInput';
@@ -163,7 +163,7 @@ const FormControlComponent = ({
           style={localStyles.saveButton}
           isDisabled={!canSaveForm}
           textStyle={localStyles.saveButtonTextStyle}
-          text="Save"
+          text={generalStrings.save}
         />
         <PageButton
           style={localStyles.cancelButton}
