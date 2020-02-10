@@ -4,7 +4,7 @@
  */
 
 import { SUPPLIER_CREDIT_ACTIONS } from '../actions/SupplierCreditActions';
-import { UIDatabase } from '../database/index';
+import { UIDatabase } from '../database';
 import { parsePositiveInteger } from '../utilities';
 
 const mapBatchToObject = batches =>
@@ -24,7 +24,10 @@ const initialState = () => ({
   sortKey: 'otherPartyName',
   isAscending: true,
   item: null,
+  invoice: null,
+  category: null,
   title: '',
+  reasons: UIDatabase.objects('SupplierCreditCategory'),
 });
 
 export const SupplierCreditReducer = (state = initialState(), action) => {
@@ -37,30 +40,36 @@ export const SupplierCreditReducer = (state = initialState(), action) => {
       const { batchId, returnAmount } = payload;
 
       const rowToEditIndex = batches.findIndex(({ id }) => id === batchId);
+
+      const { totalQuantity } = batches[rowToEditIndex];
+      const adjustmentAmount = parsePositiveInteger(returnAmount);
+
       const newRow = {
         ...batches[rowToEditIndex],
-        returnAmount: parsePositiveInteger(returnAmount),
+        returnAmount: adjustmentAmount <= totalQuantity ? adjustmentAmount : 0,
       };
       batches[rowToEditIndex] = newRow;
 
       return { ...state, batches: [...batches] };
     }
 
+    case SUPPLIER_CREDIT_ACTIONS.EDIT_CATEGORY: {
+      const { payload } = action;
+      const { category } = payload;
+      return { ...state, category };
+    }
+
     case SUPPLIER_CREDIT_ACTIONS.CREATE_FROM_ITEM: {
       const { payload } = action;
       const { itemId } = payload;
 
-      const batches = UIDatabase.objects('ItemBatch').filtered(
-        'item.id == $0 && numberOfPacks > 0',
-        itemId
-      );
+      const item = UIDatabase.get('Item', itemId);
 
       return {
         ...state,
+        batches: mapBatchToObject(item.batches.filtered('numberOfPacks > 0')),
         open: true,
-        batches: mapBatchToObject(batches),
-        item: UIDatabase.get('Item', itemId),
-        title: `Available Credits for  ${UIDatabase.get('Item', itemId).name}`,
+        item,
         type: 'supplierCreditFromItem',
       };
     }
@@ -69,7 +78,6 @@ export const SupplierCreditReducer = (state = initialState(), action) => {
       const { payload } = action;
       const { invoice } = payload;
 
-      const { serialNumber } = invoice;
       const transactionBatches = invoice.getTransactionBatches(UIDatabase);
       const itemBatches = transactionBatches.map(({ itemBatch }) => itemBatch);
 
@@ -77,8 +85,7 @@ export const SupplierCreditReducer = (state = initialState(), action) => {
         ...state,
         open: true,
         batches: mapBatchToObject(itemBatches),
-        item: UIDatabase.objects('Item')[0],
-        title: `Supplier Credit for Supplier Invoice ${serialNumber}`,
+        invoice,
         type: 'supplierCreditFromInvoice',
       };
     }
