@@ -140,10 +140,10 @@ const createPatient = (database, patientDetails) => {
 };
 
 const createCashOut = (database, user, cashTransaction) => {
-  const { name, amount, reason, description } = cashTransaction;
+  const { name, amount, paymentType, reason, description } = cashTransaction;
 
   // Create payment transaction.
-  const payment = createPayment(database, user, name, amount, reason, description);
+  const payment = createPayment(database, user, name, amount, paymentType, reason, description);
 
   // Create customer invoice of same monetary value to offset payment transaction.
   const customerInvoice = createOffsetCustomerInvoice(database, user, name, amount);
@@ -155,10 +155,10 @@ const createCashOut = (database, user, cashTransaction) => {
 };
 
 const createCashIn = (database, user, cashTransaction) => {
-  const { name, amount, description } = cashTransaction;
+  const { name, amount, paymentType, description } = cashTransaction;
 
   // Create receipt transaction.
-  const receipt = createReceipt(database, user, name, amount, description);
+  const receipt = createReceipt(database, user, name, amount, paymentType, description);
 
   // Create customer credit transaction.
   const customerCredit = createCustomerCredit(database, user, name, amount);
@@ -189,7 +189,7 @@ const createOffsetCustomerInvoice = (database, user, name, amount) => {
   return invoice;
 };
 
-const createReceipt = (database, user, name, amount, description) => {
+const createReceipt = (database, user, name, amount, paymentType, description) => {
   const currentDate = new Date();
   const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
   const receipt = database.create('Transaction', {
@@ -203,6 +203,7 @@ const createReceipt = (database, user, name, amount, description) => {
     otherParty: name,
     enteredBy: user,
     subtotal: amount,
+    paymentType,
   });
 
   database.save('Transaction', receipt);
@@ -222,7 +223,7 @@ const createReceiptLine = (database, receipt, linkedTransaction, amount) => {
   return receiptLine;
 };
 
-const createPayment = (database, user, name, amount, reason, description) => {
+const createPayment = (database, user, name, amount, paymentType, reason, description) => {
   const currentDate = new Date();
   const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
   const payment = database.create('Transaction', {
@@ -237,6 +238,7 @@ const createPayment = (database, user, name, amount, reason, description) => {
     subtotal: amount,
     option: reason,
     comment: description,
+    paymentType,
   });
 
   database.save('Transaction', payment);
