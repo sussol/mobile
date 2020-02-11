@@ -185,16 +185,14 @@ export class RequisitionItem extends Realm.Object {
   }
 
   get hasVariance() {
-    return this.requiredQuantity !== this.suppliedQuantity;
+    return this.requiredQuantity !== this.suggestedQuantity;
   }
 
   removeReason(database) {
-    if (this.option && !this.hasVariance) {
-      database.write(() => {
-        this.option = null;
-        database.save('RequisitionItem', this);
-      });
-    }
+    database.write(() => {
+      this.option = null;
+      database.save('RequisitionItem', this);
+    });
   }
 
   get validateReason() {

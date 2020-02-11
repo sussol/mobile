@@ -7,7 +7,7 @@
 
 BUGSNAG_URL=https://upload.bugsnag.com/react-native-source-map
 BUGSNAG_KEY=16a680e189b1e5f03f28665870f1401f
-APP_VERSION=4.0.0-rc1
+APP_VERSION=4.0.0-rc3
 
 PLATFORM=android
 DEV=false
