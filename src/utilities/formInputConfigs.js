@@ -90,7 +90,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
   },
   [FORM_INPUT_KEYS.GENDER]: {
     type: 'toggle',
-    initialValue: 'false',
+    initialValue: false,
     key: 'female',
     options: [true, false],
     optionLabels: [formInputStrings.female, formInputStrings.male],
