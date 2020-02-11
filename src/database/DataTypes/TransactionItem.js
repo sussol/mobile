@@ -86,13 +86,6 @@ export class TransactionItem extends Realm.Object {
   }
 
   /**
-   * Returns the note of the underlying transaction batch.
-   */
-  get note() {
-    return this.batches[0]?.note || null;
-  }
-
-  /**
    * Get available quantity of items.
    *
    * For customer invoices, get how much can be issued in total, accounting for the fact that any
@@ -268,9 +261,9 @@ export class TransactionItem extends Realm.Object {
    * TransactionBatches.
    */
   setItemDirection = (database, newDirection) => {
-    if (!this.batches.length) return;
-    this.batches.forEach(batch => {
-      database.write(() => {
+    database.write(() => {
+      this.note = newDirection;
+      this.batches.forEach(batch => {
         batch.note = newDirection;
         database.save('TransactionBatch', batch);
       });
@@ -285,6 +278,7 @@ TransactionItem.schema = {
     id: 'string',
     item: 'Item',
     transaction: 'Transaction',
+    note: { type: 'string', optional: true },
     batches: { type: 'list', objectType: 'TransactionBatch' },
   },
 };

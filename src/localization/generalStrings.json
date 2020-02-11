@@ -1,6 +1,5 @@
 {
   "gb": {
-    "price": "Price",
     "submit": "Submit",
     "submitting": "Submitting...",
     "submitted": "Submitted",
@@ -30,6 +29,7 @@
     "item_code": "item code",
     "customer": "customer",
     "code": "code",
+    "price": "price",
     "name": "name",
     "or": "or",
     "expiry_date": "Expiry date",
@@ -39,7 +39,6 @@
     "save": "Save"
   },
   "fr": {
-    "price": "Prix",
     "submit": "Soumettre",
     "submitting": "En cours d'enregistrement",
     "submitted": "Soumise",
@@ -69,6 +68,7 @@
     "indicator_code": "code de l'indicateur",
     "customer": "cliente",
     "code": "code",
+    "price": "prix",
     "name": "nom",
     "or": "ou",
     "expiry_date": "date d'expiration",

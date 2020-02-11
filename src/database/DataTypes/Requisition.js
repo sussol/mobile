@@ -8,6 +8,7 @@ import { complement } from 'set-manipulator';
 
 import { createRecord, getTotal } from '../utilities';
 import { UIDatabase } from '..';
+import { programDailyUsage } from '../../utilities/dailyUsage';
 
 /**
  * A requisition.
@@ -269,7 +270,8 @@ export class Requisition extends Realm.Object {
     }
 
     this.program.items.forEach(masterListItem => {
-      createRecord(database, 'RequisitionItem', this, masterListItem.item);
+      const usage = programDailyUsage(masterListItem.item, this.period);
+      createRecord(database, 'RequisitionItem', this, masterListItem.item, usage);
     });
   }
 

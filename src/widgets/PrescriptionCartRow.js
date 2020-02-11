@@ -20,7 +20,7 @@ import { TouchableNoFeedback } from './DataTable';
 
 import { UIDatabase } from '../database';
 import { PrescriptionActions } from '../actions/PrescriptionActions';
-import { dispensingStrings } from '../localization';
+import { generalStrings, dispensingStrings } from '../localization';
 
 /**
  * Renders a row in the PrescriptionCart consisting of a `StepperRow`, `DropdownRow`,
@@ -49,7 +49,7 @@ const PrescriptionCartRowComponent = ({
   itemCode,
   id,
   note,
-  totalPrice,
+  price,
   item,
   totalQuantity,
   availableQuantity,
@@ -60,10 +60,10 @@ const PrescriptionCartRowComponent = ({
   usingPayments,
 }) => {
   const itemDetails = React.useMemo(() => {
-    const details = [{ label: dispensingStrings.code, text: itemCode }];
-    if (usingPayments) details.push({ label: dispensingStrings.unit_price, text: totalPrice });
+    const details = [{ label: generalStrings.code, text: itemCode }];
+    if (usingPayments) details.push({ label: generalStrings.price, text: price });
     return details;
-  }, [itemCode, totalPrice]);
+  }, [itemCode, price]);
 
   const defaultDirections = React.useMemo(() => item.getDirectionExpansions(UIDatabase), [id]);
 
@@ -116,7 +116,7 @@ PrescriptionCartRowComponent.propTypes = {
   itemName: PropTypes.string.isRequired,
   totalQuantity: PropTypes.number.isRequired,
   itemCode: PropTypes.string.isRequired,
-  totalPrice: PropTypes.string.isRequired,
+  price: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
   note: PropTypes.string,
   item: PropTypes.object.isRequired,

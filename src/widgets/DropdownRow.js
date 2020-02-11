@@ -64,11 +64,11 @@ const localStyles = StyleSheet.create({
     flex: 1,
   },
   textInputStyle: {
-    flex: 19,
+    flex: 2,
     fontFamily: APP_FONT_FAMILY,
   },
   dropDownStyle: {
-    flex: 2,
+    flex: 1,
     marginBottom: 0,
     marginLeft: 0,
     marginTop: 0,

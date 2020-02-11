@@ -125,9 +125,12 @@ const updateDirection = (id, newValue) => (dispatch, getState) => {
   // Try to find if the most recent word is an Abbreviation.
   const abbreviation = UIDatabase.get('Abbreviation', possibleAbbreviation, 'abbreviation');
 
+  // Only try to find abbreviations after a space has been entered.
   // If and appreviation was found, remove the Abbreviation and replace it with the expansion.
   // Otherwise, just assign the input as the note.
-  if (abbreviation) {
+  if (!newValue.endsWith(' ')) {
+    item.setItemDirection(UIDatabase, newValue);
+  } else if (abbreviation) {
     const withAbbreviation = splitValue.slice(0, splitValue.length - whitespaceOffset).join(' ');
     const updateValue = `${withAbbreviation} ${abbreviation.expansion} `;
 
