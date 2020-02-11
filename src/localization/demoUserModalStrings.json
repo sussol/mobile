@@ -6,5 +6,9 @@
   "fr": {},
   "gil": {},
   "tl": {},
-  "la": {}
+  "la": {},
+  "pt": {
+    "confirm_modal_body": "Você está a apenas um passo de criar o seu local simulado. Mas antes de gerar o seu local simulado, nós primeiro precisamos fazer uma verificação. Uma mensagem foi para o seu e-mail cadastrado com um link. Por favor, cheque a sua caixa de entrada e clique no link de verificação.",
+    "modal_body_text": "Solicite um local virtual. Um e-mail será usado por motivos de verificação e para notificar quando o local simulado terminará."
+  }
 }
