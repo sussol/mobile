@@ -87,10 +87,8 @@ const getIndicatorsByValues = indicatorValues => {
       acc.some(indicatorId => indicatorId === indicator.id) ? acc : [...acc, indicator.id],
     []
   );
-  const indicators = UIDatabase.objects('ProgramIndicator').filtered(
-    indicatorIds.map(indicatorId => `id == "${indicatorId}"`).join(' OR ')
-  );
-  return indicators;
+  const query = indicatorIds.map(indicatorId => `id == "${indicatorId}"`).join(' OR ');
+  return query ? UIDatabase.objects('ProgramIndicator').filtered(query) : [];
 };
 
 export {
