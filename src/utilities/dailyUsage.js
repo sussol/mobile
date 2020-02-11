@@ -3,18 +3,17 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { UIDatabase } from '../database';
-import { MILLISECONDS_PER_DAY, millisecondsToDays } from '../database/utilities/index';
+import moment from 'moment';
 
-const DEFAULT_LOOKBACK_PERIOD = 90;
+import { UIDatabase } from '../database';
+
+const DEFAULT_LOOKBACK_PERIOD = 3;
 /**
  * Returns either a customized lookback period, or 90 days in milliseconds.
  */
 const getAMCLookbackPeriod = () => {
   const amcLookbackString = UIDatabase.getSetting('monthlyConsumptionLookBackPeriod');
-  return (
-    (amcLookbackString ? Number(amcLookbackString) : DEFAULT_LOOKBACK_PERIOD) * MILLISECONDS_PER_DAY
-  );
+  return amcLookbackString ? Number(amcLookbackString) : DEFAULT_LOOKBACK_PERIOD;
 };
 
 /**
@@ -43,19 +42,61 @@ export const dailyUsage = item => {
   const amcLookback = getAMCLookbackPeriod();
   const amcEnforceLookback = getAMCEnforcementLookback();
 
-  const dateNow = new Date();
-  const lookbackDate = new Date(dateNow - amcLookback);
-  const addedRecently = addedDate > lookbackDate;
+  const itemAddedDate = moment(addedDate);
+  const dateNow = moment();
+  const lookbackDate = moment(dateNow).subtract(amcLookback * 30, 'days');
 
-  const startDate = amcEnforceLookback || !addedRecently ? lookbackDate : addedDate;
+  const addedRecently = itemAddedDate.isBefore(lookbackDate);
 
-  const usagePeriod = dateNow - startDate;
-  const numberOfUsageDays = millisecondsToDays(usagePeriod);
+  const startDate = amcEnforceLookback || !addedRecently ? lookbackDate : itemAddedDate;
+
+  const numberOfUsageDays = moment.duration(dateNow.diff(startDate)).asDays();
 
   const usage = UIDatabase.objects('TransactionBatch')
     .filtered('itemBatch.item.id == $0', itemId)
     .filtered('transaction.type == $0', 'customer_invoice')
-    .filtered('transaction.confirmDate >= $0 && transaction.confirmDate <= $1', startDate, dateNow)
+    .filtered(
+      'transaction.confirmDate >= $0 && transaction.confirmDate <= $1',
+      startDate.toDate(),
+      dateNow.toDate()
+    )
+    .reduce((sum, { totalQuantity }) => sum + totalQuantity, 0);
+
+  return usage / (numberOfUsageDays || 1);
+};
+
+/**
+ * Calculates usage for a provided item.
+ * This algorithm differs such that the usage period is from the provided Realm<Period>
+ * object endDate, adding 1 and subtracting X, where X defaults to 3, or can be provided
+ * and customized to be any number of months.
+ *
+ * @param {Item}   item
+ * @param {Period} period
+ */
+export const programDailyUsage = (item, period) => {
+  const { batches, id: itemId } = item;
+  const { endDate: periodEndDate } = period;
+
+  if (!batches.length) return 0;
+
+  const amcLookback = getAMCLookbackPeriod();
+
+  const periodEnd = moment(periodEndDate);
+  const usageStartDate = moment(periodEndDate)
+    .add(1, 'days')
+    .subtract(amcLookback, 'months');
+
+  const numberOfUsageDays = moment.duration(periodEnd.diff(usageStartDate)).asDays();
+
+  const usage = UIDatabase.objects('TransactionBatch')
+    .filtered('transaction.type == $0', 'customer_invoice')
+    .filtered('itemBatch.item.id == $0', itemId)
+    .filtered(
+      'transaction.confirmDate >= $0 && transaction.confirmDate <= $1',
+      usageStartDate.toDate(),
+      periodEnd.toDate()
+    )
     .reduce((sum, { totalQuantity }) => sum + totalQuantity, 0);
 
   return usage / (numberOfUsageDays || 1);
