@@ -29,7 +29,9 @@ export const MODAL_KEYS = {
   VIEW_REGIMEN_DATA: 'viewRegimenData',
   EDIT_STOCKTAKE_BATCH: 'editStocktakeBatch',
   STOCKTAKE_OUTDATED_ITEM: 'stocktakeOutdatedItems',
+  REQUISITION_REASON: 'requisitionReason',
   STOCKTAKE_REASON: 'stocktakeReason',
+  ENFORCE_REQUISITION_REASON: 'enforceRequisitionReason',
   ENFORCE_STOCKTAKE_REASON: 'enforceStocktakeReason',
   SELECT_MASTER_LISTS: 'selectMasterList',
 };
@@ -68,6 +70,8 @@ export const getModalTitle = modalKey => {
       return modalStrings.search_for_the_supplier;
     case MODAL_KEYS.VIEW_REGIMEN_DATA:
       return buttonStrings.view_regimen_data;
+    case MODAL_KEYS.REQUISITION_REASON:
+    case MODAL_KEYS.ENFORCE_REQUISITION_REASON:
     case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
     case MODAL_KEYS.STOCKTAKE_REASON:
       return modalStrings.select_a_reason;
