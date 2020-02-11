@@ -4,8 +4,10 @@
  */
 
 import { createSelector } from 'reselect';
-
 import currency from '../localization/currency';
+import { CASH_TRANSACTION } from '../utilities/modules/dispensary/constants';
+
+const { PAYMENT_TYPES } = CASH_TRANSACTION;
 
 export const selectCashRegisterState = state => state.pages.cashRegister;
 
@@ -52,11 +54,19 @@ export const selectFilteredTransactions = createSelector(
     transactions.filter(({ otherParty }) => otherParty.name.includes(searchTerm))
 );
 
-export const selectPaymentsTotal = createSelector([selectPayments], payments =>
+export const selectCashPayments = createSelector([selectPayments], payments =>
+  payments.filter(payment => payment.paymentType?.code === PAYMENT_TYPES.CASH)
+);
+
+export const selectCashReceipts = createSelector([selectReceipts], receipts =>
+  receipts.filter(receipt => receipt.paymentType?.code === PAYMENT_TYPES.CASH)
+);
+
+export const selectPaymentsTotal = createSelector([selectCashPayments], payments =>
   payments.reduce((acc, { total }) => acc.add(total), currency(0))
 );
 
-export const selectReceiptsTotal = createSelector([selectReceipts], receipts =>
+export const selectReceiptsTotal = createSelector([selectCashReceipts], receipts =>
   receipts.reduce((acc, { total }) => acc.add(total), currency(0))
 );
 
