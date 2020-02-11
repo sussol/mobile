@@ -339,6 +339,23 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
   let internalRecord;
 
   switch (recordType) {
+    case 'IndicatorAttribute': {
+      const indicator = database.getOrCreate('ProgramIndicator', record.indicator_ID);
+      const indicatorAttribute = database.update(recordType, {
+        id: record.ID,
+        indicator,
+        description: record.description,
+        code: record.code,
+        index: parseNumber(record.index),
+        isRequired: parseBoolean(record?.is_required ?? false),
+        valueType: record.value_type,
+        defaultValue: record.default_value,
+        axis: record.axis,
+        isActive: parseBoolean(record?.is_active ?? false),
+      });
+      indicator.addIndicatorAttributeIfUnique(indicatorAttribute);
+      break;
+    }
     case 'InsuranceProvider': {
       database.update(recordType, {
         id: record.ID,
@@ -362,7 +379,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         insuranceProvider: database.getOrCreate('InsuranceProvider', record.insuranceProviderID),
         isActive: parseBoolean(record.isActive),
       });
-      return;
+      break;
     }
     case 'IndicatorValue': {
       const indicatorColumn = database.getOrCreate('IndicatorAttribute', record.column_ID);
