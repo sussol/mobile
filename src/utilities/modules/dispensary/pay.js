@@ -61,7 +61,9 @@ export const pay = (
   if (creditAmount > availableCredit) throw new Error('Not enough credit');
 
   // Create a Receipt and ReceiptLine for every payment path.
-  const receipt = createRecord(UIDatabase, 'Receipt', currentUser, patient, cashAmount, '');
+
+  const receipt = createRecord(UIDatabase, 'Receipt', currentUser, patient, cashAmount, null, '');
+
   createRecord(UIDatabase, 'ReceiptLine', receipt, script, cashAmount);
 
   // When using credit, create a CustomerCreditLine and ReceiptLine for each
