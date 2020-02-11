@@ -155,7 +155,15 @@ export class Requisition extends Realm.Object {
    */
   get indicators() {
     if (this.isRequest) return this.program?.activeIndicators;
-    if (this.isResponse) return this.period?.indicators;
+    if (this.isResponse) {
+      const periodIndicators = this.period?.indicators;
+      const programIndicators = this.program?.indicators;
+      const indicators = periodIndicators.reduce((acc, indicator) => {
+        const isValidIndicator = !!programIndicators.find(({ id }) => id === indicator.id);
+        return isValidIndicator ? [...acc, indicator] : acc;
+      }, []);
+      return indicators;
+    }
     return null;
   }
 
