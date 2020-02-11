@@ -20,7 +20,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 import { OnePressButton } from '..';
 import { modalStrings } from '../../localization';
-
+import ModalContainer from '../modals';
 import globalStyles, { DARK_GREY } from '../../globalStyles';
 
 export const NewConfirmModal = props => {
@@ -45,7 +45,7 @@ export const NewConfirmModal = props => {
   if (modalProps.isOpen) Keyboard.dismiss();
 
   return (
-    <>
+    <ModalContainer>
       {!noCancel && onCancel && (
         <TouchableOpacity onPress={onCancel} style={defaultStyles.closeButton}>
           <Icon name="md-close" style={defaultStyles.closeIcon} />
@@ -72,7 +72,7 @@ export const NewConfirmModal = props => {
           )}
         </View>
       </View>
-    </>
+    </ModalContainer>
   );
 };
 
