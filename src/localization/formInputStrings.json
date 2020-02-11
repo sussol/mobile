@@ -28,7 +28,10 @@
     "registration_code": "Registration code",
     "unique_personal_policy": "Must be a unique personal policy number between 0 and 50 characters.",
     "yes": "Yes",
-    "is_required": "Is required"
+    "is_required": "Is required",
+    "gender": "Gender",
+    "female": "Female",
+    "male": "Male"
   },
   "fr": {
     "address_one": "Addresse 1",
@@ -59,7 +62,10 @@
     "registration_code": "Code d'enregistrement",
     "unique_personal_policy": "Doit être un no de police personnelle unique entre 0 et 50 caractères",
     "yes": "Oui",
-    "is_required": "Est requis"
+    "is_required": "Est requis",
+    "gender": "Gender",
+    "female": "Femme",
+    "male": "Homme"
   },
   "gil": {},
   "tl": {},

@@ -88,6 +88,14 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     },
     label: formInputStrings.date_of_birth,
   },
+  [FORM_INPUT_KEYS.GENDER]: {
+    type: 'toggle',
+    initialValue: 'false',
+    key: 'female',
+    options: [true, false],
+    optionLabels: [formInputStrings.female, formInputStrings.male],
+    label: formInputStrings.gender,
+  },
   [FORM_INPUT_KEYS.EMAIL]: {
     type: 'text',
     initialValue: '',
@@ -203,6 +211,7 @@ const FORM_CONFIGS = {
     FORM_INPUT_KEYS.FIRST_NAME,
     FORM_INPUT_KEYS.LAST_NAME,
     FORM_INPUT_KEYS.DATE_OF_BIRTH,
+    FORM_INPUT_KEYS.GENDER,
     FORM_INPUT_KEYS.EMAIL,
     FORM_INPUT_KEYS.PHONE,
     FORM_INPUT_KEYS.ADDRESS_ONE,
