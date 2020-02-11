@@ -182,12 +182,10 @@ export class StocktakeBatch extends Realm.Object {
    * @param {Realm} database App-wide database interface.
    */
   removeReason(database) {
-    if (this.option && this.difference) {
-      database.write(() => {
-        this.option = null;
-        database.save('StocktakeBatch', this);
-      });
-    }
+    database.write(() => {
+      this.option = null;
+      database.save('StocktakeBatch', this);
+    });
   }
 
   /**

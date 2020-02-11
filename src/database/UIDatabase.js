@@ -33,6 +33,7 @@ const translateToCoreDatabaseType = type => {
     case 'RequestRequisition':
     case 'ResponseRequisition':
       return 'Requisition';
+    case 'RequisitionReason':
     case 'NegativeAdjustmentReason':
     case 'PositiveAdjustmentReason':
       return 'Options';
@@ -195,6 +196,8 @@ class UIDatabase {
         return results.filtered('type == $0', 'prescription');
       case 'SupplierCreditCategory':
         return results.filtered('type == $0', 'supplier_credit');
+      case 'RequisitionReason':
+        return results.filtered('type == $0 && isActive == true', 'requisitionLineVariance');
       default:
         return results;
     }

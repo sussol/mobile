@@ -54,6 +54,8 @@ export const getPageDispatchers = (dispatch, props, dataType, route) => {
       dispatch(BasePageActions.openModal(MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM, route)),
     onEditReason: rowKey =>
       dispatch(BasePageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey, route)),
+    onEditRequisitionReason: rowKey =>
+      dispatch(BasePageActions.openModal(MODAL_KEYS.REQUISITION_REASON, rowKey, route)),
     onNewCashTransaction: () =>
       dispatch(BasePageActions.openModal(MODAL_KEYS.CREATE_CASH_TRANSACTION, route)),
     onNewCustomerInvoice: () =>
@@ -94,6 +96,10 @@ export const getPageDispatchers = (dispatch, props, dataType, route) => {
     onDeleteBatches: () => dispatch(BasePageActions.deleteSelectedBatches(dataType, route)),
 
     // Editable cell callbacks
+    onEditRequiredQuantityWithReason: (newValue, rowKey) =>
+      dispatch(
+        BasePageActions.editRequisitionItemRequiredQuantityWithReason(newValue, rowKey, route)
+      ),
     onEditRequiredQuantity: (newValue, rowKey) =>
       dispatch(BasePageActions.editRequisitionItemRequiredQuantity(newValue, rowKey, route)),
     onEditTotalQuantity: (newValue, rowKey) =>

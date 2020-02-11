@@ -307,6 +307,31 @@ export const applyReason = (value, route) => (dispatch, getState) => {
   dispatch(refreshRow(rowKey, route));
 };
 
+export const enforceRequisitionReasonChoice = (rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = pageStateSelector(getState());
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  if (!objectToEdit) return null;
+
+  const { hasVariance } = objectToEdit;
+
+  // If there's no difference, just remove the reason
+  if (!hasVariance) return dispatch(removeReason(rowKey, route));
+
+  const { validateReason } = objectToEdit;
+
+  if (!validateReason) {
+    return dispatch(openModal(MODAL_KEYS.ENFORCE_REQUISITION_REASON, rowKey, route));
+  }
+  return null;
+};
+
+export const editRequisitionItemRequiredQuantityWithReason = (value, rowKey, route) => dispatch => {
+  dispatch(editRequiredQuantity(value, rowKey, 'RequisitionItem', route));
+  dispatch(enforceRequisitionReasonChoice(rowKey, route));
+};
+
 /**
  * Wrapper around `editCountedTotalQuantity`, splitting the action to enforce a
  * reason also.
@@ -353,4 +378,5 @@ export const CellActionsLookup = {
   editStocktakeBatchCountedQuantityWithReason,
   editSellPrice,
   editBatchSupplier,
+  editRequisitionItemRequiredQuantityWithReason,
 };
