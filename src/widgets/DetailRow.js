@@ -5,11 +5,9 @@
  */
 
 import React from 'react';
-import { View } from 'react-native';
 import PropTypes from 'prop-types';
 
 import { SimpleLabel } from './SimpleLabel';
-import { FlexView } from './FlexView';
 
 /**
  * Simple layout component render sequential SimpleLabel components
@@ -23,27 +21,11 @@ export const DetailRow = ({ details }) => {
   const Details = React.useCallback(
     () =>
       details.map(({ label, text }) => (
-        <FlexView key={`${label}${text}`} flex={1}>
-          <SimpleLabel label={label} size="small" text={text} />
-        </FlexView>
+        <SimpleLabel key={`${label}${text}`} label={label} size="small" text={text} />
       )),
     [details]
   );
-
-  return (
-    <View style={localStyles.rowContainer}>
-      <Details />
-    </View>
-  );
-};
-
-const localStyles = {
-  rowContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    flex: 1,
-  },
+  return <Details />;
 };
 
 DetailRow.propTypes = { details: PropTypes.array.isRequired };
