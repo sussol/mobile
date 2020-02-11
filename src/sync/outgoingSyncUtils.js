@@ -314,6 +314,14 @@ export const generateSyncJson = (database, settings, syncOutRecord) => {
     const recordResults = database.objects(recordType).filtered('id == $0', recordId);
     if (!recordResults || recordResults.length === 0) {
       // No such record
+
+      database.write(() => {
+        database.delete(
+          'SyncOut',
+          database.objects('SyncOut').filtered('recordId == $0', recordId)
+        );
+      });
+
       throw new Error(`${recordType} with id = ${recordId} missing`);
     } else if (recordResults.length > 1) {
       // Duplicate records
