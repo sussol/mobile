@@ -96,6 +96,8 @@ export const getPageDispatchers = (dispatch, props, dataType, route) => {
     onDeleteBatches: () => dispatch(BasePageActions.deleteSelectedBatches(dataType, route)),
 
     // Editable cell callbacks
+    onEditTransactionBatchName: (newValue, rowKey) =>
+      dispatch(BasePageActions.editTransactionBatchName(newValue, rowKey, route)),
     onEditRequiredQuantityWithReason: (newValue, rowKey) =>
       dispatch(
         BasePageActions.editRequisitionItemRequiredQuantityWithReason(newValue, rowKey, route)
