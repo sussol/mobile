@@ -119,6 +119,7 @@ Name.schema = {
     isManufacturer: { type: 'bool', default: false },
     isPatient: { type: 'bool', default: false },
     policies: { type: 'linkingObjects', objectType: 'InsurancePolicy', property: 'patient' },
+    female: { type: 'bool', default: false },
   },
 };
 
