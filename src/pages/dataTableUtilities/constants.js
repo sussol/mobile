@@ -85,6 +85,7 @@ export const COLUMN_NAMES = {
   DESCRIPTION: 'description',
   DIFFERENCE: 'difference',
   DISPENSE: 'dispense',
+  EXPIRY_DATE: 'expiryDate',
   EDITABLE_BATCH_NAME: 'editableBatchName',
   EDITABLE_COMMENT: 'editableComment',
   EDITABLE_EXPIRY_DATE: 'editableExpiryDate',
