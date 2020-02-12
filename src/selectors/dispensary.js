@@ -60,5 +60,5 @@ export const selectFilteredData = createSelector(
 
 export const selectSortedData = createSelector(
   [selectFilteredData, selectIsAscending, selectSortKey],
-  (data, isAscending, sortKey) => data.sorted(sortKey, isAscending)
+  (data, isAscending, sortKey) => data.sorted(sortKey, !isAscending)
 );
