@@ -701,7 +701,7 @@ const createSupplierInvoice = (database, supplier, user) => {
  */
 const createTransactionBatch = (database, transactionItem, itemBatch, isAddition = true) => {
   const { item, batch, expiryDate, packSize, costPrice, sellPrice, donor } = itemBatch;
-  const { transaction } = transactionItem || {};
+  const { transaction, note } = transactionItem || {};
 
   const transactionBatch = database.create('TransactionBatch', {
     id: generateUUID(),
@@ -709,6 +709,7 @@ const createTransactionBatch = (database, transactionItem, itemBatch, isAddition
     itemName: item.name,
     itemBatch,
     batch,
+    note,
     expiryDate,
     packSize,
     numberOfPacks: 0,
