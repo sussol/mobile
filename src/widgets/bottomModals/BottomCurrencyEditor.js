@@ -29,6 +29,7 @@ export const BottomCurrencyEditor = React.memo(
         onSubmitEditing={onConfirm}
         keyboardType="number-pad"
         autoFocus
+        selectTextOnFocus
       />
       <OnePressButton
         style={localStyles.buttonStyle}
