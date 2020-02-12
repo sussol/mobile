@@ -217,7 +217,7 @@ export class Item extends Realm.Object {
     const allMovements = UIDatabase.objects('TransactionBatch')
       .filtered('itemBatch.item.id == $0', this.id)
       .filtered('numberOfPacks > 0')
-      .filtered('confirmDate >= ', date);
+      .filtered('transaction.confirmDate > $0', date);
 
     const sumMovements = movements =>
       movements.reduce((sum, { totalQuantity }) => sum + totalQuantity, 0);
