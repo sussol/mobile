@@ -10,7 +10,7 @@ import { ROUTES } from '../../navigation/constants';
 
 const PAGE_COLUMN_WIDTHS = {
   [ROUTES.CUSTOMER_INVOICE]: [2, 4, 2, 2, 1],
-  [ROUTES.SUPPLIER_INVOICE]: [2, 4, 2, 1.5, 1.5, 1, 1, 1],
+  [ROUTES.SUPPLIER_INVOICE]: [2, 3.5, 2, 1.5, 1.5, 1.5, 1.5, 1],
   [ROUTES.SUPPLIER_INVOICES]: [1.5, 2.5, 2, 1.5, 3, 1],
   [ROUTES.CUSTOMER_INVOICES]: [1.5, 2.5, 2, 1.5, 3, 1],
   [ROUTES.SUPPLIER_REQUISITIONS]: [1.5, 2, 1, 1, 1, 1],
