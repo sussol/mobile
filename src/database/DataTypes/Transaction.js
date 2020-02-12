@@ -184,6 +184,10 @@ export class Transaction extends Realm.Object {
     this.otherParty = name;
   }
 
+  get servicePrice() {
+    return this.isCashOffset ? this.subtotal : 0;
+  }
+
   /**
    * Get total price of items in this transaction.
    *
@@ -191,6 +195,11 @@ export class Transaction extends Realm.Object {
    */
   get totalPrice() {
     return getTotal(this.items, 'totalPrice');
+  }
+
+  get isCashOffset() {
+    const linkedTransactionType = this.linkedTransaction?.type;
+    return linkedTransactionType === 'payment' || linkedTransactionType === 'receipt';
   }
 
   /**
@@ -496,8 +505,8 @@ Transaction.schema = {
     mode: { type: 'string', default: 'store' },
     prescriber: { type: 'Prescriber', optional: true },
     linkedRequisition: { type: 'Requisition', optional: true },
-    subtotal: { type: 'float', optional: true },
-    outstanding: { type: 'float', optional: true },
+    subtotal: { type: 'double', optional: true },
+    outstanding: { type: 'double', optional: true },
     insurancePolicy: { type: 'InsurancePolicy', optional: true },
     option: { type: 'Options', optional: true },
     linkedTransaction: { type: 'Transaction', optional: true },

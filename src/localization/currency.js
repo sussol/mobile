@@ -10,6 +10,7 @@ const CURRENCY_CONFIGS = {
   DEFAULT: {
     decimal: '.',
     separator: ',',
+    increment: 0.01,
   },
   [LANGUAGE_CODES.FRENCH]: {
     decimal: ',',
@@ -23,6 +24,10 @@ export const setCurrencyLocalisation = languageCode => {
   currentLanguageCode = languageCode;
 };
 
-const getCurrencyConfig = () => CURRENCY_CONFIGS[currentLanguageCode] || CURRENCY_CONFIGS.DEFAULT;
+const getCurrencyConfig = () => {
+  const defaultConfig = CURRENCY_CONFIGS.DEFAULT ?? {};
+  const localConfig = CURRENCY_CONFIGS[currentLanguageCode] ?? {};
+  return { ...defaultConfig, ...localConfig };
+};
 
 export default value => currency(value, getCurrencyConfig());

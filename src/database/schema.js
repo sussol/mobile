@@ -186,7 +186,7 @@ export const schema = {
     ItemDirection,
     User,
   ],
-  schemaVersion: 14,
+  schemaVersion: 15,
 };
 
 export default schema;
