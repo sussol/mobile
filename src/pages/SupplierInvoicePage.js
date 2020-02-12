@@ -55,6 +55,7 @@ export const SupplierInvoice = ({
   onAddTransactionBatch,
   route,
   onEditSellPrice,
+  onEditTransactionBatchName,
 }) => {
   // Listen for this transaction being finalised, so data can be refreshed and kept consistent.
   useRecordListener(refreshData, pageObject, 'Transaction');
@@ -78,6 +79,8 @@ export const SupplierInvoice = ({
         return onUncheck;
       case 'sellPriceString':
         return onEditSellPrice;
+      case 'batch':
+        return onEditTransactionBatchName;
       default:
         return null;
     }
@@ -235,4 +238,5 @@ SupplierInvoice.propTypes = {
   route: PropTypes.string.isRequired,
   onEditSellPrice: PropTypes.func.isRequired,
   refund: PropTypes.func.isRequired,
+  onEditTransactionBatchName: PropTypes.func.isRequired,
 };
