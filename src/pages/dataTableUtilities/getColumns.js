@@ -36,7 +36,7 @@ const PAGE_COLUMN_WIDTHS = {
   prescriberSelect: [3, 3, 1],
   itemSelect: [1, 3, 1],
   patientHistory: [1, 3, 1, 3],
-  [ROUTES.CASH_REGISTER]: [1, 2, 1, 1, 1, 1.5, 2],
+  [ROUTES.CASH_REGISTER]: [1, 2, 1, 1, 1, 2, 2],
   supplierCreditFromItem: [1, 1, 1, 1],
   supplierCreditFromInvoice: [1, 1, 1, 1],
 };
