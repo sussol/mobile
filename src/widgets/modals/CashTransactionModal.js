@@ -25,6 +25,7 @@ import { PencilIcon, ChevronDownIcon } from '../icons';
 
 import globalStyles, { WARM_GREY, SUSSOL_ORANGE, COMPONENT_HEIGHT } from '../../globalStyles';
 import { buttonStrings, dispensingStrings, generalStrings } from '../../localization';
+import { FlexRow } from '../FlexRow';
 
 export const CashTransactionModal = ({ onConfirm }) => {
   const [name, setName] = useState(null);
@@ -52,8 +53,9 @@ export const CashTransactionModal = ({ onConfirm }) => {
   const reasons = useMemo(() => UIDatabase.objects('CashTransactionReason'), []);
 
   const isValidTransaction = useMemo(
-    () => !!name && !!amount && currency(amount) > currency(0) && (isCashIn || !!reason),
-    [name, amount, reason, isCashIn]
+    () =>
+      !!name && !!amount && currency(amount) > currency(0) && (isCashIn || !!reason) && paymentType,
+    [name, amount, reason, isCashIn, paymentType]
   );
 
   const onCreate = useCallback(
@@ -175,14 +177,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
 
   const PressReason = useCallback(
     () =>
-      isCashIn ? (
-        <TouchableOpacity style={localStyles.containerStyle}>
-          <View style={localStyles.textContainerStyle}>
-            <Text style={localStyles.textStyle}>{generalStrings.not_available}</Text>
-          </View>
-          <View style={localStyles.iconContainerStyle} />
-        </TouchableOpacity>
-      ) : (
+      isCashIn ? null : (
         <TouchableOpacity style={localStyles.containerStyle} onPress={onPressReason}>
           <View style={localStyles.textContainerStyle}>
             <Text style={localStyles.textStyle}>{reasonText}</Text>
@@ -197,88 +192,92 @@ export const CashTransactionModal = ({ onConfirm }) => {
 
   return (
     <>
-      <View style={localStyles.modalContainerStyle}>
-        <ToggleBar style={localStyles.toggleBarStyle} toggles={toggles} />
-        <TouchableOpacity style={localStyles.containerStyle} onPress={onPressName}>
-          <View style={localStyles.textContainerStyle}>
-            <Text style={localStyles.textStyle}>{nameText}</Text>
-          </View>
-          <View style={localStyles.iconContainerStyle}>
-            <ChevronDownIcon />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={localStyles.containerStyle} onPress={onPressAmount}>
-          <View style={localStyles.textContainerStyle}>
-            <Text style={localStyles.textStyle}>{amountText}</Text>
-          </View>
-          <View style={localStyles.iconContainerStyle}>
-            <PencilIcon />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={localStyles.containerStyle} onPress={onPressPaymentType}>
-          <View style={localStyles.textContainerStyle}>
-            <Text style={localStyles.textStyle}>{paymentTypeText}</Text>
-          </View>
-          <View style={localStyles.iconContainerStyle}>
-            <ChevronDownIcon />
-          </View>
-        </TouchableOpacity>
-        <PressReason />
-        <TouchableOpacity style={localStyles.containerStyle} onPress={onPressDescription}>
-          <View style={localStyles.textContainerStyle}>
-            <Text style={localStyles.textStyle}>{descriptionText}</Text>
-          </View>
-          <View style={localStyles.iconContainerStyle}>
-            <PencilIcon />
-          </View>
-        </TouchableOpacity>
-        <BottomCurrencyEditor
-          isOpen={isAmountModalOpen}
-          buttonText={buttonStrings.confirm}
-          value={amountBuffer}
-          placeholder={dispensingStrings.enter_the_amount}
-          onChangeText={onChangeAmount}
-          onConfirm={onSubmitAmount}
+      <FlexRow justifyContent="center">
+        <View style={{ maxWidth: 300 }}>
+          <ToggleBar style={localStyles.toggleBarStyle} toggles={toggles} />
+        </View>
+      </FlexRow>
+      <TouchableOpacity style={localStyles.containerStyle} onPress={onPressName}>
+        <View style={localStyles.textContainerStyle}>
+          <Text style={localStyles.textStyle}>{nameText}</Text>
+        </View>
+        <View style={localStyles.iconContainerStyle}>
+          <ChevronDownIcon />
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity style={localStyles.containerStyle} onPress={onPressAmount}>
+        <View style={localStyles.textContainerStyle}>
+          <Text style={localStyles.textStyle}>{amountText}</Text>
+        </View>
+        <View style={localStyles.iconContainerStyle}>
+          <PencilIcon />
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity style={localStyles.containerStyle} onPress={onPressPaymentType}>
+        <View style={localStyles.textContainerStyle}>
+          <Text style={localStyles.textStyle}>{paymentTypeText}</Text>
+        </View>
+        <View style={localStyles.iconContainerStyle}>
+          <ChevronDownIcon />
+        </View>
+      </TouchableOpacity>
+
+      <PressReason />
+      <TouchableOpacity style={localStyles.containerStyle} onPress={onPressDescription}>
+        <View style={localStyles.textContainerStyle}>
+          <Text style={localStyles.textStyle}>{descriptionText}</Text>
+        </View>
+        <View style={localStyles.iconContainerStyle}>
+          <PencilIcon />
+        </View>
+      </TouchableOpacity>
+      <BottomCurrencyEditor
+        isOpen={isAmountModalOpen}
+        buttonText={buttonStrings.confirm}
+        value={amountBuffer}
+        placeholder={dispensingStrings.enter_the_amount}
+        onChangeText={onChangeAmount}
+        onConfirm={onSubmitAmount}
+      />
+      <BottomModalContainer
+        isOpen={isPaymentTypeModalOpen}
+        modalStyle={localStyles.bottomModalContainerStyle}
+      >
+        <GenericChoiceList
+          data={paymentTypes}
+          keyToDisplay={CASH_TRANSACTION_FIELD_KEYS.PAYMENT_TYPE}
+          onPress={onSubmitPaymentType}
+          highlightValue={paymentType?.title}
         />
-        <BottomModalContainer
-          isOpen={isPaymentTypeModalOpen}
-          modalStyle={localStyles.bottomModalContainerStyle}
-        >
-          <GenericChoiceList
-            data={paymentTypes}
-            keyToDisplay={CASH_TRANSACTION_FIELD_KEYS.PAYMENT_TYPE}
-            onPress={onSubmitPaymentType}
-            highlightValue={paymentType?.title}
-          />
-        </BottomModalContainer>
-        <BottomModalContainer
-          isOpen={isReasonModalOpen}
-          modalStyle={localStyles.bottomModalContainerStyle}
-        >
-          <GenericChoiceList
-            data={reasons}
-            keyToDisplay={CASH_TRANSACTION_FIELD_KEYS.REASON}
-            onPress={onSubmitReason}
-            highlightValue={reason?.title}
-          />
-        </BottomModalContainer>
-        <BottomTextEditor
-          isOpen={isDescriptionModalOpen}
-          buttonText={buttonStrings.confirm}
-          value={descriptionBuffer}
-          placeholder={dispensingStrings.enter_a_description}
-          onChangeText={onChangeText}
-          onConfirm={onSubmitDescription}
+      </BottomModalContainer>
+      <BottomModalContainer
+        isOpen={isReasonModalOpen}
+        modalStyle={localStyles.bottomModalContainerStyle}
+      >
+        <GenericChoiceList
+          data={reasons}
+          keyToDisplay={CASH_TRANSACTION_FIELD_KEYS.REASON}
+          onPress={onSubmitReason}
+          highlightValue={reason?.title}
         />
-        <PageButton
-          text={buttonStrings.confirm}
-          onPress={onCreate}
-          isDisabled={!isValidTransaction}
-          disabledColor={WARM_GREY}
-          style={localStyles.okButton}
-          textStyle={localStyles.pageButtonTextStyle}
-        />
-      </View>
+      </BottomModalContainer>
+      <BottomTextEditor
+        isOpen={isDescriptionModalOpen}
+        buttonText={buttonStrings.confirm}
+        value={descriptionBuffer}
+        placeholder={dispensingStrings.enter_a_description}
+        onChangeText={onChangeText}
+        onConfirm={onSubmitDescription}
+      />
+      <PageButton
+        text={buttonStrings.confirm}
+        onPress={onCreate}
+        isDisabled={!isValidTransaction}
+        disabledColor={WARM_GREY}
+        style={localStyles.okButton}
+        textStyle={localStyles.pageButtonTextStyle}
+      />
+
       <ModalContainer
         title={dispensingStrings.choose_a_name}
         isVisible={isNameModalOpen}
@@ -304,13 +303,6 @@ CashTransactionModal.propTypes = {
 };
 
 const localStyles = StyleSheet.create({
-  modalContainerStyle: {
-    flexDirection: 'column',
-    flexGrow: 1,
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   containerStyle: {
     flexDirection: 'row',
     width: '100%',
