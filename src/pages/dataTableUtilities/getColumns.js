@@ -37,20 +37,24 @@ const PAGE_COLUMN_WIDTHS = {
   itemSelect: [1, 3, 1],
   patientHistory: [1, 3, 1, 3],
   [ROUTES.CASH_REGISTER]: [1, 2, 1, 1, 1, 1.5, 2],
-  supplierCreditFromItem: [1, 1, 1, 1],
-  supplierCreditFromInvoice: [1, 1, 1, 1],
+  supplierCreditFromItem: [1, 1, 1, 1, 1, 1],
+  supplierCreditFromInvoice: [1, 1, 1, 1, 1, 1],
 };
 
 const PAGE_COLUMNS = {
   supplierCreditFromItem: [
+    COLUMN_NAMES.ITEM_CODE,
+    COLUMN_NAMES.EXPIRY_DATE,
     COLUMN_NAMES.BATCH_NAME,
     COLUMN_NAMES.OTHER_PARTY_NAME,
     COLUMN_NAMES.TOTAL_QUANTITY,
     COLUMN_NAMES.RETURN_AMOUNT,
   ],
   supplierCreditFromInvoice: [
-    COLUMN_NAMES.BATCH_NAME,
+    COLUMN_NAMES.ITEM_CODE,
     COLUMN_NAMES.ITEM_NAME,
+    COLUMN_NAMES.EXPIRY_DATE,
+    COLUMN_NAMES.BATCH_NAME,
     COLUMN_NAMES.TOTAL_QUANTITY,
     COLUMN_NAMES.RETURN_AMOUNT,
   ],
@@ -617,6 +621,15 @@ const COLUMNS = () => ({
   },
 
   // DATE COLUMNS
+
+  [COLUMN_NAMES.EXPIRY_DATE]: {
+    type: COLUMN_TYPES.DATE,
+    key: COLUMN_KEYS.EXPIRY_DATE,
+    title: tableStrings.expiry,
+    alignText: 'left',
+    sortable: true,
+    editable: false,
+  },
 
   [COLUMN_NAMES.DATE_OF_BIRTH]: {
     type: COLUMN_TYPES.DATE,

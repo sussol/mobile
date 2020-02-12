@@ -17,6 +17,8 @@ const mapBatchToObject = batches =>
     batch: batch.batch,
     costPrice: batch.costPrice,
     itemName: batch.itemName,
+    expiryDate: batch.expiryDate,
+    itemCode: batch.itemCode,
   }));
 
 const initialState = () => ({
