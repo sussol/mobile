@@ -47,10 +47,11 @@ const create = () => (dispatch, getState) => {
 
   UIDatabase.write(() => {
     Object.entries(batchesGroupedBySupplier).forEach(([supplierId, suppliersBatches]) => {
-      const returnSum = suppliersBatches.reduce(
-        (total, { costPrice, returnAmount }) => total - costPrice * returnAmount,
-        0
-      );
+      const returnSum =
+        suppliersBatches?.reduce(
+          (total, { costPrice, returnAmount }) => total - costPrice * returnAmount,
+          0
+        ) ?? 0;
 
       const newSupplierCredit = createRecord(
         UIDatabase,
