@@ -80,6 +80,7 @@ export const pay = (
       const amountToTake = Math.min(Math.abs(creditFromCustomerCredit), creditToAllocate);
 
       createRecord(UIDatabase, 'CustomerCreditLine', customerCredit, amountToTake);
+      createRecord(UIDatabase, 'ReceiptLine', receipt, customerCredit, amountToTake);
       createRecord(UIDatabase, 'ReceiptLine', receipt, customerCredit, -amountToTake);
 
       creditToAllocate -= amountToTake;
