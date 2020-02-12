@@ -23,17 +23,17 @@ import { FlexView } from './FlexView';
  * @prop {Number} total        Total value - displays text / total rather than just total.
  * @prop {Bool}   isPercentage Indicator whether to append `%` to each number value.
  */
-export const NumberLabelRow = ({ size, text, number, total, isPercentage }) => {
+export const NumberLabelRow = ({ size, text, number, total, isPercentage, bold }) => {
   const withTotalText = total ? `${number} / ${total}` : number;
   const withPercentage = isPercentage ? `${withTotalText}%` : `${withTotalText}`;
 
   return (
     <FlexRow flex={1}>
       <FlexView flex={1}>
-        <SimpleLabel text={text} size={size} />
+        <SimpleLabel text={text} size={size} bold={bold} />
       </FlexView>
       <FlexView flex={1}>
-        <SimpleLabel text={withPercentage} size={size} textAlign="right" />
+        <SimpleLabel text={withPercentage} size={size} textAlign="right" bold={bold} />
       </FlexView>
     </FlexRow>
   );
@@ -43,6 +43,7 @@ NumberLabelRow.defaultProps = {
   total: 0,
   isPercentage: false,
   size: 'small',
+  bold: false,
 };
 
 NumberLabelRow.propTypes = {
@@ -51,4 +52,5 @@ NumberLabelRow.propTypes = {
   number: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
   total: PropTypes.number,
   isPercentage: PropTypes.bool,
+  bold: PropTypes.bool,
 };

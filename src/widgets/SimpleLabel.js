@@ -24,7 +24,7 @@ import {
  *
  */
 export const SimpleLabel = React.memo(
-  ({ label, text, size, labelAlign, textAlign, labelBackground, textBackground }) => {
+  ({ label, text, size, labelAlign, textAlign, labelBackground, textBackground, bold }) => {
     // Ensure null is set rather than any other nullish value as null is a node, but "" is not.
     const usingText = text || null;
     const usingLabel = label || null;
@@ -36,7 +36,12 @@ export const SimpleLabel = React.memo(
           <Text
             numberOfLines={2}
             ellipsizeMode="tail"
-            style={{ ...labelStyle, textAlign: labelAlign, backgroundColor: labelBackground }}
+            style={{
+              ...labelStyle,
+              textAlign: labelAlign,
+              backgroundColor: labelBackground,
+              fontWeight: bold ? 'bold' : 'normal',
+            }}
           >
             {`${label}  `}
           </Text>
@@ -45,7 +50,12 @@ export const SimpleLabel = React.memo(
           <Text
             numberOfLines={2}
             ellipsizeMode="tail"
-            style={{ ...textStyle, textAlign, backgroundColor: textBackground }}
+            style={{
+              ...textStyle,
+              textAlign,
+              backgroundColor: textBackground,
+              fontWeight: bold ? 'bold' : 'normal',
+            }}
           >
             {text}
           </Text>
@@ -88,6 +98,7 @@ SimpleLabel.defaultProps = {
   textAlign: 'left',
   labelBackground: 'transparent',
   textBackground: 'transparent',
+  bold: false,
 };
 
 SimpleLabel.propTypes = {
@@ -98,4 +109,5 @@ SimpleLabel.propTypes = {
   textAlign: PropTypes.string,
   labelBackground: PropTypes.string,
   textBackground: PropTypes.string,
+  bold: PropTypes.bool,
 };
