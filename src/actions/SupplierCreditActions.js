@@ -41,7 +41,7 @@ const create = () => (dispatch, getState) => {
     const { id: supplierId } = itemBatch.itemBatch?.supplier || {};
     const suppliersGroup = groupings[supplierId];
 
-    if (suppliersGroup) return { ...groupings, [supplierId]: suppliersGroup.push(itemBatch) };
+    if (suppliersGroup) return { ...groupings, [supplierId]: [...suppliersGroup, itemBatch] };
     return { ...groupings, [supplierId]: [itemBatch] };
   }, {});
 
