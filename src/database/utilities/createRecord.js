@@ -557,7 +557,7 @@ const createRequisition = (
  * @param   {double}          dailyUsage   Daily usage of item.
  * @return  {RequisitionItem}
  */
-const createRequisitionItem = (database, requisition, item, dailyUsage) => {
+const createRequisitionItem = (database, requisition, item, dailyUsage, stockOnHand) => {
   // Handle cross reference items.
   const { realItem } = item;
 
@@ -565,7 +565,7 @@ const createRequisitionItem = (database, requisition, item, dailyUsage) => {
     id: generateUUID(),
     item: realItem,
     requisition,
-    stockOnHand: realItem.totalQuantity,
+    stockOnHand: stockOnHand || realItem.totalQuantity,
     dailyUsage: dailyUsage || realItem.dailyUsage,
     requiredQuantity: 0,
     comment: '',

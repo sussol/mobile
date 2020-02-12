@@ -124,6 +124,7 @@ export const COLUMN_NAMES = {
   SELL_PRICE: 'sellPrice',
   SNAPSHOT_TOTAL_QUANTITY: 'snapshotTotalQuantity',
   STATUS: 'status',
+  STOCK_ON_HAND: 'stockOnHand',
   SUGGESTED_QUANTITY: 'suggestedQuantity',
   SUPPLIED_QUANTITY: 'suppliedQuantity',
   SUPPLIER: 'supplier',
