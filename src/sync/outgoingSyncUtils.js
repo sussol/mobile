@@ -177,7 +177,6 @@ const generateSyncData = (settings, recordType, record) => {
       };
     }
     case 'Transaction': {
-      console.log(record.servicePrice);
       return {
         ID: record.id,
         name_ID: record.otherParty && record.otherParty.id,
