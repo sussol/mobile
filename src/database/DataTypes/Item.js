@@ -215,7 +215,7 @@ export class Item extends Realm.Object {
     if (date >= new Date()) return this.totalQuantity;
 
     const allMovements = UIDatabase.object('TransactionBatch')
-      .filtered('itemBatch.item.id == $0', this.ID)
+      .filtered('itemBatch.item.id == $0', this.id)
       .filtered('numberOfPacks > 0')
       .filtered('confirmDate >= ', date);
 
