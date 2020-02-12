@@ -177,6 +177,7 @@ const generateSyncData = (settings, recordType, record) => {
       };
     }
     case 'Transaction': {
+      console.log(record.servicePrice);
       return {
         ID: record.id,
         name_ID: record.otherParty && record.otherParty.id,
@@ -189,6 +190,7 @@ const generateSyncData = (settings, recordType, record) => {
         prescriber_ID: record.prescriber && record.prescriber.id,
         total: String(record.total),
         foreign_currency_total: String(record.total),
+        service_price: String(record.servicePrice),
         their_ref: record.theirRef,
         confirm_date: getDateString(record.confirmDate),
         subtotal: String(record.subtotal),
