@@ -44,6 +44,7 @@ export const StepperInput = React.memo(
       const updateValue = parseNumber(newValue);
       currentValue.current = updateValue;
       setCurrentValueState(updateValue);
+      return updateValue;
     };
 
     const decrementValue = () => onUpdate(currentValue.current - currentAdjustmentAmount.current);
@@ -69,6 +70,11 @@ export const StepperInput = React.memo(
       }
     };
 
+    const onManualEdit = newValue => {
+      const updateValue = onUpdate(newValue);
+      onChangeText(updateValue);
+    };
+
     const onEndLongPress = () => {
       clearInterval(valueAdjustmentInterval.current);
       clearInterval(adjustmentIncreaseInterval.current);
@@ -92,7 +98,7 @@ export const StepperInput = React.memo(
         />
         <TextInput
           editable={!isDisabled}
-          onChangeText={onUpdate}
+          onChangeText={onManualEdit}
           value={String(currentValue.current)}
           style={textInputStyle}
         />
