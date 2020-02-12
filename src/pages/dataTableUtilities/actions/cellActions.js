@@ -105,6 +105,9 @@ export const editIndicatorValue = (value, rowKey, columnKey, route) => (dispatch
 export const editStocktakeBatchName = (value, rowKey, route) =>
   editBatchName(value, rowKey, 'StocktakeBatch', route);
 
+export const editTransactionBatchName = (value, rowKey, route) =>
+  editBatchName(value, rowKey, 'TransactionBatch', route);
+
 /**
  * Edits a rows underlying `expiryDate` field.
  *
@@ -379,4 +382,5 @@ export const CellActionsLookup = {
   editSellPrice,
   editBatchSupplier,
   editRequisitionItemRequiredQuantityWithReason,
+  editTransactionBatchName,
 };
