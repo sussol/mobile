@@ -188,7 +188,12 @@ const PaymentSummaryComponent = ({
 
         <FlexView flex={1}>
           <Separator marginBottom={20} />
-          <NumberLabelRow text={dispensingStrings.subtotal} number={subtotal.format()} />
+          <NumberLabelRow
+            text={dispensingStrings.subtotal}
+            number={subtotal.format()}
+            size="medium"
+            bold
+          />
 
           {usingInsurance && (
             <NumberLabelRow
