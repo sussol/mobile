@@ -168,11 +168,11 @@ export class Transaction extends Realm.Object {
    * @return {String} This transaction reason title, or an empty string.
    */
   get reasonTitle() {
-    return (this.option && this.option.title) || '';
+    return (this.option && this.option.title) || 'N/A';
   }
 
   get paymentTypeDescription() {
-    return this.paymentType?.description ?? '';
+    return this.paymentType?.description ?? 'N/A';
   }
 
   /**
