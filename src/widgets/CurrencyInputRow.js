@@ -60,7 +60,7 @@ export const CurrencyInputRow = ({
   const onSubmit = nextIndex => () => refsArray.current[nextIndex]?.current?.focus();
 
   const update = ({ centAmount: cents, dollarAmount: dollars }) => {
-    const fullValue = `${dollars}.${cents}`;
+    const fullValue = `${dollars}${dispensingStrings.decimal_point}${cents}`;
     onChangeText(currency(fullValue));
   };
 
