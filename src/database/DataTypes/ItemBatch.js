@@ -65,6 +65,10 @@ export class ItemBatch extends Realm.Object {
     return this.item ? this.item.name : '';
   }
 
+  get itemCode() {
+    return this?.item?.code ?? '';
+  }
+
   /**
    * Set the total number of items in this batch.
    *
