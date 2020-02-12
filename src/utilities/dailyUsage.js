@@ -87,7 +87,7 @@ export const programDailyUsage = (item, period) => {
     .add(1, 'days')
     .subtract(amcLookback, 'months');
 
-  const numberOfUsageDays = moment.duration(periodEnd.diff(usageStartDate)).asDays();
+  const numberOfUsageDays = 30 * amcLookback;
 
   const usage = UIDatabase.objects('TransactionBatch')
     .filtered('transaction.type == $0', 'customer_invoice')
