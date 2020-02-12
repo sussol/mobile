@@ -94,6 +94,8 @@ export const CustomerRequisition = ({
     isFinalised,
   ]);
 
+  console.log(pageInfoColumns);
+
   const getCallback = useCallback(colKey => {
     switch (colKey) {
       case 'suppliedQuantity':

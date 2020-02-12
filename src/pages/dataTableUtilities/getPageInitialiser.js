@@ -29,7 +29,6 @@ export const cashRegisterInitialiser = () => {
     modalKey: '',
     columns: getColumns(ROUTES.CASH_REGISTER),
     transactionType: 'payment',
-    getPageInfoColumns: getPageInfoColumns(ROUTES.CASH_REGISTER),
     route: ROUTES.CASH_REGISTER,
   };
 };

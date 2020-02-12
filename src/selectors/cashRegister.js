@@ -4,6 +4,7 @@
  */
 
 import { createSelector } from 'reselect';
+import { pageInfoStrings } from '../localization';
 import currency from '../localization/currency';
 import { CASH_TRANSACTION } from '../utilities/modules/dispensary/constants';
 
@@ -74,3 +75,12 @@ export const selectBalance = createSelector(
   [selectReceiptsTotal, selectPaymentsTotal],
   (receiptsTotal, paymentsTotal) => receiptsTotal.subtract(paymentsTotal).format()
 );
+
+export const selectCashRegisterInfoColumns = createSelector([selectBalance], currentBalance => [
+  [
+    {
+      title: `${pageInfoStrings.current_balance}:`,
+      info: currentBalance,
+    },
+  ],
+]);
