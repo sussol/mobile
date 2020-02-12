@@ -49,7 +49,9 @@ export const selectToggledTransactions = createSelector(
 export const selectFilteredTransactions = createSelector(
   [selectToggledTransactions, selectSearchTerm],
   (transactions, searchTerm) =>
-    transactions.filter(({ otherParty }) => otherParty.name.includes(searchTerm))
+    transactions.filter(({ otherParty }) =>
+      otherParty.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
 );
 
 export const selectPaymentsTotal = createSelector([selectPayments], payments =>

@@ -4,6 +4,7 @@
  */
 
 import { INSURANCE_ACTIONS } from '../actions/InsuranceActions';
+import { ROUTES } from '../navigation/index';
 
 const initialState = () => ({
   currentInsurancePolicy: null,
@@ -16,6 +17,13 @@ export const InsuranceReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
+    case 'Navigation/NAVIGATE': {
+      const { routeName } = action;
+      if (routeName !== ROUTES.PRESCRIPTION) return state;
+
+      return initialState();
+    }
+
     case INSURANCE_ACTIONS.CLOSE: {
       return {
         ...state,
