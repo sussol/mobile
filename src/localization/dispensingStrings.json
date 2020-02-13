@@ -53,7 +53,8 @@
     "select_a_supplier_credit_category": "Select a supplier credit category",
     "patient_detail": "Patient Detail",
     "item_details": "Item Details",
-    "new_patient": "New patient"
+    "new_patient": "New patient",
+    "unable_to_create_withdrawl": "Unable to create a withdrawl for more than the current balance."
   },
   "fr": {
     "available_credit": "Crédit disponible",
@@ -108,7 +109,8 @@
     "select_a_supplier_credit_category": "Sélectionnez une catégorie de crédit fournisseur",
     "patient_detail": "Détail du patient",
     "item_details": "Détail des articles",
-    "new_patient": "Patient nouvelle"
+    "new_patient": "Patient nouvelle",
+    "unable_to_create_withdrawl": "Impossible de créer un retrait supérieur au solde actuel"
   },
   "gil": {},
   "tl": {},

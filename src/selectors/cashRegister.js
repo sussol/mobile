@@ -49,8 +49,29 @@ export const selectToggledTransactions = createSelector(
   }
 );
 
+export const selectPaymentType = ({ pages }) => {
+  const { cashRegister } = pages;
+  const { currentPaymentType } = cashRegister ?? {};
+
+  return currentPaymentType;
+};
+
+export const selectFilteredByPaymentTypeTransactions = createSelector(
+  [selectToggledTransactions, selectPaymentType],
+  (transactions, paymentType) => {
+    if (paymentType) {
+      const { code: filteringByCode } = paymentType;
+      return transactions.filter(({ paymentType: transactionsPaymentType }) => {
+        const { code } = transactionsPaymentType ?? {};
+        return code === filteringByCode;
+      });
+    }
+    return transactions;
+  }
+);
+
 export const selectFilteredTransactions = createSelector(
-  [selectToggledTransactions, selectSearchTerm],
+  [selectFilteredByPaymentTypeTransactions, selectSearchTerm],
   (transactions, searchTerm) =>
     transactions.filter(({ otherParty }) =>
       otherParty.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -65,11 +86,39 @@ export const selectCashReceipts = createSelector([selectReceipts], receipts =>
   receipts.filter(receipt => receipt.paymentType?.code === PAYMENT_TYPES.CASH)
 );
 
-export const selectPaymentsTotal = createSelector([selectCashPayments], payments =>
+export const selectFilteredPaymentsByPaymentType = createSelector(
+  [selectPayments, selectPaymentType],
+  (payments, paymentType) => {
+    if (paymentType) {
+      const { code: selectedPaymentTypeCode } = paymentType;
+      return payments.filter(({ paymentType: transactionPaymentType }) => {
+        const { code: transactionPaymentTypeCode } = transactionPaymentType ?? {};
+        return transactionPaymentTypeCode === selectedPaymentTypeCode;
+      });
+    }
+    return payments;
+  }
+);
+
+export const selectFilteredReceiptsByPaymentType = createSelector(
+  [selectReceipts, selectPaymentType],
+  (receipts, paymentType) => {
+    if (paymentType) {
+      const { code: selectedPaymentTypeCode } = paymentType;
+      return receipts.filter(({ paymentType: transactionPaymentType }) => {
+        const { code: transactionPaymentTypeCode } = transactionPaymentType ?? {};
+        return transactionPaymentTypeCode === selectedPaymentTypeCode;
+      });
+    }
+    return receipts;
+  }
+);
+
+export const selectPaymentsTotal = createSelector([selectFilteredPaymentsByPaymentType], payments =>
   payments.reduce((acc, { total }) => acc.add(total), currency(0))
 );
 
-export const selectReceiptsTotal = createSelector([selectCashReceipts], receipts =>
+export const selectReceiptsTotal = createSelector([selectFilteredReceiptsByPaymentType], receipts =>
   receipts.reduce((acc, { total }) => acc.add(total), currency(0))
 );
 

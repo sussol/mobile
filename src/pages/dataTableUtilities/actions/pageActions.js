@@ -18,6 +18,11 @@ import { pageObjectSelector, pageStateSelector } from '../../../selectors/pageSe
  */
 const refreshData = route => ({ type: ACTIONS.REFRESH_DATA, payload: { route } });
 
+export const updatePaymentType = (paymentType, route) => ({
+  type: 'updatePaymentType',
+  payload: { paymentType, route },
+});
+
 /**
  * Edits the name field in the current store.
  * use case: Stocktake naming.
@@ -210,4 +215,5 @@ export const PageActionsLookup = {
   closeAndRefresh,
   editPageObjectName,
   editPrescriber,
+  updatePaymentType,
 };

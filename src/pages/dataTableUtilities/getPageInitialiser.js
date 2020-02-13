@@ -18,7 +18,10 @@ export const cashRegisterInitialiser = () => {
   const backingData = UIDatabase.objects('CashTransaction');
   const filteredData = backingData.slice();
   const sortedData = sortDataBy(filteredData, COLUMN_KEYS.SERIAL_NUMBER, false);
+  const paymentTypes = UIDatabase.objects('PaymentType');
   return {
+    paymentTypes,
+    currentPaymentType: paymentTypes[0],
     backingData,
     data: sortedData,
     dataState: new Map(),
