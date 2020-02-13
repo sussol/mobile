@@ -5,7 +5,7 @@
 
 import React, { useCallback, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ToastAndroid } from 'react-native';
 
 import moment from 'moment';
 import currency from '../../localization/currency';
@@ -44,6 +44,18 @@ export const CashTransactionModal = ({ onConfirm }) => {
   const [isReasonModalOpen, setIsReasonModalOpen] = useState(false);
   const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
 
+  const balance = React.useMemo(() => {
+    const receiptBalance = UIDatabase.objects('Transaction')
+      .filtered('type == "receipt" && paymentType.code == $0', paymentType?.code)
+      .sum('subtotal');
+
+    const paymentBalance = UIDatabase.objects('Transaction')
+      .filtered('type == "payment" && paymentType.code == $0', paymentType?.code)
+      .sum('subtotal');
+
+    return currency(receiptBalance - paymentBalance);
+  }, [paymentType]);
+
   const names = useMemo(() => UIDatabase.objects('CashTransactionName'), []);
   const type = useMemo(
     () => (isCashIn ? CASH_TRANSACTION_TYPES.CASH_IN : CASH_TRANSACTION_TYPES.CASH_OUT),
@@ -58,10 +70,13 @@ export const CashTransactionModal = ({ onConfirm }) => {
     [name, amount, reason, isCashIn, paymentType]
   );
 
-  const onCreate = useCallback(
-    () => onConfirm({ name, type, amount: amount.value, paymentType, reason, description }),
-    [name, type, amount, paymentType, reason, description]
-  );
+  const onCreate = useCallback(() => {
+    if (amount.value > balance.value && !isCashIn) {
+      ToastAndroid.show(dispensingStrings.unable_to_create_withdrawl, ToastAndroid.LONG);
+    } else {
+      onConfirm({ name, type, amount: amount.value, paymentType, reason, description });
+    }
+  }, [name, type, amount, paymentType, reason, description, balance]);
 
   const onChangeText = useMemo(() => text => setDescriptionBuffer(text), []);
   const onChangeAmount = useMemo(() => value => setAmountBuffer(value), []);
