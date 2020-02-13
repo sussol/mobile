@@ -17,7 +17,7 @@ import {
 
 import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 
-import { DataTablePageView, PageButton, SearchBar } from '../widgets';
+import { DropDown, DataTablePageView, PageButton, SearchBar } from '../widgets';
 import { ToggleBar } from '../widgets/ToggleBar';
 import { PageInfo } from '../widgets/PageInfo';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
@@ -26,6 +26,8 @@ import { DataTablePageModal } from '../widgets/modals';
 import { ROUTES } from '../navigation/constants';
 import { buttonStrings, generalStrings, dispensingStrings } from '../localization';
 import globalStyles from '../globalStyles';
+
+import { updatePaymentType } from './dataTableUtilities/actions/pageActions';
 
 export const CashRegister = ({
   dispatch,
@@ -45,6 +47,9 @@ export const CashRegister = ({
   onCloseModal,
   onAddCashTransaction,
   onToggleTransactionType,
+  paymentTypes,
+  currentPaymentType,
+  onUpdatePaymentType,
 }) => {
   const renderRow = useCallback(
     listItem => {
@@ -109,10 +114,23 @@ export const CashRegister = ({
     verticalContainer,
   } = globalStyles;
 
+  const onSelectPaymentType = React.useCallback(
+    (_, index) => {
+      onUpdatePaymentType(paymentTypes[index]);
+    },
+    [paymentTypes, onUpdatePaymentType]
+  );
+
   return (
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
         <View style={pageTopLeftSectionContainer}>
+          <DropDown
+            style={{ height: 25 }}
+            values={paymentTypes.map(({ description }) => description)}
+            selectedValue={currentPaymentType.description}
+            onValueChange={onSelectPaymentType}
+          />
           <PageInfo columns={pageInfoColumns} isEditingDisabled={true} />
           <SearchBar
             onChangeText={onFilterData}
@@ -147,9 +165,15 @@ export const CashRegister = ({
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.CASH_REGISTER),
-});
+const mapDispatchToProps = (dispatch, ownProps) => {
+  const onUpdatePaymentType = paymentType =>
+    dispatch(updatePaymentType(paymentType, ROUTES.CASH_REGISTER));
+
+  return {
+    ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.CASH_REGISTER),
+    onUpdatePaymentType,
+  };
+};
 
 const mapStateToProps = state => {
   const pageState = selectCashRegisterState(state);
@@ -180,4 +204,7 @@ CashRegister.propTypes = {
   onNewCashTransaction: PropTypes.func.isRequired,
   onCloseModal: PropTypes.func.isRequired,
   onAddCashTransaction: PropTypes.func.isRequired,
+  paymentTypes: PropTypes.object.isRequired,
+  currentPaymentType: PropTypes.object.isRequired,
+  onUpdatePaymentType: PropTypes.func.isRequired,
 };
