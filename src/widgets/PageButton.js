@@ -11,7 +11,7 @@ import { Button } from 'react-native-ui-components';
 
 import { debounce } from '../utilities';
 
-import globalStyles from '../globalStyles';
+import globalStyles, { WARMER_GREY } from '../globalStyles';
 
 // A generic button for use on pages
 export function PageButtonComponent(props) {
@@ -32,6 +32,7 @@ export function PageButtonComponent(props) {
       style={[...defaultButtonStyle, localStyles.button, style]}
       onPress={callback}
       textStyle={[...defaultTextStyle, textStyle]}
+      disabledColor={WARMER_GREY}
       {...buttonProps}
     />
   );
