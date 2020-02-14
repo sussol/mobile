@@ -56,6 +56,7 @@ export const SupplierInvoice = ({
   route,
   onEditSellPrice,
   onEditTransactionBatchName,
+  isSupplierInvoice,
 }) => {
   // Listen for this transaction being finalised, so data can be refreshed and kept consistent.
   useRecordListener(refreshData, pageObject, 'Transaction');
@@ -147,7 +148,7 @@ export const SupplierInvoice = ({
           />
         </View>
         <View style={pageTopRightSectionContainer}>
-          {!isFinalised ? (
+          {(!isFinalised && isSupplierInvoice) || (isFinalised && !isSupplierInvoice) ? (
             <PageButton
               text={buttonStrings.new_item}
               onPress={onSelectNewItem}
@@ -198,7 +199,12 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 const mapStateToProps = state => {
   const { pages } = state;
   const { supplierInvoice } = pages;
-  return supplierInvoice;
+
+  const { pageObject } = supplierInvoice ?? {};
+
+  const { isSupplierInvoice } = pageObject ?? {};
+
+  return { ...supplierInvoice, isSupplierInvoice };
 };
 
 export const SupplierInvoicePage = connect(mapStateToProps, mapDispatchToProps)(SupplierInvoice);
@@ -239,4 +245,5 @@ SupplierInvoice.propTypes = {
   onEditSellPrice: PropTypes.func.isRequired,
   refund: PropTypes.func.isRequired,
   onEditTransactionBatchName: PropTypes.func.isRequired,
+  isSupplierInvoice: PropTypes.bool.isRequired,
 };

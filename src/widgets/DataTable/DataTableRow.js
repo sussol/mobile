@@ -36,6 +36,7 @@ import { formatStatus } from '../../utilities';
 
 import { COLUMN_TYPES, COLUMN_NAMES } from '../../pages/dataTableUtilities';
 import { generalStrings, tableStrings } from '../../localization/index';
+import { formatType } from '../../utilities/formatStatus';
 
 /**
  * Wrapper component for a mSupply DataTable page row.
@@ -175,7 +176,9 @@ const DataTableRow = React.memo(
 
             case COLUMN_TYPES.STRING: {
               const value = rowData[columnKey];
-              const displayValue = columnKey === 'status' ? formatStatus(value) : value;
+              let displayValue = columnKey === 'status' ? formatStatus(value) : value;
+              displayValue = columnKey === 'type' ? formatType(displayValue) : displayValue;
+
               return (
                 <Cell
                   key={columnKey}

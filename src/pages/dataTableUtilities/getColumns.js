@@ -109,7 +109,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.INVOICE_NUMBER,
     COLUMN_NAMES.SUPPLIER,
     COLUMN_NAMES.ENTRY_DATE,
-    COLUMN_NAMES.STATUS,
+    COLUMN_NAMES.TRANSACTION_TYPE,
     COLUMN_NAMES.COMMENT,
     COLUMN_NAMES.REMOVE,
   ],
@@ -299,6 +299,15 @@ const COLUMNS = () => ({
   },
 
   // STRING COLUMNS
+
+  [COLUMN_NAMES.TRANSACTION_TYPE]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.TYPE,
+    title: tableStrings.type,
+    alignText: 'left',
+    sortable: true,
+    editable: false,
+  },
 
   [COLUMN_NAMES.OTHER_PARTY_NAME]: {
     type: COLUMN_TYPES.STRING,

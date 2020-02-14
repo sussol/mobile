@@ -69,7 +69,9 @@
     "total": "TOTAL",
     "type": "TYPE",
     "unit": "UNIT",
-    "value": "VALUE"
+    "value": "VALUE",
+    "supplier_credit": "Crédit fournisseur",
+    "supplier_invoice": "Facture fournisseur"
   },
   "fr": {
     "actual_quantity": "QUANTITÉ\nRÉELLE",

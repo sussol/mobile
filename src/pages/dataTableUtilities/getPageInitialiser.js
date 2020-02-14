@@ -367,7 +367,7 @@ const supplierInvoiceInitialiser = transaction => {
  * @returns  {object}
  */
 const supplierInvoicesInitialiser = () => {
-  const backingData = UIDatabase.objects('SupplierInvoice');
+  const backingData = UIDatabase.objects('SupplierTransaction');
 
   const filteredData = backingData.filtered('status != $0', 'finalised').slice();
   const sortedData = sortDataBy(filteredData, 'serialNumber', false);
