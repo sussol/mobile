@@ -341,6 +341,10 @@ const supplierInvoiceInitialiser = transaction => {
 
   const sortedData = backingData.sorted('itemName').slice();
 
+  const pageInfoConstant = transaction.isSupplierInvoice
+    ? ROUTES.SUPPLIER_INVOICE
+    : 'supplierCredit';
+
   return {
     pageObject: transaction,
     backingData,
@@ -356,7 +360,7 @@ const supplierInvoiceInitialiser = transaction => {
     hasSelection: false,
     route: ROUTES.SUPPLIER_INVOICE,
     columns: getColumns(ROUTES.SUPPLIER_INVOICE),
-    getPageInfoColumns: getPageInfoColumns(ROUTES.SUPPLIER_INVOICE),
+    getPageInfoColumns: getPageInfoColumns(pageInfoConstant),
   };
 };
 
