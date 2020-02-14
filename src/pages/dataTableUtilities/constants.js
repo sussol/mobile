@@ -70,6 +70,7 @@ export const COLUMN_KEYS = {
 };
 
 export const COLUMN_NAMES = {
+  TRANSACTION_TYPE: 'transactionType',
   AVAILABLE_QUANTITY: 'availableQuantity',
   BATCH_NAME: 'batch',
   BATCHES: 'batches',
