@@ -70,10 +70,12 @@
     "type": "TYPE",
     "unit": "UNIT",
     "value": "VALUE",
-    "supplier_credit": "Crédit fournisseur",
-    "supplier_invoice": "Facture fournisseur"
+    "supplier_credit": "Supplier credit",
+    "supplier_invoice": "Supplier invoice"
   },
   "fr": {
+    "supplier_credit": "Crédit fournisseur",
+    "supplier_invoice": "Facture fournisseur",
     "actual_quantity": "QUANTITÉ\nRÉELLE",
     "available_stock": "QUANTITÉ\nDISPONIBLE",
     "batch_expiry": "EXPIRATION",

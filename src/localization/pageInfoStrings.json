@@ -12,9 +12,11 @@
     "stocktake_name": "Stocktake Name",
     "supplier": "Supplier",
     "their_ref": "Their Ref",
-    "by_batch": "By batch"
+    "by_batch": "By batch",
+    "category": "Category"
   },
   "fr": {
+    "category": "Catégorie",
     "address": "Addresse",
     "code": "Code",
     "comment": "Commentaire",

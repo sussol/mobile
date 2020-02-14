@@ -292,7 +292,7 @@ export const gotoCustomerInvoice = transaction => dispatch => {
  * @param {Object} dispatch    Redux dispatch method.
  */
 export const gotoSupplierInvoice = transaction => dispatch => {
-  const { isConfirmed } = transaction;
+  const { isSupplierInvoice, isConfirmed } = transaction;
 
   // Supplier invoices are `new` or `finalised`. Ensure any `confirmed` invoices are
   // `finalised` before navigating.
@@ -303,10 +303,13 @@ export const gotoSupplierInvoice = transaction => dispatch => {
     });
   }
 
+  const invoiceTitle = `${navStrings.invoice} ${transaction.serialNumber}`;
+  const creditTitle = `${navStrings.supplier_credit} ${transaction.serialNumber}`;
+
   const navigationAction = NavigationActions.navigate({
     routeName: ROUTES.SUPPLIER_INVOICE,
     params: {
-      title: `${navStrings.invoice} ${transaction.serialNumber}`,
+      title: isSupplierInvoice ? invoiceTitle : creditTitle,
       transaction,
       pageObject: transaction,
     },
