@@ -2,6 +2,7 @@
   "gb": {
     "current_stock": "Current Stock",
     "customer_invoices": "Customer Invoices",
+    "supplier_credit": "Supplier Credit",
     "customer_requisitions": "Customer Requisitions",
     "customers": "Customers",
     "finalise": "FINALISE",
@@ -24,6 +25,7 @@
     "prescription": "Prescription"
   },
   "fr": {
+    "supplier_credit": "Crédit Fournisseur",
     "current_stock": "Stock actuel",
     "customer_invoices": "Factures client",
     "customer_requisitions": "Réquisitions clients",
