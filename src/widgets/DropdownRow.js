@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import { DropDown } from './DropDown';
 import { FlexRow } from './FlexRow';
 
-import { SUSSOL_ORANGE, APP_FONT_FAMILY } from '../globalStyles';
+import { LIGHT_GREY, SUSSOL_ORANGE, APP_FONT_FAMILY } from '../globalStyles';
 
 /**
  * Layout component rendering a Dropdown and a TextInput.
@@ -48,6 +48,7 @@ export const DropdownRow = ({
       underlineColorAndroid={SUSSOL_ORANGE}
       style={localStyles.textInputStyle}
       placeholder={placeholder}
+      placeholderTextColor={LIGHT_GREY}
     />
   </FlexRow>
 );
