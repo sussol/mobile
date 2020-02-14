@@ -36,6 +36,7 @@ const sortKeyToType = {
   total: 'number',
   reasonTitle: 'string',
   confirmDate: 'date',
+  type: 'string',
 };
 
 /**
