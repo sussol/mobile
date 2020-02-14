@@ -54,7 +54,9 @@
     "patient_detail": "Patient Detail",
     "item_details": "Item Details",
     "new_patient": "New patient",
-    "unable_to_create_withdrawl": "Unable to create a withdrawl for more than the current balance."
+    "unable_to_create_withdrawl": "Unable to create a withdrawl for more than the current balance.",
+    "inpatient": "Inpatient",
+    "outpatient": "Outpatient"
   },
   "fr": {
     "available_credit": "Crédit disponible",
@@ -110,7 +112,9 @@
     "patient_detail": "Détail du patient",
     "item_details": "Détail des articles",
     "new_patient": "Patient nouvelle",
-    "unable_to_create_withdrawl": "Impossible de créer un retrait supérieur au solde actuel"
+    "unable_to_create_withdrawl": "Impossible de créer un retrait supérieur au solde actuel",
+    "inpatient": "hospitalisé",
+    "outpatient": "Consul. externe"
   },
   "gil": {},
   "tl": {},

@@ -24,7 +24,7 @@ import {
 } from '../selectors/prescription';
 import { selectUsingPrescriptionCategories, selectUsingPatientTypes } from '../selectors/modules';
 
-const PATIENT_TYPES = ['Inpatient', 'Outpatient'];
+const PATIENT_TYPES = [dispensingStrings.inpatient, dispensingStrings.outpatient];
 
 const PrescriptionExtraComponent = ({
   onOpenCommentModal,
