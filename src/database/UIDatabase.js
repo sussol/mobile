@@ -20,6 +20,7 @@ const translateToCoreDatabaseType = type => {
     case 'CustomerCredit':
     case 'Payment':
     case 'CashTransaction':
+    case 'SupplierTransaction':
       return 'Transaction';
     case 'CashTransactionName':
     case 'Customer':
@@ -123,6 +124,20 @@ class UIDatabase {
           null,
           'finalised'
         );
+      case 'SupplierTransaction': {
+        const queryString =
+          // eslint-disable-next-line no-multi-str
+          '((type == $0 AND mode == $2) OR (type == $1 AND status == $3))\
+           AND otherParty.type != $4';
+        return results.filtered(
+          queryString,
+          'supplier_invoice',
+          'supplier_credit',
+          'store',
+          'finalised',
+          'inventory_adjustment'
+        );
+      }
       case 'SupplierInvoice':
         return results.filtered(
           'type == $0 AND mode == $1 AND otherParty.type != $2',
