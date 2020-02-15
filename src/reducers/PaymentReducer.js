@@ -29,7 +29,7 @@ export const PaymentReducer = (state = initialState(), action) => {
 
       if (routeName !== ROUTES.PRESCRIPTION) return state;
       const { transaction } = params;
-      return { ...state, transaction };
+      return { ...initialState(), transaction };
     }
 
     case PRESCRIPTION_ACTIONS.DELETE: {
