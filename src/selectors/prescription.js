@@ -103,7 +103,8 @@ export const selectPatientType = ({ prescription }) => {
   return user1 ?? '';
 };
 
-export const selectPrescriptionCategories = () => UIDatabase.objects('PrescriptionCategory');
+export const selectPrescriptionCategories = () =>
+  UIDatabase.objects('PrescriptionCategory').sorted('name');
 
 export const selectSelectedRows = createSelector(
   [selectPrescriptionItems, selectNumberOfItems],
