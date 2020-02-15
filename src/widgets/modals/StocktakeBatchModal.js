@@ -95,7 +95,7 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, reduxDispatch }) =
       reduxDispatch(PageActions.refreshRow(stocktakeItem.id, ROUTES.STOCKTAKE_EDITOR));
     });
   const onEditDate = (date, rowKey, columnKey) =>
-    dispatch(PageActions.editTransactionBatchExpiryDate(date, rowKey, columnKey));
+    dispatch(PageActions.editStocktakeBatchExpiryDate(date, rowKey, columnKey));
 
   const toggles = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), []);
 
