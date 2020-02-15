@@ -111,6 +111,7 @@ export const FormDateInput = React.forwardRef(
               mode="date"
               display="spinner"
               value={pickerSeedValue}
+              maximumDate={new Date()}
             />
           )}
           <FormInvalidMessage isValid={isValid} message={invalidMessage} />
