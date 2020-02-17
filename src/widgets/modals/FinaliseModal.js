@@ -64,7 +64,7 @@ export const FinaliseModal = props => {
   };
 
   return (
-    <ModalContainer isVisible={isOpen} onClose={onClose}>
+    <ModalContainer fullScreen={true} isVisible={isOpen} onClose={onClose}>
       <ConfirmForm
         isOpen={isOpen}
         questionText={errorText || modalStrings[finaliseText]}
