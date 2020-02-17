@@ -96,7 +96,7 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: re
       reduxDispatch(PageActions.refreshRow(stocktakeItem.id, ROUTES.STOCKTAKE_EDITOR));
     });
   const onEditDate = (date, rowKey, columnKey) =>
-    dispatch(PageActions.editTransactionBatchExpiryDate(date, rowKey, columnKey));
+    dispatch(PageActions.editStocktakeBatchExpiryDate(date, rowKey, columnKey));
   const onEditSellPrice = (newValue, rowKey) =>
     dispatch(PageActions.editSellPrice(newValue, rowKey));
 

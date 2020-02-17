@@ -17,7 +17,7 @@ import {
   SYNC_TYPES,
   TRANSACTION_TYPES,
 } from './syncTranslators';
-import { CHANGE_TYPES } from '../database';
+import { UIDatabase, CHANGE_TYPES } from '../database';
 import { SETTINGS_KEYS } from '../settings';
 
 const { THIS_STORE_ID, SYNC_URL, SYNC_SITE_NAME } = SETTINGS_KEYS;
@@ -313,21 +313,26 @@ export const generateSyncJson = (database, settings, syncOutRecord) => {
   } else {
     // Get the record the |syncOutRecord| refers to from the database.
     const recordResults = database.objects(recordType).filtered('id == $0', recordId);
+
     if (!recordResults || recordResults.length === 0) {
       // No such record
-
-      database.write(() => {
-        database.delete(
-          'SyncOut',
-          database.objects('SyncOut').filtered('recordId == $0', recordId)
-        );
+      const error = new Error(`${recordType} with id = ${recordId} missing`);
+      bugsnagClient.notify(error, content => {
+        content.syncSite = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
+        content.record = syncOutRecord;
       });
-
-      throw new Error(`${recordType} with id = ${recordId} missing`);
-    } else if (recordResults.length > 1) {
-      // Duplicate records
-      throw new Error(`Multiple ${recordType} records with id = ${recordId}`);
+      throw error;
     }
+    if (recordResults.length > 1) {
+      // Duplicate records
+      const error = new Error(`Multiple ${recordType} records with id = ${recordId}`);
+      bugsnagClient.notify(error, content => {
+        content.syncSite = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
+        content.record = syncOutRecord;
+      });
+      throw error;
+    }
+
     const record = recordResults[0];
 
     // Generate the appropriate data for the sync object to carry, representing the
