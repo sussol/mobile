@@ -43,7 +43,7 @@ export const LANGUAGE_NAMES = {
   [LANGUAGE_CODES.FRENCH]: 'French',
   [LANGUAGE_CODES.TETUM]: 'Tetum',
   [LANGUAGE_CODES.LAOS]: 'Laos',
-  [LANGUAGE_CODES.PORTUGUESE]: 'Português',
+  [LANGUAGE_CODES.PORTUGUESE]: 'Portuguese',
 };
 
 export const LANGUAGE_CHOICE = [
