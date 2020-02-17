@@ -95,7 +95,7 @@
   },
   "pt": {
     "current_stock": "Estoque atual",
-    "customer_invoices": "Faturas de clientes",
+    "customer_invoices": "Faturas para clientes",
     "customer_requisitions": "Requisições de clientes",
     "customers": "Clientes",
     "finalise": "FINALIZAR",
@@ -109,7 +109,7 @@
     "stocktakes": "Inventários",
     "stocktake": "Inventário",
     "supplier_invoices": "Faturas de fornecedores",
-    "supplier_requisitions": "Requisições de fornecedores",
+    "supplier_requisitions": "Requisições para\nfornecedores",
     "settings": "configuração",
     "database_contents": "Conteúdo da base de dados",
     "dispensary": "Distribuição",
