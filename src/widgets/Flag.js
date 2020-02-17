@@ -9,11 +9,11 @@ import { KiribatiFlag, EnglishFlag, LaosFlag, TetumFlag, FrenchFlag, PortugueseF
 
 const LANGUAGE_TO_FLAG = {
   [LANGUAGE_CODES.FRENCH]: FrenchFlag,
-  [LANGUAGE_CODES.PORTUGUESE]: PortugueseFlag,
   [LANGUAGE_CODES.TETUM]: TetumFlag,
   [LANGUAGE_CODES.ENGLISH]: EnglishFlag,
   [LANGUAGE_CODES.KIRIBATI]: KiribatiFlag,
   [LANGUAGE_CODES.LAOS]: LaosFlag,
+  [LANGUAGE_CODES.PORTUGUESE]: PortugueseFlag,
 };
 
 /**

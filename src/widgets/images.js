@@ -31,11 +31,6 @@ export const FrenchFlag = ({ style }) => (
 );
 FrenchFlag.propTypes = imagePropTypes;
 
-export const PortugueseFlag = ({ style }) => (
-  <Image style={style} source={require('../images/flags/pt.png')} resizeMode="stretch" />
-);
-PortugueseFlag.propTypes = imagePropTypes;
-
 export const TetumFlag = ({ style }) => (
   <Image style={style} source={require('../images/flags/tl.png')} resizeMode="stretch" />
 );
@@ -45,6 +40,11 @@ export const LaosFlag = ({ style }) => (
   <Image style={style} source={require('../images/flags/la.png')} resizeMode="stretch" />
 );
 LaosFlag.propTypes = imagePropTypes;
+
+export const PortugueseFlag = ({ style }) => (
+  <Image style={style} source={require('../images/flags/pt.png')} resizeMode="stretch" />
+);
+PortugueseFlag.propTypes = imagePropTypes;
 
 export const CustomerImage = ({ style }) => (
   <Image style={style} source={require('../images/menu_people.png')} resizeMode="contain" />
