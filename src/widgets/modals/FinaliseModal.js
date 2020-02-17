@@ -8,9 +8,10 @@ import PropTypes from 'prop-types';
 
 import { Client as BugsnagClient } from 'bugsnag-react-native';
 
-import { ConfirmModal } from './ConfirmModal';
+import { ConfirmForm } from '../modalChildren';
 
 import { modalStrings } from '../../localization';
+import ModalContainer from './ModalContainer';
 
 const bugsnagClient = new BugsnagClient();
 
@@ -63,16 +64,18 @@ export const FinaliseModal = props => {
   };
 
   return (
-    <ConfirmModal
-      isOpen={isOpen}
-      questionText={errorText || modalStrings[finaliseText]}
-      confirmText={modalStrings.confirm}
-      cancelText={errorText ? modalStrings.got_it : modalStrings.cancel}
-      onConfirm={!errorText ? tryFinalise : null}
-      onCancel={() => {
-        if (onClose) onClose();
-      }}
-    />
+    <ModalContainer isVisible={isOpen} onClose={onClose}>
+      <ConfirmForm
+        isOpen={isOpen}
+        questionText={errorText || modalStrings[finaliseText]}
+        confirmText={modalStrings.confirm}
+        cancelText={errorText ? modalStrings.got_it : modalStrings.cancel}
+        onConfirm={!errorText ? tryFinalise : null}
+        onCancel={() => {
+          if (onClose) onClose();
+        }}
+      />
+    </ModalContainer>
   );
 };
 
