@@ -34,13 +34,7 @@ const initialState = () => {
   const usingSupplierCredits = checkModule(SETTINGS_KEYS.SUPPLIER_CREDIT_MODULE);
   const usingPatientTypes = checkModule(SETTINGS_KEYS.PATIENT_TYPES);
 
-  const usingModules =
-    usingDashboard ||
-    usingDispensary ||
-    usingVaccines ||
-    usingCashRegister ||
-    usingPayments ||
-    usingSupplierCredits;
+  const usingModules = usingDashboard || usingDispensary || usingVaccines || usingCashRegister;
 
   const usingInsurance = UIDatabase.objects('InsuranceProvider').length > 0;
   const usingPrescriptionCategories = UIDatabase.objects('PrescriptionCategory').length > 0;
