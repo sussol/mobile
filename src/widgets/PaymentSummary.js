@@ -48,7 +48,7 @@ const paymentState = state => {
   const creditUsed = selectCreditBeingUsed(state);
   const availableCredit = selectAvailableCredit(state);
   const insurancePolicies = selectPatientInsurancePolicies(state);
-  const paymentTypes = UIDatabase.objects('PaymentType');
+  const paymentTypes = UIDatabase.objects('PaymentType').sorted('description');
   const discountRate = selectInsuranceDiscountRate(state);
   const discountAmount = selectDiscountAmount(state);
   const changeRequired = selectChangeRequired(state);
