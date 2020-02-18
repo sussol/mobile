@@ -10,14 +10,14 @@ import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import PropTypes from 'prop-types';
 
-import { FlexColumn } from './FlexColumn';
-import { FlexRow } from './FlexRow';
+import { FlexColumn } from '../FlexColumn';
+import { FlexRow } from '../FlexRow';
 
-import { APP_FONT_FAMILY, SUSSOL_ORANGE, DARKER_GREY } from '../globalStyles';
-import { CalendarIcon } from './icons';
-import { CircleButton } from './CircleButton';
-import { FormLabel } from './FormInputs/FormLabel';
-import { FormInvalidMessage } from './FormInputs/FormInvalidMessage';
+import { APP_FONT_FAMILY, SUSSOL_ORANGE, DARKER_GREY } from '../../globalStyles';
+import { CalendarIcon } from '../icons';
+import { CircleButton } from '../CircleButton';
+import { FormLabel } from './FormLabel';
+import { FormInvalidMessage } from './FormInvalidMessage';
 
 export const FormDateInput = React.forwardRef(
   (

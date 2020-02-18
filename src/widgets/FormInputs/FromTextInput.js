@@ -3,10 +3,10 @@ import React from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 
-import { FormLabel } from './FormInputs/FormLabel';
-import { FormInvalidMessage } from './FormInputs/FormInvalidMessage';
+import { FormLabel } from './FormLabel';
+import { FormInvalidMessage } from './FormInvalidMessage';
 
-import { SUSSOL_ORANGE, APP_FONT_FAMILY, DARKER_GREY } from '../globalStyles';
+import { SUSSOL_ORANGE, APP_FONT_FAMILY, DARKER_GREY } from '../../globalStyles';
 
 /**
  * Uncontrolled wrapper component around a TextInput with validation
@@ -22,7 +22,7 @@ import { SUSSOL_ORANGE, APP_FONT_FAMILY, DARKER_GREY } from '../globalStyles';
  * @prop {Object} labelStyle            Style of the label.
  * @prop {Object} textInputStyle        Style of the underlying TextInput.
  */
-export const ValidationTextInput = React.forwardRef(
+export const FormTextInput = React.forwardRef(
   (
     {
       placeholder,
@@ -104,7 +104,7 @@ const localStyles = StyleSheet.create({
   textInputStyle: { flex: 1, fontFamily: APP_FONT_FAMILY },
 });
 
-ValidationTextInput.defaultProps = {
+FormTextInput.defaultProps = {
   placeholder: '',
   placeholderTextColor: SUSSOL_ORANGE,
   underlineColorAndroid: DARKER_GREY,
@@ -116,7 +116,7 @@ ValidationTextInput.defaultProps = {
   onSubmit: null,
 };
 
-ValidationTextInput.propTypes = {
+FormTextInput.propTypes = {
   placeholder: PropTypes.string,
   placeholderTextColor: PropTypes.string,
   underlineColorAndroid: PropTypes.string,
