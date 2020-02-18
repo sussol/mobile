@@ -6,7 +6,6 @@
 
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 
 import currency from '../../localization/currency';
 
@@ -32,10 +31,10 @@ import {
 } from '../icons';
 import TextInputCell from './TextInputCell';
 
-import { formatStatus } from '../../utilities';
-
 import { COLUMN_TYPES, COLUMN_NAMES } from '../../pages/dataTableUtilities';
 import { generalStrings, tableStrings } from '../../localization/index';
+
+import { formatStatus, formatDate } from '../../utilities';
 import { formatType } from '../../utilities/formatStatus';
 
 /**
@@ -216,7 +215,7 @@ const DataTableRow = React.memo(
               return (
                 <Cell
                   key={columnKey}
-                  value={moment(rowData[columnKey] && rowData[columnKey]).format('ll')}
+                  value={formatDate(rowData[columnKey], 'll') ?? generalStrings.not_available}
                   width={width}
                   viewStyle={cellContainer[cellAlignment]}
                   textStyle={cellText[cellAlignment]}
