@@ -21,14 +21,22 @@ export const selectSearchTerm = ({ prescriber }) => {
   return searchTerm;
 };
 
-export const selectFilteredPrescribers = createSelector([selectSearchTerm], searchTerm => {
-  const [lastName, firstName] = searchTerm.split(',').map(name => name.trim());
+export const selectNumberOfPrescribers = () => {
+  const numberOfPrescribers = UIDatabase.objects('Prescriber').length;
+  return numberOfPrescribers;
+};
 
-  const queryString = 'lastName BEGINSWITH[c] $0 AND firstName BEGINSWITH[c] $1';
-  const newData = UIDatabase.objects('Prescriber').filtered(queryString, lastName, firstName);
+export const selectFilteredPrescribers = createSelector(
+  [selectSearchTerm, selectNumberOfPrescribers],
+  searchTerm => {
+    const [lastName, firstName] = searchTerm.split(',').map(name => name.trim());
 
-  return newData;
-});
+    const queryString = 'lastName BEGINSWITH[c] $0 AND firstName BEGINSWITH[c] $1';
+    const newData = UIDatabase.objects('Prescriber').filtered(queryString, lastName, firstName);
+
+    return newData;
+  }
+);
 
 export const selectSortedPrescribers = createSelector(
   [selectSortKey, selectIsAscending, selectFilteredPrescribers],
