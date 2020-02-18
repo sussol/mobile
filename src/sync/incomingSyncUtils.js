@@ -112,12 +112,6 @@ const getOrCreateAddress = (database, line1, line2, line3, line4, zipCode) => {
   return createRecord(database, 'Address', { line1, line2, line3, line4, zipCode });
 };
 
-const getOrCreatePaymentType = (database, id, code, description) => {
-  const results = database.objects('PaymentType').filtered('id == $0', id);
-  if (results.length > 0) return results[0];
-  return database.update('PaymentType', { id, code, description });
-};
-
 /**
  * Ensure the given record has the right data to create an internal record of the given
  * |recordType|. Check only that it is a recognised record type, and that it contains values
@@ -773,7 +767,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         option: database.getOrCreate('Options', record.optionID),
         subtotal: parseFloat(record.subtotal),
         user1: record.user1,
-        paymentType: getOrCreatePaymentType(database, record.paymentTypeID),
+        paymentType: database.getOrCreate('PaymentType', record.paymentTypeID),
       };
       const transaction = database.update(recordType, internalRecord);
       if (linkedRequisition) {
