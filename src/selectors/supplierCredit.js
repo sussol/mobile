@@ -38,6 +38,12 @@ export const selectItemName = ({ supplierCredit }) => {
   return name;
 };
 
+export const selectItemCode = ({ supplierCredit }) => {
+  const { item } = supplierCredit;
+  const { code } = item || {};
+  return code;
+};
+
 export const selectType = ({ supplierCredit }) => {
   const { type } = supplierCredit;
   return type;
@@ -51,10 +57,10 @@ export const selectInvoice = ({ supplierCredit }) => {
 };
 
 export const selectTitle = createSelector(
-  [selectType, selectInvoice, selectItemName],
-  (type, invoice, itemName) => {
+  [selectType, selectInvoice, selectItemName, selectItemCode],
+  (type, invoice, itemName, itemCode) => {
     if (type === 'supplierCreditFromItem') {
-      return `${dispensingStrings.available_credits_for} ${itemName}`;
+      return `${dispensingStrings.available_credits_for} ${itemName} (${itemCode})`;
     }
     const { serialNumber, otherPartyName } = invoice;
     return `${dispensingStrings.supplier_credit_for_supplier_invoice} ${serialNumber} ${generalStrings.to} ${otherPartyName}`;
