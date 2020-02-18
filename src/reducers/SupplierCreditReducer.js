@@ -68,9 +68,11 @@ export const SupplierCreditReducer = (state = initialState(), action) => {
 
       const item = UIDatabase.get('Item', itemId);
 
+      const query = 'numberOfPacks > 0 && supplier != null && supplier.isVisible == true';
+
       return {
         ...state,
-        batches: mapBatchToObject(item?.batches?.filtered('numberOfPacks > 0') ?? []),
+        batches: mapBatchToObject(item?.batches?.filtered(query)),
         open: true,
         item,
         type: 'supplierCreditFromItem',
