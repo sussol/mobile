@@ -255,7 +255,7 @@
     "unit": "UNIT"
   },
   "pt": {
-    "actual_quantity": "QUANTIDADE\nATUAL",
+    "actual_quantity": "QUANTIDADE\nREAL",
     "available_stock": "QUANTIDADE\nDISPONÍVEL",
     "batch_expiry": "VALIDADE",
     "batch": "LOTE",
