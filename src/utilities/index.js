@@ -27,5 +27,5 @@ export {
   checkForStocktakeError,
   checkForCustomerRequisitionError,
 } from './finalisation';
-
+export { parsePositiveIntegerInterfaceInput } from './parsers';
 export { formatErrorItemNames, roundNumber } from './formatters';
