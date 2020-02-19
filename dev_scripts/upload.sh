@@ -7,15 +7,20 @@
 
 BUGSNAG_URL=https://upload.bugsnag.com/react-native-source-map
 BUGSNAG_KEY=16a680e189b1e5f03f28665870f1401f
-APP_VERSION=3.2.2
-
+APP_VERSION=$(grep '"version":."' ../package.json | sed 's/"version"://' | tr -d ' ",')
+if [ -z "APP_VERSION" ] # if unable to obtain version
+then
+echo "Warning, unable to optain the APP_VERSION from package.json, exiting."
+exit 1
+else
+echo "App_Version = $APP_VERSION"
+fi
 PLATFORM=android
 DEV=false
 ENTRY_FILE=index.js
 PROJECT_ROOT=$(pwd)
 BUNDLE_OUTPUT=android-release.bundle
 SOURCEMAP_OUTPUT=android-release.bundle.map
-
 echo "Building source map..."
 react-native bundle \
 --platform $PLATFORM \
