@@ -188,6 +188,7 @@ const generateSyncData = (settings, recordType, record) => {
         mode: record.mode,
         prescriber_ID: record.prescriber && record.prescriber.id,
         total: String(record.total),
+        amount_outstanding: String(record.outstanding),
         foreign_currency_total: String(record.total),
         service_price: String(record.servicePrice),
         their_ref: record.theirRef,
