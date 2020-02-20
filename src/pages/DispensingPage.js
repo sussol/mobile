@@ -26,7 +26,7 @@ import { InsuranceActions } from '../actions/InsuranceActions';
 import { DispensaryActions } from '../actions/DispensaryActions';
 
 import { selectDataSetInUse, selectSortedData } from '../selectors/dispensary';
-import { selectPrescriberModalOpen } from '../selectors/prescriber';
+import { selectPrescriberModalOpen, selectCanEditPrescriber } from '../selectors/prescriber';
 import { selectInsuranceModalOpen } from '../selectors/insurance';
 import { selectPatientModalOpen } from '../selectors/patient';
 
@@ -41,6 +41,7 @@ const Dispensing = ({
   searchTerm,
   usingPatientsDataSet,
   usingPrescribersDataSet,
+
   // Misc. Callbacks
   filter,
   sort,
@@ -51,6 +52,7 @@ const Dispensing = ({
   patientEditModalOpen,
   currentPatient,
   patientHistoryModalOpen,
+
   // Patient callback
   editPatient,
   createPatient,
@@ -61,6 +63,8 @@ const Dispensing = ({
   // Prescriber variables
   currentPrescriber,
   prescriberModalOpen,
+  canEditPrescriber,
+
   // Prescriber callbacks
   editPrescriber,
   createPrescriber,
@@ -183,6 +187,7 @@ const Dispensing = ({
         isVisible={prescriberModalOpen}
       >
         <FormControl
+          isDisabled={!canEditPrescriber}
           onSave={savePrescriber}
           onCancel={cancelPrescriberEdit}
           inputConfig={getFormInputConfig('prescriber', currentPrescriber)}
@@ -235,6 +240,7 @@ const mapStateToProps = state => {
   const { isCreatingInsurancePolicy, selectedInsurancePolicy } = insurance;
 
   const prescriberModalOpen = selectPrescriberModalOpen(state);
+  const canEditPrescriber = selectCanEditPrescriber(state);
   const [patientEditModalOpen, patientHistoryModalOpen] = selectPatientModalOpen(state);
   const insuranceModalOpen = selectInsuranceModalOpen(state);
   const data = selectSortedData(state);
@@ -256,6 +262,7 @@ const mapStateToProps = state => {
     // Prescriber
     currentPrescriber,
     prescriberModalOpen,
+    canEditPrescriber,
     // Insurance
     insuranceModalOpen,
     selectedInsurancePolicy,
@@ -294,6 +301,7 @@ Dispensing.defaultProps = {
   currentPatient: null,
   currentPrescriber: null,
   selectedInsurancePolicy: null,
+  canEditPrescriber: false,
 };
 
 Dispensing.propTypes = {
@@ -313,6 +321,7 @@ Dispensing.propTypes = {
   cancelPatientEdit: PropTypes.func.isRequired,
   currentPatient: PropTypes.object,
   currentPrescriber: PropTypes.object,
+  canEditPrescriber: PropTypes.bool,
   editPrescriber: PropTypes.func.isRequired,
   createPrescriber: PropTypes.func.isRequired,
   cancelPrescriberEdit: PropTypes.func.isRequired,
