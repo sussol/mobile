@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import { StyleSheet, View, Text, TextInput } from 'react-native';
 
 import RNSlider from '@react-native-community/slider';
-import { SUSSOL_ORANGE, WARMER_GREY, FINALISED_RED } from '../globalStyles/index';
-import { roundNumber } from '../utilities/index';
+import { SUSSOL_ORANGE, WARMER_GREY } from '../globalStyles';
+import { roundNumber } from '../utilities';
 
 /**
  * Component rendering a slider with an additional TextInput in a row.
@@ -15,8 +15,7 @@ import { roundNumber } from '../utilities/index';
  * The callback on value changes is invoked when sliding has finished and when
  * a valid number is entered into the TextInput.
  *
- * @prop {Number} minimumValue           The lower bound of valid values.
- * @prop {Number} maximumValue           The upper bound of valid values.
+ * @prop {Bool}   isDisabled             Indicator whether this component is disabled.
  * @prop {String} minimumTrackTintColour The colour of the track lower than the slider.
  * @prop {String} maximumTrackTintColour The colour of the track greater than the slider.
  * @prop {String} thumbTintColour        The colour of the slider thumb
@@ -24,6 +23,8 @@ import { roundNumber } from '../utilities/index';
  * @prop {Number} step                   The steps of the slider. i.e. 0.25 for [.0, .25,.5,.75]
  * @prop {Number} value                  The current value of the input.
  * @prop {Number} onEndEditing           The callback on editing.
+ * @prop {Number} minimumValue           The lower bound of valid values.
+ * @prop {Number} maximumValue           The upper bound of valid values.
  *
  */
 export const Slider = React.forwardRef(
@@ -38,6 +39,7 @@ export const Slider = React.forwardRef(
       step,
       value,
       onEndEditing,
+      isDisabled,
     },
     ref
   ) => {
@@ -100,6 +102,7 @@ export const Slider = React.forwardRef(
       <View style={mainContainerStyle}>
         <View style={rowStyle}>
           <RNSlider
+            disabled={isDisabled}
             style={sliderStyle}
             value={currentValue}
             step={step}
@@ -114,8 +117,9 @@ export const Slider = React.forwardRef(
 
           <TextInput
             ref={ref}
+            enabled={!isDisabled}
             style={textInputStyle}
-            underlineColorAndroid={isValid ? WARMER_GREY : FINALISED_RED}
+            underlineColorAndroid={WARMER_GREY}
             value={currentStringValue}
             onChangeText={setString}
             selectTextOnFocus
@@ -155,6 +159,7 @@ Slider.defaultProps = {
   fractionDigits: 2,
   step: 0.25,
   value: 20,
+  isDisabled: false,
 };
 
 Slider.propTypes = {
@@ -167,4 +172,5 @@ Slider.propTypes = {
   step: PropTypes.number,
   value: PropTypes.number,
   onEndEditing: PropTypes.func.isRequired,
+  isDisabled: PropTypes.bool,
 };
