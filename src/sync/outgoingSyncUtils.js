@@ -258,6 +258,9 @@ const generateSyncData = (settings, recordType, record) => {
       };
     }
     case 'Prescriber': {
+      // Only sync out prescribers from this store.
+      if (!record.fromThisStore) return null;
+
       return {
         ID: record.id,
         last_name: record.lastName,

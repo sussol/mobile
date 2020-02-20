@@ -17,6 +17,7 @@ Prescriber.schema = {
     mobileNumber: { type: 'string', optional: true },
     emailAddress: { type: 'string', optional: true },
     transactions: { type: 'linkingObjects', objectType: 'Transaction', property: 'prescriber' },
+    fromThisStore: { type: 'bool', default: false },
   },
 };
 

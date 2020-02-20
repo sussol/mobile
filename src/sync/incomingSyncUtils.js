@@ -869,6 +869,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'Prescriber': {
+      const fromThisStore = record.store_ID === settings.get(THIS_STORE_ID);
+
       database.update(recordType, {
         id: record.ID,
         firstName: record.first_name,
@@ -880,6 +882,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         phoneNumber: record.phone,
         mobileNumber: record.mobile,
         emailAddress: record.email,
+        fromThisStore,
       });
       break;
     }
