@@ -17,6 +17,7 @@ import { DemoSiteRequest } from '../../authentication';
 import { authStrings, generalStrings, demoUserModalStrings } from '../../localization';
 
 import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
+import ModalContainer from './ModalContainer';
 
 export class DemoUserModal extends React.Component {
   constructor(props) {
@@ -208,12 +209,14 @@ export class DemoUserModal extends React.Component {
               />
             </View>
           </View>
-          <ConfirmForm
-            isOpen={status === 'submitted'}
-            questionText={demoUserModalStrings.confirmModalBody}
-            onConfirm={this.onDemoSubmittedModalClose}
-            confirmText="Close"
-          />
+          <ModalContainer fullScreen={true} isVisible={isOpen}>
+            <ConfirmForm
+              isOpen={status === 'submitted'}
+              questionText={demoUserModalStrings.confirmModalBody}
+              onConfirm={this.onDemoSubmittedModalClose}
+              confirmText="Close"
+            />
+          </ModalContainer>
         </View>
       </Modal>
     );
