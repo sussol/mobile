@@ -120,6 +120,7 @@ Name.schema = {
     isPatient: { type: 'bool', default: false },
     policies: { type: 'linkingObjects', objectType: 'InsurancePolicy', property: 'patient' },
     female: { type: 'bool', default: false },
+    thisStoresPatient: { type: 'bool', default: false },
   },
 };
 

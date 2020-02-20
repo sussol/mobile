@@ -535,6 +535,9 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
     case 'Name': {
       const isPatient = record.type === 'patient';
       const name = isPatient ? `${record.last}, ${record.first}` : record.name;
+
+      const thisStoresPatient = record.supplying_store_id === settings.get(THIS_STORE_ID);
+
       internalRecord = {
         id: record.ID,
         name,
@@ -554,6 +557,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         isSupplier: parseBoolean(record.supplier),
         isManufacturer: parseBoolean(record.manufacturer),
         supplyingStoreId: record.supplying_store_id,
+        thisStoresPatient,
         isPatient,
         firstName: record.first,
         lastName: record.last,
