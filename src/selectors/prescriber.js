@@ -45,5 +45,13 @@ export const selectSortedPrescribers = createSelector(
 
 export const selectPrescriberModalOpen = ({ prescriber }) => {
   const { isCreatingPrescriber, isEditingPrescriber } = prescriber;
+
   return isCreatingPrescriber || isEditingPrescriber;
+};
+
+export const selectCanEditPrescriber = ({ prescriber }) => {
+  const { currentPrescriber } = prescriber;
+  const { fromThisStore } = currentPrescriber ?? {};
+
+  return fromThisStore ?? true;
 };
