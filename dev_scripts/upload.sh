@@ -7,7 +7,7 @@
 
 BUGSNAG_URL=https://upload.bugsnag.com/react-native-source-map
 BUGSNAG_KEY=16a680e189b1e5f03f28665870f1401f
-APP_VERSION=$(grep '"version":."' ../package.json | sed 's/"version"://' | tr -d ' ",')
+APP_VERSION=$(node -e "console.log(require('./package.json').version)")
 if [ -z "APP_VERSION" ] # if unable to obtain version
 then
 echo "Warning, unable to optain the APP_VERSION from package.json, exiting."
