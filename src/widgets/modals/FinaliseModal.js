@@ -42,6 +42,7 @@ export const FinaliseModal = props => {
   // Wrapped in try-catch block so that finalise methods in schema can throw an error
   // as last line of defence
   const tryFinalise = () => {
+    if (onClose) onClose();
     runWithLoadingIndicator(() => {
       try {
         if (record) {
@@ -54,7 +55,6 @@ export const FinaliseModal = props => {
             database.save(recordType, record);
           });
         }
-        if (onClose) onClose();
       } catch (error) {
         // Fling off to bugsnag so we can be notified finalise isn't
         // behaving
