@@ -19,6 +19,23 @@ import { CircleButton } from '../CircleButton';
 import { FormLabel } from './FormLabel';
 import { FormInvalidMessage } from './FormInvalidMessage';
 
+/**
+ * Form input for entering dates. Renders a TextInput as well as a button, opening a
+ * native Date picker.
+ *
+ * @prop {Date}   value                    A date or moment - The initial date.
+ * @prop {Bool}   isRequired               Indicator whether this date is required.
+ * @prop {Bool}   isDisabled               Indicator whether this input is disabled.
+ * @prop {Func}   onValidate               Callback to validate the input.
+ * @prop {Func}   onChangeDate             Callback for date changes[called only with a valid date].
+ * @prop {Func}   onSubmit                 Callback after submitting a date from text.
+ * @prop {String} label                    Label for the input
+ * @prop {String} placeholder              Placeholder text for the text input.
+ * @prop {String} placeholderTextColor     Colour of the placeholder text.
+ * @prop {String} underlineColorAndroid    Underline colour of the text input.
+ * @prop {String} invalidMessage           Message to the user when the current input is invalid.
+ * @prop {Object} textInputStyle           Style object to override the underlying text input.
+ */
 export const FormDateInput = React.forwardRef(
   (
     {
@@ -33,6 +50,7 @@ export const FormDateInput = React.forwardRef(
       placeholderTextColor,
       underlineColorAndroid,
       onSubmit,
+      isDisabled,
     },
     ref
   ) => {
@@ -101,8 +119,13 @@ export const FormDateInput = React.forwardRef(
               autoCorrect={false}
               onChangeText={onChangeTextCallback}
               onSubmitEditing={onSubmitEditing}
+              editable={!isDisabled}
             />
-            <CircleButton IconComponent={CalendarIcon} onPress={openDatePicker} />
+            <CircleButton
+              IconComponent={CalendarIcon}
+              onPress={openDatePicker}
+              isDisabled={isDisabled}
+            />
           </FlexRow>
 
           {datePickerOpen && (
@@ -136,6 +159,7 @@ FormDateInput.defaultProps = {
   onValidate: null,
   invalidMessage: '',
   onSubmit: null,
+  isDisabled: false,
 };
 
 FormDateInput.propTypes = {
@@ -150,4 +174,5 @@ FormDateInput.propTypes = {
   placeholderTextColor: PropTypes.string,
   underlineColorAndroid: PropTypes.string,
   onSubmit: PropTypes.func,
+  isDisabled: PropTypes.isDisabled,
 };
