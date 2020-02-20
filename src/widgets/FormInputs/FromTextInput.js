@@ -21,6 +21,8 @@ import { SUSSOL_ORANGE, APP_FONT_FAMILY, DARKER_GREY } from '../../globalStyles'
  * @prop {String} value                 The initial value of the input.
  * @prop {Object} labelStyle            Style of the label.
  * @prop {Object} textInputStyle        Style of the underlying TextInput.
+ * @prop {Func}   onSubmit              Callback from submitting - component holds internal state.
+ * @prop {Bool}   isDisabled            Indicator whether this component is disabled.
  */
 export const FormTextInput = React.forwardRef(
   (
@@ -36,6 +38,7 @@ export const FormTextInput = React.forwardRef(
       value,
       textInputStyle,
       onSubmit,
+      isDisabled,
     },
     ref
   ) => {
@@ -89,6 +92,7 @@ export const FormTextInput = React.forwardRef(
               autoCorrect={false}
               onChangeText={onChangeTextCallback}
               onSubmitEditing={onSubmitEditing}
+              editable={!isDisabled}
             />
             <FormInvalidMessage message={invalidMessage} isValid={isValid} />
           </View>
@@ -114,6 +118,7 @@ FormTextInput.defaultProps = {
   textInputStyle: localStyles.textInputStyle,
   onValidate: null,
   onSubmit: null,
+  isDisabled: false,
 };
 
 FormTextInput.propTypes = {
@@ -128,4 +133,5 @@ FormTextInput.propTypes = {
   invalidMessage: PropTypes.string,
   textInputStyle: PropTypes.object,
   onSubmit: PropTypes.func,
+  isDisabled: PropTypes.bool,
 };
