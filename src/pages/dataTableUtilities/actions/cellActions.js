@@ -203,7 +203,7 @@ export const editStocktakeBatchCountedQuantity = (value, rowKey, route) => (disp
   if (objectToEdit) {
     UIDatabase.write(() => {
       objectToEdit.countedTotalQuantity = parsePositiveInteger(value);
-      UIDatabase.save('StocktakeBatch', UIDatabase);
+      UIDatabase.save('StocktakeBatch', objectToEdit);
     });
   }
 
