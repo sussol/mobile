@@ -12,7 +12,27 @@ import { FormLabel } from './FormLabel';
 import { ToggleBar } from '../ToggleBar';
 import { FlexView } from '../FlexView';
 
-export const FormToggle = ({ label, options, optionLabels, value, onValueChange, isRequired }) => {
+/**
+ * Form input of a toggle selection. Multiple toggles can be rendered, with
+ * just one being selected.
+ *
+ * @prop {String} label         Label for this form input.
+ * @prop {Array}  options       The underlying options to select from.
+ * @prop {Array}  optionLabels  Array of labels for options i.e. ["Yes", "No"]
+ * @prop {String} value         The current selected value.
+ * @prop {Func}   onValueChange Callback after a toggle selection.
+ * @prop {Bool}   isRequired    Indicator whether this form input is required.
+ * @prop {Bool}   isDisabled    Indicator whether this form input is disabled.
+ */
+export const FormToggle = ({
+  label,
+  options,
+  optionLabels,
+  value,
+  onValueChange,
+  isRequired,
+  isDisabled,
+}) => {
   const toggles = React.useMemo(
     () =>
       options.map((option, index) => ({
@@ -27,6 +47,7 @@ export const FormToggle = ({ label, options, optionLabels, value, onValueChange,
     <FlexView flex={1}>
       <FormLabel value={label} isRequired={isRequired} />
       <ToggleBar
+        isDisabled={isDisabled}
         toggles={toggles}
         style={{ marginTop: 20 }}
         toggleOnStyle={{ flex: 1 }}
@@ -38,6 +59,7 @@ export const FormToggle = ({ label, options, optionLabels, value, onValueChange,
 
 FormToggle.defaultProps = {
   isRequired: false,
+  isDisabled: false,
 };
 
 FormToggle.propTypes = {
@@ -47,4 +69,5 @@ FormToggle.propTypes = {
   value: PropTypes.any.isRequired,
   label: PropTypes.string.isRequired,
   isRequired: PropTypes.bool,
+  isDisabled: PropTypes.bool,
 };
