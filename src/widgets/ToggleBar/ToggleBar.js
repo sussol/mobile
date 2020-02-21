@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -40,6 +41,7 @@ export const ToggleBarComponent = props => {
     textOnStyle,
     toggles,
     isDisabled,
+    toggleOnDisabledStyle,
     ...containerProps
   } = props;
 
@@ -47,9 +49,7 @@ export const ToggleBarComponent = props => {
     if (buttons.length === 0) return [];
     const renderOutput = [];
 
-    const defaultOnStyle = isDisabled
-      ? localStyles.toggleOnDisabledStyle
-      : localStyles.toggleOnStyle;
+    const defaultOnStyle = isDisabled ? toggleOnDisabledStyle : toggleOnStyle;
 
     buttons.forEach((button, i) => {
       const currentTextStyle = button.isOn
@@ -110,8 +110,8 @@ const localStyles = StyleSheet.create({
   toggleOnDisabledStyle: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: 142,
     backgroundColor: WARMER_GREY,
+    width: 142,
   },
 });
 
@@ -124,6 +124,7 @@ ToggleBarComponent.propTypes = {
   textOffStyle: Text.propTypes.style,
   textOnStyle: Text.propTypes.style,
   isDisabled: PropTypes.bool,
+  toggleOnDisabledStyle: PropTypes.object,
 };
 
 ToggleBarComponent.defaultProps = {
@@ -132,5 +133,6 @@ ToggleBarComponent.defaultProps = {
   toggleOnStyle: localStyles.toggleOnStyle,
   textOffStyle: globalStyles.toggleText,
   textOnStyle: globalStyles.toggleTextSelected,
+  toggleOnDisabledStyle: localStyles.toggleOnDisabledStyle,
   isDisabled: false,
 };
