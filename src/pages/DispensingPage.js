@@ -28,7 +28,7 @@ import { DispensaryActions } from '../actions/DispensaryActions';
 import { selectDataSetInUse, selectSortedData } from '../selectors/dispensary';
 import { selectPrescriberModalOpen, selectCanEditPrescriber } from '../selectors/prescriber';
 import { selectInsuranceModalOpen } from '../selectors/insurance';
-import { selectPatientModalOpen } from '../selectors/patient';
+import { selectPatientModalOpen, selectCanEditPatient } from '../selectors/patient';
 
 import globalStyles from '../globalStyles';
 import { dispensingStrings } from '../localization';
@@ -52,6 +52,7 @@ const Dispensing = ({
   patientEditModalOpen,
   currentPatient,
   patientHistoryModalOpen,
+  canEditPatient,
 
   // Patient callback
   editPatient,
@@ -175,6 +176,7 @@ const Dispensing = ({
         isVisible={patientEditModalOpen}
       >
         <FormControl
+          isDisabled={!canEditPatient}
           onSave={savePatient}
           onCancel={cancelPatientEdit}
           inputConfig={getFormInputConfig('patient', currentPatient)}
@@ -241,6 +243,7 @@ const mapStateToProps = state => {
 
   const prescriberModalOpen = selectPrescriberModalOpen(state);
   const canEditPrescriber = selectCanEditPrescriber(state);
+  const canEditPatient = selectCanEditPatient(state);
   const [patientEditModalOpen, patientHistoryModalOpen] = selectPatientModalOpen(state);
   const insuranceModalOpen = selectInsuranceModalOpen(state);
   const data = selectSortedData(state);
@@ -259,6 +262,7 @@ const mapStateToProps = state => {
     patientEditModalOpen,
     currentPatient,
     patientHistoryModalOpen,
+    canEditPatient,
     // Prescriber
     currentPrescriber,
     prescriberModalOpen,
@@ -320,6 +324,7 @@ Dispensing.propTypes = {
   savePatient: PropTypes.func.isRequired,
   cancelPatientEdit: PropTypes.func.isRequired,
   currentPatient: PropTypes.object,
+  canEditPatient: PropTypes.bool.isRequired,
   currentPrescriber: PropTypes.object,
   canEditPrescriber: PropTypes.bool,
   editPrescriber: PropTypes.func.isRequired,
