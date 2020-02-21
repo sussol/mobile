@@ -5,12 +5,13 @@
  */
 
 import React from 'react';
-
+import { StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 
 import { FormLabel } from './FormLabel';
 import { ToggleBar } from '../ToggleBar';
 import { FlexView } from '../FlexView';
+import { WARMER_GREY, SUSSOL_ORANGE } from '../../globalStyles';
 
 /**
  * Form input of a toggle selection. Multiple toggles can be rendered, with
@@ -49,13 +50,31 @@ export const FormToggle = ({
       <ToggleBar
         isDisabled={isDisabled}
         toggles={toggles}
-        style={{ marginTop: 20 }}
-        toggleOnStyle={{ flex: 1 }}
-        toggleOffStyle={{ flex: 1 }}
+        style={localStyles.toggleMargin}
+        toggleOnStyle={localStyles.toggleOnStyle}
+        toggleOffStyle={localStyles.toggleOffStyle}
+        toggleOnDisabledStyle={localStyles.toggleOnDisabledStyle}
       />
     </FlexView>
   );
 };
+
+const localStyles = StyleSheet.create({
+  toggleMargin: { marginTop: 20 },
+  toggleOnStyle: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: SUSSOL_ORANGE,
+  },
+  toggleOffStyle: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  toggleOnDisabledStyle: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: WARMER_GREY,
+  },
+});
 
 FormToggle.defaultProps = {
   isRequired: false,
