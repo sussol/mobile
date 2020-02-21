@@ -426,6 +426,13 @@ const createNumberSequence = (database, sequenceKey) =>
  * @param  {number}          number
  */
 const createNumberToReuse = (database, numberSequence, number) => {
+  const alreadyReusing = database
+    .objects('NumberToReuse')
+    .query('numberSequence == $0 && number == $1', numberSequence, number);
+
+  // If we are already reusing this number - shortcut return
+  if (alreadyReusing.length) return;
+
   const numberToReuse = database.create('NumberToReuse', {
     id: generateUUID(),
     numberSequence,
