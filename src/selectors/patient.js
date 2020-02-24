@@ -45,3 +45,10 @@ export const selectPatientModalOpen = ({ patient }) => {
   const { viewingHistory } = patient;
   return [isCreating || isEditing, viewingHistory];
 };
+
+export const selectCanEditPatient = ({ patient }) => {
+  const { currentPatient } = patient;
+  const { thisStoresPatient } = currentPatient ?? {};
+
+  return thisStoresPatient ?? true;
+};
