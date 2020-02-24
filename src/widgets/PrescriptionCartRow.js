@@ -61,7 +61,7 @@ const PrescriptionCartRowComponent = ({
 }) => {
   const itemDetails = React.useMemo(() => {
     const details = [{ label: generalStrings.code, text: itemCode }];
-    if (usingPayments) details.push({ label: generalStrings.price, text: price });
+    if (usingPayments) details.push({ label: generalStrings.total_price, text: price });
     return details;
   }, [itemCode, price]);
 
