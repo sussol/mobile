@@ -6,17 +6,17 @@ import { View, ScrollView, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { ValidationTextInput } from './ValidationTextInput';
 import { PageButton } from './PageButton';
+import { FormTextInput } from './FormInputs/FromTextInput';
+import { FormDateInput } from './FormInputs/FormDateInput';
+import { FormToggle } from './FormInputs/FormToggle';
+import { FormDropdown } from './FormInputs/FormDropdown';
+import { FormSlider } from './FormInputs/FormSlider';
 
 import globalStyles, { SUSSOL_ORANGE, WHITE } from '../globalStyles';
 import { modalStrings, generalStrings } from '../localization';
 import { selectCanSaveForm, selectCompletedForm } from '../selectors/form';
 import { FormActions } from '../actions/FormActions';
-import { FormDateInput } from './FormDateInput';
-import { FormToggle } from './FormInputs/FormToggle';
-import { FormDropdown } from './FormInputs/FormDropdown';
-import { FormSlider } from './FormInputs/FormSlider';
 
 /**
  * Component which will manage and control a set of user inputs of a form.
@@ -32,6 +32,7 @@ import { FormSlider } from './FormInputs/FormSlider';
  * @param {func}  completedForm   Object containing key:value pairs of valid inputs from the form.
  * @param {func}  initialiseForm  Dispatcher to initialise the redux state with the correct config.
  * @param {func}  onSave          Callback to invoke on saving the form, passing back completedForm.
+ * @param {bool}  isDisabled      Indicator whether this Form is disabled.
  * @param {Array} inputConfig     Configuration array of input config objects.
  *                                See { getFormInputConfig } from src/utilities/formInputConfigs.
  */
@@ -43,6 +44,7 @@ const FormControlComponent = ({
   initialiseForm,
   onSave,
   inputConfig,
+  isDisabled,
 }) => {
   const [refs, setRefs] = React.useState([]);
   React.useEffect(() => {
@@ -70,7 +72,7 @@ const FormControlComponent = ({
         switch (type) {
           case 'text': {
             return (
-              <ValidationTextInput
+              <FormTextInput
                 ref={refs[index]}
                 onSubmit={nextFocus(index, key)}
                 key={key}
@@ -80,6 +82,7 @@ const FormControlComponent = ({
                 onChangeText={value => onUpdateForm(key, value)}
                 label={label}
                 invalidMessage={invalidMessage}
+                isDisabled={isDisabled}
               />
             );
           }
@@ -95,6 +98,7 @@ const FormControlComponent = ({
                 onValidate={validator}
                 invalidMessage={invalidMessage}
                 onSubmit={nextFocus(index, key)}
+                isDisabled={isDisabled}
               />
             );
           }
@@ -109,6 +113,7 @@ const FormControlComponent = ({
                 onValueChange={value => onUpdateForm(key, value)}
                 options={options}
                 optionKey={optionKey}
+                isDisabled={isDisabled}
               />
             );
           }
@@ -123,6 +128,7 @@ const FormControlComponent = ({
                 key={key}
                 label={label}
                 isRequired={isRequired}
+                isDisabled={isDisabled}
               />
             );
           }
@@ -139,6 +145,7 @@ const FormControlComponent = ({
                 key={key}
                 label={label}
                 isRequired={isRequired}
+                isDisabled={isDisabled}
               />
             );
           }
@@ -161,7 +168,7 @@ const FormControlComponent = ({
         <PageButton
           onPress={onSaveCompletedForm}
           style={localStyles.saveButton}
-          isDisabled={!canSaveForm}
+          isDisabled={!canSaveForm || isDisabled}
           textStyle={localStyles.saveButtonTextStyle}
           text={generalStrings.save}
         />
@@ -196,6 +203,7 @@ const mapStateToProps = state => {
 
 FormControlComponent.defaultProps = {
   completedForm: null,
+  isDisabled: false,
 };
 
 FormControlComponent.propTypes = {
@@ -206,6 +214,7 @@ FormControlComponent.propTypes = {
   onUpdateForm: PropTypes.func.isRequired,
   inputConfig: PropTypes.array.isRequired,
   onCancelPressed: PropTypes.func.isRequired,
+  isDisabled: PropTypes.bool,
 };
 
 export const FormControl = connect(mapStateToProps, mapDispatchToProps)(FormControlComponent);

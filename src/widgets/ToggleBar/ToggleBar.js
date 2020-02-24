@@ -7,7 +7,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { StyleSheet, Text, TouchableOpacity, ViewPropTypes, View } from 'react-native';
-import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
+import globalStyles, { WARMER_GREY, SUSSOL_ORANGE } from '../../globalStyles';
 
 /**
  * Renders a bar of multiple toggling buttons, defined by the array 'toggles' passed in.
@@ -39,6 +39,7 @@ export const ToggleBarComponent = props => {
     textOffStyle,
     textOnStyle,
     toggles,
+    isDisabled,
     ...containerProps
   } = props;
 
@@ -46,16 +47,19 @@ export const ToggleBarComponent = props => {
     if (buttons.length === 0) return [];
     const renderOutput = [];
 
+    const defaultOnStyle = isDisabled
+      ? localStyles.toggleOnDisabledStyle
+      : localStyles.toggleOnStyle;
+
     buttons.forEach((button, i) => {
       const currentTextStyle = button.isOn
         ? [localStyles.textOnStyle, textOnStyle]
         : [localStyles.textOffStyle, textOffStyle];
-      const currentToggleStyle = button.isOn
-        ? [localStyles.toggleOnStyle, toggleOnStyle]
-        : [localStyles.toggleOffStyle, toggleOffStyle];
+      const currentToggleStyle = button.isOn ? defaultOnStyle : toggleOffStyle;
+      const Container = isDisabled ? View : TouchableOpacity;
 
       renderOutput.push(
-        <TouchableOpacity
+        <Container
           // TODO: use key which is not index.
           // eslint-disable-next-line react/no-array-index-key
           key={i}
@@ -63,7 +67,7 @@ export const ToggleBarComponent = props => {
           onPress={button.onPress}
         >
           <Text style={currentTextStyle}>{button.text}</Text>
-        </TouchableOpacity>
+        </Container>
       );
     });
 
@@ -80,24 +84,6 @@ export const ToggleBarComponent = props => {
 export const ToggleBar = React.memo(ToggleBarComponent);
 
 export default ToggleBar;
-
-ToggleBarComponent.propTypes = {
-  style: ViewPropTypes.style,
-  // eslint-disable-next-line react/require-default-props, react/forbid-prop-types
-  toggles: PropTypes.array,
-  toggleOffStyle: ViewPropTypes.style,
-  toggleOnStyle: ViewPropTypes.style,
-  textOffStyle: Text.propTypes.style,
-  textOnStyle: Text.propTypes.style,
-};
-
-ToggleBarComponent.defaultProps = {
-  style: globalStyles.toggleBar,
-  toggleOffStyle: globalStyles.toggleOption,
-  toggleOnStyle: globalStyles.toggleOptionSelected,
-  textOffStyle: globalStyles.toggleText,
-  textOnStyle: globalStyles.toggleTextSelected,
-};
 
 const localStyles = StyleSheet.create({
   container: {
@@ -121,4 +107,30 @@ const localStyles = StyleSheet.create({
     width: 142,
     backgroundColor: SUSSOL_ORANGE,
   },
+  toggleOnDisabledStyle: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 142,
+    backgroundColor: WARMER_GREY,
+  },
 });
+
+ToggleBarComponent.propTypes = {
+  style: ViewPropTypes.style,
+  // eslint-disable-next-line react/require-default-props, react/forbid-prop-types
+  toggles: PropTypes.array,
+  toggleOffStyle: ViewPropTypes.style,
+  toggleOnStyle: ViewPropTypes.style,
+  textOffStyle: Text.propTypes.style,
+  textOnStyle: Text.propTypes.style,
+  isDisabled: PropTypes.bool,
+};
+
+ToggleBarComponent.defaultProps = {
+  style: globalStyles.toggleBar,
+  toggleOffStyle: localStyles.toggleOffStyle,
+  toggleOnStyle: localStyles.toggleOnStyle,
+  textOffStyle: globalStyles.toggleText,
+  textOnStyle: globalStyles.toggleTextSelected,
+  isDisabled: false,
+};

@@ -3,10 +3,10 @@ import React from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 
-import { FormLabel } from './FormInputs/FormLabel';
-import { FormInvalidMessage } from './FormInputs/FormInvalidMessage';
+import { FormLabel } from './FormLabel';
+import { FormInvalidMessage } from './FormInvalidMessage';
 
-import { SUSSOL_ORANGE, APP_FONT_FAMILY, DARKER_GREY } from '../globalStyles';
+import { SUSSOL_ORANGE, APP_FONT_FAMILY, DARKER_GREY } from '../../globalStyles';
 
 /**
  * Uncontrolled wrapper component around a TextInput with validation
@@ -21,8 +21,10 @@ import { SUSSOL_ORANGE, APP_FONT_FAMILY, DARKER_GREY } from '../globalStyles';
  * @prop {String} value                 The initial value of the input.
  * @prop {Object} labelStyle            Style of the label.
  * @prop {Object} textInputStyle        Style of the underlying TextInput.
+ * @prop {Func}   onSubmit              Callback from submitting - component holds internal state.
+ * @prop {Bool}   isDisabled            Indicator whether this component is disabled.
  */
-export const ValidationTextInput = React.forwardRef(
+export const FormTextInput = React.forwardRef(
   (
     {
       placeholder,
@@ -36,6 +38,7 @@ export const ValidationTextInput = React.forwardRef(
       value,
       textInputStyle,
       onSubmit,
+      isDisabled,
     },
     ref
   ) => {
@@ -89,6 +92,7 @@ export const ValidationTextInput = React.forwardRef(
               autoCorrect={false}
               onChangeText={onChangeTextCallback}
               onSubmitEditing={onSubmitEditing}
+              editable={!isDisabled}
             />
             <FormInvalidMessage message={invalidMessage} isValid={isValid} />
           </View>
@@ -104,7 +108,7 @@ const localStyles = StyleSheet.create({
   textInputStyle: { flex: 1, fontFamily: APP_FONT_FAMILY },
 });
 
-ValidationTextInput.defaultProps = {
+FormTextInput.defaultProps = {
   placeholder: '',
   placeholderTextColor: SUSSOL_ORANGE,
   underlineColorAndroid: DARKER_GREY,
@@ -114,9 +118,10 @@ ValidationTextInput.defaultProps = {
   textInputStyle: localStyles.textInputStyle,
   onValidate: null,
   onSubmit: null,
+  isDisabled: false,
 };
 
-ValidationTextInput.propTypes = {
+FormTextInput.propTypes = {
   placeholder: PropTypes.string,
   placeholderTextColor: PropTypes.string,
   underlineColorAndroid: PropTypes.string,
@@ -128,4 +133,5 @@ ValidationTextInput.propTypes = {
   invalidMessage: PropTypes.string,
   textInputStyle: PropTypes.object,
   onSubmit: PropTypes.func,
+  isDisabled: PropTypes.bool,
 };

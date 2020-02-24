@@ -17,7 +17,7 @@ import { formInputStrings } from '../localization';
  *
  * FormInputConfig have the following structure:
  * {
- *     type: 'text' : A ValidationTextInput component
+ *     type: 'text' : A FormTextInput component
  *     initialValue : The value to seed the form input component with.
  *     key: A key for the underlying record.
  *     isRequired : Indicator whether this input is required to be filled for completion.

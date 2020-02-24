@@ -95,6 +95,7 @@ const createPrescriber = (database, prescriberDetails) => {
     ...prescriberDetails,
     address,
     // Defaults:
+    fromThisStore: true,
     isVisible: true,
     isActive: true,
   });

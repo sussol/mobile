@@ -37,7 +37,7 @@ export { TableShortcuts } from './TableShortcuts';
 export { TabNavigator } from './TabNavigator';
 export { TextInput } from './TextInput';
 export { ToggleBar } from './ToggleBar';
-export { ValidationTextInput } from './ValidationTextInput';
+export { FormTextInput } from './FormInputs/FromTextInput';
 export { Wizard } from './Wizard';
 
 export * from './icons';
