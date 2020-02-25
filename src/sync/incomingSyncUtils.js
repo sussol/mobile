@@ -940,6 +940,10 @@ export const integrateRecord = (database, settings, syncRecord) => {
   const changeType = SYNC_TYPES.translate(syncType, EXTERNAL_TO_INTERNAL);
   const internalRecordType = RECORD_TYPES.translate(recordType, EXTERNAL_TO_INTERNAL);
 
+  // If there is no translation available, then the app does not handle the record type.
+  // Shortcut return here and silently ignore it.
+  if (!internalRecordType) return;
+
   switch (changeType) {
     case CHANGE_TYPES.CREATE:
     case CHANGE_TYPES.UPDATE:

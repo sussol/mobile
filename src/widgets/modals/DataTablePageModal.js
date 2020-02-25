@@ -16,7 +16,7 @@ import { ModalContainer } from './ModalContainer';
 import {
   TextEditor,
   AutocompleteSelector,
-  NewConfirmModal,
+  ConfirmForm,
   GenericChoiceList,
   MultiSelectList,
   ToggleSelector,
@@ -176,7 +176,7 @@ const DataTablePageModalComponent = ({
 
       case MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM:
         return (
-          <NewConfirmModal
+          <ConfirmForm
             coverScreen
             noCancel
             isOpen={isOpen}

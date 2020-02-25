@@ -5,7 +5,7 @@
 
 export { AutocompleteSelector } from './AutocompleteSelector';
 export { TextEditor } from './TextEditor';
-export { NewConfirmModal } from './NewConfirmModal';
+export { ConfirmForm } from './ConfirmForm';
 export { GenericChoiceList } from './GenericChoiceList';
 export { MultiSelectList } from './MultiSelectList';
 export { ToggleSelector } from './ToggleSelector';
