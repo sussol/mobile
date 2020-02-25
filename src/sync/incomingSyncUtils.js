@@ -376,7 +376,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         rate: parseNumber(record.rate),
         description: record.currency,
         isDefaultCurrency: parseBoolean(record.is_home_currency ?? false),
-        lastUpdate: parseDate(record.date_updated),
+        lastUpdate: parseDate(record.date_updated) ?? new Date(),
       });
       return;
     }
