@@ -10,7 +10,31 @@ import { recordKeyExtractor } from './utilities';
 import getColumns from './getColumns';
 import getPageInfoColumns from './getPageInfoColumns';
 
+import { COLUMN_KEYS } from './constants';
 import { ROUTES } from '../../navigation/constants';
+import { SETTINGS_KEYS } from '../../settings';
+
+export const cashRegisterInitialiser = () => {
+  const backingData = UIDatabase.objects('CashTransaction');
+  const filteredData = backingData.slice();
+  const sortedData = sortDataBy(filteredData, COLUMN_KEYS.SERIAL_NUMBER, false);
+  const paymentTypes = UIDatabase.objects('PaymentType');
+  return {
+    paymentTypes,
+    currentPaymentType: paymentTypes[0],
+    backingData,
+    data: sortedData,
+    dataState: new Map(),
+    searchTerm: '',
+    sortKey: COLUMN_KEYS.SERIAL_NUMBER,
+    isAscending: true,
+    keyExtractor: recordKeyExtractor,
+    modalKey: '',
+    columns: getColumns(ROUTES.CASH_REGISTER),
+    transactionType: 'payment',
+    route: ROUTES.CASH_REGISTER,
+  };
+};
 
 /**
  * Gets data for initialising a customer invoice page from an associated transaction.
@@ -153,8 +177,6 @@ const stockInitialiser = () => {
     isAscending: true,
     selectedRow: null,
     route: ROUTES.STOCK,
-    columns: getColumns(ROUTES.STOCK),
-    getPageInfoColumns: getPageInfoColumns(ROUTES.STOCK),
   };
 };
 
@@ -193,19 +215,28 @@ const stocktakesInitialiser = () => {
  * @param    {StocktakeItem}  stocktakeItem
  * @returns  {object}
  */
-const stocktakeBatchInitialiser = stocktakeItem => ({
-  pageObject: stocktakeItem,
-  backingData: stocktakeItem.batches,
-  data: stocktakeItem.batches.slice(),
-  keyExtractor: recordKeyExtractor,
-  dataState: new Map(),
-  sortKey: 'itemName',
-  isAscending: true,
-  modalKey: '',
-  modalValue: null,
-  columns: getColumns(ROUTES.CUSTOMER_INVOICE),
-  getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_INVOICE),
-});
+const stocktakeBatchInitialiser = stocktakeItem => {
+  const thisStoreNameId = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_NAME_ID);
+  const suppliers = UIDatabase.objects('Name').filtered(
+    '(isVisible == true AND isSupplier == true AND id != $0) OR (type == "inventory_adjustment")',
+    thisStoreNameId
+  );
+
+  return {
+    pageObject: stocktakeItem,
+    backingData: stocktakeItem.batches,
+    data: stocktakeItem.batches.slice(),
+    keyExtractor: recordKeyExtractor,
+    dataState: new Map(),
+    sortKey: 'itemName',
+    isAscending: true,
+    modalKey: '',
+    modalValue: null,
+    columns: getColumns(ROUTES.CUSTOMER_INVOICE),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_INVOICE),
+    suppliers,
+  };
+};
 
 /**
  * Gets data for initialising a manage stocktake page from an associated stocktake item.
@@ -310,6 +341,10 @@ const supplierInvoiceInitialiser = transaction => {
 
   const sortedData = backingData.sorted('itemName').slice();
 
+  const pageInfoConstant = transaction.isSupplierInvoice
+    ? ROUTES.SUPPLIER_INVOICE
+    : 'supplierCredit';
+
   return {
     pageObject: transaction,
     backingData,
@@ -325,7 +360,7 @@ const supplierInvoiceInitialiser = transaction => {
     hasSelection: false,
     route: ROUTES.SUPPLIER_INVOICE,
     columns: getColumns(ROUTES.SUPPLIER_INVOICE),
-    getPageInfoColumns: getPageInfoColumns(ROUTES.SUPPLIER_INVOICE),
+    getPageInfoColumns: getPageInfoColumns(pageInfoConstant),
   };
 };
 
@@ -336,7 +371,7 @@ const supplierInvoiceInitialiser = transaction => {
  * @returns  {object}
  */
 const supplierInvoicesInitialiser = () => {
-  const backingData = UIDatabase.objects('SupplierInvoice');
+  const backingData = UIDatabase.objects('SupplierTransaction');
 
   const filteredData = backingData.filtered('status != $0', 'finalised').slice();
   const sortedData = sortDataBy(filteredData, 'serialNumber', false);
@@ -444,6 +479,8 @@ const pageInitialisers = {
   stock: stockInitialiser,
   stocktakeBatchEditModal: stocktakeBatchInitialiser,
   stocktakeBatchEditModalWithReasons: stocktakeBatchInitialiser,
+  stocktakeBatchEditModalWithPrices: stocktakeBatchInitialiser,
+  stocktakeBatchEditModalWithReasonsAndPrices: stocktakeBatchInitialiser,
   stocktakeEditor: stocktakeEditorInitialiser,
   stocktakeEditorWithReasons: stocktakeEditorWithReasonsInitialiser,
   stocktakeManager: stocktakeManagerInitialiser,
@@ -452,6 +489,7 @@ const pageInitialisers = {
   supplierInvoices: supplierInvoicesInitialiser,
   supplierRequisition: supplierRequisitionInitialiser,
   supplierRequisitions: supplierRequisitionsInitialiser,
+  cashRegister: cashRegisterInitialiser,
 };
 
 /**

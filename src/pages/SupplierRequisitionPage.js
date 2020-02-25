@@ -29,7 +29,7 @@ import {
   selectCurrentIndicatorCode,
   selectIndicatorTableColumns,
   selectIndicatorTableRows,
-} from './dataTableUtilities/selectors/indicatorSelectors';
+} from '../selectors/indicatorSelectors';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
 import { ROUTES } from '../navigation/constants';
@@ -95,10 +95,15 @@ const SupplierRequisition = ({
   onSetRequestedToSuggested,
   onAddMasterList,
   onApplyMasterLists,
+  onEditRequiredQuantityWithReason,
+  onEditRequisitionReason,
+  onApplyReason,
   route,
 }) => {
   // Listen for changes to this pages requisition. Refreshing data on side effects i.e. finalizing.
   useRecordListener(() => dispatch(refreshData), pageObject, 'Requisition');
+
+  const usingReasons = !!UIDatabase.objects('RequisitionReason').length;
 
   const { isFinalised, comment, theirRef, program, daysToSupply } = pageObject;
 
@@ -115,10 +120,12 @@ const SupplierRequisition = ({
   const getCallback = (colKey, propName) => {
     switch (colKey) {
       case 'requiredQuantity':
-        return onEditRequiredQuantity;
+        return usingReasons ? onEditRequiredQuantityWithReason : onEditRequiredQuantity;
       case 'remove':
         if (propName === 'onCheck') return onCheck;
         return onUncheck;
+      case 'reasonTitle':
+        return onEditRequisitionReason;
       default:
         // Indicators functionality generates columns at run-time from indicator attribute
         // data. If known column key not found, assume column is a dynamic indicators column.
@@ -136,6 +143,9 @@ const SupplierRequisition = ({
         return onEditComment;
       case MODAL_KEYS.SELECT_MASTER_LISTS:
         return onApplyMasterLists;
+      case MODAL_KEYS.ENFORCE_REQUISITION_REASON:
+      case MODAL_KEYS.REQUISITION_REASON:
+        return onApplyReason;
       default:
         return null;
     }
@@ -450,4 +460,7 @@ SupplierRequisition.propTypes = {
   onAddMasterList: PropTypes.func.isRequired,
   onApplyMasterLists: PropTypes.func.isRequired,
   route: PropTypes.string.isRequired,
+  onEditRequiredQuantityWithReason: PropTypes.func.isRequired,
+  onEditRequisitionReason: PropTypes.func.isRequired,
+  onApplyReason: PropTypes.func.isRequired,
 };

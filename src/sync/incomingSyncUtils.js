@@ -11,12 +11,12 @@ import {
   SYNC_TYPES,
   TRANSACTION_TYPES,
 } from './syncTranslators';
-import { CHANGE_TYPES, generateUUID } from '../database';
-import { deleteRecord } from '../database/utilities';
+import { CHANGE_TYPES } from '../database';
+import { deleteRecord, createRecord } from '../database/utilities';
 import { SETTINGS_KEYS } from '../settings';
 import { validateReport } from '../utilities';
 
-const { THIS_STORE_ID, THIS_STORE_TAGS, THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
+const { THIS_STORE_ID, THIS_STORE_TAGS, THIS_STORE_CODE, THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
 
 /**
  * Returns the number string as a float, or null if none passed.
@@ -108,13 +108,8 @@ const getOrCreateAddress = (database, line1, line2, line3, line4, zipCode) => {
     results = results.filtered('zipCode == $0', zipCode);
   }
   if (results.length > 0) return results[0];
-  const address = { id: generateUUID() };
-  if (typeof line1 === 'string') address.line1 = line1;
-  if (typeof line2 === 'string') address.line2 = line2;
-  if (typeof line3 === 'string') address.line3 = line3;
-  if (typeof line4 === 'string') address.line4 = line4;
-  if (typeof zipCode === 'string') address.zipCode = zipCode;
-  return database.create('Address', address);
+
+  return createRecord(database, 'Address', { line1, line2, line3, line4, zipCode });
 };
 
 /**
@@ -263,16 +258,48 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: ['name', 'startDate', 'endDate', 'periodScheduleID'],
       canBeBlank: [],
     },
+    Prescriber: {
+      cannotBeBlank: ['first_name', 'last_name', 'code'],
+      canBeBlank: [],
+    },
     Unit: {
       cannotBeBlank: [],
       canBeBlank: ['units', 'comment', 'order_number'],
+    },
+    ItemDirection: {
+      cannotBeBlank: ['directions', 'priority', 'item_ID'],
+      canBeBlank: [],
+    },
+    Abbreviation: {
+      cannotBeBlank: ['abbreviation', 'expansion'],
+      canBeBlank: [],
+    },
+    InsuranceProvider: {
+      cannotBeBlank: ['providerName', 'isActive', 'prescriptionValidityDays'],
+      canBeBlank: ['comment'],
+    },
+    InsurancePolicy: {
+      cannotBeBlank: [
+        'insuranceProviderID',
+        'nameID',
+        'isActive',
+        'policyNumberFamily',
+        'policyNumberPerson',
+        'expiryDate',
+        'discountRate',
+      ],
+      canBeBlank: ['type', 'policyNumberFull', 'enteredByID'],
+    },
+    Report: {
+      cannotBeBlank: ['ID', 'title', 'type', 'json'],
+      canBeBlank: [],
     },
     ProgramIndicator: {
       cannotBeBlank: ['code', 'program_ID', 'is_active'],
       canBeBlank: [],
     },
-    Report: {
-      cannotBeBlank: ['ID', 'title', 'type', 'json'],
+    PaymentType: {
+      cannotBeBlank: ['code', 'description'],
       canBeBlank: [],
     },
   };
@@ -310,21 +337,48 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
 export const createOrUpdateRecord = (database, settings, recordType, record) => {
   if (!sanityCheckIncomingRecord(recordType, record)) return; // Unsupported or malformed record.
   let internalRecord;
+
   switch (recordType) {
     case 'IndicatorAttribute': {
+      const indicator = database.getOrCreate('ProgramIndicator', record.indicator_ID);
       const indicatorAttribute = database.update(recordType, {
         id: record.ID,
-        indicator: database.getOrCreate('ProgramIndicator', record.indicator_ID),
+        indicator,
         description: record.description,
         code: record.code,
         index: parseNumber(record.index),
-        isRequired: parseBoolean(record.is_required),
+        isRequired: parseBoolean(record?.is_required ?? false),
         valueType: record.value_type,
-        defaultValue: record?.default_value,
+        defaultValue: record.default_value,
         axis: record.axis,
-        isActive: parseBoolean(record.is_active),
+        isActive: parseBoolean(record?.is_active ?? false),
       });
-      indicatorAttribute.indicator.addIndicatorAttributeIfUnique(indicatorAttribute);
+      indicator.addIndicatorAttributeIfUnique(indicatorAttribute);
+      break;
+    }
+    case 'InsuranceProvider': {
+      database.update(recordType, {
+        id: record.ID,
+        name: record.providerName,
+        comment: record?.comment,
+        validityDays: parseNumber(record?.prescriptionValidityDays || 0),
+        isActive: parseBoolean(record?.isActive || false),
+      });
+      return;
+    }
+    case 'InsurancePolicy': {
+      database.update(recordType, {
+        id: record.ID,
+        policyNumberFamily: record.policyNumberFamily,
+        policyNumberPerson: record.policyNumberPerson,
+        type: record.type,
+        discountRate: parseNumber(record.discountRate),
+        expiryDate: parseDate(record.expiryDate),
+        enteredBy: database.getOrCreate('User', record.enteredByID),
+        patient: database.getOrCreate('Name', record.nameID),
+        insuranceProvider: database.getOrCreate('InsuranceProvider', record.insuranceProviderID),
+        isActive: parseBoolean(record.isActive),
+      });
       break;
     }
     case 'IndicatorValue': {
@@ -479,6 +533,11 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'Name': {
+      const isPatient = record.type === 'patient';
+      const thisStoresPatient = record.supplying_store_id === settings.get(THIS_STORE_ID);
+
+      if (isPatient && !thisStoresPatient) break;
+
       internalRecord = {
         id: record.ID,
         name: record.name,
@@ -498,7 +557,15 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         isSupplier: parseBoolean(record.supplier),
         isManufacturer: parseBoolean(record.manufacturer),
         supplyingStoreId: record.supplying_store_id,
+        thisStoresPatient,
+        isPatient,
+        firstName: record.first,
+        lastName: record.last,
+        dateOfBirth: parseDate(record.date_of_birth),
       };
+
+      if (isPatient) internalRecord.isVisible = true;
+
       database.update(recordType, internalRecord);
       break;
     }
@@ -666,11 +733,11 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'Store': {
-      const { tags, custom_data } = record;
+      const { tags, custom_data, code } = record;
       const customData = parseJsonString(custom_data);
       if (settings.get(THIS_STORE_ID) === record.ID) {
         database.update('Setting', { key: THIS_STORE_TAGS, value: tags });
-
+        database.update('Setting', { key: THIS_STORE_CODE, value: code });
         database.update('Setting', {
           key: THIS_STORE_CUSTOM_DATA,
           value: customData ?? '',
@@ -695,10 +762,16 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
         confirmDate: parseDate(record.confirm_date),
         theirRef: record.their_ref,
+        mode: record.mode,
+        prescriber: database.getOrCreate('Prescriber', record.prescriber_ID),
         category,
         enteredBy,
         otherParty,
         linkedRequisition,
+        option: database.getOrCreate('Options', record.optionID),
+        subtotal: parseFloat(record.subtotal),
+        user1: record.user1,
+        paymentType: database.getOrCreate('PaymentType', record.paymentTypeID),
       };
       const transaction = database.update(recordType, internalRecord);
       if (linkedRequisition) {
@@ -707,8 +780,6 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
           linkedTransaction: transaction,
         });
       }
-      otherParty.addTransactionIfUnique(transaction);
-      database.save('Name', otherParty);
       break;
     }
     case 'TransactionCategory': {
@@ -746,6 +817,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         sortIndex: parseNumber(record.line_number),
         expiryDate: parseDate(record.expiry_date),
         batch: record.batch,
+        type: record.type,
       };
       const transactionBatch = database.update(recordType, internalRecord);
       transaction.addBatchIfUnique(database, transactionBatch);
@@ -800,7 +872,50 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       });
       break;
     }
+    case 'Prescriber': {
+      const fromThisStore = record.store_ID === settings.get(THIS_STORE_ID);
 
+      database.update(recordType, {
+        id: record.ID,
+        firstName: record.first_name,
+        lastName: record.last_name,
+        registrationCode: record.registration_code,
+        address: getOrCreateAddress(database, record.address1, record.address2),
+        isVisible: true,
+        isActive: true,
+        phoneNumber: record.phone,
+        mobileNumber: record.mobile,
+        emailAddress: record.email,
+        fromThisStore,
+      });
+      break;
+    }
+    case 'Abbreviation': {
+      database.update(recordType, {
+        id: record.ID,
+        expansion: record.expansion,
+        abbreviation: record.abbreviation,
+      });
+      break;
+    }
+    case 'ItemDirection': {
+      const item = database.getOrCreate('Item', record.item_ID);
+      database.update(recordType, {
+        id: record.ID,
+        item,
+        priority: Number(record.priority),
+        directions: record.directions,
+      });
+      break;
+    }
+    case 'PaymentType': {
+      database.update(recordType, {
+        id: record.ID,
+        code: record.code,
+        description: record.description,
+      });
+      break;
+    }
     default:
       break; // Silently ignore record types which are not used by mobile.
   }

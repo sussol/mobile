@@ -17,7 +17,7 @@ import { DemoSiteRequest } from '../../authentication';
 import { authStrings, generalStrings, demoUserModalStrings } from '../../localization';
 
 import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
-import ModalContainer from './ModalContainer';
+import { ModalContainer } from './ModalContainer';
 
 export class DemoUserModal extends React.Component {
   constructor(props) {

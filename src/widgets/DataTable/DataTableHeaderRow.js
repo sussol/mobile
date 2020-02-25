@@ -24,36 +24,34 @@ import { dataTableStyles } from '../../globalStyles';
  */
 const DataTableHeaderRow = React.memo(({ columns, sortKey, isAscending, onPress }) => {
   const { headerRow, headerCells, cellText } = dataTableStyles;
-  return (
-    <HeaderRow
-      style={headerRow}
-      renderCells={() =>
-        columns.map(({ key, title, sortable, width, alignText }, index) => {
-          const sortDirection = isAscending ? 'ASC' : 'DESC';
-          const directionForThisColumn = key === sortKey ? sortDirection : null;
-          const isLastCell = index === columns.length - 1;
+  const renderCells = React.useCallback(
+    () =>
+      columns.map(({ key, title, sortable, width, alignText }, index) => {
+        const sortDirection = isAscending ? 'ASC' : 'DESC';
+        const directionForThisColumn = key === sortKey ? sortDirection : null;
+        const isLastCell = index === columns.length - 1;
 
-          return (
-            <HeaderCell
-              key={key}
-              title={title}
-              SortAscComponent={SortAscIcon}
-              SortDescComponent={SortDescIcon}
-              SortNeutralComponent={SortNeutralIcon}
-              columnKey={key}
-              onPress={sortable ? onPress : null}
-              sortDirection={directionForThisColumn}
-              sortable={sortable}
-              width={width}
-              containerStyle={headerCells[alignText || 'left']}
-              textStyle={cellText[alignText || 'left']}
-              isLastCell={isLastCell}
-            />
-          );
-        })
-      }
-    />
+        return (
+          <HeaderCell
+            key={key}
+            title={title}
+            SortAscComponent={<SortAscIcon />}
+            SortDescComponent={<SortDescIcon />}
+            SortNeutralComponent={<SortNeutralIcon />}
+            columnKey={key}
+            onPress={sortable ? onPress : null}
+            sortDirection={directionForThisColumn}
+            sortable={sortable}
+            width={width}
+            containerStyle={headerCells[alignText || 'left']}
+            textStyle={cellText[alignText || 'left']}
+            isLastCell={isLastCell}
+          />
+        );
+      }),
+    [columns, sortKey, isAscending, onPress]
   );
+  return <HeaderRow style={headerRow} renderCells={renderCells} />;
 });
 
 DataTableHeaderRow.propTypes = {

@@ -28,11 +28,18 @@ export const ROUTES = {
   SUPPLIER_INVOICES: 'supplierInvoices',
 
   STOCK: 'stock',
+  STOCK_WITH_CREDITS: 'stockWithCredits',
 
   STOCKTAKES: 'stocktakes',
   STOCKTAKE_MANAGER: 'stocktakeManager',
   STOCKTAKE_EDITOR: 'stocktakeEditor',
   STOCKTAKE_EDITOR_WITH_REASONS: 'stocktakeEditorWithReasons',
+
+  DISPENSARY: 'dispensary',
+  PRESCRIPTIONS: 'prescriptions',
+  PRESCRIPTION: 'prescription',
+
+  CASH_REGISTER: 'cashRegister',
 
   SETTINGS: 'settings',
   DASHBOARD: 'dashboard',

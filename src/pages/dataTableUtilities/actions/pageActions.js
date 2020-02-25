@@ -6,7 +6,7 @@
 import { UIDatabase } from '../../../database/index';
 import { MODAL_KEYS } from '../../../utilities';
 import { ACTIONS } from './constants';
-import { pageObjectSelector, pageStateSelector } from '../selectors/pageSelectors';
+import { pageObjectSelector, pageStateSelector } from '../../../selectors/pageSelectors';
 
 /**
  * Refreshes the underlying data array by slicing backingData.
@@ -17,6 +17,11 @@ import { pageObjectSelector, pageStateSelector } from '../selectors/pageSelector
  *       tableActions.js
  */
 const refreshData = route => ({ type: ACTIONS.REFRESH_DATA, payload: { route } });
+
+export const updatePaymentType = (paymentType, route) => ({
+  type: 'updatePaymentType',
+  payload: { paymentType, route },
+});
 
 /**
  * Edits the name field in the current store.
@@ -56,10 +61,14 @@ export const closeAndRefresh = route => (dispatch, getState) => {
  */
 export const openModal = (modalKey, value, route) => {
   switch (modalKey) {
+    case MODAL_KEYS.REQUISITION_REASON:
+    case MODAL_KEYS.ENFORCE_REQUISITION_REASON:
     case MODAL_KEYS.STOCKTAKE_REASON:
     case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
     case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
+    case MODAL_KEYS.SELECT_ITEM_BATCH_SUPPLIER:
       return { type: ACTIONS.OPEN_MODAL, payload: { modalKey, rowKey: value, route } };
+    case MODAL_KEYS.CREATE_CASH_TRANSACTION:
     case MODAL_KEYS.MONTHS_SELECT:
     case MODAL_KEYS.PROGRAM_REQUISITION:
     case MODAL_KEYS.PROGRAM_STOCKTAKE:
@@ -78,6 +87,19 @@ export const openModal = (modalKey, value, route) => {
     default:
       return { type: ACTIONS.OPEN_MODAL, payload: { modalKey, route: route || value } };
   }
+};
+
+export const editPrescriber = (value, route) => (dispatch, getState) => {
+  const pageObject = pageObjectSelector(getState());
+
+  UIDatabase.write(() => {
+    UIDatabase.update('Transaction', {
+      ...pageObject,
+      prescriber: value,
+    });
+  });
+
+  dispatch(closeModal(route));
 };
 
 /**
@@ -192,4 +214,6 @@ export const PageActionsLookup = {
   resetStocktake,
   closeAndRefresh,
   editPageObjectName,
+  editPrescriber,
+  updatePaymentType,
 };
