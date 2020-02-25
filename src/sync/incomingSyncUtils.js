@@ -302,6 +302,10 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: ['code', 'description'],
       canBeBlank: [],
     },
+    Currency: {
+      cannotBeBlank: [],
+      canBeBlank: [],
+    },
   };
 
   if (!requiredFields[recordType]) return false; // Unsupported record type
@@ -363,6 +367,16 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         comment: record?.comment,
         validityDays: parseNumber(record?.prescriptionValidityDays || 0),
         isActive: parseBoolean(record?.isActive || false),
+      });
+      return;
+    }
+    case 'Currency': {
+      database.update(recordType, {
+        id: record.ID,
+        rate: parseNumber(record.rate),
+        description: record.currency,
+        isDefaultCurrency: parseBoolean(record.is_home_currency ?? false),
+        lastUpdate: parseDate(record.date_updated),
       });
       return;
     }
@@ -932,6 +946,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
  * @param   {object}  syncRecord  Data representing the sync record.
  * @return  {none}
  */
+
 export const integrateRecord = (database, settings, syncRecord) => {
   // Ignore sync record if missing data, record type, sync type, or record ID.
   if (!syncRecord.RecordType || !syncRecord.SyncType) return;
