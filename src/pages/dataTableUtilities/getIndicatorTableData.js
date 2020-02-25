@@ -76,7 +76,7 @@ const mapIndicatorTableColumns = (indicatorColumns, isEditable) => {
       key,
     };
   });
-  return [COLUMNS[COLUMN_NAMES.DESCRIPTION], COLUMNS[COLUMN_NAMES.CODE], ...valueColumns];
+  return [COLUMNS[COLUMN_NAMES.CODE], COLUMNS[COLUMN_NAMES.DESCRIPTION], ...valueColumns];
 };
 
 export { mapIndicatorTableRows, mapIndicatorTableColumns };
