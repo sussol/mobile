@@ -92,6 +92,8 @@ const generateSyncData = (settings, recordType, record) => {
         customer: String(record.isCustomer),
         address1: record.address?.line1,
         address2: record.address?.line2,
+        barcode: `*${record.code}*`,
+        charge_code: record.code,
       };
     }
     case 'NumberSequence': {
