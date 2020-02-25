@@ -429,7 +429,7 @@ const createNumberSequence = (database, sequenceKey) =>
 const createNumberToReuse = (database, numberSequence, number) => {
   const alreadyReusing = database
     .objects('NumberToReuse')
-    .query('numberSequence == $0 && number == $1', numberSequence, number);
+    .filtered('numberSequence == $0 && number == $1', numberSequence, number);
 
   // If we are already reusing this number - shortcut return
   if (alreadyReusing.length) return;
