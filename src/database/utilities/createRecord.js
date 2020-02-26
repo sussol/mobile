@@ -361,22 +361,6 @@ const createCustomerRefundLine = (database, customerCredit, transactionBatch) =>
   return refundLine;
 };
 
-const createCustomerCreditLine = (database, customerCredit, total) => {
-  const receiptLine = database.create('TransactionBatch', {
-    id: generateUUID(),
-    total,
-    transaction: customerCredit,
-    type: 'cash_in',
-    note: 'credit',
-  });
-
-  customerCredit.outstanding += total;
-
-  database.save('Transaction', customerCredit);
-  database.save('TransactionBatch', receiptLine);
-  return receiptLine;
-};
-
 /**
  * Create a customer invoice associated with a given customer.
  *
@@ -846,8 +830,6 @@ export const createRecord = (database, type, ...args) => {
       return createOffsetCustomerCredit(database, ...args);
     case 'SupplierCredit':
       return createSupplierCredit(database, ...args);
-    case 'CustomerCreditLine':
-      return createCustomerCreditLine(database, ...args);
     case 'SupplierCreditLine':
       return createSupplierCreditLine(database, ...args);
     case 'InsurancePolicy':
