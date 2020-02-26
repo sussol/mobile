@@ -29,6 +29,7 @@ export const validationStrings = new LocalizedStrings({
   fr: {},
   gil: {},
   tl: {},
+  pt: {}
 });
 
 export default validationStrings;

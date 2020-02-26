@@ -104,6 +104,7 @@
   "pt": {
     "current_stock": "Estoque atual",
     "customer_invoices": "Faturas para clientes",
+    "supplier_credit": "Crédito para fornecedor",
     "customer_requisitions": "Requisições de clientes",
     "customers": "Clientes",
     "finalise": "FINALIZAR",
@@ -121,6 +122,8 @@
     "settings": "configuração",
     "database_contents": "Conteúdo da base de dados",
     "dispensary": "Distribuição",
-    "dashboard": "Painéis"
+    "dashboard": "Painéis",
+    "cash_register": "Caixa registradora",
+    "prescription": "Prescrição"
   }
 }

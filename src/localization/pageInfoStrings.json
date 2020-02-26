@@ -76,6 +76,7 @@
     "code": "Código",
     "comment": "Comentário",
     "confirm_date": "Data de confirmação",
+    "current_balance": "Balanço em caixa",
     "customer": "Cliente",
     "entered_by": "Criado por",
     "entry_date": "Data de criação",
@@ -83,6 +84,7 @@
     "stocktake_name": "Nome do inventário",
     "supplier": "Fornecedor",
     "their_ref": "Referência do outro local",
-    "by_batch": "Por lote"
+    "by_batch": "Por lote",
+    "category": "Categoria"
   }
 }

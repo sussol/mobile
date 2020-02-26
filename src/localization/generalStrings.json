@@ -124,7 +124,14 @@
     "item_code": "código do item",
     "customer": "cliente",
     "code": "código",
+    "price": "preço",
+    "total_price": "preço total",
     "name": "nome",
-    "or": "ou"
+    "or": "ou",
+    "expiry_date": "Data de validade",
+    "quantity": "Quantidade",
+    "to": "para",
+    "batch_name": "Nome do lote",
+    "save": "Salvar"
   }
 }
