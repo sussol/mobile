@@ -65,10 +65,12 @@ export const pay = (
   const receipt = createRecord(UIDatabase, 'Receipt', currentUser, patient, cashAmount, null, '');
 
   createRecord(UIDatabase, 'ReceiptLine', receipt, script, cashAmount);
+  createRecord(UIDatabase, 'ReceiptLine', receipt, script, creditAmount);
 
   // When using credit, create a CustomerCreditLine and ReceiptLine for each
   // source of credit being used.
   let creditToAllocate = creditAmount;
+
   if (usingCredit) {
     // Iterate over all the patients CustomerCredits, taking credit
     // from each with available credit, until all has been allocated.
@@ -79,8 +81,6 @@ export const pay = (
 
       const amountToTake = Math.min(Math.abs(creditFromCustomerCredit), creditToAllocate);
 
-      createRecord(UIDatabase, 'CustomerCreditLine', customerCredit, amountToTake);
-      createRecord(UIDatabase, 'ReceiptLine', receipt, customerCredit, amountToTake);
       createRecord(UIDatabase, 'ReceiptLine', receipt, customerCredit, -amountToTake);
 
       creditToAllocate -= amountToTake;
