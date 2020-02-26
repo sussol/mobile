@@ -36,28 +36,29 @@ export class Name extends Realm.Object {
   }
 
   /**
-   * The customer credits for this name are the literal customer credit type transactions, as well
+   * The credit sources for this name are the literal customer credit type transactions, as well
    * as any customer invoices which are cancellations. These cancelled customer invoices are
    * inverted customer invoices, which are equivallent to a customer credit.
    */
-  get customerCredits() {
-    const queryString = 'type == $0 || (type == $1 && isCancellation == $2)';
+  get creditSources() {
+    const queryString = 'type == $0 || (type == $1 && isCancellation == $2) && outstanding != 0';
     return this.transactions.filtered(queryString, 'customer_credit', 'customer_invoice', true);
   }
 
   /**
-   * Returns all customer invoices for this Name
+   * Debit sources are customer invoices which are not cancellations - all outgoings.
    */
-  get customerInvoices() {
-    return this.transactions.filtered('type == $0', 'customer_invoice');
+  get debitSources() {
+    const queryString = 'type == $0 && isCancellation == $2 && outstanding != 0';
+    return this.transactions.filtered(queryString, 'customer_invoice', false);
   }
 
   /**
    * Returns the available credit for this Name.
    */
   get availableCredit() {
-    const sumOfCredits = this.customerCredits.sum('outstanding');
-    const sumOfDebits = this.customerInvoices.sum('outstanding');
+    const sumOfCredits = this.creditSources.sum('outstanding');
+    const sumOfDebits = this.debitSources.sum('outstanding');
 
     return Math.abs(sumOfCredits + sumOfDebits);
   }
