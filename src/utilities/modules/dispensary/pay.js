@@ -5,6 +5,7 @@
 
 import { createRecord } from '../../../database/utilities';
 import { UIDatabase } from '../../../database';
+import { dispensingStrings } from '../../../localization';
 
 /**
  * Helper method to pay off a prescription. Given a cash amount
@@ -61,8 +62,16 @@ export const pay = (
   if (creditAmount > availableCredit) throw new Error('Not enough credit');
 
   // Create a Receipt and ReceiptLine for every payment path.
-
-  const receipt = createRecord(UIDatabase, 'Receipt', currentUser, patient, cashAmount, null, '');
+  const receiptDescription = `${dispensingStrings.receipt_for_invoice} ${script.serialNumber}`;
+  const receipt = createRecord(
+    UIDatabase,
+    'Receipt',
+    currentUser,
+    patient,
+    cashAmount,
+    null,
+    receiptDescription
+  );
 
   createRecord(UIDatabase, 'ReceiptLine', receipt, script, cashAmount);
 
