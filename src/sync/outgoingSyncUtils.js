@@ -187,6 +187,11 @@ const generateSyncData = (settings, recordType, record) => {
       };
     }
     case 'Transaction': {
+      const defaultCurrency = UIDatabase.objects('Currency').filtered(
+        'isDefaultCurrency == $0',
+        true
+      )[0];
+
       return {
         ID: record.id,
         name_ID: record.otherParty && record.otherParty.id,
@@ -218,6 +223,9 @@ const generateSyncData = (settings, recordType, record) => {
         entry_time: getTimeString(record.entryDate),
         Date_order_written: getDateString(record.entryDate),
         isCancellation: String(record?.isCancellation ?? false),
+        currency_ID: defaultCurrency?.id ?? '',
+        currency_rate: String(defaultCurrency?.rate ?? ''),
+        optionID: record.option?.id ?? '',
       };
     }
     case 'TransactionBatch': {
