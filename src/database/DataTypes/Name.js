@@ -36,10 +36,13 @@ export class Name extends Realm.Object {
   }
 
   /**
-   * Returns all customer credits for this Name
+   * The customer credits for this name are the literal customer credit type transactions, as well
+   * as any customer invoices which are cancellations. These cancelled customer invoices are
+   * inverted customer invoices, which are equivallent to a customer credit.
    */
   get customerCredits() {
-    return this.transactions.filtered('type == $0', 'customer_credit');
+    const queryString = 'type == $0 || (type == $1 && isCancellation == $2)';
+    return this.transactions.filtered(queryString, 'customer_credit', 'customer_invoice', true);
   }
 
   /**
