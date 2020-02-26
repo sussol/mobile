@@ -224,6 +224,7 @@ const generateSyncData = (settings, recordType, record) => {
         Date_order_written: getDateString(record.entryDate),
         currency_ID: defaultCurrency?.id ?? '',
         currency_rate: String(defaultCurrency?.rate ?? ''),
+        optionID: record.option?.id ?? '',
       };
     }
     case 'TransactionBatch': {
