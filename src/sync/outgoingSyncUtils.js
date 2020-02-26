@@ -262,7 +262,7 @@ const generateSyncData = (settings, recordType, record) => {
       // Only sync out prescribers from this store.
       if (!record.fromThisStore) return null;
 
-      const initials = `${record.firstName[0] ?? ''}${record.lastName[0] ?? ''}`;
+      const initials = `${record.firstName?.[0] ?? ''}${record.lastName?.[0] ?? ''}`;
 
       return {
         ID: record.id,
