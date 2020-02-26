@@ -217,6 +217,7 @@ const generateSyncData = (settings, recordType, record) => {
         paymentTypeID: record?.paymentType?.id ?? '',
         entry_time: getTimeString(record.entryDate),
         Date_order_written: getDateString(record.entryDate),
+        isCancellation: String(record?.isCancellation ?? false),
       };
     }
     case 'TransactionBatch': {
