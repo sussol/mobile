@@ -172,6 +172,7 @@ const createCashIn = (database, user, cashTransaction) => {
 
 const createOffsetCustomerInvoice = (database, payment) => {
   const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+
   const currentDate = new Date();
   const invoice = database.create('Transaction', {
     id: generateUUID(),
@@ -186,6 +187,7 @@ const createOffsetCustomerInvoice = (database, payment) => {
     outstanding: payment.subtotal,
     enteredBy: payment.enteredBy,
     linkedTransaction: payment,
+    paymentType: payment?.paymentType,
   });
 
   return invoice;
@@ -321,6 +323,7 @@ const createOffsetCustomerCredit = (database, receipt) => {
     subtotal: -receipt.subtotal,
     outstanding: -receipt.subtotal,
     linkedTransaction: receipt,
+    paymentType: receipt?.paymentType,
   });
 
   database.save('Transaction', customerCredit);
