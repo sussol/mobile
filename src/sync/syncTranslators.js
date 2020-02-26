@@ -73,6 +73,7 @@ export const RECORD_TYPES = new SyncTranslator({
   Abbreviation: 'abbreviation',
   InsuranceProvider: 'insuranceProvider',
   InsurancePolicy: 'nameInsuranceJoin',
+  Currency: 'currency',
 });
 
 export const REQUISITION_TYPES = new SyncTranslator({

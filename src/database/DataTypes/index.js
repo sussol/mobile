@@ -49,3 +49,4 @@ export { Unit } from './Unit';
 export { Prescriber } from './Prescriber';
 export { Abbreviation } from './Abbreviation';
 export { ItemDirection } from './ItemDirection';
+export { Currency } from './Currency';

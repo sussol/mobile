@@ -5,6 +5,7 @@
 
 import {
   Address,
+  Currency,
   Item,
   ItemBatch,
   ItemCategory,
@@ -185,6 +186,7 @@ export const schema = {
     Abbreviation,
     ItemDirection,
     User,
+    Currency,
   ],
   schemaVersion: 56,
 };

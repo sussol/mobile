@@ -78,6 +78,11 @@ const generateSyncData = (settings, recordType, record) => {
     case 'Name': {
       if (!record.isPatient) return false;
 
+      const defaultCurrency = UIDatabase.objects('Currency').filtered(
+        'isDefaultCurrency == $0',
+        true
+      )[0];
+
       return {
         id: record.id,
         type: record.type,
@@ -90,6 +95,11 @@ const generateSyncData = (settings, recordType, record) => {
         supplying_store_id: settings.get(THIS_STORE_ID),
         phone: record.phoneNumber,
         customer: String(record.isCustomer),
+        address1: record.address?.line1,
+        address2: record.address?.line2,
+        barcode: `*${record.code}*`,
+        'charge code': record.code,
+        currency_id: defaultCurrency?.id ?? '',
       };
     }
     case 'NumberSequence': {
