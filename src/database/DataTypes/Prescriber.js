@@ -18,6 +18,7 @@ Prescriber.schema = {
     emailAddress: { type: 'string', optional: true },
     transactions: { type: 'linkingObjects', objectType: 'Transaction', property: 'prescriber' },
     fromThisStore: { type: 'bool', default: false },
+    female: { type: 'bool', default: false },
   },
 };
 

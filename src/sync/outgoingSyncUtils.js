@@ -272,17 +272,22 @@ const generateSyncData = (settings, recordType, record) => {
       // Only sync out prescribers from this store.
       if (!record.fromThisStore) return null;
 
+      const initials = `${record.firstName?.[0] ?? ''}${record.lastName?.[0] ?? ''}`;
+
       return {
         ID: record.id,
         last_name: record.lastName,
         first_name: record.firstName,
+        code: record.registrationCode,
         registration_code: record.registrationCode,
         email: record.emailAddress,
         phone: record.phoneNumber,
-        active: record.isActive,
+        active: String(record.isActive),
         address1: record.address?.line1,
         address2: record.address?.line2,
         store_ID: settings.get(THIS_STORE_ID),
+        female: String(record.female),
+        initials,
       };
     }
     default:
