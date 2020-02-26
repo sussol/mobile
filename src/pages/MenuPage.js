@@ -25,6 +25,8 @@ import {
   gotoStock,
   gotoStocktakes,
   gotoRealmExplorer,
+  goToCashRegister,
+  gotoDispensingPage,
   gotoSettings,
   gotoDashboard,
 } from '../navigation/actions';
@@ -49,10 +51,13 @@ const Menu = ({
   toSupplierInvoices,
   toSupplierRequisitions,
   toRealmExplorer,
+  toDispensary,
   toSettings,
   toDashboard,
+  toCashRegister,
   usingDashboard,
   usingDispensary,
+  usingCashRegister,
   usingModules,
   isAdmin,
 }) => {
@@ -63,7 +68,7 @@ const Menu = ({
 
   const MenuButton = useCallback(
     props => <Button style={menuButton} textStyle={buttonText} {...props} />,
-    [usingDashboard, usingDispensary, usingModules]
+    [usingDashboard, usingDispensary, usingCashRegister, usingModules]
   );
 
   const CustomerSection = useCallback(
@@ -80,7 +85,7 @@ const Menu = ({
         </View>
       </View>
     ),
-    [usingDashboard, usingDispensary, usingModules]
+    [usingDashboard, usingDispensary, usingCashRegister, usingModules]
   );
 
   const SupplierSection = useCallback(
@@ -97,7 +102,7 @@ const Menu = ({
         </View>
       </View>
     ),
-    [usingDashboard, usingDispensary, usingModules]
+    [usingDashboard, usingDispensary, usingCashRegister, usingModules]
   );
 
   const StockSection = useCallback(
@@ -112,7 +117,7 @@ const Menu = ({
         </View>
       </View>
     ),
-    [usingDashboard, usingDispensary, usingModules]
+    [usingDashboard, usingDispensary, usingCashRegister, usingModules]
   );
 
   const ModulesSection = useCallback(
@@ -120,12 +125,15 @@ const Menu = ({
       <View style={containerStyle}>
         <ModulesImage style={image} />
         <View>
-          {usingDispensary && <MenuButton text={navStrings.dispensary} />}
+          {usingDispensary && <MenuButton text={navStrings.dispensary} onPress={toDispensary} />}
           {usingDashboard && <MenuButton text={navStrings.dashboard} onPress={toDashboard} />}
+          {usingCashRegister && (
+            <MenuButton text={navStrings.cash_register} onPress={toCashRegister} />
+          )}
         </View>
       </View>
     ),
-    [usingDashboard, usingDispensary, usingModules]
+    [usingDashboard, usingDispensary, usingCashRegister, usingModules]
   );
 
   const AdminRow = useCallback(
@@ -171,7 +179,7 @@ const Menu = ({
         </View>
       </View>
     ),
-    [usingModules]
+    [usingModules, usingDashboard, usingDispensary, usingCashRegister]
   );
 
   const OriginalLayout = useCallback(
@@ -194,8 +202,8 @@ const Menu = ({
 };
 
 const styles = {
-  moduleTopRow: { flex: 9 },
-  originalTopRow: { flex: 9, flexDirection: 'row' },
+  moduleTopRow: { flex: 19 },
+  originalTopRow: { flex: 19, flexDirection: 'row' },
   moduleRow: { flex: 1, flexDirection: 'row' },
   image: { height: 150, width: 150, marginBottom: 30 },
   bottomIcon: { color: GREY },
@@ -210,14 +218,14 @@ const styles = {
     alignItems: 'center',
     borderColor: SHADOW_BORDER,
     backgroundColor: 'white',
-    marginTop: 30,
+    marginBottom: 5,
     flex: 1,
     borderWidth: 1,
   },
   moduleContainer: {
     justifyContent: 'center',
     flexDirection: 'row',
-    marginHorizontal: 15,
+    marginHorizontal: 5,
   },
   originalContainer: {
     justifyContent: 'flex-start',
@@ -235,18 +243,27 @@ const mapDispatchToProps = dispatch => ({
   toSupplierRequisitions: () => dispatch(gotoSupplierRequisitions()),
   toRealmExplorer: () => dispatch(gotoRealmExplorer()),
   toSettings: () => dispatch(gotoSettings()),
+  toDispensary: () => dispatch(gotoDispensingPage()),
   toDashboard: () => dispatch(gotoDashboard()),
+  toCashRegister: () => dispatch(goToCashRegister()),
   logout: () => dispatch(UserActions.logout()),
 });
 
 const mapStateToProps = state => {
   const { modules, user } = state;
   const { currentUser } = user;
-  const { usingDashboard, usingDispensary, usingVaccines, usingModules } = modules;
+  const {
+    usingDashboard,
+    usingDispensary,
+    usingVaccines,
+    usingCashRegister,
+    usingModules,
+  } = modules;
   return {
     usingDashboard,
     usingDispensary,
     usingVaccines,
+    usingCashRegister,
     usingModules,
     isAdmin: currentUser?.isAdmin,
   };
@@ -269,10 +286,13 @@ Menu.propTypes = {
   toSupplierInvoices: PropTypes.func.isRequired,
   toSupplierRequisitions: PropTypes.func.isRequired,
   toRealmExplorer: PropTypes.func.isRequired,
+  toDispensary: PropTypes.func.isRequired,
   toSettings: PropTypes.func.isRequired,
   toDashboard: PropTypes.func.isRequired,
+  toCashRegister: PropTypes.func.isRequired,
   isAdmin: PropTypes.bool,
   usingDispensary: PropTypes.bool.isRequired,
   usingDashboard: PropTypes.bool.isRequired,
+  usingCashRegister: PropTypes.bool.isRequired,
   usingModules: PropTypes.bool.isRequired,
 };

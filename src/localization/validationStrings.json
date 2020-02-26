@@ -9,7 +9,16 @@
     "repeat_password_required": "Enter the repeat password",
     "username_required": "Enter the username"
   },
-  "fr": {},
+  "fr": {
+    "email_required": "Saisir une addresse courriel",
+    "email_valid": "Saisir une addresse courriel valide",
+    "password_contains_spaces": "Le mot de passe ne peut contenir des espaces",
+    "password_length_invalid": "Le mot de passe doit avoir entre 8-32 caractères",
+    "password_match_repeat": "Mot de passe & la confirmation du mot de passe doivent correspondre",
+    "password_required": "Saisissez le mot de passe",
+    "repeat_password_required": "Saisissez la confirmation du mot de passe",
+    "username_required": "Saisir le nom d'utilisateur"
+  },
   "gil": {},
   "tl": {},
   "la": {},

@@ -4,12 +4,13 @@
  */
 
 import { UIDatabase } from '../../../database/index';
+import { CASH_TRANSACTION_TYPES } from '../../../utilities/modules/dispensary/constants';
 import { SETTINGS_KEYS } from '../../../settings';
 import Settings from '../../../settings/MobileAppSettings';
 import { createRecord } from '../../../database/utilities/index';
 import { closeModal } from './pageActions';
 import { ACTIONS } from './constants';
-import { pageObjectSelector } from '../selectors/pageSelectors';
+import { pageObjectSelector } from '../../../selectors/pageSelectors';
 
 /**
  * Sorts the underlying data array by the key provided. Determines
@@ -51,6 +52,11 @@ export const addRecord = (record, route) => ({
  * finalising can make out of sync with the data array used for display.
  */
 export const refreshData = route => ({ type: ACTIONS.REFRESH_DATA, payload: { route } });
+
+export const refreshCashRegister = route => ({
+  type: ACTIONS.REFRESH_CASH_REGISTER,
+  payload: { route },
+});
 
 export const toggleIndicators = route => ({ type: ACTIONS.TOGGLE_INDICATORS, payload: { route } });
 
@@ -97,6 +103,11 @@ export const toggleShowFinalised = route => ({
  */
 export const toggleStockOut = route => ({
   type: ACTIONS.TOGGLE_STOCK_OUT,
+  payload: { route },
+});
+
+export const toggleTransactionType = route => ({
+  type: ACTIONS.TOGGLE_TRANSACTION_TYPE,
   payload: { route },
 });
 
@@ -151,6 +162,33 @@ export const addItem = (item, addedItemType, route) => (dispatch, getState) => {
 };
 
 /**
+ * Creates a cash transaction for a given cash transaction object.
+ * @param {Object} cashTransaction Cash transaction object.
+ */
+export const addCashTransaction = (cashTransaction, route) => (dispatch, getState) => {
+  const { user } = getState();
+  const { currentUser } = user;
+  const { type: transactionType } = cashTransaction;
+
+  if (transactionType === CASH_TRANSACTION_TYPES.CASH_IN) {
+    // Create receipt transaction and associated customer credit and receipt transaction batch.
+    UIDatabase.write(() => {
+      createRecord(UIDatabase, 'CashIn', currentUser, cashTransaction);
+    });
+  }
+
+  if (transactionType === CASH_TRANSACTION_TYPES.CASH_OUT) {
+    // Create payment transaction and associated customer invoice, payment transaction batch.
+    UIDatabase.write(() => {
+      createRecord(UIDatabase, 'CashOut', currentUser, cashTransaction);
+    });
+  }
+
+  dispatch(refreshCashRegister(route));
+  dispatch(closeModal(route));
+};
+
+/**
  * Creates a transaction batch which will be associated with the current stores
  * pageObject.
  * use case: Pages which are batch-based i.e. SupplierInvoice page.
@@ -158,10 +196,17 @@ export const addItem = (item, addedItemType, route) => (dispatch, getState) => {
  */
 export const addTransactionBatch = (item, route) => (dispatch, getState) => {
   const pageObject = pageObjectSelector(getState());
+  const { serialNumber, otherParty } = pageObject;
 
   UIDatabase.write(() => {
     const transItem = createRecord(UIDatabase, 'TransactionItem', pageObject, item);
-    const itemBatch = createRecord(UIDatabase, 'ItemBatch', item, '');
+    const itemBatch = createRecord(
+      UIDatabase,
+      'ItemBatch',
+      item,
+      `supplier_invoice${serialNumber}`,
+      otherParty
+    );
     const addedBatch = createRecord(UIDatabase, 'TransactionBatch', transItem, itemBatch);
     dispatch(addRecord(addedBatch, route));
   });
@@ -260,15 +305,18 @@ export const TableActionsLookup = {
   sortData,
   filterData,
   refreshData,
+  refreshCashRegister,
   toggleIndicators,
   selectIndicator,
   hideOverStocked,
   toggleShowFinalised,
+  toggleTransactionType,
   showOverStocked,
   showStockOut,
   toggleStockOut,
   addMasterListItems,
   addItem,
+  addCashTransaction,
   addTransactionBatch,
   createAutomaticOrder,
   setRequestedToSuggested,

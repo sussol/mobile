@@ -4,6 +4,7 @@
     "code": "Code",
     "comment": "Comment",
     "confirm_date": "Confirm Date",
+    "current_balance": "Cash Balance",
     "customer": "Customer",
     "entered_by": "Entered By",
     "entry_date": "Entry Date",
@@ -11,13 +12,16 @@
     "stocktake_name": "Stocktake Name",
     "supplier": "Supplier",
     "their_ref": "Their Ref",
-    "by_batch": "By batch"
+    "by_batch": "By batch",
+    "category": "Category"
   },
   "fr": {
+    "category": "Catégorie",
     "address": "Addresse",
     "code": "Code",
     "comment": "Commentaire",
     "confirm_date": "Date de confirmation",
+    "current_balance": "Solde de caisse actuel",
     "customer": "Client",
     "entered_by": "Entrée par",
     "entry_date": "Date d'entrée",

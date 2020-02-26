@@ -4,7 +4,10 @@
  */
 
 import { createSelector } from 'reselect';
-import { mapIndicatorTableRows, mapIndicatorTableColumns } from '../getIndicatorTableData';
+import {
+  mapIndicatorTableRows,
+  mapIndicatorTableColumns,
+} from '../pages/dataTableUtilities/getIndicatorTableData';
 import { pageStateSelector, pageObjectSelector } from './pageSelectors';
 
 export const selectIndicators = createSelector(

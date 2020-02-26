@@ -11,14 +11,18 @@ const recordTypesSynced = [
   'IndicatorValue',
   'ItemBatch',
   'Message',
+  'Name',
   'NumberSequence',
   'NumberToReuse',
+  'Prescriber',
   'Requisition',
   'RequisitionItem',
   'Stocktake',
   'StocktakeBatch',
   'Transaction',
   'TransactionBatch',
+  'InsurancePolicy',
+  'IndicatorValue',
 ];
 
 /**

@@ -13,8 +13,11 @@
     "logging_in": "Connexion en cours",
     "login": "Se connecter",
     "password": "Mot de passe",
+    "repeat_password": "Veuillez saisir de nouveau le mot de passe",
     "user_name": "Identifiant",
-    "invalid_username_or_password": "Identifiant ou mot de passe invalide"
+    "email": "Adresse courriel",
+    "invalid_username_or_password": "Identifiant ou mot de passe invalide",
+    "warning_sync_edit": "AVERTISSEMENT:\nCeci affectera la synchronisation de ce dépôt.\nAssurez-vous de savoir ce que vous faites!"
   },
   "gil": {
     "logging_in": "Taninga bwa e na uki",

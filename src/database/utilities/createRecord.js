@@ -3,6 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+import moment from 'moment';
 import { generateUUID } from 'react-native-database';
 
 import { UIDatabase } from '..';
@@ -39,6 +40,343 @@ export const getNumberSequence = (database, sequenceKey) => {
   return sequenceResults[0];
 };
 
+const createInsurancePolicy = (database, policyValues) => {
+  const {
+    patient,
+    policyNumberFamily,
+    policyNumberPerson,
+    type,
+    discountRate,
+    insuranceProvider,
+  } = policyValues;
+
+  const expiryDate = moment(new Date())
+    .add(insuranceProvider.validityDays, 'days')
+    .toDate();
+
+  const policy = database.create('InsurancePolicy', {
+    id: generateUUID(),
+    discountRate,
+    patient,
+    policyNumberFamily,
+    policyNumberPerson,
+    type,
+    expiryDate,
+    insuranceProvider,
+  });
+
+  database.save('InsurancePolicy', policy);
+  return policy;
+};
+
+const createAddress = (database, { line1, line2, line3, line4, zipCode } = {}) =>
+  database.create('Address', {
+    id: generateUUID(),
+    line1,
+    line2,
+    line3,
+    line4,
+    zipCode,
+  });
+
+/**
+ * Creates a prescriber record. prescriberDetails can have the shape:
+ * {
+ *     firstName, lastName, registrationCode, line1, line2, isVisible,
+ *     isActive, phoneNumber, mobileNumber, emailAddress
+ * }
+ */
+const createPrescriber = (database, prescriberDetails) => {
+  const { addressOne, addressTwo } = prescriberDetails;
+  const address = createAddress(database, { line1: addressOne, line2: addressTwo });
+
+  const prescriber = database.create('Prescriber', {
+    id: generateUUID(),
+    ...prescriberDetails,
+    address,
+    // Defaults:
+    fromThisStore: true,
+    isVisible: true,
+    isActive: true,
+  });
+
+  database.save('Prescriber', prescriber);
+};
+
+/**
+ * Creates a patient record. Patient details passed can be in the shape:
+ *  {
+ *    firstName, lastName, dateOfBirth, code, emailAddress,
+ *    phoneNumber, addressOne, addressTwo, country
+ *  }
+ */
+const createPatient = (database, patientDetails) => {
+  const { PATIENT_CODE } = NUMBER_SEQUENCE_KEYS;
+  const { dateOfBirth, addressOne, addressTwo, lastName, firstName } = patientDetails;
+
+  const billingAddress = createAddress(database, { line1: addressOne, line2: addressTwo });
+
+  const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
+  const thisStoreCode = database.getSetting(SETTINGS_KEYS.THIS_STORE_CODE);
+  const patientSequenceNumber = getNextNumber(database, PATIENT_CODE);
+  const uniqueCode = `${thisStoreCode}${String(patientSequenceNumber)}`;
+
+  const fullName = `${lastName}, ${firstName}`;
+
+  const patient = database.create('Name', {
+    id: generateUUID(),
+    ...patientDetails,
+    billingAddress,
+    dateOfBirth,
+    isVisible: true,
+    isPatient: true,
+    type: 'patient',
+    code: uniqueCode,
+    supplyingStoreId: thisStoreId,
+    isCustomer: true,
+    name: fullName,
+  });
+
+  database.save('Patient', patient);
+};
+
+const createCashOut = (database, user, cashTransaction) => {
+  const { name, amount, paymentType, reason, description } = cashTransaction;
+
+  // Create payment transaction.
+  const payment = createPayment(database, user, name, amount, paymentType, reason, description);
+
+  // Create customer invoice of same monetary value to offset payment transaction.
+  const customerInvoice = createOffsetCustomerInvoice(database, payment);
+
+  // Create payment transaction batch.
+  const paymentLine = createPaymentLine(database, payment, customerInvoice, amount);
+
+  return [payment, customerInvoice, paymentLine];
+};
+
+const createCashIn = (database, user, cashTransaction) => {
+  const { name, amount, paymentType, description } = cashTransaction;
+
+  // Create receipt transaction.
+  const receipt = createReceipt(database, user, name, amount, paymentType, description);
+
+  // Create customer credit transaction.
+  const customerCredit = createOffsetCustomerCredit(database, receipt);
+
+  // Create receipt transaction batch.
+  const receiptLine = createReceiptLine(database, receipt, customerCredit, amount);
+
+  return [receipt, customerCredit, receiptLine];
+};
+
+const createOffsetCustomerInvoice = (database, payment) => {
+  const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+  const currentDate = new Date();
+  const invoice = database.create('Transaction', {
+    id: generateUUID(),
+    serialNumber: getNextNumber(database, CUSTOMER_INVOICE_NUMBER),
+    entryDate: currentDate,
+    confirmDate: currentDate,
+    type: 'customer_invoice',
+    status: 'finalised',
+    comment: 'Offset for a cash-only transaction',
+    otherParty: payment.otherParty,
+    subtotal: payment.subtotal,
+    outstanding: payment.subtotal,
+    enteredBy: payment.enteredBy,
+    linkedTransaction: payment,
+  });
+
+  return invoice;
+};
+
+const createReceipt = (database, user, name, amount, paymentType, description) => {
+  const currentDate = new Date();
+  const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+  const receipt = database.create('Transaction', {
+    id: generateUUID(),
+    serialNumber: getNextNumber(database, CUSTOMER_INVOICE_NUMBER),
+    entryDate: currentDate,
+    confirmDate: currentDate,
+    type: 'receipt',
+    status: 'finalised',
+    comment: description,
+    otherParty: name,
+    enteredBy: user,
+    subtotal: amount,
+    paymentType,
+  });
+
+  database.save('Transaction', receipt);
+  return receipt;
+};
+
+const createReceiptLine = (database, receipt, linkedTransaction, amount) => {
+  const receiptLine = database.create('TransactionBatch', {
+    id: generateUUID(),
+    total: amount,
+    transaction: receipt,
+    linkedTransaction,
+    type: 'cash_in',
+  });
+
+  database.save('TransactionBatch', receiptLine);
+  return receiptLine;
+};
+
+const createPayment = (database, user, name, amount, paymentType, reason, description) => {
+  const currentDate = new Date();
+  const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+  const payment = database.create('Transaction', {
+    id: generateUUID(),
+    serialNumber: getNextNumber(database, CUSTOMER_INVOICE_NUMBER),
+    entryDate: currentDate,
+    confirmDate: currentDate,
+    type: 'payment',
+    status: 'finalised',
+    otherParty: name,
+    enteredBy: user,
+    subtotal: amount,
+    option: reason,
+    comment: description,
+    paymentType,
+  });
+
+  database.save('Transaction', payment);
+  return payment;
+};
+
+const createPaymentLine = (database, payment, invoice, amount) => {
+  const receiptLine = database.create('TransactionBatch', {
+    id: generateUUID(),
+    total: amount,
+    transaction: payment,
+    linkedTransaction: invoice,
+    type: 'cash_out',
+  });
+
+  database.save('TransactionBatch', receiptLine);
+  return receiptLine;
+};
+
+const createSupplierCreditLine = (database, supplierCredit, itemBatch, returnAmount) => {
+  // Create a TransactionITem to link between the new TransactionBatch and Transaction.
+  const transactionItem = createTransactionItem(
+    database,
+    supplierCredit,
+    itemBatch.item,
+    -returnAmount
+  );
+
+  // Create a TransactionBatch for the return amount
+  const transactionBatch = createTransactionBatch(database, transactionItem, itemBatch, false);
+
+  // Adjust the TransactionBatch total to the negative amount of the original cost.
+  transactionBatch.total = -transactionBatch.sellPrice * returnAmount;
+  transactionBatch.numberOfPacks = returnAmount;
+  database.save('TransactionBatch', transactionBatch);
+
+  // Adjust the quantity of the underlying ItemBatch.
+  itemBatch.totalQuantity -= returnAmount;
+  database.save('ItemBatch', itemBatch);
+};
+
+const createSupplierCredit = (database, user, supplierId, returnAmount) => {
+  const currentDate = new Date();
+  const { SUPPLIER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+
+  // Create a supplier credit transaction with the negative of the sum of all
+  // the batches to be returned.
+  const supplierCredit = database.create('Transaction', {
+    id: generateUUID(),
+    serialNumber: getNextNumber(database, SUPPLIER_INVOICE_NUMBER),
+    entryDate: currentDate,
+    confirmDate: currentDate,
+    type: 'supplier_credit',
+    status: 'finalised',
+    comment: '',
+    otherParty: database.get('Name', supplierId),
+    subtotal: returnAmount,
+    enteredBy: user,
+  });
+
+  return supplierCredit;
+};
+
+const createOffsetCustomerCredit = (database, receipt) => {
+  const currentDate = new Date();
+  const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+
+  const customerCredit = database.create('Transaction', {
+    id: generateUUID(),
+    serialNumber: getNextNumber(database, CUSTOMER_INVOICE_NUMBER),
+    entryDate: currentDate,
+    confirmDate: currentDate,
+    type: 'customer_credit',
+    status: 'finalised',
+    comment: 'Offset for a cash-only transaction',
+    otherParty: receipt.otherParty,
+    enteredBy: receipt.enteredBy,
+    subtotal: -receipt.subtotal,
+    outstanding: -receipt.subtotal,
+    linkedTransaction: receipt,
+  });
+
+  database.save('Transaction', customerCredit);
+  return customerCredit;
+};
+
+const createCustomerRefundLine = (database, customerCredit, transactionBatch) => {
+  const { total, itemBatch, numberOfPacks } = transactionBatch;
+  const { item, batch, expiryDate, packSize, costPrice, sellPrice, donor } = itemBatch;
+
+  const inverseTotal = -total;
+
+  const refundLine = database.create('TransactionBatch', {
+    id: generateUUID(),
+    item,
+    batch,
+    expiryDate,
+    packSize,
+    costPrice,
+    sellPrice,
+    donor,
+    itemBatch,
+    transaction: customerCredit,
+    total: inverseTotal,
+    type: 'stock_in',
+    note: 'credit',
+  });
+
+  customerCredit.outstanding += inverseTotal;
+
+  itemBatch.addTransactionBatch(refundLine);
+  refundLine.setTotalQuantity(database, numberOfPacks);
+
+  database.save('Transaction', customerCredit);
+  database.save('TransactionBatch', refundLine);
+  database.save('ItemBatch', customerCredit);
+
+  return refundLine;
+};
+
+const createCustomerCreditLine = (database, customerCredit, total) => {
+  const receiptLine = database.create('TransactionBatch', {
+    id: generateUUID(),
+    total,
+    transaction: customerCredit,
+    type: 'cash_in',
+    note: 'credit',
+  });
+
+  customerCredit.outstanding += total;
+
+  database.save('Transaction', customerCredit);
+  database.save('TransactionBatch', receiptLine);
+  return receiptLine;
+};
+
 /**
  * Create a customer invoice associated with a given customer.
  *
@@ -46,7 +384,7 @@ export const getNumberSequence = (database, sequenceKey) => {
  * @param   {Name}         customer  Customer associated with invoice.
  * @return  {Transaction}
  */
-const createCustomerInvoice = (database, customer, user) => {
+const createCustomerInvoice = (database, customer, user, mode = 'store') => {
   const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
   const currentDate = new Date();
   const invoice = database.create('Transaction', {
@@ -60,11 +398,10 @@ const createCustomerInvoice = (database, customer, user) => {
     comment: '',
     otherParty: customer,
     enteredBy: user,
+    mode,
   });
 
   database.save('Transaction', invoice);
-  customer.addTransaction(invoice);
-  database.save('Name', customer);
 
   return invoice;
 };
@@ -90,6 +427,13 @@ const createNumberSequence = (database, sequenceKey) =>
  * @param  {number}          number
  */
 const createNumberToReuse = (database, numberSequence, number) => {
+  const alreadyReusing = database
+    .objects('NumberToReuse')
+    .query('numberSequence == $0 && number == $1', numberSequence, number);
+
+  // If we are already reusing this number - shortcut return
+  if (alreadyReusing.length) return;
+
   const numberToReuse = database.create('NumberToReuse', {
     id: generateUUID(),
     numberSequence,
@@ -147,7 +491,7 @@ const createInventoryAdjustment = (database, user, date, isAddition) => {
  * @param  {string}     batchString
  * @return {ItemBatch}
  */
-const createItemBatch = (database, item, batchString) => {
+const createItemBatch = (database, item, batchString, supplier) => {
   // Handle cross-reference items.
   const { realItem } = item;
 
@@ -159,6 +503,7 @@ const createItemBatch = (database, item, batchString) => {
     numberOfPacks: 0,
     costPrice: realItem.defaultPrice ? realItem.defaultPrice : 0,
     sellPrice: realItem.defaultPrice ? realItem.defaultPrice : 0,
+    supplier,
   });
 
   realItem.addBatch(itemBatch);
@@ -220,7 +565,7 @@ const createRequisition = (
  * @param   {double}          dailyUsage   Daily usage of item.
  * @return  {RequisitionItem}
  */
-const createRequisitionItem = (database, requisition, item, dailyUsage) => {
+const createRequisitionItem = (database, requisition, item, dailyUsage, stockOnHand) => {
   // Handle cross reference items.
   const { realItem } = item;
 
@@ -228,8 +573,8 @@ const createRequisitionItem = (database, requisition, item, dailyUsage) => {
     id: generateUUID(),
     item: realItem,
     requisition,
-    stockOnHand: realItem.totalQuantity,
-    dailyUsage: dailyUsage || realItem.dailyUsage,
+    stockOnHand: stockOnHand ?? realItem.totalQuantity,
+    dailyUsage: dailyUsage ?? realItem.dailyUsage,
     requiredQuantity: 0,
     comment: '',
     sortIndex: requisition.items.length + 1,
@@ -302,13 +647,14 @@ const createStocktakeItem = (database, stocktake, item) => {
  * @return  {StocktakeBatch}
  */
 const createStocktakeBatch = (database, stocktakeItem, itemBatch) => {
-  const { numberOfPacks, packSize, expiryDate, batch, costPrice, sellPrice } = itemBatch;
+  const { numberOfPacks, supplier, packSize, expiryDate, batch, costPrice, sellPrice } = itemBatch;
 
   const stocktakeBatch = database.create('StocktakeBatch', {
     id: generateUUID(),
     stocktake: stocktakeItem.stocktake,
     itemBatch,
     snapshotNumberOfPacks: numberOfPacks,
+    supplier,
     packSize,
     expiryDate,
     batch,
@@ -333,6 +679,7 @@ const createStocktakeBatch = (database, stocktakeItem, itemBatch) => {
  */
 const createSupplierInvoice = (database, supplier, user) => {
   const { SUPPLIER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+
   const currentDate = new Date();
 
   const invoice = database.create('Transaction', {
@@ -347,21 +694,21 @@ const createSupplierInvoice = (database, supplier, user) => {
   });
 
   database.save('Transaction', invoice);
-  supplier.addTransaction(invoice);
 
   return invoice;
 };
 
 /**
- * Create a new transaction batch.
- *
+ * Create a new transaction batch. When creating a TransactionBatch, this is coming from either
+ * a) an external supplier or b) some adjustment during a stocktake. These must be stock ins.
  * @param   {Realm}             database
  * @param   {TransactionItem}   transactionItem  Batch item.
  * @param   {ItemBatch}         itemBatch        Item batch to associate with transaction batch.
  * @return  {TransactionBatch}
  */
-const createTransactionBatch = (database, transactionItem, itemBatch) => {
+const createTransactionBatch = (database, transactionItem, itemBatch, isAddition = true) => {
   const { item, batch, expiryDate, packSize, costPrice, sellPrice, donor } = itemBatch;
+  const { transaction, note } = transactionItem || {};
 
   const transactionBatch = database.create('TransactionBatch', {
     id: generateUUID(),
@@ -369,13 +716,15 @@ const createTransactionBatch = (database, transactionItem, itemBatch) => {
     itemName: item.name,
     itemBatch,
     batch,
+    note,
     expiryDate,
     packSize,
     numberOfPacks: 0,
     costPrice,
     sellPrice,
     donor,
-    transaction: transactionItem.transaction,
+    transaction,
+    type: isAddition ? 'stock_in' : 'stock_out',
     sortIndex: (transactionItem?.transaction?.numberOfBatches || 0) + 1 || 1,
   });
 
@@ -395,7 +744,7 @@ const createTransactionBatch = (database, transactionItem, itemBatch) => {
  * @param   {Item}             item         Real item to create transaction item from.
  * @return  {TransactionItem}
  */
-const createTransactionItem = (database, transaction, item) => {
+const createTransactionItem = (database, transaction, item, initialQuantity = 0) => {
   // Handle cross reference items.
   const { realItem } = item;
 
@@ -404,6 +753,9 @@ const createTransactionItem = (database, transaction, item) => {
     item: realItem,
     transaction,
   });
+
+  const { isFinalised } = transaction;
+  if (!isFinalised) transactionItem.setTotalQuantity(database, initialQuantity);
 
   transaction.addItem(transactionItem);
   database.save('Transaction', transaction);
@@ -482,6 +834,38 @@ export const createRecord = (database, type, ...args) => {
       return createTransactionItem(database, ...args);
     case 'TransactionBatch':
       return createTransactionBatch(database, ...args);
+    case 'Receipt':
+      return createReceipt(database, ...args);
+    case 'ReceiptLine':
+      return createReceiptLine(database, ...args);
+    case 'Payment':
+      return createPayment(database, ...args);
+    case 'PaymentLine':
+      return createPaymentLine(database, ...args);
+    case 'OffsetCustomerCredit':
+      return createOffsetCustomerCredit(database, ...args);
+    case 'SupplierCredit':
+      return createSupplierCredit(database, ...args);
+    case 'CustomerCreditLine':
+      return createCustomerCreditLine(database, ...args);
+    case 'SupplierCreditLine':
+      return createSupplierCreditLine(database, ...args);
+    case 'InsurancePolicy':
+      return createInsurancePolicy(database, ...args);
+    case 'CashIn':
+      return createCashIn(database, ...args);
+    case 'CashOut':
+      return createCashOut(database, ...args);
+    case 'OffsetCustomerInvoice':
+      return createOffsetCustomerInvoice(database, ...args);
+    case 'RefundLine':
+      return createCustomerRefundLine(database, ...args);
+    case 'Address':
+      return createAddress(database, ...args);
+    case 'Patient':
+      return createPatient(database, ...args);
+    case 'Prescriber':
+      return createPrescriber(database, ...args);
     case 'UpgradeMessage':
       return createUpgradeMessage(database, ...args);
     default:

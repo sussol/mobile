@@ -2,6 +2,9 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
+import moment from 'moment';
+import french from 'moment/locale/fr';
+import english from 'moment/locale/en-nz';
 
 import {
   authStrings,
@@ -13,7 +16,18 @@ import {
   programStrings,
   syncStrings,
   tableStrings,
+  LANGUAGE_CODES,
+  formInputStrings,
+  dispensingStrings,
 } from './index';
+
+const DATE_CONFIGS = {
+  DEFAULT: english,
+  [LANGUAGE_CODES.FRENCH]: french,
+};
+
+export const setDateLocale = languageCode =>
+  moment.updateLocale(languageCode, DATE_CONFIGS[languageCode] || DATE_CONFIGS.DEFAULT);
 
 export function setCurrentLanguage(language) {
   authStrings.setLanguage(language);
@@ -25,6 +39,8 @@ export function setCurrentLanguage(language) {
   tableStrings.setLanguage(language);
   syncStrings.setLanguage(language);
   programStrings.setLanguage(language);
+  formInputStrings.setLanguage(language);
+  dispensingStrings.setLanguage(language);
 }
 
 export default setCurrentLanguage;

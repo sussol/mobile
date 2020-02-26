@@ -1,5 +1,7 @@
 import Realm from 'realm';
 
+import currency from '../../localization/currency';
+
 /**
  * A transaction batch.
  *
@@ -36,6 +38,18 @@ export class TransactionBatch extends Realm.Object {
   }
 
   /**
+   * Returns either the prescriber name who prescribed the medicine
+   * to a patient, or an empty string.
+   * @return {String}
+   */
+  get prescriber() {
+    const { prescriber } = this.transaction;
+    const { firstName = '', lastName = '' } = prescriber || {};
+    if (!firstName && !lastName) return '';
+    return `${firstName} ${lastName}`.trim();
+  }
+
+  /**
    * Get total quantity of this batch.
    *
    * @return  {number}
@@ -50,7 +64,7 @@ export class TransactionBatch extends Realm.Object {
    * @return  {string}
    */
   get itemCode() {
-    return this.itemBatch.item.code;
+    return this.itemBatch?.item?.code || '';
   }
 
   /**
@@ -59,7 +73,7 @@ export class TransactionBatch extends Realm.Object {
    * @return  {string}
    */
   get itemBatchId() {
-    return this.itemBatch ? this.itemBatch.id : '';
+    return this.itemBatch?.id || '';
   }
 
   /**
@@ -69,12 +83,9 @@ export class TransactionBatch extends Realm.Object {
    * @param  {number}  quantity
    */
   setTotalQuantity(database, quantity) {
-    if (this.transaction.isFinalised) {
-      throw new Error('Cannot change quantity of batches in a finalised transaction');
-    }
-
     const difference = quantity - this.totalQuantity;
     this.numberOfPacks = this.packSize ? quantity / this.packSize : 0;
+    this.total = this.totalPrice;
 
     if (this.transaction.isConfirmed) {
       const inventoryDifference = this.transaction.isIncoming ? difference : -difference;
@@ -100,12 +111,13 @@ export class TransactionBatch extends Realm.Object {
    */
   get totalPrice() {
     if (!this.numberOfPacks) return 0;
-    if (this.type === 'customer_invoice') {
+    if (this.transaction.type === 'customer_invoice') {
       if (!this.sellPrice) return 0;
       return this.sellPrice * this.numberOfPacks;
     }
     // Must be a supplier invoice.
     if (!this.costPrice) return 0;
+    if (this.transaction?.type === 'supplier_credit') return -this.costPrice * this.numberOfPacks;
     return this.costPrice * this.numberOfPacks;
   }
 
@@ -132,7 +144,19 @@ export class TransactionBatch extends Realm.Object {
    * @return  {string}
    */
   toString() {
-    return `${this.itemBatch} in a ${this.transaction.type}`;
+    return `${this?.itemBatch} in a ${this.transaction.type}`;
+  }
+
+  get otherPartyName() {
+    return this.transaction?.otherParty?.name || '';
+  }
+
+  get costPriceString() {
+    return currency(this.costPrice ?? 0, { formatWithSymbol: true }).format();
+  }
+
+  get sellPriceString() {
+    return currency(this.sellPrice ?? 0, { formatWithSymbol: true }).format();
   }
 }
 
@@ -141,20 +165,23 @@ TransactionBatch.schema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
-    itemId: 'string',
-    itemName: 'string',
-    itemBatch: 'ItemBatch',
-    batch: 'string',
+    itemId: { type: 'string', optional: true },
+    itemName: 'string?',
+    itemBatch: 'ItemBatch?',
+    batch: 'string?',
     expiryDate: { type: 'date', optional: true },
-    packSize: 'double',
-    numberOfPacks: 'double',
+    packSize: 'double?',
+    numberOfPacks: 'double?',
     numberOfPacksSent: { type: 'double', optional: true },
     transaction: 'Transaction',
     note: { type: 'string', optional: true },
-    costPrice: 'double',
-    sellPrice: 'double',
+    costPrice: 'double?',
+    sellPrice: 'double?',
     donor: { type: 'Name', optional: true },
     sortIndex: { type: 'int', optional: true },
+    total: { type: 'double', optional: true },
+    type: { type: 'string', optional: true },
+    linkedTransaction: { type: 'Transaction', optional: true },
   },
 };
 

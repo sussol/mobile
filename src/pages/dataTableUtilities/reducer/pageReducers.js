@@ -8,6 +8,13 @@ import { UIDatabase } from '../../../database/index';
 import { SETTINGS_KEYS } from '../../../settings';
 import Settings from '../../../settings/MobileAppSettings';
 
+export const updatePaymentType = (state, action) => {
+  const { payload } = action;
+  const { paymentType } = payload ?? {};
+
+  return { ...state, currentPaymentType: paymentType };
+};
+
 /**
  * Edits the name field in the current stores state.
  */
@@ -40,6 +47,9 @@ export const openModal = (state, action) => {
       return { ...state, modalKey, modalValue: name };
     }
 
+    case MODAL_KEYS.ENFORCE_REQUISITION_REASON:
+    case MODAL_KEYS.REQUISITION_REASON:
+    case MODAL_KEYS.SELECT_ITEM_BATCH_SUPPLIER:
     case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
     case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
     case MODAL_KEYS.STOCKTAKE_REASON: {
@@ -122,4 +132,4 @@ export const openModal = (state, action) => {
  */
 export const closeModal = state => ({ ...state, modalKey: '', modalValue: null });
 
-export const PageReducerLookup = { editName, openModal, closeModal };
+export const PageReducerLookup = { editName, openModal, closeModal, updatePaymentType };

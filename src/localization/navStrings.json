@@ -2,6 +2,7 @@
   "gb": {
     "current_stock": "Current Stock",
     "customer_invoices": "Customer Invoices",
+    "supplier_credit": "Supplier Credit",
     "customer_requisitions": "Customer Requisitions",
     "customers": "Customers",
     "finalise": "FINALISE",
@@ -19,14 +20,17 @@
     "settings": "settings",
     "database_contents": "Database Contents",
     "dispensary": "Dispensary",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "cash_register": "Cash Register",
+    "prescription": "Prescription"
   },
   "fr": {
+    "supplier_credit": "Crédit Fournisseur",
     "current_stock": "Stock actuel",
     "customer_invoices": "Factures client",
     "customer_requisitions": "Réquisitions clients",
     "customers": "Clients",
-    "finalise": "FINALISER",
+    "finalise": "FINALISEZ",
     "finalised_cannot_be_edited": "FINALISÉ. NE PEUT ÊTRE MODIFIÉ",
     "invoice": "Facture",
     "language": "Langage",
@@ -38,8 +42,12 @@
     "stocktake": "Relevé d'inventaire",
     "supplier_invoices": "Factures fournisseurs",
     "supplier_requisitions": "Factures réquisitions",
+    "settings": "réglages",
+    "database_contents": "Contenus de la base de données",
     "dispensary": "Dispensaire",
-    "dashboard": "Tableau de bord"
+    "dashboard": "Tableau de bord",
+    "cash_register": "Caisse enregistreuse",
+    "prescription": "Ordonnance"
   },
   "gil": {
     "current_stock": "Mwaitin am bwai n\naoraki ke am supply",

@@ -159,7 +159,7 @@ export class RequisitionItem extends Realm.Object {
    */
   setSuppliedQuantity(database, newValue) {
     // TODO: this.requisition is optional, unhandled possible TypeError.
-    if (this.requisition.isFinalised || this.requisition.isRequest) {
+    if (this?.requisition.isFinalised || this?.requisition.isRequest) {
       throw new Error('Cannot set supplied quantity for Finalised or Request Requisition');
     }
 
@@ -182,6 +182,38 @@ export class RequisitionItem extends Realm.Object {
     // Update quantity of this requisition item.
     this.suppliedQuantity = transactionItem.totalQuantity;
     database.save('RequisitionItem', this);
+  }
+
+  get hasVariance() {
+    return this.requiredQuantity !== this.suggestedQuantity;
+  }
+
+  removeReason(database) {
+    database.write(() => {
+      this.option = null;
+      database.save('RequisitionItem', this);
+    });
+  }
+
+  get validateReason() {
+    if (!this.option && this.hasVariance) return false;
+
+    return true;
+  }
+
+  applyReason(database, newOption) {
+    if (this.hasVariance) {
+      database.write(() => {
+        database.update('RequisitionItem', {
+          ...this,
+          option: newOption,
+        });
+      });
+    }
+  }
+
+  get reasonTitle() {
+    return this.option?.title ?? '';
   }
 }
 

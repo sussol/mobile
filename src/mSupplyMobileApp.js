@@ -10,12 +10,11 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import { connect } from 'react-redux';
-
 import {
   BackHandler,
   Image,
+  AppState,
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
@@ -31,8 +30,9 @@ import { Synchroniser, PostSyncProcessor, SyncModal } from './sync';
 import { FinaliseButton, NavigationBar, SyncState, Spinner } from './widgets';
 import { FinaliseModal, LoginModal } from './widgets/modals';
 
-import { getCurrentParams, getCurrentRouteName, ReduxNavigator } from './navigation';
+import { getCurrentParams, getCurrentRouteName, ReduxNavigator, ROUTES } from './navigation';
 import { syncCompleteTransaction } from './actions/SyncActions';
+import { FinaliseActions } from './actions/FinaliseActions';
 import { migrateDataToVersion } from './dataMigration';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import Settings from './settings/MobileAppSettings';
@@ -40,9 +40,15 @@ import Database from './database/BaseDatabase';
 import { UIDatabase } from './database';
 
 import globalStyles, { textStyles, SUSSOL_ORANGE } from './globalStyles';
+import { LoadingIndicatorContext } from './context/LoadingIndicatorContext';
 import { UserActions } from './actions';
 import { debounce } from './utilities';
 import { prevRouteNameSelector } from './navigation/selectors';
+import { SupplierCredit } from './widgets/modalChildren/SupplierCredit';
+import { ModalContainer } from './widgets/modals/ModalContainer';
+import { SupplierCreditActions } from './actions/SupplierCreditActions';
+import { PrescriptionActions } from './actions/PrescriptionActions';
+import { selectTitle } from './selectors/supplierCredit';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -50,16 +56,29 @@ const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 class MSupplyMobileAppContainer extends React.Component {
   handleBackEvent = debounce(
     () => {
-      const { dispatch, prevRouteName } = this.props;
-      const { confirmFinalise, syncModalIsOpen } = this.state;
+      const { dispatch, prevRouteName, currentRouteName } = this.props;
+      const { syncModalIsOpen } = this.state;
+
       // If finalise or sync modals are open, close them rather than navigating.
-      if (confirmFinalise || syncModalIsOpen) {
-        this.setState({ confirmFinalise: false, syncModalIsOpen: false });
+      if (syncModalIsOpen) {
+        this.setState({ syncModalIsOpen: false });
         return true;
       }
       // If we are on base screen (e.g. home), back button should close app as we can't go back.
-      if (!this.getCanNavigateBack()) BackHandler.exitApp();
-      else dispatch({ ...NavigationActions.back(), payload: { prevRouteName } });
+      if (!this.getCanNavigateBack()) {
+        BackHandler.exitApp();
+      } else {
+        dispatch({ ...NavigationActions.back(), payload: { prevRouteName } });
+      }
+      if (currentRouteName === ROUTES.PRESCRIPTION) {
+        UIDatabase.write(() => {
+          UIDatabase.delete(
+            'Transaction',
+            UIDatabase.objects('Prescription').filtered('status != $0', 'finalised')
+          );
+          dispatch(PrescriptionActions.deletePrescription());
+        });
+      }
 
       return true;
     },
@@ -86,18 +105,40 @@ class MSupplyMobileAppContainer extends React.Component {
       }
     }, AUTHENTICATION_INTERVAL);
     this.state = {
-      confirmFinalise: false,
       isInitialised,
       isLoading: false,
       syncModalIsOpen: false,
+      appState: null,
     };
   }
 
-  componentDidMount = () => BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
+  componentDidMount = () => {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
+
+    if (!__DEV__) {
+      AppState.addEventListener('change', this.onAppStateChange);
+    }
+  };
 
   componentWillUnmount = () => {
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackEvent);
+
+    if (!__DEV__) {
+      AppState.removeEventListener('change', this.onAppStateChange);
+    }
+
     this.scheduler.clearAll();
+  };
+
+  onAppStateChange = nextAppState => {
+    const { appState } = this.state;
+    const { dispatch } = this.props;
+    if (nextAppState?.match(/inactive|background/)) dispatch(UserActions.setTime());
+    if (appState?.match(/inactive|background/) && nextAppState === 'active') {
+      dispatch(UserActions.active());
+    }
+
+    this.setState({ appState: nextAppState });
   };
 
   onAuthentication = user => {
@@ -113,6 +154,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
   getCanNavigateBack = () => {
     const { navigationState } = this.props;
+
     return navigationState.index !== 0;
   };
 
@@ -164,12 +206,9 @@ class MSupplyMobileAppContainer extends React.Component {
   };
 
   renderFinaliseButton = () => {
-    const { finaliseItem } = this.props;
+    const { finaliseItem, openFinaliseModal } = this.props;
     return (
-      <FinaliseButton
-        isFinalised={finaliseItem.record.isFinalised}
-        onPress={() => this.setState({ confirmFinalise: true })}
-      />
+      <FinaliseButton isFinalised={finaliseItem.record.isFinalised} onPress={openFinaliseModal} />
     );
   };
 
@@ -213,14 +252,19 @@ class MSupplyMobileAppContainer extends React.Component {
   };
 
   render() {
-    const { dispatch, finaliseItem, navigationState, syncState, currentUser } = this.props;
     const {
-      confirmFinalise,
-      isInAdminMode,
-      isInitialised,
-      isLoading,
-      syncModalIsOpen,
-    } = this.state;
+      dispatch,
+      finaliseItem,
+      navigationState,
+      syncState,
+      currentUser,
+      finaliseModalOpen,
+      closeFinaliseModal,
+      closeSupplierCreditModal,
+      supplierCreditModalOpen,
+      creditTitle,
+    } = this.props;
+    const { isInAdminMode, isInitialised, isLoading, syncModalIsOpen } = this.state;
 
     if (!isInitialised) {
       return (
@@ -233,70 +277,100 @@ class MSupplyMobileAppContainer extends React.Component {
     }
 
     return (
-      <View style={globalStyles.appBackground}>
-        <NavigationBar
-          routeName={this.getCurrentRouteName(navigationState)}
-          onPressBack={this.getCanNavigateBack() ? this.handleBackEvent : null}
-          LeftComponent={this.getCanNavigateBack() ? this.renderPageTitle : null}
-          CentreComponent={this.renderLogo}
-          RightComponent={finaliseItem ? this.renderFinaliseButton : this.renderSyncState}
-        />
-        <ReduxNavigator
-          state={navigationState}
-          dispatch={dispatch}
-          screenProps={{
-            database: UIDatabase,
-            settings: Settings,
-            currentUser,
-            routeName: navigationState.routes[navigationState.index].routeName,
-            runWithLoadingIndicator: this.runWithLoadingIndicator,
-            isInAdminMode,
-          }}
-        />
-        <FinaliseModal
-          database={UIDatabase}
-          isOpen={confirmFinalise}
-          onClose={() => this.setState({ confirmFinalise: false })}
-          finaliseItem={finaliseItem}
-          user={currentUser}
-          runWithLoadingIndicator={this.runWithLoadingIndicator}
-        />
-        <SyncModal
-          database={UIDatabase}
-          isOpen={syncModalIsOpen}
-          state={syncState}
-          onPressManualSync={this.synchronise}
-          onClose={() => this.setState({ syncModalIsOpen: false })}
-        />
-        <LoginModal
-          authenticator={this.userAuthenticator}
-          settings={Settings}
-          isAuthenticated={!!currentUser}
-          onAuthentication={this.onAuthentication}
-        />
-        {isLoading && this.renderLoadingIndicator()}
-      </View>
+      <LoadingIndicatorContext.Provider value={this.runWithLoadingIndicator}>
+        <View style={globalStyles.appBackground}>
+          <NavigationBar
+            routeName={this.getCurrentRouteName(navigationState)}
+            onPressBack={this.getCanNavigateBack() ? this.handleBackEvent : null}
+            LeftComponent={this.getCanNavigateBack() ? this.renderPageTitle : null}
+            CentreComponent={this.renderLogo}
+            RightComponent={
+              finaliseItem && finaliseItem?.visibleButton
+                ? this.renderFinaliseButton
+                : this.renderSyncState
+            }
+          />
+          <ReduxNavigator
+            state={navigationState}
+            dispatch={dispatch}
+            screenProps={{
+              database: UIDatabase,
+              settings: Settings,
+              currentUser,
+              routeName: navigationState.routes[navigationState.index].routeName,
+              runWithLoadingIndicator: this.runWithLoadingIndicator,
+              isInAdminMode,
+            }}
+          />
+          <FinaliseModal
+            database={UIDatabase}
+            isOpen={finaliseModalOpen}
+            onClose={closeFinaliseModal}
+            finaliseItem={finaliseItem}
+            user={currentUser}
+            runWithLoadingIndicator={this.runWithLoadingIndicator}
+          />
+          <SyncModal
+            database={UIDatabase}
+            isOpen={syncModalIsOpen}
+            state={syncState}
+            onPressManualSync={this.synchronise}
+            onClose={() => this.setState({ syncModalIsOpen: false })}
+          />
+          <LoginModal
+            authenticator={this.userAuthenticator}
+            settings={Settings}
+            isAuthenticated={!!currentUser}
+            onAuthentication={this.onAuthentication}
+          />
+          {isLoading && this.renderLoadingIndicator()}
+          <ModalContainer
+            isVisible={supplierCreditModalOpen}
+            onClose={closeSupplierCreditModal}
+            title={creditTitle}
+            fullScreen
+          >
+            <SupplierCredit />
+          </ModalContainer>
+        </View>
+      </LoadingIndicatorContext.Provider>
     );
   }
 }
 
-const mapStateToProps = state => {
-  const { nav: navigationState, sync: syncState } = state;
+const mapDispatchToProps = dispatch => {
+  const openFinaliseModal = () => dispatch(FinaliseActions.openModal());
+  const closeFinaliseModal = () => dispatch(FinaliseActions.closeModal());
+  const closeSupplierCreditModal = () => dispatch(SupplierCreditActions.close());
 
+  return { dispatch, openFinaliseModal, closeFinaliseModal, closeSupplierCreditModal };
+};
+
+const mapStateToProps = state => {
+  const { finalise, nav: navigationState, sync: syncState, supplierCredit } = state;
+  const { open: supplierCreditModalOpen } = supplierCredit;
+  const { finaliseModalOpen } = finalise;
   const currentParams = getCurrentParams(navigationState);
   const currentTitle = currentParams && currentParams.title;
-  const finaliseItem = FINALISABLE_PAGES[getCurrentRouteName(navigationState)];
+  const currentRouteName = getCurrentRouteName(navigationState);
+  const finaliseItem = FINALISABLE_PAGES[currentRouteName];
   if (finaliseItem && currentParams) {
+    if (currentRouteName === ROUTES.PRESCRIPTION) finaliseItem.visibleButton = false;
+    else finaliseItem.visibleButton = true;
     finaliseItem.record = currentParams[finaliseItem.recordToFinaliseKey];
   }
 
   return {
+    currentRouteName,
     currentTitle,
     prevRouteName: prevRouteNameSelector(state),
     finaliseItem,
     navigationState,
     syncState,
     currentUser: state.user.currentUser,
+    finaliseModalOpen,
+    supplierCreditModalOpen,
+    creditTitle: selectTitle(state),
   };
 };
 
@@ -304,6 +378,7 @@ MSupplyMobileAppContainer.defaultProps = {
   currentUser: null,
   currentTitle: '',
   finaliseItem: null,
+  creditTitle: '',
 };
 
 MSupplyMobileAppContainer.propTypes = {
@@ -314,6 +389,13 @@ MSupplyMobileAppContainer.propTypes = {
   syncState: PropTypes.object.isRequired,
   currentUser: PropTypes.object,
   prevRouteName: PropTypes.string.isRequired,
+  finaliseModalOpen: PropTypes.bool.isRequired,
+  openFinaliseModal: PropTypes.func.isRequired,
+  closeFinaliseModal: PropTypes.func.isRequired,
+  closeSupplierCreditModal: PropTypes.func.isRequired,
+  supplierCreditModalOpen: PropTypes.bool.isRequired,
+  currentRouteName: PropTypes.string.isRequired,
+  creditTitle: PropTypes.string,
 };
 
-export default connect(mapStateToProps)(MSupplyMobileAppContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(MSupplyMobileAppContainer);

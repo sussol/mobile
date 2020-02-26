@@ -26,7 +26,10 @@
     "sync_complete": "Sync complété",
     "all_records_updated": "Tous les enregistrements ont été mis à jour",
     "loading_change_count": "Chargement du nombre de changements",
-    "last_successful_sync": "Date de dernière synchronisation"
+    "last_successful_sync": "Date de dernière synchronisation",
+    "initialising": "En cours d'initialisation...",
+    "pulling_changes": "Extraire les modifications du serveur",
+    "pushing_changes": "Pousser les modifications au serveur"
   },
   "gil": {
     "last_sync": "LAST SYNC",

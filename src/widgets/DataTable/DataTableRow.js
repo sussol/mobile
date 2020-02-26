@@ -7,7 +7,9 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 
-import { dataTableStyles } from '../../globalStyles';
+import currency from '../../localization/currency';
+
+import { dataTableStyles, SUSSOL_ORANGE } from '../../globalStyles';
 
 import Row from './Row';
 import Cell from './Cell';
@@ -19,18 +21,21 @@ import DropDownCell from '../DropDownCell';
 import { ExpiryDateInput } from '../ExpiryDateInput';
 
 import {
-  CheckedComponent,
-  UncheckedComponent,
-  DisabledCheckedComponent,
-  DisabledUncheckedComponent,
-  OpenModal,
+  CheckedIcon,
+  UncheckedIcon,
+  DisabledCheckedIcon,
+  DisabledUncheckedIcon,
+  ChevronRightIcon,
+  HistoryIcon,
+  PencilIcon,
 } from '../icons';
 import TextInputCell from './TextInputCell';
 
-import { formatStatus } from '../../utilities';
-
 import { COLUMN_TYPES, COLUMN_NAMES } from '../../pages/dataTableUtilities';
 import { generalStrings, tableStrings } from '../../localization/index';
+
+import { formatStatus, formatDate } from '../../utilities';
+import { formatType } from '../../utilities/formatStatus';
 
 /**
  * Wrapper component for a mSupply DataTable page row.
@@ -74,7 +79,7 @@ const DataTableRow = React.memo(
     const renderCells = useCallback(
       () =>
         // Map each column to an appropriate cell for a given row.
-        columns.map(({ key: columnKey, type, width, alignText }, index) => {
+        columns.map(({ key: columnKey, type, width, alignText, icon }, index) => {
           // Indicator if the right hand border should be removed from styles for this cell.
           const isLastCell = index === columns.length - 1;
 
@@ -141,10 +146,10 @@ const DataTableRow = React.memo(
                   columnKey={columnKey}
                   isChecked={rowState && rowState.isSelected}
                   isDisabled={isDisabled}
-                  CheckedComponent={CheckedComponent}
-                  UncheckedComponent={UncheckedComponent}
-                  DisabledCheckedComponent={DisabledCheckedComponent}
-                  DisabledUncheckedComponent={DisabledUncheckedComponent}
+                  CheckedComponent={CheckedIcon}
+                  UncheckedComponent={UncheckedIcon}
+                  DisabledCheckedComponent={DisabledCheckedIcon}
+                  DisabledUncheckedComponent={DisabledUncheckedIcon}
                   onCheck={getCallback(columnKey, 'onCheck')}
                   onUncheck={getCallback(columnKey, 'onUncheck')}
                   containerStyle={touchableCellContainer}
@@ -153,9 +158,26 @@ const DataTableRow = React.memo(
                 />
               );
 
+            case COLUMN_TYPES.CURRENCY: {
+              const value = currency(rowData[columnKey]).format(false);
+
+              return (
+                <Cell
+                  key={columnKey}
+                  value={value}
+                  width={width}
+                  viewStyle={cellContainer[cellAlignment]}
+                  textStyle={cellText[cellAlignment]}
+                  isLastCell={isLastCell}
+                />
+              );
+            }
+
             case COLUMN_TYPES.STRING: {
               const value = rowData[columnKey];
-              const displayValue = columnKey === 'status' ? formatStatus(value) : value;
+              let displayValue = columnKey === 'status' ? formatStatus(value) : value;
+              displayValue = columnKey === 'type' ? formatType(displayValue) : displayValue;
+
               return (
                 <Cell
                   key={columnKey}
@@ -193,7 +215,7 @@ const DataTableRow = React.memo(
               return (
                 <Cell
                   key={columnKey}
-                  value={rowData[columnKey] && rowData[columnKey].toDateString()}
+                  value={formatDate(rowData[columnKey], 'll') ?? generalStrings.not_available}
                   width={width}
                   viewStyle={cellContainer[cellAlignment]}
                   textStyle={cellText[cellAlignment]}
@@ -201,11 +223,17 @@ const DataTableRow = React.memo(
                 />
               );
 
-            case COLUMN_TYPES.ICON:
+            case COLUMN_TYPES.ICON: {
+              const icons = {
+                chevron_right: ChevronRightIcon,
+                history: () => <HistoryIcon color={SUSSOL_ORANGE} />,
+                pencil: () => <PencilIcon color={SUSSOL_ORANGE} />,
+              };
+
               return (
                 <TouchableCell
                   key={columnKey}
-                  renderChildren={OpenModal}
+                  renderChildren={icons[icon]}
                   rowKey={rowKey}
                   columnKey={columnKey}
                   onPress={getCallback(columnKey)}
@@ -214,6 +242,7 @@ const DataTableRow = React.memo(
                   containerStyle={iconCell}
                 />
               );
+            }
 
             case COLUMN_TYPES.DROP_DOWN:
               return (

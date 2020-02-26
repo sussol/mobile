@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -7,7 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { StyleSheet, Text, TouchableOpacity, ViewPropTypes, View } from 'react-native';
-import globalStyles from '../../globalStyles';
+import globalStyles, { WARMER_GREY, SUSSOL_ORANGE } from '../../globalStyles';
 
 /**
  * Renders a bar of multiple toggling buttons, defined by the array 'toggles' passed in.
@@ -39,6 +40,8 @@ export const ToggleBarComponent = props => {
     textOffStyle,
     textOnStyle,
     toggles,
+    isDisabled,
+    toggleOnDisabledStyle,
     ...containerProps
   } = props;
 
@@ -46,16 +49,17 @@ export const ToggleBarComponent = props => {
     if (buttons.length === 0) return [];
     const renderOutput = [];
 
+    const defaultOnStyle = isDisabled ? toggleOnDisabledStyle : toggleOnStyle;
+
     buttons.forEach((button, i) => {
       const currentTextStyle = button.isOn
         ? [localStyles.textOnStyle, textOnStyle]
         : [localStyles.textOffStyle, textOffStyle];
-      const currentToggleStyle = button.isOn
-        ? [localStyles.toggleOnStyle, toggleOnStyle]
-        : [localStyles.toggleOffStyle, toggleOffStyle];
+      const currentToggleStyle = button.isOn ? defaultOnStyle : toggleOffStyle;
+      const Container = isDisabled ? View : TouchableOpacity;
 
       renderOutput.push(
-        <TouchableOpacity
+        <Container
           // TODO: use key which is not index.
           // eslint-disable-next-line react/no-array-index-key
           key={i}
@@ -63,7 +67,7 @@ export const ToggleBarComponent = props => {
           onPress={button.onPress}
         >
           <Text style={currentTextStyle}>{button.text}</Text>
-        </TouchableOpacity>
+        </Container>
       );
     });
 
@@ -81,24 +85,6 @@ export const ToggleBar = React.memo(ToggleBarComponent);
 
 export default ToggleBar;
 
-ToggleBarComponent.propTypes = {
-  style: ViewPropTypes.style,
-  // eslint-disable-next-line react/require-default-props, react/forbid-prop-types
-  toggles: PropTypes.array,
-  toggleOffStyle: ViewPropTypes.style,
-  toggleOnStyle: ViewPropTypes.style,
-  textOffStyle: Text.propTypes.style,
-  textOnStyle: Text.propTypes.style,
-};
-
-ToggleBarComponent.defaultProps = {
-  style: globalStyles.toggleBar,
-  toggleOffStyle: globalStyles.toggleOption,
-  toggleOnStyle: globalStyles.toggleOptionSelected,
-  textOffStyle: globalStyles.toggleText,
-  textOnStyle: globalStyles.toggleTextSelected,
-};
-
 const localStyles = StyleSheet.create({
   container: {
     flexDirection: 'row',
@@ -106,6 +92,9 @@ const localStyles = StyleSheet.create({
     justifyContent: 'center',
     height: 45,
     borderWidth: 1,
+    borderColor: SUSSOL_ORANGE,
+    marginHorizontal: 5,
+    borderRadius: 4,
   },
   toggleOffStyle: {
     alignItems: 'center',
@@ -116,6 +105,34 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: 142,
-    backgroundColor: 'rgb(114, 211, 242)',
+    backgroundColor: SUSSOL_ORANGE,
+  },
+  toggleOnDisabledStyle: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: WARMER_GREY,
+    width: 142,
   },
 });
+
+ToggleBarComponent.propTypes = {
+  style: ViewPropTypes.style,
+  // eslint-disable-next-line react/require-default-props, react/forbid-prop-types
+  toggles: PropTypes.array,
+  toggleOffStyle: ViewPropTypes.style,
+  toggleOnStyle: ViewPropTypes.style,
+  textOffStyle: Text.propTypes.style,
+  textOnStyle: Text.propTypes.style,
+  isDisabled: PropTypes.bool,
+  toggleOnDisabledStyle: PropTypes.object,
+};
+
+ToggleBarComponent.defaultProps = {
+  style: globalStyles.toggleBar,
+  toggleOffStyle: localStyles.toggleOffStyle,
+  toggleOnStyle: localStyles.toggleOnStyle,
+  textOffStyle: globalStyles.toggleText,
+  textOnStyle: globalStyles.toggleTextSelected,
+  toggleOnDisabledStyle: localStyles.toggleOnDisabledStyle,
+  isDisabled: false,
+};

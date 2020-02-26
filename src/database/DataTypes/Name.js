@@ -36,12 +36,27 @@ export class Name extends Realm.Object {
   }
 
   /**
-   * Get number of transactions associated with this name.
-   *
-   * @return  {number}
+   * Returns all customer credits for this Name
    */
-  get numberOfTransactions() {
-    return this.transactions.length;
+  get customerCredits() {
+    return this.transactions.filtered('type == $0', 'customer_credit');
+  }
+
+  /**
+   * Returns all customer invoices for this Name
+   */
+  get customerInvoices() {
+    return this.transactions.filtered('type == $0', 'customer_invoice');
+  }
+
+  /**
+   * Returns the available credit for this Name.
+   */
+  get availableCredit() {
+    const sumOfCredits = this.customerCredits.sum('outstanding');
+    const sumOfDebits = this.customerInvoices.sum('outstanding');
+
+    return Math.abs(sumOfCredits + sumOfDebits);
   }
 
   /**
@@ -73,27 +88,6 @@ export class Name extends Realm.Object {
   }
 
   /**
-   * Add transaction to name.
-   *
-   * @param  {Transaction}  transaction
-   */
-  addTransaction(transaction) {
-    this.transactions.push(transaction);
-  }
-
-  /**
-   * Add transaction to name, if it has not already been added.
-   *
-   * @param  {Transaction}  transaction
-   */
-  addTransactionIfUnique(transaction) {
-    if (this.transactions.filtered('id == $0', transaction.id).length > 0) {
-      return;
-    }
-    this.addTransaction(transaction);
-  }
-
-  /**
    * Get string representation of name.
    */
   toString() {
@@ -108,17 +102,25 @@ Name.schema = {
     id: 'string',
     name: { type: 'string', default: 'placeholderName' },
     code: { type: 'string', default: 'placeholderCode' },
+    dateOfBirth: { type: 'date', optional: true },
     phoneNumber: { type: 'string', optional: true },
     billingAddress: { type: 'Address', optional: true },
     emailAddress: { type: 'string', optional: true },
     type: { type: 'string', default: 'placeholderType' },
+    masterLists: { type: 'list', objectType: 'MasterList' },
+    transactions: { type: 'linkingObjects', objectType: 'Transaction', property: 'otherParty' },
+    isVisible: { type: 'bool', default: false },
+    supplyingStoreId: { type: 'string', optional: true },
+    firstName: { type: 'string', optional: true },
+    lastName: { type: 'string', optional: true },
+    isActive: { type: 'bool', optional: true },
     isCustomer: { type: 'bool', default: false },
     isSupplier: { type: 'bool', default: false },
     isManufacturer: { type: 'bool', default: false },
-    masterLists: { type: 'list', objectType: 'MasterList' },
-    transactions: { type: 'list', objectType: 'Transaction' },
-    isVisible: { type: 'bool', default: false },
-    supplyingStoreId: { type: 'string', optional: true },
+    isPatient: { type: 'bool', default: false },
+    policies: { type: 'linkingObjects', objectType: 'InsurancePolicy', property: 'patient' },
+    female: { type: 'bool', default: false },
+    thisStoresPatient: { type: 'bool', default: false },
   },
 };
 

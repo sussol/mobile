@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { View, Text } from 'react-native';
 
 import TouchableCell from './DataTable/TouchableCell';
-import { Expand } from './icons';
+import { ExpandIcon } from './icons';
 import { dataTableStyles } from '../globalStyles/index';
 
 const {
@@ -43,7 +43,7 @@ const DropDownCell = React.memo(
         </View>
         {!!value && (
           <View style={dropDownCellIconContainer}>
-            <Expand />
+            <ExpandIcon />
           </View>
         )}
       </View>

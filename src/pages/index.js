@@ -11,6 +11,7 @@ import { CustomerInvoicePage } from './CustomerInvoicePage';
 import { CustomerInvoicesPage } from './CustomerInvoicesPage';
 import { CustomerRequisitionPage } from './CustomerRequisitionPage';
 import { CustomerRequisitionsPage } from './CustomerRequisitionsPage';
+import { CashRegisterPage } from './CashRegisterPage';
 import { DashboardPage } from './DashboardPage';
 import { MenuPage } from './MenuPage';
 import { PageContainer } from './PageContainer';
@@ -24,6 +25,8 @@ import { SupplierInvoicePage } from './SupplierInvoicePage';
 import { SupplierInvoicesPage } from './SupplierInvoicesPage';
 import { SupplierRequisitionPage } from './SupplierRequisitionPage';
 import { SupplierRequisitionsPage } from './SupplierRequisitionsPage';
+import { DispensingPage } from './DispensingPage';
+import { PrescriptionPage } from './PrescriptionPage';
 
 import {
   checkForCustomerInvoiceError,
@@ -73,6 +76,12 @@ export const PAGES = {
   [ROUTES.STOCKTAKE_EDITOR_WITH_REASONS]: props => (
     <PageContainer page={StocktakeEditPage} {...props} />
   ),
+
+  [ROUTES.CASH_REGISTER]: props => <PageContainer page={CashRegisterPage} {...props} />,
+
+  [ROUTES.DISPENSARY]: props => <PageContainer page={DispensingPage} {...props} />,
+  [ROUTES.PRESCRIPTION]: props => <PageContainer page={PrescriptionPage} {...props} />,
+
   [ROUTES.SETTINGS]: props => <PageContainer page={SettingsPage} {...props} />,
   [ROUTES.DASHBOARD]: props => <PageContainer page={DashboardPage} {...props} />,
 };
@@ -85,6 +94,12 @@ export const FINALISABLE_PAGES = {
     finaliseText: 'finalise_supplier_invoice',
   },
   [ROUTES.CUSTOMER_INVOICE]: {
+    checkForError: checkForCustomerInvoiceError,
+    recordType: 'Transaction',
+    recordToFinaliseKey: 'transaction',
+    finaliseText: 'finalise_customer_invoice',
+  },
+  [ROUTES.PRESCRIPTION]: {
     checkForError: checkForCustomerInvoiceError,
     recordType: 'Transaction',
     recordToFinaliseKey: 'transaction',

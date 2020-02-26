@@ -22,8 +22,10 @@ import { buttonStrings, modalStrings, generalStrings } from '../localization';
 import globalStyles from '../globalStyles';
 
 import { ROUTES } from '../navigation/constants';
+import { SupplierCreditActions } from '../actions/SupplierCreditActions';
 
 export const SupplierInvoice = ({
+  refund,
   pageObject,
   data,
   dispatch,
@@ -52,6 +54,9 @@ export const SupplierInvoice = ({
   onEditDate,
   onAddTransactionBatch,
   route,
+  onEditSellPrice,
+  onEditTransactionBatchName,
+  isSupplierInvoice,
 }) => {
   // Listen for this transaction being finalised, so data can be refreshed and kept consistent.
   useRecordListener(refreshData, pageObject, 'Transaction');
@@ -73,6 +78,10 @@ export const SupplierInvoice = ({
       case 'remove':
         if (propName === 'onCheck') return onCheck;
         return onUncheck;
+      case 'sellPriceString':
+        return onEditSellPrice;
+      case 'batch':
+        return onEditTransactionBatchName;
       default:
         return null;
     }
@@ -139,11 +148,15 @@ export const SupplierInvoice = ({
           />
         </View>
         <View style={pageTopRightSectionContainer}>
-          <PageButton
-            text={buttonStrings.new_item}
-            onPress={onSelectNewItem}
-            isDisabled={isFinalised}
-          />
+          {(!isFinalised && isSupplierInvoice) || (isFinalised && !isSupplierInvoice) ? (
+            <PageButton
+              text={buttonStrings.new_item}
+              onPress={onSelectNewItem}
+              isDisabled={isFinalised}
+            />
+          ) : (
+            <PageButton text={buttonStrings.new_supplier_credit} onPress={refund} />
+          )}
         </View>
       </View>
       <DataTable
@@ -175,13 +188,23 @@ export const SupplierInvoice = ({
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) =>
-  getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.SUPPLIER_INVOICE);
+const mapDispatchToProps = (dispatch, ownProps) => {
+  const { transaction } = ownProps;
+  return {
+    ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.SUPPLIER_INVOICE),
+    refund: () => dispatch(SupplierCreditActions.createFromInvoice(transaction)),
+  };
+};
 
 const mapStateToProps = state => {
   const { pages } = state;
   const { supplierInvoice } = pages;
-  return supplierInvoice;
+
+  const { pageObject } = supplierInvoice ?? {};
+
+  const { isSupplierInvoice } = pageObject ?? {};
+
+  return { ...supplierInvoice, isSupplierInvoice };
 };
 
 export const SupplierInvoicePage = connect(mapStateToProps, mapDispatchToProps)(SupplierInvoice);
@@ -219,4 +242,8 @@ SupplierInvoice.propTypes = {
   onEditDate: PropTypes.func.isRequired,
   onAddTransactionBatch: PropTypes.func.isRequired,
   route: PropTypes.string.isRequired,
+  onEditSellPrice: PropTypes.func.isRequired,
+  refund: PropTypes.func.isRequired,
+  onEditTransactionBatchName: PropTypes.func.isRequired,
+  isSupplierInvoice: PropTypes.bool.isRequired,
 };
