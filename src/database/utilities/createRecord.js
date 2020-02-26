@@ -213,13 +213,14 @@ const createReceipt = (database, user, name, amount, paymentType, description) =
   return receipt;
 };
 
-const createReceiptLine = (database, receipt, linkedTransaction, amount) => {
+const createReceiptLine = (database, receipt, linkedTransaction, amount, note) => {
   const receiptLine = database.create('TransactionBatch', {
     id: generateUUID(),
     total: amount,
     transaction: receipt,
     linkedTransaction,
     type: 'cash_in',
+    note,
   });
 
   database.save('TransactionBatch', receiptLine);

@@ -95,7 +95,7 @@ export const pay = (
       if (outstandingCredit >= 0) return false;
 
       const amountToTake = Math.min(Math.abs(outstandingCredit), creditToAllocate);
-      createRecord(UIDatabase, 'ReceiptLine', receipt, creditSource, -amountToTake);
+      createRecord(UIDatabase, 'ReceiptLine', receipt, creditSource, -amountToTake, 'credit');
 
       creditToAllocate -= amountToTake;
 
