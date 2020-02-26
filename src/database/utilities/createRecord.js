@@ -186,7 +186,6 @@ const createOffsetCustomerInvoice = (database, payment) => {
     subtotal: payment.subtotal,
     outstanding: payment.subtotal,
     enteredBy: payment.enteredBy,
-    linkedTransaction: payment,
     paymentType: payment?.paymentType,
   });
 
@@ -322,7 +321,6 @@ const createOffsetCustomerCredit = (database, receipt) => {
     enteredBy: receipt.enteredBy,
     subtotal: -receipt.subtotal,
     outstanding: -receipt.subtotal,
-    linkedTransaction: receipt,
     paymentType: receipt?.paymentType,
   });
 
