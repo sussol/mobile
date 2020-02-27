@@ -222,7 +222,7 @@ const generateSyncData = (settings, recordType, record) => {
         paymentTypeID: record?.paymentType?.id ?? '',
         entry_time: getTimeString(record.entryDate),
         Date_order_written: getDateString(record.entryDate),
-        isCancellation: String(record?.isCancellation ?? false),
+        is_cancellation: String(record?.isCancellation ?? false),
         currency_ID: defaultCurrency?.id ?? '',
         currency_rate: String(defaultCurrency?.rate ?? ''),
         optionID: record.option?.id ?? '',

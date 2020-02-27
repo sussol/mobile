@@ -786,7 +786,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         subtotal: parseFloat(record.subtotal),
         user1: record.user1,
         paymentType: database.getOrCreate('PaymentType', record.paymentTypeID),
-        isCancellation: parseBoolean(record.is_cancellaton),
+        isCancellation: parseBoolean(record.is_cancellation),
       };
       const transaction = database.update(recordType, internalRecord);
       if (linkedRequisition) {
