@@ -4,10 +4,13 @@
  */
 
 import DeviceInfo from 'react-native-device-info';
-
 import { authenticateAsync, AUTH_ERROR_CODES, hashPassword } from 'sussol-utilities';
 
+import packageJson from '../../package.json';
 import { SETTINGS_KEYS } from '../settings';
+
+import { SERVER_COMPATIBILITIES } from '../sync/constants';
+import { authStrings } from '../localization';
 
 const { SYNC_URL, THIS_STORE_ID } = SETTINGS_KEYS;
 
@@ -33,18 +36,19 @@ export class UserAuthenticator {
    *
    * On successful authentication, save the details in the database.
    *
-   * @param  {string}  username  Username to test.
-   * @param  {string}  password  Password to test.
+   * @param  {string}  username       Username to test.
+   * @param  {string}  password       Password to test.
+   * @param  {string}  hashedPassword Hashed password to test, alternative to non-hashed.
    */
-  async authenticate(username, password) {
+  async authenticate(username, password, hashedPassword) {
     if (username.length === 0) throw new Error('Enter a username');
-    if (password.length === 0) throw new Error('Enter a password');
+    if (!password && !hashedPassword) throw new Error('Enter a password');
 
     this.activeUsername = username;
     this.activePassword = password;
 
     // Hash the password.
-    const passwordHash = hashPassword(password);
+    const passwordHash = hashedPassword ?? hashPassword(password);
 
     // Get the cached user from the database, if exists.
     let user = this.database.objects('User').filtered('username == $0', username)[0];
@@ -64,18 +68,29 @@ export class UserAuthenticator {
         authenticateAsync(authURL, username, passwordHash, { ...this.extraHeaders }),
         createConnectionTimeoutPromise(),
       ]);
-      if (!userJson || !userJson.UserID) {
-        throw new Error('Unexpected response from server');
-      } else {
-        // Success, save user to database.
-        this.database.write(() => {
-          user = this.database.update('User', {
-            id: userJson.UserID,
-            username,
-            passwordHash,
-            isAdmin: userJson.isAdmin || false,
+
+      if (userJson?.ServerVersion) {
+        const { version: appVersion } = packageJson;
+        const [majorAppVersion] = appVersion.split('.');
+        const { ServerVersion: serverVersion } = userJson;
+
+        if (serverVersion >= SERVER_COMPATIBILITIES[majorAppVersion]) {
+          throw new Error(authStrings.incompatible_server);
+        }
+
+        if (!userJson || !userJson.UserID) {
+          throw new Error('Unexpected response from server');
+        } else {
+          // Success, save user to database.
+          this.database.write(() => {
+            user = this.database.update('User', {
+              id: userJson.UserID,
+              username,
+              passwordHash,
+              isAdmin: userJson.isAdmin || false,
+            });
           });
-        });
+        }
       }
     } catch (error) {
       // If there was an error with connection, check against locally cached credentials.
