@@ -3,6 +3,10 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+export const SERVER_COMPATIBILITIES = {
+  4: 409,
+};
+
 export const INCREMENT_SYNC_PROGRESS = 'INCREMENT_SYNC_PROGRESS';
 export const SET_SYNC_ERROR = 'SET_SYNC_ERROR';
 export const SET_SYNC_PROGRESS = 'SET_SYNC_PROGRESS';
