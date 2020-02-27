@@ -26,8 +26,17 @@ const DATE_CONFIGS = {
   [LANGUAGE_CODES.FRENCH]: french,
 };
 
+const SUPPORTED_DATE_LOCALES = {
+  DEFAULT: 'en-nz',
+  [LANGUAGE_CODES.ENGLISH]: 'en-nz',
+  [LANGUAGE_CODES.FRENCH]: 'fr',
+};
+
 export const setDateLocale = languageCode =>
-  moment.updateLocale(languageCode, DATE_CONFIGS[languageCode] || DATE_CONFIGS.DEFAULT);
+  moment.updateLocale(
+    SUPPORTED_DATE_LOCALES[languageCode] ?? SUPPORTED_DATE_LOCALES.DEFAULT,
+    DATE_CONFIGS[languageCode] ?? DATE_CONFIGS.DEFAULT
+  );
 
 export function setCurrentLanguage(language) {
   authStrings.setLanguage(language);
