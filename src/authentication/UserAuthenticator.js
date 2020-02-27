@@ -74,7 +74,7 @@ export class UserAuthenticator {
         const [majorAppVersion] = appVersion.split('.');
         const { ServerVersion: serverVersion } = userJson;
 
-        if (serverVersion >= SERVER_COMPATIBILITIES[majorAppVersion]) {
+        if (serverVersion < SERVER_COMPATIBILITIES[majorAppVersion]) {
           throw new Error(authStrings.incompatible_server);
         }
 

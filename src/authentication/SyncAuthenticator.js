@@ -62,7 +62,7 @@ export class SyncAuthenticator {
     const [majorAppVersion] = appVersion.split('.');
     const { ServerVersion: serverVersion } = responseJson;
 
-    if (serverVersion >= SERVER_COMPATIBILITIES[majorAppVersion]) {
+    if (serverVersion < SERVER_COMPATIBILITIES[majorAppVersion]) {
       throw new Error(authStrings.incompatible_server);
     }
 
