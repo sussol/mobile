@@ -7,7 +7,8 @@
     "user_name": "User Name",
     "email": "E-mail Address",
     "invalid_username_or_password": "Invalid username or password",
-    "warning_sync_edit": "WARNING:\nThis will effect syncing for this store.\nMake sure you know what you doing!"
+    "warning_sync_edit": "WARNING:\nThis will effect syncing for this store.\nMake sure you know what you doing!",
+    "incompatible_server": "mSupply Server is not compatible with this application. Please contact your administrator."
   },
   "fr": {
     "logging_in": "Connexion en cours",
