@@ -44,13 +44,13 @@ export class SyncAuthenticator {
    *                                       any error message as a second parameter
    * @return {none}
    */
-  async authenticate(serverURL, username, password) {
+  async authenticate(serverURL, username, password, hashedPassword) {
     if (serverURL.length === 0) throw new Error('Enter a server URL');
     if (username.length === 0) throw new Error('Enter the sync site username');
-    if (password.length === 0) throw new Error('Enter the sync site password');
+    if (!password && !hashedPassword) throw new Error('Enter the sync site password');
 
     // Hash the password.
-    const passwordHash = hashPassword(password);
+    const passwordHash = hashedPassword ?? hashPassword(password);
 
     const authURL = `${serverURL}${AUTH_ENDPOINT}`;
 
