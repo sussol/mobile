@@ -49,7 +49,7 @@ export class Name extends Realm.Object {
    * Debit sources are customer invoices which are not cancellations - all outgoings.
    */
   get debitSources() {
-    const queryString = 'type == $0 && isCancellation == $2 && outstanding != 0';
+    const queryString = 'type == $0 && isCancellation == $1 && outstanding != 0';
     return this.transactions.filtered(queryString, 'customer_invoice', false);
   }
 
