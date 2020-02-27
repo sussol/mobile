@@ -8,27 +8,32 @@ import { UIDatabase } from '../../../database';
 import { dispensingStrings } from '../../../localization';
 
 /**
- * Helper method to pay off a prescription. Given a cash amount
- * a script and a patient, all receipts, credits and cash in
- * transactions will be created and the script will be finalised.
+ * Helper method to pay off a prescription. After payment, the script
+ * will be finalised.
  *
- * Paying a script has three paths: underpay, exactpay and overpay.
- * All payments create a Receipt with a ReceiptLine.
+ * Paying a script has three paths: exact cash* payment, credit payment and
+ * mixed cash+payment.
+ * * [cash payment really meaning the patient has paid some amount that is not
+ * credit]
  *
- * An underpayment creates a CustomerCreditLine and a ReceiptLine
- * for each source of credit (CustomerCredit) that credit was used from.
- * For example if a Patient has overpaid the last two prescriptions, then
- * there would be two sources of credit. If both sources were used to pay
- * off a script, a CustomerCreditLine is added to each CustomerCredit for
- * the amount used. A CustomerCredit can have many CustomerCreditLines If
- * only a fraction of credit is used at a time.
+ * Every payment starts with a Receipt.
+ * There are then two ReceiptLines created:
+ * If there is a cash payment portion: create a ReceiptLine with an amount equal.
+ * If there is a credit portion: create a ReceiptLine with the full amount of credit used.
  *
- * An overpayment creates a CashIn Transaction to the value of the
- * amount overpaid.
+ * Then the amount of credit used needs to be reduced from the credit sources*.
+ * * credit source: [Sources of credit are from customer_credit type Transactions, as well as
+ * cancelled customer invoices. These invoices will have their outstanding field < 0 - where the
+ * absolute value is the amount of credit the patient has from that source. I.e. a customer_credit
+ * transaction with an outstanding equal to -20 shows the patient has $20 of credit]
  *
- * When using credit, credit must not become negative.
- * A script must be paid off in full, no partial payments.
- * Any amount overpaid must be gained in credit.
+ * Using credit:
+ * - Credit must not become negative.
+ * - Credit must come from a credit source.
+ * - A script must be paid off in full, no partial payments.
+ *
+ * To use credit, iterate over each credit source and reduce the outstanding value by the amount
+ * of credit being used.
  *
  * @param {User} currentUser   The currently logged in user.
  * @param {Name} patient       A Name that is a patient
@@ -55,13 +60,13 @@ export const pay = (
 
   const { availableCredit } = patient;
 
-  // Determine if this is an under, exact or over payment
+  // Determine if the payment is using credit.
   const creditAmount = scriptTotal - cashAmount;
   const usingCredit = creditAmount > 0;
 
   if (creditAmount > availableCredit) throw new Error('Not enough credit');
 
-  // Create a Receipt and ReceiptLine for every payment path.
+  // Create a Receipt for every payment path.
   const receiptDescription = `${dispensingStrings.receipt_for_invoice} ${script.serialNumber}`;
   const receipt = createRecord(
     UIDatabase,
@@ -73,26 +78,29 @@ export const pay = (
     receiptDescription
   );
 
-  createRecord(UIDatabase, 'ReceiptLine', receipt, script, cashAmount);
+  // Create a receipt line for the full non-credit amount, if any.
+  if (cashAmount) createRecord(UIDatabase, 'ReceiptLine', receipt, script, cashAmount);
 
-  // When using credit, create a CustomerCreditLine and ReceiptLine for each
-  // source of credit being used.
   let creditToAllocate = creditAmount;
+
   if (usingCredit) {
-    // Iterate over all the patients CustomerCredits, taking credit
-    // from each with available credit, until all has been allocated.
-    patient.customerCredits.some(customerCredit => {
-      const creditFromCustomerCredit = customerCredit.outstanding;
+    // Create a receipt line for the full credit amount, if any.
+    createRecord(UIDatabase, 'ReceiptLine', receipt, script, creditAmount);
 
-      if (creditFromCustomerCredit >= 0) return false;
+    // Iterate over all the patients credit sources, taking credit from each with
+    // available credit, by reducing the outstanding value until all has been allocated.
+    patient.creditSources.some(creditSource => {
+      const { outstanding: outstandingCredit } = creditSource;
 
-      const amountToTake = Math.min(Math.abs(creditFromCustomerCredit), creditToAllocate);
+      if (outstandingCredit >= 0) return false;
 
-      createRecord(UIDatabase, 'CustomerCreditLine', customerCredit, amountToTake);
-      createRecord(UIDatabase, 'ReceiptLine', receipt, customerCredit, amountToTake);
-      createRecord(UIDatabase, 'ReceiptLine', receipt, customerCredit, -amountToTake);
+      const creditUsed = Math.min(Math.abs(outstandingCredit), creditToAllocate);
+      createRecord(UIDatabase, 'ReceiptLine', receipt, creditSource, -creditUsed, 'credit');
 
-      creditToAllocate -= amountToTake;
+      creditToAllocate -= creditUsed;
+
+      creditSource.outstanding -= creditUsed;
+      UIDatabase.save('Transaction', creditSource);
 
       return !creditToAllocate;
     });

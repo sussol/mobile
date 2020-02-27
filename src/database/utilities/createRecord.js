@@ -213,13 +213,14 @@ const createReceipt = (database, user, name, amount, paymentType, description) =
   return receipt;
 };
 
-const createReceiptLine = (database, receipt, linkedTransaction, amount) => {
+const createReceiptLine = (database, receipt, linkedTransaction, amount, note) => {
   const receiptLine = database.create('TransactionBatch', {
     id: generateUUID(),
     total: amount,
     transaction: receipt,
     linkedTransaction,
     type: 'cash_in',
+    note,
   });
 
   database.save('TransactionBatch', receiptLine);
@@ -360,22 +361,6 @@ const createCustomerRefundLine = (database, customerCredit, transactionBatch) =>
   database.save('ItemBatch', customerCredit);
 
   return refundLine;
-};
-
-const createCustomerCreditLine = (database, customerCredit, total) => {
-  const receiptLine = database.create('TransactionBatch', {
-    id: generateUUID(),
-    total,
-    transaction: customerCredit,
-    type: 'cash_in',
-    note: 'credit',
-  });
-
-  customerCredit.outstanding += total;
-
-  database.save('Transaction', customerCredit);
-  database.save('TransactionBatch', receiptLine);
-  return receiptLine;
 };
 
 /**
@@ -847,8 +832,6 @@ export const createRecord = (database, type, ...args) => {
       return createOffsetCustomerCredit(database, ...args);
     case 'SupplierCredit':
       return createSupplierCredit(database, ...args);
-    case 'CustomerCreditLine':
-      return createCustomerCreditLine(database, ...args);
     case 'SupplierCreditLine':
       return createSupplierCreditLine(database, ...args);
     case 'InsurancePolicy':

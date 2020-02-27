@@ -514,6 +514,7 @@ Transaction.schema = {
     insuranceDiscountRate: { type: 'double', optional: true },
     insuranceDiscountAmount: { type: 'double', optional: true },
     paymentType: { type: 'PaymentType', optional: true },
+    isCancellation: { type: 'bool', default: false },
   },
 };
 
