@@ -38,6 +38,7 @@ import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import Settings from './settings/MobileAppSettings';
 import Database from './database/BaseDatabase';
 import { UIDatabase } from './database';
+import { SETTINGS_KEYS } from './settings';
 
 import globalStyles, { textStyles, SUSSOL_ORANGE } from './globalStyles';
 import { LoadingIndicatorContext } from './context/LoadingIndicatorContext';
@@ -191,17 +192,18 @@ class MSupplyMobileAppContainer extends React.Component {
   };
 
   synchronise = async () => {
-    const { syncState, dispatch, currentUser } = this.props;
+    const { syncState, dispatch } = this.props;
     const { isInitialised } = this.state;
 
     if (!isInitialised || syncState.isSyncing) return; // Ignore if syncing.
 
     try {
-      await this.userAuthenticator.authenticate(
-        currentUser.username,
-        null,
-        currentUser.passwordHash
-      );
+      const syncUrl = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL);
+      const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
+      const syncSitePasswordHash = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_PASSWORD_HASH);
+
+      await this.syncAuthenticator.authenticate(syncUrl, syncSiteName, null, syncSitePasswordHash);
+
       // True if most recent call to |this.synchroniser.synchronise()| failed.
       const lastSyncFailed = this.synchroniser.lastSyncFailed();
       const lastPostSyncProcessingFailed = this.postSyncProcessor.lastPostSyncProcessingFailed();
