@@ -18,7 +18,8 @@
     "user_name": "Identifiant",
     "email": "Adresse courriel",
     "invalid_username_or_password": "Identifiant ou mot de passe invalide",
-    "warning_sync_edit": "AVERTISSEMENT:\nCeci affectera la synchronisation de ce dépôt.\nAssurez-vous de savoir ce que vous faites!"
+    "warning_sync_edit": "AVERTISSEMENT:\nCeci affectera la synchronisation de ce dépôt.\nAssurez-vous de savoir ce que vous faites!",
+    "incompatible_server": "Le serveur mSupply avec lequel vous essayez de vous synchroniser n'est pas compatible avec votre version actuelle. Veuillez contacter votre administrateur."
   },
   "gil": {
     "logging_in": "Taninga bwa e na uki",
