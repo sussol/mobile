@@ -31,13 +31,14 @@ import { FinaliseButton, NavigationBar, SyncState, Spinner } from './widgets';
 import { FinaliseModal, LoginModal } from './widgets/modals';
 
 import { getCurrentParams, getCurrentRouteName, ReduxNavigator, ROUTES } from './navigation';
-import { syncCompleteTransaction } from './actions/SyncActions';
+import { syncCompleteTransaction, setSyncError } from './actions/SyncActions';
 import { FinaliseActions } from './actions/FinaliseActions';
 import { migrateDataToVersion } from './dataMigration';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import Settings from './settings/MobileAppSettings';
 import Database from './database/BaseDatabase';
 import { UIDatabase } from './database';
+import { SETTINGS_KEYS } from './settings';
 
 import globalStyles, { textStyles, SUSSOL_ORANGE } from './globalStyles';
 import { LoadingIndicatorContext } from './context/LoadingIndicatorContext';
@@ -91,8 +92,13 @@ class MSupplyMobileAppContainer extends React.Component {
 
     migrateDataToVersion(UIDatabase, Settings);
     this.userAuthenticator = new UserAuthenticator(UIDatabase, Settings);
-    const syncAuthenticator = new SyncAuthenticator(Settings);
-    this.synchroniser = new Synchroniser(Database, syncAuthenticator, Settings, props.dispatch);
+    this.syncAuthenticator = new SyncAuthenticator(Settings);
+    this.synchroniser = new Synchroniser(
+      Database,
+      this.syncAuthenticator,
+      Settings,
+      props.dispatch
+    );
     this.postSyncProcessor = new PostSyncProcessor(UIDatabase, Settings);
     this.scheduler = new Scheduler();
     const isInitialised = this.synchroniser.isInitialised();
@@ -188,21 +194,33 @@ class MSupplyMobileAppContainer extends React.Component {
   synchronise = async () => {
     const { syncState, dispatch } = this.props;
     const { isInitialised } = this.state;
+
     if (!isInitialised || syncState.isSyncing) return; // Ignore if syncing.
-    // True if most recent call to |this.synchroniser.synchronise()| failed.
-    const lastSyncFailed = this.synchroniser.lastSyncFailed();
-    const lastPostSyncProcessingFailed = this.postSyncProcessor.lastPostSyncProcessingFailed();
-    await this.synchroniser.synchronise();
-    if (lastSyncFailed || lastPostSyncProcessingFailed) {
-      // If last sync was interrupted, it did not enter this block. If the app was closed, it did
-      // not store the records left in the record queue, so tables should be checked for unprocessed
-      // records. If the last processing of the record queue was interrupted by app crash then all
-      // records need to be checked.
-      this.postSyncProcessor.processAnyUnprocessedRecords();
-    } else {
-      this.postSyncProcessor.processRecordQueue();
+
+    try {
+      const syncUrl = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL);
+      const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
+      const syncSitePasswordHash = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_PASSWORD_HASH);
+
+      await this.syncAuthenticator.authenticate(syncUrl, syncSiteName, null, syncSitePasswordHash);
+
+      // True if most recent call to |this.synchroniser.synchronise()| failed.
+      const lastSyncFailed = this.synchroniser.lastSyncFailed();
+      const lastPostSyncProcessingFailed = this.postSyncProcessor.lastPostSyncProcessingFailed();
+      await this.synchroniser.synchronise();
+      if (lastSyncFailed || lastPostSyncProcessingFailed) {
+        // If last sync was interrupted, it did not enter this block. If the app was closed, it did
+        // not store any records left in the sync queue, so tables should be checked for unprocessed
+        // records. If the last processing of the record queue was interrupted by app crash then all
+        // records need to be checked.
+        this.postSyncProcessor.processAnyUnprocessedRecords();
+      } else {
+        this.postSyncProcessor.processRecordQueue();
+      }
+      dispatch(syncCompleteTransaction());
+    } catch (error) {
+      dispatch(setSyncError(error.message));
     }
-    dispatch(syncCompleteTransaction());
   };
 
   renderFinaliseButton = () => {
