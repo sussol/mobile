@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
 import { useRecordListener } from '../hooks';
-import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
+import { getItemLayout, getPageDispatchers, getColumns } from './dataTableUtilities';
 
 import { DataTablePageModal } from '../widgets/modals';
 import { BottomConfirmModal } from '../widgets/bottomModals';
@@ -197,14 +197,17 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 };
 
 const mapStateToProps = state => {
-  const { pages } = state;
+  const { pages, modules } = state;
   const { supplierInvoice } = pages;
+  const { usingPayments } = modules;
 
   const { pageObject } = supplierInvoice ?? {};
 
   const { isSupplierInvoice } = pageObject ?? {};
+  const columnsKey = usingPayments ? 'supplierInvoiceWithPrices' : 'supplierInvoice';
+  const columns = getColumns(columnsKey);
 
-  return { ...supplierInvoice, isSupplierInvoice };
+  return { ...supplierInvoice, isSupplierInvoice, columns };
 };
 
 export const SupplierInvoicePage = connect(mapStateToProps, mapDispatchToProps)(SupplierInvoice);
