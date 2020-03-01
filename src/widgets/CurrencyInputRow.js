@@ -89,7 +89,7 @@ export const CurrencyInputRow = ({
           editable={!isDisabled}
           onSubmitEditing={onSubmit(1)}
         />
-        <SimpleLabel label={dispensingStrings.decimal_point} size="large" />
+        <SimpleLabel text={dispensingStrings.decimal_point} size="large" />
         <TextInput
           ref={refsArray.current[1]}
           value={centAmount}
