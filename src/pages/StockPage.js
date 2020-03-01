@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { getItemLayout, getPageDispatchers, getColumns } from './dataTableUtilities';
+import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import { ItemDetails } from '../widgets/bottomModals/ItemDetails';
@@ -20,7 +20,6 @@ import { useSyncListener } from '../hooks';
 
 import { generalStrings } from '../localization';
 import { SupplierCreditActions } from '../actions/SupplierCreditActions';
-import { selectUsingSupplierCredits } from '../selectors/modules';
 
 /**
  * Renders a mSupply mobile page with Items and their stock levels.
@@ -119,10 +118,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 const mapStateToProps = state => {
   const { pages } = state;
   const { stock } = pages;
-  const usingSupplierCredits = selectUsingSupplierCredits(state);
-  const columns = usingSupplierCredits ? getColumns('stockWithCredits') : getColumns('stock');
 
-  return { ...stock, columns };
+  return stock;
 };
 
 export const StockPage = connect(mapStateToProps, mapDispatchToProps)(Stock);
