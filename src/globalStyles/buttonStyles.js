@@ -4,7 +4,7 @@
  */
 
 import { COMPONENT_HEIGHT } from './appStyles';
-import { SUSSOL_ORANGE, WARM_GREY, WARMER_GREY, DARKER_GREY, DARK_GREY } from './colors';
+import { SUSSOL_ORANGE, WARMER_GREY, DARKER_GREY, DARK_GREY, WHITE } from './colors';
 import { APP_FONT_FAMILY } from './fonts';
 
 export const buttonStyles = {
@@ -14,7 +14,7 @@ export const buttonStyles = {
     color: SUSSOL_ORANGE,
   },
   disabledButtonText: {
-    color: WARM_GREY,
+    color: WHITE,
   },
   button: {
     alignItems: 'center',
