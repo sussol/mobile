@@ -36,7 +36,6 @@ const initialState = () => {
   const usingVaccines = checkModule(SETTINGS_KEYS.VACCINE_MODULE);
   const usingCashRegister = checkModule(SETTINGS_KEYS.CASH_REGISTER_MODULE) && usingPaymentTypes;
   const usingPayments = checkModule(SETTINGS_KEYS.PAYMENT_MODULE);
-  const usingSupplierCredits = checkModule(SETTINGS_KEYS.SUPPLIER_CREDIT_MODULE);
   const usingPatientTypes = checkModule(SETTINGS_KEYS.PATIENT_TYPES);
 
   const usingModules = usingDashboard || usingDispensary || usingVaccines || usingCashRegister;
@@ -47,7 +46,6 @@ const initialState = () => {
     usingDispensary,
     usingVaccines,
     usingCashRegister,
-    usingSupplierCredits,
     usingModules,
     usingInsurance,
     usingPrescriptionCategories,
