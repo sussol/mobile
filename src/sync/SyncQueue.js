@@ -87,6 +87,7 @@ export class SyncQueue {
           } else {
             existingSyncOutRecord.changeTime = new Date().getTime();
             existingSyncOutRecord.changeType = changeType;
+            existingSyncOutRecord.recordType = recordType;
             this.database.save('SyncOut', existingSyncOutRecord);
           }
           break;

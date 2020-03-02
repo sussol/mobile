@@ -92,6 +92,8 @@ export class TransactionBatch extends Realm.Object {
       this.itemBatch.totalQuantity += inventoryDifference;
       database.save('ItemBatch', this.itemBatch);
     }
+
+    database.save('TransactionBatch', this);
   }
 
   /**
