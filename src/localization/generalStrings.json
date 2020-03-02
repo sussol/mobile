@@ -30,7 +30,7 @@
     "customer": "customer",
     "code": "code",
     "price": "price",
-    "total_price": "total_price",
+    "total_price": "total price",
     "name": "name",
     "or": "or",
     "expiry_date": "Expiry date",
