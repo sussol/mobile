@@ -177,6 +177,7 @@ const stockInitialiser = () => {
     isAscending: true,
     selectedRow: null,
     route: ROUTES.STOCK,
+    columns: getColumns(ROUTES.STOCK),
   };
 };
 
