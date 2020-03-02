@@ -15,6 +15,7 @@ import {
   PAGE_CONTENT_PADDING_HORIZONTAL,
   DARKER_GREY,
 } from '../../globalStyles';
+import { FlexView } from '../FlexView';
 
 /**
  * A modal that can be displayed over the page content container, rendering any children
@@ -74,8 +75,16 @@ export const ModalContainer = ({
     () => (
       <View style={titleBar}>
         <View style={flexSpacer} />
-        {!!title && <Text style={titleFont}>{title}</Text>}
-        <View style={closeButtonContainer}>{onClose && !noCancel && <CloseButton />}</View>
+        {!!title && (
+          <FlexView flex={2}>
+            <Text ellipsizeMode="tail" numberOfLines={1} style={titleFont}>
+              {title}
+            </Text>
+          </FlexView>
+        )}
+        <FlexView flex={1} style={closeButtonContainer}>
+          {onClose && !noCancel && <CloseButton />}
+        </FlexView>
       </View>
     ),
     [title, onClose, noCancel]
