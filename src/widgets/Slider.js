@@ -1,11 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { StyleSheet, View, Text, TextInput } from 'react-native';
+import { StyleSheet, Text, TextInput } from 'react-native';
 
 import RNSlider from '@react-native-community/slider';
 import { SUSSOL_ORANGE, WARMER_GREY } from '../globalStyles';
 import { roundNumber } from '../utilities';
+import { FlexRow } from './FlexRow';
+import { generalStrings } from '../localization';
 
 /**
  * Component rendering a slider with an additional TextInput in a row.
@@ -56,13 +58,7 @@ export const Slider = React.forwardRef(
     // min numbers.
     const [isValid, setValidity] = React.useState(true);
 
-    const {
-      mainContainerStyle,
-      rowStyle,
-      sliderStyle,
-      textInputStyle,
-      errorTextStyle,
-    } = localStyles;
+    const { sliderStyle, textInputStyle, errorTextStyle } = localStyles;
 
     // Ensures a value is a number and within the valid bounds able to be set.
     const validateNewValue = newValue => {
@@ -99,11 +95,11 @@ export const Slider = React.forwardRef(
     }, []);
 
     return (
-      <View style={mainContainerStyle}>
-        <View style={rowStyle}>
+      <>
+        <FlexRow>
           <RNSlider
             disabled={isDisabled}
-            style={sliderStyle}
+            style={{ ...sliderStyle, alignSelf: 'center' }}
             value={currentValue}
             step={step}
             minimumValue={minimumValue}
@@ -114,7 +110,6 @@ export const Slider = React.forwardRef(
             onValueChange={setSlider}
             onSlidingComplete={onEndEditing}
           />
-
           <TextInput
             ref={ref}
             enabled={!isDisabled}
@@ -124,13 +119,14 @@ export const Slider = React.forwardRef(
             onChangeText={setString}
             selectTextOnFocus
           />
-        </View>
+        </FlexRow>
+
         {!isValid && (
           <Text style={errorTextStyle}>
-            {`Must be a number between ${minimumValue} - ${maximumValue} (inclusive)`}
+            {`${generalStrings.must_be_a_number_between} ${minimumValue} - ${maximumValue} ${generalStrings.inclusive}`}
           </Text>
         )}
-      </View>
+      </>
     );
   }
 );
@@ -138,7 +134,7 @@ export const Slider = React.forwardRef(
 const localStyles = StyleSheet.create({
   mainContainerStyle: { flexDirection: 'column', flex: 1 },
   rowStyle: { flexDirection: 'row' },
-  sliderStyle: { flex: 19 },
+  sliderStyle: { flex: 9, alignSelf: 'center' },
   textInputStyle: { textAlign: 'right', flex: 1 },
   errorTextStyle: {
     fontSize: 12,

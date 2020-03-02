@@ -37,9 +37,13 @@
     "quantity": "Quantity",
     "to": "to",
     "batch_name": "Batch name",
-    "save": "Save"
+    "save": "Save",
+    "must_be_a_number_between": "Must be a number between",
+    "inclusive": "(inclusive)"
   },
   "fr": {
+    "must_be_a_number_between": "Doit être un nombre entre",
+    "inclusive": "(comprise)",
     "submit": "Soumettre",
     "submitting": "En cours d'enregistrement",
     "submitted": "Soumise",
