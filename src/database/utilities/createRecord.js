@@ -134,6 +134,7 @@ const createPatient = (database, patientDetails) => {
     code: uniqueCode,
     supplyingStoreId: thisStoreId,
     isCustomer: true,
+    thisStoresPatient: true,
     name: fullName,
   });
 
