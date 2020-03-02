@@ -92,20 +92,17 @@ const PrescriptionConfirmationComponent = ({
 }) => {
   const runWithLoadingIndicator = useLoadingIndicator();
 
-  const confirm = React.useCallback(() => {
-    UIDatabase.write(() =>
-      pay(
-        currentUser,
-        currentPatient,
-        transaction,
-        paymentAmount.value,
-        total.value,
-        subtotal.value,
-        discountAmount.value,
-        discountRate
-      )
+  const confirmAndPay = React.useCallback(() => {
+    pay(
+      currentUser,
+      currentPatient,
+      transaction,
+      paymentAmount.value,
+      total.value,
+      subtotal.value,
+      discountAmount.value,
+      discountRate
     );
-    goBack();
   }, [
     currentUser,
     currentPatient,
@@ -117,7 +114,18 @@ const PrescriptionConfirmationComponent = ({
     discountRate,
   ]);
 
-  const confirmPrescription = React.useCallback(() => runWithLoadingIndicator(confirm), [confirm]);
+  const confirmPrescription = React.useCallback(
+    () =>
+      runWithLoadingIndicator(() => {
+        const shouldPay = usingPayments && total?.value;
+        UIDatabase.write(() => {
+          if (shouldPay) confirmAndPay();
+          else transaction.finalise(UIDatabase);
+        });
+        goBack();
+      }),
+    [confirmAndPay]
+  );
 
   return (
     <FlexView flex={1} style={pageTopViewContainer}>
