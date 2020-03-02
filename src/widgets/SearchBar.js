@@ -7,11 +7,12 @@
 
 import React, { useCallback, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-
 import { Dimensions, StyleSheet, TextInput, View, TouchableOpacity } from 'react-native';
-import { MagnifyingGlass, Cancel } from './icons';
-import { APP_FONT_FAMILY, SUSSOL_ORANGE, LIGHT_GREY } from '../globalStyles/index';
-import { debounce } from '../utilities/index';
+
+import { MagnifyingGlassIcon, CancelIcon } from './icons';
+
+import { APP_FONT_FAMILY, SUSSOL_ORANGE, LIGHT_GREY } from '../globalStyles';
+import { debounce } from '../utilities';
 
 /**
  * Simple search bar - essentially a wrapper around a text input
@@ -76,7 +77,7 @@ export const SearchBarComponent = ({
 
   return (
     <View style={internalViewStyle}>
-      <MagnifyingGlass color={color} />
+      <MagnifyingGlassIcon color={color} />
       <TextInput
         {...textInputProps}
         style={internalTextStyle}
@@ -92,7 +93,7 @@ export const SearchBarComponent = ({
       />
       {!!textValue && (
         <TouchableOpacity onPress={() => onChangeTextCallback('')}>
-          <Cancel />
+          <CancelIcon />
         </TouchableOpacity>
       )}
     </View>
@@ -124,10 +125,10 @@ const defaultStyles = StyleSheet.create({
   },
   textInput: {
     height: 40,
+    flex: 1,
     fontSize: Dimensions.get('window').width / 80,
     fontFamily: APP_FONT_FAMILY,
     backgroundColor: 'rgba(0, 0, 0, 0)',
-    flex: 1,
   },
 });
 

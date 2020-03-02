@@ -17,13 +17,12 @@ import {
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
-
 import { OnePressButton } from '..';
 import { modalStrings } from '../../localization';
 
 import globalStyles, { DARK_GREY } from '../../globalStyles';
 
-export const NewConfirmModal = props => {
+export const ConfirmForm = props => {
   const {
     questionText,
     confirmText,
@@ -77,7 +76,7 @@ export const NewConfirmModal = props => {
 };
 
 /* eslint-disable react/require-default-props */
-NewConfirmModal.propTypes = {
+ConfirmForm.propTypes = {
   style: ViewPropTypes.style,
   buttonContainerStyle: ViewPropTypes.style,
   buttonTextStyle: Text.propTypes.style,
@@ -94,7 +93,7 @@ NewConfirmModal.propTypes = {
 };
 
 /* eslint-disable react/default-props-match-prop-types */
-NewConfirmModal.defaultProps = {
+ConfirmForm.defaultProps = {
   backdropColor: DARK_GREY,
   backdropOpacity: 0.97,
   style: globalStyles.confirmModal,

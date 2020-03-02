@@ -17,6 +17,8 @@ export class TransactionCategory extends Realm.Object {}
 export class User extends Realm.Object {}
 
 export { Item } from './Item';
+export { InsurancePolicy } from './InsurancePolicy';
+export { InsuranceProvider } from './InsuranceProvider';
 export { ItemBatch } from './ItemBatch';
 export { ItemStoreJoin } from './ItemStoreJoin';
 export { IndicatorAttribute } from './IndicatorAttribute';
@@ -30,6 +32,7 @@ export { NameStoreJoin } from './NameStoreJoin';
 export { NumberSequence } from './NumberSequence';
 export { NumberToReuse } from './NumberToReuse';
 export { Options } from './Options';
+export { PaymentType } from './PaymentType';
 export { Period } from './Period';
 export { PeriodSchedule } from './PeriodSchedule';
 export { ProgramIndicator } from './ProgramIndicator';
@@ -43,3 +46,7 @@ export { Transaction } from './Transaction';
 export { TransactionBatch } from './TransactionBatch';
 export { TransactionItem } from './TransactionItem';
 export { Unit } from './Unit';
+export { Prescriber } from './Prescriber';
+export { Abbreviation } from './Abbreviation';
+export { ItemDirection } from './ItemDirection';
+export { Currency } from './Currency';

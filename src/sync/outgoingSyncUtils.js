@@ -5,6 +5,7 @@
  */
 
 import { Client as BugsnagClient } from 'bugsnag-react-native';
+import moment from 'moment';
 
 import {
   INTERNAL_TO_EXTERNAL,
@@ -14,7 +15,6 @@ import {
   SEQUENCE_KEYS,
   STATUSES,
   SYNC_TYPES,
-  TRANSACTION_BATCH_TYPES,
   TRANSACTION_TYPES,
 } from './syncTranslators';
 import { UIDatabase, CHANGE_TYPES } from '../database';
@@ -35,33 +35,6 @@ function getTimeString(date) {
   if (!date || typeof date !== 'object') return '00:00:00';
   return date.toTimeString().substring(0, 8);
 }
-
-/**
- * Tries to get a value that is known to potentially lead to crash.
- * If path on the record returns null, throw an error with prototype extended with
- * |canDeleteSyncOut| set to true to indicates that sync should continue.
- *
- * @param {object}  record  The object to get properties from.
- * @param {string}  path    The path on that object safely try.
- * @return {any}            Whatever variable was stored at path, if no error thrown.
- */
-const safeGet = (record, path) => {
-  const pathSegments = path.split('.');
-  let currentPath = 'record';
-  let nestedProp = record;
-  for (let i = 0; i < pathSegments.length; i += 1) {
-    const segment = pathSegments[i];
-    currentPath += `.${segment}`; // Build up path to know at what point potential errors occur.
-    try {
-      nestedProp = nestedProp[segment];
-    } catch (error) {
-      error.canDeleteSyncOut = true; // Safe to delete |syncOut|.
-      error.message = `Error on object getter on path "${currentPath}", original message: ${error.message}`;
-      throw error; // Bubble error to next handler.
-    }
-  }
-  return nestedProp;
-};
 
 /**
  * Turn an internal database object into data representing a record in the
@@ -100,6 +73,33 @@ const generateSyncData = (settings, recordType, record) => {
         total_cost: String(record.costPrice * record.numberOfPacks),
         name_ID: record.supplier && String(record.supplier.id),
         donor_id: record.donor && record.donor.id,
+      };
+    }
+    case 'Name': {
+      if (!record.isPatient) return false;
+
+      const defaultCurrency = UIDatabase.objects('Currency').filtered(
+        'isDefaultCurrency == $0',
+        true
+      )[0];
+
+      return {
+        id: record.id,
+        type: record.type,
+        first: record.firstName,
+        last: record.lastName,
+        name: record.name,
+        date_of_birth: moment(record.dateOfBirth).format(),
+        code: record.code,
+        email: record.emailAddress,
+        supplying_store_id: settings.get(THIS_STORE_ID),
+        phone: record.phoneNumber,
+        customer: String(record.isCustomer),
+        address1: record.address?.line1,
+        address2: record.address?.line2,
+        barcode: `*${record.code}*`,
+        'charge code': record.code,
+        currency_id: defaultCurrency?.id ?? '',
       };
     }
     case 'NumberSequence': {
@@ -187,6 +187,11 @@ const generateSyncData = (settings, recordType, record) => {
       };
     }
     case 'Transaction': {
+      const defaultCurrency = UIDatabase.objects('Currency').filtered(
+        'isDefaultCurrency == $0',
+        true
+      )[0];
+
       return {
         ID: record.id,
         name_ID: record.otherParty && record.otherParty.id,
@@ -195,19 +200,32 @@ const generateSyncData = (settings, recordType, record) => {
         entry_date: getDateString(record.entryDate),
         type: TRANSACTION_TYPES.translate(record.type, INTERNAL_TO_EXTERNAL),
         status: STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
-        mode: 'store',
-        total: String(record.totalPrice),
+        mode: record.mode,
+        prescriber_ID: record.prescriber && record.prescriber.id,
+        total: String(record.total),
+        amount_outstanding: String(record.outstanding),
+        foreign_currency_total: String(record.total),
+        service_price: String(record.servicePrice),
         their_ref: record.theirRef,
         confirm_date: getDateString(record.confirmDate),
-        subtotal: String(record.totalPrice),
+        subtotal: String(record.subtotal),
         user_ID: record.enteredBy && record.enteredBy.id,
         category_ID: record.category && record.category.id,
         confirm_time: getTimeString(record.confirmDate),
         store_ID: settings.get(THIS_STORE_ID),
-        requisition_ID:
-          record.linkedRequisition && record.linkedRequisition.id
-            ? record.linkedRequisition.id
-            : undefined,
+        linked_transaction_id: record.linkedTransaction?.id ?? '',
+        user1: record.user1,
+        requisition_ID: record.linkedRequisition?.id ?? '',
+        nameInsuranceJoinID: record?.insurancePolicy?.id,
+        insuranceDiscountAmount: String(record?.insuranceDiscountAmount),
+        insuranceDiscountRate: String(record?.insuranceDiscountRate),
+        paymentTypeID: record?.paymentType?.id ?? '',
+        entry_time: getTimeString(record.entryDate),
+        Date_order_written: getDateString(record.entryDate),
+        is_cancellation: String(record?.isCancellation ?? false),
+        currency_ID: defaultCurrency?.id ?? '',
+        currency_rate: String(defaultCurrency?.rate ?? ''),
+        optionID: record.option?.id ?? '',
       };
     }
     case 'TransactionBatch': {
@@ -217,7 +235,8 @@ const generateSyncData = (settings, recordType, record) => {
         transaction_ID: record.transaction.id,
         item_ID: record.itemId,
         batch: record.batch,
-        price_extension: String(record.totalPrice),
+        price_extension: String(record.total),
+        foreign_currency_price: String(record.total),
         note: record.note,
         cost_price: String(record.costPrice),
         sell_price: String(record.sellPrice),
@@ -225,12 +244,28 @@ const generateSyncData = (settings, recordType, record) => {
         pack_size: String(record.packSize),
         quantity: String(record.numberOfPacks),
         // |item_line_ID| can be null due to server merge bug in v3.83.
-        item_line_ID: safeGet(record, 'itemBatch.id'),
+        item_line_ID: record.itemBatch?.id ?? '',
         line_number: String(record.sortIndex),
         item_name: record.itemName,
         is_from_inventory_adjustment: transaction.isInventoryAdjustment,
         donor_id: record.donor && record.donor.id,
-        type: TRANSACTION_BATCH_TYPES.translate(transaction.type, INTERNAL_TO_EXTERNAL),
+        type: record.type,
+        linked_transact_id: record.linkedTransaction?.id,
+      };
+    }
+    case 'InsurancePolicy': {
+      return {
+        ID: record.id,
+        insuranceProviderID: record.insuranceProvider.id,
+        nameID: record.patient.id,
+        isActive: String(record.isActive),
+        policyNumberFamily: record.policyNumberFamily,
+        policyNumberPerson: record.policyNumberPerson,
+        type: record.type,
+        discountRate: String(record.discountRate),
+        expiryDate: getDateString(record.expiryDate),
+        policyNumberFull: `${record.policyNumberFamily}-${record.policyNumberPerson}`,
+        enteredByID: record.enteredBy?.id,
       };
     }
     case 'Message': {
@@ -242,6 +277,28 @@ const generateSyncData = (settings, recordType, record) => {
         createdTime: getTimeString(record.createdTime),
         status: record.status,
         type: record.type,
+      };
+    }
+    case 'Prescriber': {
+      // Only sync out prescribers from this store.
+      if (!record.fromThisStore) return null;
+
+      const initials = `${record.firstName?.[0] ?? ''}${record.lastName?.[0] ?? ''}`;
+
+      return {
+        ID: record.id,
+        last_name: record.lastName,
+        first_name: record.firstName,
+        code: record.registrationCode,
+        registration_code: record.registrationCode,
+        email: record.emailAddress,
+        phone: record.phoneNumber,
+        active: String(record.isActive),
+        address1: record.address?.line1,
+        address2: record.address?.line2,
+        store_ID: settings.get(THIS_STORE_ID),
+        female: String(record.female),
+        initials,
       };
     }
     default:

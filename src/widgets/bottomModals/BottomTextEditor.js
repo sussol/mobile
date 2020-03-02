@@ -27,6 +27,8 @@ export const BottomTextEditor = React.memo(
         value={value}
         onChangeText={onChangeText}
         onSubmitEditing={onConfirm}
+        autoFocus
+        selectTextOnFocus
       />
       <OnePressButton
         style={localStyles.buttonStyle}

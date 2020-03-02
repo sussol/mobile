@@ -18,6 +18,7 @@ export { backupValidation } from './fileSystem';
 export { debounce } from './underscoreMethods';
 export { getModalTitle, MODAL_KEYS } from './getModalTitle';
 export { checkIsObject } from './checkIsObject';
+export { validateReport } from './validateReport';
 // eslint-disable-next-line import/no-cycle
 export {
   checkForCustomerInvoiceError,
@@ -26,5 +27,5 @@ export {
   checkForStocktakeError,
   checkForCustomerRequisitionError,
 } from './finalisation';
-
-export { formatErrorItemNames } from './formatters';
+export { parsePositiveIntegerInterfaceInput } from './parsers';
+export { formatErrorItemNames, roundNumber } from './formatters';

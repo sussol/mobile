@@ -31,6 +31,72 @@ import { ROUTES } from './constants';
  */
 
 /**
+ * Action creator which first creates a prescription, and then navigates to it
+ * for editing.
+ *
+ * @param {Object} patient     The other party of the invoice (Customer)
+ * @param {Object} currentUser    The currently logged in user.
+ */
+export const createPrescription = patientID => (dispatch, getState) => {
+  const { user } = getState();
+  const { currentUser } = user;
+
+  const patient = UIDatabase.get('Name', patientID);
+
+  let newPrescription;
+  UIDatabase.write(() => {
+    newPrescription = createRecord(
+      UIDatabase,
+      'CustomerInvoice',
+      patient,
+      currentUser,
+      'dispensary'
+    );
+  });
+
+  dispatch(gotoPrescription(newPrescription));
+};
+
+export const goToCashRegister = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.CASH_REGISTER,
+    params: { title: navStrings.cash_register },
+  });
+
+export const gotoPrescription = prescription =>
+  NavigationActions.navigate({
+    routeName: ROUTES.PRESCRIPTION,
+    params: {
+      title: `${navStrings.prescription} ${prescription.serialNumber}`,
+      transaction: prescription,
+      patient: prescription.otherParty,
+      pageObject: prescription,
+    },
+  });
+
+export const gotoPrescriptions = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.PRESCRIPTIONS,
+    params: { title: 'Prescriptions' },
+  });
+
+export const gotoDispensingPage = () => dispatch => {
+  UIDatabase.write(() => {
+    UIDatabase.delete(
+      'Transaction',
+      UIDatabase.objects('Prescription').filtered('status != $0', 'finalised')
+    );
+  });
+
+  dispatch(
+    NavigationActions.navigate({
+      routeName: ROUTES.DISPENSARY,
+      params: { title: navStrings.dispensary },
+    })
+  );
+};
+
+/**
  * Pushes the Settings page route onto the main navigation stack.
  */
 export const gotoDashboard = () =>
@@ -64,13 +130,21 @@ export const gotoRealmExplorer = () =>
 /**
  * Pushes the Customer Invoices route onto the main navigation stack.
  */
-export const gotoCustomerInvoices = () =>
-  NavigationActions.navigate({
-    routeName: ROUTES.CUSTOMER_INVOICES,
-    params: {
-      title: navStrings.customer_invoices,
-    },
+export const gotoCustomerInvoices = () => dispatch => {
+  UIDatabase.write(() => {
+    UIDatabase.delete(
+      'Transaction',
+      UIDatabase.objects('Prescription').filtered('status != $0', 'finalised')
+    );
   });
+
+  dispatch(
+    NavigationActions.navigate({
+      routeName: ROUTES.CUSTOMER_INVOICES,
+      params: { title: navStrings.customer_invoices },
+    })
+  );
+};
 
 /**
  * Pushes the Customer Requisitions route onto the main navigation stack.
@@ -218,7 +292,7 @@ export const gotoCustomerInvoice = transaction => dispatch => {
  * @param {Object} dispatch    Redux dispatch method.
  */
 export const gotoSupplierInvoice = transaction => dispatch => {
-  const { isConfirmed } = transaction;
+  const { isSupplierInvoice, isConfirmed } = transaction;
 
   // Supplier invoices are `new` or `finalised`. Ensure any `confirmed` invoices are
   // `finalised` before navigating.
@@ -229,10 +303,13 @@ export const gotoSupplierInvoice = transaction => dispatch => {
     });
   }
 
+  const invoiceTitle = `${navStrings.invoice} ${transaction.serialNumber}`;
+  const creditTitle = `${navStrings.supplier_credit} ${transaction.serialNumber}`;
+
   const navigationAction = NavigationActions.navigate({
     routeName: ROUTES.SUPPLIER_INVOICE,
     params: {
-      title: `${navStrings.invoice} ${transaction.serialNumber}`,
+      title: isSupplierInvoice ? invoiceTitle : creditTitle,
       transaction,
       pageObject: transaction,
     },
