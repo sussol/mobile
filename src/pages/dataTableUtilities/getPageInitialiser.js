@@ -281,7 +281,7 @@ const stocktakeEditorInitialiser = stocktake => {
   const hasPositiveAdjustmentReasons = UIDatabase.objects('PositiveAdjustmentReason').length > 0;
   const usesReasons = hasNegativeAdjustmentReasons && hasPositiveAdjustmentReasons;
 
-  const route = usesReasons ? ROUTES.STOCKTAKE_EDITOR_WITH_REASONS : ROUTES.STOCKTAKE_EDITOR;
+  const customCode = usesReasons ? ROUTES.STOCKTAKE_EDITOR_WITH_REASONS : ROUTES.STOCKTAKE_EDITOR;
 
   return {
     pageObject: stocktake,
@@ -295,9 +295,9 @@ const stocktakeEditorInitialiser = stocktake => {
     isAscending: true,
     modalKey: '',
     modalValue: null,
-    route,
-    columns: getColumns(route),
-    getPageInfoColumns: getPageInfoColumns(route),
+    route: ROUTES.STOCKTAKE_EDITOR,
+    columns: getColumns(customCode),
+    getPageInfoColumns: getPageInfoColumns(customCode),
   };
 };
 
