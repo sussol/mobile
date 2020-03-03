@@ -22,7 +22,7 @@ import {
 } from 'react-native';
 
 import { Scheduler } from 'sussol-utilities';
-import { NavigationActions } from 'react-navigation';
+import { NavigationActions } from '@react-navigation/core';
 
 import { FirstUsePage, FINALISABLE_PAGES } from './pages';
 

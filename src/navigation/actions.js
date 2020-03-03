@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import { NavigationActions, StackActions } from 'react-navigation';
+import { NavigationActions, StackActions } from '@react-navigation/core';
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
 import { createRecord } from '../database/utilities/index';

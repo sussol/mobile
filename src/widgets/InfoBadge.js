@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import { View, Text } from 'react-native';
 import Popover from 'react-native-popover-view';
-import { withNavigation } from 'react-navigation';
+import { withNavigation } from '@react-navigation/core';
 
 import { getBadgeData } from '../utilities/getBadgeData';
 import { usePopover } from '../hooks';

@@ -7,7 +7,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { NavigationActions } from 'react-navigation';
+import { NavigationActions } from '@react-navigation/core';
 
 import { PrescriptionSummary } from '../PrescriptionSummary';
 import { PrescriptionInfo } from '../PrescriptionInfo';
