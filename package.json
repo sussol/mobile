@@ -55,13 +55,13 @@
     ]
   },
   "dependencies": {
-    "@react-native-community/async-storage": "^1.6.2",
-    "@react-native-community/datetimepicker": "^2.1.0",
-    "@react-native-community/slider": "^2.0.7",
+    "@react-native-community/async-storage": "^1.8.1",
+    "@react-native-community/datetimepicker": "^2.2.2",
+    "@react-native-community/slider": "^2.0.8",
     "@react-navigation/core": "^3.5.1",
     "@react-navigation/native": "^3.6.2",
-    "ajv": "^6.11.0",
-    "bugsnag-react-native": "2.23.2",
+    "ajv": "^6.12.0",
+    "bugsnag-react-native": "^2.23.6",
     "currency.js": "^1.2.2",
     "moment": "^2.24.0",
     "prop-types": "^15.7.2",
@@ -95,7 +95,7 @@
     "set-manipulator": "^0.3.1",
     "sussol-utilities": "^0.5.1",
     "valid-url": "^1.0.9",
-    "victory-native": "^33.0.1"
+    "victory-native": "^34.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
