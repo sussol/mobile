@@ -12,7 +12,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { CustomerImage, SupplierImage, StockImage, ModulesImage, InfoBadge } from '../widgets';
 
 import { ROUTES } from '../navigation/constants';
-import { navStrings } from '../localization';
+import { buttonStrings, navStrings } from '../localization';
 
 import { SETTINGS_KEYS } from '../settings';
 import { UIDatabase } from '../database';
@@ -158,7 +158,7 @@ const Menu = ({
             backgroundColor="rgba(255,255,255,0)"
             onPress={toSettings}
           >
-            <Text>SETTINGS</Text>
+            <Text>{buttonStrings.settings}</Text>
           </Icon.Button>
         )}
       </View>
