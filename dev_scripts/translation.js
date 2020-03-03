@@ -7,6 +7,23 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+/*
+Example for exporting strings:
+------------------------------
+yarn translation export [selectedLanguage]
+
+# selectedLanguage options: fr, gil, tl, la, pt
+
+Example for importing strings:
+------------------------------
+yarn translation import [selectedLanguage]
+
+# selectedLanguage options: fr, gil, tl, la, pt
+# It should match with the language of the tsv file to be imported
+
+More info here: https://github.com/openmsupply/mobile/wiki/Scripts
+*/
+
 const fs = require('fs');
 
 const localizationFiles = [];
