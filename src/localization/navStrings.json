@@ -100,5 +100,30 @@
     "stocktake": "ກວດ​ກາ​ສິນ​ຄ້າ​ໃນ​ສາງ",
     "supplier_invoices": "ໃບນຳສົ່ງສິນຄ້າ",
     "supplier_requisitions": "ການ​ສະ​ເໜີ​ຂໍ ຫາຜູ້​ສະ​ໜອງ"
+  },
+  "pt": {
+    "current_stock": "Estoque atual",
+    "customer_invoices": "Faturas para clientes",
+    "supplier_credit": "Crédito para fornecedor",
+    "customer_requisitions": "Requisições de clientes",
+    "customers": "Clientes",
+    "finalise": "FINALIZAR",
+    "finalised_cannot_be_edited": "FINALIZAR. NÃO PODE SER EDITADO",
+    "invoice": "Fatura",
+    "language": "LÍNGUA",
+    "log_out": "DESCONECTAR",
+    "manage_stocktake": "Gerenciar inventários",
+    "new_stocktake": "Novo inventário",
+    "requisition": "Requisição",
+    "stocktakes": "Inventários",
+    "stocktake": "Inventário",
+    "supplier_invoices": "Faturas de fornecedores",
+    "supplier_requisitions": "Requisições para\nfornecedores",
+    "settings": "configuração",
+    "database_contents": "Conteúdo da base de dados",
+    "dispensary": "Distribuição",
+    "dashboard": "Painéis",
+    "cash_register": "Caixa registradora",
+    "prescription": "Prescrição"
   }
 }

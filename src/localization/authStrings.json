@@ -38,5 +38,15 @@
     "login": "ເຂົ້າ​ລະ​ບົບ",
     "password": "ລະຫັດຜ່ານ",
     "user_name": "ຊື່​ຜູ້​ນຳ​ໃຊ້"
+  },
+  "pt": {
+    "logging_in": "Logando...",
+    "login": "Logar",
+    "password": "Senha",
+    "repeat_password": "Por favor, reinsira a senha",
+    "user_name": "Nome de usuário",
+    "email": "E-mail",
+    "invalid_username_or_password": "Nome de usuário ou senha inválidos",
+    "warning_sync_edit": "ATENÇÃO:\nEssa ação irá afetar a sincronização desse local.\nVocê está certo disso?"
   }
 }

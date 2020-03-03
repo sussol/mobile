@@ -70,5 +70,21 @@
     "supplier": "ຜູ້ສະໜອງ",
     "their_ref": "ຂໍ້ມູນອ້າງອີງ",
     "by_batch": "By batch"
+  },
+  "pt": {
+    "address": "Endereço",
+    "code": "Código",
+    "comment": "Comentário",
+    "confirm_date": "Data de confirmação",
+    "current_balance": "Balanço em caixa",
+    "customer": "Cliente",
+    "entered_by": "Criado por",
+    "entry_date": "Data de criação",
+    "months_stock_required": "Meses sem estoque",
+    "stocktake_name": "Nome do inventário",
+    "supplier": "Fornecedor",
+    "their_ref": "Referência do outro local",
+    "by_batch": "Por lote",
+    "category": "Categoria"
   }
 }

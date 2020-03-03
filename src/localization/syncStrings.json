@@ -59,5 +59,21 @@
     "all_records_updated": "ລາຍ​ການ​ທັງ​ໝົດ​ຖື​ກ​ອັບ​ເດດ​ແລ້ວ",
     "loading_change_count": "ກຳ​ລັງ​ໂຫຼດ​ຮັບ​ການ​ປ່ຽນ​ແປງ",
     "last_successful_sync": "Last successful sync"
+  },
+  "pt": {
+    "last_sync": "ÚLTIMO SYNC",
+    "manual_sync": "Sync Manual",
+    "sync_enabled": "SYNC ATIVO",
+    "sync_error": "ERRO no SYNC",
+    "sync_in_progress": "SYNC EM ANDAMENTO",
+    "checking_server_for_records": "Solicitando dados do servidor...",
+    "records_waiting": "Dados aguardando envio SYNC",
+    "sync_complete": "Sync finalizado",
+    "all_records_updated": "Todos os dados foram atualizados",
+    "loading_change_count": "Carregando contagem dos dados...",
+    "last_successful_sync": "Último SYNC finalizado",
+    "initialising": "Inicializando...",
+    "pulling_changes": "Obtendo dados do servidor",
+    "pushing_changes": "Enviando dados ao servidor"
   }
 }

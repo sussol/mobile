@@ -107,5 +107,32 @@
     "past": "ໃນທີ່​ຜ່ານ​ມາ",
     "use_suggested_quantities": "ນຳໃຊ້ຈຳ​ນວນທີ່​ຖືກແນະ​ນຳ",
     "use_requested_quantities": "ນຳໃຊ້ຈຳ​ນວນທີ່​ສະ​ເໜີ​ຂໍ"
+  },
+  "pt": {
+    "next": "Próximo",
+    "cancel": "Cancelar",
+    "add_batch": "Adicionar Lote",
+    "add_master_list_items": "Adicionar itens da lista mestre",
+    "all_items_selected": "Selecionar todos os itens",
+    "confirm": "Confirmar",
+    "create_automatic_order": "Criar um pedido automático",
+    "current": "Atual",
+    "done": "Concluir",
+    "export_data": "Exportar os dados",
+    "hide_stockouts": "Esconder linhas sem estoque",
+    "manage_stocktake": "Gerenciar inventários",
+    "new_invoice": "Nova fatura",
+    "new_item": "Novo item",
+    "new_line": "Nova linha",
+    "new_requisition": "Nova requisição",
+    "new_stocktake": "Novo inventário",
+    "new_supplier_invoice": "Nova fatura para fornecedor",
+    "new_transaction": "Nova transação",
+    "new_supplier_credit": "Novo crédito para fornecedor",
+    "past": "Arquivados",
+    "realm_explorer": "Explorador Realm",
+    "use_requested_quantities": "Usar quantidades solicitadas",
+    "use_suggested_quantities": "Usar quantidades sugeridas",
+    "view_regimen_data": "Visualizar dados do regime"
   }
 }

@@ -21,5 +21,15 @@
   },
   "gil": {},
   "tl": {},
-  "la": {}
+  "la": {},
+  "pt": {
+    "email_required": "Insira e-mail",
+    "email_valid": "Insira um e-mail válido",
+    "password_contains_spaces": "Senha não pode conter espaços.",
+    "password_length_invalid": "Senha deve conter de 8-32 dígitos",
+    "password_match_repeat": "A senha e confirmação devem ser iguais",
+    "password_required": "Insira a senha",
+    "repeat_password_required": "Confirmação da senha",
+    "username_required": "Insira o nome de usuário"
+  }
 }
