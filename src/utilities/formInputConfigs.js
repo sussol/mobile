@@ -55,6 +55,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isRequired: true,
     label: formInputStrings.first_name,
     invalidMessage: formInputStrings.must_not_be_empty,
+    isEditable: true,
   },
   [FORM_INPUT_KEYS.LAST_NAME]: {
     type: 'text',
@@ -64,6 +65,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isRequired: true,
     label: formInputStrings.last_name,
     invalidMessage: formInputStrings.must_not_be_empty,
+    isEditable: true,
   },
   [FORM_INPUT_KEYS.CODE]: {
     type: 'text',
@@ -73,6 +75,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isRequired: true,
     label: formInputStrings.code,
     invalidMessage: `${formInputStrings.must_not_be_empty} ${formInputStrings.and} ${formInputStrings.less_than_20_characters}`,
+    isEditable: true,
   },
   [FORM_INPUT_KEYS.DATE_OF_BIRTH]: {
     type: 'date',
@@ -87,6 +90,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
       return isValid && isDateOfBirth;
     },
     label: formInputStrings.date_of_birth,
+    isEditable: true,
   },
   [FORM_INPUT_KEYS.GENDER]: {
     type: 'toggle',
@@ -95,6 +99,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     options: [true, false],
     optionLabels: [formInputStrings.female, formInputStrings.male],
     label: formInputStrings.gender,
+    isEditable: true,
   },
   [FORM_INPUT_KEYS.EMAIL]: {
     type: 'text',
@@ -102,6 +107,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     key: 'emailAddress',
     isRequired: false,
     label: formInputStrings.email,
+    isEditable: true,
   },
   [FORM_INPUT_KEYS.PHONE]: {
     type: 'text',
@@ -109,6 +115,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     key: 'phoneNumber',
     isRequired: false,
     label: formInputStrings.phone,
+    isEditable: true,
   },
   [FORM_INPUT_KEYS.COUNTRY]: {
     type: 'text',
@@ -118,6 +125,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isRequired: false,
     invalidMessage: `${formInputStrings.must_be} ${formInputStrings.less_than_20_characters}`,
     label: formInputStrings.country,
+    isEditable: true,
   },
   [FORM_INPUT_KEYS.ADDRESS_ONE]: {
     type: 'text',
@@ -127,6 +135,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isRequired: false,
     invalidMessage: `${formInputStrings.must_be} ${formInputStrings.less_than_50_characters}`,
     label: formInputStrings.address_one,
+    isEditable: true,
   },
   [FORM_INPUT_KEYS.ADDRESS_TWO]: {
     type: 'text',
@@ -136,6 +145,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isRequired: false,
     label: formInputStrings.address_two,
     invalidMessage: `${formInputStrings.must_be} ${formInputStrings.less_than_50_characters}`,
+    isEditable: true,
   },
   [FORM_INPUT_KEYS.REGISTRATION_CODE]: {
     type: 'text',
@@ -145,6 +155,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isRequired: true,
     label: formInputStrings.registration_code,
     invalidMessage: formInputStrings.must_be_between_0_and_50,
+    isEditable: true,
   },
   [FORM_INPUT_KEYS.POLICY_NUMBER_PERSON]: {
     type: 'text',
@@ -161,6 +172,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isRequired: true,
     invalidMessage: formInputStrings.unique_personal_policy,
     label: formInputStrings.personal_policy_number,
+    isEditable: !seedObject,
   },
   [FORM_INPUT_KEYS.POLICY_NUMBER_FAMILY]: {
     type: 'text',
@@ -170,6 +182,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isRequired: true,
     invalidMessage: formInputStrings.must_be_between_0_and_50,
     label: formInputStrings.family_policy_number,
+    isEditable: !seedObject,
   },
   [FORM_INPUT_KEYS.POLICY_PROVIDER]: {
     type: 'dropdown',
@@ -178,6 +191,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     label: formInputStrings.policy_provider,
     options: UIDatabase.objects('InsuranceProvider'),
     optionKey: 'name',
+    isEditable: true,
   },
   [FORM_INPUT_KEYS.IS_ACTIVE]: {
     type: 'toggle',
@@ -186,6 +200,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     options: [true, false],
     optionLabels: [formInputStrings.yes, formInputStrings.no],
     label: formInputStrings.is_active,
+    isEditable: true,
   },
   [FORM_INPUT_KEYS.POLICY_TYPE]: {
     type: 'toggle',
@@ -194,6 +209,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     options: ['personal', 'business'],
     optionLabels: [formInputStrings.personal, formInputStrings.business],
     label: formInputStrings.policy_type,
+    isEditable: true,
   },
   [FORM_INPUT_KEYS.DISCOUNT_RATE]: {
     type: 'slider',
@@ -203,6 +219,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     minimumValue: 0,
     step: 0.1,
     label: formInputStrings.discount_rate,
+    isEditable: true,
   },
 });
 
