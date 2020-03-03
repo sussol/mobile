@@ -19,12 +19,12 @@ import { FlexColumn } from '../FlexColumn';
  * passed by `optionKey`.
  *
  * @prop {Bool}   isRequired    Indicator whether this input is required.
- * @prop {Bool}   isDisabled    Indicator whether this input is disabled.
  * @prop {String} label         Label to display for this input.
  * @prop {Func}   onValueChange Callback for when a selection has been made.
  * @prop {Array}  options       Array of options [{[optionKey], ..}, {..} ]
  * @prop {String} optionKey     Key of an object within options to display.
  * @prop {value}  value         The currently selected value.
+ * @prop {Bool}   isDisabled    Indicator whether this input is disabled.
  */
 export const FormDropdown = ({
   isRequired,
@@ -45,11 +45,11 @@ export const FormDropdown = ({
     <FlexColumn flex={1}>
       <FormLabel value={label} isRequired={isRequired} />
       <DropDown
-        enabled={!isDisabled}
         style={{ width: null, flex: 1 }}
         values={valueStrings}
         selectedValue={value[optionKey]}
         onValueChange={onValueChangeCallback}
+        isDisabled={isDisabled}
       />
     </FlexColumn>
   );
