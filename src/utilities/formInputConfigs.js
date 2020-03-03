@@ -191,7 +191,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     label: formInputStrings.policy_provider,
     options: UIDatabase.objects('InsuranceProvider'),
     optionKey: 'name',
-    isEditable: true,
+    isEditable: !seedObject,
   },
   [FORM_INPUT_KEYS.IS_ACTIVE]: {
     type: 'toggle',
