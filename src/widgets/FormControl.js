@@ -123,7 +123,7 @@ const FormControlComponent = ({
                 onValueChange={value => onUpdateForm(key, value)}
                 options={options}
                 optionKey={optionKey}
-                isDisabled={isDisabled}
+                isDisabled={!isEditable || isDisabled}
               />
             );
           }
