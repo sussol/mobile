@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import { View, Text } from 'react-native';
 import Popover from 'react-native-popover-view';
-import { withNavigation } from '@react-navigation/core';
+import { withNavigation } from '@react-navigation/compat';
 
 import { getBadgeData } from '../utilities/getBadgeData';
 import { usePopover } from '../hooks';
@@ -71,7 +71,6 @@ const InfoBadgeComponent = ({
 };
 
 export const InfoBadge = withNavigation(InfoBadgeComponent);
-export default withNavigation(InfoBadgeComponent);
 
 InfoBadgeComponent.propTypes = {
   routeName: PropTypes.string.isRequired,
