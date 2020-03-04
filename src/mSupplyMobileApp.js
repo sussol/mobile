@@ -23,14 +23,15 @@ import {
 
 import { Scheduler } from 'sussol-utilities';
 import { NavigationActions } from '@react-navigation/core';
+import { MainStackNavigator } from './navigation/Navigator';
 
-import { FirstUsePage, FINALISABLE_PAGES } from './pages';
+import { FirstUsePage } from './pages';
 
 import { Synchroniser, PostSyncProcessor, SyncModal } from './sync';
 import { FinaliseButton, NavigationBar, SyncState, Spinner } from './widgets';
 import { FinaliseModal, LoginModal } from './widgets/modals';
 
-import { getCurrentParams, getCurrentRouteName, ReduxNavigator, ROUTES } from './navigation';
+import { getCurrentRouteName, ROUTES } from './navigation';
 import { syncCompleteTransaction, setSyncError } from './actions/SyncActions';
 import { FinaliseActions } from './actions/FinaliseActions';
 import { migrateDataToVersion } from './dataMigration';
@@ -44,12 +45,12 @@ import globalStyles, { textStyles, SUSSOL_ORANGE } from './globalStyles';
 import { LoadingIndicatorContext } from './context/LoadingIndicatorContext';
 import { UserActions } from './actions';
 import { debounce } from './utilities';
-import { prevRouteNameSelector } from './navigation/selectors';
 import { SupplierCredit } from './widgets/modalChildren/SupplierCredit';
 import { ModalContainer } from './widgets/modals/ModalContainer';
 import { SupplierCreditActions } from './actions/SupplierCreditActions';
 import { PrescriptionActions } from './actions/PrescriptionActions';
 import { selectTitle } from './selectors/supplierCredit';
+import { MenuPage } from './pages/MenuPage';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -161,14 +162,14 @@ class MSupplyMobileAppContainer extends React.Component {
   getCanNavigateBack = () => {
     const { navigationState } = this.props;
 
-    return navigationState.index !== 0;
+    return navigationState?.index !== 0;
   };
 
   // eslint-disable-next-line class-methods-use-this
   getCurrentRouteName(navigationState) {
     if (!navigationState) return null;
 
-    const route = navigationState.routes[navigationState.index];
+    const route = navigationState?.routes[navigationState?.index];
 
     // dive into nested navigators
     if (route.routes) return getCurrentRouteName(route);
@@ -271,7 +272,6 @@ class MSupplyMobileAppContainer extends React.Component {
 
   render() {
     const {
-      dispatch,
       finaliseItem,
       navigationState,
       syncState,
@@ -282,7 +282,7 @@ class MSupplyMobileAppContainer extends React.Component {
       supplierCreditModalOpen,
       creditTitle,
     } = this.props;
-    const { isInAdminMode, isInitialised, isLoading, syncModalIsOpen } = this.state;
+    const { isInitialised, isLoading, syncModalIsOpen } = this.state;
 
     if (!isInitialised) {
       return (
@@ -308,18 +308,10 @@ class MSupplyMobileAppContainer extends React.Component {
                 : this.renderSyncState
             }
           />
-          <ReduxNavigator
-            state={navigationState}
-            dispatch={dispatch}
-            screenProps={{
-              database: UIDatabase,
-              settings: Settings,
-              currentUser,
-              routeName: navigationState.routes[navigationState.index].routeName,
-              runWithLoadingIndicator: this.runWithLoadingIndicator,
-              isInAdminMode,
-            }}
-          />
+          <MainStackNavigator.Navigator>
+            <MainStackNavigator.Screen name="root" component={MenuPage} />
+          </MainStackNavigator.Navigator>
+
           <FinaliseModal
             database={UIDatabase}
             isOpen={finaliseModalOpen}
@@ -365,25 +357,11 @@ const mapDispatchToProps = dispatch => {
 };
 
 const mapStateToProps = state => {
-  const { finalise, nav: navigationState, sync: syncState, supplierCredit } = state;
+  const { finalise, sync: syncState, supplierCredit } = state;
   const { open: supplierCreditModalOpen } = supplierCredit;
   const { finaliseModalOpen } = finalise;
-  const currentParams = getCurrentParams(navigationState);
-  const currentTitle = currentParams && currentParams.title;
-  const currentRouteName = getCurrentRouteName(navigationState);
-  const finaliseItem = FINALISABLE_PAGES[currentRouteName];
-  if (finaliseItem && currentParams) {
-    if (currentRouteName === ROUTES.PRESCRIPTION) finaliseItem.visibleButton = false;
-    else finaliseItem.visibleButton = true;
-    finaliseItem.record = currentParams[finaliseItem.recordToFinaliseKey];
-  }
 
   return {
-    currentRouteName,
-    currentTitle,
-    prevRouteName: prevRouteNameSelector(state),
-    finaliseItem,
-    navigationState,
     syncState,
     currentUser: state.user.currentUser,
     finaliseModalOpen,
