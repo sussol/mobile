@@ -27,6 +27,7 @@ import { getAdjustedStyle } from './utilities';
  * @param {Object} cellTextStyle     text style for the disabled Cell component.
  * @param {Bool}  isLastCell         Indicator if this cell is last in a row,
  *                                   removing the borderRight,
+ * @param {Func}  onFocus            focus a row when a row is clicked.
  * @param {Func}  onChangeText       Callback for the onChangeText event.
  * @param {String} underlineColor    Underline colour of TextInput on Android.
  */
@@ -55,7 +56,7 @@ const TextInputCell = React.memo(
 
     const { focusNextCell, getRefIndex, getCellRef } = React.useContext(RefContext);
     const refIndex = getRefIndex(rowIndex, columnKey);
-
+    const onFocus = () => onFocus(rowKey, columnKey);
     const onEdit = newValue => onChangeText(newValue, rowKey, columnKey);
     const focusNext = () => focusNextCell(refIndex);
 
@@ -88,6 +89,7 @@ const TextInputCell = React.memo(
           onChangeText={onEdit}
           onSubmitEditing={focusNext}
           underlineColorAndroid={underlineColor}
+          onFocus={onFocus}
           keyboardType={keyboardType}
           blurOnSubmit={false}
           selectTextOnFocus
