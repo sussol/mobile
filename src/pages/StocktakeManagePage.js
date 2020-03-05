@@ -20,10 +20,10 @@ import { buttonStrings, modalStrings, generalStrings } from '../localization';
 import globalStyles from '../globalStyles';
 
 import { ROUTES } from '../navigation/constants';
+import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
 export const StocktakeManage = ({
   dispatch,
-  runWithLoadingIndicator,
   data,
   pageObject,
   dataState,
@@ -45,6 +45,7 @@ export const StocktakeManage = ({
   toggleStockOut,
   route,
 }) => {
+  const runWithLoadingIndicator = useLoadingIndicator();
   // On navigating to this screen, if a stocktake is passed through, update the selection with
   // the items already in the stocktake.
   useEffect(() => {
@@ -173,7 +174,6 @@ StocktakeManage.propTypes = {
   columns: PropTypes.array.isRequired,
   keyExtractor: PropTypes.func.isRequired,
   hasSelection: PropTypes.bool.isRequired,
-  runWithLoadingIndicator: PropTypes.func.isRequired,
   showAll: PropTypes.bool.isRequired,
   allSelected: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired,
