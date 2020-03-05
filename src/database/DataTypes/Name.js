@@ -122,6 +122,7 @@ Name.schema = {
     code: { type: 'string', default: 'placeholderCode' },
     dateOfBirth: { type: 'date', optional: true },
     phoneNumber: { type: 'string', optional: true },
+    country: { type: 'string', optional: true },
     billingAddress: { type: 'Address', optional: true },
     emailAddress: { type: 'string', optional: true },
     type: { type: 'string', default: 'placeholderType' },
