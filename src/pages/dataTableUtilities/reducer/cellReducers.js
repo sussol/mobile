@@ -26,6 +26,11 @@ export const refreshIndicatorRow = state => {
   return { ...state, indicatorRows: currentIndicator.rows };
 };
 
+export const focusCell = (state, action) => {
+  const { dataState } = state;
+  dataState.row[action.rowKey].focusedColumn = action.columnKey;
+};
+
 export const CellReducerLookup = {
   refreshRow,
   refreshIndicatorRow,
