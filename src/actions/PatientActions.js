@@ -32,11 +32,11 @@ const patientUpdate = completedForm => (dispatch, getState) => {
   const { currentPatient } = patient;
 
   if (currentPatient) {
-    const { addressOne, addressTwo } = completedForm;
+    const { addressOne: line1, addressTwo: line2 } = completedForm;
     const { billingAddress } = currentPatient;
 
     UIDatabase.write(() => {
-      UIDatabase.update('Address', { ...billingAddress, line1: addressOne, line2: addressTwo });
+      UIDatabase.update('Address', { ...billingAddress, line1, line2 });
       UIDatabase.update('Name', { ...currentPatient, ...completedForm });
     });
   } else {
