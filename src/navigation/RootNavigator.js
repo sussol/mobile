@@ -25,8 +25,11 @@ const replace = (screenName, screenProps) =>
 
 const goBack = () => rootNavigatorRef.current?.goBack();
 
+const canGoBack = () => !!rootNavigatorRef.current?.canGoBack();
+
 export const RootNavigator = {
   navigate,
   replace,
   goBack,
+  canGoBack,
 };

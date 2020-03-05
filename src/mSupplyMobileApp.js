@@ -31,7 +31,7 @@ import { Synchroniser, PostSyncProcessor, SyncModal } from './sync';
 import { FinaliseButton, NavigationBar, SyncState, Spinner } from './widgets';
 import { FinaliseModal, LoginModal } from './widgets/modals';
 
-import { getCurrentRouteName, ROUTES } from './navigation';
+import { getCurrentRouteName, ROUTES, RootNavigator } from './navigation';
 import { syncCompleteTransaction, setSyncError } from './actions/SyncActions';
 import { FinaliseActions } from './actions/FinaliseActions';
 import { migrateDataToVersion } from './dataMigration';
@@ -176,11 +176,7 @@ class MSupplyMobileAppContainer extends React.Component {
     this.postSyncProcessor.processAnyUnprocessedRecords();
   };
 
-  getCanNavigateBack = () => {
-    const { navigationState } = this.props;
-
-    return navigationState?.index !== 0;
-  };
+  getCanNavigateBack = () => RootNavigator.canGoBack();
 
   // eslint-disable-next-line class-methods-use-this
   getCurrentRouteName(navigationState) {
