@@ -11,14 +11,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import {
-  BackHandler,
-  Image,
-  AppState,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import { Image, AppState, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 
 import { Scheduler } from 'sussol-utilities';
 
@@ -104,16 +97,12 @@ class MSupplyMobileAppContainer extends React.Component {
   }
 
   componentDidMount = () => {
-    BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
-
     if (!__DEV__) {
       AppState.addEventListener('change', this.onAppStateChange);
     }
   };
 
   componentWillUnmount = () => {
-    BackHandler.removeEventListener('hardwareBackPress', this.handleBackEvent);
-
     if (!__DEV__) {
       AppState.removeEventListener('change', this.onAppStateChange);
     }

@@ -3,7 +3,10 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
+import { BackHandler } from 'react-native';
+import { batch } from 'react-redux';
 import { NavigationActions, StackActions } from '@react-navigation/core';
+
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
 import { createRecord } from '../database/utilities';
@@ -11,6 +14,7 @@ import { navStrings } from '../localization';
 import { SETTINGS_KEYS } from '../settings';
 import { ROUTES } from './constants';
 import { RootNavigator } from './RootNavigator';
+import { PrescriptionActions } from '../actions/PrescriptionActions';
 
 /**
  * Navigation Action Creators.
@@ -30,12 +34,25 @@ import { RootNavigator } from './RootNavigator';
  *
  */
 
-export const goBack = () => ({
-  ...NavigationActions.back(),
-  payload: {
-    prevRouteName: RootNavigator.prevRouteName(),
-  },
-});
+export const goBack = () => dispatch => {
+  if (!RootNavigator.canGoBack()) BackHandler.exitApp();
+  else {
+    UIDatabase.write(() => {
+      const prescriptions = UIDatabase.objects('Prescription').filtered('status != "finalised"');
+      UIDatabase.delete('Transaction', prescriptions);
+
+      batch(() => {
+        dispatch({
+          ...NavigationActions.back(),
+          payload: {
+            prevRouteName: RootNavigator.prevRouteName(),
+          },
+        });
+        dispatch(PrescriptionActions.deletePrescription());
+      });
+    });
+  }
+};
 
 /**
  * Action creator which first creates a prescription, and then navigates to it

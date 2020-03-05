@@ -3,7 +3,10 @@
  * Sustainable Solutions (NZ) Ltd. 2020
  */
 
+import { RootNavigator } from './RootNavigator';
+import { goBack } from './actions';
 import { ROUTES } from './constants';
+
 import { navStrings } from '../localization';
 
 export const SCREEN_TITLES = {
@@ -33,4 +36,38 @@ export const getRouteTitle = (pageObject, routeName) => {
   if (!SCREEN_TITLES[routeName]) return '';
 
   return SCREEN_TITLES[routeName](pageObject);
+};
+
+/**
+ * Simple hardware backhandler which dispatches a goBack action on a
+ * provided store.
+ */
+export const backHandler = store => () => store.dispatch(goBack());
+
+/**
+ * Simple middleware which intercepts navigation actions and calls a function
+ * on the apps root navigator to force navigation.
+ *
+ * Note: This was added when transitioning from react-navigation v4, where
+ * navigation was handled through redux - to v5 where the previous integration
+ * method was not possible.
+ *
+ */
+export const navigationMiddleware = () => next => action => {
+  const { type } = action;
+
+  if (type === 'Navigation/NAVIGATE') {
+    const { routeName, params } = action;
+    RootNavigator.navigate(routeName, params);
+  }
+  if (type === 'Navigation/REPLACE') {
+    const { routeName, params } = action;
+    RootNavigator.replace(routeName, params);
+  }
+
+  if (type === 'Navigation/BACK') {
+    RootNavigator.goBack();
+  }
+
+  next(action);
 };

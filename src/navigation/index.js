@@ -6,4 +6,4 @@
 export { ROUTES } from './constants';
 export { MainStackNavigator } from './Navigator';
 export { RootNavigator, rootNavigatorRef } from './RootNavigator';
-export { getRouteTitle } from './utilities';
+export { backHandler, getRouteTitle, navigationMiddleware } from './utilities';
