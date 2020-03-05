@@ -86,5 +86,21 @@
     "their_ref": "Referência do outro local",
     "by_batch": "Por lote",
     "category": "Categoria"
+  },
+  "es": {
+    "address": "Dirección",
+    "code": "Código",
+    "comment": "Comentario",
+    "confirm_date": "Cormirmar fecha",
+    "current_balance": "Balance de efectivo",
+    "customer": "Cliente",
+    "entered_by": "Ingresado por",
+    "entry_date": "Fecha de ingreso",
+    "months_stock_required": "Meses de stock",
+    "stocktake_name": "Nombre del inventario",
+    "supplier": "Proveedor",
+    "their_ref": "Referencia de otro almacén",
+    "by_batch": "Mi lote",
+    "category": "Categoría"
   }
 }
