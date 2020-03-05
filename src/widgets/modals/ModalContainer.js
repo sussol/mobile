@@ -36,6 +36,7 @@ export const ModalContainer = ({
   children,
   noCancel,
   backgroundColor,
+  numberOfLines,
 }) => {
   const {
     contentContainer,
@@ -77,7 +78,7 @@ export const ModalContainer = ({
         <View style={flexSpacer} />
         {!!title && (
           <FlexView flex={2}>
-            <Text ellipsizeMode="tail" numberOfLines={1} style={titleFont}>
+            <Text ellipsizeMode="tail" numberOfLines={numberOfLines} style={titleFont}>
               {title}
             </Text>
           </FlexView>
@@ -116,6 +117,7 @@ ModalContainer.defaultProps = {
   noCancel: false,
   onClose: null,
   backgroundColor: DARKER_GREY,
+  numberOfLines: 1,
 };
 
 ModalContainer.propTypes = {
@@ -126,6 +128,7 @@ ModalContainer.propTypes = {
   children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
   noCancel: PropTypes.bool,
   backgroundColor: PropTypes.string,
+  numberOfLines: PropTypes.number,
 };
 
 const localStyles = StyleSheet.create({

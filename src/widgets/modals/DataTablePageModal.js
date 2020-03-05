@@ -232,12 +232,16 @@ const DataTablePageModalComponent = ({
     }
   };
 
+  const modalTitle = getModalTitle(modalKey);
+  const numberOfTitleLines = modalTitle.split('\n').length;
+
   return (
     <ModalContainer
       fullScreen={fullScreen}
       isVisible={isOpen}
       onClose={onClose}
-      title={getModalTitle(modalKey)}
+      title={modalTitle}
+      numberOfLines={numberOfTitleLines}
       {...ADDITIONAL_MODAL_PROPS[modalKey]}
     >
       <ModalContent />
