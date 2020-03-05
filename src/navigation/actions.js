@@ -9,7 +9,6 @@ import Settings from '../settings/MobileAppSettings';
 import { createRecord } from '../database/utilities';
 import { navStrings } from '../localization';
 import { SETTINGS_KEYS } from '../settings';
-import { getCurrentRouteName } from './selectors';
 import { ROUTES } from './constants';
 import { RootNavigator } from './RootNavigator';
 
@@ -214,10 +213,8 @@ export const gotoStock = () =>
  *
  * @param {Object} requisition The requisition to pass to the next screen.
  */
-export const gotoStocktakeManagePage = (stocktakeName, stocktake) => (dispatch, getState) => {
-  const { nav } = getState();
-
-  const currentRouteName = getCurrentRouteName(nav);
+export const gotoStocktakeManagePage = (stocktakeName, stocktake) => dispatch => {
+  const currentRouteName = RootNavigator.getCurrentRouteName();
 
   const navigationActionCreator =
     currentRouteName === ROUTES.STOCKTAKES ? NavigationActions.navigate : StackActions.replace;
@@ -225,7 +222,6 @@ export const gotoStocktakeManagePage = (stocktakeName, stocktake) => (dispatch, 
   const navigationParameters = {
     routeName: ROUTES.STOCKTAKE_MANAGER,
     params: {
-      title: stocktake ? navStrings.manage_stocktake : navStrings.new_stocktake,
       stocktakeName,
       stocktake,
       pageObject: stocktake,
@@ -240,9 +236,8 @@ export const gotoStocktakeManagePage = (stocktakeName, stocktake) => (dispatch, 
  *
  * @param {Object} stocktake  The requisition to navigate to.
  */
-export const gotoStocktakeEditPage = stocktake => (dispatch, getState) => {
-  const { nav } = getState();
-  const currentRouteName = getCurrentRouteName(nav);
+export const gotoStocktakeEditPage = stocktake => dispatch => {
+  const currentRouteName = RootNavigator.getCurrentRouteName();
 
   // If navigating from the stocktakesPage, go straight to the StocktakeEditPage. Otherwise,
   // replace the current page as the user is coming from StocktakeManagePage.
