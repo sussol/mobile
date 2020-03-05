@@ -6,11 +6,12 @@
 import { NavigationActions, StackActions } from '@react-navigation/core';
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
-import { createRecord } from '../database/utilities/index';
-import { navStrings } from '../localization/index';
-import { SETTINGS_KEYS } from '../settings/index';
+import { createRecord } from '../database/utilities';
+import { navStrings } from '../localization';
+import { SETTINGS_KEYS } from '../settings';
 import { getCurrentRouteName } from './selectors';
 import { ROUTES } from './constants';
+import { RootNavigator } from './RootNavigator';
 
 /**
  * Navigation Action Creators.
@@ -29,6 +30,13 @@ import { ROUTES } from './constants';
  * - `params` (See: Pages/pageContainer and pages/index FINALISABLE_PAGES for requirements)
  *
  */
+
+export const goBack = () => ({
+  ...NavigationActions.back(),
+  payload: {
+    prevRouteName: RootNavigator.prevRouteName(),
+  },
+});
 
 /**
  * Action creator which first creates a prescription, and then navigates to it
