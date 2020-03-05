@@ -36,6 +36,20 @@ export class Name extends Realm.Object {
   }
 
   /**
+   * Get first line of billing address.
+   */
+  get addressOne() {
+    return this.billingAddress?.line1 ?? '';
+  }
+
+  /**
+   * Get second line of billing address.
+   */
+  get addressTwo() {
+    return this.billingAddress?.line2 ?? '';
+  }
+
+  /**
    * The credit sources for this name are the literal customer credit type transactions, as well
    * as any customer invoices which are cancellations. These cancelled customer invoices are
    * inverted customer invoices, which are equivallent to a customer credit.
