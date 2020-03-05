@@ -51,6 +51,23 @@ import { SupplierCreditActions } from './actions/SupplierCreditActions';
 import { PrescriptionActions } from './actions/PrescriptionActions';
 import { selectTitle } from './selectors/supplierCredit';
 import { MenuPage } from './pages/MenuPage';
+import { RealmExplorer } from './pages/RealmExplorer';
+import { CustomerRequisitionPage } from './pages/CustomerRequisitionPage';
+import { CustomerRequisitionsPage } from './pages/CustomerRequisitionsPage';
+import { SupplierRequisitionsPage } from './pages/SupplierRequisitionsPage';
+import { SupplierInvoicePage } from './pages/SupplierInvoicePage';
+import { SupplierInvoicesPage } from './pages/SupplierInvoicesPage';
+import { StockPage } from './pages/StockPage';
+import { CustomerInvoicePage } from './pages/CustomerInvoicePage';
+import { CustomerInvoicesPage } from './pages/CustomerInvoicesPage';
+import { StocktakesPage } from './pages/StocktakesPage';
+import { StocktakeManagePage } from './pages/StocktakeManagePage';
+import { StocktakeEditPage } from './pages/StocktakeEditPage';
+import { DispensingPage } from './pages/DispensingPage';
+import { PrescriptionPage } from './pages/PrescriptionPage';
+import { SettingsPage } from './pages/SettingsPage';
+import { DashboardPage } from './pages/DashboardPage';
+import { SupplierRequisitionPage } from './pages/SupplierRequisitionPage';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -308,8 +325,66 @@ class MSupplyMobileAppContainer extends React.Component {
                 : this.renderSyncState
             }
           />
-          <MainStackNavigator.Navigator>
-            <MainStackNavigator.Screen name="root" component={MenuPage} />
+          <MainStackNavigator.Navigator
+            initialRouteName={ROUTES.ROOT}
+            screenOptions={{ headerShown: false }}
+          >
+            <MainStackNavigator.Screen name={ROUTES.ROOT} component={MenuPage} />
+
+            <MainStackNavigator.Screen
+              name={ROUTES.CUSTOMER_REQUISITION}
+              component={CustomerRequisitionPage}
+            />
+            <MainStackNavigator.Screen
+              name={ROUTES.CUSTOMER_REQUISITIONS}
+              component={CustomerRequisitionsPage}
+            />
+
+            <MainStackNavigator.Screen
+              name={ROUTES.SUPPLIER_REQUISITION}
+              component={SupplierRequisitionPage}
+            />
+            <MainStackNavigator.Screen
+              name={ROUTES.SUPPLIER_REQUISITIONS}
+              component={SupplierRequisitionsPage}
+            />
+
+            <MainStackNavigator.Screen
+              name={ROUTES.SUPPLIER_INVOICE}
+              component={SupplierInvoicePage}
+            />
+            <MainStackNavigator.Screen
+              name={ROUTES.SUPPLIER_INVOICES}
+              component={SupplierInvoicesPage}
+            />
+
+            <MainStackNavigator.Screen
+              name={ROUTES.CUSTOMER_INVOICE}
+              component={CustomerInvoicePage}
+            />
+            <MainStackNavigator.Screen
+              name={ROUTES.CUSTOMER_INVOICES}
+              component={CustomerInvoicesPage}
+            />
+
+            <MainStackNavigator.Screen name={ROUTES.STOCK} component={StockPage} />
+
+            <MainStackNavigator.Screen name={ROUTES.STOCKTAKES} component={StocktakesPage} />
+            <MainStackNavigator.Screen
+              name={ROUTES.STOCKTAKE_MANAGER}
+              component={StocktakeManagePage}
+            />
+            <MainStackNavigator.Screen
+              name={ROUTES.STOCKTAKE_EDITOR}
+              component={StocktakeEditPage}
+            />
+
+            <MainStackNavigator.Screen name={ROUTES.DISPENSARY} component={DispensingPage} />
+            <MainStackNavigator.Screen name={ROUTES.PRESCRIPTION} component={PrescriptionPage} />
+
+            <MainStackNavigator.Screen name={ROUTES.REALM_EXPLORER} component={RealmExplorer} />
+            <MainStackNavigator.Screen name={ROUTES.SETTINGS} component={SettingsPage} />
+            <MainStackNavigator.Screen name={ROUTES.DASHBOARD} component={DashboardPage} />
           </MainStackNavigator.Navigator>
 
           <FinaliseModal
