@@ -2,10 +2,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, TextInput } from 'react-native';
-
 import Cell from './Cell';
 import RefContext from './RefContext';
-
 import { getAdjustedStyle } from './utilities';
 
 /**
@@ -29,6 +27,7 @@ import { getAdjustedStyle } from './utilities';
  *                                   removing the borderRight,
  * @param {Func}  onChangeText       Callback for the onChangeText event.
  * @param {String} underlineColor    Underline colour of TextInput on Android.
+ * @param {Func}  onFocus            focus a row when a row is clicked.
  */
 const TextInputCell = React.memo(
   ({
@@ -55,10 +54,9 @@ const TextInputCell = React.memo(
 
     const { focusNextCell, getRefIndex, getCellRef } = React.useContext(RefContext);
     const refIndex = getRefIndex(rowIndex, columnKey);
-
     const onEdit = newValue => onChangeText(newValue, rowKey, columnKey);
     const focusNext = () => focusNextCell(refIndex);
-
+    const onFocus = () => onFocus(rowKey, columnKey);
     // Render a plain Cell if disabled.
     if (isDisabled) {
       return (
@@ -91,6 +89,7 @@ const TextInputCell = React.memo(
           keyboardType={keyboardType}
           blurOnSubmit={false}
           selectTextOnFocus
+          onFocus={onFocus}
         />
       </View>
     );
