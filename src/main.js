@@ -11,6 +11,7 @@ import { ErrorHandler } from 'redux-persist-error-handler';
 
 import { name as appName } from '../app.json';
 import { store, persistedStore } from './Store';
+import { rootNavigatorRef } from './navigation';
 
 import MSupplyMobileApp from './mSupplyMobileApp';
 
@@ -18,7 +19,7 @@ function App() {
   return (
     <ErrorHandler persistedStore={persistedStore}>
       <Provider store={store}>
-        <NavigationContainer>
+        <NavigationContainer ref={rootNavigatorRef}>
           <MSupplyMobileApp />
         </NavigationContainer>
       </Provider>
@@ -27,4 +28,5 @@ function App() {
 }
 
 YellowBox.ignoreWarnings(['Setting a timer']);
+
 AppRegistry.registerComponent(appName, () => App);
