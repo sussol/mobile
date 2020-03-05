@@ -4,6 +4,7 @@
  */
 
 import { FORM_ACTIONS } from '../actions/FormActions';
+import { UIDatabase } from '../database/index';
 
 const initialState = config => {
   if (!config) return {};
@@ -34,6 +35,46 @@ export const FormReducer = (state = initialState(), action) => {
     case FORM_ACTIONS.UPDATE: {
       const { payload } = action;
       const { key, value } = payload;
+
+      const updatePolicyNumberPerson = key === 'policyNumberPerson';
+      const updatePolicyNumberFamily = key === 'policyNumberFamily';
+
+      if (updatePolicyNumberPerson || updatePolicyNumberFamily) {
+        const { policyNumberPerson: policyNumberPersonState } = state;
+        const { value: policyNumberPersonValue } = updatePolicyNumberPerson
+          ? { value }
+          : policyNumberPersonState;
+
+        const { policyNumberFamily: policyNumberFamilyState } = state;
+        const { value: policyNumberFamilyValue } = updatePolicyNumberFamily
+          ? { value }
+          : policyNumberFamilyState;
+
+        const isDuplicatePolicyNumber =
+          UIDatabase.objects('InsurancePolicy').filtered(
+            'policyNumberPerson == $0 && policyNumberFamily == $1',
+            policyNumberPersonValue,
+            policyNumberFamilyValue
+          ).length > 0;
+
+        const newPolicyNumberPersonState = {
+          ...policyNumberPersonState,
+          value: policyNumberPersonValue,
+          isValid: !isDuplicatePolicyNumber,
+        };
+
+        const newPolicyNumberFamilyState = {
+          ...policyNumberFamilyState,
+          value: policyNumberFamilyValue,
+          isValid: !isDuplicatePolicyNumber,
+        };
+
+        return {
+          ...state,
+          policyNumberPerson: newPolicyNumberPersonState,
+          policyNumberFamily: newPolicyNumberFamilyState,
+        };
+      }
 
       const stateData = state[key];
 
