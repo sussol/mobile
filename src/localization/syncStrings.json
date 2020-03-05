@@ -16,11 +16,11 @@
     "pushing_changes": "Pushing changes to the server"
   },
   "fr": {
-    "last_sync": "Dernier SYNC",
+    "last_sync": "DERNIER SYNC",
     "manual_sync": "SYNC Manuel",
-    "sync_enabled": "SYNC Activé",
-    "sync_error": "Erreur Sync",
-    "sync_in_progress": "SYNC en cours",
+    "sync_enabled": "SYNC ACTIVÉ",
+    "sync_error": "ERREUR SYNC",
+    "sync_in_progress": "SYNC EN COURS",
     "checking_server_for_records": "Vérifier le serveur pour des enregistrements",
     "records_waiting": "Enregistrements en attente",
     "sync_complete": "Sync complété",

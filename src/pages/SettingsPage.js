@@ -123,7 +123,7 @@ const Settings = ({ toRealmExplorer, currentUser }) => {
   return (
     <DataTablePageView>
       <TouchableOpacity style={topRow} onPress={onSave}>
-        <Text style={marginRight}>Save Changes</Text>
+        <Text style={marginRight}>{buttonStrings.save_changes}</Text>
         <ConfirmIcon />
       </TouchableOpacity>
 
