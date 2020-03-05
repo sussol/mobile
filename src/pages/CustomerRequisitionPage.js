@@ -307,9 +307,9 @@ const mapDispatchToProps = (dispatch, ownProps) =>
   getPageDispatchers(dispatch, ownProps, 'Requisition', ROUTES.CUSTOMER_REQUISITION);
 
 const mapStateToProps = state => {
-  const { pages } = state;
-  const { customerRequisition } = pages;
-  const { usingIndicators, showIndicators } = customerRequisition;
+  const { pages = {} } = state;
+  const { customerRequisition = {} } = pages;
+  const { usingIndicators = false, showIndicators = false } = customerRequisition;
 
   if (usingIndicators && showIndicators) {
     return {

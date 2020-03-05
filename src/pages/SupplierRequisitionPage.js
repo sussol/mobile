@@ -387,9 +387,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 };
 
 const mapStateToProps = state => {
-  const { pages } = state;
-  const supplierRequisition = pages[ROUTES.SUPPLIER_REQUISITION];
-  const { usingIndicators, showIndicators } = supplierRequisition;
+  const { pages = {} } = state;
+  const { supplierRequisition = {} } = pages;
+  const { usingIndicators = false, showIndicators = false } = supplierRequisition;
 
   if (usingIndicators && showIndicators) {
     return {
@@ -400,7 +400,7 @@ const mapStateToProps = state => {
       columns: selectIndicatorTableColumns(supplierRequisition),
     };
   }
-  return pages[ROUTES.SUPPLIER_REQUISITION];
+  return supplierRequisition;
 };
 
 export const SupplierRequisitionPage = connect(
