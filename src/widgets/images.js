@@ -46,6 +46,11 @@ export const PortugueseFlag = ({ style }) => (
 );
 PortugueseFlag.propTypes = imagePropTypes;
 
+export const SpanishFlag = ({ style }) => (
+  <Image style={style} source={require('../images/flags/es.png')} resizeMode="stretch" />
+);
+SpanishFlag.propTypes = imagePropTypes;
+
 export const CustomerImage = ({ style }) => (
   <Image style={style} source={require('../images/menu_people.png')} resizeMode="contain" />
 );
