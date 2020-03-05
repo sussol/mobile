@@ -89,7 +89,7 @@ export const getPageDispatchers = (dispatch, props, dataType, route) => {
     onDeselectRow: () => dispatch(BasePageActions.deselectOneRow(route)),
     onCheck: rowKey => dispatch(BasePageActions.selectRow(rowKey, route)),
     onUncheck: rowKey => dispatch(BasePageActions.deselectRow(rowKey, route)),
-
+    onFocusCell: rowKey => dispatch(BasePageActions.focusCell(rowKey, route)),
     // Deletions
     onDeleteRecords: () => dispatch(BasePageActions.deleteSelectedRecords(dataType, route)),
     onDeleteItems: () => dispatch(BasePageActions.deleteSelectedItems(dataType, route)),
