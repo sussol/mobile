@@ -26,11 +26,6 @@ import { pageStateSelector } from '../../../selectors/pageSelectors';
  *
  * @param {String} rowKey Key of the row to edit.
  */
-export const focusCell = (rowKey, columnKey) => ({
-  type: ACTIONS.FOCUS_CELL,
-  payload: { rowKey, columnKey },
-});
-
 export const refreshRow = (rowKey, route) => ({
   type: ACTIONS.REFRESH_ROW,
   payload: { rowKey, route },
@@ -368,7 +363,6 @@ export const editStocktakeBatchCountedQuantityWithReason = (value, rowKey, route
 };
 
 export const CellActionsLookup = {
-  focusCell,
   refreshRow,
   refreshIndicatorRow,
   editExpiryDate,
