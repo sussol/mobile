@@ -48,5 +48,16 @@
     "email": "E-mail",
     "invalid_username_or_password": "Nome de usuário ou senha inválidos",
     "warning_sync_edit": "ATENÇÃO:\nEssa ação irá afetar a sincronização desse local.\nVocê está certo disso?"
+  },
+  "es": {
+    "logging_in": "Iniciando sesión..",
+    "login": "Iniciar sesión",
+    "password": "Contraseña",
+    "repeat_password": "Por favor, re ingresar la contraseña",
+    "user_name": "Nombre de usuario",
+    "email": "E-mail",
+    "invalid_username_or_password": "Nombre de usuario o contraseña inválido",
+    "warning_sync_edit": "ADVERTENCIA:\nEsto afectará la sincronización de esta tienda.\n¡Asegúrese de saber lo que está haciendo!",
+    "incompatible_server": "El servidor mSupply con el que intenta sincronizar no es compatible con su versión actual. Por favor contacte a su administrador."
   }
 }

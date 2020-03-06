@@ -16,6 +16,10 @@ const CURRENCY_CONFIGS = {
     decimal: ',',
     separator: '.',
   },
+  [LANGUAGE_CODES.SPANISH]: {
+    decimal: ',',
+    separator: '.',
+  },
 };
 
 let currentLanguageCode = LANGUAGE_CODES.ENGLISH;

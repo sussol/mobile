@@ -24,7 +24,17 @@ import {
  *
  */
 export const SimpleLabel = React.memo(
-  ({ label, text, size, labelAlign, textAlign, labelBackground, textBackground, bold }) => {
+  ({
+    label,
+    text,
+    size,
+    labelAlign,
+    textAlign,
+    labelBackground,
+    textBackground,
+    numberOfLines,
+    bold,
+  }) => {
     // Ensure null is set rather than any other nullish value as null is a node, but "" is not.
     const usingText = text || null;
     const usingLabel = label || null;
@@ -34,7 +44,7 @@ export const SimpleLabel = React.memo(
       <View style={containerStyle}>
         {usingLabel && (
           <Text
-            numberOfLines={2}
+            numberOfLines={numberOfLines}
             ellipsizeMode="tail"
             style={{
               ...labelStyle,
@@ -48,7 +58,7 @@ export const SimpleLabel = React.memo(
         )}
         {usingText && (
           <Text
-            numberOfLines={2}
+            numberOfLines={numberOfLines}
             ellipsizeMode="tail"
             style={{
               ...textStyle,
@@ -96,6 +106,7 @@ SimpleLabel.defaultProps = {
   label: '',
   labelAlign: 'left',
   textAlign: 'left',
+  numberOfLines: 2,
   labelBackground: 'transparent',
   textBackground: 'transparent',
   bold: false,
@@ -107,6 +118,7 @@ SimpleLabel.propTypes = {
   label: PropTypes.string,
   labelAlign: PropTypes.string,
   textAlign: PropTypes.string,
+  numberOfLines: PropTypes.number,
   labelBackground: PropTypes.string,
   textBackground: PropTypes.string,
   bold: PropTypes.bool,
