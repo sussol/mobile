@@ -125,5 +125,30 @@
     "dashboard": "Painéis",
     "cash_register": "Caixa registradora",
     "prescription": "Prescrição"
+  },
+  "es": {
+    "current_stock": "Stock actual",
+    "customer_invoices": "Facturas de clientes",
+    "supplier_credit": "Crédito para el proveedor",
+    "customer_requisitions": "Requisiciones de\nclientes",
+    "customers": "Clientes",
+    "finalise": "FINALIZAR",
+    "finalised_cannot_be_edited": "FINALIZADA. NO PUEDE SER EDITADA",
+    "invoice": "Factura",
+    "language": "LENGUAJE",
+    "log_out": "CERRAR SESIÓN",
+    "manage_stocktake": "Administrar inventario",
+    "new_stocktake": "Nuevo inventario",
+    "requisition": "Requisición",
+    "stocktakes": "Inventarios",
+    "stocktake": "Inventario",
+    "supplier_invoices": "Facturas de proveedores",
+    "supplier_requisitions": "Requisiones para\nproveedores",
+    "settings": "configuración",
+    "database_contents": "Contenido de la base de datos",
+    "dispensary": "Dispensario",
+    "dashboard": "Tablero",
+    "cash_register": "Registro de efectivo",
+    "prescription": "Prescripción"
   }
 }

@@ -31,5 +31,15 @@
     "password_required": "Insira a senha",
     "repeat_password_required": "Confirmação da senha",
     "username_required": "Insira o nome de usuário"
+  },
+  "es": {
+    "email_required": "Ingresar el e-mail",
+    "email_valid": "Ingresar un e-mail válido",
+    "password_contains_spaces": "La contraseña no puede contener espacios.",
+    "password_length_invalid": "La contraseña debe tener entre 8 y 32 caracteres.",
+    "password_match_repeat": "Las contraseñas deben coincidir",
+    "password_required": "Ingresar la contraseña",
+    "repeat_password_required": "Confirmar la contraseña",
+    "username_required": "Ingresar el nombre de usuario"
   }
 }
