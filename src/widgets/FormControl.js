@@ -138,7 +138,7 @@ const FormControlComponent = ({
                 key={key}
                 label={label}
                 isRequired={isRequired}
-                isDisabled={isDisabled}
+                isDisabled={!isEditable || isDisabled}
               />
             );
           }

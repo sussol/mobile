@@ -209,7 +209,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     options: ['personal', 'business'],
     optionLabels: [formInputStrings.personal, formInputStrings.business],
     label: formInputStrings.policy_type,
-    isEditable: true,
+    isEditable: !seedObject,
   },
   [FORM_INPUT_KEYS.DISCOUNT_RATE]: {
     type: 'slider',
