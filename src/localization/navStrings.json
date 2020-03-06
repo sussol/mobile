@@ -130,7 +130,7 @@
     "current_stock": "Stock actual",
     "customer_invoices": "Facturas de clientes",
     "supplier_credit": "Crédito para el proveedor",
-    "customer_requisitions": "Requisiciones de clientes",
+    "customer_requisitions": "Requisiciones de\nclientes",
     "customers": "Clientes",
     "finalise": "FINALIZAR",
     "finalised_cannot_be_edited": "FINALIZADA. NO PUEDE SER EDITADA",

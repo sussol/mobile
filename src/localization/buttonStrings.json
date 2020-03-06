@@ -148,7 +148,7 @@
     "current": "Actual",
     "done": "Hecho",
     "export_data": "Exportar datos",
-    "hide_stockouts": "Ocultar líneas sin stock",
+    "hide_stockouts": "Ocultar líneas sin\nstock",
     "manage_stocktake": "Administrar inventario",
     "new_invoice": "Nueva Factura",
     "new_item": "Nuevo Artículo",
