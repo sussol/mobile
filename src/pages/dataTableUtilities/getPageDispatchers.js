@@ -114,6 +114,7 @@ export const getPageDispatchers = (dispatch, props, dataType, route) => {
       dispatch(BasePageActions.openModal(MODAL_KEYS.EDIT_STOCKTAKE_BATCH, rowKey, route)),
     onEditSellPrice: (newValue, rowKey) =>
       dispatch(BasePageActions.editSellPrice(newValue, rowKey, route)),
+    dispatch,
   };
 
   return dispatches;

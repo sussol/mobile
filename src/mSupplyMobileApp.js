@@ -11,27 +11,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import {
-  BackHandler,
-  Image,
-  AppState,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import { Image, AppState, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 
 import { Scheduler } from 'sussol-utilities';
-import { NavigationActions } from '@react-navigation/core';
+
 import { MainStackNavigator } from './navigation/Navigator';
 
 import { FirstUsePage } from './pages';
 
 import { Synchroniser, PostSyncProcessor, SyncModal } from './sync';
-import { FinaliseButton, NavigationBar, SyncState, Spinner } from './widgets';
+import { FinaliseButton, SyncState, Spinner, BackButton, MsupplyMan } from './widgets';
 import { FinaliseModal, LoginModal } from './widgets/modals';
 
-import { getCurrentRouteName, ROUTES } from './navigation';
+import { ROUTES, RootNavigator } from './navigation';
 import { syncCompleteTransaction, setSyncError } from './actions/SyncActions';
 import { FinaliseActions } from './actions/FinaliseActions';
 import { migrateDataToVersion } from './dataMigration';
@@ -41,53 +33,39 @@ import Database from './database/BaseDatabase';
 import { UIDatabase } from './database';
 import { SETTINGS_KEYS } from './settings';
 
-import globalStyles, { textStyles, SUSSOL_ORANGE } from './globalStyles';
+import globalStyles, { SUSSOL_ORANGE } from './globalStyles';
 import { LoadingIndicatorContext } from './context/LoadingIndicatorContext';
 import { UserActions } from './actions';
-import { debounce } from './utilities';
+
 import { SupplierCredit } from './widgets/modalChildren/SupplierCredit';
 import { ModalContainer } from './widgets/modals/ModalContainer';
 import { SupplierCreditActions } from './actions/SupplierCreditActions';
-import { PrescriptionActions } from './actions/PrescriptionActions';
+
 import { selectTitle } from './selectors/supplierCredit';
 import { MenuPage } from './pages/MenuPage';
+import { RealmExplorer } from './pages/RealmExplorer';
+import { CustomerRequisitionPage } from './pages/CustomerRequisitionPage';
+import { CustomerRequisitionsPage } from './pages/CustomerRequisitionsPage';
+import { SupplierRequisitionsPage } from './pages/SupplierRequisitionsPage';
+import { SupplierInvoicePage } from './pages/SupplierInvoicePage';
+import { SupplierInvoicesPage } from './pages/SupplierInvoicesPage';
+import { StockPage } from './pages/StockPage';
+import { CustomerInvoicePage } from './pages/CustomerInvoicePage';
+import { CustomerInvoicesPage } from './pages/CustomerInvoicesPage';
+import { StocktakesPage } from './pages/StocktakesPage';
+import { StocktakeManagePage } from './pages/StocktakeManagePage';
+import { StocktakeEditPage } from './pages/StocktakeEditPage';
+import { DispensingPage } from './pages/DispensingPage';
+import { PrescriptionPage } from './pages/PrescriptionPage';
+import { SettingsPage } from './pages/SettingsPage';
+import { DashboardPage } from './pages/DashboardPage';
+import { SupplierRequisitionPage } from './pages/SupplierRequisitionPage';
+import { navigationStyles } from './globalStyles/navigationStyles';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 
 class MSupplyMobileAppContainer extends React.Component {
-  handleBackEvent = debounce(
-    () => {
-      const { dispatch, prevRouteName, currentRouteName } = this.props;
-      const { syncModalIsOpen } = this.state;
-
-      // If finalise or sync modals are open, close them rather than navigating.
-      if (syncModalIsOpen) {
-        this.setState({ syncModalIsOpen: false });
-        return true;
-      }
-      // If we are on base screen (e.g. home), back button should close app as we can't go back.
-      if (!this.getCanNavigateBack()) {
-        BackHandler.exitApp();
-      } else {
-        dispatch({ ...NavigationActions.back(), payload: { prevRouteName } });
-      }
-      if (currentRouteName === ROUTES.PRESCRIPTION) {
-        UIDatabase.write(() => {
-          UIDatabase.delete(
-            'Transaction',
-            UIDatabase.objects('Prescription').filtered('status != $0', 'finalised')
-          );
-          dispatch(PrescriptionActions.deletePrescription());
-        });
-      }
-
-      return true;
-    },
-    400,
-    true
-  );
-
   constructor(props, ...otherArgs) {
     super(props, ...otherArgs);
 
@@ -120,16 +98,12 @@ class MSupplyMobileAppContainer extends React.Component {
   }
 
   componentDidMount = () => {
-    BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
-
     if (!__DEV__) {
       AppState.addEventListener('change', this.onAppStateChange);
     }
   };
 
   componentWillUnmount = () => {
-    BackHandler.removeEventListener('hardwareBackPress', this.handleBackEvent);
-
     if (!__DEV__) {
       AppState.removeEventListener('change', this.onAppStateChange);
     }
@@ -159,23 +133,7 @@ class MSupplyMobileAppContainer extends React.Component {
     this.postSyncProcessor.processAnyUnprocessedRecords();
   };
 
-  getCanNavigateBack = () => {
-    const { navigationState } = this.props;
-
-    return navigationState?.index !== 0;
-  };
-
-  // eslint-disable-next-line class-methods-use-this
-  getCurrentRouteName(navigationState) {
-    if (!navigationState) return null;
-
-    const route = navigationState?.routes[navigationState?.index];
-
-    // dive into nested navigators
-    if (route.routes) return getCurrentRouteName(route);
-
-    return route.routeName;
-  }
+  getCanNavigateBack = () => RootNavigator.canGoBack();
 
   runWithLoadingIndicator = async functionToRun => {
     UIDatabase.isLoading = true;
@@ -253,11 +211,6 @@ class MSupplyMobileAppContainer extends React.Component {
     );
   };
 
-  renderPageTitle = () => {
-    const { currentTitle } = this.props;
-    return <Text style={textStyles}>{currentTitle}</Text>;
-  };
-
   renderSyncState = () => {
     const { syncState } = this.props;
     return (
@@ -270,10 +223,19 @@ class MSupplyMobileAppContainer extends React.Component {
     );
   };
 
+  getOptions = () => ({
+    headerLeft: () => <BackButton />,
+    headerTitleAlign: 'center',
+    headerTitle: MsupplyMan,
+    headerRight: this.renderSyncState,
+    headerStyle: navigationStyles.headerStyle,
+    headerLeftContainerStyle: navigationStyles.headerLeftContainerStyle,
+    headerRightContainerStyle: navigationStyles.headerRightContainerStyle,
+  });
+
   render() {
     const {
       finaliseItem,
-      navigationState,
       syncState,
       currentUser,
       finaliseModalOpen,
@@ -297,19 +259,67 @@ class MSupplyMobileAppContainer extends React.Component {
     return (
       <LoadingIndicatorContext.Provider value={this.runWithLoadingIndicator}>
         <View style={globalStyles.appBackground}>
-          <NavigationBar
-            routeName={this.getCurrentRouteName(navigationState)}
-            onPressBack={this.getCanNavigateBack() ? this.handleBackEvent : null}
-            LeftComponent={this.getCanNavigateBack() ? this.renderPageTitle : null}
-            CentreComponent={this.renderLogo}
-            RightComponent={
-              finaliseItem && finaliseItem?.visibleButton
-                ? this.renderFinaliseButton
-                : this.renderSyncState
-            }
-          />
-          <MainStackNavigator.Navigator>
-            <MainStackNavigator.Screen name="root" component={MenuPage} />
+          <MainStackNavigator.Navigator
+            initialRouteName={ROUTES.ROOT}
+            screenOptions={this.getOptions()}
+          >
+            <MainStackNavigator.Screen name={ROUTES.ROOT} component={MenuPage} />
+
+            <MainStackNavigator.Screen
+              name={ROUTES.CUSTOMER_REQUISITION}
+              component={CustomerRequisitionPage}
+            />
+
+            <MainStackNavigator.Screen
+              name={ROUTES.CUSTOMER_REQUISITIONS}
+              component={CustomerRequisitionsPage}
+            />
+
+            <MainStackNavigator.Screen
+              name={ROUTES.SUPPLIER_REQUISITION}
+              component={SupplierRequisitionPage}
+            />
+            <MainStackNavigator.Screen
+              name={ROUTES.SUPPLIER_REQUISITIONS}
+              component={SupplierRequisitionsPage}
+            />
+
+            <MainStackNavigator.Screen
+              name={ROUTES.SUPPLIER_INVOICE}
+              component={SupplierInvoicePage}
+            />
+            <MainStackNavigator.Screen
+              name={ROUTES.SUPPLIER_INVOICES}
+              component={SupplierInvoicesPage}
+            />
+
+            <MainStackNavigator.Screen
+              name={ROUTES.CUSTOMER_INVOICE}
+              component={CustomerInvoicePage}
+            />
+            <MainStackNavigator.Screen
+              name={ROUTES.CUSTOMER_INVOICES}
+              component={CustomerInvoicesPage}
+            />
+
+            <MainStackNavigator.Screen name={ROUTES.STOCK} component={StockPage} />
+
+            <MainStackNavigator.Screen name={ROUTES.STOCKTAKES} component={StocktakesPage} />
+            <MainStackNavigator.Screen
+              name={ROUTES.STOCKTAKE_MANAGER}
+              component={StocktakeManagePage}
+            />
+            <MainStackNavigator.Screen
+              name={ROUTES.STOCKTAKE_EDITOR}
+              component={StocktakeEditPage}
+            />
+
+            <MainStackNavigator.Screen name={ROUTES.DISPENSARY} component={DispensingPage} />
+            <MainStackNavigator.Screen name={ROUTES.PRESCRIPTION} component={PrescriptionPage} />
+
+            <MainStackNavigator.Screen name={ROUTES.REALM_EXPLORER} component={RealmExplorer} />
+            <MainStackNavigator.Screen name={ROUTES.SETTINGS} component={SettingsPage} />
+            <MainStackNavigator.Screen name={ROUTES.DASHBOARD} component={DashboardPage} />
           </MainStackNavigator.Navigator>
 
           <FinaliseModal
@@ -372,25 +382,20 @@ const mapStateToProps = state => {
 
 MSupplyMobileAppContainer.defaultProps = {
   currentUser: null,
-  currentTitle: '',
   finaliseItem: null,
   creditTitle: '',
 };
 
 MSupplyMobileAppContainer.propTypes = {
-  currentTitle: PropTypes.string,
   dispatch: PropTypes.func.isRequired,
   finaliseItem: PropTypes.object,
-  navigationState: PropTypes.object.isRequired,
   syncState: PropTypes.object.isRequired,
   currentUser: PropTypes.object,
-  prevRouteName: PropTypes.string.isRequired,
   finaliseModalOpen: PropTypes.bool.isRequired,
   openFinaliseModal: PropTypes.func.isRequired,
   closeFinaliseModal: PropTypes.func.isRequired,
   closeSupplierCreditModal: PropTypes.func.isRequired,
   supplierCreditModalOpen: PropTypes.bool.isRequired,
-  currentRouteName: PropTypes.string.isRequired,
   creditTitle: PropTypes.string,
 };
 
