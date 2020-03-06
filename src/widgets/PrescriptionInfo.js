@@ -53,7 +53,7 @@ const PrescriptionInfoComponent = ({
         <FlexRow alignItems="center" justifyContent="">
           <FlexView flex={3}>
             <SimpleLabel label={dispensingStrings.patient} size="small" />
-            <SimpleLabel text={patientName} size="medium" />
+            <SimpleLabel text={patientName} size="medium" numberOfLines={1} />
           </FlexView>
 
           <FlexRow flex={1}>
