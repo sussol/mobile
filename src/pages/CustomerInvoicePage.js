@@ -200,9 +200,9 @@ export const CustomerInvoice = ({
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
-  const { transaction } = ownProps || {};
-  const { otherParty } = transaction;
-  const hasMasterLists = otherParty.masterLists.length > 0;
+  const { transaction } = ownProps?.navigation?.route?.param || {};
+  const { otherParty } = transaction || {};
+  const hasMasterLists = otherParty?.masterLists?.length > 0;
 
   const noMasterLists = () =>
     ToastAndroid.show(modalStrings.customer_no_masterlist_available, ToastAndroid.LONG);

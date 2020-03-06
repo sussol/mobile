@@ -19,12 +19,11 @@ import { PrescriptionReducer } from './PrescriptionReducer';
 import { SupplierCreditReducer } from './SupplierCreditReducer';
 import { UserReducer } from './UserReducer';
 import { WizardReducer } from './WizardReducer';
-import NavigationReducer from './NavigationReducer';
+
 import SyncReducer from './SyncReducer';
 
 export default combineReducers({
   user: UserReducer,
-  nav: NavigationReducer,
   sync: SyncReducer,
   pages: PagesReducer,
   modules: ModulesReducer,

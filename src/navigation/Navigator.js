@@ -1,16 +1,8 @@
-import { createStackNavigator } from 'react-navigation-stack';
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2020
+ */
 
-import { PAGES } from '../pages';
+import { createStackNavigator } from '@react-navigation/stack';
 
-const routes = {};
-// Add all pages to navigation routes.
-Object.entries(PAGES).forEach(([routeName, page]) => {
-  routes[routeName] = { screen: page };
-});
-
-const config = {
-  initialRouteName: 'root',
-  headerMode: 'none',
-};
-
-export default createStackNavigator(routes, config);
+export const MainStackNavigator = createStackNavigator();

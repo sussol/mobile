@@ -3,14 +3,18 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import { NavigationActions, StackActions } from 'react-navigation';
+import { BackHandler } from 'react-native';
+import { batch } from 'react-redux';
+import { NavigationActions, StackActions } from '@react-navigation/core';
+
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
-import { createRecord } from '../database/utilities/index';
-import { navStrings } from '../localization/index';
-import { SETTINGS_KEYS } from '../settings/index';
-import { getCurrentRouteName } from './selectors';
+import { createRecord } from '../database/utilities';
+import { navStrings } from '../localization';
+import { SETTINGS_KEYS } from '../settings';
 import { ROUTES } from './constants';
+import { RootNavigator } from './RootNavigator';
+import { PrescriptionActions } from '../actions/PrescriptionActions';
 
 /**
  * Navigation Action Creators.
@@ -29,6 +33,26 @@ import { ROUTES } from './constants';
  * - `params` (See: Pages/pageContainer and pages/index FINALISABLE_PAGES for requirements)
  *
  */
+
+export const goBack = () => dispatch => {
+  if (!RootNavigator.canGoBack()) BackHandler.exitApp();
+  else {
+    UIDatabase.write(() => {
+      const prescriptions = UIDatabase.objects('Prescription').filtered('status != "finalised"');
+      UIDatabase.delete('Transaction', prescriptions);
+
+      batch(() => {
+        dispatch({
+          ...NavigationActions.back(),
+          payload: {
+            prevRouteName: RootNavigator.getPrevRouteName(),
+          },
+        });
+        dispatch(PrescriptionActions.deletePrescription());
+      });
+    });
+  }
+};
 
 /**
  * Action creator which first creates a prescription, and then navigates to it
@@ -206,10 +230,8 @@ export const gotoStock = () =>
  *
  * @param {Object} requisition The requisition to pass to the next screen.
  */
-export const gotoStocktakeManagePage = (stocktakeName, stocktake) => (dispatch, getState) => {
-  const { nav } = getState();
-
-  const currentRouteName = getCurrentRouteName(nav);
+export const gotoStocktakeManagePage = (stocktakeName, stocktake) => dispatch => {
+  const currentRouteName = RootNavigator.getCurrentRouteName();
 
   const navigationActionCreator =
     currentRouteName === ROUTES.STOCKTAKES ? NavigationActions.navigate : StackActions.replace;
@@ -217,7 +239,6 @@ export const gotoStocktakeManagePage = (stocktakeName, stocktake) => (dispatch, 
   const navigationParameters = {
     routeName: ROUTES.STOCKTAKE_MANAGER,
     params: {
-      title: stocktake ? navStrings.manage_stocktake : navStrings.new_stocktake,
       stocktakeName,
       stocktake,
       pageObject: stocktake,
@@ -232,9 +253,8 @@ export const gotoStocktakeManagePage = (stocktakeName, stocktake) => (dispatch, 
  *
  * @param {Object} stocktake  The requisition to navigate to.
  */
-export const gotoStocktakeEditPage = stocktake => (dispatch, getState) => {
-  const { nav } = getState();
-  const currentRouteName = getCurrentRouteName(nav);
+export const gotoStocktakeEditPage = stocktake => dispatch => {
+  const currentRouteName = RootNavigator.getCurrentRouteName();
 
   // If navigating from the stocktakesPage, go straight to the StocktakeEditPage. Otherwise,
   // replace the current page as the user is coming from StocktakeManagePage.

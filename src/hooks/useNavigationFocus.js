@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 /* eslint-disable import/prefer-default-export */
 /**
  * mSupply Mobile
@@ -34,8 +35,8 @@ export const useNavigationFocus = (navigation, willFocusCallback, willBlurCallba
   };
 
   const unSubscribe = () => {
-    if (willFocusSub.current) willFocusSub.current.remove();
-    if (willBlurSub.current) willBlurSub.current.remove();
+    if (willFocusSub.current) willFocusSub.current?.();
+    if (willBlurSub.current) willBlurSub.current?.();
   };
 
   // On-mount/On-unmount effect, subscribing/unsubscribing to navigation events given the callbacks.
