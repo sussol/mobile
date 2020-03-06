@@ -60,6 +60,7 @@ import { PrescriptionPage } from './pages/PrescriptionPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { SupplierRequisitionPage } from './pages/SupplierRequisitionPage';
+import { navigationStyles } from './globalStyles/navigationStyles';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -227,6 +228,9 @@ class MSupplyMobileAppContainer extends React.Component {
     headerTitleAlign: 'center',
     headerTitle: MsupplyMan,
     headerRight: this.renderSyncState,
+    headerStyle: navigationStyles.headerStyle,
+    headerLeftContainerStyle: navigationStyles.headerLeftContainerStyle,
+    headerRightContainerStyle: navigationStyles.headerRightContainerStyle,
   });
 
   render() {
