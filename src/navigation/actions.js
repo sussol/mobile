@@ -45,7 +45,7 @@ export const goBack = () => dispatch => {
         dispatch({
           ...NavigationActions.back(),
           payload: {
-            prevRouteName: RootNavigator.prevRouteName(),
+            prevRouteName: RootNavigator.getPrevRouteName(),
           },
         });
         dispatch(PrescriptionActions.deletePrescription());

@@ -36,7 +36,7 @@ const getCurrentRouteName = () => {
   return routes[routes.length - 1]?.name ?? '';
 };
 
-const prevRouteName = () => {
+const getPrevRouteName = () => {
   if (!rootNavigatorRef.current?.getRootState()) return '';
 
   const routes = rootNavigatorRef.current?.getRootState()?.routes ?? [];
@@ -50,5 +50,5 @@ export const RootNavigator = {
   goBack,
   canGoBack,
   getCurrentRouteName,
-  prevRouteName,
+  getPrevRouteName,
 };
