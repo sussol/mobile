@@ -23,7 +23,7 @@ import { Synchroniser, PostSyncProcessor, SyncModal } from './sync';
 import { FinaliseButton, SyncState, Spinner, BackButton, MsupplyMan } from './widgets';
 import { FinaliseModal, LoginModal } from './widgets/modals';
 
-import { ROUTES, RootNavigator } from './navigation';
+import { ROUTES } from './navigation';
 import { syncCompleteTransaction, setSyncError } from './actions/SyncActions';
 import { FinaliseActions } from './actions/FinaliseActions';
 import { migrateDataToVersion } from './dataMigration';
@@ -132,8 +132,6 @@ class MSupplyMobileAppContainer extends React.Component {
     this.setState({ isInitialised: true });
     this.postSyncProcessor.processAnyUnprocessedRecords();
   };
-
-  getCanNavigateBack = () => RootNavigator.canGoBack();
 
   runWithLoadingIndicator = async functionToRun => {
     UIDatabase.isLoading = true;
