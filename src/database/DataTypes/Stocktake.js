@@ -46,9 +46,13 @@ export class Stocktake extends Realm.Object {
    */
   addBatchIfUnique(database, stocktakeBatch) {
     // TODO: rename method to addBatch.
-    addBatchToParent(stocktakeBatch, this, () =>
-      createRecord(database, 'StocktakeItem', this, stocktakeBatch.itemBatch.item)
-    );
+    const { itemBatch } = stocktakeBatch ?? {};
+    const { item } = itemBatch ?? {};
+    if (item) {
+      addBatchToParent(stocktakeBatch, this, () =>
+        createRecord(database, 'StocktakeItem', this, item)
+      );
+    }
   }
 
   /**
@@ -76,7 +80,10 @@ export class Stocktake extends Realm.Object {
     }
 
     // Add a new stocktake item for each new item id not currently in the stocktake.
-    const itemIdsToAdd = complement(itemIds, this.items.map(stocktakeItem => stocktakeItem.itemId));
+    const itemIdsToAdd = complement(
+      itemIds,
+      this.items.map(stocktakeItem => stocktakeItem.itemId)
+    );
 
     const items = database.objects('Item');
     itemIdsToAdd.forEach(itemId => {
@@ -285,7 +292,10 @@ export class Stocktake extends Realm.Object {
    */
   addItemsFromProgram(database) {
     if (!this.program) return false;
-    this.setItemsByID(database, this.program.items.map(masterListItem => masterListItem.item.id));
+    this.setItemsByID(
+      database,
+      this.program.items.map(masterListItem => masterListItem.item.id)
+    );
     return true;
   }
 }
