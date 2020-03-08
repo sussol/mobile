@@ -65,7 +65,17 @@ const FormControlComponent = ({
   const formInputs = () =>
     inputConfig.map(
       (
-        { type, key, isRequired, validator, initialValue, label, invalidMessage, ...rest },
+        {
+          type,
+          key,
+          isRequired,
+          validator,
+          initialValue,
+          label,
+          invalidMessage,
+          isEditable,
+          ...rest
+        },
         index
       ) => {
         refs[index] = React.useRef();
@@ -82,7 +92,7 @@ const FormControlComponent = ({
                 onChangeText={value => onUpdateForm(key, value)}
                 label={label}
                 invalidMessage={invalidMessage}
-                isDisabled={isDisabled}
+                isDisabled={!isEditable || isDisabled}
               />
             );
           }
@@ -113,7 +123,7 @@ const FormControlComponent = ({
                 onValueChange={value => onUpdateForm(key, value)}
                 options={options}
                 optionKey={optionKey}
-                isDisabled={isDisabled}
+                isDisabled={!isEditable || isDisabled}
               />
             );
           }
@@ -128,7 +138,7 @@ const FormControlComponent = ({
                 key={key}
                 label={label}
                 isRequired={isRequired}
-                isDisabled={isDisabled}
+                isDisabled={!isEditable || isDisabled}
               />
             );
           }
