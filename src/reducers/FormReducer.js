@@ -5,6 +5,7 @@
 
 import { FORM_ACTIONS } from '../actions/FormActions';
 import { UIDatabase } from '../database/index';
+import { INSURANCE_POLICY_FIELDS } from '../utilities/modules/dispensary/constants';
 
 const initialState = config => {
   if (!config) return {};
@@ -36,8 +37,8 @@ export const FormReducer = (state = initialState(), action) => {
       const { payload } = action;
       const { key, value } = payload;
 
-      const updatePolicyNumberPerson = key === 'policyNumberPerson';
-      const updatePolicyNumberFamily = key === 'policyNumberFamily';
+      const updatePolicyNumberPerson = key === INSURANCE_POLICY_FIELDS.POLICY_NUMBER_PERSON;
+      const updatePolicyNumberFamily = key === INSURANCE_POLICY_FIELDS.POLICY_NUMBER_FAMILY;
 
       if (updatePolicyNumberPerson || updatePolicyNumberFamily) {
         const { policyNumberPerson: policyNumberPersonState } = state;

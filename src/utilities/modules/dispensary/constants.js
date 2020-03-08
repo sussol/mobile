@@ -3,7 +3,12 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-export const CASH_TRANSACTION_FIELD_KEYS = {
+export const INSURANCE_POLICY_FIELDS = {
+  POLICY_NUMBER_PERSON: 'policyNumberPerson',
+  POLICY_NUMBER_FAMILY: 'policyNumberFamily',
+};
+
+export const CASH_TRANSACTION_FIELDS = {
   NAME: 'name',
   TYPE: 'title',
   PAYMENT_TYPE: 'description',
@@ -22,8 +27,12 @@ export const CASH_TRANSACTION_PAYMENT_TYPES = {
   MOBILE_PAYMENT: 'mobile_payment',
 };
 
+export const INSURANCE_POLICY = {
+  FIELDS: INSURANCE_POLICY_FIELDS,
+};
+
 export const CASH_TRANSACTION = {
   TYPES: CASH_TRANSACTION_TYPES,
   PAYMENT_TYPES: CASH_TRANSACTION_PAYMENT_TYPES,
-  FIELD_KEYS: CASH_TRANSACTION_FIELD_KEYS,
+  FIELDS: CASH_TRANSACTION_FIELDS,
 };
