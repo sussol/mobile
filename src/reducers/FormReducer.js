@@ -51,23 +51,33 @@ export const FormReducer = (state = initialState(), action) => {
           ? { value }
           : policyNumberFamilyState;
 
-        const isDuplicatePolicyNumber =
+        const policyNumberPersonLength = policyNumberPersonValue.length;
+        const policyNumberFamilyLength = policyNumberFamilyValue.length;
+
+        const isPolicyNumberUnique =
           UIDatabase.objects('InsurancePolicy').filtered(
             'policyNumberPerson == $0 && policyNumberFamily == $1',
             policyNumberPersonValue,
             policyNumberFamilyValue
-          ).length > 0;
+          ).length === 0;
+
+        const isPolicyNumberPersonLengthValid = updatePolicyNumberPerson
+          ? policyNumberPersonLength > 0 && policyNumberPersonLength < 50
+          : true;
+        const isPolicyNumberFamilyLengthValid = updatePolicyNumberFamily
+          ? policyNumberFamilyLength > 0 && policyNumberFamilyLength < 50
+          : true;
 
         const newPolicyNumberPersonState = {
           ...policyNumberPersonState,
           value: policyNumberPersonValue,
-          isValid: !isDuplicatePolicyNumber,
+          isValid: isPolicyNumberUnique && isPolicyNumberPersonLengthValid,
         };
 
         const newPolicyNumberFamilyState = {
           ...policyNumberFamilyState,
           value: policyNumberFamilyValue,
-          isValid: !isDuplicatePolicyNumber,
+          isValid: isPolicyNumberUnique && isPolicyNumberFamilyLengthValid,
         };
 
         return {

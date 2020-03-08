@@ -52,7 +52,7 @@ export const FormTextInput = React.forwardRef(
 
     React.useEffect(() => {
       setInputState({ ...inputState, isValid: form[formKey]?.isValid });
-    }, [form[formKey]?.isValid]);
+    }, [form[formKey]?.value, form[formKey]?.isValid]);
 
     const { inputValue, isValid } = inputState;
     const { flexRow, flexColumn } = localStyles;
