@@ -7,41 +7,31 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { StyleSheet, View } from 'react-native';
-import IoniconIcon from 'react-native-vector-icons/Ionicons';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
-export const SyncIcon = props => {
-  const { size, cloudColor, arrowsColor, wifiColor } = props;
+import { GREY, DARK_GREY } from '../globalStyles';
+import { CloudIcon, ArrowIcon, WifiIcon } from './icons';
+
+export const SyncIcon = ({ isActive }) => {
+  const iconColor = isActive ? DARK_GREY : GREY;
 
   return (
     <View style={localStyles.horizontalContainer}>
-      <IoniconIcon name="md-cloud" size={size * 30} style={{ top: size * 4 }} color={cloudColor} />
-      <FontAwesomeIcon
-        name="exchange"
-        size={size * 16}
-        style={localStyles.icon}
-        color={arrowsColor}
-      />
-      <IoniconIcon name="logo-rss" size={size * 22} style={localStyles.icon} color={wifiColor} />
+      <CloudIcon color={iconColor} />
+      <ArrowIcon color={iconColor} />
+      <WifiIcon color={iconColor} />
     </View>
   );
 };
 
-export default SyncIcon;
+SyncIcon.defaultProps = {
+  isActive: true,
+};
 
 SyncIcon.propTypes = {
-  cloudColor: PropTypes.string,
-  arrowsColor: PropTypes.string,
-  wifiColor: PropTypes.string,
-  size: PropTypes.number,
+  isActive: PropTypes.bool,
 };
 
-SyncIcon.defaultProps = {
-  cloudColor: '#000000',
-  arrowsColor: '#000000',
-  wifiColor: '#000000',
-  size: 1,
-};
+SyncIcon.defaultProps = {};
 
 const localStyles = StyleSheet.create({
   horizontalContainer: {
