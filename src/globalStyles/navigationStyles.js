@@ -20,13 +20,11 @@ export const navigationStyles = {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
   },
   navBarText: {
     fontFamily: APP_FONT_FAMILY,
     fontSize: 10,
     color: GREY,
-
     marginRight: 15,
   },
 };
