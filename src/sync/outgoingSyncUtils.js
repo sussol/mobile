@@ -185,6 +185,7 @@ const generateSyncData = (settings, recordType, record) => {
         Batch: record.batch,
         item_ID: record.itemId,
         optionID: record.option && record.option.id,
+        is_edited: record.hasBeenCounted,
       };
     }
     case 'Transaction': {
