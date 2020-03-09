@@ -180,15 +180,18 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
   },
 });
 
-const getPageInfoColumns = page => {
+const getPageInfoColumns = (page, isProgramBased) => {
   const pageInfoColumns = PER_PAGE_INFO_COLUMNS[page];
 
   if (!pageInfoColumns) return null;
+
   return (pageObjectParameter, dispatch, route) => {
     const pageInfoRows = PAGE_INFO_ROWS(pageObjectParameter, dispatch, route);
-    return pageInfoColumns.map(pageInfoColumn =>
-      pageInfoColumn.map(pageInfoKey => pageInfoRows[pageInfoKey])
-    );
+    return pageInfoColumns.map((pageInfoColumn, idx) => {
+      const columnArray =
+        isProgramBased && idx === 0 ? ['program', ...pageInfoColumn] : pageInfoColumn;
+      return columnArray.map(pageInfoKey => pageInfoRows[pageInfoKey]);
+    });
   };
 };
 
