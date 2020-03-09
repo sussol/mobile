@@ -135,7 +135,6 @@ class MSupplyMobileAppContainer extends React.Component {
   };
 
   runWithLoadingIndicator = async functionToRun => {
-    UIDatabase.isLoading = true;
     // We here set up an asynchronous promise that will be resolved after a timeout
     // of 1 millisecond. This allows a fraction of a delay for the javascript thread
     // to unblock and allow the spinner animation to start up. The |functionToRun| should
@@ -146,7 +145,6 @@ class MSupplyMobileAppContainer extends React.Component {
     });
     functionToRun();
     this.setState({ isLoading: false });
-    UIDatabase.isLoading = false;
   };
 
   synchronise = async () => {
@@ -181,13 +179,6 @@ class MSupplyMobileAppContainer extends React.Component {
     }
   };
 
-  renderFinaliseButton = () => {
-    const { finaliseItem, openFinaliseModal } = this.props;
-    return (
-      <FinaliseButton isFinalised={finaliseItem.record.isFinalised} onPress={openFinaliseModal} />
-    );
-  };
-
   renderLoadingIndicator = () => {
     const { isLoading } = this.state;
     return (
@@ -209,10 +200,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
   render() {
     const {
-      finaliseItem,
       currentUser,
-      finaliseModalOpen,
-      closeFinaliseModal,
       closeSupplierCreditModal,
       supplierCreditModalOpen,
       creditTitle,
@@ -233,6 +221,7 @@ class MSupplyMobileAppContainer extends React.Component {
             <MainStackNavigator.Screen name={ROUTES.ROOT} component={MenuPage} />
 
             <MainStackNavigator.Screen
+              options={{ headerRight: () => <FinaliseButton /> }}
               name={ROUTES.CUSTOMER_REQUISITION}
               component={CustomerRequisitionPage}
             />
@@ -243,6 +232,7 @@ class MSupplyMobileAppContainer extends React.Component {
             />
 
             <MainStackNavigator.Screen
+              options={{ headerRight: () => <FinaliseButton /> }}
               name={ROUTES.SUPPLIER_REQUISITION}
               component={SupplierRequisitionPage}
             />
@@ -252,6 +242,7 @@ class MSupplyMobileAppContainer extends React.Component {
             />
 
             <MainStackNavigator.Screen
+              options={{ headerRight: () => <FinaliseButton /> }}
               name={ROUTES.SUPPLIER_INVOICE}
               component={SupplierInvoicePage}
             />
@@ -261,6 +252,7 @@ class MSupplyMobileAppContainer extends React.Component {
             />
 
             <MainStackNavigator.Screen
+              options={{ headerRight: () => <FinaliseButton /> }}
               name={ROUTES.CUSTOMER_INVOICE}
               component={CustomerInvoicePage}
             />
@@ -277,6 +269,7 @@ class MSupplyMobileAppContainer extends React.Component {
               component={StocktakeManagePage}
             />
             <MainStackNavigator.Screen
+              options={{ headerRight: () => <FinaliseButton /> }}
               name={ROUTES.STOCKTAKE_EDITOR}
               component={StocktakeEditPage}
             />
@@ -291,12 +284,7 @@ class MSupplyMobileAppContainer extends React.Component {
             <MainStackNavigator.Screen name={ROUTES.DASHBOARD} component={DashboardPage} />
           </MainStackNavigator.Navigator>
 
-          <FinaliseModal
-            isOpen={finaliseModalOpen}
-            onClose={closeFinaliseModal}
-            finaliseItem={finaliseItem}
-            user={currentUser}
-          />
+          <FinaliseModal />
           <SyncModal onPressManualSync={this.synchronise} />
           <LoginModal
             authenticator={this.userAuthenticator}
@@ -323,7 +311,6 @@ const mapDispatchToProps = dispatch => {
   const openFinaliseModal = () => dispatch(FinaliseActions.openModal());
   const closeFinaliseModal = () => dispatch(FinaliseActions.closeModal());
   const closeSupplierCreditModal = () => dispatch(SupplierCreditActions.close());
-
   const onOpenSyncModal = () => dispatch(openSyncModal());
 
   return {
@@ -353,18 +340,13 @@ const mapStateToProps = state => {
 
 MSupplyMobileAppContainer.defaultProps = {
   currentUser: null,
-  finaliseItem: null,
   creditTitle: '',
 };
 
 MSupplyMobileAppContainer.propTypes = {
   isSyncing: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
-  finaliseItem: PropTypes.object,
   currentUser: PropTypes.object,
-  finaliseModalOpen: PropTypes.bool.isRequired,
-  openFinaliseModal: PropTypes.func.isRequired,
-  closeFinaliseModal: PropTypes.func.isRequired,
   closeSupplierCreditModal: PropTypes.func.isRequired,
   supplierCreditModalOpen: PropTypes.bool.isRequired,
   creditTitle: PropTypes.string,
