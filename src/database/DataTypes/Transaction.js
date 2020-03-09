@@ -9,6 +9,7 @@ import {
   reuseNumber as reuseSerialNumber,
   NUMBER_SEQUENCE_KEYS,
 } from '../utilities';
+import { modalStrings } from '../../localization/index';
 
 /**
  * A transaction.
@@ -455,6 +456,43 @@ export class Transaction extends Realm.Object {
       return `supplierinvoice_${this.serialNumber}`;
     }
     return batchName;
+  }
+
+  get canFinaliseCustomerInvoice() {
+    const finaliseStatus = { success: true };
+
+    if (!this.items.length) {
+      finaliseStatus.success = false;
+      finaliseStatus.errorMessage = modalStrings.add_at_least_one_item_before_finalising;
+    }
+
+    if (!this.totalQuantity) {
+      finaliseStatus.success = false;
+      finaliseStatus.errorMessage = modalStrings.record_stock_to_issue_before_finalising;
+    }
+
+    return finaliseStatus;
+  }
+
+  get canFinaliseSupplierInvoice() {
+    const finaliseStatus = { success: true };
+    if (!this.isExternalSupplierInvoice) return finaliseStatus;
+    if (!this.items.length) {
+      finaliseStatus.success = false;
+      finaliseStatus.errorMessage = modalStrings.add_at_least_one_item_before_finalising;
+    }
+    if (!this.totalQuantity) {
+      finaliseStatus.success = false;
+      finaliseStatus.errorMessage = modalStrings.stock_quantity_greater_then_zero;
+    }
+
+    return finaliseStatus;
+  }
+
+  get canFinalise() {
+    return this.isSupplierInvoice
+      ? this.canFinaliseSupplierInvoice
+      : this.canFinaliseCustomerInvoice;
   }
 
   /**

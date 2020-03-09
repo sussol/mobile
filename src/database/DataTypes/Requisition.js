@@ -9,6 +9,8 @@ import { complement } from 'set-manipulator';
 import { createRecord, getTotal } from '../utilities';
 import { UIDatabase } from '..';
 import { programDailyUsage } from '../../utilities/dailyUsage';
+import { modalStrings } from '../../localization/index';
+import { SETTINGS_KEYS } from '../../settings/index';
 
 /**
  * A requisition.
@@ -371,6 +373,33 @@ export class Requisition extends Realm.Object {
       }
     });
     database.delete('RequisitionItem', itemsToPrune);
+  }
+
+  get canFinaliseRequest() {
+    const finaliseStatus = { success: true };
+
+    if (!this.numberOfOrderedItems) {
+      finaliseStatus.success = false;
+      finaliseStatus.errorMessage = modalStrings.add_at_least_one_item_before_finalising;
+    }
+    if (!this.totalRequiredQuantity) {
+      finaliseStatus.success = false;
+      finaliseStatus.errorMessage = modalStrings.record_stock_required_before_finalising;
+    }
+
+    const thisStoresTags = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_TAGS);
+    const maxLinesForOrder = this.program?.getMaxLines?.(this.orderType, thisStoresTags);
+
+    if (this.numberOfOrderedItems > maxLinesForOrder) {
+      finaliseStatus.success = false;
+      finaliseStatus.errorMessage = `${modalStrings.emergency_orders_can_only_have} ${maxLinesForOrder} ${modalStrings.items_remove_some}`;
+    }
+
+    return finaliseStatus;
+  }
+
+  get canFinalise() {
+    return this.isRequest ? this.canFinaliseRequest : { success: true };
   }
 
   /**
