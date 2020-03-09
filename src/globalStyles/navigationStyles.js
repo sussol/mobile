@@ -18,15 +18,15 @@ export const navigationStyles = {
   },
   navBarRightContainer: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'flex-end',
-    bottom: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
   },
   navBarText: {
     fontFamily: APP_FONT_FAMILY,
     fontSize: 10,
     color: GREY,
-    alignSelf: 'flex-end',
+
     marginRight: 15,
   },
 };

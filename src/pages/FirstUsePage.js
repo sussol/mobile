@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -5,6 +6,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Button } from 'react-native-ui-components';
 
@@ -16,7 +18,7 @@ import { DemoUserModal } from '../widgets/modals';
 
 import globalStyles, { SUSSOL_ORANGE, WARM_GREY } from '../globalStyles';
 
-export class FirstUsePage extends React.Component {
+export class FirstUsePageComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -65,10 +67,9 @@ export class FirstUsePage extends React.Component {
   }
 
   get buttonText() {
-    const { syncState } = this.props;
     const { status } = this.state;
 
-    const { progressMessage, errorMessage, progress, total } = syncState;
+    const { progressMessage, errorMessage, progress, total } = this.props;
 
     switch (status) {
       case 'initialising':
@@ -82,12 +83,17 @@ export class FirstUsePage extends React.Component {
     }
   }
 
+  onChangeText = text =>
+    this.setState({
+      syncSitePassword: text,
+      status: 'uninitialised',
+    });
+
   handleDemoModalOpen = () => this.setState({ isDemoUserModalOpen: true });
 
   handleDemoModalClose = () => this.setState({ isDemoUserModalOpen: false });
 
   render() {
-    const { syncState } = this.props;
     const {
       appVersion,
       isDemoUserModalOpen,
@@ -103,7 +109,6 @@ export class FirstUsePage extends React.Component {
           <Image
             resizeMode="contain"
             style={globalStyles.authFormLogo}
-            // eslint-disable-next-line global-require
             source={require('../images/logo_large.png')}
           />
           <View style={globalStyles.horizontalContainer}>
@@ -157,23 +162,14 @@ export class FirstUsePage extends React.Component {
               editable={status !== 'initialising'}
               returnKeyType="done"
               selectTextOnFocus
-              onChangeText={text =>
-                this.setState({
-                  syncSitePassword: text,
-                  status: 'uninitialised',
-                })
-              }
+              onChangeText={this.onChangeText}
               onSubmitEditing={() => {
                 if (this.passwordInputRef) this.passwordInputRef.blur();
                 if (this.canAttemptLogin) this.onPressConnect();
               }}
             />
           </View>
-          <SyncState
-            style={localStyles.initialisationStateIcon}
-            state={syncState}
-            showText={false}
-          />
+          <SyncState style={localStyles.initialisationStateIcon} showText={false} />
           <View style={globalStyles.authFormButtonContainer}>
             <Button
               style={globalStyles.authFormButton}
@@ -204,17 +200,20 @@ export class FirstUsePage extends React.Component {
   }
 }
 
-export default FirstUsePage;
+const mapStateToProps = state => {
+  const { sync } = state;
+  return sync;
+};
 
-FirstUsePage.propTypes = {
+export const FirstUsePage = connect(mapStateToProps)(FirstUsePageComponent);
+
+FirstUsePageComponent.propTypes = {
   onInitialised: PropTypes.func.isRequired,
   synchroniser: PropTypes.instanceOf(Synchroniser).isRequired,
-  syncState: PropTypes.shape({
-    progressMessage: PropTypes.string,
-    errorMessage: PropTypes.string,
-    progress: PropTypes.number,
-    total: PropTypes.number,
-  }).isRequired,
+  progressMessage: PropTypes.string.isRequired,
+  errorMessage: PropTypes.string.isRequired,
+  progress: PropTypes.number.isRequired,
+  total: PropTypes.number.isRequired,
 };
 
 const localStyles = StyleSheet.create({

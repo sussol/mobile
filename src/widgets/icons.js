@@ -1,3 +1,4 @@
+/* eslint-disable react/default-props-match-prop-types */
 /* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
@@ -19,6 +20,7 @@ import {
   FINALISE_GREEN,
   SUSSOL_ORANGE,
   FINALISED_RED,
+  DARK_GREY,
   dataTableColors,
 } from '../globalStyles';
 
@@ -106,3 +108,21 @@ MinusIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
 export const CalendarIcon = () => <FAIcon name="calendar" size={20} color={WHITE} />;
 
 export const BackIcon = () => <FAIcon name="chevron-left" size={16} color="black" />;
+
+export const CloudIcon = ({ color, size, style }) => (
+  <IonIcon name="md-cloud" size={size} color={color} style={style} />
+);
+CloudIcon.defaultProps = { color: DARK_GREY, size: 30, style: {} };
+CloudIcon.propTypes = { color: PropTypes.string, size: PropTypes.number, style: PropTypes.object };
+
+export const ArrowIcon = ({ color, size, style }) => (
+  <FAIcon name="exchange" size={size} style={style} color={color} />
+);
+ArrowIcon.defaultProps = { color: DARK_GREY, size: 16, style: { marginLeft: 10 } };
+ArrowIcon.propTypes = { color: PropTypes.string, size: PropTypes.number, style: PropTypes.object };
+
+export const WifiIcon = ({ color, size, style }) => (
+  <IonIcon name="logo-rss" size={size} style={style} color={color} />
+);
+WifiIcon.defaultProps = { color: DARK_GREY, size: 22, style: { marginLeft: 10 } };
+WifiIcon.propTypes = { color: PropTypes.string, size: PropTypes.number, style: PropTypes.object };
