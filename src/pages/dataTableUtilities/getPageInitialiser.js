@@ -298,7 +298,7 @@ const stocktakeEditorInitialiser = stocktake => {
     modalValue: null,
     route: ROUTES.STOCKTAKE_EDITOR,
     columns: getColumns(customCode),
-    getPageInfoColumns: getPageInfoColumns(customCode),
+    getPageInfoColumns: getPageInfoColumns(customCode, !!stocktake.program),
   };
 };
 
