@@ -6,54 +6,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 import globalStyles from '../globalStyles';
 import { navStrings } from '../localization';
 import { ConfirmIcon, LockIcon } from './icons';
 
-export const FinaliseButton = props => {
-  const { isFinalised, onPress } = props;
+export const FinaliseButton = ({ isFinalised, onPress }) => {
+  const Container = isFinalised ? View : TouchableOpacity;
 
-  if (isFinalised) {
-    return (
-      <View style={[globalStyles.navBarRightContainer, localStyles.outerContainer]}>
-        <Text style={[globalStyles.navBarText, localStyles.text]}>
-          {navStrings.finalised_cannot_be_edited}
-        </Text>
-        <LockIcon />
-      </View>
-    );
-  }
   return (
-    <TouchableOpacity
-      style={[globalStyles.navBarRightContainer, localStyles.outerContainer]}
-      onPress={onPress}
-    >
-      <Text style={[globalStyles.navBarText, localStyles.text]}>{navStrings.finalise}</Text>
-      <ConfirmIcon />
-    </TouchableOpacity>
+    <Container onPress={onPress} style={globalStyles.navBarRightContainer}>
+      <Text style={globalStyles.navBarText}>
+        {isFinalised ? navStrings.finalised_cannot_be_edited : navStrings.finalise}
+      </Text>
+      {isFinalised ? <LockIcon /> : <ConfirmIcon />}
+    </Container>
   );
 };
 
 export default FinaliseButton;
 
-/* eslint-disable react/require-default-props, react/default-props-match-prop-types */
 FinaliseButton.propTypes = {
   isFinalised: PropTypes.bool.isRequired,
-  onPress: PropTypes.func,
+  onPress: PropTypes.func.isRequired,
 };
-
-FinaliseButton.defaultProps = {
-  isFinalised: false,
-};
-
-const APPBAR_HEIGHT = Platform.OS === 'ios' ? 44 : 56; // Taken from NavigationExperimental
-const localStyles = StyleSheet.create({
-  outerContainer: {
-    height: APPBAR_HEIGHT,
-  },
-  text: {
-    bottom: 12,
-  },
-});
