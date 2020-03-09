@@ -1,71 +1,49 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2019
+ * Sustainable Solutions (NZ) Ltd. 2020
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
-
-import { StyleSheet, Text, View, ViewPropTypes } from 'react-native';
+import { connect } from 'react-redux';
+import { Text, View } from 'react-native';
 
 import { SyncIcon } from './SyncIcon';
+
 import { syncStrings } from '../localization';
 import { formatDate } from '../utilities';
+import globalStyles from '../globalStyles';
 
-import globalStyles, { GREY, DARK_GREY } from '../globalStyles';
+const mapStateToProps = state => {
+  const { sync } = state;
+  return sync;
+};
 
-const ACTIVE_COLOR = DARK_GREY;
-const INACTIVE_COLOR = GREY;
-
-export const SyncState = props => {
-  const { state, style, showText } = props;
-
-  let text = syncStrings.sync_enabled;
-  let cloudColor = ACTIVE_COLOR;
-  let arrowsColor = ACTIVE_COLOR;
-  let wifiColor = ACTIVE_COLOR;
-
-  const { lastSyncTime, isSyncing, errorMessage } = state;
-
-  if (isSyncing) {
-    text = syncStrings.sync_in_progress;
-  } else if (errorMessage && errorMessage.length > 0) {
-    const lastSync = lastSyncTime && formatDate(new Date(lastSyncTime), 'dots');
-    text = syncStrings.sync_error;
-    if (lastSync) text = `${text}. ${syncStrings.last_sync} ${lastSync}`;
-    cloudColor = INACTIVE_COLOR;
-    arrowsColor = INACTIVE_COLOR;
-    wifiColor = INACTIVE_COLOR;
-  }
+export const SyncStateComponent = ({ lastSyncTime, isSyncing, errorMessage, showText }) => {
+  const syncMessage = isSyncing ? syncStrings.sync_enabled : syncStrings.sync_in_progress;
+  const formattedDate = formatDate(lastSyncTime, 'dots');
+  const errorText = `${syncStrings.sync_error}. ${syncStrings.last_sync} ${formattedDate}`;
+  const hasError = !!errorMessage?.length;
 
   return (
-    <View style={[globalStyles.navBarRightContainer, style]}>
-      {showText && <Text style={[globalStyles.navBarText, localStyles.text]}>{text}</Text>}
-      <SyncIcon cloudColor={cloudColor} arrowsColor={arrowsColor} wifiColor={wifiColor} />
+    <View style={globalStyles.navBarRightContainer}>
+      {showText && (
+        <Text style={globalStyles.navBarText}>{hasError ? errorText : syncMessage}</Text>
+      )}
+      <SyncIcon isActive={!hasError} />
     </View>
   );
 };
 
-export default SyncState;
-
-/* eslint-disable react/forbid-prop-types, react/require-default-props */
-SyncState.propTypes = {
-  state: PropTypes.object.isRequired,
-  showText: PropTypes.bool,
-  style: ViewPropTypes.style,
-};
-SyncState.defaultProps = {
+SyncStateComponent.defaultProps = {
   showText: true,
 };
 
-const localStyles = StyleSheet.create({
-  iconActive: {
-    color: DARK_GREY,
-  },
-  iconInactive: {
-    color: GREY,
-  },
-  text: {
-    marginRight: 25,
-  },
-});
+SyncStateComponent.propTypes = {
+  lastSyncTime: PropTypes.number.isRequired,
+  isSyncing: PropTypes.bool.isRequired,
+  errorMessage: PropTypes.string.isRequired,
+  showText: PropTypes.bool,
+};
+
+export const SyncState = connect(mapStateToProps)(SyncStateComponent);
