@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unused-prop-types */
 /* eslint-disable react/require-default-props */
 /* eslint-disable react/forbid-prop-types */
 /**
@@ -18,6 +19,7 @@ import { ModalContainer } from './ModalContainer';
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 import { UIDatabase } from '../../database';
 import { FinaliseActions } from '../../actions/FinaliseActions';
+import { selectCurrentUser } from '../../selectors/user';
 
 const bugsnagClient = new BugsnagClient();
 
@@ -39,7 +41,7 @@ const bugsnagClient = new BugsnagClient();
 export const FinaliseModalComponent = props => {
   const runWithLoadingIndicator = useLoadingIndicator();
 
-  const { finaliseItem, isOpen, user, closeFinaliseModal } = props;
+  const { finaliseItem, currentUser, closeFinaliseModal, finaliseModalOpen } = props;
 
   if (!finaliseItem) return null;
   const { record, recordType, checkForError, finaliseText } = finaliseItem;
@@ -53,7 +55,7 @@ export const FinaliseModalComponent = props => {
       try {
         if (record) {
           UIDatabase.write(() => {
-            record.finalise(UIDatabase, user);
+            record.finalise(UIDatabase, currentUser);
             UIDatabase.save(recordType, record);
           });
         }
@@ -64,9 +66,9 @@ export const FinaliseModalComponent = props => {
   };
 
   return (
-    <ModalContainer fullScreen={true} isVisible={isOpen}>
+    <ModalContainer fullScreen={true} isVisible={finaliseModalOpen}>
       <ConfirmForm
-        isOpen={isOpen}
+        isOpen={finaliseModalOpen}
         questionText={errorText || modalStrings[finaliseText]}
         confirmText={modalStrings.confirm}
         cancelText={errorText ? modalStrings.got_it : modalStrings.cancel}
@@ -77,23 +79,30 @@ export const FinaliseModalComponent = props => {
   );
 };
 
-FinaliseModalComponent.propTypes = {
-  isOpen: PropTypes.bool,
-  closeFinaliseModal: PropTypes.func.isRequired,
-  finaliseItem: PropTypes.object,
-  user: PropTypes.any,
-};
+const mapStateToProps = state => {
+  const { finalise } = state;
+  const { finaliseModalOpen } = finalise;
 
-FinaliseModalComponent.defaultProps = {
-  isOpen: false,
-};
+  const currentUser = selectCurrentUser(state);
 
-const mapStateToProps = state => state;
+  return { finaliseModalOpen, currentUser };
+};
 
 const mapDispatchToProps = dispatch => {
   const closeFinaliseModal = () => dispatch(FinaliseActions.closeModal());
 
   return { closeFinaliseModal };
+};
+
+FinaliseModalComponent.defaultProps = {
+  finaliseModalOpen: false,
+};
+
+FinaliseModalComponent.propTypes = {
+  finaliseModalOpen: PropTypes.bool,
+  closeFinaliseModal: PropTypes.func.isRequired,
+  finaliseItem: PropTypes.object,
+  currentUser: PropTypes.object.isRequired,
 };
 
 export const FinaliseModal = connect(mapStateToProps, mapDispatchToProps)(FinaliseModalComponent);
