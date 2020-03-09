@@ -62,6 +62,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { SupplierRequisitionPage } from './pages/SupplierRequisitionPage';
 import { navigationStyles } from './globalStyles/navigationStyles';
 import { CashRegisterPage } from './pages/CashRegisterPage';
+import { selectIsSyncing } from './selectors/sync';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -149,10 +150,10 @@ class MSupplyMobileAppContainer extends React.Component {
   };
 
   synchronise = async () => {
-    const { dispatch } = this.props;
+    const { dispatch, isSyncing } = this.props;
     const { isInitialised } = this.state;
 
-    if (!isInitialised) return; // Ignore if syncing.
+    if (!isInitialised || isSyncing) return;
 
     try {
       const syncUrl = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL);
@@ -341,7 +342,10 @@ const mapStateToProps = state => {
   const { open: supplierCreditModalOpen } = supplierCredit;
   const { finaliseModalOpen } = finalise;
 
+  const isSyncing = selectIsSyncing(state);
+
   return {
+    isSyncing,
     currentUser: state.user.currentUser,
     finaliseModalOpen,
     supplierCreditModalOpen,
@@ -356,6 +360,7 @@ MSupplyMobileAppContainer.defaultProps = {
 };
 
 MSupplyMobileAppContainer.propTypes = {
+  isSyncing: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
   finaliseItem: PropTypes.object,
   currentUser: PropTypes.object,
