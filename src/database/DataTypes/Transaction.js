@@ -463,12 +463,12 @@ export class Transaction extends Realm.Object {
 
     if (!this.items.length) {
       finaliseStatus.success = false;
-      finaliseStatus.errorMessage = modalStrings.add_at_least_one_item_before_finalising;
+      finaliseStatus.message = modalStrings.add_at_least_one_item_before_finalising;
     }
 
     if (!this.totalQuantity) {
       finaliseStatus.success = false;
-      finaliseStatus.errorMessage = modalStrings.record_stock_to_issue_before_finalising;
+      finaliseStatus.message = modalStrings.record_stock_to_issue_before_finalising;
     }
 
     return finaliseStatus;
@@ -479,11 +479,11 @@ export class Transaction extends Realm.Object {
     if (!this.isExternalSupplierInvoice) return finaliseStatus;
     if (!this.items.length) {
       finaliseStatus.success = false;
-      finaliseStatus.errorMessage = modalStrings.add_at_least_one_item_before_finalising;
+      finaliseStatus.message = modalStrings.add_at_least_one_item_before_finalising;
     }
     if (!this.totalQuantity) {
       finaliseStatus.success = false;
-      finaliseStatus.errorMessage = modalStrings.stock_quantity_greater_then_zero;
+      finaliseStatus.message = modalStrings.stock_quantity_greater_then_zero;
     }
 
     return finaliseStatus;
@@ -506,10 +506,12 @@ export class Transaction extends Realm.Object {
     if (this.isFinalised) {
       throw new Error('Cannot finalise as transaction is already finalised');
     }
+
     // Prune all invoices except internal supplier invoices.
     if (!this.isInternalSupplierInvoice) {
       this.pruneRedundantBatchesAndItems(database);
     }
+
     if (!this.isConfirmed) this.confirm(database);
 
     // Finding the totalPrice propogates through `TransactionItem` records down to the batch
