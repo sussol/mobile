@@ -292,12 +292,10 @@ class MSupplyMobileAppContainer extends React.Component {
           </MainStackNavigator.Navigator>
 
           <FinaliseModal
-            database={UIDatabase}
             isOpen={finaliseModalOpen}
             onClose={closeFinaliseModal}
             finaliseItem={finaliseItem}
             user={currentUser}
-            runWithLoadingIndicator={this.runWithLoadingIndicator}
           />
           <SyncModal onPressManualSync={this.synchronise} />
           <LoginModal
