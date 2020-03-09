@@ -9,7 +9,7 @@ export const MODALS = {
   STOCKTAKE_BATCH_EDIT: 'stocktakeBatchEditModal',
   STOCKTAKE_BATCH_EDIT_WITH_REASONS: 'stocktakeBatchEditModalWithReasons',
   STOCKTAKE_BATCH_EDIT_WITH_PRICES: 'stocktakeBatchEditModalWithPrices',
-  STOCKTAKE_BATCH_EDIT_WITH_REASONS_AND_PRICE: 'stocktakeBatchEditModalWithReasonsAndPrices',
+  STOCKTAKE_BATCH_EDIT_WITH_REASONS_AND_PRICES: 'stocktakeBatchEditModalWithReasonsAndPrices',
   SUPPLIER_CREDIT_FROM_INVOICE: 'supplierCreditFromInvoice',
   SUPPLIER_CREDIT_FROM_ITEM: 'supplierCreditFromItem',
 };
