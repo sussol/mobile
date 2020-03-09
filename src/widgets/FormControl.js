@@ -15,7 +15,7 @@ import { FormSlider } from './FormInputs/FormSlider';
 
 import globalStyles, { SUSSOL_ORANGE, WHITE } from '../globalStyles';
 import { modalStrings, generalStrings } from '../localization';
-import { selectCanSaveForm, selectCompletedForm } from '../selectors/form';
+import { selectForm, selectCanSaveForm, selectCompletedForm } from '../selectors/form';
 import { FormActions } from '../actions/FormActions';
 
 /**
@@ -41,12 +41,14 @@ const FormControlComponent = ({
   onCancelPressed,
   canSaveForm,
   completedForm,
+  form,
   initialiseForm,
   onSave,
   inputConfig,
   isDisabled,
 }) => {
   const [refs, setRefs] = React.useState([]);
+
   React.useEffect(() => {
     initialiseForm(inputConfig);
     setRefs({ length: inputConfig.length });
@@ -84,6 +86,8 @@ const FormControlComponent = ({
             return (
               <FormTextInput
                 ref={refs[index]}
+                form={form}
+                formKey={key}
                 onSubmit={nextFocus(index, key)}
                 key={key}
                 value={initialValue}
@@ -206,19 +210,22 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 };
 
 const mapStateToProps = state => {
+  const form = selectForm(state);
   const canSaveForm = selectCanSaveForm(state);
   const completedForm = selectCompletedForm(state);
-  return { canSaveForm, completedForm };
+  return { form, canSaveForm, completedForm };
 };
 
 FormControlComponent.defaultProps = {
   completedForm: null,
   isDisabled: false,
+  form: {},
 };
 
 FormControlComponent.propTypes = {
   canSaveForm: PropTypes.bool.isRequired,
   completedForm: PropTypes.object,
+  form: PropTypes.object,
   initialiseForm: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
   onUpdateForm: PropTypes.func.isRequired,

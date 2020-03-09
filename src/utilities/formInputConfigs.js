@@ -161,16 +161,9 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     type: 'text',
     initialValue: '',
     key: 'policyNumberPerson',
-    validator: input =>
-      input.length > 0 &&
-      input.length < 50 &&
-      UIDatabase.objects('InsurancePolicy').filtered(
-        'policyNumberPerson == $0 && id != $1',
-        input,
-        seedObject?.id ?? ''
-      ).length === 0,
+    validator: null,
     isRequired: true,
-    invalidMessage: formInputStrings.unique_personal_policy,
+    invalidMessage: formInputStrings.unique_policy,
     label: formInputStrings.personal_policy_number,
     isEditable: !seedObject,
   },
@@ -178,9 +171,9 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     type: 'text',
     initialValue: '',
     key: 'policyNumberFamily',
-    validator: input => input.length > 0 && input.length < 50,
+    validator: null,
     isRequired: true,
-    invalidMessage: formInputStrings.must_be_between_0_and_50,
+    invalidMessage: formInputStrings.unique_policy,
     label: formInputStrings.family_policy_number,
     isEditable: !seedObject,
   },

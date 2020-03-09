@@ -11,6 +11,7 @@ import { SUSSOL_ORANGE, APP_FONT_FAMILY, DARKER_GREY } from '../../globalStyles'
 /**
  * Uncontrolled wrapper component around a TextInput with validation
  * and labels.
+ * @prop {Object} form                  Parent form object.
  * @prop {String} placeholder           Placeholder text string
  * @prop {String} placeholderTextColor  Color of the placeholder text
  * @prop {String} underlineColorAndroid Color of the underline colour
@@ -27,6 +28,8 @@ import { SUSSOL_ORANGE, APP_FONT_FAMILY, DARKER_GREY } from '../../globalStyles'
 export const FormTextInput = React.forwardRef(
   (
     {
+      form,
+      formKey,
       placeholder,
       placeholderTextColor,
       underlineColorAndroid,
@@ -46,6 +49,11 @@ export const FormTextInput = React.forwardRef(
       isValid: true,
       inputValue: value,
     });
+
+    React.useEffect(() => {
+      setInputState({ ...inputState, isValid: form[formKey]?.isValid });
+    }, [form[formKey]?.value, form[formKey]?.isValid]);
+
     const { inputValue, isValid } = inputState;
     const { flexRow, flexColumn } = localStyles;
 
@@ -94,7 +102,7 @@ export const FormTextInput = React.forwardRef(
               onSubmitEditing={onSubmitEditing}
               editable={!isDisabled}
             />
-            <FormInvalidMessage message={invalidMessage} isValid={isValid} />
+            <FormInvalidMessage message={invalidMessage} isValid={isValid ?? true} />
           </View>
         </View>
       </View>
@@ -109,6 +117,8 @@ const localStyles = StyleSheet.create({
 });
 
 FormTextInput.defaultProps = {
+  form: null,
+  formKey: '',
   placeholder: '',
   placeholderTextColor: SUSSOL_ORANGE,
   underlineColorAndroid: DARKER_GREY,
@@ -122,6 +132,8 @@ FormTextInput.defaultProps = {
 };
 
 FormTextInput.propTypes = {
+  form: PropTypes.object,
+  formKey: PropTypes.string,
   placeholder: PropTypes.string,
   placeholderTextColor: PropTypes.string,
   underlineColorAndroid: PropTypes.string,
