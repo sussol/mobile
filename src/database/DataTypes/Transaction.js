@@ -459,7 +459,7 @@ export class Transaction extends Realm.Object {
   }
 
   get canFinaliseCustomerInvoice() {
-    const finaliseStatus = { success: true };
+    const finaliseStatus = { success: true, message: modalStrings.finalise_customer_invoice };
 
     if (!this.items.length) {
       finaliseStatus.success = false;
@@ -475,7 +475,7 @@ export class Transaction extends Realm.Object {
   }
 
   get canFinaliseSupplierInvoice() {
-    const finaliseStatus = { success: true };
+    const finaliseStatus = { success: true, message: modalStrings.finalise_supplier_invoice };
     if (!this.isExternalSupplierInvoice) return finaliseStatus;
     if (!this.items.length) {
       finaliseStatus.success = false;

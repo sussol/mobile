@@ -376,15 +376,15 @@ export class Requisition extends Realm.Object {
   }
 
   get canFinaliseRequest() {
-    const finaliseStatus = { success: true };
+    const finaliseStatus = { success: true, message: modalStrings.finalise_supplier_requisition };
 
     if (!this.numberOfOrderedItems) {
       finaliseStatus.success = false;
-      finaliseStatus.errorMessage = modalStrings.add_at_least_one_item_before_finalising;
+      finaliseStatus.message = modalStrings.add_at_least_one_item_before_finalising;
     }
     if (!this.totalRequiredQuantity) {
       finaliseStatus.success = false;
-      finaliseStatus.errorMessage = modalStrings.record_stock_required_before_finalising;
+      finaliseStatus.message = modalStrings.record_stock_required_before_finalising;
     }
 
     const thisStoresTags = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_TAGS);
@@ -392,14 +392,16 @@ export class Requisition extends Realm.Object {
 
     if (this.numberOfOrderedItems > maxLinesForOrder) {
       finaliseStatus.success = false;
-      finaliseStatus.errorMessage = `${modalStrings.emergency_orders_can_only_have} ${maxLinesForOrder} ${modalStrings.items_remove_some}`;
+      finaliseStatus.message = `${modalStrings.emergency_orders_can_only_have} ${maxLinesForOrder} ${modalStrings.items_remove_some}`;
     }
 
     return finaliseStatus;
   }
 
   get canFinalise() {
-    return this.isRequest ? this.canFinaliseRequest : { success: true };
+    return this.isRequest
+      ? this.canFinaliseRequest
+      : { success: true, message: modalStrings.finalise_customer_requisition };
   }
 
   /**
