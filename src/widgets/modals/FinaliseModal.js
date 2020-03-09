@@ -29,14 +29,8 @@ const bugsnagClient = new BugsnagClient();
  * function is passed in within the finaliseItem.
  * @prop  {boolean}   isOpen        Whether the modal is open
  * @prop  {function}  onClose       Function to call when finalise is cancelled
- * @prop  {object}    finaliseItem  An object carrying details of the item being
- *                                  finalised, with the following fields:
- *                                  record        The record being finalised
- *                                  recordType    The type of database object being finalised
- *                                  checkForError A function returning an error message if the
- *                                                record cannot yet be finalised, or null otherwise
- *                                  finaliseText  The text to display on the confirmation modal
- * @prop  {object}    user          The user who is finalising the record
+ * @prop  {object}    finaliseItem  A finalisable object - Stocktake, Requisition or Transaction.
+ * @prop  {object}    currentUser   The user who is finalising the record
  */
 export const FinaliseModalComponent = props => {
   const runWithLoadingIndicator = useLoadingIndicator();
@@ -44,21 +38,14 @@ export const FinaliseModalComponent = props => {
   const { finaliseItem, currentUser, closeFinaliseModal, finaliseModalOpen } = props;
 
   if (!finaliseItem) return null;
-  const { record, recordType, checkForError, finaliseText } = finaliseItem;
-  if (!record || !record.isValid()) return null; // Record may have been deleted
 
-  const errorText = !record.isFinalised && checkForError && checkForError(record);
+  const { canFinalise } = finaliseItem;
 
   const tryFinalise = () => {
     closeFinaliseModal();
     runWithLoadingIndicator(() => {
       try {
-        if (record) {
-          UIDatabase.write(() => {
-            record.finalise(UIDatabase, currentUser);
-            UIDatabase.save(recordType, record);
-          });
-        }
+        UIDatabase.write(() => finaliseItem.finalise(UIDatabase, currentUser));
       } catch (error) {
         bugsnagClient.notify(error);
       }
@@ -69,10 +56,10 @@ export const FinaliseModalComponent = props => {
     <ModalContainer fullScreen={true} isVisible={finaliseModalOpen}>
       <ConfirmForm
         isOpen={finaliseModalOpen}
-        questionText={errorText || modalStrings[finaliseText]}
+        questionText={canFinalise.message}
         confirmText={modalStrings.confirm}
-        cancelText={errorText ? modalStrings.got_it : modalStrings.cancel}
-        onConfirm={!errorText ? tryFinalise : null}
+        cancelText={canFinalise ? modalStrings.cancel : modalStrings.got_it}
+        onConfirm={canFinalise ? tryFinalise : null}
         onCancel={closeFinaliseModal}
       />
     </ModalContainer>
@@ -81,11 +68,11 @@ export const FinaliseModalComponent = props => {
 
 const mapStateToProps = state => {
   const { finalise } = state;
-  const { finaliseModalOpen } = finalise;
+  const { finaliseModalOpen, finaliseItem } = finalise;
 
   const currentUser = selectCurrentUser(state);
 
-  return { finaliseModalOpen, currentUser };
+  return { finaliseModalOpen, currentUser, finaliseItem };
 };
 
 const mapDispatchToProps = dispatch => {

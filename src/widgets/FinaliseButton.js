@@ -5,18 +5,27 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import { Text, TouchableOpacity, View } from 'react-native';
 
-import globalStyles from '../globalStyles';
-import { navStrings } from '../localization';
 import { ConfirmIcon, LockIcon } from './icons';
+import { selectFinaliseItemIsFinalised } from '../selectors/finalise';
+import { FinaliseActions } from '../actions/FinaliseActions';
 
-export const FinaliseButton = ({ isFinalised, onPress }) => {
+import { navStrings } from '../localization';
+import globalStyles from '../globalStyles';
+
+const mapStateToProps = state => {
+  const isFinalised = selectFinaliseItemIsFinalised(state);
+  return { isFinalised };
+};
+
+const FinaliseButtonComponent = ({ isFinalised, openFinaliseModal }) => {
   const Container = isFinalised ? View : TouchableOpacity;
 
   return (
-    <Container onPress={onPress} style={globalStyles.navBarRightContainer}>
+    <Container onPress={openFinaliseModal} style={globalStyles.navBarRightContainer}>
       <Text style={globalStyles.navBarText}>
         {isFinalised ? navStrings.finalised_cannot_be_edited : navStrings.finalise}
       </Text>
@@ -25,9 +34,15 @@ export const FinaliseButton = ({ isFinalised, onPress }) => {
   );
 };
 
-export default FinaliseButton;
+const mapDispatchToProps = dispatch => {
+  const openFinaliseModal = () => dispatch(FinaliseActions.openModal());
 
-FinaliseButton.propTypes = {
-  isFinalised: PropTypes.bool.isRequired,
-  onPress: PropTypes.func.isRequired,
+  return { openFinaliseModal };
 };
+
+FinaliseButtonComponent.propTypes = {
+  isFinalised: PropTypes.bool.isRequired,
+  openFinaliseModal: PropTypes.func.isRequired,
+};
+
+export const FinaliseButton = connect(mapStateToProps, mapDispatchToProps)(FinaliseButtonComponent);
