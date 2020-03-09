@@ -112,7 +112,7 @@ export const BackIcon = () => <FAIcon name="chevron-left" size={16} color="black
 export const CloudIcon = ({ color, size, style }) => (
   <IonIcon name="md-cloud" size={size} color={color} style={style} />
 );
-CloudIcon.defaultProps = { color: DARK_GREY, size: 30, style: { top: 6 } };
+CloudIcon.defaultProps = { color: DARK_GREY, size: 30, style: {} };
 CloudIcon.propTypes = { color: PropTypes.string, size: PropTypes.number, style: PropTypes.object };
 
 export const ArrowIcon = ({ color, size, style }) => (
