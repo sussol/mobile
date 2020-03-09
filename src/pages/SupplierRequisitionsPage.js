@@ -24,6 +24,7 @@ import { getItemLayout, PageActions, getPageDispatchers } from './dataTableUtili
 
 import globalStyles from '../globalStyles';
 import { buttonStrings, modalStrings, generalStrings } from '../localization';
+import { selectCurrentUser } from '../selectors/user';
 
 /**
  * Renders a mSupply mobile page with a list of supplier requisitions.
@@ -205,7 +206,10 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 const mapStateToProps = state => {
   const { pages } = state;
   const { supplierRequisitions } = pages;
-  return supplierRequisitions;
+
+  const currentUser = selectCurrentUser(state);
+
+  return { ...supplierRequisitions, currentUser };
 };
 
 export const SupplierRequisitionsPage = connect(

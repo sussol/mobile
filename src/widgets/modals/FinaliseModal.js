@@ -41,9 +41,9 @@ export const FinaliseModalComponent = props => {
 
   const { canFinalise } = finaliseItem;
 
-  const tryFinalise = () => {
+  const tryFinalise = async () => {
     closeFinaliseModal();
-    runWithLoadingIndicator(() => {
+    await runWithLoadingIndicator(() => {
       try {
         UIDatabase.write(() => finaliseItem.finalise(UIDatabase, currentUser));
       } catch (error) {
@@ -83,13 +83,14 @@ const mapDispatchToProps = dispatch => {
 
 FinaliseModalComponent.defaultProps = {
   finaliseModalOpen: false,
+  currentUser: null,
 };
 
 FinaliseModalComponent.propTypes = {
   finaliseModalOpen: PropTypes.bool,
   closeFinaliseModal: PropTypes.func.isRequired,
   finaliseItem: PropTypes.object,
-  currentUser: PropTypes.object.isRequired,
+  currentUser: PropTypes.object,
 };
 
 export const FinaliseModal = connect(mapStateToProps, mapDispatchToProps)(FinaliseModalComponent);

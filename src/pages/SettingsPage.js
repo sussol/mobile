@@ -19,11 +19,12 @@ import { MODAL_KEYS } from '../utilities';
 import { gotoRealmExplorer } from '../navigation/actions';
 
 import { ConfirmIcon } from '../widgets/icons';
-import { DataTablePageView, PageInfo } from '../widgets/index';
-import { DataTablePageModal } from '../widgets/modals/index';
+import { DataTablePageView, PageInfo } from '../widgets';
+import { DataTablePageModal } from '../widgets/modals';
 
 import globalStyles from '../globalStyles';
 import { generalStrings, buttonStrings } from '../localization';
+import { selectCurrentUserPasswordHash } from '../selectors/user';
 
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
@@ -34,7 +35,7 @@ const exportData = async () => {
   ToastAndroid.show(toastMessage, ToastAndroid.SHORT);
 };
 
-const Settings = ({ toRealmExplorer, currentUser }) => {
+const Settings = ({ toRealmExplorer, currentUserPasswordHash }) => {
   const [state, setState] = useState({
     syncURL: UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL),
     modalKey: '',
@@ -55,8 +56,7 @@ const Settings = ({ toRealmExplorer, currentUser }) => {
     setState({ ...state, modalKey: '', syncPassword: newSyncPassword });
 
   const save = enteredPassword => {
-    const currentUserPassword = currentUser?.passwordHash ?? '';
-    const passwordMatch = hashPassword(enteredPassword) === currentUserPassword;
+    const passwordMatch = hashPassword(enteredPassword) === currentUserPasswordHash;
     const toastMessage = passwordMatch
       ? generalStrings.new_details_saved
       : generalStrings.new_details_not_saved;
@@ -70,7 +70,7 @@ const Settings = ({ toRealmExplorer, currentUser }) => {
 
         UIDatabase.update('Setting', {
           key: SETTINGS_KEYS.SYNC_SITE_PASSWORD_HASH,
-          value: syncPassword ? hashPassword(syncPassword) : currentUserPassword,
+          value: syncPassword ? hashPassword(syncPassword) : currentUserPasswordHash,
         });
       });
     }
@@ -154,7 +154,7 @@ const mapStateToDispatch = dispatch => ({
 });
 
 const mapStateToProps = state => ({
-  currentUser: state.user.currentUser,
+  currentUserPasswordHash: selectCurrentUserPasswordHash(state),
 });
 
 const styles = {
@@ -168,5 +168,5 @@ export const SettingsPage = connect(mapStateToProps, mapStateToDispatch)(Setting
 
 Settings.propTypes = {
   toRealmExplorer: PropTypes.func.isRequired,
-  currentUser: PropTypes.object.isRequired,
+  currentUserPasswordHash: PropTypes.string.isRequired,
 };

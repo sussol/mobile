@@ -22,6 +22,7 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 import { buttonStrings, modalStrings, generalStrings } from '../localization';
 import globalStyles from '../globalStyles';
 import { ROUTES } from '../navigation/constants';
+import { selectCurrentUser } from '../selectors/user';
 
 export const CustomerInvoices = ({
   currentUser,
@@ -176,7 +177,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 const mapStateToProps = state => {
   const { pages } = state;
   const { customerInvoices } = pages;
-  return customerInvoices;
+  const currentUser = selectCurrentUser(state);
+  return { ...customerInvoices, currentUser };
 };
 
 export const CustomerInvoicesPage = connect(mapStateToProps, mapDispatchToProps)(CustomerInvoices);

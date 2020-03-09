@@ -38,8 +38,9 @@ import { useRecordListener } from '../hooks';
 
 import globalStyles from '../globalStyles';
 import { buttonStrings, modalStrings, programStrings, generalStrings } from '../localization';
-import { UIDatabase } from '../database/index';
-import { SETTINGS_KEYS } from '../settings/index';
+import { UIDatabase } from '../database';
+import { SETTINGS_KEYS } from '../settings';
+import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
 /**
  * Renders a mSupply mobile page with a supplier requisition loaded for editing
@@ -55,7 +56,6 @@ import { SETTINGS_KEYS } from '../settings/index';
  * { isSelected, isDisabled },
  */
 const SupplierRequisition = ({
-  runWithLoadingIndicator,
   dispatch,
   data,
   dataState,
@@ -102,6 +102,7 @@ const SupplierRequisition = ({
 }) => {
   // Listen for changes to this pages requisition. Refreshing data on side effects i.e. finalizing.
   useRecordListener(() => dispatch(refreshData), pageObject, 'Requisition');
+  const runWithLoadingIndicator = useLoadingIndicator();
 
   const usingReasons = !!UIDatabase.objects('RequisitionReason').length;
 
@@ -425,12 +426,10 @@ SupplierRequisition.propTypes = {
   searchTerm: PropTypes.string.isRequired,
   columns: PropTypes.array.isRequired,
   keyExtractor: PropTypes.func.isRequired,
-  runWithLoadingIndicator: PropTypes.func.isRequired,
   dataState: PropTypes.object.isRequired,
   modalKey: PropTypes.string.isRequired,
   pageObject: PropTypes.object.isRequired,
   getPageInfoColumns: PropTypes.func.isRequired,
-  routeName: PropTypes.string.isRequired,
   hasSelection: PropTypes.bool.isRequired,
   showAll: PropTypes.bool,
   usingIndicators: PropTypes.bool,

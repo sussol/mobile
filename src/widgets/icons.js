@@ -68,7 +68,7 @@ ConfirmIcon.defaultProps = { style: { color: FINALISE_GREEN, fontSize: 40 } };
 ConfirmIcon.propTypes = { style: PropTypes.object };
 
 export const LockIcon = React.memo(({ style }) => <FAIcon name="lock" size={28} style={style} />);
-LockIcon.defaultProps = { style: { color: FINALISED_RED, marginHorizontal: 8, bottom: 6 } };
+LockIcon.defaultProps = { style: { color: FINALISED_RED } };
 LockIcon.propTypes = { style: PropTypes.object };
 
 export const ChevronDownIcon = React.memo(({ color, size }) => (

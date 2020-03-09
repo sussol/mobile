@@ -30,6 +30,7 @@ import {
   createStocktake,
   gotoStocktakeEditPage,
 } from '../navigation/actions';
+import { selectCurrentUser } from '../selectors/user';
 
 export const Stocktakes = ({
   currentUser,
@@ -188,7 +189,10 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 const mapStateToProps = state => {
   const { pages } = state;
   const { stocktakes } = pages;
-  return stocktakes;
+
+  const currentUser = selectCurrentUser(state);
+
+  return { ...stocktakes, currentUser };
 };
 
 export const StocktakesPage = connect(mapStateToProps, mapDispatchToProps)(Stocktakes);
