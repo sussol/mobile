@@ -52,10 +52,9 @@ const stateChanges = {
   [SET_SYNC_COMPLETION_TIME]: ({ lastSyncTime }) => ({
     lastSyncTime,
   }),
-  [OPEN_SYNC_MODAL]: () => {
-    console.log('??');
-    return { syncModalIsOpen: true };
-  },
+  [OPEN_SYNC_MODAL]: () => ({
+    syncModalIsOpen: true,
+  }),
   [CLOSE_SYNC_MODAL]: () => ({
     syncModalIsOpen: false,
   }),
