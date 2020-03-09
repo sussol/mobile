@@ -11,7 +11,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Image, AppState, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { AppState, View } from 'react-native';
 
 import { Scheduler } from 'sussol-utilities';
 
@@ -24,7 +24,7 @@ import { FinaliseButton, SyncState, Spinner, BackButton, MsupplyMan } from './wi
 import { FinaliseModal, LoginModal } from './widgets/modals';
 
 import { ROUTES } from './navigation';
-import { syncCompleteTransaction, setSyncError } from './actions/SyncActions';
+import { syncCompleteTransaction, setSyncError, openSyncModal } from './actions/SyncActions';
 import { FinaliseActions } from './actions/FinaliseActions';
 import { migrateDataToVersion } from './dataMigration';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
@@ -61,6 +61,7 @@ import { SettingsPage } from './pages/SettingsPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { SupplierRequisitionPage } from './pages/SupplierRequisitionPage';
 import { navigationStyles } from './globalStyles/navigationStyles';
+import { CashRegisterPage } from './pages/CashRegisterPage';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -92,7 +93,6 @@ class MSupplyMobileAppContainer extends React.Component {
     this.state = {
       isInitialised,
       isLoading: false,
-      syncModalIsOpen: false,
       appState: null,
     };
   }
@@ -149,10 +149,10 @@ class MSupplyMobileAppContainer extends React.Component {
   };
 
   synchronise = async () => {
-    const { syncState, dispatch } = this.props;
+    const { dispatch } = this.props;
     const { isInitialised } = this.state;
 
-    if (!isInitialised || syncState.isSyncing) return; // Ignore if syncing.
+    if (!isInitialised) return; // Ignore if syncing.
 
     try {
       const syncUrl = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL);
@@ -187,19 +187,6 @@ class MSupplyMobileAppContainer extends React.Component {
     );
   };
 
-  renderLogo = () => {
-    const { isInAdminMode } = this.state;
-
-    return (
-      <TouchableWithoutFeedback
-        delayLongPress={3000}
-        onLongPress={() => this.setState({ isInAdminMode: !isInAdminMode })}
-      >
-        <Image resizeMode="contain" source={require('./images/logo.png')} />
-      </TouchableWithoutFeedback>
-    );
-  };
-
   renderLoadingIndicator = () => {
     const { isLoading } = this.state;
     return (
@@ -209,23 +196,11 @@ class MSupplyMobileAppContainer extends React.Component {
     );
   };
 
-  renderSyncState = () => {
-    const { syncState } = this.props;
-    return (
-      <TouchableOpacity
-        style={{ flexDirection: 'row' }}
-        onPress={() => this.setState({ syncModalIsOpen: true })}
-      >
-        <SyncState state={syncState} />
-      </TouchableOpacity>
-    );
-  };
-
   getOptions = () => ({
     headerLeft: () => <BackButton />,
     headerTitleAlign: 'center',
     headerTitle: MsupplyMan,
-    headerRight: this.renderSyncState,
+    headerRight: () => <SyncState />,
     headerStyle: navigationStyles.headerStyle,
     headerLeftContainerStyle: navigationStyles.headerLeftContainerStyle,
     headerRightContainerStyle: navigationStyles.headerRightContainerStyle,
@@ -234,7 +209,6 @@ class MSupplyMobileAppContainer extends React.Component {
   render() {
     const {
       finaliseItem,
-      syncState,
       currentUser,
       finaliseModalOpen,
       closeFinaliseModal,
@@ -242,16 +216,10 @@ class MSupplyMobileAppContainer extends React.Component {
       supplierCreditModalOpen,
       creditTitle,
     } = this.props;
-    const { isInitialised, isLoading, syncModalIsOpen } = this.state;
+    const { isInitialised, isLoading } = this.state;
 
     if (!isInitialised) {
-      return (
-        <FirstUsePage
-          synchroniser={this.synchroniser}
-          onInitialised={this.onInitialised}
-          syncState={syncState}
-        />
-      );
+      return <FirstUsePage synchroniser={this.synchroniser} onInitialised={this.onInitialised} />;
     }
 
     return (
@@ -315,6 +283,8 @@ class MSupplyMobileAppContainer extends React.Component {
             <MainStackNavigator.Screen name={ROUTES.DISPENSARY} component={DispensingPage} />
             <MainStackNavigator.Screen name={ROUTES.PRESCRIPTION} component={PrescriptionPage} />
 
+            <MainStackNavigator.Screen name={ROUTES.CASH_REGISTER} component={CashRegisterPage} />
+
             <MainStackNavigator.Screen name={ROUTES.REALM_EXPLORER} component={RealmExplorer} />
             <MainStackNavigator.Screen name={ROUTES.SETTINGS} component={SettingsPage} />
             <MainStackNavigator.Screen name={ROUTES.DASHBOARD} component={DashboardPage} />
@@ -328,13 +298,7 @@ class MSupplyMobileAppContainer extends React.Component {
             user={currentUser}
             runWithLoadingIndicator={this.runWithLoadingIndicator}
           />
-          <SyncModal
-            database={UIDatabase}
-            isOpen={syncModalIsOpen}
-            state={syncState}
-            onPressManualSync={this.synchronise}
-            onClose={() => this.setState({ syncModalIsOpen: false })}
-          />
+          <SyncModal onPressManualSync={this.synchronise} />
           <LoginModal
             authenticator={this.userAuthenticator}
             settings={Settings}
@@ -361,16 +325,23 @@ const mapDispatchToProps = dispatch => {
   const closeFinaliseModal = () => dispatch(FinaliseActions.closeModal());
   const closeSupplierCreditModal = () => dispatch(SupplierCreditActions.close());
 
-  return { dispatch, openFinaliseModal, closeFinaliseModal, closeSupplierCreditModal };
+  const onOpenSyncModal = () => dispatch(openSyncModal());
+
+  return {
+    dispatch,
+    onOpenSyncModal,
+    openFinaliseModal,
+    closeFinaliseModal,
+    closeSupplierCreditModal,
+  };
 };
 
 const mapStateToProps = state => {
-  const { finalise, sync: syncState, supplierCredit } = state;
+  const { finalise, supplierCredit } = state;
   const { open: supplierCreditModalOpen } = supplierCredit;
   const { finaliseModalOpen } = finalise;
 
   return {
-    syncState,
     currentUser: state.user.currentUser,
     finaliseModalOpen,
     supplierCreditModalOpen,
@@ -387,7 +358,6 @@ MSupplyMobileAppContainer.defaultProps = {
 MSupplyMobileAppContainer.propTypes = {
   dispatch: PropTypes.func.isRequired,
   finaliseItem: PropTypes.object,
-  syncState: PropTypes.object.isRequired,
   currentUser: PropTypes.object,
   finaliseModalOpen: PropTypes.bool.isRequired,
   openFinaliseModal: PropTypes.func.isRequired,
