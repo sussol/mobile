@@ -18,9 +18,10 @@ import { Button, ProgressBar } from '../widgets';
 
 import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../globalStyles';
 import { UIDatabase } from '../database';
+import { closeSyncModal } from '../actions/SyncActions';
 
 export const SyncModalComponent = ({
-  isOpen,
+  syncModalIsOpen,
   onClose,
   onPressManualSync,
   progress,
@@ -62,7 +63,7 @@ export const SyncModalComponent = ({
 
   return (
     <Modal
-      isOpen={isOpen}
+      isOpen={syncModalIsOpen}
       style={[globalStyles.modal, localStyles.modal]}
       backdropPressToClose={false}
       backdropOpacity={1}
@@ -157,13 +158,13 @@ const localStyles = StyleSheet.create({
 });
 
 SyncModalComponent.defaultProps = {
-  isOpen: false,
+  syncModalIsOpen: false,
 };
 
 SyncModalComponent.propTypes = {
   onClose: PropTypes.func.isRequired,
   onPressManualSync: PropTypes.func.isRequired,
-  isOpen: PropTypes.bool,
+  syncModalIsOpen: PropTypes.bool,
   progress: PropTypes.number.isRequired,
   total: PropTypes.number.isRequired,
   isSyncing: PropTypes.bool.isRequired,
@@ -177,4 +178,9 @@ const mapStateToProps = state => {
   return sync;
 };
 
-export const SyncModal = connect(mapStateToProps)(SyncModalComponent);
+const mapDispatchToProps = dispatch => {
+  const onClose = () => dispatch(closeSyncModal());
+  return { onClose };
+};
+
+export const SyncModal = connect(mapStateToProps, mapDispatchToProps)(SyncModalComponent);
