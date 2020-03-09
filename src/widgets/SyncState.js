@@ -20,7 +20,7 @@ const mapStateToProps = state => {
 };
 
 export const SyncStateComponent = ({ lastSyncTime, isSyncing, errorMessage, showText }) => {
-  const syncMessage = isSyncing ? syncStrings.sync_enabled : syncStrings.sync_in_progress;
+  const syncMessage = isSyncing ? syncStrings.sync_in_progress : syncStrings.sync_enabled;
   const formattedDate = formatDate(lastSyncTime, 'dots');
   const errorText = `${syncStrings.sync_error}. ${syncStrings.last_sync} ${formattedDate}`;
   const hasError = !!errorMessage?.length;
