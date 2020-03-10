@@ -99,7 +99,7 @@ export const pay = (
 
       creditToAllocate -= creditUsed;
 
-      creditSource.outstanding -= creditUsed;
+      creditSource.outstanding += creditUsed;
       UIDatabase.save('Transaction', creditSource);
 
       return !creditToAllocate;

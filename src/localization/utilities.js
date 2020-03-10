@@ -5,6 +5,7 @@
 import moment from 'moment';
 import french from 'moment/locale/fr';
 import english from 'moment/locale/en-nz';
+import spanish from 'moment/locale/es';
 
 import {
   authStrings,
@@ -24,12 +25,14 @@ import {
 const DATE_CONFIGS = {
   DEFAULT: english,
   [LANGUAGE_CODES.FRENCH]: french,
+  [LANGUAGE_CODES.SPANISH]: spanish,
 };
 
 const SUPPORTED_DATE_LOCALES = {
   DEFAULT: 'en-nz',
   [LANGUAGE_CODES.ENGLISH]: 'en-nz',
   [LANGUAGE_CODES.FRENCH]: 'fr',
+  [LANGUAGE_CODES.SPANISH]: 'es',
 };
 
 export const setDateLocale = languageCode =>
