@@ -27,10 +27,10 @@ export const useNavigationFocus = (navigation, willFocusCallback, willBlurCallba
 
   const subscribe = () => {
     if (!willFocusSub.current && willFocusCallback) {
-      willFocusSub.current = navigation.addListener('willFocus', () => willFocusCallback());
+      willFocusSub.current = navigation.addListener('focus', willFocusCallback);
     }
     if (!willBlurSub.current && willBlurCallback) {
-      willBlurSub.current = navigation.addListener('willBlur', () => willBlurCallback());
+      willBlurSub.current = navigation.addListener('blur', willBlurCallback);
     }
   };
 
