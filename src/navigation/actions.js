@@ -355,19 +355,17 @@ export const gotoSupplierInvoice = transaction => dispatch => {
  */
 export const gotoSupplierRequisition = requisition => dispatch => {
   batch(() => {
-    batch(() => {
-      dispatch(
-        NavigationActions.navigate({
-          routeName: ROUTES.SUPPLIER_REQUISITION,
-          params: {
-            title: `${navStrings.requisition} ${requisition.serialNumber}`,
-            requisition,
-            pageObject: requisition,
-          },
-        })
-      );
-      dispatch(FinaliseActions.setFinaliseItem(requisition));
-    });
+    dispatch(
+      NavigationActions.navigate({
+        routeName: ROUTES.SUPPLIER_REQUISITION,
+        params: {
+          title: `${navStrings.requisition} ${requisition.serialNumber}`,
+          requisition,
+          pageObject: requisition,
+        },
+      })
+    );
+    dispatch(FinaliseActions.setFinaliseItem(requisition));
   });
 };
 
