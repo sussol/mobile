@@ -17,6 +17,7 @@ import { SETTINGS_KEYS } from '../settings';
 import { MODAL_KEYS } from '../utilities';
 
 import { gotoRealmExplorer } from '../navigation/actions';
+import { selectCurrentUser } from '../selectors/user';
 
 import { ConfirmIcon } from '../widgets/icons';
 import { DataTablePageView, PageInfo } from '../widgets/index';
@@ -153,9 +154,11 @@ const mapStateToDispatch = dispatch => ({
   toRealmExplorer: () => dispatch(gotoRealmExplorer()),
 });
 
-const mapStateToProps = state => ({
-  currentUser: state.user.currentUser,
-});
+const mapStateToProps = state => {
+  const currentUser = selectCurrentUser(state);
+
+  return { currentUser };
+};
 
 const styles = {
   row: { flex: 1, flexDirection: 'row' },
