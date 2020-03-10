@@ -13,6 +13,8 @@ import { MODAL_KEYS } from '../utilities';
 import { useNavigationFocus, useSyncListener } from '../hooks';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 import { gotoCustomerInvoice, createCustomerInvoice } from '../navigation/actions';
+import { ROUTES } from '../navigation/constants';
+import { selectCurrentUser } from '../selectors/user';
 
 import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets';
 import { DataTablePageModal } from '../widgets/modals';
@@ -21,8 +23,6 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 
 import { buttonStrings, modalStrings, generalStrings } from '../localization';
 import globalStyles from '../globalStyles';
-import { ROUTES } from '../navigation/constants';
-import { selectCurrentUser } from '../selectors/user';
 
 export const CustomerInvoices = ({
   currentUser,
