@@ -1,68 +1,42 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable no-undef */
-/* eslint-disable no-console */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-/* eslint-disable global-require */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { AppState, View } from 'react-native';
-
 import { Scheduler } from 'sussol-utilities';
 
-import { MainStackNavigator } from './navigation/Navigator';
-
-import { FirstUsePage } from './pages';
-
-import { Synchroniser, PostSyncProcessor, SyncModal } from './sync';
-import { FinaliseButton, SyncState, Spinner, BackButton, MsupplyMan } from './widgets';
-import { FinaliseModal, LoginModal } from './widgets/modals';
-
-import { ROUTES } from './navigation';
-import { syncCompleteTransaction, setSyncError, openSyncModal } from './actions/SyncActions';
-import { FinaliseActions } from './actions/FinaliseActions';
-import { migrateDataToVersion } from './dataMigration';
-import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import Settings from './settings/MobileAppSettings';
 import Database from './database/BaseDatabase';
 import { UIDatabase } from './database';
 import { SETTINGS_KEYS } from './settings';
 
-import globalStyles, { SUSSOL_ORANGE } from './globalStyles';
-import { LoadingIndicatorContext } from './context/LoadingIndicatorContext';
-import { UserActions } from './actions';
+import { MainStackNavigator, Pages } from './navigation/Navigator';
+import { ROUTES } from './navigation';
+import { Synchroniser, PostSyncProcessor, SyncModal } from './sync';
+import { migrateDataToVersion } from './dataMigration';
+import { SyncAuthenticator, UserAuthenticator } from './authentication';
 
-import { SupplierCredit } from './widgets/modalChildren/SupplierCredit';
-import { ModalContainer } from './widgets/modals/ModalContainer';
+import { LoadingIndicatorContext } from './context/LoadingIndicatorContext';
+import { selectTitle } from './selectors/supplierCredit';
+import { selectIsSyncing } from './selectors/sync';
+
+import { syncCompleteTransaction, setSyncError, openSyncModal } from './actions/SyncActions';
+import { FinaliseActions } from './actions/FinaliseActions';
+import { UserActions } from './actions';
 import { SupplierCreditActions } from './actions/SupplierCreditActions';
 
-import { selectTitle } from './selectors/supplierCredit';
-import { MenuPage } from './pages/MenuPage';
-import { RealmExplorer } from './pages/RealmExplorer';
-import { CustomerRequisitionPage } from './pages/CustomerRequisitionPage';
-import { CustomerRequisitionsPage } from './pages/CustomerRequisitionsPage';
-import { SupplierRequisitionsPage } from './pages/SupplierRequisitionsPage';
-import { SupplierInvoicePage } from './pages/SupplierInvoicePage';
-import { SupplierInvoicesPage } from './pages/SupplierInvoicesPage';
-import { StockPage } from './pages/StockPage';
-import { CustomerInvoicePage } from './pages/CustomerInvoicePage';
-import { CustomerInvoicesPage } from './pages/CustomerInvoicesPage';
-import { StocktakesPage } from './pages/StocktakesPage';
-import { StocktakeManagePage } from './pages/StocktakeManagePage';
-import { StocktakeEditPage } from './pages/StocktakeEditPage';
-import { DispensingPage } from './pages/DispensingPage';
-import { PrescriptionPage } from './pages/PrescriptionPage';
-import { SettingsPage } from './pages/SettingsPage';
-import { DashboardPage } from './pages/DashboardPage';
-import { SupplierRequisitionPage } from './pages/SupplierRequisitionPage';
-import { navigationStyles } from './globalStyles/navigationStyles';
-import { CashRegisterPage } from './pages/CashRegisterPage';
-import { selectIsSyncing } from './selectors/sync';
+import { Spinner } from './widgets';
+import { ModalContainer, FinaliseModal, LoginModal } from './widgets/modals';
+import { FirstUsePage } from './pages';
+import { SupplierCredit } from './widgets/modalChildren/SupplierCredit';
+
+import globalStyles, { SUSSOL_ORANGE } from './globalStyles';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -188,16 +162,6 @@ class MSupplyMobileAppContainer extends React.Component {
     );
   };
 
-  getOptions = () => ({
-    headerLeft: () => <BackButton />,
-    headerTitleAlign: 'center',
-    headerTitle: MsupplyMan,
-    headerRight: () => <SyncState />,
-    headerStyle: navigationStyles.headerStyle,
-    headerLeftContainerStyle: navigationStyles.headerLeftContainerStyle,
-    headerRightContainerStyle: navigationStyles.headerRightContainerStyle,
-  });
-
   render() {
     const {
       currentUser,
@@ -214,74 +178,8 @@ class MSupplyMobileAppContainer extends React.Component {
     return (
       <LoadingIndicatorContext.Provider value={this.runWithLoadingIndicator}>
         <View style={globalStyles.appBackground}>
-          <MainStackNavigator.Navigator
-            initialRouteName={ROUTES.ROOT}
-            screenOptions={this.getOptions()}
-          >
-            <MainStackNavigator.Screen name={ROUTES.ROOT} component={MenuPage} />
-
-            <MainStackNavigator.Screen
-              options={{ headerRight: () => <FinaliseButton /> }}
-              name={ROUTES.CUSTOMER_REQUISITION}
-              component={CustomerRequisitionPage}
-            />
-
-            <MainStackNavigator.Screen
-              name={ROUTES.CUSTOMER_REQUISITIONS}
-              component={CustomerRequisitionsPage}
-            />
-
-            <MainStackNavigator.Screen
-              options={{ headerRight: () => <FinaliseButton /> }}
-              name={ROUTES.SUPPLIER_REQUISITION}
-              component={SupplierRequisitionPage}
-            />
-            <MainStackNavigator.Screen
-              name={ROUTES.SUPPLIER_REQUISITIONS}
-              component={SupplierRequisitionsPage}
-            />
-
-            <MainStackNavigator.Screen
-              options={{ headerRight: () => <FinaliseButton /> }}
-              name={ROUTES.SUPPLIER_INVOICE}
-              component={SupplierInvoicePage}
-            />
-            <MainStackNavigator.Screen
-              name={ROUTES.SUPPLIER_INVOICES}
-              component={SupplierInvoicesPage}
-            />
-
-            <MainStackNavigator.Screen
-              options={{ headerRight: () => <FinaliseButton /> }}
-              name={ROUTES.CUSTOMER_INVOICE}
-              component={CustomerInvoicePage}
-            />
-            <MainStackNavigator.Screen
-              name={ROUTES.CUSTOMER_INVOICES}
-              component={CustomerInvoicesPage}
-            />
-
-            <MainStackNavigator.Screen name={ROUTES.STOCK} component={StockPage} />
-
-            <MainStackNavigator.Screen name={ROUTES.STOCKTAKES} component={StocktakesPage} />
-            <MainStackNavigator.Screen
-              name={ROUTES.STOCKTAKE_MANAGER}
-              component={StocktakeManagePage}
-            />
-            <MainStackNavigator.Screen
-              options={{ headerRight: () => <FinaliseButton /> }}
-              name={ROUTES.STOCKTAKE_EDITOR}
-              component={StocktakeEditPage}
-            />
-
-            <MainStackNavigator.Screen name={ROUTES.DISPENSARY} component={DispensingPage} />
-            <MainStackNavigator.Screen name={ROUTES.PRESCRIPTION} component={PrescriptionPage} />
-
-            <MainStackNavigator.Screen name={ROUTES.CASH_REGISTER} component={CashRegisterPage} />
-
-            <MainStackNavigator.Screen name={ROUTES.REALM_EXPLORER} component={RealmExplorer} />
-            <MainStackNavigator.Screen name={ROUTES.SETTINGS} component={SettingsPage} />
-            <MainStackNavigator.Screen name={ROUTES.DASHBOARD} component={DashboardPage} />
+          <MainStackNavigator.Navigator initialRouteName={ROUTES.MENU}>
+            {Pages}
           </MainStackNavigator.Navigator>
 
           <FinaliseModal />
