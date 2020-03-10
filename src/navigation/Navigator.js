@@ -41,6 +41,7 @@ export const DEFAULT_SCREEN_OPTIONS = {
 };
 
 const FINALISABLE_SCREEN_OPTIONS = {
+  ...DEFAULT_SCREEN_OPTIONS,
   headerRight: () => <FinaliseButton />,
 };
 
@@ -70,12 +71,15 @@ const ROUTE_NAME_TO_PAGE = {
 
 export const Pages = Object.values(ROUTES).reduce((acc, route) => {
   if (!ROUTE_NAME_TO_PAGE[route]) return acc;
+  const screenOptions = FINALISABLE_PAGES.includes(route)
+    ? FINALISABLE_SCREEN_OPTIONS
+    : DEFAULT_SCREEN_OPTIONS;
   return [
     ...acc,
     <MainStackNavigator.Screen
       key={route}
       name={route}
-      options={route in FINALISABLE_PAGES ? FINALISABLE_SCREEN_OPTIONS : DEFAULT_SCREEN_OPTIONS}
+      options={screenOptions}
       component={ROUTE_NAME_TO_PAGE[route]}
     />,
   ];
