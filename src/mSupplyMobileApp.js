@@ -1,49 +1,42 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable no-undef */
-/* eslint-disable no-console */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-/* eslint-disable global-require */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { AppState, View } from 'react-native';
-
 import { Scheduler } from 'sussol-utilities';
 
-import { MainStackNavigator, Pages } from './navigation/Navigator';
-
-import { FirstUsePage } from './pages';
-
-import { Synchroniser, PostSyncProcessor, SyncModal } from './sync';
-import { Spinner } from './widgets';
-import { FinaliseModal, LoginModal } from './widgets/modals';
-
-import { ROUTES } from './navigation';
-import { syncCompleteTransaction, setSyncError, openSyncModal } from './actions/SyncActions';
-import { FinaliseActions } from './actions/FinaliseActions';
-import { migrateDataToVersion } from './dataMigration';
-import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import Settings from './settings/MobileAppSettings';
 import Database from './database/BaseDatabase';
 import { UIDatabase } from './database';
 import { SETTINGS_KEYS } from './settings';
 
-import globalStyles, { SUSSOL_ORANGE } from './globalStyles';
-import { LoadingIndicatorContext } from './context/LoadingIndicatorContext';
-import { UserActions } from './actions';
+import { MainStackNavigator, Pages } from './navigation/Navigator';
+import { ROUTES } from './navigation';
+import { Synchroniser, PostSyncProcessor, SyncModal } from './sync';
+import { migrateDataToVersion } from './dataMigration';
+import { SyncAuthenticator, UserAuthenticator } from './authentication';
 
-import { SupplierCredit } from './widgets/modalChildren/SupplierCredit';
-import { ModalContainer } from './widgets/modals/ModalContainer';
+import { LoadingIndicatorContext } from './context/LoadingIndicatorContext';
+import { selectTitle } from './selectors/supplierCredit';
+import { selectIsSyncing } from './selectors/sync';
+
+import { syncCompleteTransaction, setSyncError, openSyncModal } from './actions/SyncActions';
+import { FinaliseActions } from './actions/FinaliseActions';
+import { UserActions } from './actions';
 import { SupplierCreditActions } from './actions/SupplierCreditActions';
 
-import { selectTitle } from './selectors/supplierCredit';
+import { Spinner } from './widgets';
+import { ModalContainer, FinaliseModal, LoginModal } from './widgets/modals';
+import { FirstUsePage } from './pages';
+import { SupplierCredit } from './widgets/modalChildren/SupplierCredit';
 
-import { selectIsSyncing } from './selectors/sync';
+import globalStyles, { SUSSOL_ORANGE } from './globalStyles';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
