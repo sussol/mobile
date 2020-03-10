@@ -17,7 +17,6 @@ import { SETTINGS_KEYS } from '../settings';
 import { MODAL_KEYS } from '../utilities';
 
 import { gotoRealmExplorer } from '../navigation/actions';
-import { selectCurrentUser } from '../selectors/user';
 
 import { ConfirmIcon } from '../widgets/icons';
 import { DataTablePageView, PageInfo } from '../widgets';

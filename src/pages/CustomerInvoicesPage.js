@@ -178,6 +178,7 @@ const mapStateToProps = state => {
   const { pages } = state;
   const { customerInvoices } = pages;
   const currentUser = selectCurrentUser(state);
+
   return { ...customerInvoices, currentUser };
 };
 
