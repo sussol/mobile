@@ -21,6 +21,7 @@ import { ROUTES } from '../navigation/constants';
 import { useNavigationFocus, useSyncListener } from '../hooks';
 import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
 import { getItemLayout, PageActions, getPageDispatchers } from './dataTableUtilities';
+import { selectCurrentUser } from '../selectors/user';
 
 import globalStyles from '../globalStyles';
 import { buttonStrings, modalStrings, generalStrings } from '../localization';
@@ -205,7 +206,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 const mapStateToProps = state => {
   const { pages } = state;
   const { supplierRequisitions } = pages;
-  return supplierRequisitions;
+  const currentUser = selectCurrentUser(state);
+
+  return { ...supplierRequisitions, currentUser };
 };
 
 export const SupplierRequisitionsPage = connect(
