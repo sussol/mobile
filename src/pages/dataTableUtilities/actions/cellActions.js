@@ -17,7 +17,7 @@ import {
 } from '../../../database/utilities/getIndicatorData';
 import { ACTIONS } from './constants';
 import { openModal, closeModal } from './pageActions';
-import { pageStateSelector } from '../../../selectors/pageSelectors';
+import { selectPageState } from '../../../selectors/pages';
 
 /**
  * Refreshes a row in the DataTable component.
@@ -44,7 +44,7 @@ export const refreshIndicatorRow = route => ({
  * @param {String}  objectType  Type of object to edit i.e. 'TransactionBatch'
  */
 export const editBatchName = (value, rowKey, objectType, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = pageStateSelector(getState());
+  const { data, keyExtractor } = selectPageState(getState());
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
@@ -60,7 +60,7 @@ export const editBatchName = (value, rowKey, objectType, route) => (dispatch, ge
 };
 
 export const editSellPrice = (value, rowKey, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = pageStateSelector(getState());
+  const { data, keyExtractor } = selectPageState(getState());
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
   const objectDataType = objectToEdit.stocktake ? 'StocktakeBatch' : 'TransactionBatch';
@@ -93,7 +93,7 @@ export const editBatchSupplier = (supplier, batch, route) => dispatch => {
 };
 
 export const editIndicatorValue = (value, rowKey, columnKey, route) => (dispatch, getState) => {
-  const { indicatorRows, indicatorColumns, pageObject } = pageStateSelector(getState());
+  const { indicatorRows, indicatorColumns, pageObject } = selectPageState(getState());
   const { period } = pageObject;
   const row = getIndicatorRow(indicatorRows, rowKey);
   const column = getIndicatorColumn(indicatorColumns, columnKey);
@@ -119,7 +119,7 @@ export const editTransactionBatchName = (value, rowKey, route) =>
  * @param {String}  objectType  Type of object to edit i.e. 'TransactionBatch'
  */
 export const editExpiryDate = (newDate, rowKey, objectType, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = pageStateSelector(getState());
+  const { data, keyExtractor } = selectPageState(getState());
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
@@ -149,7 +149,7 @@ export const editStocktakeBatchExpiryDate = (newDate, rowKey, route) =>
  * @param {String}        rowKey     The key of the row to edit.
  */
 export const editTotalQuantity = (value, rowKey, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = pageStateSelector(getState());
+  const { data, keyExtractor } = selectPageState(getState());
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
@@ -170,7 +170,7 @@ export const editTotalQuantity = (value, rowKey, route) => (dispatch, getState) 
  * @param {String}          objectType  Type of object to edit i.e. 'RequisitionItem'
  */
 export const editSuppliedQuantity = (value, rowKey, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = pageStateSelector(getState());
+  const { data, keyExtractor } = selectPageState(getState());
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
@@ -191,7 +191,7 @@ export const editSuppliedQuantity = (value, rowKey, route) => (dispatch, getStat
  * @param {String}          objectType  Type of object to edit i.e. 'RequisitionItem'
  */
 export const editRequiredQuantity = (value, rowKey, objectType, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = pageStateSelector(getState());
+  const { data, keyExtractor } = selectPageState(getState());
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
@@ -218,7 +218,7 @@ export const editRequisitionItemRequiredQuantity = (value, rowKey, route) =>
  * @param {String}          rowKey  Key of the row to edit.
  */
 export const editCountedQuantity = (value, rowKey, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = pageStateSelector(getState());
+  const { data, keyExtractor } = selectPageState(getState());
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
@@ -236,7 +236,7 @@ export const editCountedQuantity = (value, rowKey, route) => (dispatch, getState
  * @param {String}          rowKey Key of the row to edit.
  */
 export const editStocktakeBatchCountedQuantity = (value, rowKey, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = pageStateSelector(getState());
+  const { data, keyExtractor } = selectPageState(getState());
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
@@ -256,7 +256,7 @@ export const editStocktakeBatchCountedQuantity = (value, rowKey, route) => (disp
  * @param {String} rowKey   Key for the row to edit.
  */
 export const removeReason = (rowKey, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = pageStateSelector(getState());
+  const { data, keyExtractor } = selectPageState(getState());
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
@@ -280,7 +280,7 @@ export const removeReason = (rowKey, route) => (dispatch, getState) => {
  * @param {String} rowKey Key of the row to enforce a reason on
  */
 export const enforceReasonChoice = (rowKey, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = pageStateSelector(getState());
+  const { data, keyExtractor } = selectPageState(getState());
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
   if (!objectToEdit) return null;
@@ -303,7 +303,7 @@ export const enforceReasonChoice = (rowKey, route) => (dispatch, getState) => {
  * @param {Realm.Option} value Reason to apply to the underlying rorw.
  */
 export const applyReason = (value, route) => (dispatch, getState) => {
-  const { modalValue, keyExtractor } = pageStateSelector(getState());
+  const { modalValue, keyExtractor } = selectPageState(getState());
 
   modalValue.applyReason(UIDatabase, value);
 
@@ -314,7 +314,7 @@ export const applyReason = (value, route) => (dispatch, getState) => {
 };
 
 export const enforceRequisitionReasonChoice = (rowKey, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = pageStateSelector(getState());
+  const { data, keyExtractor } = selectPageState(getState());
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 

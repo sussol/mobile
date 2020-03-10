@@ -30,7 +30,7 @@ import {
   selectCurrentIndicatorCode,
   selectIndicatorTableColumns,
   selectIndicatorTableRows,
-} from '../selectors/indicatorSelectors';
+} from '../selectors/indicators';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
 import { useRecordListener } from '../hooks';
@@ -93,8 +93,6 @@ export const CustomerRequisition = ({
     comment,
     isFinalised,
   ]);
-
-  console.log(pageInfoColumns);
 
   const getCallback = useCallback(colKey => {
     switch (colKey) {
