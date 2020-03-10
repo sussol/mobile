@@ -1,12 +1,11 @@
 /* eslint-disable react/forbid-prop-types */
-/* eslint-disable import/no-named-as-default */
 import React, { useReducer, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
 
 import { ToggleBar, PageButton, Step } from '..';
 import { AutocompleteSelector, TextEditor } from '../modalChildren';
-import ModalContainer from './ModalContainer';
+import { ModalContainer } from './ModalContainer';
 
 import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
 

@@ -26,7 +26,7 @@ import {
  * @prop {React.Element}    children   The components to render within the modal.
  * @prop {Bool}             noCancel   Indicator that the close button should not display.
  */
-const ModalContainer = ({ fullScreen, isVisible, onClose, title, children, noCancel }) => {
+export const ModalContainer = ({ fullScreen, isVisible, onClose, title, children, noCancel }) => {
   const {
     contentContainer,
     modalContainer,
