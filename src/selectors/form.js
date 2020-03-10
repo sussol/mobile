@@ -4,6 +4,12 @@
  */
 
 /**
+ * Selects a the form state.
+ * @return {Object}
+ */
+export const selectForm = ({ form }) => form;
+
+/**
  * Selects a boolean from the form state which is an indicator
  * whether this form is in a valid and complete state.
  * @return {bool}

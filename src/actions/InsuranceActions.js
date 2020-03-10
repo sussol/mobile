@@ -54,7 +54,10 @@ const update = completedForm => (dispatch, getState) => {
     });
   }
 
-  dispatch(save(insurancePolicy));
+  batch(() => {
+    dispatch(save(insurancePolicy));
+    dispatch(select(insurancePolicy));
+  });
 };
 
 const select = insurancePolicy => (dispatch, getState) => {
