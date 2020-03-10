@@ -1,4 +1,5 @@
 /* eslint-disable react/forbid-prop-types */
+/* eslint-disable import/no-named-as-default */
 import React, { useReducer, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
@@ -174,7 +175,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
       <TextEditor text={name} onEndEditing={value => dispatch(setName(value))} />
     );
     return (
-      <ModalContainer isOpen={isModalOpen} onClose={onCloseModal} fullScreen>
+      <ModalContainer isVisible={isModalOpen} onClose={onCloseModal} fullScreen>
         {currentKey !== 'name' ? <Selector /> : <Editor />}
       </ModalContainer>
     );
