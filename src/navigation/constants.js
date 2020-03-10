@@ -8,8 +8,6 @@
  */
 
 export const ROUTES = {
-  ROOT: 'root',
-
   MENU: 'menu',
 
   REALM_EXPLORER: 'realmExplorer',
@@ -44,3 +42,11 @@ export const ROUTES = {
   SETTINGS: 'settings',
   DASHBOARD: 'dashboard',
 };
+
+export const FINALISABLE_PAGES = [
+  ROUTES.SUPPLIER_INVOICE,
+  ROUTES.CUSTOMER_INVOICE,
+  ROUTES.CUSTOMER_REQUISITION,
+  ROUTES.SUPPLIER_REQUISITION,
+  ROUTES.STOCKTAKE_EDITOR,
+];
