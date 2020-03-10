@@ -186,14 +186,14 @@ export const SupplierRequisitions = ({
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = dispatch => {
   const usingPrograms = getAllPrograms(Settings, UIDatabase).length > 0;
   const newRequisitionModalKey = usingPrograms
     ? MODAL_KEYS.PROGRAM_REQUISITION
     : MODAL_KEYS.SELECT_INTERNAL_SUPPLIER;
 
   return {
-    ...getPageDispatchers(dispatch, ownProps, 'Requisition', ROUTES.SUPPLIER_REQUISITIONS),
+    ...getPageDispatchers(dispatch, 'Requisition', ROUTES.SUPPLIER_REQUISITIONS),
     onFilterData: value =>
       dispatch(PageActions.filterDataWithFinalisedToggle(value, ROUTES.SUPPLIER_REQUISITIONS)),
     refreshData: () =>
