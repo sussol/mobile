@@ -5,6 +5,7 @@
 
 import { DataTablePageReducer } from '../pages/dataTableUtilities/reducer/DataTablePageReducer';
 import getPageInitialiser from '../pages/dataTableUtilities/getPageInitialiser';
+import { FINALISE_ACTIONS } from '../actions/FinaliseActions';
 
 /**
  * Redux reducer controlling the `pages` field.
@@ -20,6 +21,11 @@ export const PagesReducer = (state = {}, action) => {
       const { prevRouteName } = payload || {};
       return { ...state, currentRoute: prevRouteName };
     }
+
+    case FINALISE_ACTIONS.CONFIRM_FINALISE: {
+      return { ...state };
+    }
+
     case 'Navigation/REPLACE':
     case 'Navigation/NAVIGATE': {
       const { routeName, params } = action;
@@ -30,6 +36,7 @@ export const PagesReducer = (state = {}, action) => {
 
       return { ...state, [routeName]: pageInitialState, currentRoute: routeName };
     }
+
     default: {
       const { payload } = action;
       const { route } = payload || {};
