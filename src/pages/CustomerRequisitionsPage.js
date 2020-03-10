@@ -120,8 +120,8 @@ export const CustomerRequisitions = ({
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.CUSTOMER_REQUISITIONS),
+const mapDispatchToProps = dispatch => ({
+  ...getPageDispatchers(dispatch, 'Tansaction', ROUTES.CUSTOMER_REQUISITIONS),
   onFilterData: value =>
     dispatch(PageActions.filterDataWithFinalisedToggle(value, ROUTES.CUSTOMER_REQUISITIONS)),
   refreshData: () =>

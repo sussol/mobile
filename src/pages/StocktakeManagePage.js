@@ -150,16 +150,20 @@ export const StocktakeManage = ({
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  ...getPageDispatchers(dispatch, ownProps, 'Stocktake', ROUTES.STOCKTAKE_MANAGER),
+const mapDispatchToProps = dispatch => ({
+  ...getPageDispatchers(dispatch, 'Stocktake', ROUTES.STOCKTAKE_MANAGER),
   onFilterData: value =>
     dispatch(PageActions.filterDataWithOverStockToggle(value, ROUTES.STOCKTAKE_MANAGER)),
 });
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   const { pages } = state;
   const { stocktakeManager } = pages;
-  return stocktakeManager;
+  const { route } = ownProps;
+  const { params } = route ?? {};
+  const { pageObject } = params ?? {};
+
+  return { ...stocktakeManager, pageObject };
 };
 
 export const StocktakeManagePage = connect(mapStateToProps, mapDispatchToProps)(StocktakeManage);

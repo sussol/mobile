@@ -34,8 +34,6 @@ import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtili
 
 import { ROUTES } from '../navigation/constants';
 
-import { useRecordListener } from '../hooks';
-
 import globalStyles from '../globalStyles';
 import { buttonStrings, modalStrings, programStrings, generalStrings } from '../localization';
 import { UIDatabase } from '../database';
@@ -74,7 +72,6 @@ const SupplierRequisition = ({
   searchTerm,
   columns,
   getPageInfoColumns,
-  refreshData,
   onSelectNewItem,
   onEditComment,
   onFilterData,
@@ -100,8 +97,6 @@ const SupplierRequisition = ({
   onApplyReason,
   route,
 }) => {
-  // Listen for changes to this pages requisition. Refreshing data on side effects i.e. finalizing.
-  useRecordListener(() => dispatch(refreshData), pageObject, 'Requisition');
   const runWithLoadingIndicator = useLoadingIndicator();
 
   const usingReasons = !!UIDatabase.objects('RequisitionReason').length;
@@ -373,7 +368,7 @@ const SupplierRequisition = ({
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = dispatch => {
   const thisStoreID = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_NAME_ID);
   const thisStore = UIDatabase.get('Name', thisStoreID);
   const hasMasterLists = thisStore?.masterLists?.length > 0;
@@ -382,7 +377,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     ToastAndroid.show(modalStrings.supplier_no_masterlist_available, ToastAndroid.LONG);
 
   return {
-    ...getPageDispatchers(dispatch, ownProps, 'Requisition', ROUTES.SUPPLIER_REQUISITION),
+    ...getPageDispatchers(dispatch, 'Requisition', ROUTES.SUPPLIER_REQUISITION),
     [hasMasterLists ? null : 'onAddMasterList']: noMasterLists,
   };
 };
@@ -437,7 +432,6 @@ SupplierRequisition.propTypes = {
   currentIndicatorCode: PropTypes.string,
   indicatorCodes: PropTypes.array,
   modalValue: PropTypes.any,
-  refreshData: PropTypes.func.isRequired,
   onSelectNewItem: PropTypes.func.isRequired,
   onEditComment: PropTypes.func.isRequired,
   onFilterData: PropTypes.func.isRequired,

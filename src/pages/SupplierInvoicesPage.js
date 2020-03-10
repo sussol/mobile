@@ -170,8 +170,8 @@ export const SupplierInvoices = ({
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.SUPPLIER_INVOICES),
+const mapDispatchToProps = dispatch => ({
+  ...getPageDispatchers(dispatch, 'Transaction', ROUTES.SUPPLIER_INVOICES),
   onFilterData: value =>
     dispatch(PageActions.filterDataWithFinalisedToggle(value, ROUTES.SUPPLIER_INVOICES)),
   refreshData: () => dispatch(PageActions.refreshDataWithFinalisedToggle(ROUTES.SUPPLIER_INVOICES)),
