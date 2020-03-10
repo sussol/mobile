@@ -95,8 +95,9 @@ const generateSyncData = (settings, recordType, record) => {
         supplying_store_id: settings.get(THIS_STORE_ID),
         phone: record.phoneNumber,
         customer: String(record.isCustomer),
-        address1: record.address?.line1,
-        address2: record.address?.line2,
+        country: record.country,
+        bill_address1: record.addressOne,
+        bill_address2: record.addressTwo,
         barcode: `*${record.code}*`,
         'charge code': record.code,
         currency_id: defaultCurrency?.id ?? '',
@@ -184,6 +185,7 @@ const generateSyncData = (settings, recordType, record) => {
         Batch: record.batch,
         item_ID: record.itemId,
         optionID: record.option && record.option.id,
+        is_edited: record.hasBeenCounted,
       };
     }
     case 'Transaction': {

@@ -47,9 +47,13 @@ export class Stocktake extends Realm.Object {
    */
   addBatchIfUnique(database, stocktakeBatch) {
     // TODO: rename method to addBatch.
-    addBatchToParent(stocktakeBatch, this, () =>
-      createRecord(database, 'StocktakeItem', this, stocktakeBatch.itemBatch.item)
-    );
+    const { itemBatch } = stocktakeBatch ?? {};
+    const { item } = itemBatch ?? {};
+    if (item) {
+      addBatchToParent(stocktakeBatch, this, () =>
+        createRecord(database, 'StocktakeItem', this, item)
+      );
+    }
   }
 
   /**
