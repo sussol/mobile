@@ -100,6 +100,9 @@ const SupplierRequisition = ({
   const runWithLoadingIndicator = useLoadingIndicator();
 
   const usingReasons = !!UIDatabase.objects('RequisitionReason').length;
+  const onAddMasterLists = React.useCallback(selected => onApplyMasterLists(pageObject, selected), [
+    pageObject,
+  ]);
 
   const { isFinalised, comment, theirRef, program, daysToSupply } = pageObject;
 
@@ -138,7 +141,7 @@ const SupplierRequisition = ({
       case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
         return onEditComment;
       case MODAL_KEYS.SELECT_MASTER_LISTS:
-        return onApplyMasterLists;
+        return onAddMasterLists;
       case MODAL_KEYS.ENFORCE_REQUISITION_REASON:
       case MODAL_KEYS.REQUISITION_REASON:
         return onApplyReason;
@@ -184,7 +187,6 @@ const SupplierRequisition = ({
       style={globalStyles.leftButton}
       text={buttonStrings.add_master_list_items}
       onPress={onAddMasterList}
-      onSelect={onApplyMasterLists}
       isDisabled={isFinalised}
     />
   );
