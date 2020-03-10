@@ -20,6 +20,7 @@ const persistConfig = {
     'user',
     'prescription',
     'patient',
+    'finalise',
     'form',
     'prescriber',
     'wizard',

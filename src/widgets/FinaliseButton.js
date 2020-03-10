@@ -5,55 +5,44 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
-import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
-import globalStyles from '../globalStyles';
-import { navStrings } from '../localization';
 import { ConfirmIcon, LockIcon } from './icons';
+import { selectFinaliseItemIsFinalised } from '../selectors/finalise';
+import { FinaliseActions } from '../actions/FinaliseActions';
 
-export const FinaliseButton = props => {
-  const { isFinalised, onPress } = props;
+import { navStrings } from '../localization';
+import globalStyles from '../globalStyles';
 
-  if (isFinalised) {
-    return (
-      <View style={[globalStyles.navBarRightContainer, localStyles.outerContainer]}>
-        <Text style={[globalStyles.navBarText, localStyles.text]}>
-          {navStrings.finalised_cannot_be_edited}
-        </Text>
-        <LockIcon />
-      </View>
-    );
-  }
+const mapStateToProps = state => {
+  const isFinalised = selectFinaliseItemIsFinalised(state);
+  return { isFinalised };
+};
+
+const FinaliseButtonComponent = ({ isFinalised, openFinaliseModal }) => {
+  const Container = isFinalised ? View : TouchableOpacity;
+
   return (
-    <TouchableOpacity
-      style={[globalStyles.navBarRightContainer, localStyles.outerContainer]}
-      onPress={onPress}
-    >
-      <Text style={[globalStyles.navBarText, localStyles.text]}>{navStrings.finalise}</Text>
-      <ConfirmIcon />
-    </TouchableOpacity>
+    <Container onPress={openFinaliseModal} style={globalStyles.navBarRightContainer}>
+      <Text style={globalStyles.navBarText}>
+        {isFinalised ? navStrings.finalised_cannot_be_edited : navStrings.finalise}
+      </Text>
+      {isFinalised ? <LockIcon /> : <ConfirmIcon />}
+    </Container>
   );
 };
 
-export default FinaliseButton;
+const mapDispatchToProps = dispatch => {
+  const openFinaliseModal = () => dispatch(FinaliseActions.openModal());
 
-/* eslint-disable react/require-default-props, react/default-props-match-prop-types */
-FinaliseButton.propTypes = {
+  return { openFinaliseModal };
+};
+
+FinaliseButtonComponent.propTypes = {
   isFinalised: PropTypes.bool.isRequired,
-  onPress: PropTypes.func,
+  openFinaliseModal: PropTypes.func.isRequired,
 };
 
-FinaliseButton.defaultProps = {
-  isFinalised: false,
-};
-
-const APPBAR_HEIGHT = Platform.OS === 'ios' ? 44 : 56; // Taken from NavigationExperimental
-const localStyles = StyleSheet.create({
-  outerContainer: {
-    height: APPBAR_HEIGHT,
-  },
-  text: {
-    bottom: 12,
-  },
-});
+export const FinaliseButton = connect(mapStateToProps, mapDispatchToProps)(FinaliseButtonComponent);

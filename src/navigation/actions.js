@@ -15,6 +15,7 @@ import { SETTINGS_KEYS } from '../settings';
 import { ROUTES } from './constants';
 import { RootNavigator } from './RootNavigator';
 import { PrescriptionActions } from '../actions/PrescriptionActions';
+import { FinaliseActions } from '../actions/FinaliseActions';
 
 /**
  * Navigation Action Creators.
@@ -266,7 +267,10 @@ export const gotoStocktakeEditPage = stocktake => dispatch => {
     params: { title: navStrings.stocktake, stocktake, pageObject: stocktake },
   };
 
-  dispatch(navigationActionCreator(navigationParameters));
+  batch(() => {
+    dispatch(navigationActionCreator(navigationParameters));
+    dispatch(FinaliseActions.setFinaliseItem(stocktake));
+  });
 };
 
 /**
@@ -299,7 +303,10 @@ export const gotoCustomerInvoice = transaction => dispatch => {
     },
   });
 
-  dispatch(navigationAction);
+  batch(() => {
+    dispatch(navigationAction);
+    dispatch(FinaliseActions.setFinaliseItem(transaction));
+  });
 };
 
 /**
@@ -335,7 +342,10 @@ export const gotoSupplierInvoice = transaction => dispatch => {
     },
   });
 
-  dispatch(navigationAction);
+  batch(() => {
+    dispatch(navigationAction);
+    dispatch(FinaliseActions.setFinaliseItem(transaction));
+  });
 };
 
 /**
@@ -343,30 +353,42 @@ export const gotoSupplierInvoice = transaction => dispatch => {
  *
  * @param {Object} requisition  SupplierRequisition to navigate to.
  */
-export const gotoSupplierRequisition = requisition =>
-  NavigationActions.navigate({
-    routeName: ROUTES.SUPPLIER_REQUISITION,
-    params: {
-      title: `${navStrings.requisition} ${requisition.serialNumber}`,
-      requisition,
-      pageObject: requisition,
-    },
+export const gotoSupplierRequisition = requisition => dispatch => {
+  batch(() => {
+    dispatch(
+      NavigationActions.navigate({
+        routeName: ROUTES.SUPPLIER_REQUISITION,
+        params: {
+          title: `${navStrings.requisition} ${requisition.serialNumber}`,
+          requisition,
+          pageObject: requisition,
+        },
+      })
+    );
+    dispatch(FinaliseActions.setFinaliseItem(requisition));
   });
+};
 
 /**
  * Navigate to the CustomerRequisitionPage.
  *
  * @param {Object} requisition  Customer requisition to navigate to.
  */
-export const gotoCustomerRequisition = requisition =>
-  NavigationActions.navigate({
-    routeName: ROUTES.CUSTOMER_REQUISITION,
-    params: {
-      title: `${navStrings.requisition} ${requisition.serialNumber}`,
-      requisition,
-      pageObject: requisition,
-    },
+export const gotoCustomerRequisition = requisition => dispatch => {
+  batch(() => {
+    dispatch(
+      NavigationActions.navigate({
+        routeName: ROUTES.CUSTOMER_REQUISITION,
+        params: {
+          title: `${navStrings.requisition} ${requisition.serialNumber}`,
+          requisition,
+          pageObject: requisition,
+        },
+      })
+    );
+    dispatch(FinaliseActions.setFinaliseItem(requisition));
   });
+};
 
 /**
  * Action creator for creating, and navigating to a Supplier Requsition.

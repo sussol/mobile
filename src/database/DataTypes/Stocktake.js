@@ -7,6 +7,7 @@ import Realm from 'realm';
 import { complement } from 'set-manipulator';
 
 import { addBatchToParent, createRecord, getTotal } from '../utilities';
+import { modalStrings } from '../../localization';
 
 /**
  * A stocktake.
@@ -225,6 +226,16 @@ export class Stocktake extends Realm.Object {
       );
     }
     return this.additions;
+  }
+
+  get canFinalise() {
+    const finaliseStatus = { success: true, message: modalStrings.finalise_stocktake };
+    if (!this.hasSomeCountedItems) {
+      finaliseStatus.success = false;
+      finaliseStatus.errorMessage = modalStrings.stocktake_no_counted_items;
+    }
+
+    return finaliseStatus;
   }
 
   /**

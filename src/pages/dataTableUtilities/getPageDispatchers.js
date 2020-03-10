@@ -9,9 +9,7 @@ import { MODAL_KEYS } from '../../utilities/getModalTitle';
 import { debounce } from '../../utilities/underscoreMethods';
 import { gotoStocktakeManagePage } from '../../navigation/actions';
 
-export const getPageDispatchers = (dispatch, props, dataType, route) => {
-  const { pageObject } = props;
-
+export const getPageDispatchers = (dispatch, dataType, route) => {
   const dispatches = {
     // Editing of PageInfo
     onEditName: value => dispatch(BasePageActions.editPageObjectName(value, dataType, route)),
@@ -78,11 +76,13 @@ export const getPageDispatchers = (dispatch, props, dataType, route) => {
     // Master list
     onAddMasterList: () =>
       dispatch(BasePageActions.openModal(MODAL_KEYS.SELECT_MASTER_LISTS, route)),
-    onApplyMasterLists: selected =>
+    onApplyMasterLists: (selected, pageObject) =>
       dispatch(BasePageActions.addMasterListItems(selected, pageObject, route)),
 
     // Navigation
-    onManageStocktake: name => dispatch(gotoStocktakeManagePage(name, pageObject, route)),
+    onManageStocktake: (name, pageObject) => {
+      dispatch(gotoStocktakeManagePage(name, pageObject, route));
+    },
 
     // Row selections
     onSelectRow: ({ id }) => dispatch(BasePageActions.selectOneRow(id, route)),

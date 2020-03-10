@@ -10,6 +10,8 @@ import {
   NUMBER_SEQUENCE_KEYS,
 } from '../utilities';
 
+import { modalStrings } from '../../localization';
+
 /**
  * A transaction.
  *
@@ -457,6 +459,43 @@ export class Transaction extends Realm.Object {
     return batchName;
   }
 
+  get canFinaliseCustomerInvoice() {
+    const finaliseStatus = { success: true, message: modalStrings.finalise_customer_invoice };
+
+    if (!this.items.length) {
+      finaliseStatus.success = false;
+      finaliseStatus.message = modalStrings.add_at_least_one_item_before_finalising;
+    }
+
+    if (!this.totalQuantity) {
+      finaliseStatus.success = false;
+      finaliseStatus.message = modalStrings.record_stock_to_issue_before_finalising;
+    }
+
+    return finaliseStatus;
+  }
+
+  get canFinaliseSupplierInvoice() {
+    const finaliseStatus = { success: true, message: modalStrings.finalise_supplier_invoice };
+    if (!this.isExternalSupplierInvoice) return finaliseStatus;
+    if (!this.items.length) {
+      finaliseStatus.success = false;
+      finaliseStatus.message = modalStrings.add_at_least_one_item_before_finalising;
+    }
+    if (!this.totalQuantity) {
+      finaliseStatus.success = false;
+      finaliseStatus.message = modalStrings.stock_quantity_greater_then_zero;
+    }
+
+    return finaliseStatus;
+  }
+
+  get canFinalise() {
+    return this.isSupplierInvoice
+      ? this.canFinaliseSupplierInvoice
+      : this.canFinaliseCustomerInvoice;
+  }
+
   /**
    * Finalise this transaction, setting the status so that this transaction is
    * locked down. If it has not already been confirmed (i.e. adjustments to inventory
@@ -468,10 +507,12 @@ export class Transaction extends Realm.Object {
     if (this.isFinalised) {
       throw new Error('Cannot finalise as transaction is already finalised');
     }
+
     // Prune all invoices except internal supplier invoices.
     if (!this.isInternalSupplierInvoice) {
       this.pruneRedundantBatchesAndItems(database);
     }
+
     if (!this.isConfirmed) this.confirm(database);
 
     // Finding the totalPrice propogates through `TransactionItem` records down to the batch

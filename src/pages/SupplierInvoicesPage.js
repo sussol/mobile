@@ -22,6 +22,7 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 import { buttonStrings, modalStrings, generalStrings } from '../localization';
 import globalStyles from '../globalStyles';
 import { ROUTES } from '../navigation/constants';
+import { selectCurrentUser } from '../selectors/user';
 
 export const SupplierInvoices = ({
   currentUser,
@@ -169,8 +170,8 @@ export const SupplierInvoices = ({
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.SUPPLIER_INVOICES),
+const mapDispatchToProps = dispatch => ({
+  ...getPageDispatchers(dispatch, 'Transaction', ROUTES.SUPPLIER_INVOICES),
   onFilterData: value =>
     dispatch(PageActions.filterDataWithFinalisedToggle(value, ROUTES.SUPPLIER_INVOICES)),
   refreshData: () => dispatch(PageActions.refreshDataWithFinalisedToggle(ROUTES.SUPPLIER_INVOICES)),
@@ -179,7 +180,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 const mapStateToProps = state => {
   const { pages } = state;
   const { supplierInvoices } = pages;
-  return supplierInvoices;
+
+  const currentUser = selectCurrentUser(state);
+
+  return { ...supplierInvoices, currentUser };
 };
 
 export const SupplierInvoicesPage = connect(mapStateToProps, mapDispatchToProps)(SupplierInvoices);
