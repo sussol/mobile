@@ -9,8 +9,8 @@ import { complement } from 'set-manipulator';
 import { createRecord, getTotal } from '../utilities';
 import { UIDatabase } from '..';
 import { programDailyUsage } from '../../utilities/dailyUsage';
-import { modalStrings } from '../../localization/index';
-import { SETTINGS_KEYS } from '../../settings/index';
+import { modalStrings } from '../../localization';
+import { SETTINGS_KEYS } from '../../settings';
 
 /**
  * A requisition.

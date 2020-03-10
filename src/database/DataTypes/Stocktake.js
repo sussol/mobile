@@ -7,7 +7,7 @@ import Realm from 'realm';
 import { complement } from 'set-manipulator';
 
 import { addBatchToParent, createRecord, getTotal } from '../utilities';
-import { modalStrings } from '../../localization/index';
+import { modalStrings } from '../../localization';
 
 /**
  * A stocktake.

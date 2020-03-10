@@ -9,7 +9,8 @@ import {
   reuseNumber as reuseSerialNumber,
   NUMBER_SEQUENCE_KEYS,
 } from '../utilities';
-import { modalStrings } from '../../localization/index';
+
+import { modalStrings } from '../../localization';
 
 /**
  * A transaction.
