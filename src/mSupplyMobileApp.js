@@ -25,6 +25,7 @@ import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import { LoadingIndicatorContext } from './context/LoadingIndicatorContext';
 import { selectTitle } from './selectors/supplierCredit';
 import { selectIsSyncing } from './selectors/sync';
+import { selectCurrentUser } from './selectors/user';
 
 import { syncCompleteTransaction, setSyncError, openSyncModal } from './actions/SyncActions';
 import { FinaliseActions } from './actions/FinaliseActions';
@@ -224,12 +225,12 @@ const mapStateToProps = state => {
   const { finalise, supplierCredit } = state;
   const { open: supplierCreditModalOpen } = supplierCredit;
   const { finaliseModalOpen } = finalise;
-
+  const currentUser = selectCurrentUser(state);
   const isSyncing = selectIsSyncing(state);
 
   return {
     isSyncing,
-    currentUser: state.user.currentUser,
+    currentUser,
     finaliseModalOpen,
     supplierCreditModalOpen,
     creditTitle: selectTitle(state),
