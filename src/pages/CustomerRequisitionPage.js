@@ -33,8 +33,6 @@ import {
 } from '../selectors/indicatorSelectors';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
-import { useRecordListener } from '../hooks';
-
 import globalStyles from '../globalStyles';
 import { buttonStrings, generalStrings, programStrings } from '../localization';
 
@@ -69,7 +67,6 @@ export const CustomerRequisition = ({
   searchTerm,
   columns,
   getPageInfoColumns,
-  refreshData,
   onEditComment,
   onFilterData,
   onCloseModal,
@@ -79,9 +76,6 @@ export const CustomerRequisition = ({
   onEditSuppliedQuantity,
   route,
 }) => {
-  // Listen for changes to this pages requisition. Refreshing data on side effects i.e. finalizing.
-  useRecordListener(refreshData, pageObject, 'Requisition');
-
   const { isFinalised, comment } = pageObject;
 
   const onSetSuppliedToRequested = () =>
@@ -93,8 +87,6 @@ export const CustomerRequisition = ({
     comment,
     isFinalised,
   ]);
-
-  console.log(pageInfoColumns);
 
   const getCallback = useCallback(colKey => {
     switch (colKey) {
@@ -303,13 +295,13 @@ export const CustomerRequisition = ({
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) =>
-  getPageDispatchers(dispatch, ownProps, 'Requisition', ROUTES.CUSTOMER_REQUISITION);
+const mapDispatchToProps = dispatch =>
+  getPageDispatchers(dispatch, 'Requisition', ROUTES.CUSTOMER_REQUISITION);
 
 const mapStateToProps = state => {
-  const { pages } = state;
-  const { customerRequisition } = pages;
-  const { usingIndicators, showIndicators } = customerRequisition;
+  const { pages = {} } = state;
+  const { customerRequisition = {} } = pages;
+  const { usingIndicators = false, showIndicators = false } = customerRequisition;
 
   if (usingIndicators && showIndicators) {
     return {
@@ -358,7 +350,6 @@ CustomerRequisition.propTypes = {
   pageObject: PropTypes.object.isRequired,
   modalValue: PropTypes.any,
   getPageInfoColumns: PropTypes.func.isRequired,
-  refreshData: PropTypes.func.isRequired,
   onEditComment: PropTypes.func.isRequired,
   onFilterData: PropTypes.func.isRequired,
   onCloseModal: PropTypes.func.isRequired,

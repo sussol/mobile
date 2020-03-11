@@ -30,6 +30,7 @@ import {
   createStocktake,
   gotoStocktakeEditPage,
 } from '../navigation/actions';
+import { selectCurrentUser } from '../selectors/user';
 
 export const Stocktakes = ({
   currentUser,
@@ -170,14 +171,14 @@ export const Stocktakes = ({
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = dispatch => {
   const usingPrograms = getAllPrograms(Settings, UIDatabase).length > 0;
   const onNewProgramStocktake = () =>
     dispatch(PageActions.openModal(MODAL_KEYS.PROGRAM_STOCKTAKE, ROUTES.STOCKTAKES));
   const onNewStocktake = () => dispatch(gotoStocktakeManagePage(''));
 
   return {
-    ...getPageDispatchers(dispatch, ownProps, 'Stocktake', ROUTES.STOCKTAKES),
+    ...getPageDispatchers(dispatch, 'Stocktake', ROUTES.STOCKTAKES),
     onNewStocktake: usingPrograms ? onNewProgramStocktake : onNewStocktake,
     refreshData: () => dispatch(PageActions.refreshDataWithFinalisedToggle(ROUTES.STOCKTAKES)),
     onFilterData: value =>
@@ -188,7 +189,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 const mapStateToProps = state => {
   const { pages } = state;
   const { stocktakes } = pages;
-  return stocktakes;
+  const currentUser = selectCurrentUser(state);
+
+  return { ...stocktakes, currentUser };
 };
 
 export const StocktakesPage = connect(mapStateToProps, mapDispatchToProps)(Stocktakes);

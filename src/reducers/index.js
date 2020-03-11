@@ -19,24 +19,23 @@ import { PrescriptionReducer } from './PrescriptionReducer';
 import { SupplierCreditReducer } from './SupplierCreditReducer';
 import { UserReducer } from './UserReducer';
 import { WizardReducer } from './WizardReducer';
-import NavigationReducer from './NavigationReducer';
+
 import SyncReducer from './SyncReducer';
 
 export default combineReducers({
-  user: UserReducer,
-  nav: NavigationReducer,
-  sync: SyncReducer,
-  pages: PagesReducer,
-  modules: ModulesReducer,
-  prescription: PrescriptionReducer,
-  patient: PatientReducer,
-  prescriber: PrescriberReducer,
-  form: FormReducer,
-  finalise: FinaliseReducer,
-  wizard: WizardReducer,
-  payment: PaymentReducer,
-  insurance: InsuranceReducer,
   dashboard: DashboardReducer,
   dispensary: DispensaryReducer,
+  finalise: FinaliseReducer,
+  form: FormReducer,
+  insurance: InsuranceReducer,
+  modules: ModulesReducer,
+  pages: PagesReducer,
+  patient: PatientReducer,
+  payment: PaymentReducer,
+  prescriber: PrescriberReducer,
+  prescription: PrescriptionReducer,
   supplierCredit: SupplierCreditReducer,
+  sync: SyncReducer,
+  user: UserReducer,
+  wizard: WizardReducer,
 });

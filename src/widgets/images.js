@@ -70,3 +70,7 @@ export const ModulesImage = ({ style }) => (
   <Image style={style} source={require('../images/menu_modules.png')} resizeMode="contain" />
 );
 ModulesImage.propTypes = imagePropTypes;
+
+export const MsupplyMan = () => (
+  <Image resizeMode="contain" source={require('../images/logo.png')} />
+);

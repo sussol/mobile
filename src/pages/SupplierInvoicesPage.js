@@ -13,6 +13,7 @@ import { MODAL_KEYS } from '../utilities';
 import { useNavigationFocus, useSyncListener } from '../hooks';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 import { gotoSupplierInvoice, createSupplierInvoice } from '../navigation/actions';
+import { selectCurrentUser } from '../selectors/user';
 
 import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets';
 import { DataTablePageModal } from '../widgets/modals';
@@ -169,8 +170,8 @@ export const SupplierInvoices = ({
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.SUPPLIER_INVOICES),
+const mapDispatchToProps = dispatch => ({
+  ...getPageDispatchers(dispatch, 'Transaction', ROUTES.SUPPLIER_INVOICES),
   onFilterData: value =>
     dispatch(PageActions.filterDataWithFinalisedToggle(value, ROUTES.SUPPLIER_INVOICES)),
   refreshData: () => dispatch(PageActions.refreshDataWithFinalisedToggle(ROUTES.SUPPLIER_INVOICES)),
@@ -179,7 +180,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 const mapStateToProps = state => {
   const { pages } = state;
   const { supplierInvoices } = pages;
-  return supplierInvoices;
+  const currentUser = selectCurrentUser(state);
+
+  return { ...supplierInvoices, currentUser };
 };
 
 export const SupplierInvoicesPage = connect(mapStateToProps, mapDispatchToProps)(SupplierInvoices);
