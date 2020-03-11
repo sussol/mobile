@@ -1,7 +1,7 @@
 /* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2019
+ * Sustainable Solutions (NZ) Ltd. 2020
  */
 
 import React from 'react';
@@ -109,9 +109,14 @@ const PaymentSummaryComponent = ({
   usingInsurance,
   usingPaymentTypes,
 }) => {
-  const policyNumbers = React.useMemo(() => insurancePolicies.map(policy => policy.policyNumber), [
-    insurancePolicies,
-  ]);
+  const policyNumbers = React.useMemo(
+    () =>
+      insurancePolicies.map(policy => {
+        const { policyNumber } = policy;
+        return policyNumber;
+      }),
+    [insurancePolicies]
+  );
 
   const onSelectPolicy = React.useCallback(
     (_, index) => {
@@ -234,7 +239,7 @@ PaymentSummaryComponent.propTypes = {
   paymentAmount: PropTypes.object.isRequired,
   creditOverflow: PropTypes.bool,
   isComplete: PropTypes.bool.isRequired,
-  insurancePolicies: PropTypes.object.isRequired,
+  insurancePolicies: PropTypes.array.isRequired,
   choosePolicy: PropTypes.func.isRequired,
   selectedInsurancePolicy: PropTypes.object,
   editPolicy: PropTypes.func.isRequired,
