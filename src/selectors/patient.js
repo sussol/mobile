@@ -37,9 +37,11 @@ export const selectAvailableCredit = ({ patient }) =>
 export const selectPatientInsurancePolicies = ({ patient }) => {
   const { currentPatient } = patient;
   const { policies } = currentPatient;
-  return policies;
+  return policies.map(policy => {
+    const { isActive, policyNumber } = policy;
+    return isActive ? policy : { ...policy, policyNumber: `${policyNumber} (inactive)` };
+  });
 };
-
 export const selectPatientModalOpen = ({ patient }) => {
   const { isCreating, isEditing } = patient;
   const { viewingHistory } = patient;
