@@ -14,10 +14,8 @@ export const selectInsurancePolicyDiscountRate = ({ insurancePolicy }) => {
   return discountRate;
 };
 
-export const selectInsuranceDiscountRate = ({ insurance }) => {
-  const { selectedInsurancePolicy } = insurance;
-  return selectInsurancePolicyDiscountRate({ selectedInsurancePolicy });
-};
+export const selectInsuranceDiscountRate = ({ insurance }) =>
+  selectInsurancePolicyDiscountRate(insurance);
 
 export const selectInsuranceModalOpen = ({ insurance }) => {
   const { isCreatingInsurancePolicy, isEditingInsurancePolicy } = insurance;
