@@ -109,14 +109,9 @@ const PaymentSummaryComponent = ({
   usingInsurance,
   usingPaymentTypes,
 }) => {
-  const policyNumbers = React.useMemo(
-    () =>
-      insurancePolicies.map(policy => {
-        const { policyNumber } = policy;
-        return policyNumber;
-      }),
-    [insurancePolicies]
-  );
+  const policyNumbers = React.useMemo(() => insurancePolicies.map(policy => policy.policyNumber), [
+    insurancePolicies,
+  ]);
 
   const onSelectPolicy = React.useCallback(
     (_, index) => {
