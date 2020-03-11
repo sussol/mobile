@@ -189,7 +189,6 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = state => {
   const { pages } = state;
   const { stocktakes } = pages;
-
   const currentUser = selectCurrentUser(state);
 
   return { ...stocktakes, currentUser };

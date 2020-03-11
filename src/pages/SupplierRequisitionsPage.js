@@ -21,10 +21,10 @@ import { ROUTES } from '../navigation/constants';
 import { useNavigationFocus, useSyncListener } from '../hooks';
 import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
 import { getItemLayout, PageActions, getPageDispatchers } from './dataTableUtilities';
+import { selectCurrentUser } from '../selectors/user';
 
 import globalStyles from '../globalStyles';
 import { buttonStrings, modalStrings, generalStrings } from '../localization';
-import { selectCurrentUser } from '../selectors/user';
 
 /**
  * Renders a mSupply mobile page with a list of supplier requisitions.
@@ -206,7 +206,6 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = state => {
   const { pages } = state;
   const { supplierRequisitions } = pages;
-
   const currentUser = selectCurrentUser(state);
 
   return { ...supplierRequisitions, currentUser };
