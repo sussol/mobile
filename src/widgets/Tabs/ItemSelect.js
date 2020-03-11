@@ -9,6 +9,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { ToastAndroid } from 'react-native';
 
+import { TABS } from '../constants';
+
 import { PageButton } from '../PageButton';
 import { PrescriptionInfo } from '../PrescriptionInfo';
 import { SimpleTable } from '../SimpleTable';
@@ -60,7 +62,7 @@ const ItemSelectComponent = ({
   selectedRows,
   onDelete,
 }) => {
-  const columns = React.useMemo(() => getColumns('itemSelect'), []);
+  const columns = React.useMemo(() => getColumns(TABS.ITEM), []);
   const showToast = React.useCallback(
     () => ToastAndroid.show(dispensingStrings.must_order_one_to_continue, ToastAndroid.LONG),
     []

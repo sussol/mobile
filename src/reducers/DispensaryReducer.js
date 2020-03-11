@@ -7,13 +7,14 @@ import { DISPENSARY_ACTIONS } from '../actions/DispensaryActions';
 import { getColumns } from '../pages/dataTableUtilities';
 import { UIDatabase } from '../database';
 import { ROUTES } from '../navigation';
+import { FORMS } from '../widgets/constants';
 
 const initialState = () => ({
   searchTerm: '',
   sortKey: 'firstName',
   isAscending: true,
   dataSet: 'patient',
-  columns: getColumns('patient'),
+  columns: getColumns(FORMS.PATIENT),
   data: UIDatabase.objects('Patient'),
 });
 

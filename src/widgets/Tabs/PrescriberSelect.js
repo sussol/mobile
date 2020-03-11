@@ -9,6 +9,8 @@ import PropTypes from 'prop-types';
 import { StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 
+import { TABS } from '../constants';
+
 import { SearchBar } from '../SearchBar';
 import { PageButton } from '../PageButton';
 import { FlexRow } from '../FlexRow';
@@ -52,7 +54,7 @@ const PrescriberSelectComponent = ({
   isComplete,
   currentPrescriber,
 }) => {
-  const columns = React.useMemo(() => getColumns('prescriberSelect'), []);
+  const columns = React.useMemo(() => getColumns(TABS.PRESCRIBER), []);
 
   const renderRow = React.useCallback(
     listItem => {
