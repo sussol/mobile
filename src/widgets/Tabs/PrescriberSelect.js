@@ -141,7 +141,7 @@ const localStyles = StyleSheet.create({
 
 const mapDispatchToProps = dispatch => {
   const choosePrescriber = debounce(
-    prescriberID => dispatch(PrescriptionActions.assignPrescriber(prescriberID)),
+    prescriber => dispatch(PrescriptionActions.assignPrescriber(prescriber)),
     1000,
     true
   );

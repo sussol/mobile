@@ -20,14 +20,14 @@ import { BACKGROUND_COLOR, BLUE_WHITE, SHADOW_BORDER } from '../globalStyles/col
  * to completion for completion. See TabNavigator and StepsTracker
  * for individual component implementation.
  */
-const WizardComponent = ({ tabs, titles, currentTab, switchTab }) => (
+const WizardComponent = ({ tabs, currentTab, switchTab }) => (
   <View style={localStyles.container}>
     <View style={localStyles.stepperContainer}>
       <Stepper
         numberOfSteps={tabs.length}
         currentStep={currentTab}
         onPress={switchTab}
-        titles={titles}
+        titles={tabs.map(tab => tab.title)}
       />
     </View>
     <DataTablePageView>
@@ -48,7 +48,6 @@ const localStyles = StyleSheet.create({
 
 WizardComponent.propTypes = {
   tabs: PropTypes.array.isRequired,
-  titles: PropTypes.array.isRequired,
   switchTab: PropTypes.func.isRequired,
   currentTab: PropTypes.number.isRequired,
 };
