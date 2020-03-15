@@ -5,9 +5,11 @@
 
 import Realm from 'realm';
 
+import { UIDatabase } from '..';
+
+import { generalStrings } from '../../localization';
 import { getTotal } from '../utilities';
 import { dailyUsage } from '../../utilities/dailyUsage';
-import { UIDatabase } from '..';
 
 /**
  * An item.
@@ -163,7 +165,7 @@ export class Item extends Realm.Object {
    * @return {string} the unit for this item, or N/A if none has been assigned.
    */
   get unitString() {
-    return (this.unit && this.unit.units) || 'N/A';
+    return this.unit?.units ?? generalStrings.not_available;
   }
 
   /**
