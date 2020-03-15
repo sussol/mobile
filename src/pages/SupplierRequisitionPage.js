@@ -29,7 +29,8 @@ import {
   selectCurrentIndicatorCode,
   selectIndicatorTableColumns,
   selectIndicatorTableRows,
-} from '../selectors/indicatorSelectors';
+} from '../selectors/indicators';
+
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
 import { ROUTES } from '../navigation/constants';

@@ -5,7 +5,7 @@
 
 import { UIDatabase } from '../../../database/index';
 import { ACTIONS } from './constants';
-import { pageStateSelector } from '../../../selectors/pageSelectors';
+import { selectPageState } from '../../../selectors/pages';
 
 /**
  * Uses the stores dataState map to set a row to
@@ -86,7 +86,7 @@ export const selectItems = (items, route) => ({
  * @param {String} pageObjectType Type of the underlying pageObject, i.e. Transaction.
  */
 export const deleteSelectedBatches = (pageObjectType, route) => (dispatch, getState) => {
-  const { dataState, pageObject } = pageStateSelector(getState());
+  const { dataState, pageObject } = selectPageState(getState());
 
   const itemIds = Array.from(dataState.keys()).filter(rowKey => dataState.get(rowKey).isSelected);
 
@@ -106,7 +106,7 @@ export const deleteSelectedBatches = (pageObjectType, route) => (dispatch, getSt
  * @param {String} pageObjectType Type of the underlying pageObject, i.e. Transaction.
  */
 export const deleteSelectedItems = (pageObjectType, route) => (dispatch, getState) => {
-  const { dataState, pageObject } = pageStateSelector(getState());
+  const { dataState, pageObject } = selectPageState(getState());
 
   const itemIds = Array.from(dataState.keys()).filter(rowKey => dataState.get(rowKey).isSelected);
 
@@ -125,7 +125,7 @@ export const deleteSelectedItems = (pageObjectType, route) => (dispatch, getStat
  * @param {String} recordType
  */
 export const deleteSelectedRecords = (recordType, route) => (dispatch, getState) => {
-  const { dataState, backingData } = pageStateSelector(getState());
+  const { dataState, backingData } = selectPageState(getState());
 
   const recordIds = Array.from(dataState.keys()).filter(rowKey => dataState.get(rowKey).isSelected);
 

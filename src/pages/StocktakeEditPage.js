@@ -9,6 +9,8 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { selectStocktakeEditor, selectStocktakeEditorColumns } from '../selectors/pages';
+
 import { MODAL_KEYS } from '../utilities';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
@@ -212,9 +214,9 @@ const mapDispatchToProps = dispatch => {
 };
 
 const mapStateToProps = state => {
-  const { pages } = state;
-  const { stocktakeEditor } = pages;
-  return stocktakeEditor;
+  const stocktakeEditor = selectStocktakeEditor(state);
+  const columns = selectStocktakeEditorColumns(state);
+  return { ...stocktakeEditor, columns };
 };
 
 export const StocktakeEditPage = connect(mapStateToProps, mapDispatchToProps)(StocktakeEdit);

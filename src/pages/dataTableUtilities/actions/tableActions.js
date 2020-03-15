@@ -10,7 +10,7 @@ import Settings from '../../../settings/MobileAppSettings';
 import { createRecord } from '../../../database/utilities/index';
 import { closeModal } from './pageActions';
 import { ACTIONS } from './constants';
-import { pageObjectSelector } from '../../../selectors/pageSelectors';
+import { selectPageObject } from '../../../selectors/pages';
 
 /**
  * Sorts the underlying data array by the key provided. Determines
@@ -120,7 +120,7 @@ export const toggleTransactionType = route => ({
  * @param {String} objectType Type of object to add items for.
  */
 export const addMasterListItems = (selected, objectType, route) => (dispatch, getState) => {
-  const pageObject = pageObjectSelector(getState());
+  const pageObject = selectPageObject(getState());
 
   const thisStore = UIDatabase.objects('Name').filtered(
     'id == $0',
@@ -149,7 +149,7 @@ export const addMasterListItems = (selected, objectType, route) => (dispatch, ge
  * @param {String} addedItemType  The item type to be added.
  */
 export const addItem = (item, addedItemType, route) => (dispatch, getState) => {
-  const pageObject = pageObjectSelector(getState());
+  const pageObject = selectPageObject(getState());
 
   if (!pageObject.hasItem(item)) {
     UIDatabase.write(() => {
@@ -195,7 +195,7 @@ export const addCashTransaction = (cashTransaction, route) => (dispatch, getStat
  * @param {Object} item The item to create a transaction batch for.
  */
 export const addTransactionBatch = (item, route) => (dispatch, getState) => {
-  const pageObject = pageObjectSelector(getState());
+  const pageObject = selectPageObject(getState());
   const { serialNumber, otherParty } = pageObject;
 
   UIDatabase.write(() => {
@@ -219,7 +219,7 @@ export const addTransactionBatch = (item, route) => (dispatch, getState) => {
  * use case: StocktakeEditBatchModal adding empty batches.
  */
 export const addStocktakeBatch = route => (dispatch, getState) => {
-  const pageObject = pageObjectSelector(getState());
+  const pageObject = selectPageObject(getState());
 
   UIDatabase.write(() => {
     const addedBatch = pageObject.createNewBatch(UIDatabase);
@@ -231,7 +231,7 @@ export const addStocktakeBatch = route => (dispatch, getState) => {
  * Creates an automatic order for a Supplier Requisition.
  */
 export const createAutomaticOrder = route => (dispatch, getState) => {
-  const pageObject = pageObjectSelector(getState());
+  const pageObject = selectPageObject(getState());
 
   const thisStore = UIDatabase.objects('Name').filtered(
     'id == $0',
@@ -251,7 +251,7 @@ export const createAutomaticOrder = route => (dispatch, getState) => {
  * a requisition.
  */
 export const setRequestedToSuggested = route => (dispatch, getState) => {
-  const pageObject = pageObjectSelector(getState());
+  const pageObject = selectPageObject(getState());
 
   UIDatabase.write(() => {
     pageObject.setRequestedToSuggested(UIDatabase);
@@ -264,7 +264,7 @@ export const setRequestedToSuggested = route => (dispatch, getState) => {
  * Sets all rows `suppliedQuantity` to `requestedQuantity`.
  */
 export const setSuppliedToRequested = route => (dispatch, getState) => {
-  const pageObject = pageObjectSelector(getState());
+  const pageObject = selectPageObject(getState());
 
   UIDatabase.write(() => {
     pageObject.setSuppliedToRequested();
@@ -277,7 +277,7 @@ export const setSuppliedToRequested = route => (dispatch, getState) => {
  * Sets all rows `suppliedQuantity` to `suggestedQuantity`.
  */
 export const setSuppliedToSuggested = route => (dispatch, getState) => {
-  const pageObject = pageObjectSelector(getState());
+  const pageObject = selectPageObject(getState());
 
   UIDatabase.write(() => {
     pageObject.setSuppliedToSuggested();

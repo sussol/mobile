@@ -8,25 +8,25 @@ import {
   mapIndicatorTableRows,
   mapIndicatorTableColumns,
 } from '../pages/dataTableUtilities/getIndicatorTableData';
-import { pageStateSelector, pageObjectSelector } from './pageSelectors';
+import { selectPageState, selectPageObject } from './pages';
 
 export const selectIndicators = createSelector(
-  [pageStateSelector],
+  [selectPageState],
   pageState => pageState.indicators
 );
 
 export const selectIndicatorRows = createSelector(
-  [pageStateSelector],
+  [selectPageState],
   pageState => pageState.indicatorRows
 );
 
 export const selectIndicatorColumns = createSelector(
-  [pageStateSelector],
+  [selectPageState],
   pageState => pageState.indicatorColumns
 );
 
 export const selectCurrentIndicator = createSelector(
-  [pageStateSelector],
+  [selectPageState],
   pageState => pageState.currentIndicator
 );
 
@@ -40,14 +40,14 @@ export const selectIndicatorCodes = createSelector([selectIndicators], indicator
 );
 
 export const selectIsRequestRequisition = createSelector(
-  [pageObjectSelector],
+  [selectPageObject],
   pageObject => pageObject.isRequest
 );
 
-export const selectPeriod = createSelector([pageObjectSelector], pageObject => pageObject.period);
+export const selectPeriod = createSelector([selectPageObject], pageObject => pageObject.period);
 
 export const selectSearchTerm = createSelector(
-  [pageStateSelector],
+  [selectPageState],
   pageState => pageState.searchTerm
 );
 
