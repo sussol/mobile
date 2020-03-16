@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const DEFAULT_TAB_CONFIG = { options: { tabBarVisible: false } };
+const Tab = createBottomTabNavigator();
 
 /**
  * Simple TabNavigator component managing lazily loaded
@@ -17,7 +18,6 @@ const DEFAULT_TAB_CONFIG = { options: { tabBarVisible: false } };
  */
 export const TabNavigator = ({ tabs, currentTabIndex }) => {
   const navigatorRef = useRef(useNavigation());
-  const Tab = createBottomTabNavigator();
 
   // When `currentTabIndex` changes, dispatch an action to trigger a switch on the
   // base navigation component to the passed tab index.
