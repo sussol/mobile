@@ -18,16 +18,19 @@ import { WizardActions } from '../actions/WizardActions';
 
 import { dispensingStrings } from '../localization';
 
-const tabs = [PrescriberSelect, ItemSelect, PrescriptionConfirmation];
-const titles = [
-  dispensingStrings.select_the_prescriber,
-  dispensingStrings.select_items,
-  dispensingStrings.finalise,
+const tabs = [
+  {
+    component: PrescriberSelect,
+    name: 'prescriber',
+    title: dispensingStrings.select_the_prescriber,
+  },
+  { component: ItemSelect, name: 'item', title: dispensingStrings.select_items },
+  { component: PrescriptionConfirmation, name: 'prescription', title: dispensingStrings.finalise },
 ];
 
 export const Prescription = ({ transaction, completePrescription }) => {
   useRecordListener(completePrescription, transaction, 'Transaction');
-  return <Wizard tabs={tabs} titles={titles} />;
+  return <Wizard tabs={tabs} />;
 };
 
 const mapDispatchToProps = dispatch => {
