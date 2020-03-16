@@ -19,6 +19,13 @@ import { authStrings, generalStrings, demoUserModalStrings } from '../../localiz
 import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
 import { ModalContainer } from './ModalContainer';
 
+const STATUS = {
+  SUBMIT: 'submit',
+  SUBMITTING: 'submitting',
+  SUBMITTED: 'submitted',
+  ERROR: 'error',
+};
+
 export class DemoUserModal extends React.Component {
   constructor(props) {
     super(props);
@@ -209,9 +216,9 @@ export class DemoUserModal extends React.Component {
               />
             </View>
           </View>
-          <ModalContainer fullScreen={true} isVisible={isOpen}>
+          <ModalContainer fullScreen={true} isVisible={status === STATUS.SUBMITTED}>
             <ConfirmForm
-              isOpen={status === 'submitted'}
+              isOpen={status === STATUS.SUBMITTED}
               questionText={demoUserModalStrings.confirm_modal_body}
               onConfirm={this.onDemoSubmittedModalClose}
               confirmText="Close"
