@@ -54,7 +54,7 @@
     "cancel": "Annuler",
     "confirm": "Confirmer",
     "create": "Créer",
-    "create_cash_transaction": "Créer une nouvelle transaction en espèce",
+    "create_cash_transaction": "Créer une nouvelle transaction",
     "delete_these_invoices": "Êtes-vous sûr de vouloir supprimer ces factures ?",
     "delete_these_requisitions": "Êtes-vous sûr de vouloir supprimer ces réquisitions ?",
     "delete_these_stocktakes": "Êtes-vous sûr de vouloir supprimer ces relevé d'inventaires ?",
