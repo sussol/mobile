@@ -20,6 +20,7 @@ export const PagesReducer = (state = {}, action) => {
       const { prevRouteName } = payload || {};
       return { ...state, currentRoute: prevRouteName };
     }
+
     case 'Navigation/REPLACE':
     case 'Navigation/NAVIGATE': {
       const { routeName, params } = action;
@@ -30,6 +31,7 @@ export const PagesReducer = (state = {}, action) => {
 
       return { ...state, [routeName]: pageInitialState, currentRoute: routeName };
     }
+
     default: {
       const { payload } = action;
       const { route } = payload || {};

@@ -170,6 +170,14 @@ export class StocktakeItem extends Realm.Object {
   }
 
   /**
+   * Returns a string representing the units for this stocktake item.
+   * @return {string} the unit for this stocktake item, or N/A if none has been assigned.
+   */
+  get unitString() {
+    return this.item?.unitString;
+  }
+
+  /**
    * Returns an indicator that all batches related to this item have a correct
    * reason/option applied. A correct reason being a `positiveInventoryAdjustment`
    * for positive differences and vice versa for negative differences and no reason

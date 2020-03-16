@@ -165,12 +165,12 @@ export const CashRegister = ({
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = dispatch => {
   const onUpdatePaymentType = paymentType =>
     dispatch(updatePaymentType(paymentType, ROUTES.CASH_REGISTER));
 
   return {
-    ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.CASH_REGISTER),
+    ...getPageDispatchers(dispatch, 'Transaction', ROUTES.CASH_REGISTER),
     onUpdatePaymentType,
   };
 };

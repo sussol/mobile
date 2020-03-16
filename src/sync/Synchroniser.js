@@ -185,6 +185,7 @@ export class Synchroniser {
     this.settings.set(SYNC_IS_INITIALISED, 'true');
     this.syncQueue.enable(); // Begin the sync queue listening to database changes.
     this.setIsSyncing(false);
+    this.setCompletionTime(new Date().getTime());
   };
 
   /**

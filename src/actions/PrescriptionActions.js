@@ -5,7 +5,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 import { batch } from 'react-redux';
-import { NavigationActions } from 'react-navigation';
+import { NavigationActions } from '@react-navigation/core';
 
 import { UIDatabase, createRecord } from '../database';
 

@@ -10,7 +10,6 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
-import { useRecordListener } from '../hooks';
 import { getItemLayout, getPageDispatchers, getColumns } from './dataTableUtilities';
 
 import { DataTablePageModal } from '../widgets/modals';
@@ -39,7 +38,6 @@ export const SupplierInvoice = ({
   searchTerm,
   columns,
   getPageInfoColumns,
-  refreshData,
   onSelectNewItem,
   onEditComment,
   onEditTheirRef,
@@ -58,9 +56,6 @@ export const SupplierInvoice = ({
   onEditTransactionBatchName,
   isSupplierInvoice,
 }) => {
-  // Listen for this transaction being finalised, so data can be refreshed and kept consistent.
-  useRecordListener(refreshData, pageObject, 'Transaction');
-
   const { isFinalised, comment, theirRef } = pageObject;
 
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, route), [
@@ -189,10 +184,13 @@ export const SupplierInvoice = ({
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
-  const { transaction } = ownProps;
+  const { route } = ownProps;
+  const { params } = route ?? {};
+  const { pageObject } = params;
+
   return {
-    ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.SUPPLIER_INVOICE),
-    refund: () => dispatch(SupplierCreditActions.createFromInvoice(transaction)),
+    ...getPageDispatchers(dispatch, 'Transaction', ROUTES.SUPPLIER_INVOICE),
+    refund: () => dispatch(SupplierCreditActions.createFromInvoice(pageObject)),
   };
 };
 
@@ -230,7 +228,6 @@ SupplierInvoice.propTypes = {
   columns: PropTypes.array.isRequired,
   getPageInfoColumns: PropTypes.func.isRequired,
   dispatch: PropTypes.func.isRequired,
-  refreshData: PropTypes.func.isRequired,
   onSelectNewItem: PropTypes.func.isRequired,
   onEditComment: PropTypes.func.isRequired,
   onEditTheirRef: PropTypes.func.isRequired,

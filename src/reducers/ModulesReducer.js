@@ -20,6 +20,7 @@ import { SYNC_TRANSACTION_COMPLETE } from '../sync/constants';
  *     usingSupplierCredits: [bool],
  *     usingModules: [bool],
  *     usingInsurance: [bool],
+ *     usingHideSnapshotColumn: [bool],
  * }
  */
 
@@ -37,6 +38,7 @@ const initialState = () => {
   const usingCashRegister = checkModule(SETTINGS_KEYS.CASH_REGISTER_MODULE) && usingPaymentTypes;
   const usingPayments = checkModule(SETTINGS_KEYS.PAYMENT_MODULE);
   const usingPatientTypes = checkModule(SETTINGS_KEYS.PATIENT_TYPES);
+  const usingHideSnapshotColumn = checkModule(SETTINGS_KEYS.HIDE_SNAPSHOT_COLUMN);
 
   const usingModules = usingDashboard || usingDispensary || usingVaccines || usingCashRegister;
 
@@ -52,6 +54,7 @@ const initialState = () => {
     usingSupplierCreditCategories,
     usingPaymentTypes,
     usingPatientTypes,
+    usingHideSnapshotColumn,
   };
 };
 

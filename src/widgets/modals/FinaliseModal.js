@@ -1,96 +1,89 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2019
+ * Sustainable Solutions (NZ) Ltd. 2020
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
-
-import { Client as BugsnagClient } from 'bugsnag-react-native';
+import { connect } from 'react-redux';
 
 import { ConfirmForm } from '../modalChildren';
 
 import { modalStrings } from '../../localization';
-import ModalContainer from './ModalContainer';
+import { ModalContainer } from './ModalContainer';
+import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 
-const bugsnagClient = new BugsnagClient();
+import { FinaliseActions } from '../../actions/FinaliseActions';
+import { selectCurrentUser } from '../../selectors/user';
+import { selectCanFinalise, selectFinaliseMessage } from '../../selectors/finalise';
 
 /**
  * Presents a modal allowing the user to confirm or cancel finalising a record.
  * Will first check for an error that would prevent finalising, if an error checking
  * function is passed in within the finaliseItem.
- * @prop  {Realm}     database      App wide database
- * @prop  {boolean}   isOpen        Whether the modal is open
- * @prop  {function}  onClose       Function to call when finalise is cancelled
- * @prop  {object}    finaliseItem  An object carrying details of the item being
- *                                  finalised, with the following fields:
- *                                  record        The record being finalised
- *                                  recordType    The type of database object being finalised
- *                                  checkForError A function returning an error message if the
- *                                                record cannot yet be finalised, or null otherwise
- *                                  finaliseText  The text to display on the confirmation modal
- * @prop  {object}    user          The user who is finalising the record
+ * @prop  {boolean}   isOpen          Whether the modal is open
+ * @prop  {function}  onClose         Function to call when finalise is cancelled
+ * @prop  {String}    finaliseMessage Message to display to the user.
+ * @prop  {Boolean}   canFinalise     Indication whether the current item can be finalised.
  */
-export const FinaliseModal = props => {
-  const { finaliseItem, isOpen, runWithLoadingIndicator, database, user, onClose } = props;
+export const FinaliseModalComponent = ({
+  finaliseMessage,
+  canFinalise,
+  closeFinaliseModal,
+  finaliseModalOpen,
+  onFinalise,
+}) => {
+  const runWithLoadingIndicator = useLoadingIndicator();
 
-  if (!finaliseItem) return null;
-  const { record, recordType, checkForError, finaliseText } = finaliseItem;
-  if (!record || !record.isValid()) return null; // Record may have been deleted
-  let errorText = !record.isFinalised && checkForError && checkForError(record);
-
-  // Wrapped in try-catch block so that finalise methods in schema can throw an error
-  // as last line of defence
-  const tryFinalise = () => {
-    if (onClose) onClose();
-    runWithLoadingIndicator(() => {
-      try {
-        if (record) {
-          // Check for error again to cleaning show user warning
-          // If the first attempt didn't catch it (was still writing changes)
-          errorText = checkForError && checkForError(record);
-          if (errorText) return;
-          database.write(() => {
-            record.finalise(database, user);
-            database.save(recordType, record);
-          });
-        }
-      } catch (error) {
-        // Fling off to bugsnag so we can be notified finalise isn't
-        // behaving
-        bugsnagClient.notify(error);
-      }
-    });
-  };
+  const finaliseWithLoadingIndicator = React.useCallback(
+    () => runWithLoadingIndicator(onFinalise),
+    []
+  );
 
   return (
-    <ModalContainer fullScreen={true} isVisible={isOpen}>
+    <ModalContainer fullScreen={true} isVisible={finaliseModalOpen}>
       <ConfirmForm
-        isOpen={isOpen}
-        questionText={errorText || modalStrings[finaliseText]}
+        isOpen={finaliseModalOpen}
+        questionText={finaliseMessage}
         confirmText={modalStrings.confirm}
-        cancelText={errorText ? modalStrings.got_it : modalStrings.cancel}
-        onConfirm={!errorText ? tryFinalise : null}
-        onCancel={() => {
-          if (onClose) onClose();
-        }}
+        cancelText={canFinalise ? modalStrings.cancel : modalStrings.got_it}
+        onConfirm={canFinalise ? finaliseWithLoadingIndicator : null}
+        onCancel={closeFinaliseModal}
       />
     </ModalContainer>
   );
 };
 
-export default FinaliseModal;
+const mapStateToProps = state => {
+  const { finalise } = state;
+  const { finaliseModalOpen, finaliseItem } = finalise;
 
-/* eslint-disable react/forbid-prop-types, react/require-default-props */
-FinaliseModal.propTypes = {
-  database: PropTypes.object.isRequired,
-  isOpen: PropTypes.bool,
-  onClose: PropTypes.func,
-  finaliseItem: PropTypes.object,
-  user: PropTypes.any,
-  runWithLoadingIndicator: PropTypes.func.isRequired,
+  const currentUser = selectCurrentUser(state);
+  const canFinalise = selectCanFinalise(state);
+  const finaliseMessage = selectFinaliseMessage(state);
+
+  return { finaliseModalOpen, currentUser, finaliseItem, finaliseMessage, canFinalise };
 };
 
-FinaliseModal.defaultProps = {
-  isOpen: false,
+const mapDispatchToProps = dispatch => {
+  const closeFinaliseModal = () => dispatch(FinaliseActions.closeModal());
+  const onFinalise = () => dispatch(FinaliseActions.finalise());
+
+  return { onFinalise, closeFinaliseModal };
 };
+
+FinaliseModalComponent.defaultProps = {
+  finaliseModalOpen: false,
+  finaliseMessage: '',
+  canFinalise: false,
+};
+
+FinaliseModalComponent.propTypes = {
+  finaliseModalOpen: PropTypes.bool,
+  closeFinaliseModal: PropTypes.func.isRequired,
+  onFinalise: PropTypes.func.isRequired,
+  finaliseMessage: PropTypes.string,
+  canFinalise: PropTypes.bool,
+};
+
+export const FinaliseModal = connect(mapStateToProps, mapDispatchToProps)(FinaliseModalComponent);
