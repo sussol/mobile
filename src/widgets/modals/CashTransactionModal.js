@@ -12,7 +12,7 @@ import currency from '../../localization/currency';
 
 import { UIDatabase } from '../../database';
 import {
-  CASH_TRANSACTION_FIELD_KEYS,
+  CASH_TRANSACTION_FIELDS,
   CASH_TRANSACTION_TYPES,
 } from '../../utilities/modules/dispensary/constants';
 
@@ -260,7 +260,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
       >
         <GenericChoiceList
           data={paymentTypes}
-          keyToDisplay={CASH_TRANSACTION_FIELD_KEYS.PAYMENT_TYPE}
+          keyToDisplay={CASH_TRANSACTION_FIELDS.PAYMENT_TYPE}
           onPress={onSubmitPaymentType}
           highlightValue={paymentType?.title}
         />
@@ -271,7 +271,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
       >
         <GenericChoiceList
           data={reasons}
-          keyToDisplay={CASH_TRANSACTION_FIELD_KEYS.REASON}
+          keyToDisplay={CASH_TRANSACTION_FIELDS.REASON}
           onPress={onSubmitReason}
           highlightValue={reason?.title}
         />
