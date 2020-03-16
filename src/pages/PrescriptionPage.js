@@ -38,7 +38,14 @@ const mapDispatchToProps = dispatch => {
   return { completePrescription };
 };
 
-const mapStateToProps = () => ({});
+const mapStateToProps = (state, props) => mapParamsToProps(props);
+
+const mapParamsToProps = props => {
+  const { route } = props;
+  const { params } = route || {};
+  const { transaction } = params || {};
+  return { transaction };
+};
 
 export const PrescriptionPage = connect(mapStateToProps, mapDispatchToProps)(Prescription);
 
