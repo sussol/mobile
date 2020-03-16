@@ -1,6 +1,6 @@
 /* eslint-disable import/no-named-as-default */
 /* eslint-disable react/forbid-prop-types */
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { StyleSheet, View } from 'react-native';
@@ -20,21 +20,25 @@ import { BACKGROUND_COLOR, BLUE_WHITE, SHADOW_BORDER } from '../globalStyles/col
  * to completion for completion. See TabNavigator and StepsTracker
  * for individual component implementation.
  */
-const WizardComponent = ({ tabs, currentTab, switchTab }) => (
-  <View style={localStyles.container}>
-    <View style={localStyles.stepperContainer}>
-      <Stepper
-        numberOfSteps={tabs.length}
-        currentStep={currentTab}
-        onPress={switchTab}
-        titles={tabs.map(tab => tab.title)}
-      />
+const WizardComponent = ({ tabs, currentTab, switchTab }) => {
+  const titles = useMemo(() => tabs.map(tab => tab.title), [tabs]);
+
+  return (
+    <View style={localStyles.container}>
+      <View style={localStyles.stepperContainer}>
+        <Stepper
+          numberOfSteps={tabs.length}
+          currentStep={currentTab}
+          onPress={switchTab}
+          titles={titles}
+        />
+      </View>
+      <DataTablePageView>
+        <TabNavigator tabs={tabs} currentTabIndex={currentTab} />
+      </DataTablePageView>
     </View>
-    <DataTablePageView>
-      <TabNavigator tabs={tabs} currentTabIndex={currentTab} />
-    </DataTablePageView>
-  </View>
-);
+  );
+};
 
 const localStyles = StyleSheet.create({
   container: { backgroundColor: BACKGROUND_COLOR, flex: 1 },
