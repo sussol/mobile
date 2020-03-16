@@ -8,6 +8,7 @@ import { complement } from 'set-manipulator';
 
 import { createRecord, getTotal } from '../utilities';
 import { UIDatabase } from '..';
+import { programDailyUsage } from '../../utilities/dailyUsage';
 
 /**
  * A requisition.
@@ -155,7 +156,16 @@ export class Requisition extends Realm.Object {
    */
   get indicators() {
     if (this.isRequest) return this.program?.activeIndicators;
-    if (this.isResponse) return this.period?.indicators;
+    if (this.isResponse) {
+      const periodIndicators = this.period?.indicators;
+      const programIndicators = this.program?.indicators;
+      const indicators =
+        periodIndicators?.reduce((acc, indicator) => {
+          const isValidIndicator = !!programIndicators.find(({ id }) => id === indicator.id);
+          return isValidIndicator ? [...acc, indicator] : acc;
+        }, []) ?? [];
+      return indicators;
+    }
     return null;
   }
 
@@ -268,8 +278,10 @@ export class Requisition extends Realm.Object {
       throw new Error('Cannot add items to a finalised requisition');
     }
 
-    this.program.items.forEach(masterListItem => {
-      createRecord(database, 'RequisitionItem', this, masterListItem.item);
+    this.program.items.forEach(({ item }) => {
+      const usage = programDailyUsage(item, this.period);
+      const stockOnHand = item.geTotalQuantityOnDate(this.period.endDate);
+      createRecord(database, 'RequisitionItem', this, item, usage, stockOnHand);
     });
   }
 

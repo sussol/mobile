@@ -59,9 +59,6 @@ export class NumberSequence extends Realm.Object {
    * @param   {number}  number
    */
   addNumberToReuse(numberToReuse) {
-    if (numberToReuse.number > this.highestNumberUsed) {
-      throw new Error(`Cannot reuse ${numberToReuse.number} as it has not been used yet`);
-    }
     if (
       this.numbersToReuse.find(
         testNumberToReuse => testNumberToReuse.number === numberToReuse.number

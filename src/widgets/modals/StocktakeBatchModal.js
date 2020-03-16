@@ -4,12 +4,12 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect, batch } from 'react-redux';
 
-import { MODAL_KEYS } from '../../utilities';
+import { MODAL_KEYS, getModalTitle } from '../../utilities';
 import { usePageReducer } from '../../hooks';
 import { getItemLayout } from '../../pages/dataTableUtilities';
 
@@ -20,9 +20,12 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../DataTable';
 import globalStyles from '../../globalStyles';
 
 import { UIDatabase } from '../../database';
-import ModalContainer from './ModalContainer';
-import { buttonStrings } from '../../localization/index';
+import { ModalContainer } from './ModalContainer';
+import { buttonStrings } from '../../localization';
 import { ROUTES } from '../../navigation/constants';
+
+import { selectUsingPayments } from '../../selectors/modules';
+import { AutocompleteSelector } from '../modalChildren';
 
 /**
  * Renders a stateful modal with a stocktake item and it's batches loaded
@@ -39,18 +42,12 @@ import { ROUTES } from '../../navigation/constants';
  * { isSelected, isFocused, isDisabled },
  *
  * @prop {Object} stocktakeItem The realm transaction object for this invoice.
+ * @prop {Object} page the current routeName for this modal.
  *
  */
-export const StocktakeBatchModalComponent = ({ stocktakeItem, reduxDispatch }) => {
-  const usingReasons = useMemo(
-    () =>
-      UIDatabase.objects('NegativeAdjustmentReason').length > 0 &&
-      UIDatabase.objects('PositiveAdjustmentReason').length > 0,
-    []
-  );
-
+export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: reduxDispatch }) => {
   const initialState = {
-    page: usingReasons ? 'stocktakeBatchEditModalWithReasons' : 'stocktakeBatchEditModal',
+    page,
     pageObject: stocktakeItem,
   };
 
@@ -68,6 +65,7 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, reduxDispatch }) =
     PageActions,
     columns,
     getPageInfoColumns,
+    suppliers,
   } = state;
 
   const { stocktake = {} } = stocktakeItem;
@@ -79,6 +77,9 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, reduxDispatch }) =
       ? UIDatabase.objects('PositiveAdjustmentReason')
       : UIDatabase.objects('NegativeAdjustmentReason');
 
+  const onEditSupplier = value => dispatch(PageActions.editBatchSupplier(value, modalValue));
+  const onSelectSupplier = rowKey =>
+    dispatch(PageActions.openModal('selectItemBatchSupplier', rowKey));
   const onCloseModal = () => dispatch(PageActions.closeModal());
   const onApplyReason = ({ item }) => dispatch(PageActions.applyReason(item));
   const onAddBatch = () => dispatch(PageActions.addStocktakeBatch());
@@ -95,7 +96,9 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, reduxDispatch }) =
       reduxDispatch(PageActions.refreshRow(stocktakeItem.id, ROUTES.STOCKTAKE_EDITOR));
     });
   const onEditDate = (date, rowKey, columnKey) =>
-    dispatch(PageActions.editTransactionBatchExpiryDate(date, rowKey, columnKey));
+    dispatch(PageActions.editStocktakeBatchExpiryDate(date, rowKey, columnKey));
+  const onEditSellPrice = (newValue, rowKey) =>
+    dispatch(PageActions.editSellPrice(newValue, rowKey));
 
   const toggles = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), []);
 
@@ -109,6 +112,10 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, reduxDispatch }) =
         return onEditDate;
       case 'reasonTitle':
         return onEditReason;
+      case 'sellPriceString':
+        return onEditSellPrice;
+      case 'otherPartyName':
+        return onSelectSupplier;
       default:
         return null;
     }
@@ -180,13 +187,24 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, reduxDispatch }) =
         fullScreen={modalKey === MODAL_KEYS.ENFORCE_STOCKTAKE_REASON}
         isVisible={!!modalKey}
         onClose={onCloseModal}
+        title={getModalTitle(modalKey)}
       >
-        <GenericChoiceList
-          data={reasonsSelection}
-          highlightValue={(modalValue && modalValue.reasonTitle) || ''}
-          keyToDisplay="title"
-          onPress={onApplyReason}
-        />
+        {modalKey === MODAL_KEYS.SELECT_ITEM_BATCH_SUPPLIER ? (
+          <AutocompleteSelector
+            options={suppliers}
+            onSelect={onEditSupplier}
+            sortKeyString="name"
+            queryString="name contains[c] $0"
+            renderRightText={({ code }) => code}
+          />
+        ) : (
+          <GenericChoiceList
+            data={reasonsSelection}
+            highlightValue={(modalValue && modalValue.reasonTitle) || ''}
+            keyToDisplay="title"
+            onPress={onApplyReason}
+          />
+        )}
       </ModalContainer>
     </DataTablePageView>
   );
@@ -194,13 +212,23 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, reduxDispatch }) =
 
 StocktakeBatchModalComponent.propTypes = {
   stocktakeItem: PropTypes.object.isRequired,
-  reduxDispatch: PropTypes.func.isRequired,
+  page: PropTypes.string.isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => state;
-const mapDispatchToProps = dispatch => ({ reduxDispatch: dispatch });
+const mapStateToProps = state => {
+  const usingPaymentsModule = selectUsingPayments(state);
+  const usingReasons =
+    UIDatabase.objects('NegativeAdjustmentReason').length > 0 &&
+    UIDatabase.objects('PositiveAdjustmentReason').length > 0;
 
-export const StocktakeBatchModal = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(StocktakeBatchModalComponent);
+  if (usingReasons) {
+    if (usingPaymentsModule) return { page: 'stocktakeBatchEditModalWithReasonsAndPrices' };
+    return { page: 'stocktakeBatchEditModalWithReasons' };
+  }
+
+  if (usingPaymentsModule) return { page: 'stocktakeBatchEditModalWithPrices' };
+  return { page: 'stocktakeBatchEditModal' };
+};
+
+export const StocktakeBatchModal = connect(mapStateToProps)(StocktakeBatchModalComponent);

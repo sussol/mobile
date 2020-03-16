@@ -7,3 +7,4 @@ export { BottomConfirmModal } from './BottomConfirmModal';
 export { BottomModalContainer } from './BottomModalContainer';
 export { BottomTextEditor } from './BottomTextEditor';
 export { ItemDetails } from './ItemDetails';
+export { BottomCurrencyEditor } from './BottomCurrencyEditor';

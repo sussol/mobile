@@ -5,6 +5,7 @@
 
 import {
   Address,
+  Currency,
   Item,
   ItemBatch,
   ItemCategory,
@@ -22,6 +23,7 @@ import {
   NumberToReuse,
   Options,
   Report,
+  PaymentType,
   Period,
   PeriodSchedule,
   ProgramIndicator,
@@ -37,6 +39,11 @@ import {
   TransactionCategory,
   TransactionItem,
   Unit,
+  Prescriber,
+  InsurancePolicy,
+  InsuranceProvider,
+  Abbreviation,
+  ItemDirection,
   User,
 } from './DataTypes';
 
@@ -157,6 +164,7 @@ export const schema = {
     NumberToReuse,
     Options,
     Report,
+    PaymentType,
     Period,
     PeriodSchedule,
     ProgramIndicator,
@@ -172,9 +180,15 @@ export const schema = {
     TransactionCategory,
     TransactionItem,
     Unit,
+    Prescriber,
+    InsurancePolicy,
+    InsuranceProvider,
+    Abbreviation,
+    ItemDirection,
     User,
+    Currency,
   ],
-  schemaVersion: 11,
+  schemaVersion: 15,
 };
 
 export default schema;

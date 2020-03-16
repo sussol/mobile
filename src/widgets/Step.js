@@ -6,11 +6,11 @@
 
 import React, { useState, useEffect, memo } from 'react';
 import PropTypes from 'prop-types';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { PencilIcon, ChevronDownIcon } from './icons';
 
 import { SUSSOL_ORANGE } from '../globalStyles';
 import { programStrings, modalStrings } from '../localization';
@@ -95,9 +95,8 @@ export const Step = memo(props => {
   // Render a pencil on text editing or a down arrow for list selections.
   const EditIcon = () => {
     if (internalStatus === 'ERROR') return null;
-    const PencilIcon = <FontAwesome name="pencil" size={20} color="white" />;
-    const ArrowDownIcon = <Ionicons name="ios-arrow-down" size={20} color="white" />;
-    return <View>{type === 'input' ? PencilIcon : ArrowDownIcon}</View>;
+
+    return <View>{type === 'input' ? <PencilIcon /> : <ChevronDownIcon />}</View>;
   };
 
   // Render the error string if in an error state, the title if there is

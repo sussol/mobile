@@ -81,7 +81,7 @@ const localStyles = StyleSheet.create({
     fontFamily: APP_FONT_FAMILY,
   },
   itemText: {
-    flex: 1,
+    flex: 2,
     flexDirection: 'row',
     marginHorizontal: 10,
     marginVertical: 10,

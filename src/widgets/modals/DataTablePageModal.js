@@ -12,17 +12,18 @@ import { UIDatabase } from '../../database';
 import Settings from '../../settings/MobileAppSettings';
 import { getModalTitle, MODAL_KEYS } from '../../utilities/getModalTitle';
 
-import ModalContainer from './ModalContainer';
+import { ModalContainer } from './ModalContainer';
 import {
   TextEditor,
   AutocompleteSelector,
-  NewConfirmModal,
+  ConfirmForm,
   GenericChoiceList,
   MultiSelectList,
   ToggleSelector,
 } from '../modalChildren';
 
 import { ByProgramModal } from './ByProgramModal';
+import { CashTransactionModal } from './CashTransactionModal';
 import { RegimenDataModal } from './RegimenDataModal';
 import { StocktakeBatchModal } from './StocktakeBatchModal';
 
@@ -45,6 +46,7 @@ import { modalStrings } from '../../localization';
 const ADDITIONAL_MODAL_PROPS = {
   [MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM]: { noCancel: true, fullScreen: true },
   [MODAL_KEYS.ENFORCE_STOCKTAKE_REASON]: { noCancel: true, fullScreen: true },
+  [MODAL_KEYS.ENFORCE_REQUISITION_REASON]: { noCancel: true, fullScreen: true },
 };
 
 const DataTablePageModalComponent = ({
@@ -57,6 +59,8 @@ const DataTablePageModalComponent = ({
 }) => {
   const ModalContent = () => {
     switch (modalKey) {
+      case MODAL_KEYS.CREATE_CASH_TRANSACTION:
+        return <CashTransactionModal onConfirm={onSelect} />;
       case MODAL_KEYS.SELECT_ITEM:
         return (
           <AutocompleteSelector
@@ -88,6 +92,30 @@ const DataTablePageModalComponent = ({
           />
         );
       }
+      case MODAL_KEYS.SELECT_PRESCRIBER:
+        return (
+          <AutocompleteSelector
+            options={UIDatabase.objects('Prescriber')}
+            isOpen={isOpen}
+            placeholderText="Select a prescriber"
+            queryString="firstName BEGINSWITH[c] $0"
+            sortByString="firstName"
+            onSelect={onSelect}
+            renderLeftText={({ firstName, lastName }) => `${firstName} ${lastName}`}
+          />
+        );
+      case MODAL_KEYS.SELECT_PATIENT:
+        return (
+          <AutocompleteSelector
+            options={UIDatabase.objects('Patient')}
+            isOpen={isOpen}
+            placeholderText="Start typing to select a patient"
+            queryString="firstName BEGINSWITH[c] $0"
+            sortByString="firstName"
+            onSelect={onSelect}
+            renderLeftText={({ firstName, lastName }) => `${firstName} ${lastName}`}
+          />
+        );
 
       case MODAL_KEYS.SELECT_CUSTOMER:
         return (
@@ -148,7 +176,7 @@ const DataTablePageModalComponent = ({
 
       case MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM:
         return (
-          <NewConfirmModal
+          <ConfirmForm
             coverScreen
             noCancel
             isOpen={isOpen}
@@ -156,6 +184,21 @@ const DataTablePageModalComponent = ({
             onConfirm={onSelect}
           />
         );
+      case MODAL_KEYS.ENFORCE_REQUISITION_REASON:
+      case MODAL_KEYS.REQUISITION_REASON: {
+        const { reasonTitle } = currentValue;
+        const reasonsSelection = UIDatabase.objects('RequisitionReason');
+
+        return (
+          <GenericChoiceList
+            data={reasonsSelection}
+            highlightValue={reasonTitle}
+            keyToDisplay="title"
+            onPress={onSelect}
+          />
+        );
+      }
+
       case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
       case MODAL_KEYS.STOCKTAKE_REASON: {
         const { difference, reasonTitle } = currentValue;

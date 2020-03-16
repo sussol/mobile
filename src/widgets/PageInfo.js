@@ -183,7 +183,7 @@ const localStyles = StyleSheet.create({
     marginVertical: 1,
   },
   rightmostColumnContainer: {
-    flex: 2,
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'flex-start',
     marginRight: 5,

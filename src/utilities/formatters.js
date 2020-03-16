@@ -24,3 +24,13 @@ export const formatErrorItemNames = items => {
   }
   return itemsString;
 };
+
+/**
+ * Rounds a number to the provided number of digits. I.e.
+ * roundNumber(17.123, 2) = 17.12
+ *
+ * @param {Number} number           The number to round.
+ * @param {Number} fractionalDigits The number of digits to round to.
+ */
+export const roundNumber = (number, fractionalDigits) =>
+  Number(parseFloat(number).toFixed(fractionalDigits));

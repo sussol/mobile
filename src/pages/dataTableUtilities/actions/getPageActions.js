@@ -34,6 +34,11 @@ const stocktakeBatchEditModalWithReasons = {
   editStocktakeBatchCountedQuantity: editStocktakeBatchCountedQuantityWithReason,
 };
 
+const stocktakeBatchEditModalWithReasonsAndPrices = {
+  ...BasePageActions,
+  editStocktakeBatchCountedQuantity: editStocktakeBatchCountedQuantityWithReason,
+};
+
 /**
  * If actions need to be overriden for a particular routeName,
  * adding them here will pass that new set of actions to the
@@ -41,6 +46,7 @@ const stocktakeBatchEditModalWithReasons = {
  */
 const NON_DEFAULT_PAGE_ACTIONS = {
   stocktakeBatchEditModalWithReasons,
+  stocktakeBatchEditModalWithReasonsAndPrices,
 };
 
 /**

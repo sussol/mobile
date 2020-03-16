@@ -18,8 +18,8 @@ import { DataTablePageView, SearchBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { useSyncListener } from '../hooks';
 
-import { ROUTES } from '../navigation/constants';
 import { generalStrings } from '../localization';
+import { SupplierCreditActions } from '../actions/SupplierCreditActions';
 
 /**
  * Renders a mSupply mobile page with Items and their stock levels.
@@ -48,9 +48,12 @@ export const Stock = ({
   onDeselectRow,
   onFilterData,
   onSortColumn,
+  refund,
 }) => {
   //  Refresh data on retrieving item or itembatch records from sync.
   useSyncListener(refreshData, ['Item', 'ItemBatch']);
+
+  const refundCallback = React.useCallback(() => itemId => refund(itemId), []);
 
   const renderRow = useCallback(
     listItem => {
@@ -64,6 +67,7 @@ export const Stock = ({
           columns={columns}
           rowIndex={index}
           onPress={onSelectRow}
+          getCallback={refundCallback}
         />
       );
     },
@@ -106,13 +110,15 @@ export const Stock = ({
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) =>
-  getPageDispatchers(dispatch, ownProps, '', ROUTES.STOCK);
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  ...getPageDispatchers(dispatch, ownProps, '', 'stock'),
+  refund: rowKey => dispatch(SupplierCreditActions.createFromItem(rowKey)),
+});
 
 const mapStateToProps = state => {
   const { pages } = state;
-
   const { stock } = pages;
+
   return stock;
 };
 
@@ -136,4 +142,5 @@ Stock.propTypes = {
   onDeselectRow: PropTypes.func.isRequired,
   onFilterData: PropTypes.func.isRequired,
   onSortColumn: PropTypes.func.isRequired,
+  refund: PropTypes.func.isRequired,
 };

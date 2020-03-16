@@ -5,7 +5,7 @@
 export { DataTablePageReducer } from './reducer';
 export { COLUMN_TYPES, COLUMN_NAMES, COLUMN_KEYS } from './constants';
 export { recordKeyExtractor, getItemLayout } from './utilities';
-export { PageActions } from './actions';
+export { PageActions, DATA_SET, ACTIONS } from './actions';
 
 /* eslint-disable import/first */
 import getColumns from './getColumns';

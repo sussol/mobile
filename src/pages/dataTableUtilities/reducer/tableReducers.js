@@ -3,6 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+import { ROUTES } from '../../../navigation/constants';
 import { sortDataBy } from '../../../utilities';
 
 /**
@@ -39,15 +40,37 @@ export const filterData = (state, action) => {
     showIndicators,
   } = state;
   const { payload } = action;
+  const { route } = payload;
 
   const searchTerm = payload.searchTerm?.trim();
 
-  // Indicator filtering is performed on component re-render.
-  if (usingIndicators && showIndicators) {
-    return {
-      ...state,
-      searchTerm,
-    };
+  // Data filtering may be deferred to state-to-prop selectors.
+  switch (route) {
+    case ROUTES.CASH_REGISTER: {
+      return {
+        ...state,
+        searchTerm,
+      };
+    }
+    case ROUTES.SUPPLIER_REQUISITION: {
+      if (usingIndicators && showIndicators) {
+        return {
+          ...state,
+          searchTerm,
+        };
+      }
+      break;
+    }
+    case ROUTES.CUSTOMER_REQUISITION: {
+      if (usingIndicators && showIndicators) {
+        return {
+          ...state,
+          searchTerm,
+        };
+      }
+      break;
+    }
+    default:
   }
 
   const queryString = filterDataKeys.map(filterTerm => `${filterTerm} CONTAINS[c] $0`).join(' OR ');
@@ -128,6 +151,19 @@ export const refreshData = state => {
 };
 
 /**
+ * Override for refreshData for cash register. Filtering is deferred to state-to-prop
+ * selectors.
+ */
+export const refreshCashRegister = state => {
+  const { backingData, sortKey, isAscending } = state;
+
+  const backingDataArray = backingData.slice();
+  const data = sortKey ? sortDataBy(backingDataArray, sortKey, isAscending) : backingDataArray;
+
+  return { ...state, data };
+};
+
+/**
  * Override for refreshData for pages which use a finalised toggle,
  * which will display either finalised records, or unfinalised.
  */
@@ -157,6 +193,12 @@ export const toggleShowFinalised = state => {
   const sortedData = sortKey ? sortDataBy(filteredData, sortKey, isAscending) : filteredData;
 
   return { ...state, data: sortedData, showFinalised: newShowFinalisedState, searchTerm: '' };
+};
+
+export const toggleTransactionType = state => {
+  const { transactionType } = state;
+  const newTransactionType = transactionType === 'payment' ? 'receipt' : 'payment';
+  return { ...state, transactionType: newTransactionType };
 };
 
 export const toggleIndicators = state => {
@@ -226,11 +268,13 @@ export const addRecord = state => {
 export const TableReducerLookup = {
   toggleStockOut,
   toggleShowFinalised,
+  toggleTransactionType,
   addRecord,
   toggleIndicators,
   selectIndicator,
   hideOverStocked,
   refreshData,
+  refreshCashRegister,
   filterData,
   sortData,
   refreshDataWithFinalisedToggle,

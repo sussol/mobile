@@ -7,6 +7,7 @@ import { authStrings, modalStrings, buttonStrings } from '../localization';
 
 export const MODAL_KEYS = {
   CONFIRM_USER_PASSWORD: 'confirmUserPassword',
+  CREATE_CASH_TRANSACTION: 'createCashTransaction',
   SYNC_URL_EDIT: 'syncUrlEdit',
   SYNC_PASSWORD_EDIT: 'syncPasswordEdit',
   STOCKTAKE_COMMENT_EDIT: 'stocktakeCommentEdit',
@@ -17,6 +18,9 @@ export const MODAL_KEYS = {
   SELECT_ITEM: 'selectItem',
   SELECT_MONTH: 'selectMonth',
   SELECT_CUSTOMER: 'selectCustomer',
+  SELECT_PATIENT: 'selectPatient',
+  SELECT_PRESCRIBER: 'selectPrescriber',
+  SELECT_ITEM_BATCH_SUPPLIER: 'selectItemBatchSupplier',
   SELECT_INTERNAL_SUPPLIER: 'selectInternalSupplier',
   SELECT_EXTERNAL_SUPPLIER: 'selectExternalSupplier',
   SELECT_LANGUAGE: 'selectLanguage',
@@ -25,7 +29,9 @@ export const MODAL_KEYS = {
   VIEW_REGIMEN_DATA: 'viewRegimenData',
   EDIT_STOCKTAKE_BATCH: 'editStocktakeBatch',
   STOCKTAKE_OUTDATED_ITEM: 'stocktakeOutdatedItems',
+  REQUISITION_REASON: 'requisitionReason',
   STOCKTAKE_REASON: 'stocktakeReason',
+  ENFORCE_REQUISITION_REASON: 'enforceRequisitionReason',
   ENFORCE_STOCKTAKE_REASON: 'enforceStocktakeReason',
   SELECT_MASTER_LISTS: 'selectMasterList',
 };
@@ -34,6 +40,12 @@ export const getModalTitle = modalKey => {
   switch (modalKey) {
     default:
       return '';
+    case MODAL_KEYS.CREATE_CASH_TRANSACTION:
+      return modalStrings.create_cash_transaction;
+    case MODAL_KEYS.SELECT_PRESCRIBER:
+      return 'Select a prescriber';
+    case MODAL_KEYS.SELECT_PATIENT:
+      return 'Select a patient';
     case MODAL_KEYS.SELECT_LANGUAGE:
       return modalStrings.select_a_language;
     case MODAL_KEYS.SELECT_MONTH:
@@ -52,11 +64,14 @@ export const getModalTitle = modalKey => {
       return modalStrings.edit_their_reference;
     case MODAL_KEYS.SELECT_CUSTOMER:
       return modalStrings.search_for_the_customer;
+    case MODAL_KEYS.SELECT_ITEM_BATCH_SUPPLIER:
     case MODAL_KEYS.SELECT_EXTERNAL_SUPPLIER:
     case MODAL_KEYS.SELECT_INTERNAL_SUPPLIER:
       return modalStrings.search_for_the_supplier;
     case MODAL_KEYS.VIEW_REGIMEN_DATA:
       return buttonStrings.view_regimen_data;
+    case MODAL_KEYS.REQUISITION_REASON:
+    case MODAL_KEYS.ENFORCE_REQUISITION_REASON:
     case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
     case MODAL_KEYS.STOCKTAKE_REASON:
       return modalStrings.select_a_reason;

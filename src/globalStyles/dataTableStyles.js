@@ -215,6 +215,8 @@ export const dataTableStyles = {
     justifyContent: 'center',
     flexDirection: 'row',
     alignItems: 'center',
+    borderRightWidth: 2,
+    borderColor: '#ecf3fc',
   },
 };
 

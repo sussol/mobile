@@ -8,9 +8,10 @@ import PropTypes from 'prop-types';
 
 import { Client as BugsnagClient } from 'bugsnag-react-native';
 
-import { ConfirmModal } from './ConfirmModal';
+import { ConfirmForm } from '../modalChildren';
 
 import { modalStrings } from '../../localization';
+import { ModalContainer } from './ModalContainer';
 
 const bugsnagClient = new BugsnagClient();
 
@@ -41,6 +42,7 @@ export const FinaliseModal = props => {
   // Wrapped in try-catch block so that finalise methods in schema can throw an error
   // as last line of defence
   const tryFinalise = () => {
+    if (onClose) onClose();
     runWithLoadingIndicator(() => {
       try {
         if (record) {
@@ -53,7 +55,6 @@ export const FinaliseModal = props => {
             database.save(recordType, record);
           });
         }
-        if (onClose) onClose();
       } catch (error) {
         // Fling off to bugsnag so we can be notified finalise isn't
         // behaving
@@ -63,16 +64,18 @@ export const FinaliseModal = props => {
   };
 
   return (
-    <ConfirmModal
-      isOpen={isOpen}
-      questionText={errorText || modalStrings[finaliseText]}
-      confirmText={modalStrings.confirm}
-      cancelText={errorText ? modalStrings.got_it : modalStrings.cancel}
-      onConfirm={!errorText ? tryFinalise : null}
-      onCancel={() => {
-        if (onClose) onClose();
-      }}
-    />
+    <ModalContainer fullScreen={true} isVisible={isOpen}>
+      <ConfirmForm
+        isOpen={isOpen}
+        questionText={errorText || modalStrings[finaliseText]}
+        confirmText={modalStrings.confirm}
+        cancelText={errorText ? modalStrings.got_it : modalStrings.cancel}
+        onConfirm={!errorText ? tryFinalise : null}
+        onCancel={() => {
+          if (onClose) onClose();
+        }}
+      />
+    </ModalContainer>
   );
 };
 
