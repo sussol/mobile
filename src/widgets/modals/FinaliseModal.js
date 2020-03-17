@@ -11,7 +11,7 @@ import { Client as BugsnagClient } from 'bugsnag-react-native';
 import { ConfirmForm } from '../modalChildren';
 
 import { modalStrings } from '../../localization';
-import ModalContainer from './ModalContainer';
+import { ModalContainer } from './ModalContainer';
 
 const bugsnagClient = new BugsnagClient();
 
