@@ -96,7 +96,7 @@ const SupplierCreditComponent = ({
         getItemLayout={getItemLayout}
         columns={columns}
       />
-      <FlexRow flex={1} alignItems="flex-end" justifyContent="flex-end">
+      <FlexRow alignItems="flex-end" justifyContent="flex-end">
         <PageButton text={modalStrings.confirm} onPress={onSave} style={{ margin: 7 }} />
       </FlexRow>
     </View>
