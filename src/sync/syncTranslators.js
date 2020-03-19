@@ -68,6 +68,8 @@ export const RECORD_TYPES = new SyncTranslator({
   TransactionBatch: 'trans_line',
   User: 'user',
   Unit: 'unit',
+  Pref: 'pref',
+  PrefBlob: 'pref_blob',
   Prescriber: 'clinician',
   ItemDirection: 'item_direction',
   Abbreviation: 'abbreviation',
