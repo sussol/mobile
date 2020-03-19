@@ -193,6 +193,14 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: ['name', 'number_to_use'],
       canBeBlank: [],
     },
+    Pref: {
+      cannotBeBlank: ['ID', 'store_ID', 'item', 'data'],
+      canBeBlank: ['user_ID', 'network_ID'],
+    },
+    PrefBlob: {
+      cannotBeBlank: ['ID', 'store_id', 'item', 'type', 'blob'],
+      canBeBlank: ['user_ID', 'network_id'],
+    },
     Requisition: {
       cannotBeBlank: ['status', 'type', 'daysToSupply'],
       canBeBlank: ['date_entered', 'serial_number', 'requester_reference', 'programID', 'periodID'],
@@ -630,6 +638,27 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       const numberToReuse = database.update(recordType, internalRecord);
       // Attach the number to reuse to the number sequence.
       numberSequence.addNumberToReuse(numberToReuse);
+      break;
+    }
+    case 'Pref': {
+      const { item } = record;
+      if (item === 'store_preferences') {
+        try {
+          const recordData = JSON.parse(record?.data);
+          const recordKeys = Object.keys(recordData);
+          recordKeys.forEach(key => {
+            const prefData = JSON.stringify(recordData[key] ?? {});
+            internalRecord = { id: key, data: prefData };
+            database.update(recordType, internalRecord);
+          });
+        } catch (error) {
+          // Silently ignore malformed prefs.
+        }
+      }
+      break;
+    }
+    case 'PrefBlob': {
+      // Ignore pref_blob records.
       break;
     }
     case 'Report': {
