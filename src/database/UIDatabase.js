@@ -262,9 +262,14 @@ class UIDatabase {
     return this.database.write(...args);
   }
 
+  getPreference(key) {
+    const preference = this.database.get('Pref', key);
+    return preference?.data ?? '';
+  }
+
   getSetting(key) {
     const setting = this.database.get('Setting', key, 'key');
-    return (setting && setting.value) || '';
+    return setting?.value ?? '';
   }
 }
 
