@@ -35,6 +35,7 @@ export { Options } from './Options';
 export { PaymentType } from './PaymentType';
 export { Period } from './Period';
 export { PeriodSchedule } from './PeriodSchedule';
+export { Pref } from './Pref';
 export { ProgramIndicator } from './ProgramIndicator';
 export { Report } from './Report';
 export { Requisition } from './Requisition';
