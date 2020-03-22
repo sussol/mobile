@@ -4,7 +4,7 @@
  */
 
 import { UIDatabase } from '../database';
-import { STORE_PREF_KEYS } from '../settings';
+import { PREF_KEYS } from '../database/DataTypes/Pref';
 import { SYNC_TRANSACTION_COMPLETE } from '../sync/constants';
 
 /**
@@ -24,29 +24,20 @@ import { SYNC_TRANSACTION_COMPLETE } from '../sync/constants';
  * }
  */
 
-const checkModule = key => {
-  const value = UIDatabase.getPreference(key) ?? UIDatabase.getSetting(key);
-  try {
-    const usingModule = JSON.parse(value.toLowerCase());
-    return usingModule;
-  } catch (error) {
-    return false;
-  }
-};
-
 const initialState = () => {
   const usingInsurance = UIDatabase.objects('InsuranceProvider').length > 0;
   const usingPaymentTypes = UIDatabase.objects('PaymentType').length > 0;
   const usingPrescriptionCategories = UIDatabase.objects('PrescriptionCategory').length > 0;
   const usingSupplierCreditCategories = UIDatabase.objects('SupplierCreditCategory').length > 0;
 
-  const usingDashboard = checkModule(STORE_PREF_KEYS.DASHBOARD_MODULE);
-  const usingDispensary = checkModule(STORE_PREF_KEYS.DISPENSARY_MODULE);
-  const usingVaccines = checkModule(STORE_PREF_KEYS.VACCINE_MODULE);
-  const usingCashRegister = checkModule(STORE_PREF_KEYS.CASH_REGISTER_MODULE) && usingPaymentTypes;
-  const usingPayments = checkModule(STORE_PREF_KEYS.PAYMENT_MODULE);
-  const usingPatientTypes = checkModule(STORE_PREF_KEYS.PATIENT_TYPES);
-  const usingHideSnapshotColumn = checkModule(STORE_PREF_KEYS.HIDE_SNAPSHOT_COLUMN);
+  const usingDashboard = UIDatabase.getPreference(PREF_KEYS.DASHBOARD_MODULE);
+  const usingDispensary = UIDatabase.getPreference(PREF_KEYS.DISPENSARY_MODULE);
+  const usingVaccines = UIDatabase.getPreference(PREF_KEYS.VACCINE_MODULE);
+  const usingCashRegister =
+    UIDatabase.getPreference(PREF_KEYS.CASH_REGISTER_MODULE) && usingPaymentTypes;
+  const usingPayments = UIDatabase.getPreference(PREF_KEYS.PAYMENT_MODULE);
+  const usingPatientTypes = UIDatabase.getPreference(PREF_KEYS.PATIENT_TYPES);
+  const usingHideSnapshotColumn = UIDatabase.getPreference(PREF_KEYS.HIDE_SNAPSHOT_COLUMN);
 
   const usingModules = usingDashboard || usingDispensary || usingVaccines || usingCashRegister;
 
