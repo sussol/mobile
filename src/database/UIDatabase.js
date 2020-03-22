@@ -264,7 +264,7 @@ class UIDatabase {
 
   getPreference(key) {
     const preference = this.database.get('Pref', key);
-    return preference?.data ?? '';
+    return preference?.value;
   }
 
   getSetting(key) {
