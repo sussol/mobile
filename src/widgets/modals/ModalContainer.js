@@ -165,6 +165,7 @@ const localStyles = StyleSheet.create({
     fontFamily: APP_FONT_FAMILY,
     color: 'white',
     fontSize: 20,
+    textAlign: 'center',
   },
   closeButtonContainer: {
     flex: 1,
