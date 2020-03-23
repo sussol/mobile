@@ -70,6 +70,22 @@ export const CashTransactionModal = ({ onConfirm }) => {
     [name, amount, reason, isCashIn, paymentType]
   );
 
+  const isModalOpen = useMemo(
+    () =>
+      isNameModalOpen ||
+      isAmountModalOpen ||
+      isPaymentTypeModalOpen ||
+      isReasonModalOpen ||
+      isDescriptionModalOpen,
+    [
+      isNameModalOpen,
+      isAmountModalOpen,
+      isPaymentTypeModalOpen,
+      isReasonModalOpen,
+      isDescriptionModalOpen,
+    ]
+  );
+
   const onCreate = useCallback(() => {
     if (amount.value > balance.value && !isCashIn) {
       ToastAndroid.show(dispensingStrings.unable_to_create_withdrawl, ToastAndroid.LONG);
@@ -205,6 +221,21 @@ export const CashTransactionModal = ({ onConfirm }) => {
     [isCashIn, reason]
   );
 
+  const ConfirmButton = useCallback(
+    () =>
+      isModalOpen || (
+        <PageButton
+          text={buttonStrings.confirm}
+          onPress={onCreate}
+          isDisabled={!isValidTransaction}
+          disabledColor={WARM_GREY}
+          style={localStyles.okButton}
+          textStyle={localStyles.pageButtonTextStyle}
+        />
+      ),
+    [isModalOpen]
+  );
+
   return (
     <>
       <FlexRow justifyContent="center">
@@ -246,6 +277,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
           <PencilIcon />
         </View>
       </TouchableOpacity>
+      <ConfirmButton />
       <BottomCurrencyEditor
         isOpen={isAmountModalOpen}
         buttonText={buttonStrings.confirm}
@@ -284,15 +316,6 @@ export const CashTransactionModal = ({ onConfirm }) => {
         onChangeText={onChangeText}
         onConfirm={onSubmitDescription}
       />
-      <PageButton
-        text={buttonStrings.confirm}
-        onPress={onCreate}
-        isDisabled={!isValidTransaction}
-        disabledColor={WARM_GREY}
-        style={localStyles.okButton}
-        textStyle={localStyles.pageButtonTextStyle}
-      />
-
       <ModalContainer
         title={dispensingStrings.choose_a_name}
         isVisible={isNameModalOpen}
