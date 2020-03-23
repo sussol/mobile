@@ -9,6 +9,7 @@ export const DISPENSARY_ACTIONS = {
   SWITCH: 'Dispensary/switch',
   REFRESH: 'Dispensary/refresh',
   LOOKUP_RECORD: 'Dispensary/lookupRecord',
+  CANCEL_LOOKUP_RECORD: 'Dispensary/cancelLookupRecord',
 };
 
 const filter = searchTerm => ({ type: DISPENSARY_ACTIONS.FILTER, payload: { searchTerm } });
@@ -20,10 +21,14 @@ const switchDataSet = () => ({ type: DISPENSARY_ACTIONS.SWITCH });
 const refresh = () => ({ type: DISPENSARY_ACTIONS.REFRESH });
 
 const lookupRecord = () => ({ type: DISPENSARY_ACTIONS.LOOKUP_RECORD });
+
+const cancelLookupRecord = () => ({ type: DISPENSARY_ACTIONS.CANCEL_LOOKUP_RECORD });
+
 export const DispensaryActions = {
   filter,
   sort,
   switchDataSet,
   refresh,
   lookupRecord,
+  cancelLookupRecord,
 };

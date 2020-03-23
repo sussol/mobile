@@ -76,6 +76,11 @@ export const DispensaryReducer = (state = initialState(), action) => {
     case DISPENSARY_ACTIONS.LOOKUP_RECORD: {
       return { ...state, isLookupModalOpen: true };
     }
+
+    case DISPENSARY_ACTIONS.CANCEL_LOOKUP_RECORD: {
+      return { ...state, isLookupModalOpen: false };
+    }
+
     default:
       return state;
   }
