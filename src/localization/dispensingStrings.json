@@ -55,6 +55,8 @@
     "patient_detail": "Patient Detail",
     "item_details": "Item Details",
     "new_patient": "New patient",
+    "lookup_patient": "Lookup patient",
+    "lookup_prescriber": "Lookup prescriber",
     "unable_to_create_withdrawl": "Unable to create a withdrawl for more than the current balance.",
     "inpatient": "Inpatient",
     "outpatient": "Outpatient"
