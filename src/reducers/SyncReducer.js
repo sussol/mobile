@@ -11,6 +11,8 @@ import {
   SET_SYNC_MESSAGE,
   SET_SYNC_COMPLETION_TIME,
   SET_SYNC_IS_SYNCING,
+  OPEN_SYNC_MODAL,
+  CLOSE_SYNC_MODAL,
 } from '../sync/constants';
 import { createReducer, REHYDRATE } from '../utilities';
 
@@ -21,6 +23,7 @@ const defaultState = {
   progress: 0,
   isSyncing: false,
   lastSyncTime: 0,
+  syncModalIsOpen: false,
 };
 
 const stateChanges = {
@@ -48,6 +51,12 @@ const stateChanges = {
   }),
   [SET_SYNC_COMPLETION_TIME]: ({ lastSyncTime }) => ({
     lastSyncTime,
+  }),
+  [OPEN_SYNC_MODAL]: () => ({
+    syncModalIsOpen: true,
+  }),
+  [CLOSE_SYNC_MODAL]: () => ({
+    syncModalIsOpen: false,
   }),
   [REHYDRATE]: ({ sync: persistedSyncState = defaultState }) => {
     // Keep any error message and last sync time persistent across sessions.

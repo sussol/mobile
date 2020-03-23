@@ -7,6 +7,7 @@ import Realm from 'realm';
 import { complement } from 'set-manipulator';
 
 import { addBatchToParent, createRecord, getTotal } from '../utilities';
+import { modalStrings } from '../../localization';
 
 /**
  * A stocktake.
@@ -46,9 +47,13 @@ export class Stocktake extends Realm.Object {
    */
   addBatchIfUnique(database, stocktakeBatch) {
     // TODO: rename method to addBatch.
-    addBatchToParent(stocktakeBatch, this, () =>
-      createRecord(database, 'StocktakeItem', this, stocktakeBatch.itemBatch.item)
-    );
+    const { itemBatch } = stocktakeBatch ?? {};
+    const { item } = itemBatch ?? {};
+    if (item) {
+      addBatchToParent(stocktakeBatch, this, () =>
+        createRecord(database, 'StocktakeItem', this, item)
+      );
+    }
   }
 
   /**
@@ -76,7 +81,10 @@ export class Stocktake extends Realm.Object {
     }
 
     // Add a new stocktake item for each new item id not currently in the stocktake.
-    const itemIdsToAdd = complement(itemIds, this.items.map(stocktakeItem => stocktakeItem.itemId));
+    const itemIdsToAdd = complement(
+      itemIds,
+      this.items.map(stocktakeItem => stocktakeItem.itemId)
+    );
 
     const items = database.objects('Item');
     itemIdsToAdd.forEach(itemId => {
@@ -220,6 +228,16 @@ export class Stocktake extends Realm.Object {
     return this.additions;
   }
 
+  get canFinalise() {
+    const finaliseStatus = { success: true, message: modalStrings.finalise_stocktake };
+    if (!this.hasSomeCountedItems) {
+      finaliseStatus.success = false;
+      finaliseStatus.errorMessage = modalStrings.stocktake_no_counted_items;
+    }
+
+    return finaliseStatus;
+  }
+
   /**
    * Finalises this stocktake and creates transactions to apply the stock changes to inventory.
    *
@@ -285,7 +303,10 @@ export class Stocktake extends Realm.Object {
    */
   addItemsFromProgram(database) {
     if (!this.program) return false;
-    this.setItemsByID(database, this.program.items.map(masterListItem => masterListItem.item.id));
+    this.setItemsByID(
+      database,
+      this.program.items.map(masterListItem => masterListItem.item.id)
+    );
     return true;
   }
 }

@@ -3,14 +3,19 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import { NavigationActions, StackActions } from 'react-navigation';
+import { BackHandler } from 'react-native';
+import { batch } from 'react-redux';
+import { NavigationActions, StackActions } from '@react-navigation/core';
+
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
-import { createRecord } from '../database/utilities/index';
-import { navStrings } from '../localization/index';
-import { SETTINGS_KEYS } from '../settings/index';
-import { getCurrentRouteName } from './selectors';
+import { createRecord } from '../database/utilities';
+import { navStrings } from '../localization';
+import { SETTINGS_KEYS } from '../settings';
 import { ROUTES } from './constants';
+import { RootNavigator } from './RootNavigator';
+import { PrescriptionActions } from '../actions/PrescriptionActions';
+import { FinaliseActions } from '../actions/FinaliseActions';
 
 /**
  * Navigation Action Creators.
@@ -29,6 +34,92 @@ import { ROUTES } from './constants';
  * - `params` (See: Pages/pageContainer and pages/index FINALISABLE_PAGES for requirements)
  *
  */
+
+export const goBack = () => dispatch => {
+  if (!RootNavigator.canGoBack()) BackHandler.exitApp();
+  else {
+    UIDatabase.write(() => {
+      const prescriptions = UIDatabase.objects('Prescription').filtered('status != "finalised"');
+      UIDatabase.delete('Transaction', prescriptions);
+
+      batch(() => {
+        dispatch({
+          ...NavigationActions.back(),
+          payload: {
+            prevRouteName: RootNavigator.getPrevRouteName(),
+          },
+        });
+        dispatch(PrescriptionActions.deletePrescription());
+      });
+    });
+  }
+};
+
+/**
+ * Action creator which first creates a prescription, and then navigates to it
+ * for editing.
+ *
+ * @param {Object} patient     The other party of the invoice (Customer)
+ * @param {Object} currentUser    The currently logged in user.
+ */
+export const createPrescription = patientID => (dispatch, getState) => {
+  const { user } = getState();
+  const { currentUser } = user;
+
+  const patient = UIDatabase.get('Name', patientID);
+
+  let newPrescription;
+  UIDatabase.write(() => {
+    newPrescription = createRecord(
+      UIDatabase,
+      'CustomerInvoice',
+      patient,
+      currentUser,
+      'dispensary'
+    );
+  });
+
+  dispatch(gotoPrescription(newPrescription));
+};
+
+export const goToCashRegister = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.CASH_REGISTER,
+    params: { title: navStrings.cash_register },
+  });
+
+export const gotoPrescription = prescription =>
+  NavigationActions.navigate({
+    routeName: ROUTES.PRESCRIPTION,
+    params: {
+      title: `${navStrings.prescription} ${prescription.serialNumber}`,
+      transaction: prescription,
+      patient: prescription.otherParty,
+      pageObject: prescription,
+    },
+  });
+
+export const gotoPrescriptions = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.PRESCRIPTIONS,
+    params: { title: 'Prescriptions' },
+  });
+
+export const gotoDispensingPage = () => dispatch => {
+  UIDatabase.write(() => {
+    UIDatabase.delete(
+      'Transaction',
+      UIDatabase.objects('Prescription').filtered('status != $0', 'finalised')
+    );
+  });
+
+  dispatch(
+    NavigationActions.navigate({
+      routeName: ROUTES.DISPENSARY,
+      params: { title: navStrings.dispensary },
+    })
+  );
+};
 
 /**
  * Pushes the Settings page route onto the main navigation stack.
@@ -64,13 +155,21 @@ export const gotoRealmExplorer = () =>
 /**
  * Pushes the Customer Invoices route onto the main navigation stack.
  */
-export const gotoCustomerInvoices = () =>
-  NavigationActions.navigate({
-    routeName: ROUTES.CUSTOMER_INVOICES,
-    params: {
-      title: navStrings.customer_invoices,
-    },
+export const gotoCustomerInvoices = () => dispatch => {
+  UIDatabase.write(() => {
+    UIDatabase.delete(
+      'Transaction',
+      UIDatabase.objects('Prescription').filtered('status != $0', 'finalised')
+    );
   });
+
+  dispatch(
+    NavigationActions.navigate({
+      routeName: ROUTES.CUSTOMER_INVOICES,
+      params: { title: navStrings.customer_invoices },
+    })
+  );
+};
 
 /**
  * Pushes the Customer Requisitions route onto the main navigation stack.
@@ -132,10 +231,8 @@ export const gotoStock = () =>
  *
  * @param {Object} requisition The requisition to pass to the next screen.
  */
-export const gotoStocktakeManagePage = (stocktakeName, stocktake) => (dispatch, getState) => {
-  const { nav } = getState();
-
-  const currentRouteName = getCurrentRouteName(nav);
+export const gotoStocktakeManagePage = (stocktakeName, stocktake) => dispatch => {
+  const currentRouteName = RootNavigator.getCurrentRouteName();
 
   const navigationActionCreator =
     currentRouteName === ROUTES.STOCKTAKES ? NavigationActions.navigate : StackActions.replace;
@@ -143,7 +240,6 @@ export const gotoStocktakeManagePage = (stocktakeName, stocktake) => (dispatch, 
   const navigationParameters = {
     routeName: ROUTES.STOCKTAKE_MANAGER,
     params: {
-      title: stocktake ? navStrings.manage_stocktake : navStrings.new_stocktake,
       stocktakeName,
       stocktake,
       pageObject: stocktake,
@@ -158,9 +254,8 @@ export const gotoStocktakeManagePage = (stocktakeName, stocktake) => (dispatch, 
  *
  * @param {Object} stocktake  The requisition to navigate to.
  */
-export const gotoStocktakeEditPage = stocktake => (dispatch, getState) => {
-  const { nav } = getState();
-  const currentRouteName = getCurrentRouteName(nav);
+export const gotoStocktakeEditPage = stocktake => dispatch => {
+  const currentRouteName = RootNavigator.getCurrentRouteName();
 
   // If navigating from the stocktakesPage, go straight to the StocktakeEditPage. Otherwise,
   // replace the current page as the user is coming from StocktakeManagePage.
@@ -172,7 +267,10 @@ export const gotoStocktakeEditPage = stocktake => (dispatch, getState) => {
     params: { title: navStrings.stocktake, stocktake, pageObject: stocktake },
   };
 
-  dispatch(navigationActionCreator(navigationParameters));
+  batch(() => {
+    dispatch(navigationActionCreator(navigationParameters));
+    dispatch(FinaliseActions.setFinaliseItem(stocktake));
+  });
 };
 
 /**
@@ -205,7 +303,10 @@ export const gotoCustomerInvoice = transaction => dispatch => {
     },
   });
 
-  dispatch(navigationAction);
+  batch(() => {
+    dispatch(navigationAction);
+    dispatch(FinaliseActions.setFinaliseItem(transaction));
+  });
 };
 
 /**
@@ -218,7 +319,7 @@ export const gotoCustomerInvoice = transaction => dispatch => {
  * @param {Object} dispatch    Redux dispatch method.
  */
 export const gotoSupplierInvoice = transaction => dispatch => {
-  const { isConfirmed } = transaction;
+  const { isSupplierInvoice, isConfirmed } = transaction;
 
   // Supplier invoices are `new` or `finalised`. Ensure any `confirmed` invoices are
   // `finalised` before navigating.
@@ -229,16 +330,22 @@ export const gotoSupplierInvoice = transaction => dispatch => {
     });
   }
 
+  const invoiceTitle = `${navStrings.invoice} ${transaction.serialNumber}`;
+  const creditTitle = `${navStrings.supplier_credit} ${transaction.serialNumber}`;
+
   const navigationAction = NavigationActions.navigate({
     routeName: ROUTES.SUPPLIER_INVOICE,
     params: {
-      title: `${navStrings.invoice} ${transaction.serialNumber}`,
+      title: isSupplierInvoice ? invoiceTitle : creditTitle,
       transaction,
       pageObject: transaction,
     },
   });
 
-  dispatch(navigationAction);
+  batch(() => {
+    dispatch(navigationAction);
+    dispatch(FinaliseActions.setFinaliseItem(transaction));
+  });
 };
 
 /**
@@ -246,30 +353,42 @@ export const gotoSupplierInvoice = transaction => dispatch => {
  *
  * @param {Object} requisition  SupplierRequisition to navigate to.
  */
-export const gotoSupplierRequisition = requisition =>
-  NavigationActions.navigate({
-    routeName: ROUTES.SUPPLIER_REQUISITION,
-    params: {
-      title: `${navStrings.requisition} ${requisition.serialNumber}`,
-      requisition,
-      pageObject: requisition,
-    },
+export const gotoSupplierRequisition = requisition => dispatch => {
+  batch(() => {
+    dispatch(
+      NavigationActions.navigate({
+        routeName: ROUTES.SUPPLIER_REQUISITION,
+        params: {
+          title: `${navStrings.requisition} ${requisition.serialNumber}`,
+          requisition,
+          pageObject: requisition,
+        },
+      })
+    );
+    dispatch(FinaliseActions.setFinaliseItem(requisition));
   });
+};
 
 /**
  * Navigate to the CustomerRequisitionPage.
  *
  * @param {Object} requisition  Customer requisition to navigate to.
  */
-export const gotoCustomerRequisition = requisition =>
-  NavigationActions.navigate({
-    routeName: ROUTES.CUSTOMER_REQUISITION,
-    params: {
-      title: `${navStrings.requisition} ${requisition.serialNumber}`,
-      requisition,
-      pageObject: requisition,
-    },
+export const gotoCustomerRequisition = requisition => dispatch => {
+  batch(() => {
+    dispatch(
+      NavigationActions.navigate({
+        routeName: ROUTES.CUSTOMER_REQUISITION,
+        params: {
+          title: `${navStrings.requisition} ${requisition.serialNumber}`,
+          requisition,
+          pageObject: requisition,
+        },
+      })
+    );
+    dispatch(FinaliseActions.setFinaliseItem(requisition));
   });
+};
 
 /**
  * Action creator for creating, and navigating to a Supplier Requsition.

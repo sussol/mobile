@@ -1,5 +1,6 @@
 import Realm from 'realm';
 
+import currency from '../../localization/currency';
 import { createRecord } from '../utilities';
 
 /**
@@ -27,6 +28,10 @@ export class StocktakeBatch extends Realm.Object {
     if (this.snapshotNumberOfPacks === 0 && this.itemBatch.numberOfPacks === 0) {
       database.delete('ItemBatch', this.itemBatch);
     }
+  }
+
+  get otherPartyName() {
+    return this.supplier?.name ?? '';
   }
 
   /**
@@ -132,6 +137,14 @@ export class StocktakeBatch extends Realm.Object {
   }
 
   /**
+   * Returns a string representing the units for this stocktake batch.
+   * @return {string} the unit for this stocktake batch, or N/A if none has been assigned.
+   */
+  get unitString() {
+    return this.itemBatch?.unitString;
+  }
+
+  /**
    * Returns an indicator that this batches reason/option state is valid.
    * Valid being: negative differences require a negativeInventoryAdjustment
    * option. Positive differences require a positiveInventoryAdjustment option
@@ -177,12 +190,10 @@ export class StocktakeBatch extends Realm.Object {
    * @param {Realm} database App-wide database interface.
    */
   removeReason(database) {
-    if (this.option && this.difference) {
-      database.write(() => {
-        this.option = null;
-        database.save('StocktakeBatch', this);
-      });
-    }
+    database.write(() => {
+      this.option = null;
+      database.save('StocktakeBatch', this);
+    });
   }
 
   /**
@@ -225,6 +236,8 @@ export class StocktakeBatch extends Realm.Object {
     // Update the item batch details.
     this.itemBatch.batch = this.batch;
     this.itemBatch.expiryDate = this.expiryDate;
+    this.itemBatch.sellPrice = this.sellPrice;
+    this.itemBatch.supplier = this.supplier;
 
     // Make inventory adjustments if there is a difference to apply.
     if (this.difference !== 0) {
@@ -245,7 +258,8 @@ export class StocktakeBatch extends Realm.Object {
         database,
         'TransactionBatch',
         transactionItem,
-        this.itemBatch
+        this.itemBatch,
+        isAddition
       );
 
       // Apply difference from stocktake to actual stock on hand levels. Whether stock is increased
@@ -266,6 +280,14 @@ export class StocktakeBatch extends Realm.Object {
   toString() {
     return `Stocktake batch representing ${this.itemBatch}`;
   }
+
+  get costPriceString() {
+    return currency(this.costPrice ?? 0, { formatWithSymbol: true }).format();
+  }
+
+  get sellPriceString() {
+    return currency(this.sellPrice ?? 0, { formatWithSymbol: true }).format();
+  }
 }
 
 StocktakeBatch.schema = {
@@ -284,6 +306,7 @@ StocktakeBatch.schema = {
     countedNumberOfPacks: { type: 'double', optional: true },
     sortIndex: { type: 'int', optional: true },
     option: { type: 'Options', optional: true },
+    supplier: { type: 'Name', optional: true },
   },
 };
 

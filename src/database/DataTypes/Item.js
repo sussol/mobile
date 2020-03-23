@@ -5,6 +5,9 @@
 
 import Realm from 'realm';
 
+import { UIDatabase } from '..';
+
+import { generalStrings } from '../../localization';
 import { getTotal } from '../utilities';
 import { dailyUsage } from '../../utilities/dailyUsage';
 
@@ -162,7 +165,7 @@ export class Item extends Realm.Object {
    * @return {string} the unit for this item, or N/A if none has been assigned.
    */
   get unitString() {
-    return (this.unit && this.unit.units) || 'N/A';
+    return this.unit?.units ?? generalStrings.not_available;
   }
 
   /**
@@ -185,12 +188,45 @@ export class Item extends Realm.Object {
   }
 
   /**
+   * Returns an array of all direction expansions related to this
+   * item.
+   */
+  getDirectionExpansions = database =>
+    this.directions.sorted('priority').reduce((acc, value) => {
+      const expansion = value.getExpansion(database);
+      if (expansion) return [...acc, expansion];
+      return acc;
+    }, []);
+
+  /**
    * Get string representation of item.
    *
    * @returns  {string}
    */
   toString() {
     return `${this.code} - ${this.name}`;
+  }
+
+  /**
+   * Stock on date
+   *
+   * @param {Date} date
+   * @return  {number}
+   */
+  geTotalQuantityOnDate(date) {
+    if (date >= new Date()) return this.totalQuantity;
+
+    const allMovements = UIDatabase.objects('TransactionBatch')
+      .filtered('itemBatch.item.id == $0', this.id)
+      .filtered('numberOfPacks > 0')
+      .filtered('transaction.confirmDate > $0', date);
+
+    const sumMovements = movements =>
+      movements.reduce((sum, { totalQuantity }) => sum + totalQuantity, 0);
+    const additions = sumMovements(allMovements.filtered('type == $0', 'stock_in'));
+    const reductions = sumMovements(allMovements.filtered('type == $0', 'stock_out'));
+
+    return this.totalQuantity + reductions - additions;
   }
 }
 
@@ -210,6 +246,7 @@ Item.schema = {
     isVisible: { type: 'bool', default: false },
     crossReferenceItem: { type: 'Item', optional: true },
     unit: { type: 'Unit', optional: true },
+    directions: { type: 'linkingObjects', objectType: 'ItemDirection', property: 'item' },
   },
 };
 

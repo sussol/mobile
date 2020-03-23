@@ -170,6 +170,14 @@ export class StocktakeItem extends Realm.Object {
   }
 
   /**
+   * Returns a string representing the units for this stocktake item.
+   * @return {string} the unit for this stocktake item, or N/A if none has been assigned.
+   */
+  get unitString() {
+    return this.item?.unitString;
+  }
+
+  /**
    * Returns an indicator that all batches related to this item have a correct
    * reason/option applied. A correct reason being a `positiveInventoryAdjustment`
    * for positive differences and vice versa for negative differences and no reason
@@ -282,8 +290,17 @@ export class StocktakeItem extends Realm.Object {
    * @param  {Realm}  database
    */
   createNewBatch(database) {
+    const inventoryAdjustmentName = database
+      .objects('Name')
+      .filtered('type == "inventory_adjustment"')[0];
     const batchString = `stocktake_${this.stocktake.serialNumber}`;
-    const itemBatch = createRecord(database, 'ItemBatch', this.item, batchString);
+    const itemBatch = createRecord(
+      database,
+      'ItemBatch',
+      this.item,
+      batchString,
+      inventoryAdjustmentName
+    );
     return createRecord(database, 'StocktakeBatch', this, itemBatch, true);
   }
 

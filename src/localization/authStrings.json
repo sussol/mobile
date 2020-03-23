@@ -7,14 +7,19 @@
     "user_name": "User Name",
     "email": "E-mail Address",
     "invalid_username_or_password": "Invalid username or password",
-    "warning_sync_edit": "WARNING:\nThis will effect syncing for this store.\nMake sure you know what you doing!"
+    "warning_sync_edit": "WARNING:\nThis will effect syncing for this store.\nMake sure you know what you doing!",
+    "incompatible_server": "The mSupply Server you're trying to sync with is not compatible with your current version. Please contact your administrator."
   },
   "fr": {
     "logging_in": "Connexion en cours",
     "login": "Se connecter",
     "password": "Mot de passe",
+    "repeat_password": "Veuillez saisir de nouveau le mot de passe",
     "user_name": "Identifiant",
-    "invalid_username_or_password": "Identifiant ou mot de passe invalide"
+    "email": "Adresse courriel",
+    "invalid_username_or_password": "Identifiant ou mot de passe invalide",
+    "warning_sync_edit": "AVERTISSEMENT:\nCeci affectera la synchronisation de ce dépôt.\nAssurez-vous de savoir ce que vous faites!",
+    "incompatible_server": "Le serveur mSupply avec lequel vous essayez de vous synchroniser n'est pas compatible avec votre version actuelle. Veuillez contacter votre administrateur."
   },
   "gil": {
     "logging_in": "Taninga bwa e na uki",
@@ -33,5 +38,26 @@
     "login": "ເຂົ້າ​ລະ​ບົບ",
     "password": "ລະຫັດຜ່ານ",
     "user_name": "ຊື່​ຜູ້​ນຳ​ໃຊ້"
+  },
+  "pt": {
+    "logging_in": "Logando...",
+    "login": "Logar",
+    "password": "Senha",
+    "repeat_password": "Por favor, reinsira a senha",
+    "user_name": "Nome de usuário",
+    "email": "E-mail",
+    "invalid_username_or_password": "Nome de usuário ou senha inválidos",
+    "warning_sync_edit": "ATENÇÃO:\nEssa ação irá afetar a sincronização desse local.\nVocê está certo disso?"
+  },
+  "es": {
+    "logging_in": "Iniciando sesión..",
+    "login": "Iniciar sesión",
+    "password": "Contraseña",
+    "repeat_password": "Por favor, re ingresar la contraseña",
+    "user_name": "Nombre de usuario",
+    "email": "E-mail",
+    "invalid_username_or_password": "Nombre de usuario o contraseña inválido",
+    "warning_sync_edit": "ADVERTENCIA:\nEsto afectará la sincronización de esta tienda.\n¡Asegúrese de saber lo que está haciendo!",
+    "incompatible_server": "El servidor mSupply con el que intenta sincronizar no es compatible con su versión actual. Por favor contacte a su administrador."
   }
 }

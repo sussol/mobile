@@ -21,6 +21,7 @@ import { ROUTES } from '../navigation/constants';
 import { useNavigationFocus, useSyncListener } from '../hooks';
 import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
 import { getItemLayout, PageActions, getPageDispatchers } from './dataTableUtilities';
+import { selectCurrentUser } from '../selectors/user';
 
 import globalStyles from '../globalStyles';
 import { buttonStrings, modalStrings, generalStrings } from '../localization';
@@ -185,14 +186,14 @@ export const SupplierRequisitions = ({
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = dispatch => {
   const usingPrograms = getAllPrograms(Settings, UIDatabase).length > 0;
   const newRequisitionModalKey = usingPrograms
     ? MODAL_KEYS.PROGRAM_REQUISITION
     : MODAL_KEYS.SELECT_INTERNAL_SUPPLIER;
 
   return {
-    ...getPageDispatchers(dispatch, ownProps, 'Requisition', ROUTES.SUPPLIER_REQUISITIONS),
+    ...getPageDispatchers(dispatch, 'Requisition', ROUTES.SUPPLIER_REQUISITIONS),
     onFilterData: value =>
       dispatch(PageActions.filterDataWithFinalisedToggle(value, ROUTES.SUPPLIER_REQUISITIONS)),
     refreshData: () =>
@@ -205,7 +206,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 const mapStateToProps = state => {
   const { pages } = state;
   const { supplierRequisitions } = pages;
-  return supplierRequisitions;
+  const currentUser = selectCurrentUser(state);
+
+  return { ...supplierRequisitions, currentUser };
 };
 
 export const SupplierRequisitionsPage = connect(

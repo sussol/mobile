@@ -29,17 +29,17 @@ import {
   selectCurrentIndicatorCode,
   selectIndicatorTableColumns,
   selectIndicatorTableRows,
-} from './dataTableUtilities/selectors/indicatorSelectors';
+} from '../selectors/indicators';
+
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
 import { ROUTES } from '../navigation/constants';
 
-import { useRecordListener } from '../hooks';
-
 import globalStyles from '../globalStyles';
 import { buttonStrings, modalStrings, programStrings, generalStrings } from '../localization';
-import { UIDatabase } from '../database/index';
-import { SETTINGS_KEYS } from '../settings/index';
+import { UIDatabase } from '../database';
+import { SETTINGS_KEYS } from '../settings';
+import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
 /**
  * Renders a mSupply mobile page with a supplier requisition loaded for editing
@@ -55,7 +55,6 @@ import { SETTINGS_KEYS } from '../settings/index';
  * { isSelected, isDisabled },
  */
 const SupplierRequisition = ({
-  runWithLoadingIndicator,
   dispatch,
   data,
   dataState,
@@ -74,7 +73,6 @@ const SupplierRequisition = ({
   searchTerm,
   columns,
   getPageInfoColumns,
-  refreshData,
   onSelectNewItem,
   onEditComment,
   onFilterData,
@@ -95,10 +93,17 @@ const SupplierRequisition = ({
   onSetRequestedToSuggested,
   onAddMasterList,
   onApplyMasterLists,
+  onEditRequiredQuantityWithReason,
+  onEditRequisitionReason,
+  onApplyReason,
   route,
 }) => {
-  // Listen for changes to this pages requisition. Refreshing data on side effects i.e. finalizing.
-  useRecordListener(() => dispatch(refreshData), pageObject, 'Requisition');
+  const runWithLoadingIndicator = useLoadingIndicator();
+
+  const usingReasons = !!UIDatabase.objects('RequisitionReason').length;
+  const onAddMasterLists = React.useCallback(selected => onApplyMasterLists(pageObject, selected), [
+    pageObject,
+  ]);
 
   const { isFinalised, comment, theirRef, program, daysToSupply } = pageObject;
 
@@ -115,10 +120,12 @@ const SupplierRequisition = ({
   const getCallback = (colKey, propName) => {
     switch (colKey) {
       case 'requiredQuantity':
-        return onEditRequiredQuantity;
+        return usingReasons ? onEditRequiredQuantityWithReason : onEditRequiredQuantity;
       case 'remove':
         if (propName === 'onCheck') return onCheck;
         return onUncheck;
+      case 'reasonTitle':
+        return onEditRequisitionReason;
       default:
         // Indicators functionality generates columns at run-time from indicator attribute
         // data. If known column key not found, assume column is a dynamic indicators column.
@@ -135,7 +142,10 @@ const SupplierRequisition = ({
       case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
         return onEditComment;
       case MODAL_KEYS.SELECT_MASTER_LISTS:
-        return onApplyMasterLists;
+        return onAddMasterLists;
+      case MODAL_KEYS.ENFORCE_REQUISITION_REASON:
+      case MODAL_KEYS.REQUISITION_REASON:
+        return onApplyReason;
       default:
         return null;
     }
@@ -178,7 +188,6 @@ const SupplierRequisition = ({
       style={globalStyles.leftButton}
       text={buttonStrings.add_master_list_items}
       onPress={onAddMasterList}
-      onSelect={onApplyMasterLists}
       isDisabled={isFinalised}
     />
   );
@@ -362,7 +371,7 @@ const SupplierRequisition = ({
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = dispatch => {
   const thisStoreID = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_NAME_ID);
   const thisStore = UIDatabase.get('Name', thisStoreID);
   const hasMasterLists = thisStore?.masterLists?.length > 0;
@@ -371,15 +380,15 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     ToastAndroid.show(modalStrings.supplier_no_masterlist_available, ToastAndroid.LONG);
 
   return {
-    ...getPageDispatchers(dispatch, ownProps, 'Requisition', ROUTES.SUPPLIER_REQUISITION),
+    ...getPageDispatchers(dispatch, 'Requisition', ROUTES.SUPPLIER_REQUISITION),
     [hasMasterLists ? null : 'onAddMasterList']: noMasterLists,
   };
 };
 
 const mapStateToProps = state => {
-  const { pages } = state;
-  const supplierRequisition = pages[ROUTES.SUPPLIER_REQUISITION];
-  const { usingIndicators, showIndicators } = supplierRequisition;
+  const { pages = {} } = state;
+  const { supplierRequisition = {} } = pages;
+  const { usingIndicators = false, showIndicators = false } = supplierRequisition;
 
   if (usingIndicators && showIndicators) {
     return {
@@ -390,7 +399,7 @@ const mapStateToProps = state => {
       columns: selectIndicatorTableColumns(supplierRequisition),
     };
   }
-  return pages[ROUTES.SUPPLIER_REQUISITION];
+  return supplierRequisition;
 };
 
 export const SupplierRequisitionPage = connect(
@@ -415,12 +424,10 @@ SupplierRequisition.propTypes = {
   searchTerm: PropTypes.string.isRequired,
   columns: PropTypes.array.isRequired,
   keyExtractor: PropTypes.func.isRequired,
-  runWithLoadingIndicator: PropTypes.func.isRequired,
   dataState: PropTypes.object.isRequired,
   modalKey: PropTypes.string.isRequired,
   pageObject: PropTypes.object.isRequired,
   getPageInfoColumns: PropTypes.func.isRequired,
-  routeName: PropTypes.string.isRequired,
   hasSelection: PropTypes.bool.isRequired,
   showAll: PropTypes.bool,
   usingIndicators: PropTypes.bool,
@@ -428,7 +435,6 @@ SupplierRequisition.propTypes = {
   currentIndicatorCode: PropTypes.string,
   indicatorCodes: PropTypes.array,
   modalValue: PropTypes.any,
-  refreshData: PropTypes.func.isRequired,
   onSelectNewItem: PropTypes.func.isRequired,
   onEditComment: PropTypes.func.isRequired,
   onFilterData: PropTypes.func.isRequired,
@@ -450,4 +456,7 @@ SupplierRequisition.propTypes = {
   onAddMasterList: PropTypes.func.isRequired,
   onApplyMasterLists: PropTypes.func.isRequired,
   route: PropTypes.string.isRequired,
+  onEditRequiredQuantityWithReason: PropTypes.func.isRequired,
+  onEditRequisitionReason: PropTypes.func.isRequired,
+  onApplyReason: PropTypes.func.isRequired,
 };

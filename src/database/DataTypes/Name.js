@@ -36,12 +36,45 @@ export class Name extends Realm.Object {
   }
 
   /**
-   * Get number of transactions associated with this name.
-   *
-   * @return  {number}
+   * Get first line of billing address.
    */
-  get numberOfTransactions() {
-    return this.transactions.length;
+  get addressOne() {
+    return this.billingAddress?.line1 ?? '';
+  }
+
+  /**
+   * Get second line of billing address.
+   */
+  get addressTwo() {
+    return this.billingAddress?.line2 ?? '';
+  }
+
+  /**
+   * The credit sources for this name are the literal customer credit type transactions, as well
+   * as any customer invoices which are cancellations. These cancelled customer invoices are
+   * inverted customer invoices, which are equivallent to a customer credit.
+   */
+  get creditSources() {
+    const queryString = 'type == $0 || (type == $1 && isCancellation == $2) && outstanding != 0';
+    return this.transactions.filtered(queryString, 'customer_credit', 'customer_invoice', true);
+  }
+
+  /**
+   * Debit sources are customer invoices which are not cancellations - all outgoings.
+   */
+  get debitSources() {
+    const queryString = 'type == $0 && isCancellation == $1 && outstanding != 0';
+    return this.transactions.filtered(queryString, 'customer_invoice', false);
+  }
+
+  /**
+   * Returns the available credit for this Name.
+   */
+  get availableCredit() {
+    const sumOfCredits = this.creditSources.sum('outstanding');
+    const sumOfDebits = this.debitSources.sum('outstanding');
+
+    return Math.abs(sumOfCredits + sumOfDebits);
   }
 
   /**
@@ -73,27 +106,6 @@ export class Name extends Realm.Object {
   }
 
   /**
-   * Add transaction to name.
-   *
-   * @param  {Transaction}  transaction
-   */
-  addTransaction(transaction) {
-    this.transactions.push(transaction);
-  }
-
-  /**
-   * Add transaction to name, if it has not already been added.
-   *
-   * @param  {Transaction}  transaction
-   */
-  addTransactionIfUnique(transaction) {
-    if (this.transactions.filtered('id == $0', transaction.id).length > 0) {
-      return;
-    }
-    this.addTransaction(transaction);
-  }
-
-  /**
    * Get string representation of name.
    */
   toString() {
@@ -108,17 +120,26 @@ Name.schema = {
     id: 'string',
     name: { type: 'string', default: 'placeholderName' },
     code: { type: 'string', default: 'placeholderCode' },
+    dateOfBirth: { type: 'date', optional: true },
     phoneNumber: { type: 'string', optional: true },
+    country: { type: 'string', optional: true },
     billingAddress: { type: 'Address', optional: true },
     emailAddress: { type: 'string', optional: true },
     type: { type: 'string', default: 'placeholderType' },
+    masterLists: { type: 'list', objectType: 'MasterList' },
+    transactions: { type: 'linkingObjects', objectType: 'Transaction', property: 'otherParty' },
+    isVisible: { type: 'bool', default: false },
+    supplyingStoreId: { type: 'string', optional: true },
+    firstName: { type: 'string', optional: true },
+    lastName: { type: 'string', optional: true },
+    isActive: { type: 'bool', optional: true },
     isCustomer: { type: 'bool', default: false },
     isSupplier: { type: 'bool', default: false },
     isManufacturer: { type: 'bool', default: false },
-    masterLists: { type: 'list', objectType: 'MasterList' },
-    transactions: { type: 'list', objectType: 'Transaction' },
-    isVisible: { type: 'bool', default: false },
-    supplyingStoreId: { type: 'string', optional: true },
+    isPatient: { type: 'bool', default: false },
+    policies: { type: 'linkingObjects', objectType: 'InsurancePolicy', property: 'patient' },
+    female: { type: 'bool', default: false },
+    thisStoresPatient: { type: 'bool', default: false },
   },
 };
 

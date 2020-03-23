@@ -9,9 +9,7 @@ import { MODAL_KEYS } from '../../utilities/getModalTitle';
 import { debounce } from '../../utilities/underscoreMethods';
 import { gotoStocktakeManagePage } from '../../navigation/actions';
 
-export const getPageDispatchers = (dispatch, props, dataType, route) => {
-  const { pageObject } = props;
-
+export const getPageDispatchers = (dispatch, dataType, route) => {
   const dispatches = {
     // Editing of PageInfo
     onEditName: value => dispatch(BasePageActions.editPageObjectName(value, dataType, route)),
@@ -35,17 +33,14 @@ export const getPageDispatchers = (dispatch, props, dataType, route) => {
       dispatch(BasePageActions.toggleIndicators(route));
       dispatch(BasePageActions.refreshData(route));
     },
+    onToggleTransactionType: () => dispatch(BasePageActions.toggleTransactionType(route)),
     onSelectIndicator: indicatorCode =>
       dispatch(BasePageActions.selectIndicator(indicatorCode, route)),
     onShowOverStocked: () => dispatch(BasePageActions.showOverStocked(route)),
     onHideOverStocked: () => dispatch(BasePageActions.hideOverStocked(route)),
     onDeselectAll: () => dispatch(BasePageActions.deselectAll(route)),
     onSetRequestedToSuggested: () => dispatch(BasePageActions.setRequestedToSuggested(route)),
-    onSortColumn: debounce(
-      columnKey => dispatch(BasePageActions.sortData(columnKey, route)),
-      300,
-      true
-    ),
+    onSortColumn: columnKey => dispatch(BasePageActions.sortData(columnKey, route)),
 
     onEditIndicatorValue: (value, rowKey, columnKey) =>
       dispatch(BasePageActions.editIndicatorValue(value, rowKey, columnKey, route)),
@@ -57,8 +52,13 @@ export const getPageDispatchers = (dispatch, props, dataType, route) => {
       dispatch(BasePageActions.openModal(MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM, route)),
     onEditReason: rowKey =>
       dispatch(BasePageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey, route)),
+    onEditRequisitionReason: rowKey =>
+      dispatch(BasePageActions.openModal(MODAL_KEYS.REQUISITION_REASON, rowKey, route)),
+    onNewCashTransaction: () =>
+      dispatch(BasePageActions.openModal(MODAL_KEYS.CREATE_CASH_TRANSACTION, route)),
     onNewCustomerInvoice: () =>
       dispatch(BasePageActions.openModal(MODAL_KEYS.SELECT_CUSTOMER, route)),
+    onNewPrescription: () => dispatch(BasePageActions.openModal(MODAL_KEYS.SELECT_PATIENT, route)),
     onCloseModal: () => dispatch(BasePageActions.closeModal(route)),
 
     // Modal callbacks
@@ -70,16 +70,19 @@ export const getPageDispatchers = (dispatch, props, dataType, route) => {
     onAddTransactionItem: item => dispatch(BasePageActions.addItem(item, 'TransactionItem', route)),
     onAddStocktakeItem: item => dispatch(BasePageActions.addItem(item, 'StocktakeItem', route)),
     onAddRequisitionItem: item => dispatch(BasePageActions.addItem(item, 'RequisitionItem', route)),
+    onAddCashTransaction: item => dispatch(BasePageActions.addCashTransaction(item, route)),
     onSelectNewItem: () => dispatch(BasePageActions.openModal(MODAL_KEYS.SELECT_ITEM, route)),
 
     // Master list
     onAddMasterList: () =>
       dispatch(BasePageActions.openModal(MODAL_KEYS.SELECT_MASTER_LISTS, route)),
-    onApplyMasterLists: selected =>
+    onApplyMasterLists: (selected, pageObject) =>
       dispatch(BasePageActions.addMasterListItems(selected, pageObject, route)),
 
     // Navigation
-    onManageStocktake: name => dispatch(gotoStocktakeManagePage(name, pageObject, route)),
+    onManageStocktake: (name, pageObject) => {
+      dispatch(gotoStocktakeManagePage(name, pageObject, route));
+    },
 
     // Row selections
     onSelectRow: ({ id }) => dispatch(BasePageActions.selectOneRow(id, route)),
@@ -93,6 +96,12 @@ export const getPageDispatchers = (dispatch, props, dataType, route) => {
     onDeleteBatches: () => dispatch(BasePageActions.deleteSelectedBatches(dataType, route)),
 
     // Editable cell callbacks
+    onEditTransactionBatchName: (newValue, rowKey) =>
+      dispatch(BasePageActions.editTransactionBatchName(newValue, rowKey, route)),
+    onEditRequiredQuantityWithReason: (newValue, rowKey) =>
+      dispatch(
+        BasePageActions.editRequisitionItemRequiredQuantityWithReason(newValue, rowKey, route)
+      ),
     onEditRequiredQuantity: (newValue, rowKey) =>
       dispatch(BasePageActions.editRequisitionItemRequiredQuantity(newValue, rowKey, route)),
     onEditTotalQuantity: (newValue, rowKey) =>
@@ -103,6 +112,9 @@ export const getPageDispatchers = (dispatch, props, dataType, route) => {
       dispatch(BasePageActions.editTransactionBatchExpiryDate(date, rowKey, route)),
     onEditBatch: rowKey =>
       dispatch(BasePageActions.openModal(MODAL_KEYS.EDIT_STOCKTAKE_BATCH, rowKey, route)),
+    onEditSellPrice: (newValue, rowKey) =>
+      dispatch(BasePageActions.editSellPrice(newValue, rowKey, route)),
+    dispatch,
   };
 
   return dispatches;

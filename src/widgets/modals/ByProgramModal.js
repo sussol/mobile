@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { ToggleBar, PageButton, Step } from '..';
 import { AutocompleteSelector, TextEditor } from '../modalChildren';
-import ModalContainer from './ModalContainer';
+import { ModalContainer } from './ModalContainer';
 
 import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
 
@@ -174,7 +174,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
       <TextEditor text={name} onEndEditing={value => dispatch(setName(value))} />
     );
     return (
-      <ModalContainer isOpen={isModalOpen} onClose={onCloseModal} fullScreen>
+      <ModalContainer isVisible={isModalOpen} onClose={onCloseModal} fullScreen>
         {currentKey !== 'name' ? <Selector /> : <Editor />}
       </ModalContainer>
     );

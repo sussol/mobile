@@ -14,19 +14,37 @@ const { THIS_STORE_NAME_ID } = SETTINGS_KEYS;
 const translateToCoreDatabaseType = type => {
   switch (type) {
     case 'CustomerInvoice':
+    case 'Prescription':
     case 'SupplierInvoice':
+    case 'Receipt':
+    case 'CustomerCredit':
+    case 'Payment':
+    case 'CashTransaction':
+    case 'SupplierTransaction':
       return 'Transaction';
+    case 'CashTransactionName':
     case 'Customer':
     case 'Supplier':
     case 'InternalSupplier':
     case 'ExternalSupplier':
+    case 'Patient':
       return 'Name';
+    case 'CashTransactionReason':
+      return 'Options';
     case 'RequestRequisition':
     case 'ResponseRequisition':
       return 'Requisition';
+    case 'RequisitionReason':
     case 'NegativeAdjustmentReason':
     case 'PositiveAdjustmentReason':
       return 'Options';
+    case 'Policy':
+      return 'InsurancePolicy';
+    case 'Provider':
+      return 'InsuranceProvider';
+    case 'PrescriptionCategory':
+    case 'SupplierCreditCategory':
+      return 'TransactionCategory';
     default:
       return type;
   }
@@ -101,20 +119,67 @@ class UIDatabase {
       case 'CustomerInvoice':
         // Only show invoices generated from requisitions once finalised.
         return results.filtered(
-          'type == "customer_invoice" AND (linkedRequisition == null OR status == "finalised")'
+          'type == $0 AND (linkedRequisition == $1 OR status == $2)',
+          'customer_invoice',
+          null,
+          'finalised'
         );
+      case 'SupplierTransaction': {
+        const queryString =
+          // eslint-disable-next-line no-multi-str
+          '((type == $0 AND mode == $2) OR (type == $1 AND status == $3))\
+           AND otherParty.type != $4';
+        return results.filtered(
+          queryString,
+          'supplier_invoice',
+          'supplier_credit',
+          'store',
+          'finalised',
+          'inventory_adjustment'
+        );
+      }
       case 'SupplierInvoice':
         return results.filtered(
-          'type == "supplier_invoice" AND otherParty.type != "inventory_adjustment"'
+          'type == $0 AND mode == $1 AND otherParty.type != $2',
+          'supplier_invoice',
+          'store',
+          'inventory_adjustment'
         );
+      case 'Receipt':
+        return results.filtered('type == $0', 'receipt');
+      case 'Payment':
+        return results.filtered('type == $0', 'payment');
+      case 'CashTransaction':
+        return results.filtered('type == $0 OR type == $1', 'receipt', 'payment');
+      case 'CashTransactionName':
+        return results
+          .filtered('isVisible == true && id != $0', thisStoreNameId)
+          .filtered('isSupplier == true || isCustomer == true || isPatient == true');
+      case 'CashTransactionReason':
+        return results.filtered('type == $0', 'newCashOutTransaction');
+      case 'CustomerCredit':
+        return results.filtered('type == $0', 'customer_credit');
+      case 'Policy':
+        return results.filtered(
+          'insuranceProvider.isActive == $0 && expiryDate > $1',
+          true,
+          new Date()
+        );
+      case 'Provider':
+        return results.filtered('isActive == $0', true);
       case 'Customer':
         return results.filtered(
-          'isVisible == true AND isCustomer == true AND id != $0',
+          'isVisible == true AND isCustomer == true AND id != $0 AND isPatient == false',
           thisStoreNameId
         );
       case 'Supplier':
         return results.filtered(
           'isVisible == true AND isSupplier == true AND id != $0',
+          thisStoreNameId
+        );
+      case 'Patient':
+        return results.filtered(
+          'isVisible == true AND isPatient == true AND id != $0',
           thisStoreNameId
         );
       case 'InternalSupplier':
@@ -134,6 +199,20 @@ class UIDatabase {
         return results.filtered('type == $0 && isActive == true', 'negativeInventoryAdjustment');
       case 'PositiveAdjustmentReason':
         return results.filtered('type == $0 && isActive == true', 'positiveInventoryAdjustment');
+      case 'Prescription':
+        return results.filtered(
+          'type == $0 AND otherParty.type == $1 AND (linkedRequisition == $2 OR status == $3)',
+          'customer_invoice',
+          'patient',
+          null,
+          'finalised'
+        );
+      case 'PrescriptionCategory':
+        return results.filtered('type == $0', 'prescription');
+      case 'SupplierCreditCategory':
+        return results.filtered('type == $0', 'supplier_credit');
+      case 'RequisitionReason':
+        return results.filtered('type == $0 && isActive == true', 'requisitionLineVariance');
       default:
         return results;
     }

@@ -11,14 +11,18 @@ const recordTypesSynced = [
   'IndicatorValue',
   'ItemBatch',
   'Message',
+  'Name',
   'NumberSequence',
   'NumberToReuse',
+  'Prescriber',
   'Requisition',
   'RequisitionItem',
   'Stocktake',
   'StocktakeBatch',
   'Transaction',
   'TransactionBatch',
+  'InsurancePolicy',
+  'IndicatorValue',
 ];
 
 /**
@@ -83,6 +87,7 @@ export class SyncQueue {
           } else {
             existingSyncOutRecord.changeTime = new Date().getTime();
             existingSyncOutRecord.changeType = changeType;
+            existingSyncOutRecord.recordType = recordType;
             this.database.save('SyncOut', existingSyncOutRecord);
           }
           break;

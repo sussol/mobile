@@ -8,6 +8,8 @@
 import React, { useCallback, useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
 
+import { MODALS } from '../constants';
+
 import { DataTablePageView } from '..';
 import { UIDatabase } from '../../database';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../DataTable';
@@ -51,7 +53,7 @@ const stateInitialiser = requisition => ({
   customData: requisition.parsedCustomData,
   data: requisition.parsedCustomData.regimenData,
   keyExtractor: item => item.code,
-  columns: getColumns('regimenDataModal'),
+  columns: getColumns(MODALS.REGIMEN_DATA),
 });
 
 /**

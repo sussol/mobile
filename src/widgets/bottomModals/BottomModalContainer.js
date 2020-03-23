@@ -35,7 +35,7 @@ export const BottomModalContainer = ({
       backdrop={backdrop}
       isOpen={isOpen}
       {...modalProps}
-      style={localStyles.modalStyle}
+      style={{ ...localStyles.modalStyle, ...modalStyle }}
     >
       <View style={localStyles.containerStyle}>{children}</View>
     </Modal>

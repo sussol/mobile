@@ -15,6 +15,8 @@ import programStringsJSON from './programStrings.json';
 import syncStringsJSON from './syncStrings.json';
 import tableStringsJSON from './tableStrings.json';
 import validationStringsJSON from './validationStrings.json';
+import formInputStringsJSON from './formInputStrings.json';
+import dispensingStringsJSON from './dispensingStrings.json';
 
 export const authStrings = new LocalizedStrings(authStringsJSON);
 export const buttonStrings = new LocalizedStrings(buttonStringsJSON);
@@ -27,11 +29,15 @@ export const programStrings = new LocalizedStrings(programStringsJSON);
 export const syncStrings = new LocalizedStrings(syncStringsJSON);
 export const tableStrings = new LocalizedStrings(tableStringsJSON);
 export const validationStrings = new LocalizedStrings(validationStringsJSON);
+export const formInputStrings = new LocalizedStrings(formInputStringsJSON);
+export const dispensingStrings = new LocalizedStrings(dispensingStringsJSON);
 
 export const LANGUAGE_CODES = {
   ENGLISH: 'gb',
   KIRIBATI: 'gil',
   FRENCH: 'fr',
+  PORTUGUESE: 'pt',
+  SPANISH: 'es',
   TETUM: 'tl',
   LAOS: 'la',
 };
@@ -40,6 +46,8 @@ export const LANGUAGE_NAMES = {
   [LANGUAGE_CODES.ENGLISH]: 'English',
   [LANGUAGE_CODES.KIRIBATI]: 'te taetae ni Kiribati',
   [LANGUAGE_CODES.FRENCH]: 'French',
+  [LANGUAGE_CODES.PORTUGUESE]: 'Portuguese',
+  [LANGUAGE_CODES.SPANISH]: 'Spanish',
   [LANGUAGE_CODES.TETUM]: 'Tetum',
   [LANGUAGE_CODES.LAOS]: 'Laos',
 };
@@ -49,6 +57,8 @@ export const LANGUAGE_CHOICE = [
   { code: LANGUAGE_CODES.FRENCH, name: LANGUAGE_NAMES[LANGUAGE_CODES.FRENCH] },
   { code: LANGUAGE_CODES.KIRIBATI, name: LANGUAGE_NAMES[LANGUAGE_CODES.KIRIBATI] },
   { code: LANGUAGE_CODES.LAOS, name: LANGUAGE_NAMES[LANGUAGE_CODES.LAOS] },
+  { code: LANGUAGE_CODES.PORTUGUESE, name: LANGUAGE_NAMES[LANGUAGE_CODES.PORTUGUESE] },
+  { code: LANGUAGE_CODES.SPANISH, name: LANGUAGE_NAMES[LANGUAGE_CODES.SPANISH] },
   { code: LANGUAGE_CODES.TETUM, name: LANGUAGE_NAMES[LANGUAGE_CODES.TETUM] },
 ];
 

@@ -6,6 +6,8 @@
 const sortKeyToType = {
   itemCode: 'string',
   itemName: 'string',
+  batch: 'string',
+  dateOfBirth: 'date',
   availableQuantity: 'number',
   totalQuantity: 'number',
   expiryDate: 'date',
@@ -26,6 +28,15 @@ const sortKeyToType = {
   difference: 'number',
   stockOnHand: 'number',
   suppliedQuantity: 'number',
+  firstName: 'string',
+  lastName: 'string',
+  registrationCode: 'string',
+  invoiceNumber: 'number',
+  returnAmount: 'number',
+  total: 'number',
+  reasonTitle: 'string',
+  confirmDate: 'date',
+  type: 'string',
 };
 
 /**
@@ -41,8 +52,8 @@ export const sortDataBy = (data, sortKey, isAscending = true, sortDataType) => {
 
   switch (sortType) {
     case 'string':
-      if (isAscending) return [...data.sort((a, b) => a[sortKey].localeCompare(b[sortKey]))];
-      return [...data.sort((a, b) => b[sortKey].localeCompare(a[sortKey]))];
+      if (isAscending) return [...data.sort((a, b) => a[sortKey]?.localeCompare(b[sortKey]))];
+      return [...data.sort((a, b) => b[sortKey]?.localeCompare(a[sortKey]))];
     case 'number':
       // Casts to number to cover cases where the property is a string (e.g. |serialNumber|).
       if (isAscending) return [...data.sort((a, b) => Number(a[sortKey]) - Number(b[sortKey]))];

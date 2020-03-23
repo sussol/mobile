@@ -160,12 +160,4 @@ const localStyles = StyleSheet.create({
     fontSize: 20,
     fontFamily: APP_FONT_FAMILY,
   },
-  itemText: {
-    marginHorizontal: 2,
-    marginVertical: 8,
-  },
-  resultRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
 });

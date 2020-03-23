@@ -9,8 +9,37 @@
     "repeat_password_required": "Enter the repeat password",
     "username_required": "Enter the username"
   },
-  "fr": {},
+  "fr": {
+    "email_required": "Saisir une addresse courriel",
+    "email_valid": "Saisir une addresse courriel valide",
+    "password_contains_spaces": "Le mot de passe ne peut contenir des espaces",
+    "password_length_invalid": "Le mot de passe doit avoir entre 8-32 caractères",
+    "password_match_repeat": "Mot de passe & la confirmation du mot de passe doivent correspondre",
+    "password_required": "Saisissez le mot de passe",
+    "repeat_password_required": "Saisissez la confirmation du mot de passe",
+    "username_required": "Saisir le nom d'utilisateur"
+  },
   "gil": {},
   "tl": {},
-  "la": {}
+  "la": {},
+  "pt": {
+    "email_required": "Insira e-mail",
+    "email_valid": "Insira um e-mail válido",
+    "password_contains_spaces": "Senha não pode conter espaços.",
+    "password_length_invalid": "Senha deve conter de 8-32 dígitos",
+    "password_match_repeat": "A senha e confirmação devem ser iguais",
+    "password_required": "Insira a senha",
+    "repeat_password_required": "Confirmação da senha",
+    "username_required": "Insira o nome de usuário"
+  },
+  "es": {
+    "email_required": "Ingresar el e-mail",
+    "email_valid": "Ingresar un e-mail válido",
+    "password_contains_spaces": "La contraseña no puede contener espacios.",
+    "password_length_invalid": "La contraseña debe tener entre 8 y 32 caracteres.",
+    "password_match_repeat": "Las contraseñas deben coincidir",
+    "password_required": "Ingresar la contraseña",
+    "repeat_password_required": "Confirmar la contraseña",
+    "username_required": "Ingresar el nombre de usuario"
+  }
 }
