@@ -9,4 +9,15 @@ export const formatStatus = status => {
   }
 };
 
+export const formatType = type => {
+  switch (type) {
+    case 'supplier_credit':
+      return tableStrings.supplier_credit;
+    case 'supplier_invoice':
+      return tableStrings.supplier_invoice;
+    default:
+      return '';
+  }
+};
+
 export default formatStatus;

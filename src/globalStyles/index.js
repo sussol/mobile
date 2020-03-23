@@ -13,8 +13,6 @@ import { loadingIndicatorStyles } from './loadingIndicatorStyles';
 import { modalStyles } from './modalStyles';
 import { navigationStyles } from './navigationStyles';
 import {
-  PAGE_CONTENT_PADDING_BOTTOM,
-  PAGE_CONTENT_PADDING_TOP,
   PAGE_CONTENT_PADDING_HORIZONTAL,
   FULL_SCREEN_MODAL_MARGIN,
   pageStyles,
@@ -41,7 +39,7 @@ export {
   WHITE,
 } from './colors';
 
-export { APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from './fonts';
+export { APP_GENERAL_FONT_SIZE, APP_FONT_FAMILY } from './fonts';
 
 export { textStyles } from './textStyles';
 
@@ -50,8 +48,6 @@ export {
   dataTableStyles,
   dataTableColors,
   FULL_SCREEN_MODAL_MARGIN,
-  PAGE_CONTENT_PADDING_BOTTOM,
-  PAGE_CONTENT_PADDING_TOP,
   PAGE_CONTENT_PADDING_HORIZONTAL,
 };
 

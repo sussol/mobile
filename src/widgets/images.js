@@ -41,6 +41,16 @@ export const LaosFlag = ({ style }) => (
 );
 LaosFlag.propTypes = imagePropTypes;
 
+export const PortugueseFlag = ({ style }) => (
+  <Image style={style} source={require('../images/flags/pt.png')} resizeMode="stretch" />
+);
+PortugueseFlag.propTypes = imagePropTypes;
+
+export const SpanishFlag = ({ style }) => (
+  <Image style={style} source={require('../images/flags/es.png')} resizeMode="stretch" />
+);
+SpanishFlag.propTypes = imagePropTypes;
+
 export const CustomerImage = ({ style }) => (
   <Image style={style} source={require('../images/menu_people.png')} resizeMode="contain" />
 );
@@ -60,3 +70,7 @@ export const ModulesImage = ({ style }) => (
   <Image style={style} source={require('../images/menu_modules.png')} resizeMode="contain" />
 );
 ModulesImage.propTypes = imagePropTypes;
+
+export const MsupplyMan = () => (
+  <Image resizeMode="contain" source={require('../images/logo.png')} />
+);

@@ -8,6 +8,7 @@ export const ACTIONS = {
   SORT_DATA: 'sortData',
   FILTER_DATA: 'filterData',
   REFRESH_DATA: 'refreshData',
+  REFRESH_CASH_REGISTER: 'refreshCashRegister',
   ADD_ITEM: 'addItem',
   ADD_RECORD: 'addRecord',
   TOGGLE_INDICATORS: 'toggleIndicators',
@@ -15,6 +16,7 @@ export const ACTIONS = {
   HIDE_OVER_STOCKED: 'hideOverStocked',
   TOGGLE_STOCK_OUT: 'toggleStockOut',
   TOGGLE_SHOW_FINALISED: 'toggleShowFinalised',
+  TOGGLE_TRANSACTION_TYPE: 'toggleTransactionType',
   REFRESH_DATA_WITH_FINALISED_TOGGLE: 'refreshDataWithFinalisedToggle',
   FILTER_DATA_WITH_FINALISED_TOGGLE: 'filterDataWithFinalisedToggle',
   FILTER_DATA_WITH_OVER_STOCK_TOGGLE: 'filterDataWithOverStockToggle',
@@ -43,4 +45,9 @@ export const ACTIONS = {
   SELECT_ROWS: 'selectRows',
   DESELECT_ROW: 'deselectRow',
   DELETE_RECORDS: 'deleteRecords',
+};
+
+export const DATA_SET = {
+  PATIENTS: 'patients',
+  PRESCRIBERS: 'prescribers',
 };

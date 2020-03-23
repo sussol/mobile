@@ -10,6 +10,8 @@ import {
   NUMBER_SEQUENCE_KEYS,
 } from '../utilities';
 
+import { modalStrings } from '../../localization';
+
 /**
  * A transaction.
  *
@@ -57,6 +59,10 @@ export class Transaction extends Realm.Object {
     database.delete('TransactionItem', this.items);
   }
 
+  get total() {
+    return this.subtotal - this.insuranceDiscountAmount;
+  }
+
   /**
    * Get if transaction is finalised.
    *
@@ -81,7 +87,7 @@ export class Transaction extends Realm.Object {
    * @return  {boolean}
    */
   get isIncoming() {
-    return this.type === 'supplier_invoice';
+    return this.type === 'supplier_invoice' || this.type === 'customer_credit';
   }
 
   /**
@@ -110,6 +116,18 @@ export class Transaction extends Realm.Object {
    */
   get isSupplierInvoice() {
     return this.type === 'supplier_invoice';
+  }
+
+  get isPrescription() {
+    return this.mode === 'dispensary' && this.type === 'customer_invoice';
+  }
+
+  get isCashTransaction() {
+    return this.type === 'payment' || this.type === 'receipt';
+  }
+
+  get isCredit() {
+    return this.type === 'supplier_credit' || this.type === 'customer_credit';
   }
 
   /**
@@ -149,13 +167,27 @@ export class Transaction extends Realm.Object {
   }
 
   /**
+   * @return {String} This transaction reason title, or an empty string.
+   */
+  get reasonTitle() {
+    return (this.option && this.option.title) || 'N/A';
+  }
+
+  get paymentTypeDescription() {
+    return this.paymentType?.description ?? 'N/A';
+  }
+
+  /**
    * Set other party to this transaction.
    *
    * @param  {Name}  name
    */
   setOtherParty(name) {
-    name.addTransaction(this);
     this.otherParty = name;
+  }
+
+  get servicePrice() {
+    return this.isCashOffset ? this.subtotal : 0;
   }
 
   /**
@@ -165,6 +197,11 @@ export class Transaction extends Realm.Object {
    */
   get totalPrice() {
     return getTotal(this.items, 'totalPrice');
+  }
+
+  get isCashOffset() {
+    const linkedTransactionType = this.linkedTransaction?.type;
+    return linkedTransactionType === 'payment' || linkedTransactionType === 'receipt';
   }
 
   /**
@@ -422,6 +459,43 @@ export class Transaction extends Realm.Object {
     return batchName;
   }
 
+  get canFinaliseCustomerInvoice() {
+    const finaliseStatus = { success: true, message: modalStrings.finalise_customer_invoice };
+
+    if (!this.items.length) {
+      finaliseStatus.success = false;
+      finaliseStatus.message = modalStrings.add_at_least_one_item_before_finalising;
+    }
+
+    if (!this.totalQuantity) {
+      finaliseStatus.success = false;
+      finaliseStatus.message = modalStrings.record_stock_to_issue_before_finalising;
+    }
+
+    return finaliseStatus;
+  }
+
+  get canFinaliseSupplierInvoice() {
+    const finaliseStatus = { success: true, message: modalStrings.finalise_supplier_invoice };
+    if (!this.isExternalSupplierInvoice) return finaliseStatus;
+    if (!this.items.length) {
+      finaliseStatus.success = false;
+      finaliseStatus.message = modalStrings.add_at_least_one_item_before_finalising;
+    }
+    if (!this.totalQuantity) {
+      finaliseStatus.success = false;
+      finaliseStatus.message = modalStrings.stock_quantity_greater_then_zero;
+    }
+
+    return finaliseStatus;
+  }
+
+  get canFinalise() {
+    return this.isSupplierInvoice
+      ? this.canFinaliseSupplierInvoice
+      : this.canFinaliseCustomerInvoice;
+  }
+
   /**
    * Finalise this transaction, setting the status so that this transaction is
    * locked down. If it has not already been confirmed (i.e. adjustments to inventory
@@ -433,11 +507,20 @@ export class Transaction extends Realm.Object {
     if (this.isFinalised) {
       throw new Error('Cannot finalise as transaction is already finalised');
     }
+
     // Prune all invoices except internal supplier invoices.
     if (!this.isInternalSupplierInvoice) {
       this.pruneRedundantBatchesAndItems(database);
     }
+
     if (!this.isConfirmed) this.confirm(database);
+
+    // Finding the totalPrice propogates through `TransactionItem` records down to the batch
+    // level, deriving the full cost of the Transaction. Cash transactions and credits are
+    // created finalised, having their total already set.
+    if (!(this.isCashTransaction || this.isCredit)) {
+      this.subtotal = this.totalPrice;
+    }
 
     this.status = 'finalised';
     database.save('Transaction', this);
@@ -460,7 +543,19 @@ Transaction.schema = {
     theirRef: { type: 'string', optional: true },
     category: { type: 'TransactionCategory', optional: true },
     items: { type: 'list', objectType: 'TransactionItem' },
+    mode: { type: 'string', default: 'store' },
+    prescriber: { type: 'Prescriber', optional: true },
     linkedRequisition: { type: 'Requisition', optional: true },
+    subtotal: { type: 'double', optional: true },
+    outstanding: { type: 'double', optional: true },
+    insurancePolicy: { type: 'InsurancePolicy', optional: true },
+    option: { type: 'Options', optional: true },
+    linkedTransaction: { type: 'Transaction', optional: true },
+    user1: { type: 'string', optional: true },
+    insuranceDiscountRate: { type: 'double', optional: true },
+    insuranceDiscountAmount: { type: 'double', optional: true },
+    paymentType: { type: 'PaymentType', optional: true },
+    isCancellation: { type: 'bool', default: false },
   },
 };
 

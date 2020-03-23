@@ -3,8 +3,19 @@
     "confirm_modal_body": "One step closer to creating your Demo Store. Before generating your demo store, we first need to verify your email address. We have sent a verification link to the email you have provided. Please check your inbox and follow the verification link.",
     "modal_body_text": "Request a demo store.  Your email will be used for verification purposes and for notification when your demo store expires"
   },
-  "fr": {},
+  "fr": {
+    "confirm_modal_body": "Un pas de plus vers la création de votre dépôt de démonstration. Avant de générer votre dépôt de démonstration, nous avons d'abord besoin de vérifier votre addresse courriel. Nous avons envoyé un lien de vérification à l'adresse que vous nous avez fournie. Veuillez vérifier votre boîte de réception et cliquer sur le lien de vérification.",
+    "modal_body_text": "Demandez un dépôt de démonstration. Votre courriel sera utilisé à des fins de vérification et de notification lorsque votre dépôt de démonstration expirera."
+  },
   "gil": {},
   "tl": {},
-  "la": {}
+  "la": {},
+  "pt": {
+    "confirm_modal_body": "Você está a apenas um passo de criar o seu local simulado. Mas antes de gerar o seu local simulado, nós primeiro precisamos fazer uma verificação. Uma mensagem foi para o seu e-mail cadastrado com um link. Por favor, cheque a sua caixa de entrada e clique no link de verificação.",
+    "modal_body_text": "Solicite um local virtual. Um e-mail será usado por motivos de verificação e para notificar quando o local simulado terminará."
+  },
+  "es": {
+    "confirm_modal_body": "Un paso más cerca de crear su tienda de demostración. Antes de generarla, primero debemos verificar su dirección de correo electrónico. Hemos enviado un enlace de verificación al correo electrónico que nos ha proporcionado. Verifique su bandeja de entrada y siga el enlace de verificación.",
+    "modal_body_text": "Solicite una tienda de demostración. Su correo electrónico se utilizará para fines de verificación y notificación cuando caduque su tienda de demostración"
+  }
 }

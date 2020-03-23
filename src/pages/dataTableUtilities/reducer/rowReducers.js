@@ -33,10 +33,12 @@ export const deselectRow = (state, action) => {
   const rowState = newDataState.get(rowKey);
   newDataState.set(rowKey, { ...rowState, isSelected: false });
 
+  const hasSelection = Array.from(newDataState).some(([, { isSelected }]) => isSelected);
+
   return {
     ...state,
     dataState: newDataState,
-    hasSelection: false,
+    hasSelection,
     allSelected: false,
     selectedRow: null,
   };

@@ -9,11 +9,18 @@ import PropTypes from 'prop-types';
 import { StyleSheet, Text, ViewPropTypes } from 'react-native';
 import { Button } from 'react-native-ui-components';
 
-import globalStyles from '../globalStyles';
+import { debounce } from '../utilities';
+
+import globalStyles, { WARMER_GREY } from '../globalStyles';
 
 // A generic button for use on pages
 export function PageButtonComponent(props) {
-  const { style, textStyle, isDisabled, ...buttonProps } = props;
+  const { style, textStyle, isDisabled, debounceTimer, onPress, ...buttonProps } = props;
+
+  const callback = React.useCallback(debounce(onPress, debounceTimer, true), [
+    onPress,
+    debounceTimer,
+  ]);
 
   const defaultButtonStyle = [globalStyles.button];
   if (isDisabled) defaultButtonStyle.push(globalStyles.disabledButton);
@@ -23,7 +30,9 @@ export function PageButtonComponent(props) {
     <Button
       isDisabled={isDisabled}
       style={[...defaultButtonStyle, localStyles.button, style]}
+      onPress={callback}
       textStyle={[...defaultTextStyle, textStyle]}
+      disabledColor={WARMER_GREY}
       {...buttonProps}
     />
   );
@@ -49,6 +58,7 @@ PageButtonComponent.propTypes = {
   onPress: PropTypes.func,
   text: PropTypes.string,
   isDisabled: PropTypes.bool,
+  debounceTimer: PropTypes.number,
 };
 
 const localStyles = StyleSheet.create({

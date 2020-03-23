@@ -7,7 +7,11 @@ import DeviceInfo from 'react-native-device-info';
 
 import { authenticateAsync, getAuthHeader, hashPassword } from 'sussol-utilities';
 
+import packageJson from '../../package.json';
+
+import { SERVER_COMPATIBILITIES } from '../sync/constants';
 import { SETTINGS_KEYS } from '../settings';
+import { authStrings } from '../localization';
 
 const {
   SUPPLYING_STORE_ID,
@@ -40,33 +44,37 @@ export class SyncAuthenticator {
    *                                       any error message as a second parameter
    * @return {none}
    */
-  async authenticate(serverURL, username, password) {
+  async authenticate(serverURL, username, password, hashedPassword) {
     if (serverURL.length === 0) throw new Error('Enter a server URL');
     if (username.length === 0) throw new Error('Enter the sync site username');
-    if (password.length === 0) throw new Error('Enter the sync site password');
+    if (!password && !hashedPassword) throw new Error('Enter the sync site password');
 
     // Hash the password.
-    const passwordHash = hashPassword(password);
+    const passwordHash = hashedPassword ?? hashPassword(password);
 
     const authURL = `${serverURL}${AUTH_ENDPOINT}`;
 
-    try {
-      const responseJson = await authenticateAsync(authURL, username, passwordHash, {
-        ...this.extraHeaders,
-      });
-      this.settings.set(SYNC_URL, serverURL);
-      this.settings.set(SYNC_SITE_NAME, username);
-      this.settings.set(SYNC_SITE_PASSWORD_HASH, passwordHash);
-      this.settings.set(SYNC_SERVER_ID, responseJson.ServerID);
-      this.settings.set(SYNC_SITE_ID, responseJson.SiteID);
-      this.settings.set(THIS_STORE_ID, responseJson.StoreID);
-      this.settings.set(THIS_STORE_NAME_ID, responseJson.NameID);
-      this.settings.set(SUPPLYING_STORE_ID, responseJson.SupplyingStoreID);
-      this.settings.set(SUPPLYING_STORE_NAME_ID, responseJson.SupplyingStoreNameID);
-    } catch (error) {
-      // Pass error up
-      throw error;
+    const responseJson = await authenticateAsync(authURL, username, passwordHash, {
+      ...this.extraHeaders,
+    });
+
+    const { version: appVersion } = packageJson;
+    const [majorAppVersion] = appVersion.split('.');
+    const { ServerVersion: serverVersion } = responseJson;
+
+    if (serverVersion < SERVER_COMPATIBILITIES[majorAppVersion]) {
+      throw new Error(authStrings.incompatible_server);
     }
+
+    this.settings.set(SYNC_URL, serverURL);
+    this.settings.set(SYNC_SITE_NAME, username);
+    this.settings.set(SYNC_SITE_PASSWORD_HASH, passwordHash);
+    this.settings.set(SYNC_SERVER_ID, responseJson.ServerID);
+    this.settings.set(SYNC_SITE_ID, responseJson.SiteID);
+    this.settings.set(THIS_STORE_ID, responseJson.StoreID);
+    this.settings.set(THIS_STORE_NAME_ID, responseJson.NameID);
+    this.settings.set(SUPPLYING_STORE_ID, responseJson.SupplyingStoreID);
+    this.settings.set(SUPPLYING_STORE_NAME_ID, responseJson.SupplyingStoreNameID);
   }
 
   /**

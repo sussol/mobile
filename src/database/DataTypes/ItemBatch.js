@@ -21,6 +21,10 @@ import Realm from 'realm';
  * @property  {List.<TransactionBatch>}  transactionBatches
  */
 export class ItemBatch extends Realm.Object {
+  get otherPartyName() {
+    return this.supplier?.name || '';
+  }
+
   /**
    * Get the total number of items in this batch.
    *
@@ -59,6 +63,10 @@ export class ItemBatch extends Realm.Object {
    */
   get itemName() {
     return this.item ? this.item.name : '';
+  }
+
+  get itemCode() {
+    return this?.item?.code ?? '';
   }
 
   /**

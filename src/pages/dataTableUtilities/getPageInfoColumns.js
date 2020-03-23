@@ -47,8 +47,18 @@ const PER_PAGE_INFO_COLUMNS = {
     ['monthsToSupply', 'entryDate'],
     ['customer', 'requisitionComment'],
   ],
+  [ROUTES.PRESCRIPTION]: [
+    ['entryDate', 'enteredBy'],
+    ['customer', 'transactionComment', 'prescriber'],
+  ],
   stocktakeBatchEditModal: [['itemName']],
   stocktakeBatchEditModalWithReasons: [['itemName']],
+  stocktakeBatchEditModalWithPrices: [['itemName']],
+  stocktakeBatchEditModalWithReasonsAndPrices: [['itemName']],
+  supplierCredit: [
+    ['entryDate', 'confirmDate', 'transactionCategory'],
+    ['enteredBy', 'otherParty'],
+  ],
 };
 
 const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
@@ -59,6 +69,10 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
   confirmDate: {
     title: `${pageInfoStrings.confirm_date}:`,
     info: formatDate(pageObject.confirmDate),
+  },
+  transactionCategory: {
+    title: `${pageInfoStrings.entered_by}:`,
+    info: pageObject?.category?.name ?? '',
   },
   enteredBy: {
     title: `${pageInfoStrings.entered_by}:`,
@@ -129,17 +143,55 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
     info: pageObject.itemName,
     onPress: null,
   },
+  prescriber: {
+    title: 'Prescriber',
+    info: pageObject?.prescriber?.firstName,
+    onPress: () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_PRESCRIBER, route)),
+  },
+  number: {
+    title: 'Number',
+    info: pageObject.number,
+    onPress: null,
+  },
+  name: {
+    title: 'Name',
+    info: pageObject.name,
+    onPress: null,
+  },
+  type: {
+    title: 'Type',
+    info: pageObject.type,
+    onPress: null,
+  },
+  reason: {
+    title: 'Defined Reason',
+    info: pageObject.reasonTitle,
+    onPress: null,
+  },
+  comment: {
+    title: 'Comment',
+    info: pageObject.comment,
+    onPress: null,
+  },
+  status: {
+    title: 'Status',
+    info: pageObject.status,
+    onPress: null,
+  },
 });
 
-const getPageInfoColumns = page => {
+const getPageInfoColumns = (page, isProgramBased) => {
   const pageInfoColumns = PER_PAGE_INFO_COLUMNS[page];
 
   if (!pageInfoColumns) return null;
+
   return (pageObjectParameter, dispatch, route) => {
     const pageInfoRows = PAGE_INFO_ROWS(pageObjectParameter, dispatch, route);
-    return pageInfoColumns.map(pageInfoColumn =>
-      pageInfoColumn.map(pageInfoKey => pageInfoRows[pageInfoKey])
-    );
+    return pageInfoColumns.map((pageInfoColumn, idx) => {
+      const columnArray =
+        isProgramBased && idx === 0 ? ['program', ...pageInfoColumn] : pageInfoColumn;
+      return columnArray.map(pageInfoKey => pageInfoRows[pageInfoKey]);
+    });
   };
 };
 

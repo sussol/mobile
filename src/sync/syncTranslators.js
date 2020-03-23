@@ -7,6 +7,8 @@
 /* eslint-disable quote-props */
 /* eslint-disable max-classes-per-file */
 
+import { NAME_TYPE_KEYS } from '../database/utilities/constants';
+
 export const INTERNAL_TO_EXTERNAL = 0;
 export const EXTERNAL_TO_INTERNAL = 1;
 
@@ -51,6 +53,7 @@ export const RECORD_TYPES = new SyncTranslator({
   NumberSequence: 'number',
   NumberToReuse: 'number_reuse',
   Options: 'options',
+  PaymentType: 'paymentType',
   Period: 'period',
   PeriodSchedule: 'periodSchedule',
   ProgramIndicator: 'program_indicator',
@@ -65,6 +68,12 @@ export const RECORD_TYPES = new SyncTranslator({
   TransactionBatch: 'trans_line',
   User: 'user',
   Unit: 'unit',
+  Prescriber: 'clinician',
+  ItemDirection: 'item_direction',
+  Abbreviation: 'abbreviation',
+  InsuranceProvider: 'insuranceProvider',
+  InsurancePolicy: 'nameInsuranceJoin',
+  Currency: 'currency',
 });
 
 export const REQUISITION_TYPES = new SyncTranslator({
@@ -88,27 +97,21 @@ export const TRANSACTION_TYPES = new SyncTranslator({
   supplier_invoice: 'si',
   supplier_credit: 'sc',
   inventory_adjustment: 'in',
-  prescription: 'pi', // Following types provided for sync purposes, not actually used by mobile.
-  build: 'bu',
-  repack: 'sr',
+  prescription: 'pi',
   receipt: 'rc',
   payment: 'ps',
-});
-
-export const TRANSACTION_BATCH_TYPES = new SyncTranslator({
-  customer_invoice: 'stock_out',
-  customer_credit: 'stock_in',
-  supplier_invoice: 'stock_in',
-  supplier_credit: 'stock_out',
+  // Following types provided for sync purposes, not actually used by mobile.
+  build: 'bu',
+  repack: 'sr',
 });
 
 export const NAME_TYPES = new SyncTranslator({
-  inventory_adjustment: 'invad',
-  facility: 'facility',
-  patient: 'patient',
-  build: 'build',
-  store: 'store',
-  repack: 'repack',
+  [NAME_TYPE_KEYS.INVENTORY_ADJUSTMENT]: 'invad',
+  [NAME_TYPE_KEYS.FACILITY]: 'facility',
+  [NAME_TYPE_KEYS.PATIENT]: 'patient',
+  [NAME_TYPE_KEYS.BUILD]: 'build',
+  [NAME_TYPE_KEYS.STORE]: 'store',
+  [NAME_TYPE_KEYS.REPACK]: 'repack',
 });
 
 /**

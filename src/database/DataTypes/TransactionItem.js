@@ -204,8 +204,13 @@ export class TransactionItem extends Realm.Object {
       // until no remainder left.
       for (let index = 0; index < itemBatchesToAdd.length && remainder !== 0; index += 1) {
         // Create the new transaction batch and attach it to this transaction item.
-        const newBatch = createRecord(database, 'TransactionBatch', this, itemBatchesToAdd[index]);
-
+        const newBatch = createRecord(
+          database,
+          'TransactionBatch',
+          this,
+          itemBatchesToAdd[index],
+          this.transaction.isIncoming
+        );
         // Apply as much of the remainder to it as possible.
         remainder = this.allocateDifferenceToBatch(database, remainder, newBatch);
       }
@@ -250,6 +255,20 @@ export class TransactionItem extends Realm.Object {
     });
     database.delete('TransactionBatch', batchesToDelete);
   }
+
+  /**
+   * Sets the item direction to be the same for all underlying
+   * TransactionBatches.
+   */
+  setItemDirection = (database, newDirection) => {
+    database.write(() => {
+      this.note = newDirection;
+      this.batches.forEach(batch => {
+        batch.note = newDirection;
+        database.save('TransactionBatch', batch);
+      });
+    });
+  };
 }
 
 TransactionItem.schema = {
@@ -259,6 +278,7 @@ TransactionItem.schema = {
     id: 'string',
     item: 'Item',
     transaction: 'Transaction',
+    note: { type: 'string', optional: true },
     batches: { type: 'list', objectType: 'TransactionBatch' },
   },
 };
