@@ -239,7 +239,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
   return (
     <>
       <FlexRow justifyContent="center">
-        <View style={{ maxWidth: 300 }}>
+        <View style={localStyles.toggleBarContainerStyle}>
           <ToggleBar style={localStyles.toggleBarStyle} toggles={toggles} />
         </View>
       </FlexRow>
@@ -267,7 +267,6 @@ export const CashTransactionModal = ({ onConfirm }) => {
           <ChevronDownIcon />
         </View>
       </TouchableOpacity>
-
       <PressReason />
       <TouchableOpacity style={localStyles.containerStyle} onPress={onPressDescription}>
         <View style={localStyles.textContainerStyle}>
@@ -347,6 +346,10 @@ const localStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: '10%',
+  },
+  toggleBarContainerStyle: {
+    marginTop: 50,
+    maxWidth: 300,
   },
   bottomModalContainerStyle: {
     height: 120,
