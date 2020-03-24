@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 
 import { View, Text } from 'react-native';
 import Popover from 'react-native-popover-view';
+// eslint-disable-next-line import/no-unresolved
 import { withNavigation } from '@react-navigation/compat';
 
 import { getBadgeData } from '../utilities/getBadgeData';
