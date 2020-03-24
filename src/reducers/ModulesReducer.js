@@ -30,14 +30,17 @@ const initialState = () => {
   const usingPrescriptionCategories = UIDatabase.objects('PrescriptionCategory').length > 0;
   const usingSupplierCreditCategories = UIDatabase.objects('SupplierCreditCategory').length > 0;
 
-  const usingDashboard = UIDatabase.getPreference(PREFERENCE_KEYS.DASHBOARD_MODULE);
-  const usingDispensary = UIDatabase.getPreference(PREFERENCE_KEYS.DISPENSARY_MODULE);
-  const usingVaccines = UIDatabase.getPreference(PREFERENCE_KEYS.VACCINE_MODULE);
-  const usingCashRegister =
-    UIDatabase.getPreference(PREFERENCE_KEYS.CASH_REGISTER_MODULE) && usingPaymentTypes;
-  const usingPayments = UIDatabase.getPreference(PREFERENCE_KEYS.PAYMENT_MODULE);
-  const usingPatientTypes = UIDatabase.getPreference(PREFERENCE_KEYS.PATIENT_TYPES);
-  const usingHideSnapshotColumn = UIDatabase.getPreference(PREFERENCE_KEYS.HIDE_SNAPSHOT_COLUMN);
+  const usingDashboard = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.DASHBOARD_MODULE));
+  const usingDispensary = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.DISPENSARY_MODULE));
+  const usingVaccines = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.VACCINE_MODULE));
+  const usingCashRegister = Boolean(
+    UIDatabase.getPreference(PREFERENCE_KEYS.CASH_REGISTER_MODULE) && usingPaymentTypes
+  );
+  const usingPayments = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.PAYMENT_MODULE));
+  const usingPatientTypes = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.PATIENT_TYPES));
+  const usingHideSnapshotColumn = Boolean(
+    UIDatabase.getPreference(PREFERENCE_KEYS.HIDE_SNAPSHOT_COLUMN)
+  );
 
   const usingModules = usingDashboard || usingDispensary || usingVaccines || usingCashRegister;
 
