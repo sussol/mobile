@@ -32,14 +32,14 @@ export const PREF_TYPES = {
   [PREF_KEYS.HIDE_SNAPSHOT_COLUMN]: TYPE_KEYS.BOOL,
 };
 
-export class Pref extends Realm.Object {
+export class Preference extends Realm.Object {
   get type() {
     return PREF_TYPES[this.id];
   }
 }
 
-Pref.schema = {
-  name: 'Pref',
+Preference.schema = {
+  name: 'Preference',
   primaryKey: 'id',
   properties: {
     id: 'string',
@@ -47,4 +47,4 @@ Pref.schema = {
   },
 };
 
-export default Pref;
+export default Preference;

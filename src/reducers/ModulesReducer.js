@@ -4,7 +4,7 @@
  */
 
 import { UIDatabase } from '../database';
-import { PREF_KEYS } from '../database/DataTypes/Pref';
+import { PREF_KEYS } from '../database/DataTypes/Preference';
 import { SYNC_TRANSACTION_COMPLETE } from '../sync/constants';
 
 /**

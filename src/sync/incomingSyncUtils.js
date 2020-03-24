@@ -193,7 +193,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: ['name', 'number_to_use'],
       canBeBlank: [],
     },
-    Pref: {
+    Preference: {
       cannotBeBlank: ['ID', 'store_ID', 'item', 'data'],
       canBeBlank: ['user_ID', 'network_ID'],
     },
@@ -640,7 +640,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       numberSequence.addNumberToReuse(numberToReuse);
       break;
     }
-    case 'Pref': {
+    case 'Preference': {
       const { item } = record;
       if (item === 'store_preferences') {
         try {

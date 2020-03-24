@@ -26,7 +26,7 @@ import {
   PaymentType,
   Period,
   PeriodSchedule,
-  Pref,
+  Preference,
   ProgramIndicator,
   Requisition,
   RequisitionItem,
@@ -168,7 +168,7 @@ export const schema = {
     PaymentType,
     Period,
     PeriodSchedule,
-    Pref,
+    Preference,
     ProgramIndicator,
     Requisition,
     RequisitionItem,
@@ -190,7 +190,7 @@ export const schema = {
     User,
     Currency,
   ],
-  schemaVersion: 17,
+  schemaVersion: 16,
 };
 
 export default schema;

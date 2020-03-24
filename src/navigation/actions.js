@@ -14,7 +14,7 @@ import { ROUTES } from './constants';
 import { RootNavigator } from './RootNavigator';
 import { PrescriptionActions } from '../actions/PrescriptionActions';
 import { FinaliseActions } from '../actions/FinaliseActions';
-import { PREF_KEYS } from '../database/DataTypes/Pref';
+import { PREF_KEYS } from '../database/DataTypes/Preference';
 
 /**
  * Navigation Action Creators.

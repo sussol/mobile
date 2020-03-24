@@ -6,7 +6,7 @@
 import moment from 'moment';
 
 import { UIDatabase } from '../database';
-import { PREF_KEYS } from '../database/DataTypes/Pref';
+import { PREF_KEYS } from '../database/DataTypes/Preference';
 
 const DEFAULT_LOOKBACK_PERIOD = 3;
 
