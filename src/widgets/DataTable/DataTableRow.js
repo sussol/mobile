@@ -120,6 +120,7 @@ const DataTableRow = React.memo(
                   cellTextStyle={editableCellText}
                   rowIndex={rowIndex}
                   placeholder={placeholder}
+                  focusedColumn={SUSSOL_ORANGE}
                 />
               );
             }
