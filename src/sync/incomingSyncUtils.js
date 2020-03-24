@@ -197,10 +197,6 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: ['ID', 'store_ID', 'item', 'data'],
       canBeBlank: ['user_ID', 'network_ID'],
     },
-    PrefBlob: {
-      cannotBeBlank: ['ID', 'store_id', 'item', 'type', 'blob'],
-      canBeBlank: ['user_ID', 'network_id'],
-    },
     Requisition: {
       cannotBeBlank: ['status', 'type', 'daysToSupply'],
       canBeBlank: ['date_entered', 'serial_number', 'requester_reference', 'programID', 'periodID'],
@@ -655,10 +651,6 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
           // Silently ignore malformed prefs.
         }
       }
-      break;
-    }
-    case 'PrefBlob': {
-      // Ignore pref_blob records.
       break;
     }
     case 'Report': {
