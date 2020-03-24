@@ -33,6 +33,7 @@ import {
 
 import globalStyles, { SHADOW_BORDER, GREY } from '../globalStyles';
 import { UserActions } from '../actions/index';
+import { selectCurrentUserIsAdmin } from '../selectors/user';
 
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
@@ -250,8 +251,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const mapStateToProps = state => {
-  const { modules, user } = state;
-  const { currentUser } = user;
+  const { modules } = state;
+
   const {
     usingDashboard,
     usingDispensary,
@@ -259,13 +260,16 @@ const mapStateToProps = state => {
     usingCashRegister,
     usingModules,
   } = modules;
+
+  const isAdmin = selectCurrentUserIsAdmin(state);
+
   return {
     usingDashboard,
     usingDispensary,
     usingVaccines,
     usingCashRegister,
     usingModules,
-    isAdmin: currentUser?.isAdmin,
+    isAdmin,
   };
 };
 

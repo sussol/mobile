@@ -4,6 +4,7 @@
  */
 
 export { BarChart } from './BarChart';
+export { BackButton } from './BackButton';
 export { Button, ProgressBar } from 'react-native-ui-components';
 export { DataTablePageView } from './DataTablePageView';
 export { DropDown } from './DropDown';
@@ -16,7 +17,6 @@ export { FlexView } from './FlexView';
 export { IconCell } from './IconCell';
 export { InfoBadge } from './InfoBadge';
 export { LineChart } from './LineChart';
-export { NavigationBar } from './NavigationBar';
 export { OnePressButton } from './OnePressButton';
 export { PageButton } from './PageButton';
 export { PageButtonWithOnePress } from './PageButtonWithOnePress';
@@ -41,15 +41,4 @@ export { FormTextInput } from './FormInputs/FromTextInput';
 export { Wizard } from './Wizard';
 
 export * from './icons';
-
-export {
-  KiribatiFlag,
-  EnglishFlag,
-  LaosFlag,
-  TetumFlag,
-  FrenchFlag,
-  CustomerImage,
-  SupplierImage,
-  StockImage,
-  ModulesImage,
-} from './images';
+export * from './images';

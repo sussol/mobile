@@ -12,6 +12,8 @@ import {
   SET_SYNC_IS_SYNCING,
   SET_SYNC_COMPLETION_TIME,
   SYNC_TRANSACTION_COMPLETE,
+  OPEN_SYNC_MODAL,
+  CLOSE_SYNC_MODAL,
 } from '../sync/constants';
 
 const setSyncProgress = progress => ({
@@ -53,7 +55,17 @@ const syncCompleteTransaction = () => ({
   type: SYNC_TRANSACTION_COMPLETE,
 });
 
+const openSyncModal = () => ({
+  type: OPEN_SYNC_MODAL,
+});
+
+const closeSyncModal = () => ({
+  type: CLOSE_SYNC_MODAL,
+});
+
 export {
+  openSyncModal,
+  closeSyncModal,
   setSyncProgress,
   incrementSyncProgress,
   setSyncError,

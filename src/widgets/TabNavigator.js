@@ -3,7 +3,7 @@ import React, { useMemo, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { createAppContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-import { NavigationActions } from 'react-navigation';
+import { NavigationActions } from '@react-navigation/core';
 
 const getTabNavigator = (routes, options) => {
   const TabNavigator = createBottomTabNavigator(routes, options);
