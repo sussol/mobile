@@ -14,7 +14,7 @@ import { ROUTES } from './constants';
 import { RootNavigator } from './RootNavigator';
 import { PrescriptionActions } from '../actions/PrescriptionActions';
 import { FinaliseActions } from '../actions/FinaliseActions';
-import { PREF_KEYS } from '../database/DataTypes/Preference';
+import { PREFERENCE_KEYS } from '../database/utilities/constants';
 
 /**
  * Navigation Action Creators.
@@ -402,7 +402,7 @@ export const createSupplierRequisition = ({
   ...requisitionParameters
 }) => dispatch => {
   // Months lead time has an effect on daysToSupply for a requisition.
-  const monthsLeadTime = UIDatabase.getPreference(PREF_KEYS.MONTHS_LEAD_TIME);
+  const monthsLeadTime = UIDatabase.getPreference(PREFERENCE_KEYS.MONTHS_LEAD_TIME);
 
   // Create the requisition. If a program was supplied, add items from that
   // program, otherwise just navigate to it.

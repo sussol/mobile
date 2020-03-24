@@ -4,7 +4,7 @@
  */
 
 import { UIDatabase } from '../database';
-import { PREF_KEYS } from '../database/DataTypes/Preference';
+import { PREFERENCE_KEYS } from '../database/utilities/constants';
 import { SYNC_TRANSACTION_COMPLETE } from '../sync/constants';
 
 /**
@@ -30,14 +30,14 @@ const initialState = () => {
   const usingPrescriptionCategories = UIDatabase.objects('PrescriptionCategory').length > 0;
   const usingSupplierCreditCategories = UIDatabase.objects('SupplierCreditCategory').length > 0;
 
-  const usingDashboard = UIDatabase.getPreference(PREF_KEYS.DASHBOARD_MODULE);
-  const usingDispensary = UIDatabase.getPreference(PREF_KEYS.DISPENSARY_MODULE);
-  const usingVaccines = UIDatabase.getPreference(PREF_KEYS.VACCINE_MODULE);
+  const usingDashboard = UIDatabase.getPreference(PREFERENCE_KEYS.DASHBOARD_MODULE);
+  const usingDispensary = UIDatabase.getPreference(PREFERENCE_KEYS.DISPENSARY_MODULE);
+  const usingVaccines = UIDatabase.getPreference(PREFERENCE_KEYS.VACCINE_MODULE);
   const usingCashRegister =
-    UIDatabase.getPreference(PREF_KEYS.CASH_REGISTER_MODULE) && usingPaymentTypes;
-  const usingPayments = UIDatabase.getPreference(PREF_KEYS.PAYMENT_MODULE);
-  const usingPatientTypes = UIDatabase.getPreference(PREF_KEYS.PATIENT_TYPES);
-  const usingHideSnapshotColumn = UIDatabase.getPreference(PREF_KEYS.HIDE_SNAPSHOT_COLUMN);
+    UIDatabase.getPreference(PREFERENCE_KEYS.CASH_REGISTER_MODULE) && usingPaymentTypes;
+  const usingPayments = UIDatabase.getPreference(PREFERENCE_KEYS.PAYMENT_MODULE);
+  const usingPatientTypes = UIDatabase.getPreference(PREFERENCE_KEYS.PATIENT_TYPES);
+  const usingHideSnapshotColumn = UIDatabase.getPreference(PREFERENCE_KEYS.HIDE_SNAPSHOT_COLUMN);
 
   const usingModules = usingDashboard || usingDispensary || usingVaccines || usingCashRegister;
 

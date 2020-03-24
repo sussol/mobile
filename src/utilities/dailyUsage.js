@@ -6,7 +6,7 @@
 import moment from 'moment';
 
 import { UIDatabase } from '../database';
-import { PREF_KEYS } from '../database/DataTypes/Preference';
+import { PREFERENCE_KEYS } from '../database/utilities/constants';
 
 const DEFAULT_LOOKBACK_PERIOD = 3;
 
@@ -14,7 +14,7 @@ const DEFAULT_LOOKBACK_PERIOD = 3;
  * Returns either a customized lookback period, or 90 days in milliseconds.
  */
 const getAMCLookbackPeriod = () => {
-  const amcLookback = UIDatabase.getPreference(PREF_KEYS.CONSUMPTION_LOOKBACK_PERIOD);
+  const amcLookback = UIDatabase.getPreference(PREFERENCE_KEYS.CONSUMPTION_LOOKBACK_PERIOD);
   return amcLookback > 0 ? amcLookback : DEFAULT_LOOKBACK_PERIOD;
 };
 
@@ -23,7 +23,7 @@ const getAMCLookbackPeriod = () => {
  * rather than using an items added date.
  */
 const getAMCEnforcementLookback = () =>
-  UIDatabase.getPreference(PREF_KEYS.CONSUMPTION_ENFORCE_LOOKBACK);
+  UIDatabase.getPreference(PREFERENCE_KEYS.CONSUMPTION_ENFORCE_LOOKBACK);
 
 /**
  * Calculates usage for a provided item.

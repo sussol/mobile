@@ -8,7 +8,7 @@
 import RNFS from 'react-native-fs';
 
 import { SETTINGS_KEYS } from '../settings';
-import { TYPE_KEYS } from './DataTypes/Preference';
+import { PREFERENCE_TYPE_KEYS } from './utilities/constants';
 import { formatDate, requestPermission, backupValidation } from '../utilities';
 
 const { THIS_STORE_NAME_ID } = SETTINGS_KEYS;
@@ -317,11 +317,11 @@ class UIDatabase {
     const { data, type } = preference;
     if (!data) return null;
     switch (type) {
-      case TYPE_KEYS.BOOL:
+      case PREFERENCE_TYPE_KEYS.BOOL:
         return parseBooleanData(data);
-      case TYPE_KEYS.NUMERIC:
+      case PREFERENCE_TYPE_KEYS.NUMERIC:
         return parseNumericData(data);
-      case TYPE_KEYS.NON_NEGATIVE_NUMERIC:
+      case PREFERENCE_TYPE_KEYS.NON_NEGATIVE_NUMERIC:
         return parseNonNegativeNumericData(data);
       default:
         return parseUntypedData(data);
