@@ -402,7 +402,7 @@ export const createSupplierRequisition = ({
   ...requisitionParameters
 }) => dispatch => {
   // Months lead time has an effect on daysToSupply for a requisition.
-  const monthsLeadTime = UIDatabase.getPreference(PREFERENCE_KEYS.MONTHS_LEAD_TIME);
+  const monthsLeadTime = UIDatabase.getPreference(PREFERENCE_KEYS.MONTHS_LEAD_TIME) ?? 0;
 
   // Create the requisition. If a program was supplied, add items from that
   // program, otherwise just navigate to it.
