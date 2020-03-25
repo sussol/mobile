@@ -637,11 +637,11 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'Preference': {
-      const { item } = record;
+      const { item, data: recordData } = record;
       if (item === 'store_preferences') {
         try {
-          const recordData = JSON.parse(record?.data);
-          Object.entries(recordData).forEach(([id, value]) => {
+          const parsedData = JSON.parse(recordData);
+          Object.entries(parsedData).forEach(([id, value]) => {
             const data = JSON.stringify(value ?? {});
             internalRecord = { id, data };
             database.update(recordType, internalRecord);
