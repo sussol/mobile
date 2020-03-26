@@ -134,6 +134,7 @@ ItemBatch.schema = {
       objectType: 'LocationMovement',
       property: 'itemBatch',
     },
+    doses: { type: 'double', default: 0 },
   },
 };
 
