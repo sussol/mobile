@@ -130,7 +130,7 @@ ItemBatch.schema = {
     transactionBatches: { type: 'list', objectType: 'TransactionBatch' },
     location: { type: 'Location', optional: true },
     locationMovements: {
-      types: 'linkingObjects',
+      type: 'linkingObjects',
       objectType: 'ItemBatchLocationMovement',
       property: 'itemBatch',
     },
