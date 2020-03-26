@@ -136,7 +136,7 @@ ItemBatch.schema = {
     },
     doses: { type: 'double', default: 0 },
     vaccineVialMonitorStatusLogs: {
-      type: 'linkingObject',
+      type: 'linkingObjects',
       objectType: 'VaccineVialMonitorStatusLog',
       property: 'itemBatch',
     },

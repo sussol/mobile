@@ -8,7 +8,7 @@ import Realm from 'realm';
 export class VaccineVialMonitorStatusLog extends Realm.Object {}
 
 VaccineVialMonitorStatusLog.schema = {
-  name: 'Location',
+  name: 'VaccineVialMonitorStatusLog',
   primaryKey: 'id',
   properties: {
     id: 'string',
