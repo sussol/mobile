@@ -39,12 +39,14 @@ export function PageButtonComponent(props) {
 }
 
 const propsAreEqual = (
-  { isDisabled: prevIsDisabled, onPress: prevOnPress },
-  { isDisabled: nextIsDisabled, onPress: nextOnPress }
+  { isDisabled: prevIsDisabled, onPress: prevOnPress, text: prevText },
+  { isDisabled: nextIsDisabled, onPress: nextOnPress, text: nextText }
 ) => {
   const isDisabledAreEqual = prevIsDisabled === nextIsDisabled;
   const onPressAreEqual = prevOnPress === nextOnPress;
-  return isDisabledAreEqual && onPressAreEqual;
+  const textAreEqual = prevText === nextText;
+
+  return isDisabledAreEqual && onPressAreEqual && textAreEqual;
 };
 
 export const PageButton = React.memo(PageButtonComponent, propsAreEqual);
