@@ -5,18 +5,18 @@
 
 import Realm from 'realm';
 
-export class ItemBatchLocationMovement extends Realm.Object {}
+export class LocationMovement extends Realm.Object {}
 
-ItemBatchLocationMovement.schema = {
-  name: 'ItemBatchLocationMovement',
+LocationMovement.schema = {
+  name: 'LocationMovement',
   primaryKey: 'id',
   properties: {
     id: 'string',
     location: { type: 'Location' },
     itemBatch: { type: 'ItemBatch' },
-    enterDate: { type: 'date' },
+    enterDate: { type: 'date', default: new Date() },
     exitDate: { type: 'date', optional: true },
   },
 };
 
-export default ItemBatchLocationMovement;
+export default LocationMovement;

@@ -17,7 +17,7 @@ Location.schema = {
     locationType: { type: 'LocationType', optional: true },
     locationMovements: {
       type: 'linkingObjects',
-      objectType: 'ItemBatchLocationMovement',
+      objectType: 'LocationMovement',
       property: 'location',
     },
   },

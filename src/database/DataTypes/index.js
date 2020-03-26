@@ -24,7 +24,7 @@ export { InsurancePolicy } from './InsurancePolicy';
 export { InsuranceProvider } from './InsuranceProvider';
 export { Item } from './Item';
 export { ItemBatch } from './ItemBatch';
-export { ItemBatchLocationMovement } from './ItemBatchLocationMovement';
+export { LocationMovement } from './LocationMovement';
 export { ItemDirection } from './ItemDirection';
 export { ItemStoreJoin } from './ItemStoreJoin';
 export { Location } from './Location';

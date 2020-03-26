@@ -131,7 +131,7 @@ ItemBatch.schema = {
     location: { type: 'Location', optional: true },
     locationMovements: {
       type: 'linkingObjects',
-      objectType: 'ItemBatchLocationMovement',
+      objectType: 'LocationMovement',
       property: 'itemBatch',
     },
   },
