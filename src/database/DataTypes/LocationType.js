@@ -13,7 +13,6 @@ LocationType.schema = {
   properties: {
     id: 'string',
     description: { type: 'string', optional: true },
-    comment: { type: 'string', optional: true },
   },
 };
 
