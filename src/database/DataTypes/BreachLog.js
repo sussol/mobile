@@ -14,7 +14,7 @@ BreachLog.schema = {
     id: 'string',
     temperatureLogs: { type: 'linkingObjects', objectType: 'TemperatureLog', property: 'breach' },
     startTimestamp: 'date',
-    endTimestamp: 'date',
+    endTimestamp: { type: 'date', optional: true },
   },
 };
 
