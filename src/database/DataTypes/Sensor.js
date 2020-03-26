@@ -15,6 +15,7 @@ Sensor.schema = {
     macAddress: { type: 'string', optional: true },
     name: { type: 'string', optional: true },
     batteryLevel: { type: 'double', default: 0 },
+    rawSensorLogs: { type: 'linkingObjects', objectType: 'RawSensorLog', property: 'sensor' },
   },
 };
 
