@@ -25,6 +25,11 @@ Location.schema = {
       objectType: 'TemperatureLog',
       property: 'location',
     },
+    breaches: {
+      type: 'linkingObjects',
+      objectType: 'BreachLog',
+      property: 'location',
+    },
   },
 };
 
