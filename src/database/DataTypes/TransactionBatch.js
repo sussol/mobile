@@ -184,6 +184,7 @@ TransactionBatch.schema = {
     total: { type: 'double', optional: true },
     type: { type: 'string', optional: true },
     linkedTransaction: { type: 'Transaction', optional: true },
+    location: { type: 'Location', optional: true },
   },
 };
 

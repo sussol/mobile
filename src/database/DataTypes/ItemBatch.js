@@ -128,6 +128,12 @@ ItemBatch.schema = {
     supplier: { type: 'Name', optional: true },
     donor: { type: 'Name', optional: true },
     transactionBatches: { type: 'list', objectType: 'TransactionBatch' },
+    location: { type: 'Location', optional: true },
+    locationMovements: {
+      types: 'linkingObjects',
+      objectType: 'ItemBatchLocationMovement',
+      property: 'itemBatch',
+    },
   },
 };
 
