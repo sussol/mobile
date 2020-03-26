@@ -20,6 +20,11 @@ Location.schema = {
       objectType: 'LocationMovement',
       property: 'location',
     },
+    temperatureLogs: {
+      type: 'linkingObjects',
+      objectType: 'TemperatureLog',
+      property: 'location',
+    },
   },
 };
 
