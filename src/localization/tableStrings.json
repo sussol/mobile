@@ -6,6 +6,7 @@
     "batch_name": "BATCH NAME",
     "batch": "BATCH",
     "batches": "BATCHES",
+    "breach": "BREACH",
     "category": "Category",
     "code": "CODE",
     "comment": "COMMENT",
@@ -20,6 +21,7 @@
     "difference": "DIFFERENCE",
     "dispense": "DISPENSE",
     "dob": "D.O.B",
+    "doses": "DOSES",
     "earliest_expiry": "Earliest expiry",
     "edit": "EDIT",
     "entered_date": "ENTERED DATE",
@@ -35,6 +37,7 @@
     "item_name": "ITEM NAME",
     "items": "ITEMS",
     "last_name": "LAST NAME",
+    "location": "LOCATION",
     "monthly_usage_s": "Monthly usage",
     "monthly_usage": "MONTHLY\nUSE",
     "name": "NAME",
@@ -63,6 +66,8 @@
     "status": "STATUS",
     "stock_on_hand": "STOCK ON HAND",
     "suggested_quantity": "SUGGESTED\nQUANTITY",
+    "supplier_credit": "Supplier credit",
+    "supplier_invoice": "Supplier invoice",
     "supplier": "SUPPLIER",
     "supply_quantity": "SUPPLY THIS\nINVOICE",
     "their_stock": "THEIR\nSTOCK",
@@ -70,8 +75,7 @@
     "type": "TYPE",
     "unit": "UNIT",
     "value": "VALUE",
-    "supplier_credit": "Supplier credit",
-    "supplier_invoice": "Supplier invoice"
+    "vvm_status": "VVM STATUS"
   },
   "fr": {
     "supplier_credit": "Crédit fournisseur",
