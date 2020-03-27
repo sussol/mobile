@@ -761,6 +761,16 @@ const COLUMNS = () => ({
 
   // ICON COLUMNS
 
+  [COLUMN_NAMES.BREACH]: {
+    type: COLUMN_TYPES.ICON,
+    key: COLUMN_KEYS.IS_IN_BREACH,
+    title: tableStrings.breach,
+    sortable: false,
+    alignText: 'center',
+    editable: false,
+    icon: 'breach',
+  },
+
   [COLUMN_NAMES.RETURN]: {
     type: COLUMN_TYPES.ICON,
     key: COLUMN_KEYS.RETURN,
