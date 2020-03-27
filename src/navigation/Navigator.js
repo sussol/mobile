@@ -28,6 +28,7 @@ import {
   SettingsPage,
   DashboardPage,
   StockPage,
+  VaccinePage,
 } from '../pages';
 
 export const DEFAULT_SCREEN_OPTIONS = {
@@ -67,6 +68,7 @@ const ROUTE_NAME_TO_PAGE = {
   [ROUTES.CASH_REGISTER]: CashRegisterPage,
   [ROUTES.SETTINGS]: SettingsPage,
   [ROUTES.DASHBOARD]: DashboardPage,
+  [ROUTES.VACCINES]: VaccinePage,
 };
 
 export const Pages = Object.values(ROUTES).reduce((acc, route) => {
