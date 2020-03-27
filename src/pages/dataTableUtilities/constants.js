@@ -90,6 +90,7 @@ export const COLUMN_NAMES = {
   EDITABLE_BATCH_NAME: 'editableBatchName',
   EDITABLE_COMMENT: 'editableComment',
   EDITABLE_EXPIRY_DATE: 'editableExpiryDate',
+  EDITABLE_NAME: 'editableName',
   EDITABLE_REQUIRED_QUANTITY: 'editableRequiredQuantity',
   EDITABLE_TOTAL_QUANTITY: 'editableTotalQuantity',
   EDITABLE_VALUE: 'editableValue',

@@ -501,6 +501,14 @@ const COLUMNS = () => ({
     sortable: false,
     editable: true,
   },
+  [COLUMN_NAMES.EDITABLE_NAME]: {
+    type: COLUMN_TYPES.EDITABLE_STRING,
+    key: COLUMN_KEYS.NAME,
+    title: tableStrings.value,
+    textAlign: 'right',
+    sortable: true,
+    editable: true,
+  },
   [COLUMN_NAMES.EDITABLE_VALUE]: {
     type: COLUMN_TYPES.EDITABLE_STRING,
     key: COLUMN_KEYS.VALUE,
