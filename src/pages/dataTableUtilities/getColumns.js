@@ -645,6 +645,15 @@ const COLUMNS = () => ({
     editable: true,
   },
 
+  [COLUMN_NAMES.DOSES]: {
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
+    key: COLUMN_KEYS.DOSES,
+    title: tableStrings.doses,
+    alignText: 'right',
+    sortable: true,
+    editable: true,
+  },
+
   [COLUMN_NAMES.RETURN_AMOUNT]: {
     type: COLUMN_TYPES.EDITABLE_NUMERIC,
     key: COLUMN_KEYS.RETURN_AMOUNT,

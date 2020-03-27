@@ -18,6 +18,7 @@ export const COLUMN_TYPES = {
 
 export const COLUMN_KEYS = {
   AVAILABLE_QUANTITY: 'availableQuantity',
+  DOSES: 'doses',
   BATCH: 'batch',
   CODE: 'code',
   COMMENT: 'comment',
@@ -86,6 +87,7 @@ export const COLUMN_NAMES = {
   CREATED_DATE: 'createdDate',
   CUSTOMER: 'customer',
   DATE_OF_BIRTH: 'dateOfBirth',
+  DOSES: 'doses',
   DESCRIPTION: 'description',
   DIFFERENCE: 'difference',
   DISPENSE: 'dispense',
