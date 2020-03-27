@@ -862,6 +862,14 @@ const COLUMNS = () => ({
     sortable: false,
     editable: false,
   },
+  [COLUMN_NAMES.VVM_STATUS]: {
+    type: COLUMN_TYPES.DROP_DOWN,
+    key: COLUMN_KEYS.CURRENT_VVM_STATUS,
+    title: tableStrings.location,
+    alignText: 'left',
+    sortable: false,
+    editable: false,
+  },
 });
 
 const getColumns = page => {

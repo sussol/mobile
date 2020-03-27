@@ -26,6 +26,7 @@ export const COLUMN_KEYS = {
   COUNTED_TOTAL_QUANTITY: 'countedTotalQuantity',
   CREATED_DATE: 'createdDate',
   CURRENT_LOCATION: 'currentLocation',
+  CURRENT_VVM_STATUS: 'currentVvmStatus',
   DATE_OF_BIRTH: 'dateOfBirth',
   DESCRIPTION: 'description',
   DIFFERENCE: 'difference',
@@ -139,6 +140,7 @@ export const COLUMN_NAMES = {
   TOTAL: 'total',
   TRANSACTION_TYPE: 'transactionType',
   UNIT: 'unit',
+  VVM_STATUS: 'vvmStatus',
 };
 
 export default { COLUMN_TYPES, COLUMN_NAMES, COLUMN_KEYS };
