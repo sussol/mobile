@@ -19,6 +19,7 @@ export const COLUMN_TYPES = {
 export const COLUMN_KEYS = {
   AVAILABLE_QUANTITY: 'availableQuantity',
   BATCH: 'batch',
+  CURRENT_LOCATION: 'currentLocation',
   CODE: 'code',
   COMMENT: 'comment',
   CONFIRM_DATE: 'confirmDate',
@@ -100,6 +101,7 @@ export const COLUMN_NAMES = {
   ITEM_CODE: 'itemCode',
   ITEM_NAME: 'itemName',
   LAST_NAME: 'lastName',
+  LOCATION: 'location',
   MONTHLY_USAGE: 'monthlyUsage',
   NAME: 'name',
   NUMBER_OF_ITEMS: 'numberOfItems',

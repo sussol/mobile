@@ -844,6 +844,14 @@ const COLUMNS = () => ({
     sortable: false,
     editable: false,
   },
+  [COLUMN_NAMES.LOCATION]: {
+    type: COLUMN_TYPES.DROP_DOWN,
+    key: COLUMN_KEYS.CURRENT_LOCATION,
+    title: tableStrings.location,
+    alignText: 'left',
+    sortable: false,
+    editable: false,
+  },
 });
 
 const getColumns = page => {
