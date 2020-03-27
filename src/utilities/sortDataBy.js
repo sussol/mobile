@@ -8,6 +8,7 @@ const sortKeyToType = {
   itemName: 'string',
   batch: 'string',
   dateOfBirth: 'date',
+  doses: 'doses',
   availableQuantity: 'number',
   totalQuantity: 'number',
   expiryDate: 'date',
