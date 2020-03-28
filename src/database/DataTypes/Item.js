@@ -248,7 +248,7 @@ Item.schema = {
     unit: { type: 'Unit', optional: true },
     defaultRestrictedLocationType: { type: 'LocationType', optional: true },
     directions: { type: 'linkingObjects', objectType: 'ItemDirection', property: 'item' },
-    dosesPerVial: { type: 'double', default: 0 },
+    doses: { type: 'double', default: 0 },
     isVaccine: { type: 'bool', default: false },
   },
 };
