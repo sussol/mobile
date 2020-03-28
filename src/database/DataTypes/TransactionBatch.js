@@ -185,6 +185,8 @@ TransactionBatch.schema = {
     type: { type: 'string', optional: true },
     linkedTransaction: { type: 'Transaction', optional: true },
     location: { type: 'Location', optional: true },
+    doses: 'double?',
+    vaccineVialMonitorStatus: { type: 'VaccineVialMonitorStatusLog', optional: true },
   },
 };
 

@@ -308,6 +308,8 @@ StocktakeBatch.schema = {
     option: { type: 'Options', optional: true },
     supplier: { type: 'Name', optional: true },
     location: { type: 'Location', optional: true },
+    doses: 'double?',
+    vaccineVialMonitorStatus: { type: 'VaccineVialMonitorStatus', optional: true },
   },
 };
 
