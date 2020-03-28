@@ -62,6 +62,16 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     invalidMessage: formInputStrings.must_not_be_empty,
     isEditable: true,
   },
+  [FORM_INPUT_KEYS.SEARCH_FIRST_NAME]: {
+    type: 'text',
+    initialValue: '',
+    key: 'firstName',
+    validator: () => true,
+    isRequired: false,
+    label: formInputStrings.first_name,
+    invalidMessage: '',
+    isEditable: true,
+  },
   [FORM_INPUT_KEYS.LAST_NAME]: {
     type: 'text',
     initialValue: '',
@@ -70,6 +80,16 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isRequired: true,
     label: formInputStrings.last_name,
     invalidMessage: formInputStrings.must_not_be_empty,
+    isEditable: true,
+  },
+  [FORM_INPUT_KEYS.SEARCH_LAST_NAME]: {
+    type: 'text',
+    initialValue: '',
+    key: 'lastName',
+    validator: () => true,
+    isRequired: false,
+    label: formInputStrings.last_name,
+    invalidMessage: '',
     isEditable: true,
   },
   [FORM_INPUT_KEYS.CODE]: {
@@ -89,6 +109,22 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     invalidMessage: formInputStrings.must_be_a_date,
     isRequired: true,
     validator: input => {
+      const inputDate = moment(input, 'DD/MM/YYYY', null, true);
+      const isValid = inputDate.isValid();
+      const isDateOfBirth = inputDate.isSameOrBefore(new Date());
+      return isValid && isDateOfBirth;
+    },
+    label: formInputStrings.date_of_birth,
+    isEditable: true,
+  },
+  [FORM_INPUT_KEYS.SEARCH_DATE_OF_BIRTH]: {
+    type: 'date',
+    initialValue: '',
+    key: 'dateOfBirth',
+    invalidMessage: formInputStrings.must_be_a_date,
+    isRequired: false,
+    validator: input => {
+      if (input === '') return true;
       const inputDate = moment(input, 'DD/MM/YYYY', null, true);
       const isValid = inputDate.isValid();
       const isDateOfBirth = inputDate.isSameOrBefore(new Date());
@@ -172,6 +208,16 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     label: formInputStrings.personal_policy_number,
     isEditable: !seedObject,
   },
+  [FORM_INPUT_KEYS.SEARCH_POLICY_NUMBER_PERSON]: {
+    type: 'text',
+    initialValue: '',
+    key: 'policyNumberPerson',
+    validator: null,
+    isRequired: false,
+    invalidMessage: '',
+    label: formInputStrings.personal_policy_number,
+    isEditable: true,
+  },
   [FORM_INPUT_KEYS.POLICY_NUMBER_FAMILY]: {
     type: 'text',
     initialValue: '',
@@ -181,6 +227,16 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     invalidMessage: formInputStrings.unique_policy,
     label: formInputStrings.family_policy_number,
     isEditable: !seedObject,
+  },
+  [FORM_INPUT_KEYS.SEARCH_POLICY_NUMBER_FAMILY]: {
+    type: 'text',
+    initialValue: '',
+    key: 'policyNumberFamily',
+    validator: null,
+    isRequired: false,
+    invalidMessage: '',
+    label: formInputStrings.family_policy_number,
+    isEditable: true,
   },
   [FORM_INPUT_KEYS.POLICY_PROVIDER]: {
     type: 'dropdown',
