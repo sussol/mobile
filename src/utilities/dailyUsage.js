@@ -45,10 +45,8 @@ export const dailyUsage = item => {
   const itemAddedDate = moment(addedDate);
   const dateNow = moment();
   const lookbackDate = moment(dateNow).subtract(amcLookback * 30, 'days');
-
-  const addedRecently = itemAddedDate.isBefore(lookbackDate);
-
-  const startDate = amcEnforceLookback || !addedRecently ? lookbackDate : itemAddedDate;
+  const useLookbackDate = amcEnforceLookback || itemAddedDate.isBefore(lookbackDate);
+  const startDate = useLookbackDate ? lookbackDate : itemAddedDate;
 
   const numberOfUsageDays = moment.duration(dateNow.diff(startDate)).asDays();
 
