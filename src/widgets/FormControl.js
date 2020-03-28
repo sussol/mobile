@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable react/forbid-prop-types */
-import React from 'react';
+import React, { useCallback } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 
 import PropTypes from 'prop-types';
@@ -46,6 +46,7 @@ const FormControlComponent = ({
   onSave,
   inputConfig,
   isDisabled,
+  isSearchForm,
 }) => {
   const [refs, setRefs] = React.useState([]);
 
@@ -54,10 +55,7 @@ const FormControlComponent = ({
     setRefs({ length: inputConfig.length });
   }, []);
 
-  const onSaveCompletedForm = React.useCallback(() => onSave(completedForm), [
-    onSave,
-    completedForm,
-  ]);
+  const onSaveCompletedForm = useCallback(() => onSave(completedForm), [onSave, completedForm]);
 
   const nextFocus = (index, key) => value => {
     onUpdateForm(key, value);
@@ -169,6 +167,36 @@ const FormControlComponent = ({
       }
     );
 
+  const Buttons = useCallback(
+    () =>
+      isSearchForm ? (
+        <PageButton
+          onPress={onSaveCompletedForm}
+          style={{ ...localStyles.saveButton, width: 300 }}
+          isDisabled={!canSaveForm || isDisabled}
+          textStyle={localStyles.saveButtonTextStyle}
+          text={generalStrings.search}
+        />
+      ) : (
+        <>
+          <PageButton
+            onPress={onSaveCompletedForm}
+            style={localStyles.saveButton}
+            isDisabled={!canSaveForm || isDisabled}
+            textStyle={localStyles.saveButtonTextStyle}
+            text={generalStrings.save}
+          />
+          <PageButton
+            style={localStyles.cancelButton}
+            onPress={onCancelPressed}
+            textStyle={localStyles.cancelButtonTextStyle}
+            text={modalStrings.cancel}
+          />
+        </>
+      ),
+    [isSearchForm, onSaveCompletedForm, canSaveForm, isDisabled, onCancelPressed]
+  );
+
   return (
     <View style={localStyles.flexOne}>
       <ScrollView style={localStyles.whiteBackground}>
@@ -179,19 +207,7 @@ const FormControlComponent = ({
         </View>
       </ScrollView>
       <View style={localStyles.buttonsRow}>
-        <PageButton
-          onPress={onSaveCompletedForm}
-          style={localStyles.saveButton}
-          isDisabled={!canSaveForm || isDisabled}
-          textStyle={localStyles.saveButtonTextStyle}
-          text={generalStrings.save}
-        />
-        <PageButton
-          style={localStyles.cancelButton}
-          onPress={onCancelPressed}
-          textStyle={localStyles.cancelButtonTextStyle}
-          text={modalStrings.cancel}
-        />
+        <Buttons />
       </View>
     </View>
   );
@@ -219,6 +235,7 @@ const mapStateToProps = state => {
 FormControlComponent.defaultProps = {
   completedForm: null,
   isDisabled: false,
+  isSearchForm: false,
   form: {},
 };
 
@@ -232,6 +249,7 @@ FormControlComponent.propTypes = {
   inputConfig: PropTypes.array.isRequired,
   onCancelPressed: PropTypes.func.isRequired,
   isDisabled: PropTypes.bool,
+  isSearchForm: PropTypes.bool,
 };
 
 export const FormControl = connect(mapStateToProps, mapDispatchToProps)(FormControlComponent);
