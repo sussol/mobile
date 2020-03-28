@@ -5,10 +5,10 @@
 
 import Realm from 'realm';
 
-export class RawSensorLog extends Realm.Object {}
+export class SensorLog extends Realm.Object {}
 
-RawSensorLog.schema = {
-  name: 'RawSensorLog',
+SensorLog.schema = {
+  name: 'SensorLog',
   primaryKey: 'id',
   properties: {
     id: 'string',
@@ -18,4 +18,4 @@ RawSensorLog.schema = {
   },
 };
 
-export default RawSensorLog;
+export default SensorLog;

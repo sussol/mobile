@@ -43,7 +43,7 @@ export { Period } from './Period';
 export { PeriodSchedule } from './PeriodSchedule';
 export { Prescriber } from './Prescriber';
 export { ProgramIndicator } from './ProgramIndicator';
-export { RawSensorLog } from './RawSensorLog';
+export { SensorLog } from './SensorLog';
 export { Report } from './Report';
 export { Requisition } from './Requisition';
 export { RequisitionItem } from './RequisitionItem';
