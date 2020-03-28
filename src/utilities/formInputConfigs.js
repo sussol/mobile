@@ -198,6 +198,16 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     invalidMessage: formInputStrings.must_be_between_0_and_50,
     isEditable: true,
   },
+  [FORM_INPUT_KEYS.SEARCH_REGISTRATION_CODE]: {
+    type: 'text',
+    initialValue: '',
+    key: 'registrationCode',
+    validator: () => true,
+    isRequired: false,
+    label: formInputStrings.registration_code,
+    invalidMessage: '',
+    isEditable: true,
+  },
   [FORM_INPUT_KEYS.POLICY_NUMBER_PERSON]: {
     type: 'text',
     initialValue: '',
