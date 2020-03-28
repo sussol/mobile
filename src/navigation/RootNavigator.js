@@ -24,7 +24,7 @@ const navigate = (screenName, screenProps) =>
 const replace = (screenName, screenProps) =>
   rootNavigatorRef.current?.dispatch(StackActions.replace(screenName, screenProps));
 
-const goBack = () => rootNavigatorRef.current?.goBack();
+const goBack = () => rootNavigatorRef.current?.dispatch(StackActions.pop());
 
 const canGoBack = () => !!rootNavigatorRef.current?.canGoBack();
 
