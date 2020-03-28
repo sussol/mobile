@@ -59,6 +59,7 @@
     "@react-native-community/datetimepicker": "^2.2.2",
     "@react-native-community/masked-view": "^0.1.7",
     "@react-native-community/slider": "^2.0.8",
+    "@react-navigation/bottom-tabs": "^5.1.1",
     "@react-navigation/compat": "^5.1.1",
     "@react-navigation/core": "^3.5.1",
     "@react-navigation/native": "^5.0.9",
