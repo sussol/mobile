@@ -13,7 +13,7 @@ VaccineVialMonitorStatusLog.schema = {
   properties: {
     id: 'string',
     status: 'VaccineVialMonitorStatus',
-    date: { type: 'date', default: new Date() },
+    timestamp: { type: 'date', default: new Date() },
     itemBatch: 'ItemBatch',
   },
 };

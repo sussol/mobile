@@ -14,8 +14,8 @@ LocationMovement.schema = {
     id: 'string',
     location: { type: 'Location' },
     itemBatch: { type: 'ItemBatch' },
-    enterDate: { type: 'date', default: new Date() },
-    exitDate: { type: 'date', optional: true },
+    enterTimestamp: { type: 'date', default: new Date() },
+    exitTimestamp: { type: 'date', optional: true },
   },
 };
 
