@@ -74,6 +74,13 @@ export const RECORD_TYPES = new SyncTranslator({
   InsuranceProvider: 'insuranceProvider',
   InsurancePolicy: 'nameInsuranceJoin',
   Currency: 'currency',
+  LocationMovement: 'location_movement',
+  VaccineVialMonitorStatusLog: 'vaccine_vial_monitor_status_log',
+  Sensor: 'sensor',
+  Location: 'Location',
+  TemperatureLog: 'temperature_log',
+  TemperatureBreach: 'temperature_breach',
+  SensorLog: 'sensorLog',
 });
 
 export const REQUISITION_TYPES = new SyncTranslator({
