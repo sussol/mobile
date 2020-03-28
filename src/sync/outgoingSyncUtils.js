@@ -73,6 +73,8 @@ const generateSyncData = (settings, recordType, record) => {
         total_cost: String(record.costPrice * record.numberOfPacks),
         name_ID: record.supplier && String(record.supplier.id),
         donor_id: record.donor && record.donor.id,
+        doses: String(record.doses),
+        location_ID: record.location?.id,
       };
     }
     case 'Name': {
@@ -186,6 +188,9 @@ const generateSyncData = (settings, recordType, record) => {
         item_ID: record.itemId,
         optionID: record.option && record.option.id,
         is_edited: record.hasBeenCounted,
+        doses: String(record.doses),
+        location_ID: record.location?.id,
+        vaccine_vial_monitor_status_ID: record.vaccineVialMonitorStatus?.id,
       };
     }
     case 'Transaction': {
@@ -245,7 +250,6 @@ const generateSyncData = (settings, recordType, record) => {
         expiry_date: getDateString(record.expiryDate),
         pack_size: String(record.packSize),
         quantity: String(record.numberOfPacks),
-        // |item_line_ID| can be null due to server merge bug in v3.83.
         item_line_ID: record.itemBatch?.id ?? '',
         line_number: String(record.sortIndex),
         item_name: record.itemName,
@@ -253,6 +257,9 @@ const generateSyncData = (settings, recordType, record) => {
         donor_id: record.donor && record.donor.id,
         type: record.type,
         linked_transact_id: record.linkedTransaction?.id,
+        doses: String(record.doses),
+        location_ID: record.location?.id,
+        vaccine_vial_monitor_status_ID: record.vaccineVialMonitorStatus?.id,
       };
     }
     case 'InsurancePolicy': {
@@ -301,6 +308,64 @@ const generateSyncData = (settings, recordType, record) => {
         store_ID: settings.get(THIS_STORE_ID),
         female: String(record.female),
         initials,
+      };
+    }
+    case 'TemperatureLog': {
+      return {
+        ID: record.id,
+        temperature: String(record.temperature),
+        time: getTimeString(record.timestamp),
+        date: getDateString(record.timestamp),
+        location_ID: record.location?.id,
+        breach_ID: record.breach?.id,
+      };
+    }
+    case 'TemperatureBreach': {
+      return {
+        ID: record.id,
+        start_time: getTimeString(record.startTimestamp),
+        start_date: getDateString(record.startTimestamp),
+        end_time: getTimeString(record.endTimestamp),
+        end_date: getDateString(record.endTimestamp),
+        location_ID: record.location?.id,
+      };
+    }
+    case 'LocationMovement': {
+      return {
+        ID: record.id,
+        enter_time: getTimeString(record.enterTimestamp),
+        enter_date: getDateString(record.enterTimestamp),
+        exit_time: getTimeString(record.exitTimestamp),
+        exit_date: getDateString(record.exitTimestamp),
+        item_line_ID: record.itemBatch?.id,
+        location_ID: record.location?.id,
+      };
+    }
+    case 'VaccineVialMonitorStatusLog': {
+      return {
+        ID: record.id,
+        status: record.status?.id,
+        time: getTimeString(record.timestamp),
+        date: getDateString(record.timestamp),
+        item_line_ID: record.itemBatch?.id,
+      };
+    }
+    case 'Sensor': {
+      return {
+        ID: record.id,
+        macAddress: record.macAddress,
+        name: record.name,
+        batteryLevel: String(record.batteryLevel),
+        store_ID: settings.get(THIS_STORE_ID),
+      };
+    }
+    case 'Location': {
+      return {
+        ID: record.id,
+        Description: record.description,
+        code: record.code,
+        type_ID: record.locationType?.id,
+        store_ID: settings.get(THIS_STORE_ID),
       };
     }
     default:
