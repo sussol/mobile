@@ -80,7 +80,6 @@ export const RECORD_TYPES = new SyncTranslator({
   Location: 'Location',
   TemperatureLog: 'temperature_log',
   TemperatureBreach: 'temperature_breach',
-  SensorLog: 'sensorLog',
 });
 
 export const REQUISITION_TYPES = new SyncTranslator({
