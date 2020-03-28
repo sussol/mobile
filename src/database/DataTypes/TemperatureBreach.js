@@ -5,10 +5,10 @@
 
 import Realm from 'realm';
 
-export class BreachLog extends Realm.Object {}
+export class TemperatureBreach extends Realm.Object {}
 
-BreachLog.schema = {
-  name: 'BreachLog',
+TemperatureBreach.schema = {
+  name: 'TemperatureBreach',
   primaryKey: 'id',
   properties: {
     id: 'string',
@@ -19,4 +19,4 @@ BreachLog.schema = {
   },
 };
 
-export default BreachLog;
+export default TemperatureBreach;

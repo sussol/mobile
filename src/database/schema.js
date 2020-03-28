@@ -6,7 +6,6 @@
 import {
   Abbreviation,
   Address,
-  BreachLog,
   Currency,
   IndicatorAttribute,
   IndicatorValue,
@@ -45,6 +44,7 @@ import {
   StocktakeBatch,
   StocktakeItem,
   SyncOut,
+  TemperatureBreach,
   TemperatureBreachConfiguration,
   TemperatureLog,
   Transaction,
@@ -158,7 +158,6 @@ export const schema = {
   schema: [
     Abbreviation,
     Address,
-    BreachLog,
     Currency,
     IndicatorAttribute,
     IndicatorValue,
@@ -197,6 +196,7 @@ export const schema = {
     StocktakeBatch,
     StocktakeItem,
     SyncOut,
+    TemperatureBreach,
     TemperatureBreachConfiguration,
     TemperatureLog,
     Transaction,

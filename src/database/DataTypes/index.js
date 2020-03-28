@@ -17,7 +17,6 @@ export class TransactionCategory extends Realm.Object {}
 export class User extends Realm.Object {}
 
 export { Abbreviation } from './Abbreviation';
-export { BreachLog } from './BreachLog';
 export { Currency } from './Currency';
 export { IndicatorAttribute } from './IndicatorAttribute';
 export { IndicatorValue } from './IndicatorValue';
@@ -52,6 +51,7 @@ export { Sensor } from './Sensor';
 export { Stocktake } from './Stocktake';
 export { StocktakeBatch } from './StocktakeBatch';
 export { StocktakeItem } from './StocktakeItem';
+export { TemperatureBreach } from './TemperatureBreach';
 export { TemperatureBreachConfiguration } from './TemperatureBreachConfiguration';
 export { TemperatureLog } from './TemperatureLog';
 export { Transaction } from './Transaction';
