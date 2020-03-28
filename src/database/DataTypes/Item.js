@@ -246,7 +246,10 @@ Item.schema = {
     isVisible: { type: 'bool', default: false },
     crossReferenceItem: { type: 'Item', optional: true },
     unit: { type: 'Unit', optional: true },
+    defaultRestrictedLocationType: { type: 'LocationType', optional: true },
     directions: { type: 'linkingObjects', objectType: 'ItemDirection', property: 'item' },
+    doses: { type: 'double', default: 0 },
+    isVaccine: { type: 'bool', default: false },
   },
 };
 
