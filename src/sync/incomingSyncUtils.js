@@ -143,7 +143,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     },
     Item: {
       cannotBeBlank: ['code', 'item_name'],
-      canBeBlank: ['default_pack_size'],
+      canBeBlank: ['default_pack_size', 'doses'],
     },
     ItemCategory: {
       cannotBeBlank: [],
@@ -155,7 +155,16 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     },
     ItemBatch: {
       cannotBeBlank: ['item_ID', 'quantity'],
-      canBeBlank: ['pack_size', 'batch', 'expiry_date', 'cost_price', 'sell_price', 'donor_id'],
+      canBeBlank: [
+        'pack_size',
+        'batch',
+        'expiry_date',
+        'cost_price',
+        'sell_price',
+        'donor_id',
+        'doses',
+        'location_ID',
+      ],
     },
     ItemStoreJoin: {
       cannotBeBlank: ['item_ID', 'store_ID'],
@@ -213,7 +222,16 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
         'snapshot_qty',
         'snapshot_packsize',
       ],
-      canBeBlank: ['expiry', 'Batch', 'cost_price', 'sell_price', 'optionID'],
+      canBeBlank: [
+        'expiry',
+        'Batch',
+        'cost_price',
+        'sell_price',
+        'optionID',
+        'doses',
+        'vaccine_vial_monitor_status_ID',
+        'location_ID',
+      ],
     },
     Store: {
       cannotBeBlank: [],
@@ -244,6 +262,9 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
         'cost_price',
         'sell_price',
         'donor_id',
+        'doses',
+        'vaccine_vial_monitor_status_ID',
+        'location_ID',
       ],
     },
     Options: {
@@ -304,6 +325,39 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     },
     Currency: {
       cannotBeBlank: [],
+      canBeBlank: [],
+    },
+    TemperatureLog: {
+      cannotBeBlank: ['temperature', 'date', 'time', 'location_ID'],
+      canBeBlank: ['breach_ID'],
+    },
+    TemperatureBreach: {
+      cannotBeBlank: ['start_time', 'start_date', 'location_ID'],
+      canBeBlank: ['end_time', 'end_date'],
+    },
+    MovementLog: {
+      cannotBeBlank: ['item_line_ID', 'enter_time', 'enter_date', 'location_ID'],
+      canBeBlank: ['exit_time', 'exit_date'],
+    },
+    VaccineVialMonitorStatus: {
+      cannotBeBlank: [],
+      canBeBlank: ['description', 'code', 'level', 'isActive'],
+    },
+    VaccineVialMonitorStatusLog: {
+      cannotBeBlank: ['vaccine_vial_monitor_status_ID', 'item_line_ID', 'time', 'date'],
+      canBeBlank: [],
+    },
+    Location: { cannotBeBlank: [], canBeBlank: ['Description', 'code', 'type_ID'] },
+    LocationType: { cannotBeBlank: [], canBeBlank: ['Description'] },
+    Sensor: { cannotBeBlank: ['macAddress', 'name'], canBeBlank: ['batteryLevel'] },
+    TemperatureBreachConfiguration: {
+      cannotBeBlank: [
+        'minimum_temperature',
+        'maximum_temperature',
+        'duration',
+        'description',
+        'colour',
+      ],
       canBeBlank: [],
     },
   };
