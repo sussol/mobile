@@ -128,6 +128,18 @@ ItemBatch.schema = {
     supplier: { type: 'Name', optional: true },
     donor: { type: 'Name', optional: true },
     transactionBatches: { type: 'list', objectType: 'TransactionBatch' },
+    location: { type: 'Location', optional: true },
+    locationMovements: {
+      type: 'linkingObjects',
+      objectType: 'LocationMovement',
+      property: 'itemBatch',
+    },
+    doses: { type: 'double', default: 0 },
+    vaccineVialMonitorStatusLogs: {
+      type: 'linkingObjects',
+      objectType: 'VaccineVialMonitorStatusLog',
+      property: 'itemBatch',
+    },
   },
 };
 
