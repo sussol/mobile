@@ -29,9 +29,12 @@ import { formInputStrings } from '../localization';
 
 const FORM_INPUT_KEYS = {
   FIRST_NAME: 'firstName',
+  SEARCH_FIRST_NAME: 'firstName',
   LAST_NAME: 'lastName',
+  SEARCH_LAST_NAME: 'lastName',
   CODE: 'code',
   DATE_OF_BIRTH: 'dateOfBirth',
+  SEARCH_DATE_OF_BIRTH: 'dateOfBirth',
   EMAIL: 'emailAddress',
   PHONE: 'phoneNumber',
   COUNTRY: 'country',
@@ -39,7 +42,9 @@ const FORM_INPUT_KEYS = {
   ADDRESS_TWO: 'addressTwo',
   REGISTRATION_CODE: 'registrationCode',
   POLICY_NUMBER_FAMILY: 'policyNumberFamily',
+  SEARCH_POLICY_NUMBER_FAMILY: 'policyNumberFamily',
   POLICY_NUMBER_PERSON: 'policyNumberPerson',
+  SEARCH_POLICY_NUMBER_PERSON: 'policyNumberPerson',
   POLICY_PROVIDER: 'insuranceProvider',
   POLICY_TYPE: 'policyType',
   IS_ACTIVE: 'isActive',
@@ -245,6 +250,13 @@ const FORM_CONFIGS = {
     FORM_INPUT_KEYS.POLICY_PROVIDER,
     FORM_INPUT_KEYS.IS_ACTIVE,
     FORM_INPUT_KEYS.POLICY_TYPE,
+  ],
+  searchPatient: [
+    FORM_INPUT_KEYS.SEARCH_FIRST_NAME,
+    FORM_INPUT_KEYS.SEARCH_LAST_NAME,
+    FORM_INPUT_KEYS.SEARCH_DATE_OF_BIRTH,
+    FORM_INPUT_KEYS.SEARCH_POLICY_NUMBER_PERSON,
+    FORM_INPUT_KEYS.SEARCH_POLICY_NUMBER_FAMILY,
   ],
 };
 
