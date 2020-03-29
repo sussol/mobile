@@ -750,6 +750,28 @@ const createTransactionItem = (database, transaction, item, initialQuantity = 0)
   return transactionItem;
 };
 
+const createLocation = (database, description, code, locationType) => {
+  const location = database.create('Location', {
+    id: generateUUID(),
+    description,
+    code,
+    locationType,
+  });
+
+  return location;
+};
+
+const createSensor = (database, macAddress, batteryLevel, location) => {
+  const sensor = database.create('Sensor', {
+    id: generateUUID(),
+    macAddress,
+    batteryLevel,
+    location,
+  });
+
+  return sensor;
+};
+
 /**
  * Create a Message record. This will be sent to the server and requests tables
  * when an app is upgraded from some version to another.
@@ -853,6 +875,10 @@ export const createRecord = (database, type, ...args) => {
       return createPrescriber(database, ...args);
     case 'UpgradeMessage':
       return createUpgradeMessage(database, ...args);
+    case 'Location':
+      return createLocation(database, ...args);
+    case 'Sensor':
+      return createSensor(database, ...args);
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }
