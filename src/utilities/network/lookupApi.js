@@ -4,7 +4,7 @@
  */
 
 import { SETTINGS_KEYS } from '../../settings';
-import { UIDatabase } from '../../database/index';
+import { UIDatabase } from '../../database';
 
 const { SYNC_URL } = SETTINGS_KEYS;
 
