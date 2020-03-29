@@ -1091,6 +1091,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       database.update(recordType, {
         id: record.ID,
         macAddress: record.macAddress,
+        location: database.getOrCreate('Location', record.locationID),
         batteryLevel: parseNumber(record.batteryLevel),
         name: record.name,
       });
