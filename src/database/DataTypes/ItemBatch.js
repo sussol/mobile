@@ -21,6 +21,18 @@ import Realm from 'realm';
  * @property  {List.<TransactionBatch>}  transactionBatches
  */
 export class ItemBatch extends Realm.Object {
+  get isInBreach() {
+    return this.location?.isInBreach() ?? false;
+  }
+
+  get currentVvmStatus() {
+    return this.vaccineVialMonitorStatusLogs.sorted('timestamp', true)[0];
+  }
+
+  get vvmStatusName() {
+    return this.currentVvmStatus?.description ?? '';
+  }
+
   get otherPartyName() {
     return this.supplier?.name || '';
   }
@@ -110,6 +122,28 @@ export class ItemBatch extends Realm.Object {
    */
   toString() {
     return `${this.itemName} - Batch ${this.batch}`;
+  }
+
+  /**
+   * @param  {VaccineVialMonitorStatus} newVvmStatus
+   * @return {Bool} Indicator whether the new vvm status should be applied to this batch.
+   */
+  shouldApplyVvmStatus(newVvmStatus) {
+    const { id: newStatusId } = newVvmStatus;
+    const { id: currentStatusId } = this.currentVvmStatus;
+
+    return newStatusId !== currentStatusId;
+  }
+
+  /**
+   * @param  {Location} newLocation
+   * @return {Bool} Indicator whether the new location should be applied to this batch.
+   */
+  shouldApplyLocation(newLocation) {
+    const { id: newLocationId } = newLocation;
+    const { id: currentLocationId } = this.location;
+
+    return newLocationId !== currentLocationId;
   }
 }
 
