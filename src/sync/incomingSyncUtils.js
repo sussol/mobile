@@ -476,7 +476,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         crossReferenceItem: database.getOrCreate('Item', record.cross_ref_item_ID),
         unit: database.getOrCreate('Unit', record.unit_ID),
         doses: parseNumber(record.doses),
-        isVaccine: parseBoolean(record.boolean),
+        isVaccine: parseBoolean(record.is_vaccine),
         defaultRestrictedLocationType: database.getOrCreate(
           'LocationType',
           record.default_restricted_location_type_ID
@@ -1055,7 +1055,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         description: record.description,
         code: record.code,
         level: parseNumber(record.level),
-        isActive: parseBoolean(record.boolean),
+        isActive: parseBoolean(record.is_active),
       });
       break;
     }
