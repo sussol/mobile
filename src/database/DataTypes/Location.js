@@ -30,7 +30,7 @@ export class Location extends Realm.Object {
 
   batchesAtTime(database, timestamp = new Date()) {
     const locationMovements = this.locationMovements.filtered(
-      'inTime >= $0 && (outTime < $0 || outTime == null)',
+      'inTime <= $0 && (outTime > $0 || outTime == null)',
       timestamp
     );
     const queryString = locationMovements.map(({ id }) => `id == "${id}"`).join(' OR ');
