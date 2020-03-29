@@ -19,15 +19,14 @@ const SEPARATORS = {
   POLICY_NUMBER: '-',
 };
 
-const getQueryString = params => {
-  const {
-    firstName = '',
-    lastName = '',
-    registrationCode = '',
-    dateOfBirth = '',
-    policyNumberPerson = '',
-    policyNumberFamily = '',
-  } = params ?? {};
+const getQueryString = ({
+  firstName = '',
+  lastName = '',
+  registrationCode = '',
+  dateOfBirth = '',
+  policyNumberPerson = '',
+  policyNumberFamily = '',
+} = {}) => {
   const policyNumberSeparator =
     policyNumberPerson && policyNumberFamily ? SEPARATORS.POLICY_NUMBER : '';
   const policyNumber = policyNumberPerson + policyNumberSeparator + policyNumberFamily;
