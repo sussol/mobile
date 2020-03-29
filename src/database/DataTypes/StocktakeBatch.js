@@ -39,7 +39,7 @@ export class StocktakeBatch extends Realm.Object {
   }
 
   get isInBreach() {
-    return this.itemBatch?.isInBreach;
+    return this.itemBatch?.isInBreach ?? false;
   }
 
   get otherPartyName() {
