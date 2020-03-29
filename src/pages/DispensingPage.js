@@ -184,8 +184,12 @@ const Dispensing = ({
             viewStyle={localStyles.searchBar}
             placeholder={dispensingStrings.search_by_last_name_first_name}
           />
-          <PageButton text={lookupRecordText} onPress={lookupRecordAction} />
-          <PageButton text={newRecordText} onPress={newRecordAction} />
+          <PageButton
+            text={lookupRecordText}
+            onPress={lookupRecordAction}
+            style={localStyles.button}
+          />
+          <PageButton text={newRecordText} onPress={newRecordAction} style={localStyles.button} />
         </View>
         <DataTable
           data={data}
@@ -268,6 +272,9 @@ const localStyles = {
     marginHorizontal: 5,
     flex: 1,
     flexGrow: 1,
+  },
+  button: {
+    marginHorizontal: 2.5,
   },
 };
 
