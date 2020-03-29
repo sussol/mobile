@@ -38,6 +38,11 @@ export const selectDataSetInUse = ({ dispensary }) => {
   return [usingPatientsDataSet, usingPrescribersDataSet];
 };
 
+export const selectLookupModalOpen = ({ dispensary }) => {
+  const { isLookupModalOpen } = dispensary;
+  return isLookupModalOpen;
+};
+
 export const selectFilteredData = createSelector(
   [selectData, selectSearchTerm, selectDataSetInUse],
   (data, searchTerm, [usingPatientsDataSet]) => {
