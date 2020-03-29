@@ -772,6 +772,31 @@ const createSensor = (database, macAddress, batteryLevel, location) => {
   return sensor;
 };
 
+const createLocationMovement = (database, itemBatch, location) => {
+  const locationMovement = database.create('LocationMovement', {
+    id: generateUUID(),
+    itemBatch,
+    location,
+    enterTimestamp: new Date(),
+  });
+
+  itemBatch.location = location;
+  database.save('ItemBatch', itemBatch);
+
+  return locationMovement;
+};
+
+const createVvmStatusLog = (database, itemBatch, status) => {
+  const vvmStatus = database.create('VaccineVialMonitorStatus', {
+    id: generateUUID(),
+    itemBatch,
+    status,
+    timestamp: new Date(),
+  });
+
+  return vvmStatus;
+};
+
 /**
  * Create a Message record. This will be sent to the server and requests tables
  * when an app is upgraded from some version to another.
@@ -879,6 +904,10 @@ export const createRecord = (database, type, ...args) => {
       return createLocation(database, ...args);
     case 'Sensor':
       return createSensor(database, ...args);
+    case 'LocationMovement':
+      return createLocationMovement(database, ...args);
+    case 'VaccineVialMonitorStatus':
+      return createVvmStatusLog(database, ...args);
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }
