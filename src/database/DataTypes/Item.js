@@ -173,7 +173,7 @@ export class Item extends Realm.Object {
    */
   get lastRequisitionDate() {
     const mostRecentRequisitionItem = this.requisitionItems.sorted(
-      'requisition.confirmDate',
+      'requisition.entryDate',
       true
     )[0];
 
