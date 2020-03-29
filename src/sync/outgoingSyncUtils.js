@@ -357,6 +357,7 @@ const generateSyncData = (settings, recordType, record) => {
         name: record.name,
         batteryLevel: String(record.batteryLevel),
         store_ID: settings.get(THIS_STORE_ID),
+        location_ID: record.location?.id,
       };
     }
     case 'Location': {
