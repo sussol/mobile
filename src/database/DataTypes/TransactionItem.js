@@ -22,6 +22,10 @@ export class TransactionItem extends Realm.Object {
     database.delete('TransactionBatch', this.batches);
   }
 
+  get hasValidDoses() {
+    return this.batches.every(({ hasValidDoses }) => hasValidDoses);
+  }
+
   /**
    * Get id of item associated with this transaction item.
    *
