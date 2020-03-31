@@ -169,13 +169,12 @@ export class Item extends Realm.Object {
   }
 
   /**
-   * @return {Date} The date of the most recent confirmed requisition for this item.
+   * @return {Date} The date of the most recent finalised requisition for this item.
    */
   get lastRequisitionDate() {
-    const mostRecentRequisitionItem = this.requisitionItems.sorted(
-      'requisition.entryDate',
-      true
-    )[0];
+    const mostRecentRequisitionItem = this.requisitionItems
+      .filtered("requisition.status == 'finalised'")
+      .sorted('requisition.entryDate', true)[0];
 
     return mostRecentRequisitionItem?.requisition?.confirmDate;
   }
