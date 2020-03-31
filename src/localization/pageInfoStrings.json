@@ -1,5 +1,12 @@
 {
   "gb": {
+    "open_vial_wastage": "Open vial wastage",
+    "closed_vial_wastage": "Closed vial wastage",
+    "temperature_range": "Temperature range",
+    "number_of_affected_batches": "Number of affected batches",
+    "duration": "Duration",
+    "location": "Location",
+    "affected_quantity": "Affected quantity",
     "address": "Address",
     "code": "Code",
     "comment": "Comment",

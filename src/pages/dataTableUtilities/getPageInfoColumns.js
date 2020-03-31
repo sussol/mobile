@@ -59,9 +59,47 @@ const PER_PAGE_INFO_COLUMNS = {
     ['entryDate', 'confirmDate', 'transactionCategory'],
     ['enteredBy', 'otherParty'],
   ],
+  requisitionItemDetail: [['openVialWastage', 'closedVialWastage']],
+  breach: [
+    [
+      'breachTemperatureRange',
+      'numberOfAffectedBatches',
+      'breachDuration',
+      'location',
+      'affectedQuantity',
+    ],
+  ],
 };
 
 const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
+  openVialWastage: {
+    title: `${pageInfoStrings.open_vial_wastage}:`,
+    info: pageObject.openVialWastage(pageObject.lastRequisitionDate),
+  },
+  closedVialWastage: {
+    title: `${pageInfoStrings.closed_vial_wastage}:`,
+    info: pageObject.closedVialWastage(pageObject.lastRequisitionDate),
+  },
+  breachTemperatureRange: {
+    title: `${pageInfoStrings.temperature_range}:`,
+    info: pageObject.temperature_range,
+  },
+  numberOfAffectedBatches: {
+    title: `${pageInfoStrings.number_of_affected_batches}:`,
+    info: pageObject.numberOfAffectedBatches,
+  },
+  breachDuration: {
+    title: `${pageInfoStrings.duration}:`,
+    info: pageObject.duration,
+  },
+  location: {
+    title: `${pageInfoStrings.location}:`,
+    info: pageObject.currentLocation,
+  },
+  affectedQuantity: {
+    title: `${pageInfoStrings.affected_quantity}:`,
+    info: pageObject.affectedQuantity,
+  },
   entryDate: {
     title: `${pageInfoStrings.entry_date}:`,
     info: formatDate(pageObject.entryDate) || 'N/A',
