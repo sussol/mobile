@@ -5,12 +5,12 @@
  */
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { batch, connect } from 'react-redux';
 import { View } from 'react-native';
 
 import { ToggleBar, DataTablePageView, SearchBar, PageButton } from '../widgets';
 import { DataTable, DataTableRow, DataTableHeaderRow } from '../widgets/DataTable';
-import { DispensaryLookupModal } from '../widgets/modals/DispensaryLookup';
+import { SearchForm } from '../widgets/modals/SearchForm';
 import { PatientHistoryModal } from '../widgets/modals/PatientHistory';
 import { FormControl } from '../widgets/FormControl';
 import { ModalContainer } from '../widgets/modals/ModalContainer';
@@ -21,6 +21,7 @@ import { createPrescription } from '../navigation/actions';
 import { UIDatabase } from '../database';
 import { getFormInputConfig } from '../utilities/formInputConfigs';
 
+import { FormActions } from '../actions/FormActions';
 import { PatientActions } from '../actions/PatientActions';
 import { PrescriberActions } from '../actions/PrescriberActions';
 import { InsuranceActions } from '../actions/InsuranceActions';
@@ -258,7 +259,7 @@ const Dispensing = ({
         fullScreen
         isVisible={isLookupModalOpen}
       >
-        <DispensaryLookupModal />
+        <SearchForm dataSource={usingPatientsDataSet ? 'patient' : 'prescriber'} />
       </ModalContainer>
     </>
   );
@@ -331,7 +332,11 @@ const mapDispatchToProps = dispatch => ({
   switchDataset: () => dispatch(DispensaryActions.switchDataSet()),
 
   lookupRecord: () => dispatch(DispensaryActions.lookupRecord()),
-  cancelLookupRecord: () => dispatch(DispensaryActions.cancelLookupRecord()),
+  cancelLookupRecord: () =>
+    batch(() => {
+      dispatch(DispensaryActions.cancelLookupRecord());
+      dispatch(FormActions.resetForm());
+    }),
 
   editPatient: patient => dispatch(PatientActions.editPatient(UIDatabase.get('Name', patient))),
   createPatient: () => dispatch(PatientActions.createPatient()),
