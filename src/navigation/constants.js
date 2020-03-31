@@ -42,6 +42,8 @@ export const ROUTES = {
 
   SETTINGS: 'settings',
   DASHBOARD: 'dashboard',
+
+  VACCINES: 'vaccines',
 };
 
 export const FINALISABLE_PAGES = [
