@@ -282,14 +282,14 @@ export class Item extends Realm.Object {
   closedVialWastage(fromDate) {
     if (!this.isVaccine || !fromDate) return 0;
 
-    const customerCreditTransactionItems = this.transactionItems.filtered(
+    const supplierCreditTransactionItems = this.transactionItems.filtered(
       'transaction.confirmDate > $0 && transaction.type == $1 && transaction.otherParty.name == $2',
       fromDate,
       'supplier_credit',
       'inventory_adjustment'
     );
 
-    const totalDosesPossible = customerCreditTransactionItems.reduce(
+    const totalDosesPossible = supplierCreditTransactionItems.reduce(
       (dosesPossible, { batches }) => dosesPossible + batches.sum('numberOfPacks') * this.doses,
       0
     );
