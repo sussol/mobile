@@ -761,12 +761,11 @@ const createLocation = (database, description, code, locationType) => {
   return location;
 };
 
-const createSensor = (database, macAddress, batteryLevel, location) => {
+const createSensor = (database, macAddress, batteryLevel) => {
   const sensor = database.create('Sensor', {
     id: generateUUID(),
     macAddress,
     batteryLevel,
-    location,
   });
 
   return sensor;
@@ -819,11 +818,17 @@ const createTemperatureLog = (database, temperature, timestamp, location) => {
   return temperatureLog;
 };
 
-const createTemperatureBreach = (database, startTimestamp, location) => {
-  const temperatureLog = database.create('SensorLog', {
+const createTemperatureBreach = (
+  database,
+  startTimestamp,
+  location,
+  temperatureBreachConfiguration
+) => {
+  const temperatureLog = database.create('TemperatureBreach', {
     id: generateUUID(),
     startTimestamp,
     location,
+    temperatureBreachConfiguration,
   });
 
   return temperatureLog;
