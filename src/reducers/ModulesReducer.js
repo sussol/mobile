@@ -4,7 +4,7 @@
  */
 
 import { UIDatabase } from '../database';
-import { SETTINGS_KEYS } from '../settings';
+import { PREFERENCE_KEYS } from '../database/utilities/constants';
 import { SYNC_TRANSACTION_COMPLETE } from '../sync/constants';
 
 /**
@@ -24,21 +24,23 @@ import { SYNC_TRANSACTION_COMPLETE } from '../sync/constants';
  * }
  */
 
-const checkModule = key => UIDatabase.getSetting(key).toLowerCase() === 'true';
-
 const initialState = () => {
   const usingInsurance = UIDatabase.objects('InsuranceProvider').length > 0;
   const usingPaymentTypes = UIDatabase.objects('PaymentType').length > 0;
   const usingPrescriptionCategories = UIDatabase.objects('PrescriptionCategory').length > 0;
   const usingSupplierCreditCategories = UIDatabase.objects('SupplierCreditCategory').length > 0;
 
-  const usingDashboard = checkModule(SETTINGS_KEYS.DASHBOARD_MODULE);
-  const usingDispensary = checkModule(SETTINGS_KEYS.DISPENSARY_MODULE);
-  const usingVaccines = checkModule(SETTINGS_KEYS.VACCINE_MODULE);
-  const usingCashRegister = checkModule(SETTINGS_KEYS.CASH_REGISTER_MODULE) && usingPaymentTypes;
-  const usingPayments = checkModule(SETTINGS_KEYS.PAYMENT_MODULE);
-  const usingPatientTypes = checkModule(SETTINGS_KEYS.PATIENT_TYPES);
-  const usingHideSnapshotColumn = checkModule(SETTINGS_KEYS.HIDE_SNAPSHOT_COLUMN);
+  const usingDashboard = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.DASHBOARD_MODULE));
+  const usingDispensary = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.DISPENSARY_MODULE));
+  const usingVaccines = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.VACCINE_MODULE));
+  const usingCashRegister = Boolean(
+    UIDatabase.getPreference(PREFERENCE_KEYS.CASH_REGISTER_MODULE) && usingPaymentTypes
+  );
+  const usingPayments = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.PAYMENT_MODULE));
+  const usingPatientTypes = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.PATIENT_TYPES));
+  const usingHideSnapshotColumn = Boolean(
+    UIDatabase.getPreference(PREFERENCE_KEYS.HIDE_SNAPSHOT_COLUMN)
+  );
 
   const usingModules = usingDashboard || usingDispensary || usingVaccines || usingCashRegister;
 

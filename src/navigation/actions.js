@@ -8,14 +8,13 @@ import { batch } from 'react-redux';
 import { NavigationActions, StackActions } from '@react-navigation/core';
 
 import { UIDatabase } from '../database';
-import Settings from '../settings/MobileAppSettings';
 import { createRecord } from '../database/utilities';
 import { navStrings } from '../localization';
-import { SETTINGS_KEYS } from '../settings';
 import { ROUTES } from './constants';
 import { RootNavigator } from './RootNavigator';
 import { PrescriptionActions } from '../actions/PrescriptionActions';
 import { FinaliseActions } from '../actions/FinaliseActions';
+import { PREFERENCE_KEYS } from '../database/utilities/constants';
 
 /**
  * Navigation Action Creators.
@@ -402,17 +401,8 @@ export const createSupplierRequisition = ({
   currentUser,
   ...requisitionParameters
 }) => dispatch => {
-  // Fetch this stores custom data to find if this store has customized
-  // monthsLeadTime.
-  const customData = Settings.get(SETTINGS_KEYS.THIS_STORE_CUSTOM_DATA);
-
-  // CustomData is a stringified JSON object.
-  const parsedCustomData = customData ? JSON.parse(customData) : '';
-
   // Months lead time has an effect on daysToSupply for a requisition.
-  const monthsLeadTime = parsedCustomData.monthsLeadTime
-    ? Number(parsedCustomData.monthsLeadTime.data)
-    : 0;
+  const monthsLeadTime = UIDatabase.getPreference(PREFERENCE_KEYS.MONTHS_LEAD_TIME) ?? 0;
 
   // Create the requisition. If a program was supplied, add items from that
   // program, otherwise just navigate to it.
