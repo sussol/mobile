@@ -4,8 +4,37 @@
  */
 
 import Realm from 'realm';
+import { NativeModules } from 'react-native';
 
-export class Sensor extends Realm.Object {}
+const { BleManager } = NativeModules;
+
+const BLUE_MAESTRO_ID = 307;
+
+export class Sensor extends Realm.Object {
+  static async startScan(macAddress = '') {
+    return BleManager.getDevices(BLUE_MAESTRO_ID, macAddress);
+  }
+
+  async sendCommand(command) {
+    return BleManager.sendCommand(BLUE_MAESTRO_ID, this.macAddress, command);
+  }
+
+  async blink() {
+    return this.sendCommand('*blink');
+  }
+
+  async resetLogFrequency() {
+    return this.sendCommand('*lint300');
+  }
+
+  async resetAdvertisementFrequency() {
+    return this.sendCommand('*sadv1000');
+  }
+
+  async downloadLogs() {
+    return this.sendCommand('*logall');
+  }
+}
 
 Sensor.schema = {
   name: 'Sensor',
