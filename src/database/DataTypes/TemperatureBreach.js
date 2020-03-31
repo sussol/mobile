@@ -58,6 +58,13 @@ export class TemperatureBreach extends Realm.Object {
 
     return incomingStock.sum('numberOfPacks') ?? 0 - outgoingStock.sum('numberOfPacks') ?? 0;
   }
+
+  willContinueBreach(temperatureLog) {
+    const { minimumTemperature, maximumTemperature } = this.temperatureBreachConfiguration;
+    const { temperature } = temperatureLog;
+
+    return temperature >= minimumTemperature && temperature <= maximumTemperature;
+  }
 }
 
 TemperatureBreach.schema = {
@@ -69,6 +76,7 @@ TemperatureBreach.schema = {
     startTimestamp: { type: 'date', optional: true },
     endTimestamp: { type: 'date', optional: true },
     location: { type: 'Location', optional: true },
+    temperatureBreachConfiguration: { type: 'TemperatureBreachConfiguration', optional: false },
   },
 };
 
