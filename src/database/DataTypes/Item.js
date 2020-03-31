@@ -169,6 +169,17 @@ export class Item extends Realm.Object {
   }
 
   /**
+   * @return {Date} The date of the most recent finalised requisition for this item.
+   */
+  get lastRequisitionDate() {
+    const mostRecentRequisitionItem = this.requisitionItems
+      .filtered("requisition.status == 'finalised'")
+      .sorted('requisition.entryDate', true)[0];
+
+    return mostRecentRequisitionItem?.requisition?.confirmDate;
+  }
+
+  /**
    * Add batch to item.
    *
    * @param  {ItemBatch}  itemBatch
@@ -228,6 +239,63 @@ export class Item extends Realm.Object {
 
     return this.totalQuantity + reductions - additions;
   }
+
+  /**
+   * A vaccine item can have multiple doses per 'unit' or 'pack'. For example, you can have
+   * a single vaccine which has two doses. Once a vaccine has been opened, the doses must be
+   * given quickly. When recording outgoing stock, the doses and quantity (or number of packs)
+   * are recorded seperately. The amount of open vial wastage (that is, the amount of doses
+   * which are left in a vial and wasted) is the difference between the total number of 'packs'
+   * that are outgoing, multiplied by the amount of doses in each pack and the total number of
+   * doses actually given.
+   *
+   * @param  {Date} fromDate The date to calculate the open vial wastage from.
+   * @return {Number} the number of DOSES wasted.
+   */
+  openVialWastage(fromDate) {
+    if (!this.isVaccine || !fromDate) return 0;
+
+    const customerInvoiceTransactionItems = this.transactionItems.filtered(
+      "transaction.confirmDate > $0 && transaction.type == 'customer_invoice",
+      fromDate
+    );
+
+    const totalDosesPossible = customerInvoiceTransactionItems.reduce(
+      (dosesPossible, { batches }) => dosesPossible + batches.sum('numberOfPacks') * this.doses,
+      0
+    );
+
+    const totalDosesGiven = customerInvoiceTransactionItems.reduce(
+      (dosesGiven, { batches }) => dosesGiven + batches.sum('doses'),
+      0
+    );
+
+    return totalDosesPossible - totalDosesGiven;
+  }
+
+  /**
+   * Closed vial wastage differs from open vial wastage in that closed vial wastage
+   * is 'standard wastage'.
+   * @param {Date} fromDate
+   * @param {Number} the number of DOSES wasted.
+   */
+  closedVialWastage(fromDate) {
+    if (!this.isVaccine || !fromDate) return 0;
+
+    const supplierCreditTransactionItems = this.transactionItems.filtered(
+      'transaction.confirmDate > $0 && transaction.type == $1 && transaction.otherParty.name == $2',
+      fromDate,
+      'supplier_credit',
+      'inventory_adjustment'
+    );
+
+    const totalDosesPossible = supplierCreditTransactionItems.reduce(
+      (dosesPossible, { batches }) => dosesPossible + batches.sum('numberOfPacks') * this.doses,
+      0
+    );
+
+    return totalDosesPossible;
+  }
 }
 
 Item.schema = {
@@ -247,9 +315,11 @@ Item.schema = {
     crossReferenceItem: { type: 'Item', optional: true },
     unit: { type: 'Unit', optional: true },
     defaultRestrictedLocationType: { type: 'LocationType', optional: true },
-    directions: { type: 'linkingObjects', objectType: 'ItemDirection', property: 'item' },
     doses: { type: 'double', default: 0 },
     isVaccine: { type: 'bool', default: false },
+    directions: { type: 'linkingObjects', objectType: 'ItemDirection', property: 'item' },
+    requisitionItems: { type: 'linkingObjects', objectType: 'RequisitionItem', property: 'item' },
+    transactionItems: { type: 'linkingObjects', objectType: 'TransactionItem', property: 'item' },
   },
 };
 
