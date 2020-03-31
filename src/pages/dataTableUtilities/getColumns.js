@@ -501,6 +501,14 @@ const COLUMNS = () => ({
     sortable: false,
     editable: true,
   },
+  [COLUMN_NAMES.EDITABLE_NAME]: {
+    type: COLUMN_TYPES.EDITABLE_STRING,
+    key: COLUMN_KEYS.NAME,
+    title: tableStrings.value,
+    textAlign: 'right',
+    sortable: true,
+    editable: true,
+  },
   [COLUMN_NAMES.EDITABLE_VALUE]: {
     type: COLUMN_TYPES.EDITABLE_STRING,
     key: COLUMN_KEYS.VALUE,
@@ -637,6 +645,15 @@ const COLUMNS = () => ({
     editable: true,
   },
 
+  [COLUMN_NAMES.DOSES]: {
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
+    key: COLUMN_KEYS.DOSES,
+    title: tableStrings.doses,
+    alignText: 'right',
+    sortable: true,
+    editable: true,
+  },
+
   [COLUMN_NAMES.RETURN_AMOUNT]: {
     type: COLUMN_TYPES.EDITABLE_NUMERIC,
     key: COLUMN_KEYS.RETURN_AMOUNT,
@@ -753,6 +770,16 @@ const COLUMNS = () => ({
 
   // ICON COLUMNS
 
+  [COLUMN_NAMES.BREACH]: {
+    type: COLUMN_TYPES.ICON,
+    key: COLUMN_KEYS.IS_IN_BREACH,
+    title: tableStrings.breach,
+    sortable: false,
+    alignText: 'center',
+    editable: false,
+    icon: 'breach',
+  },
+
   [COLUMN_NAMES.RETURN]: {
     type: COLUMN_TYPES.ICON,
     key: COLUMN_KEYS.RETURN,
@@ -832,6 +859,22 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.DROP_DOWN,
     key: COLUMN_KEYS.REASON_TITLE,
     title: tableStrings.reason,
+    alignText: 'left',
+    sortable: false,
+    editable: false,
+  },
+  [COLUMN_NAMES.LOCATION]: {
+    type: COLUMN_TYPES.DROP_DOWN,
+    key: COLUMN_KEYS.CURRENT_LOCATION,
+    title: tableStrings.location,
+    alignText: 'left',
+    sortable: false,
+    editable: false,
+  },
+  [COLUMN_NAMES.VVM_STATUS]: {
+    type: COLUMN_TYPES.DROP_DOWN,
+    key: COLUMN_KEYS.CURRENT_VVM_STATUS,
+    title: tableStrings.location,
     alignText: 'left',
     sortable: false,
     editable: false,
