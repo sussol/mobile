@@ -772,6 +772,63 @@ const createSensor = (database, macAddress, batteryLevel, location) => {
   return sensor;
 };
 
+const createLocationMovement = (database, itemBatch, location) => {
+  const locationMovement = database.create('LocationMovement', {
+    id: generateUUID(),
+    itemBatch,
+    location,
+    enterTimestamp: new Date(),
+  });
+
+  itemBatch.location = location;
+  database.save('ItemBatch', itemBatch);
+
+  return locationMovement;
+};
+
+const createVvmStatusLog = (database, itemBatch, status) => {
+  const vvmStatus = database.create('VaccineVialMonitorStatus', {
+    id: generateUUID(),
+    itemBatch,
+    status,
+    timestamp: new Date(),
+  });
+
+  return vvmStatus;
+};
+
+const createSensorLog = (database, temperature, timestamp, sensor) => {
+  const sensorLog = database.create('SensorLog', {
+    id: generateUUID(),
+    temperature,
+    timestamp,
+    sensor,
+  });
+
+  return sensorLog;
+};
+
+const createTemperatureLog = (database, temperature, timestamp, location) => {
+  const temperatureLog = database.create('TemperatureLog', {
+    id: generateUUID(),
+    temperature,
+    timestamp,
+    location,
+  });
+
+  return temperatureLog;
+};
+
+const createTemperatureBreach = (database, startTimestamp, location) => {
+  const temperatureLog = database.create('SensorLog', {
+    id: generateUUID(),
+    startTimestamp,
+    location,
+  });
+
+  return temperatureLog;
+};
+
 /**
  * Create a Message record. This will be sent to the server and requests tables
  * when an app is upgraded from some version to another.
@@ -879,6 +936,16 @@ export const createRecord = (database, type, ...args) => {
       return createLocation(database, ...args);
     case 'Sensor':
       return createSensor(database, ...args);
+    case 'LocationMovement':
+      return createLocationMovement(database, ...args);
+    case 'VaccineVialMonitorStatus':
+      return createVvmStatusLog(database, ...args);
+    case 'SensorLog':
+      return createSensorLog(database, ...args);
+    case 'TemperatureLog':
+      return createTemperatureLog(database, ...args);
+    case 'TemperatureBreach':
+      return createTemperatureBreach(database, ...args);
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }
