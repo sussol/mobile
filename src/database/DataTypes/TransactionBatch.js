@@ -37,6 +37,35 @@ export class TransactionBatch extends Realm.Object {
     }
   }
 
+  get currentLocationName() {
+    return this.location?.description ?? '';
+  }
+
+  get currentVvmStatusName() {
+    return this.vaccineVialMonitorStatus?.description ?? '';
+  }
+
+  get isInBreach() {
+    return this.itemBatch?.isInBreach ?? false;
+  }
+
+  /**
+   * @return {Bool} Indicator if this batch has a valid number of doses.
+   */
+  get hasValidDoses() {
+    const { item } = this.itemBatch;
+    const { doses: dosesPerVial } = item;
+
+    const maximumDosesPossible = this.snapshotTotalQuantity * dosesPerVial;
+    const minimumDosesPossible = this.snapshotTotalQuantity;
+
+    const tooManyDoses = this.doses > maximumDosesPossible;
+    const tooLittleDoses = this.doses < minimumDosesPossible;
+    const justRightDoses = !tooManyDoses && !tooLittleDoses;
+
+    return justRightDoses;
+  }
+
   /**
    * Returns either the prescriber name who prescribed the medicine
    * to a patient, or an empty string.
@@ -186,7 +215,7 @@ TransactionBatch.schema = {
     linkedTransaction: { type: 'Transaction', optional: true },
     location: { type: 'Location', optional: true },
     doses: 'double?',
-    vaccineVialMonitorStatus: { type: 'VaccineVialMonitorStatusLog', optional: true },
+    vaccineVialMonitorStatus: { type: 'VaccineVialMonitorStatus', optional: true },
   },
 };
 

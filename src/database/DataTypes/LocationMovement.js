@@ -12,10 +12,10 @@ LocationMovement.schema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
-    location: { type: 'Location' },
-    itemBatch: { type: 'ItemBatch' },
-    enterDate: { type: 'date', default: new Date() },
-    exitDate: { type: 'date', optional: true },
+    location: { type: 'Location', optional: true },
+    itemBatch: { type: 'ItemBatch', optional: true },
+    enterTimestamp: { type: 'date', default: new Date() },
+    exitTimestamp: { type: 'date', optional: true },
   },
 };
 
