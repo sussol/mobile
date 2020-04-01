@@ -8,6 +8,8 @@ import { TEMPERATURE_SYNC_ACTIONS } from '../actions/TemperatureSyncActions';
 const TEMPERATURE_SYNC_STATES = {
   SCANNING: 'SCANNING',
   SCAN_ERROR: 'SCAN_ERROR',
+  DOWNLOADING_LOGS: 'DOWNLOADING_LOGS',
+  DOWNLOADING_LOGS_ERROR: 'DOWNLOADING_LOGS_ERROR',
 };
 
 const initialState = () => ({
@@ -29,6 +31,16 @@ export const TemperatureSyncReducer = (state = initialState(), action) => {
     }
     case TEMPERATURE_SYNC_ACTIONS.SCAN_ERROR: {
       return { ...state, syncState: TEMPERATURE_SYNC_STATES.SCAN_ERROR };
+    }
+
+    case TEMPERATURE_SYNC_ACTIONS.DOWNLOAD_LOGS_START: {
+      return { ...state, syncState: TEMPERATURE_SYNC_STATES.DOWNLOADING_LOGS };
+    }
+    case TEMPERATURE_SYNC_ACTIONS.DOWNLOAD_LOGS_ERROR: {
+      return { ...state, syncState: TEMPERATURE_SYNC_STATES.DOWNLOADING_LOGS_ERROR };
+    }
+    case TEMPERATURE_SYNC_ACTIONS.DOWNLOAD_LOGS_COMPLETE: {
+      return { ...state, syncState: null };
     }
 
     default:
