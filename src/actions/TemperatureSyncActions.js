@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2020
@@ -7,8 +8,14 @@ import { UIDatabase } from '../database';
 import { Sensor } from '../database/DataTypes';
 import { createRecord } from '../database/utilities';
 import { MILLISECONDS } from '../utilities';
+import { chunk } from '../utilities/chunk';
 
 export const TEMPERATURE_SYNC_ACTIONS = {
+  ERROR_NO_SENSORS: 'TemperatureSync/errorNoSensors',
+
+  START_SYNC: 'TemperatureSync/startSync',
+  COMPLETE_SYNC: 'TemperatureSync/completeSync',
+
   SCAN_START: 'TemperatureSync/scanStart',
   SCAN_COMPLETE: 'TemperatureSync/scanComplete',
   SCAN_ERROR: 'TemperatureSync/scanError',
@@ -24,6 +31,9 @@ export const TEMPERATURE_SYNC_ACTIONS = {
   START_RESETTING_LOG_FREQUENCY: 'TemperatureSync/startResettingLogFrequency',
   COMPLETE_RESETTING_LOG_FREQUENCY: 'TemperatureSync/completeResettingLogFrequency',
   ERROR_RESETTING_LOG_FREQUENCY: 'TemperatureSync/errorResettingLogFrequency',
+
+  START_SAVING_TEMPERATURE_LOGS: 'TemperatureSync/startSavingTemperatureLogs',
+  COMPLETE_SAVING_TEMPERATURE_LOGS: 'TemperatureSync/completeSavingTemperatureLogs',
 };
 
 const scanStart = () => ({ type: TEMPERATURE_SYNC_ACTIONS.SCAN_START });
@@ -90,7 +100,7 @@ const downloadLogs = sensor => async dispatch => {
     dispatch(downloadLogsError());
   }
 
-  return Promise.resolve();
+  return new Promise(resolver => resolver(success));
 };
 
 const startResettingAdvertisementFrequency = () => ({
@@ -113,7 +123,7 @@ const resetAdvertisementFrequency = sensor => async dispatch => {
   if (success) dispatch(completeResettingAdvertisementFrequency());
   else dispatch(errorResettingAdvertisementFrequency());
 
-  return Promise.resolve();
+  return new Promise(resolver => resolver(success));
 };
 
 const startResettingLogFrequency = () => ({
@@ -136,9 +146,97 @@ const resetLogFrequency = sensor => async dispatch => {
   if (success) dispatch(completeResettingLogFrequency());
   else dispatch(errorResettingLogFrequency());
 
+  return new Promise(resolver => resolver(success));
+};
+
+const startSavingTemperatureLogs = () => ({
+  type: TEMPERATURE_SYNC_ACTIONS.START_SAVING_TEMPERATURE_LOGS,
+});
+const completeSavingTemperatureLogs = () => ({
+  type: TEMPERATURE_SYNC_ACTIONS.COMPLETE_SAVING_TEMPERATURE_LOGS,
+});
+
+const createTemperatureLogs = sensor => dispatch => {
+  const { sensorLogs, location } = sensor;
+
+  // Only create TemperatureLogs for the greatest multiple of 6 SensorLogs,
+  // as each SensorLog is a 5 minute log, and each Temperature log a 30 minute log.
+  const iterateToo = sensorLogs.length - (sensorLogs.length % 6);
+  const sensorLogsToGroup = sensorLogs.sorted('timestamp').slice(0, iterateToo);
+  const groupedSensorLogs = chunk(sensorLogsToGroup, 6);
+
+  dispatch(startSavingTemperatureLogs(groupedSensorLogs.length));
+
+  UIDatabase.write(() => {
+    groupedSensorLogs.forEach(sensorLogGroup => {
+      const { isInBreach, mostRecentTemperatureBreach } = sensor;
+      const temperature = Math.min(...sensorLogGroup);
+      const timestamp = Math.min(...sensorLogGroup);
+
+      const newLog = createRecord(
+        UIDatabase,
+        'TemperatureLog',
+        temperature,
+        new Date(timestamp),
+        location
+      );
+
+      if (isInBreach) {
+        if (mostRecentTemperatureBreach?.willContinueBreach(newLog)) {
+          UIDatabase.update('TemperatureLog', { ...newLog, breach: mostRecentTemperatureBreach });
+        } else {
+          UIDatabase.update('TemperatureBreach', {
+            ...mostRecentTemperatureBreach,
+            endTimestamp: timestamp,
+          });
+        }
+      } else {
+        const breachConfigs = UIDatabase.objects('TemperatureBreachConfiguration');
+        breachConfigs.some(breachConfig => breachConfig.createBreach(UIDatabase, location, newLog));
+      }
+    });
+  });
+
+  dispatch(completeSavingTemperatureLogs());
+
   return Promise.resolve();
+};
+
+const errorNoSensors = () => ({ type: TEMPERATURE_SYNC_ACTIONS.ERROR_NO_SENSORS });
+const startSync = () => ({ type: TEMPERATURE_SYNC_ACTIONS.START_SYNC });
+const completeSync = () => ({ type: TEMPERATURE_SYNC_ACTIONS.COMPLETE_SYNC });
+
+const syncTemperatures = () => async (dispatch, getState) => {
+  const { isSyncing } = getState();
+  const sensors = UIDatabase.objects('Sensor').filtered('location != null');
+  const { length: numberOfSensors } = sensors;
+
+  if (isSyncing) return null;
+  if (!numberOfSensors) return dispatch(errorNoSensors());
+
+  dispatch(startSync());
+
+  for (let i = 0; i < numberOfSensors; i++) {
+    const sensor = sensors[i];
+
+    const downloadedLogsResult = await dispatch(downloadLogs(sensor));
+    if (downloadedLogsResult) {
+      const resetLogFrequencyResult = await dispatch(resetLogFrequency());
+      if (resetLogFrequencyResult) {
+        const resetAdvertisementFrequencyResult = await dispatch(
+          resetAdvertisementFrequency(sensor)
+        );
+        if (resetAdvertisementFrequencyResult) {
+          dispatch(createTemperatureLogs(sensor));
+        }
+      }
+    }
+  }
+
+  return dispatch(completeSync());
 };
 
 export const TemperatureSyncActions = {
   scanForSensors,
+  syncTemperatures,
 };
