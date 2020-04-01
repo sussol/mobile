@@ -3,6 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2020
  */
 
+import { generateUUID } from 'react-native-database';
+
 import { UIDatabase } from '../database';
 import { Sensor } from '../database/DataTypes';
 import { createRecord } from '../database/utilities';
@@ -23,7 +25,7 @@ const scanComplete = () => ({ type: TEMPERATURE_SYNC_ACTIONS.SCAN_COMPLETE });
 const scanError = () => ({ type: TEMPERATURE_SYNC_ACTIONS.SCAN_ERROR });
 
 const updateSensors = sensorAdvertisements => dispatch => {
-  const isArray = Object.isArray(sensorAdvertisements);
+  const isArray = Array.isArray(sensorAdvertisements);
 
   if (!isArray) dispatch(scanError());
   if (isArray && !sensorAdvertisements.length) dispatch(scanError());
@@ -32,6 +34,7 @@ const updateSensors = sensorAdvertisements => dispatch => {
     sensorAdvertisements.forEach(({ macAddress, batteryLevel }) => {
       UIDatabase.write(() => {
         UIDatabase.update('Sensor', {
+          id: generateUUID(),
           ...UIDatabase.get('Sensor', 'macAddress', macAddress),
           macAddress,
           batteryLevel,
