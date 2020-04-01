@@ -31,10 +31,10 @@ export const TemperatureSyncReducer = (state = initialState(), action) => {
 
   switch (type) {
     case TEMPERATURE_SYNC_ACTIONS.START_SCAN: {
-      return { ...state, syncState: TEMPERATURE_SYNC_STATES.SCANNING };
+      return { ...state, syncState: TEMPERATURE_SYNC_STATES.SCANNING, isSyncing: true };
     }
-    case TEMPERATURE_SYNC_ACTIONS.COMPLETE_SCAN: {
-      return { ...state, syncState: null };
+    case TEMPERATURE_SYNC_ACTIONS.SCAN_COMPLETE: {
+      return { ...state, syncState: null, isSyncing: false };
     }
     case TEMPERATURE_SYNC_ACTIONS.SCAN_ERROR: {
       return { ...state, syncState: TEMPERATURE_SYNC_STATES.SCAN_ERROR };
@@ -43,7 +43,11 @@ export const TemperatureSyncReducer = (state = initialState(), action) => {
       return { ...state, syncState: TEMPERATURE_SYNC_STATES.DOWNLOADING_LOGS };
     }
     case TEMPERATURE_SYNC_ACTIONS.DOWNLOAD_LOGS_ERROR: {
-      return { ...state, syncState: TEMPERATURE_SYNC_STATES.DOWNLOADING_LOGS_ERROR };
+      return {
+        ...state,
+        syncState: TEMPERATURE_SYNC_STATES.DOWNLOADING_LOGS_ERROR,
+        isSyncing: false,
+      };
     }
     case TEMPERATURE_SYNC_ACTIONS.DOWNLOAD_LOGS_COMPLETE: {
       return { ...state, syncState: null };
@@ -55,7 +59,11 @@ export const TemperatureSyncReducer = (state = initialState(), action) => {
       return { ...state, syncState: null };
     }
     case TEMPERATURE_SYNC_ACTIONS.ERROR_RESETTING_LOG_FREQUENCY: {
-      return { ...state, syncState: TEMPERATURE_SYNC_STATES.ERROR_RESETTING_LOG_FREQUENCY };
+      return {
+        ...state,
+        syncState: TEMPERATURE_SYNC_STATES.ERROR_RESETTING_LOG_FREQUENCY,
+        isSyncing: false,
+      };
     }
     case TEMPERATURE_SYNC_ACTIONS.START_RESETTING_ADVERTISEMENT_FREQUENCY: {
       return { ...state, syncState: TEMPERATURE_SYNC_STATES.RESETTING_ADVERTISEMENT_FREQUENCY };
@@ -67,6 +75,7 @@ export const TemperatureSyncReducer = (state = initialState(), action) => {
       return {
         ...state,
         syncState: TEMPERATURE_SYNC_STATES.ERROR_RESETTING_LOG_FREQUENCY,
+        isSyncing: false,
       };
     }
     case TEMPERATURE_SYNC_ACTIONS.START_SAVING_TEMPERATURE_LOGS: {
@@ -76,13 +85,13 @@ export const TemperatureSyncReducer = (state = initialState(), action) => {
       return { ...state, syncState: null };
     }
     case TEMPERATURE_SYNC_ACTIONS.ERROR_NO_SENSORS: {
-      return { ...state, syncState: TEMPERATURE_SYNC_STATES.NO_SENSORS };
+      return { ...state, syncState: TEMPERATURE_SYNC_STATES.NO_SENSORS, isSyncing: false };
     }
     case TEMPERATURE_SYNC_ACTIONS.START_SYNC: {
-      return { ...state, syncState: TEMPERATURE_SYNC_STATES.SYNCING };
+      return { ...state, syncState: TEMPERATURE_SYNC_STATES.SYNCING, isSyncing: true };
     }
     case TEMPERATURE_SYNC_ACTIONS.COMPLETE_SYNC: {
-      return { ...state, syncState: null };
+      return { ...state, syncState: null, isSyncing: false };
     }
     default:
       return state;
