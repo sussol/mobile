@@ -13,7 +13,12 @@ import { FormControl } from '../FormControl';
 import { getFormInputConfig } from '../../utilities/formInputConfigs';
 
 import { APP_FONT_FAMILY, DARK_GREY } from '../../globalStyles';
-import { createPatientRecord, createPrescriberRecord, queryPatientApi, queryPrescriberApi } from '../../utilities/network/lookupApi';
+import {
+  createPatientRecord,
+  createPrescriberRecord,
+  queryPatientApi,
+  queryPrescriberApi,
+} from '../../utilities/network/lookupApi';
 
 const RECORD_TYPES = {
   PATIENT: 'patient',
@@ -37,15 +42,15 @@ const SearchListItemColumn = ({ value, type }) => (
 );
 
 const SearchListItem = ({ listItem, listConfig, onPress }) => {
-    const columns = listConfig.map(({ key, type }) => {
-      const value = listItem[key];
-      return <SearchListItemColumn key={key} value={value} type={type} />;
-    });
-    return (
-      <TouchableOpacity onPress={onPress} style={localStyles.rowContainer}>
-        {columns}
-      </TouchableOpacity>
-    );
+  const columns = listConfig.map(({ key, type }) => {
+    const value = listItem[key];
+    return <SearchListItemColumn key={key} value={value} type={type} />;
+  });
+  return (
+    <TouchableOpacity onPress={onPress} style={localStyles.rowContainer}>
+      {columns}
+    </TouchableOpacity>
+  );
 };
 
 export const SearchForm = ({ dataSource, onClose }) => {
@@ -67,22 +72,24 @@ export const SearchForm = ({ dataSource, onClose }) => {
 
   const renderItem = useMemo(
     () => ({ item }) => {
-        const { id: key } = item;
-        const onPress = () => { 
-            switch (dataSource) {
-                case RECORD_TYPES.PATIENT: 
-                    createPatientRecord(item); 
-                    break;
-                case RECORD_TYPES.PRESCRIBER:
-                    createPrescriberRecord(item);
-                    break;
-                default:
-                    break;
-            }
-            onClose();
-        };
-        return <SearchListItem key={key} listItem={item} listConfig={listConfig} onPress={onPress} />
-    }, [dataSource, listConfig, onClose]);
+      const { id: key } = item;
+      const onPress = () => {
+        switch (dataSource) {
+          case RECORD_TYPES.PATIENT:
+            createPatientRecord(item);
+            break;
+          case RECORD_TYPES.PRESCRIBER:
+            createPrescriberRecord(item);
+            break;
+          default:
+            break;
+        }
+        onClose();
+      };
+      return <SearchListItem key={key} listItem={item} listConfig={listConfig} onPress={onPress} />;
+    },
+    [dataSource, listConfig, onClose]
+  );
 
   const lookupRecords = useMemo(
     () => params => {
@@ -113,7 +120,7 @@ export const SearchForm = ({ dataSource, onClose }) => {
           inputConfig={formConfig}
         />
       </View>
-      <View style={localStyles.verticalSeparator}></View>
+      <View style={localStyles.verticalSeparator} />
       <View style={localStyles.listContainer}>
         <FlatList data={data} keyExtractor={record => record.id} renderItem={renderItem} />
       </View>
@@ -123,11 +130,13 @@ export const SearchForm = ({ dataSource, onClose }) => {
 
 SearchForm.propTypes = {
   dataSource: PropTypes.string.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
 
 SearchListItem.propTypes = {
   listItem: PropTypes.object.isRequired,
   listConfig: PropTypes.array.isRequired,
+  onPress: PropTypes.func.isRequired,
 };
 
 SearchListItemColumn.propTypes = {
