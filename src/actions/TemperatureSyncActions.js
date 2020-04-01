@@ -71,7 +71,7 @@ const downloadLogs = sensor => async dispatch => {
     const sensorLogs = data[0]?.logs;
     const timeNow = new Date().getTime();
 
-    if (Object.isArray(sensorLogs)) {
+    if (Array.isArray(sensorLogs)) {
       UIDatabase.write(() =>
         sensorLogs.forEach(({ temperature }, i) => {
           const timestamp = timeNow - (i + 1) * MILLISECONDS.FIVE_MINUTES;
