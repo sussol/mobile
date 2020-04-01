@@ -4,6 +4,8 @@
  * Sustainable Solutions (NZ) Ltd. 2020
  */
 
+import { generateUUID } from 'react-native-database';
+
 import { UIDatabase } from '../database';
 import { Sensor } from '../database/DataTypes';
 import { createRecord } from '../database/utilities';
@@ -41,7 +43,7 @@ const scanComplete = () => ({ type: TEMPERATURE_SYNC_ACTIONS.SCAN_COMPLETE });
 const scanError = () => ({ type: TEMPERATURE_SYNC_ACTIONS.SCAN_ERROR });
 
 const updateSensors = sensorAdvertisements => dispatch => {
-  const isArray = Object.isArray(sensorAdvertisements);
+  const isArray = Array.isArray(sensorAdvertisements);
 
   if (!isArray) dispatch(scanError());
   if (isArray && !sensorAdvertisements.length) dispatch(scanError());
@@ -50,6 +52,7 @@ const updateSensors = sensorAdvertisements => dispatch => {
     sensorAdvertisements.forEach(({ macAddress, batteryLevel }) => {
       UIDatabase.write(() => {
         UIDatabase.update('Sensor', {
+          id: generateUUID(),
           ...UIDatabase.get('Sensor', 'macAddress', macAddress),
           macAddress,
           batteryLevel,
@@ -86,7 +89,7 @@ const downloadLogs = sensor => async dispatch => {
     const sensorLogs = data[0]?.logs;
     const timeNow = new Date().getTime();
 
-    if (Object.isArray(sensorLogs)) {
+    if (Array.isArray(sensorLogs)) {
       UIDatabase.write(() =>
         sensorLogs.forEach(({ temperature }, i) => {
           const timestamp = timeNow - (i + 1) * MILLISECONDS.FIVE_MINUTES;
