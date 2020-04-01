@@ -194,6 +194,8 @@ const createTemperatureLogs = sensor => dispatch => {
         const breachConfigs = UIDatabase.objects('TemperatureBreachConfiguration');
         breachConfigs.some(breachConfig => breachConfig.createBreach(UIDatabase, location, newLog));
       }
+
+      UIDatabase.delete('SensorLog', groupedSensorLogs);
     });
   });
 
