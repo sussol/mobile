@@ -16,6 +16,14 @@ export const TEMPERATURE_SYNC_ACTIONS = {
   DOWNLOAD_LOGS_START: 'TemperatureSync/downloadLogsStart',
   DOWNLOAD_LOGS_COMPLETE: 'TemperatureSync/downloadLogsComplete',
   DOWNLOAD_LOGS_ERROR: 'TemperatureSync/downloadLogsErorr',
+
+  START_RESETTING_ADVERTISEMENT_FREQUENCY: 'TemperatureSync/startResettingAdvertisementFrequency',
+  ERROR_RESETTING_ADVERTISEMENT_FREQUENCY: 'TemperatureSync/errorResettingAdvertisementFrequency',
+  COMPLETE_RESETTING_ADVERTISEMENT_FREQUENCY:
+    'TemperatureSync/completeResettingAdvertisementFrequency',
+  START_RESETTING_LOG_FREQUENCY: 'TemperatureSync/startResettingLogFrequency',
+  COMPLETE_RESETTING_LOG_FREQUENCY: 'TemperatureSync/completeResettingLogFrequency',
+  ERROR_RESETTING_LOG_FREQUENCY: 'TemperatureSync/errorResettingLogFrequency',
 };
 
 const scanStart = () => ({ type: TEMPERATURE_SYNC_ACTIONS.SCAN_START });
@@ -81,6 +89,52 @@ const downloadLogs = sensor => async dispatch => {
   } else {
     dispatch(downloadLogsError());
   }
+
+  return Promise.resolve();
+};
+
+const startResettingAdvertisementFrequency = () => ({
+  type: TEMPERATURE_SYNC_ACTIONS.START_RESETTING_ADVERTISEMENT_FREQUENCY,
+});
+const completeResettingAdvertisementFrequency = () => ({
+  type: TEMPERATURE_SYNC_ACTIONS.COMPLETE_RESETTING_ADVERTISEMENT_FREQUENCY,
+});
+const errorResettingAdvertisementFrequency = () => ({
+  type: TEMPERATURE_SYNC_ACTIONS.ERROR_RESETTING_ADVERTISEMENT_FREQUENCY,
+});
+
+const resetAdvertisementFrequency = sensor => async dispatch => {
+  dispatch(startResettingAdvertisementFrequency());
+
+  const resettingAdvertisementFrequencyResult = await sensor.resetAdvertisementFrequency();
+
+  const { success } = resettingAdvertisementFrequencyResult;
+
+  if (success) dispatch(completeResettingAdvertisementFrequency());
+  else dispatch(errorResettingAdvertisementFrequency());
+
+  return Promise.resolve();
+};
+
+const startResettingLogFrequency = () => ({
+  type: TEMPERATURE_SYNC_ACTIONS.START_RESETTING_LOG_FREQUENCY,
+});
+const completeResettingLogFrequency = () => ({
+  type: TEMPERATURE_SYNC_ACTIONS.COMPLETE_RESETTING_LOG_FREQUENCY,
+});
+const errorResettingLogFrequency = () => ({
+  type: TEMPERATURE_SYNC_ACTIONS.ERROR_RESETTING_LOG_FREQUENCY,
+});
+
+const resetLogFrequency = sensor => async dispatch => {
+  dispatch(startResettingLogFrequency());
+
+  const resettingLogFrequencyResult = await sensor.resetLogFrequency();
+
+  const { success } = resettingLogFrequencyResult;
+
+  if (success) dispatch(completeResettingLogFrequency());
+  else dispatch(errorResettingLogFrequency());
 
   return Promise.resolve();
 };
