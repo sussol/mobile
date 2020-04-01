@@ -56,7 +56,6 @@ const updateSensors = sensorAdvertisements => dispatch => {
           ...UIDatabase.get('Sensor', macAddress, 'macAddress'),
           macAddress,
           batteryLevel,
-          location: UIDatabase.objects('Location')[0],
         });
       });
     });
