@@ -230,18 +230,16 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   const onUpdateForm = (key, value) => dispatch(FormActions.updateForm(key, value));
   const onCancel = () => {
     dispatch(FormActions.resetForm());
-    ownProps.onCancel();
+    ownProps.showCancelButton && ownProps.onCancel();
   };
   return { initialiseForm, onUpdateForm, onCancel };
 };
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = state => {
   const form = selectForm(state);
   const canSaveForm = selectCanSaveForm(state);
   const completedForm = selectCompletedForm(state);
-  const { showCancelButton } = ownProps;
-  const onCancel = showCancelButton ? ownProps.onCancel : () => null;
-  return { form, canSaveForm, completedForm, onCancel, ...ownProps };
+  return { form, canSaveForm, completedForm };
 };
 
 FormControlComponent.defaultProps = {
