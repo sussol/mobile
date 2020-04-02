@@ -7,6 +7,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { PageButton } from './PageButton';
+
+import { FORM_INPUT_TYPES } from '../utilities/formInputConfigs';
 import { FormTextInput } from './FormInputs/FromTextInput';
 import { FormDateInput } from './FormInputs/FormDateInput';
 import { FormToggle } from './FormInputs/FormToggle';
@@ -80,7 +82,7 @@ const FormControlComponent = ({
       ) => {
         refs[index] = React.useRef();
         switch (type) {
-          case 'text': {
+          case FORM_INPUT_TYPES.TEXT: {
             return (
               <FormTextInput
                 ref={refs[index]}
@@ -98,7 +100,7 @@ const FormControlComponent = ({
               />
             );
           }
-          case 'date': {
+          case FORM_INPUT_TYPES.DATE: {
             return (
               <FormDateInput
                 ref={refs[index]}
@@ -114,7 +116,7 @@ const FormControlComponent = ({
               />
             );
           }
-          case 'dropdown': {
+          case FORM_INPUT_TYPES.DROPDOWN: {
             const { options, optionKey } = rest;
             return (
               <FormDropdown
@@ -129,7 +131,7 @@ const FormControlComponent = ({
               />
             );
           }
-          case 'toggle': {
+          case FORM_INPUT_TYPES.TOGGLE: {
             const { options, optionLabels } = rest;
             return (
               <FormToggle
@@ -144,7 +146,7 @@ const FormControlComponent = ({
               />
             );
           }
-          case 'slider': {
+          case FORM_INPUT_TYPES.SLIDER: {
             const { maximumValue, minimumValue, step } = rest;
             return (
               <FormSlider
