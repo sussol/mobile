@@ -6,12 +6,11 @@
 
 import React, { useMemo, useState } from 'react';
 import { View, StyleSheet, FlatList, Text, TouchableOpacity } from 'react-native';
-import { batch, connect } from 'react-redux';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { FormControl } from '../FormControl';
 
-import { FormActions } from '../../actions/FormActions';
 import { DispensaryActions } from '../../actions/DispensaryActions';
 
 import { generalStrings } from '../../localization';
@@ -118,18 +117,12 @@ const mapDispatchToProps = dispatch => ({
   // TODO: update to use PatientActions.updatePatient()
   selectPatient: patient => {
     createPatientRecord(patient);
-    batch(() => {
-      dispatch(FormActions.resetForm());
-      dispatch(DispensaryActions.closeLookupModal());
-    });
+    dispatch(DispensaryActions.closeLookupModal());
   },
   // TODO: update to use PrescriberActions.updatePrescriber()
   selectPrescriber: prescriber => {
     createPrescriberRecord(prescriber);
-    batch(() => {
-      dispatch(FormActions.resetForm());
-      dispatch(DispensaryActions.closeLookupModal());
-    });
+    dispatch(DispensaryActions.closeLookupModal());
   },
 });
 

@@ -3,6 +3,10 @@
  * Sustainable Solutions (NZ) Ltd. 2020
  */
 
+import { batch } from 'react-redux';
+
+import { FORM_ACTIONS } from './FormActions';
+
 export const DISPENSARY_ACTIONS = {
   FILTER: 'Dispensary/filter',
   SORT: 'Dispensary/sort',
@@ -22,7 +26,12 @@ const refresh = () => ({ type: DISPENSARY_ACTIONS.REFRESH });
 
 const openLookupModal = () => ({ type: DISPENSARY_ACTIONS.OPEN_LOOKUP_MODAL });
 
-const closeLookupModal = () => ({ type: DISPENSARY_ACTIONS.CLOSE_LOOKUP_MODAL });
+const closeLookupModal = () => dispatch => {
+  batch(() => {
+    dispatch({ type: DISPENSARY_ACTIONS.CLOSE_LOOKUP_MODAL });
+    dispatch({ type: FORM_ACTIONS.CANCEL });
+  });
+};
 
 export const DispensaryActions = {
   filter,
