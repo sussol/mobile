@@ -259,7 +259,7 @@ const Dispensing = ({
         fullScreen
         isVisible={isLookupModalOpen}
       >
-        <SearchForm dataSource={usingPatientsDataSet ? 'patient' : 'prescriber'} />
+        <SearchForm dataSource={usingPatientsDataSet ? 'patient' : 'prescriber'} onClose={cancelLookupRecord} />
       </ModalContainer>
     </>
   );

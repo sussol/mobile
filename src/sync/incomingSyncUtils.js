@@ -90,7 +90,7 @@ export const parseJsonString = jsonString => {
  * @param   {string}        zipCode   Zip code of the address (can be undefined).
  * @return  {Realm.object}            The Address object described by the params.
  */
-const getOrCreateAddress = (database, line1, line2, line3, line4, zipCode) => {
+export const getOrCreateAddress = (database, line1, line2, line3, line4, zipCode) => {
   let results = database.objects('Address');
   if (typeof line1 === 'string') {
     results = results.filtered('line1 == $0', line1);
