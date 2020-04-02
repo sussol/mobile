@@ -259,7 +259,7 @@ const Dispensing = ({
         fullScreen
         isVisible={isLookupModalOpen}
       >
-        <SearchForm dataSource={usingPatientsDataSet ? 'patient' : 'prescriber'} onClose={cancelLookupRecord} />
+        <SearchForm />
       </ModalContainer>
     </>
   );
@@ -331,11 +331,11 @@ const mapDispatchToProps = dispatch => ({
   sort: sortKey => dispatch(DispensaryActions.sort(sortKey)),
   switchDataset: () => dispatch(DispensaryActions.switchDataSet()),
 
-  lookupRecord: () => dispatch(DispensaryActions.lookupRecord()),
+  lookupRecord: () => dispatch(DispensaryActions.openLookupModal()),
   cancelLookupRecord: () =>
     batch(() => {
-      dispatch(DispensaryActions.cancelLookupRecord());
       dispatch(FormActions.resetForm());
+      dispatch(DispensaryActions.closeLookupModal());
     }),
 
   editPatient: patient => dispatch(PatientActions.editPatient(UIDatabase.get('Name', patient))),
