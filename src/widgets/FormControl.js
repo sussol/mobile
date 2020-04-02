@@ -39,16 +39,24 @@ import { FormActions } from '../actions/FormActions';
  *                                See { getFormInputConfig } from src/utilities/formInputConfigs.
  */
 const FormControlComponent = ({
-  onUpdateForm,
-  onCancelPressed,
-  canSaveForm,
-  completedForm,
+  // Form state
   form,
-  initialiseForm,
-  onSave,
+  completedForm,
   inputConfig,
   isDisabled,
-  isSearchForm,
+  // Save button state
+  canSaveForm,
+  saveButtonText,
+  // Cancel button state
+  showCancelButton,
+  cancelButtonText,
+  // Form callbacks
+  initialiseForm,
+  onUpdateForm,
+  // Save button callbacks
+  onSave,
+  // Cancel button callbacks
+  onCancel,
 }) => {
   const [refs, setRefs] = React.useState([]);
 
@@ -56,8 +64,6 @@ const FormControlComponent = ({
     initialiseForm(inputConfig);
     setRefs({ length: inputConfig.length });
   }, []);
-
-  const onSaveCompletedForm = useCallback(() => onSave(completedForm), [onSave, completedForm]);
 
   const nextFocus = (index, key) => value => {
     onUpdateForm(key, value);
@@ -169,34 +175,40 @@ const FormControlComponent = ({
       }
     );
 
-  const Buttons = useCallback(
+  const onSaveCompletedForm = useCallback(() => onSave(completedForm), [onSave, completedForm]);
+  const SaveButton = useCallback(
+    () => (
+      <PageButton
+        onPress={onSaveCompletedForm}
+        style={localStyles.saveButton}
+        isDisabled={!canSaveForm || isDisabled}
+        textStyle={localStyles.saveButtonTextStyle}
+        text={saveButtonText}
+      />
+    ),
+    [isDisabled, showCancelButton, canSaveForm, saveButtonText, onSaveCompletedForm]
+  );
+  const CancelButton = useCallback(
     () =>
-      isSearchForm ? (
+      showCancelButton ? (
         <PageButton
-          onPress={onSaveCompletedForm}
-          style={{ ...localStyles.saveButton, width: 300 }}
-          isDisabled={!canSaveForm || isDisabled}
-          textStyle={localStyles.saveButtonTextStyle}
-          text={generalStrings.search}
+          onPress={onCancel}
+          style={localStyles.cancelButton}
+          textStyle={localStyles.cancelButtonTextStyle}
+          text={cancelButtonText}
         />
-      ) : (
-        <>
-          <PageButton
-            onPress={onSaveCompletedForm}
-            style={localStyles.saveButton}
-            isDisabled={!canSaveForm || isDisabled}
-            textStyle={localStyles.saveButtonTextStyle}
-            text={generalStrings.save}
-          />
-          <PageButton
-            style={localStyles.cancelButton}
-            onPress={onCancelPressed}
-            textStyle={localStyles.cancelButtonTextStyle}
-            text={modalStrings.cancel}
-          />
-        </>
-      ),
-    [isSearchForm, onSaveCompletedForm, canSaveForm, isDisabled, onCancelPressed]
+      ) : null,
+    [showCancelButton, cancelButtonText, onCancel]
+  );
+
+  const Buttons = useCallback(
+    () => (
+      <View style={localStyles.buttonsRow}>
+        <SaveButton />
+        <CancelButton />
+      </View>
+    ),
+    [SaveButton, CancelButton]
   );
 
   return (
@@ -208,50 +220,52 @@ const FormControlComponent = ({
           <View style={localStyles.flexOne} />
         </View>
       </ScrollView>
-      <View style={localStyles.buttonsRow}>
-        <Buttons />
-      </View>
+      <Buttons />
     </View>
   );
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
-  const { onCancel } = ownProps;
-
   const initialiseForm = config => dispatch(FormActions.initialiseForm(config));
   const onUpdateForm = (key, value) => dispatch(FormActions.updateForm(key, value));
-  const onCancelPressed = () => {
+  const onCancel = () => {
     dispatch(FormActions.resetForm());
-    onCancel();
+    ownProps.onCancel();
   };
-  return { initialiseForm, onUpdateForm, onCancelPressed };
+  return { initialiseForm, onUpdateForm, onCancel };
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   const form = selectForm(state);
   const canSaveForm = selectCanSaveForm(state);
   const completedForm = selectCompletedForm(state);
-  return { form, canSaveForm, completedForm };
+  const { showCancelButton } = ownProps;
+  const onCancel = showCancelButton ? ownProps.onCancel : () => null;
+  return { form, canSaveForm, completedForm, onCancel, ...ownProps };
 };
 
 FormControlComponent.defaultProps = {
-  completedForm: null,
-  isDisabled: false,
-  isSearchForm: false,
   form: {},
+  completedForm: {},
+  isDisabled: false,
+  saveButtonText: generalStrings.save,
+  showCancelButton: true,
+  cancelButtonText: modalStrings.cancel,
 };
 
 FormControlComponent.propTypes = {
-  canSaveForm: PropTypes.bool.isRequired,
-  completedForm: PropTypes.object,
   form: PropTypes.object,
-  initialiseForm: PropTypes.func.isRequired,
-  onSave: PropTypes.func.isRequired,
-  onUpdateForm: PropTypes.func.isRequired,
+  completedForm: PropTypes.object,
   inputConfig: PropTypes.array.isRequired,
-  onCancelPressed: PropTypes.func.isRequired,
   isDisabled: PropTypes.bool,
-  isSearchForm: PropTypes.bool,
+  canSaveForm: PropTypes.bool.isRequired,
+  saveButtonText: PropTypes.string,
+  showCancelButton: PropTypes.bool,
+  cancelButtonText: PropTypes.string,
+  initialiseForm: PropTypes.func.isRequired,
+  onUpdateForm: PropTypes.func.isRequired,
+  onSave: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
 };
 
 export const FormControl = connect(mapStateToProps, mapDispatchToProps)(FormControlComponent);
@@ -259,6 +273,7 @@ export const FormControl = connect(mapStateToProps, mapDispatchToProps)(FormCont
 const localStyles = StyleSheet.create({
   saveButton: {
     ...globalStyles.button,
+    flex: 1,
     backgroundColor: SUSSOL_ORANGE,
     alignSelf: 'center',
   },
@@ -269,7 +284,7 @@ const localStyles = StyleSheet.create({
   },
   cancelButton: {
     ...globalStyles.button,
-
+    flex: 1,
     alignSelf: 'center',
   },
   cancelButtonTextStyle: {
