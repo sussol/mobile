@@ -7,7 +7,7 @@ import { SETTINGS_KEYS } from '../../settings';
 import { UIDatabase } from '../../database';
 
 import { NAME_TYPES } from '../../sync/syncTranslators';
-import { getOrCreateAddress, parseBoolean, parseDate } from '../../sync/incomingSyncUtils';
+import { getOrCreateAddress, parseBoolean, parseDate, parseNumber } from '../../sync/incomingSyncUtils';
 
 const { THIS_STORE_ID, SYNC_URL } = SETTINGS_KEYS;
 
@@ -20,6 +20,34 @@ const SEPARATORS = {
   QUERY_STRING: '?',
   QUERY_PARAMETERS: '&',
   POLICY_NUMBER: '-',
+};
+
+export const createInsurancePolicyRecord = response => {
+  const {
+    id,
+    policyNumberFamily,
+    policyNumberPerson,
+    type,
+    discountRate,
+    expiryDate,
+    enteredById,
+    nameId,
+    insuranceProviderId,
+    isActive,
+  } = response;
+  const policy = { 
+    id,
+    policyNumberFamily,
+    policyNumberPerson,
+    type,
+    discountRate: parseNumber(discountRate),
+    expiryDate: parseDate(expiryDate),
+    enteredBy: UIDatabase.getOrCreate('User', enteredById),
+    patient: UIDatabase.getOrCreate('Name', nameId),
+    insuranceProvider: UIDatabase.getOrCreate('InsuranceProvider', insuranceProviderId),
+    isActive: parseBoolean(isActive)
+  };
+  UIDatabase.write(() => UIDatabase.update('InsurancePolicy', policy));
 };
 
 export const createPatientRecord = response => {
@@ -44,6 +72,7 @@ export const createPatientRecord = response => {
     firstName,
     lastName,
     dateOfBirth,
+    policies,
   } = response;
   const billingAddress = getOrCreateAddress(
     UIDatabase,
@@ -73,6 +102,7 @@ export const createPatientRecord = response => {
     isVisible: true,
   };
   UIDatabase.write(() => UIDatabase.update('Name', patient));
+  policies.forEach(policy => createInsurancePolicyRecord(policy));
 };
 
 export const createPrescriberRecord = response => {
@@ -156,11 +186,32 @@ const getPrescriberRequestUrl = params => {
   return baseUrl + endpoint + queryString;
 };
 
-const processPatientResponse = async response => {
-  const responseJson = await response.json();
-  const { error } = responseJson;
-  if (error) throw new Error(error);
-  const patientData = responseJson.map(
+const processInsuranceResponse = response => response.map(({
+    ID: id,
+    insuranceProviderID: insuranceProviderId,
+    nameID: nameId,
+    policyNumberFamily,
+    policyNumberPerson,
+    discountRate,
+    expiryDate,
+    isActive: isActive,
+    enteredByID: enteredById,
+    type,
+  }) => ({
+    id,
+    insuranceProviderId,
+    nameId,
+    policyNumberFamily,
+    policyNumberPerson,
+    discountRate,
+    expiryDate,
+    isActive,
+    enteredById,
+    type,
+  }));
+
+const processPatientResponse = response => {
+  const patientData = response.map(
     ({
       ID: id,
       name,
@@ -180,6 +231,7 @@ const processPatientResponse = async response => {
       first: firstName,
       last: lastName,
       date_of_birth,
+      nameInsuranceJoin,
     }) => ({
       id,
       name,
@@ -201,16 +253,14 @@ const processPatientResponse = async response => {
       firstName,
       lastName,
       dateOfBirth: parseDate(date_of_birth),
+      policies: processInsuranceResponse(nameInsuranceJoin),
     })
   );
   return patientData;
 };
 
-const processPrescriberResponse = async response => {
-  const responseJson = await response.json();
-  const { error } = responseJson;
-  if (error) throw new Error(error);
-  const prescriberData = responseJson.map(
+const processPrescriberResponse = response => {
+  const prescriberData = response.map(
     ({
       ID,
       first_name,
@@ -242,7 +292,10 @@ export const queryPatientApi = async params => {
   const requestUrl = getPatientRequestUrl(params);
   try {
     const response = await fetch(requestUrl);
-    const patientData = await processPatientResponse(response);
+    const responseJson = await response.json();
+    const { error } = responseJson;
+    if (error) throw new Error(error);
+    const patientData = processPatientResponse(responseJson);
     return patientData;
   } catch (error) {
     // TODO: add bugsnag.
@@ -254,7 +307,10 @@ export const queryPrescriberApi = async params => {
   const requestUrl = getPrescriberRequestUrl(params);
   try {
     const response = await fetch(requestUrl);
-    const prescriberData = await processPrescriberResponse(response);
+    const responseJson = await response.json();
+    const { error } = responseJson;
+    if (error) throw new Error(error);
+    const prescriberData = await processPrescriberResponse(responseJson);
     return prescriberData;
   } catch (error) {
     // TODO: add bugsnag.
