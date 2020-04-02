@@ -31,7 +31,7 @@ import {
   selectLookupListConfig,
 } from '../../selectors/dispensary';
 
-const SearchListItemColumn = ({ value, type }) => {
+const SearchListItemColumnComponent = ({ value, type }) => {
   const valueText = type === 'date' ? value?.toDateString() ?? '' : value;
   return (
     <View style={localStyles.columnContainer}>
@@ -40,7 +40,7 @@ const SearchListItemColumn = ({ value, type }) => {
   );
 };
 
-const SearchListItem = ({ item, config, onSelect }) => {
+const SearchListItemComponent = ({ item, config, onSelect }) => {
   const columns = config.map(({ key, type }) => {
     const value = item[key];
     return <SearchListItemColumn key={key} value={value} type={type} />;
@@ -51,6 +51,9 @@ const SearchListItem = ({ item, config, onSelect }) => {
     </TouchableOpacity>
   );
 };
+
+const SearchListItemColumn = React.memo(SearchListItemColumnComponent);
+const SearchListItem = React.memo(SearchListItemComponent);
 
 export const SearchFormComponent = ({
   isPatient,
@@ -141,13 +144,13 @@ SearchFormComponent.propTypes = {
   selectPrescriber: PropTypes.func.isRequired,
 };
 
-SearchListItem.propTypes = {
+SearchListItemComponent.propTypes = {
   item: PropTypes.object.isRequired,
   config: PropTypes.array.isRequired,
   onSelect: PropTypes.func.isRequired,
 };
 
-SearchListItemColumn.propTypes = {
+SearchListItemColumnComponent.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]).isRequired,
   type: PropTypes.string.isRequired,
 };
