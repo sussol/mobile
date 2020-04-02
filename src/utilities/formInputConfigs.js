@@ -27,6 +27,14 @@ import { formInputStrings } from '../localization';
  * }
  */
 
+export const FORM_INPUT_TYPES = {
+  TEXT: 'text',
+  DATE: 'date',
+  DROPDOWN: 'dropdown',
+  TOGGLE: 'toggle',
+  SLIDER: 'slider',
+};
+
 const FORM_INPUT_KEYS = {
   FIRST_NAME: 'firstName',
   SEARCH_FIRST_NAME: 'searchFirstName',
@@ -54,7 +62,7 @@ const FORM_INPUT_KEYS = {
 
 const FORM_INPUT_CONFIGS = seedObject => ({
   [FORM_INPUT_KEYS.FIRST_NAME]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'firstName',
     validator: input => input.length > 0,
@@ -64,7 +72,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.SEARCH_FIRST_NAME]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'firstName',
     validator: () => true,
@@ -74,7 +82,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.LAST_NAME]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'lastName',
     validator: input => input.length > 0,
@@ -84,7 +92,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.SEARCH_LAST_NAME]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'lastName',
     validator: () => true,
@@ -94,7 +102,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.CODE]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'code',
     validator: input => input.length > 0 && input.length < 20,
@@ -104,7 +112,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.DATE_OF_BIRTH]: {
-    type: 'date',
+    type: FORM_INPUT_TYPES.DATE,
     initialValue: new Date(),
     key: 'dateOfBirth',
     invalidMessage: formInputStrings.must_be_a_date,
@@ -119,7 +127,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.SEARCH_DATE_OF_BIRTH]: {
-    type: 'date',
+    type: FORM_INPUT_TYPES.DATE,
     initialValue: '',
     key: 'dateOfBirth',
     invalidMessage: formInputStrings.must_be_a_date,
@@ -135,7 +143,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.GENDER]: {
-    type: 'toggle',
+    type: FORM_INPUT_TYPES.TOGGLE,
     initialValue: false,
     key: 'female',
     options: [true, false],
@@ -144,7 +152,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.EMAIL]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'emailAddress',
     isRequired: false,
@@ -152,7 +160,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.PHONE]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'phoneNumber',
     isRequired: false,
@@ -160,7 +168,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.COUNTRY]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'country',
     validator: input => input.length < 20,
@@ -170,7 +178,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.ADDRESS_ONE]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'addressOne',
     validator: input => input.length < 50,
@@ -180,7 +188,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.ADDRESS_TWO]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'addressTwo',
     validator: input => input.length < 50,
@@ -190,7 +198,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.REGISTRATION_CODE]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'registrationCode',
     validator: input => input.length > 0 && input.length < 50,
@@ -200,7 +208,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.SEARCH_REGISTRATION_CODE]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'registrationCode',
     validator: () => true,
@@ -210,7 +218,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.POLICY_NUMBER_PERSON]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'policyNumberPerson',
     validator: null,
@@ -220,7 +228,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: !seedObject,
   },
   [FORM_INPUT_KEYS.SEARCH_POLICY_NUMBER_PERSON]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'policyNumberPerson',
     validator: null,
@@ -230,7 +238,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.POLICY_NUMBER_FAMILY]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'policyNumberFamily',
     validator: null,
@@ -240,7 +248,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: !seedObject,
   },
   [FORM_INPUT_KEYS.SEARCH_POLICY_NUMBER_FAMILY]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'policyNumberFamily',
     validator: null,
@@ -250,7 +258,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.POLICY_PROVIDER]: {
-    type: 'dropdown',
+    type: FORM_INPUT_TYPES.DROPDOWN,
     initialValue: UIDatabase.objects('InsuranceProvider')[0],
     key: 'insuranceProvider',
     label: formInputStrings.policy_provider,
@@ -259,7 +267,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: !seedObject,
   },
   [FORM_INPUT_KEYS.IS_ACTIVE]: {
-    type: 'toggle',
+    type: FORM_INPUT_TYPES.TOGGLE,
     initialValue: true,
     key: 'isActive',
     options: [true, false],
@@ -268,7 +276,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.POLICY_TYPE]: {
-    type: 'toggle',
+    type: FORM_INPUT_TYPES.TOGGLE,
     initialValue: 'personal',
     key: 'type',
     options: ['personal', 'business'],
@@ -277,7 +285,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: !seedObject,
   },
   [FORM_INPUT_KEYS.DISCOUNT_RATE]: {
-    type: 'slider',
+    type: FORM_INPUT_TYPES.SLIDER,
     initialValue: 25,
     key: 'discountRate',
     maximumValue: 100,
