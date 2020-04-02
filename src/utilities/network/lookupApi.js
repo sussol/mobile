@@ -3,13 +3,15 @@
  * Sustainable Solutions (NZ) Ltd. 2020
  */
 
+import { getAuthHeader } from 'sussol-utilities';
+
 import { SETTINGS_KEYS } from '../../settings';
 import { UIDatabase } from '../../database';
 
 import { NAME_TYPES } from '../../sync/syncTranslators';
 import { getOrCreateAddress, parseBoolean, parseDate } from '../../sync/incomingSyncUtils';
 
-const { THIS_STORE_ID, SYNC_URL } = SETTINGS_KEYS;
+const { THIS_STORE_ID, SYNC_URL, SYNC_SITE_NAME, SYNC_SITE_PASSWORD_HASH } = SETTINGS_KEYS;
 
 const RESOURCES = {
   PATIENT: '/api/v4/patient',
@@ -20,6 +22,12 @@ const SEPARATORS = {
   QUERY_STRING: '?',
   QUERY_PARAMETERS: '&',
   POLICY_NUMBER: '-',
+};
+
+const getRequestHeaders = () => {
+  const username = UIDatabase.getSetting(SYNC_SITE_NAME);
+  const password = UIDatabase.getSetting(SYNC_SITE_PASSWORD_HASH);
+  return { Authorization: getAuthHeader(username, password) };
 };
 
 export const createPatientRecord = response => {
@@ -240,8 +248,9 @@ const processPrescriberResponse = async response => {
 
 export const queryPatientApi = async params => {
   const requestUrl = getPatientRequestUrl(params);
+  const headers = getRequestHeaders();
   try {
-    const response = await fetch(requestUrl);
+    const response = await fetch(requestUrl, { headers });
     const patientData = await processPatientResponse(response);
     return patientData;
   } catch (error) {
@@ -252,8 +261,9 @@ export const queryPatientApi = async params => {
 
 export const queryPrescriberApi = async params => {
   const requestUrl = getPrescriberRequestUrl(params);
+  const headers = getRequestHeaders();
   try {
-    const response = await fetch(requestUrl);
+    const response = await fetch(requestUrl, { headers });
     const prescriberData = await processPrescriberResponse(response);
     return prescriberData;
   } catch (error) {
