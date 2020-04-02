@@ -72,7 +72,7 @@ export const SearchFormComponent = ({
   const renderItem = useMemo(
     () => ({ item }) => {
       const onSelect = () => selectRecord(item);
-      return <SearchListItem key={item.id} item={item} config={listConfig} onSelect={onSelect} />;
+      return <SearchListItem item={item} config={listConfig} onSelect={onSelect} />;
     },
     [listConfig]
   );
