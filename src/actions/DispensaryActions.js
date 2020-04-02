@@ -8,8 +8,8 @@ export const DISPENSARY_ACTIONS = {
   SORT: 'Dispensary/sort',
   SWITCH: 'Dispensary/switch',
   REFRESH: 'Dispensary/refresh',
-  LOOKUP_RECORD: 'Dispensary/lookupRecord',
-  CANCEL_LOOKUP_RECORD: 'Dispensary/cancelLookupRecord',
+  OPEN_LOOKUP_MODAL: 'Dispensary/openLookupModal',
+  CLOSE_LOOKUP_MODAL: 'Dispensary/closeLookupModal',
 };
 
 const filter = searchTerm => ({ type: DISPENSARY_ACTIONS.FILTER, payload: { searchTerm } });
@@ -20,15 +20,15 @@ const switchDataSet = () => ({ type: DISPENSARY_ACTIONS.SWITCH });
 
 const refresh = () => ({ type: DISPENSARY_ACTIONS.REFRESH });
 
-const lookupRecord = () => ({ type: DISPENSARY_ACTIONS.LOOKUP_RECORD });
+const openLookupModal = () => ({ type: DISPENSARY_ACTIONS.OPEN_LOOKUP_MODAL });
 
-const cancelLookupRecord = () => ({ type: DISPENSARY_ACTIONS.CANCEL_LOOKUP_RECORD });
+const closeLookupModal = () => ({ type: DISPENSARY_ACTIONS.CLOSE_LOOKUP_MODAL });
 
 export const DispensaryActions = {
   filter,
   sort,
   switchDataSet,
   refresh,
-  lookupRecord,
-  cancelLookupRecord,
+  openLookupModal,
+  closeLookupModal,
 };
