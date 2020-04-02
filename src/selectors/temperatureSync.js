@@ -40,3 +40,8 @@ export const selectCurrentSensorNameString = ({ temperatureSync }) => {
 
   return currentSensorName ? `Syncing sensor: ${currentSensorName}` : '';
 };
+
+export const selectTemperatureSyncIsComplete = ({ temperatureSync }) => {
+  const { total, progress } = temperatureSync;
+  return total === progress;
+};
