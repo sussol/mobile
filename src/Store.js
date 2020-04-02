@@ -30,7 +30,6 @@ const persistConfig = {
     'dispensary',
     'modules',
     'supplierCredit',
-    'temperatureSync',
   ],
 };
 
