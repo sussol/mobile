@@ -31,7 +31,7 @@ import {
 } from '../../selectors/dispensary';
 
 const SearchListItemColumnComponent = ({ value, type }) => {
-  const valueText = type === 'date' ? value?.toDateString() ?? '' : value;
+  const valueText = type === 'date' ? value?.toDateString() ?? generalStrings.not_available : value;
   return (
     <View style={localStyles.columnContainer}>
       <Text style={localStyles.text}>{valueText}</Text>
