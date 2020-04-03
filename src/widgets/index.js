@@ -3,8 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-export { BarChart } from './BarChart';
 export { BackButton } from './BackButton';
+export { BarChart } from './BarChart';
 export { Button, ProgressBar } from 'react-native-ui-components';
 export { DataTablePageView } from './DataTablePageView';
 export { DropDown } from './DropDown';
@@ -14,6 +14,7 @@ export { Flag } from './Flag';
 export { FlexColumn } from './FlexColumn';
 export { FlexRow } from './FlexRow';
 export { FlexView } from './FlexView';
+export { FormTextInput } from './FormInputs/FromTextInput';
 export { IconCell } from './IconCell';
 export { InfoBadge } from './InfoBadge';
 export { LineChart } from './LineChart';
@@ -35,9 +36,9 @@ export { SyncState } from './SyncState';
 export { TableShortcut } from './TableShortcuts';
 export { TableShortcuts } from './TableShortcuts';
 export { TabNavigator } from './TabNavigator';
+export { TemperatureSyncState } from './TemperatureSyncState';
 export { TextInput } from './TextInput';
 export { ToggleBar } from './ToggleBar';
-export { FormTextInput } from './FormInputs/FromTextInput';
 export { Wizard } from './Wizard';
 
 export * from './icons';
