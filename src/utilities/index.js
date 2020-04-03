@@ -22,3 +22,4 @@ export { validateReport } from './validateReport';
 
 export { parsePositiveIntegerInterfaceInput } from './parsers';
 export { formatErrorItemNames, roundNumber } from './formatters';
+export { MILLISECONDS } from './constants';

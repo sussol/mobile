@@ -21,6 +21,7 @@ import { UserReducer } from './UserReducer';
 import { WizardReducer } from './WizardReducer';
 
 import SyncReducer from './SyncReducer';
+import { TemperatureSyncReducer } from './TemperatureSyncReducer';
 
 export default combineReducers({
   dashboard: DashboardReducer,
@@ -36,6 +37,7 @@ export default combineReducers({
   prescription: PrescriptionReducer,
   supplierCredit: SupplierCreditReducer,
   sync: SyncReducer,
+  temperatureSync: TemperatureSyncReducer,
   user: UserReducer,
   wizard: WizardReducer,
 });
