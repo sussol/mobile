@@ -27,6 +27,14 @@ export const buttonStyles = {
     margin: 5,
     borderColor: SUSSOL_ORANGE,
   },
+  manualSyncButton: {
+    width: 200,
+    backgroundColor: SUSSOL_ORANGE,
+    borderWidth: 0,
+    alignSelf: 'center',
+    padding: 15,
+    margin: 5,
+  },
   wideButton: {
     width: 285,
     marginLeft: 5,
@@ -48,6 +56,11 @@ export const buttonStyles = {
     fontFamily: APP_FONT_FAMILY,
     fontSize: 17,
     color: DARKER_GREY,
+  },
+  whiteButtonText: {
+    fontSize: 18,
+    color: WHITE,
+    fontFamily: APP_FONT_FAMILY,
   },
   menuButton: {
     alignItems: 'center',
