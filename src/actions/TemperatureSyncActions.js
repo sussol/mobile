@@ -164,8 +164,8 @@ const createTemperatureLogs = sensor => dispatch => {
 
   // Only create TemperatureLogs for the greatest multiple of 6 SensorLogs,
   // as each SensorLog is a 5 minute log, and each Temperature log a 30 minute log.
-  const iterateToo = sensorLogs.length - (sensorLogs.length % 6);
-  const sensorLogsToGroup = sensorLogs.sorted('timestamp').slice(0, iterateToo);
+  const iterateTo = sensorLogs.length - (sensorLogs.length % 6);
+  const sensorLogsToGroup = sensorLogs.sorted('timestamp').slice(0, iterateTo);
   const groupedSensorLogs = chunk(sensorLogsToGroup, 6);
 
   dispatch(startSavingTemperatureLogs(groupedSensorLogs.length));
