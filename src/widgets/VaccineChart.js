@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 
 import { useLayoutDimensions } from '../hooks/useLayoutDimensions';
 import { SUSSOL_ORANGE, APP_FONT_FAMILY, GREY } from '../globalStyles';
+import { HazardPoint } from './HazardPoint';
 
 export const VaccineChart = ({
   minLine,
@@ -22,6 +23,8 @@ export const VaccineChart = ({
   y,
   xTickFormat,
   yTickFormat,
+  breaches,
+  onPressBreach,
 }) => {
   const [width, height, setDimensions] = useLayoutDimensions();
 
@@ -29,7 +32,7 @@ export const VaccineChart = ({
   const minBoundary = React.useCallback(() => minDomain, []);
 
   const chartMinDomain = React.useMemo(() => ({ y: minDomain - 1 }), [minDomain]);
-  const chartMaxDomain = React.useMemo(() => ({ y: maxDomain - 1 }), [maxDomain]);
+  const chartMaxDomain = React.useMemo(() => ({ y: maxDomain + 1 }), [maxDomain]);
 
   return (
     <View onLayout={setDimensions}>
@@ -41,12 +44,20 @@ export const VaccineChart = ({
       >
         <VictoryAxis offsetX={50} dependentAxis style={chartStyles.axis} tickFormat={yTickFormat} />
         <VictoryAxis offsetY={50} tickFormat={xTickFormat} style={chartStyles.axis} />
+
         <VictoryLine interpolation="basis" data={minLine} y={y} x={x} style={chartStyles.minLine} />
         <VictoryLine interpolation="basis" data={maxLine} y={y} x={x} style={chartStyles.maxLine} />
+        <VictoryLine data={maxLine} y={maxBoundary} x={x} style={chartStyles.maxBoundaryLine} />
+        <VictoryLine data={minLine} y={minBoundary} x={x} style={chartStyles.minBoundaryLine} />
+
         <VictoryScatter data={maxLine} y={y} x={x} style={chartStyles.maxScatterPlot} />
         <VictoryScatter data={minLine} y={y} x={x} style={chartStyles.minScatterPlot} />
-        <VictoryLine data={maxLine} y={maxBoundary} x={x} style={chartStyles.maxBoundaryLine} />
-        <VictoryLine data={maxLine} y={minBoundary} x={x} style={chartStyles.minBoundaryLine} />
+        <VictoryScatter
+          data={breaches}
+          y={y}
+          x={x}
+          dataComponent={<HazardPoint onPress={onPressBreach} />}
+        />
       </VictoryChart>
     </View>
   );
@@ -57,6 +68,8 @@ VaccineChart.defaultProps = {
   y: 'temperature',
   xTickFormat: tick => moment(new Date(tick)).format('DD/MM'),
   yTickFormat: tick => `${tick}\u2103`,
+  onPressBreach: null,
+  breaches: null,
 };
 
 VaccineChart.propTypes = {
@@ -68,6 +81,8 @@ VaccineChart.propTypes = {
   maxLine: PropTypes.array.isRequired,
   xTickFormat: PropTypes.func,
   yTickFormat: PropTypes.func,
+  onPressBreach: PropTypes.func,
+  breaches: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
 };
 
 const chartStyles = {
