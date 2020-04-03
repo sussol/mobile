@@ -34,6 +34,14 @@ export class Sensor extends Realm.Object {
   async downloadLogs() {
     return this.sendCommand('*logall');
   }
+
+  get isInBreach() {
+    return this.location?.isInBreach ?? false;
+  }
+
+  get mostRecentTemperatureBreach() {
+    return this.location?.mostRecentTemperatureBreach;
+  }
 }
 
 Sensor.schema = {
@@ -46,6 +54,7 @@ Sensor.schema = {
     location: { type: 'Location', optional: true },
     batteryLevel: { type: 'double', default: 0 },
     sensorLogs: { type: 'linkingObjects', objectType: 'SensorLog', property: 'sensor' },
+    location: { type: 'Location', optional: true },
   },
 };
 

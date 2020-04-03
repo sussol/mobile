@@ -38,6 +38,7 @@ import { FirstUsePage } from './pages';
 import { SupplierCredit } from './widgets/modalChildren/SupplierCredit';
 
 import globalStyles, { SUSSOL_ORANGE } from './globalStyles';
+import { TemperatureSyncActions } from './actions/TemperatureSyncActions';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -66,6 +67,10 @@ class MSupplyMobileAppContainer extends React.Component {
         this.userAuthenticator.reauthenticate(this.onAuthentication);
       }
     }, AUTHENTICATION_INTERVAL);
+    this.scheduler.schedule(
+      () => props.dispatch(TemperatureSyncActions.syncTemperatures()),
+      SYNC_INTERVAL
+    );
     this.state = {
       isInitialised,
       isLoading: false,
