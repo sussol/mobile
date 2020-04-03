@@ -18,6 +18,8 @@ import {
   selectTemperatureSyncLastSyncString,
   selectCurrentSensorNameString,
   selectTemperatureSyncIsComplete,
+  selectTemperatureSyncProgress,
+  selectIsSyncingTemperatures,
 } from '../../selectors/temperatureSync';
 
 const TemperatureSyncComponent = ({
@@ -56,8 +58,18 @@ const mapStateToProps = state => {
   const lastTemperatureSync = selectTemperatureSyncLastSyncString(state);
   const currentSensor = selectCurrentSensorNameString(state);
   const isComplete = selectTemperatureSyncIsComplete(state);
+  const { progress, total } = selectTemperatureSyncProgress(state);
+  const isSyncing = selectIsSyncingTemperatures(state);
 
-  return { temperatureSyncMessage, lastTemperatureSync, currentSensor, isComplete };
+  return {
+    isSyncing,
+    temperatureSyncMessage,
+    lastTemperatureSync,
+    currentSensor,
+    isComplete,
+    progress,
+    total,
+  };
 };
 
 const mapDispatchToProps = dispatch => ({
