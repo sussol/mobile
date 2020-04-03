@@ -16,7 +16,7 @@ import { deleteRecord, createRecord } from '../database/utilities';
 import { SETTINGS_KEYS } from '../settings';
 import { validateReport } from '../utilities';
 
-const { THIS_STORE_ID, THIS_STORE_TAGS, THIS_STORE_CODE, THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
+const { THIS_STORE_ID, THIS_STORE_TAGS, THIS_STORE_CODE } = SETTINGS_KEYS;
 
 /**
  * Returns the number string as a float, or null if none passed.
@@ -201,6 +201,10 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     NumberReuse: {
       cannotBeBlank: ['name', 'number_to_use'],
       canBeBlank: [],
+    },
+    Preference: {
+      cannotBeBlank: ['ID', 'store_ID', 'item', 'data'],
+      canBeBlank: ['user_ID', 'network_ID'],
     },
     Requisition: {
       cannotBeBlank: ['status', 'type', 'daysToSupply'],
@@ -698,6 +702,22 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       numberSequence.addNumberToReuse(numberToReuse);
       break;
     }
+    case 'Preference': {
+      const { item, data: recordData } = record;
+      if (item === 'store_preferences') {
+        try {
+          const parsedData = JSON.parse(recordData);
+          Object.entries(parsedData).forEach(([id, value]) => {
+            const data = JSON.stringify(value ?? {});
+            internalRecord = { id, data };
+            database.update(recordType, internalRecord);
+          });
+        } catch (error) {
+          // Silently ignore malformed prefs.
+        }
+      }
+      break;
+    }
     case 'Report': {
       const { ID: id, title, type, json } = record;
       try {
@@ -819,15 +839,10 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'Store': {
-      const { tags, custom_data, code } = record;
-      const customData = parseJsonString(custom_data);
+      const { tags, code } = record;
       if (settings.get(THIS_STORE_ID) === record.ID) {
         database.update('Setting', { key: THIS_STORE_TAGS, value: tags });
         database.update('Setting', { key: THIS_STORE_CODE, value: code });
-        database.update('Setting', {
-          key: THIS_STORE_CUSTOM_DATA,
-          value: customData ?? '',
-        });
       }
       break;
     }

@@ -63,6 +63,7 @@ export const navigationMiddleware = () => next => action => {
     const { routeName, params } = action;
     RootNavigator.navigate(routeName, params);
   }
+
   if (type === 'Navigation/REPLACE') {
     const { routeName, params } = action;
     RootNavigator.replace(routeName, params);

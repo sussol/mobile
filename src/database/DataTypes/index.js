@@ -42,6 +42,7 @@ export { PaymentType } from './PaymentType';
 export { Period } from './Period';
 export { PeriodSchedule } from './PeriodSchedule';
 export { Prescriber } from './Prescriber';
+export { Preference } from './Preference';
 export { ProgramIndicator } from './ProgramIndicator';
 export { SensorLog } from './SensorLog';
 export { Report } from './Report';

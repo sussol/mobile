@@ -33,6 +33,7 @@ import {
   Period,
   PeriodSchedule,
   Prescriber,
+  Preference,
   ProgramIndicator,
   Report,
   Requisition,
@@ -185,6 +186,7 @@ export const schema = {
     Period,
     PeriodSchedule,
     Prescriber,
+    Preference,
     ProgramIndicator,
     Report,
     Requisition,
@@ -208,7 +210,7 @@ export const schema = {
     VaccineVialMonitorStatus,
     VaccineVialMonitorStatusLog,
   ],
-  schemaVersion: 15,
+  schemaVersion: 16,
 };
 
 export default schema;

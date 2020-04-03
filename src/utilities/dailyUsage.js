@@ -6,24 +6,24 @@
 import moment from 'moment';
 
 import { UIDatabase } from '../database';
+import { PREFERENCE_KEYS } from '../database/utilities/constants';
 
 const DEFAULT_LOOKBACK_PERIOD = 3;
+
 /**
  * Returns either a customized lookback period, or 90 days in milliseconds.
  */
 const getAMCLookbackPeriod = () => {
-  const amcLookbackString = UIDatabase.getSetting('monthlyConsumptionLookBackPeriod');
-  return amcLookbackString ? Number(amcLookbackString) : DEFAULT_LOOKBACK_PERIOD;
+  const amcLookback = UIDatabase.getPreference(PREFERENCE_KEYS.CONSUMPTION_LOOKBACK_PERIOD);
+  return amcLookback > 0 ? amcLookback : DEFAULT_LOOKBACK_PERIOD;
 };
 
 /**
  * Returns if this store is customized such that usage should force a lookback period,
  * rather than using an items added date.
  */
-const getAMCEnforcementLookback = () => {
-  const amcEnforcementString = UIDatabase.getSetting('monthlyConsumptionEnforceLookBackPeriod');
-  return amcEnforcementString === 'true';
-};
+const getAMCEnforcementLookback = () =>
+  UIDatabase.getPreference(PREFERENCE_KEYS.CONSUMPTION_ENFORCE_LOOKBACK);
 
 /**
  * Calculates usage for a provided item.
@@ -45,10 +45,8 @@ export const dailyUsage = item => {
   const itemAddedDate = moment(addedDate);
   const dateNow = moment();
   const lookbackDate = moment(dateNow).subtract(amcLookback * 30, 'days');
-
-  const addedRecently = itemAddedDate.isBefore(lookbackDate);
-
-  const startDate = amcEnforceLookback || !addedRecently ? lookbackDate : itemAddedDate;
+  const useLookbackDate = amcEnforceLookback || itemAddedDate.isBefore(lookbackDate);
+  const startDate = useLookbackDate ? lookbackDate : itemAddedDate;
 
   const numberOfUsageDays = moment.duration(dateNow.diff(startDate)).asDays();
 

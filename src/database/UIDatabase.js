@@ -1,4 +1,5 @@
 /* eslint-disable import/no-mutable-exports */
+/* eslint-disable no-restricted-globals */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -7,6 +8,7 @@
 import RNFS from 'react-native-fs';
 
 import { SETTINGS_KEYS } from '../settings';
+import { PREFERENCE_TYPE_KEYS } from './utilities/constants';
 import { formatDate, requestPermission, backupValidation } from '../utilities';
 
 const { THIS_STORE_NAME_ID } = SETTINGS_KEYS;
@@ -47,6 +49,34 @@ const translateToCoreDatabaseType = type => {
       return 'TransactionCategory';
     default:
       return type;
+  }
+};
+
+const isBooleanData = data => {
+  switch (data.toLowerCase()) {
+    case 'true':
+    case 'false':
+      return true;
+    default:
+      return false;
+  }
+};
+
+const isNumericData = data => !isNaN(data);
+
+const isNonNegativeNumericData = data => isNumericData(data) && Number(data) >= 0;
+
+const parseBooleanData = data => (isBooleanData(data) ? JSON.parse(data) : false);
+
+const parseNumericData = data => (isNumericData(data) ? JSON.parse(data) : 0);
+
+const parseNonNegativeNumericData = data => (isNonNegativeNumericData(data) ? JSON.parse(data) : 0);
+
+const parseUntypedData = data => {
+  try {
+    return JSON.parse(data);
+  } catch {
+    return '';
   }
 };
 
@@ -262,9 +292,45 @@ class UIDatabase {
     return this.database.write(...args);
   }
 
+  /**
+   * Get preference by key.
+   *
+   * If the preference is not found in the database, returns null.
+   *
+   * If the preference is found, returns object data cast to the
+   * expected data type. If the data is not in the correct format,
+   * returns a default value according to the preference type:
+   *
+   * - BOOL: false
+   * - NUMERIC: 0
+   * - NON_NEGATIVE_NUMERIC: 0
+   *
+   * If the data type is null or not recognised, returns the raw object
+   * data as a string, or an empty string if the data is invalid JSON.
+   *
+   * @param {String} key
+   * @return {Boolean|Number|String|Null}
+   */
+  getPreference(key) {
+    const preference = this.database.get('Preference', key);
+    if (!preference) return null;
+    const { data, type } = preference;
+    if (!data) return null;
+    switch (type) {
+      case PREFERENCE_TYPE_KEYS.BOOL:
+        return parseBooleanData(data);
+      case PREFERENCE_TYPE_KEYS.NUMERIC:
+        return parseNumericData(data);
+      case PREFERENCE_TYPE_KEYS.NON_NEGATIVE_NUMERIC:
+        return parseNonNegativeNumericData(data);
+      default:
+        return parseUntypedData(data);
+    }
+  }
+
   getSetting(key) {
     const setting = this.database.get('Setting', key, 'key');
-    return (setting && setting.value) || '';
+    return setting?.value ?? '';
   }
 }
 
