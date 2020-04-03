@@ -51,5 +51,3 @@ HazardPoint.propTypes = {
   onPress: PropTypes.func,
   datum: PropTypes.object,
 };
-
-export default HazardPoint;
