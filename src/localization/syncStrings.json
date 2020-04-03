@@ -13,7 +13,16 @@
     "last_successful_sync": "Last successful sync",
     "initialising": "Initialising...",
     "pulling_changes": "Pulling changes from the server",
-    "pushing_changes": "Pushing changes to the server"
+    "pushing_changes": "Pushing changes to the server",
+    "scanning_for_sensors": "Scanning for temperature sensors",
+    "error_scanning_for_sensors": "Error scanning for temperature sensors",
+    "downloading_temperature_logs": "Downloading temperature logs",
+    "error_downloading_temperature_logs": "Error downloading temperature logs",
+    "resetting_sensor": "Resetting sensor",
+    "error_resetting_sensor": "Error resetting sensor",
+    "saving_temperature_logs": "Saving temperature logs",
+    "no_sensors": "No sensors to scan for",
+    "syncing_temperatures": "Syncing temperatures"
   },
   "fr": {
     "last_sync": "DERNIER SYNC",

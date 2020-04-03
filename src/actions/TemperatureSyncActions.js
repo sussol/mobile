@@ -13,6 +13,8 @@ import { MILLISECONDS } from '../utilities';
 import { chunk } from '../utilities/chunk';
 
 export const TEMPERATURE_SYNC_ACTIONS = {
+  OPEN_MODAL: 'TemperatureSync/openModal',
+  CLOSE_MODAL: 'TemperatureSync/closeModal',
   ERROR_NO_SENSORS: 'TemperatureSync/errorNoSensors',
 
   START_SYNC: 'TemperatureSync/startSync',
@@ -24,7 +26,7 @@ export const TEMPERATURE_SYNC_ACTIONS = {
 
   DOWNLOAD_LOGS_START: 'TemperatureSync/downloadLogsStart',
   DOWNLOAD_LOGS_COMPLETE: 'TemperatureSync/downloadLogsComplete',
-  DOWNLOAD_LOGS_ERROR: 'TemperatureSync/downloadLogsErorr',
+  DOWNLOAD_LOGS_ERROR: 'TemperatureSync/downloadLogsError',
 
   START_RESETTING_ADVERTISEMENT_FREQUENCY: 'TemperatureSync/startResettingAdvertisementFrequency',
   ERROR_RESETTING_ADVERTISEMENT_FREQUENCY: 'TemperatureSync/errorResettingAdvertisementFrequency',
@@ -36,6 +38,8 @@ export const TEMPERATURE_SYNC_ACTIONS = {
 
   START_SAVING_TEMPERATURE_LOGS: 'TemperatureSync/startSavingTemperatureLogs',
   COMPLETE_SAVING_TEMPERATURE_LOGS: 'TemperatureSync/completeSavingTemperatureLogs',
+
+  UPDATE_SENSOR_PROGRESS: 'TemperatureSync/updateSensorProgress',
 };
 
 const scanStart = () => ({ type: TEMPERATURE_SYNC_ACTIONS.SCAN_START });
@@ -53,7 +57,7 @@ const updateSensors = sensorAdvertisements => dispatch => {
       UIDatabase.write(() => {
         UIDatabase.update('Sensor', {
           id: generateUUID(),
-          ...UIDatabase.get('Sensor', 'macAddress', macAddress),
+          ...UIDatabase.get('Sensor', macAddress, 'macAddress'),
           macAddress,
           batteryLevel,
         });
@@ -173,14 +177,14 @@ const createTemperatureLogs = sensor => dispatch => {
   UIDatabase.write(() => {
     groupedSensorLogs.forEach(sensorLogGroup => {
       const { isInBreach, mostRecentTemperatureBreach } = sensor;
-      const temperature = Math.min(...sensorLogGroup);
-      const timestamp = Math.min(...sensorLogGroup);
+      const newLogTemperature = Math.min(...sensorLogGroup.map(({ temperature }) => temperature));
+      const newLogTimestamp = Math.min(...sensorLogGroup.map(({ timestamp }) => timestamp));
 
       const newLog = createRecord(
         UIDatabase,
         'TemperatureLog',
-        temperature,
-        new Date(timestamp),
+        newLogTemperature,
+        new Date(newLogTimestamp),
         location
       );
 
@@ -190,16 +194,16 @@ const createTemperatureLogs = sensor => dispatch => {
         } else {
           UIDatabase.update('TemperatureBreach', {
             ...mostRecentTemperatureBreach,
-            endTimestamp: timestamp,
+            endTimestamp: newLogTimestamp,
           });
         }
       } else {
         const breachConfigs = UIDatabase.objects('TemperatureBreachConfiguration');
         breachConfigs.some(breachConfig => breachConfig.createBreach(UIDatabase, location, newLog));
       }
-
-      UIDatabase.delete('SensorLog', groupedSensorLogs);
     });
+
+    UIDatabase.delete('SensorLog', sensorLogsToGroup);
   });
 
   dispatch(completeSavingTemperatureLogs());
@@ -210,9 +214,15 @@ const createTemperatureLogs = sensor => dispatch => {
 const errorNoSensors = () => ({ type: TEMPERATURE_SYNC_ACTIONS.ERROR_NO_SENSORS });
 const startSync = () => ({ type: TEMPERATURE_SYNC_ACTIONS.START_SYNC });
 const completeSync = () => ({ type: TEMPERATURE_SYNC_ACTIONS.COMPLETE_SYNC });
+const updateSensorProgress = sensor => ({
+  type: TEMPERATURE_SYNC_ACTIONS.UPDATE_SENSOR_PROGRESS,
+  payload: { sensor },
+});
 
 const syncTemperatures = () => async (dispatch, getState) => {
-  const { isSyncing } = getState();
+  const { temperatureSync } = getState();
+  const { isSyncing } = temperatureSync;
+
   const sensors = UIDatabase.objects('Sensor').filtered('location != null');
   const { length: numberOfSensors } = sensors;
 
@@ -224,9 +234,11 @@ const syncTemperatures = () => async (dispatch, getState) => {
   for (let i = 0; i < numberOfSensors; i++) {
     const sensor = sensors[i];
 
+    dispatch(updateSensorProgress(sensor));
+
     const downloadedLogsResult = await dispatch(downloadLogs(sensor));
     if (downloadedLogsResult) {
-      const resetLogFrequencyResult = await dispatch(resetLogFrequency());
+      const resetLogFrequencyResult = await dispatch(resetLogFrequency(sensor));
       if (resetLogFrequencyResult) {
         const resetAdvertisementFrequencyResult = await dispatch(
           resetAdvertisementFrequency(sensor)
