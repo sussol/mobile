@@ -20,6 +20,14 @@ export class TemperatureBreach extends Realm.Object {
     return { maximumTemperature, minimumTemperature };
   }
 
+  get temperature() {
+    return this.temperatureLogs?.[0]?.temperature ?? 0;
+  }
+
+  get timestamp() {
+    return this.temperatureLogs?.[0]?.timestamp ?? new Date(null);
+  }
+
   get duration() {
     return moment
       .duration(moment(this.endTimestamp).diff(moment(this.startTimestamp)))
