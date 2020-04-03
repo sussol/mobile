@@ -126,3 +126,13 @@ export const WifiIcon = ({ color, size, style }) => (
 );
 WifiIcon.defaultProps = { color: DARK_GREY, size: 22, style: { marginLeft: 10 } };
 WifiIcon.propTypes = { color: PropTypes.string, size: PropTypes.number, style: PropTypes.object };
+
+export const TemperatureIcon = ({ color, size, style }) => (
+  <FA5Icon name="temperature-high" size={size} style={style} color={color} />
+);
+TemperatureIcon.defaultProps = { color: DARK_GREY, size: 25, style: { marginLeft: 10 } };
+TemperatureIcon.propTypes = {
+  color: PropTypes.string,
+  size: PropTypes.number,
+  style: PropTypes.object,
+};
