@@ -45,3 +45,23 @@ export const selectTemperatureSyncIsComplete = ({ temperatureSync }) => {
   const { total, progress } = temperatureSync;
   return total === progress;
 };
+
+export const selectTemperatureSyncStateMessage = ({ temperatureSync }) => {
+  const { syncState, syncError } = temperatureSync;
+
+  return (syncError && syncStrings.sync_error) || syncState
+    ? syncStrings.sync_in_progress
+    : syncStrings.sync_enabled;
+};
+
+export const selectTemperatureModalIsOpen = ({ temperatureSync }) => {
+  const { modalIsOpen } = temperatureSync;
+
+  return modalIsOpen;
+};
+
+export const selectTemperatureSyncProgress = ({ temperatureSync }) => {
+  const { total, progress } = temperatureSync;
+
+  return { total, progress };
+};
