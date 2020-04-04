@@ -5,7 +5,7 @@
  */
 
 import { truncateString } from 'sussol-utilities';
-import { modalStrings } from '../localization';
+import { generalStrings, modalStrings } from '../localization';
 
 export const formatErrorItemNames = items => {
   const MAX_ITEMS_IN_ERROR_MESSAGE = 4; // Number of items to display in finalise error modal.
@@ -36,8 +36,10 @@ export const roundNumber = (number, fractionalDigits) =>
   Number(parseFloat(number).toFixed(fractionalDigits));
 
 export const formatTemperature = temperature => {
+  const validTemperature = temperature != null;
   const degree = String.fromCharCode(176);
-  return `${temperature}${degree}C`;
+
+  return validTemperature ? `${temperature}${degree}C` : generalStrings.not_available;
 };
 
 export const formatTemperatureExposure = ({ minimumTemperature, maximumTemperature } = {}) => {
