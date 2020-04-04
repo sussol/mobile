@@ -24,7 +24,7 @@ export class Location extends Realm.Object {
   }
 
   get currentTemperature() {
-    const { temperature } = this.mostRecentTemperatureLog;
+    const { temperature } = this.mostRecentTemperatureLog ?? {};
     return temperature;
   }
 
