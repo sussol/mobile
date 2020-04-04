@@ -28,14 +28,26 @@ export class Location extends Realm.Object {
     return temperature;
   }
 
+  get numberOfBreaches() {
+    return this.breaches.length;
+  }
+
+  get temperatureExposure() {
+    const minimumTemperature = this.temperatureLogs.min('temperature') ?? Infinity;
+    const maximumTemperature = this.temperatureLogs.max('temperature') ?? -Infinity;
+
+    return { minimumTemperature, maximumTemperature };
+  }
+
   batchesAtTime(database, timestamp = new Date()) {
     const locationMovements = this.locationMovements.filtered(
-      'inTime <= $0 && (outTime > $0 || outTime == null)',
+      'enterTimestamp <= $0 && (exitTimestamp > $0 || exitTimestamp == null)',
       timestamp
     );
     const queryString = locationMovements.map(({ id }) => `id == "${id}"`).join(' OR ');
+    const itemBatches = database.objects('ItemBatch');
 
-    return database.objects('ItemBatch').filtered(queryString);
+    return queryString ? itemBatches.filtered(queryString) : itemBatches;
   }
 
   totalStock(database) {
