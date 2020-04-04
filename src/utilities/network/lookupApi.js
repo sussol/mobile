@@ -25,7 +25,7 @@ const SEPARATORS = {
 
 export const createPatientRecord = patient => {
   UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patient));
-  patient?.policies?.forEach(policy => createPolicyRecord(policy));
+  patient?.policies?.forEach(createPolicyRecord);
 };
 
 export const createPrescriberRecord = prescriber =>
@@ -36,14 +36,8 @@ export const createPolicyRecord = policy => {
   const enteredBy = UIDatabase.getOrCreate('User', enteredById);
   const patient = UIDatabase.getOrCreate('Name', nameId);
   const insuranceProvider = UIDatabase.getOrCreate('InsuranceProvider', insuranceProviderId);
-  UIDatabase.write(() =>
-    createRecord(UIDatabase, 'InsurancePolicy', {
-      ...policy,
-      enteredBy,
-      patient,
-      insuranceProvider,
-    })
-  );
+  const policyRecord = { ...policy, enteredBy, patient, insuranceProvider };
+  UIDatabase.write(() => createRecord(UIDatabase, 'InsurancePolicy', policyRecord));
 };
 
 const getQueryString = params =>
