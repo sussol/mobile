@@ -12,46 +12,18 @@ import {
   TRANSACTION_TYPES,
 } from './syncTranslators';
 import { CHANGE_TYPES } from '../database';
-import { deleteRecord, getOrCreateAddress, parseBoolean, parseDate, parseNumber, parseJsonString } from '../database/utilities';
+import {
+  deleteRecord,
+  getOrCreateAddress,
+  parseBoolean,
+  parseDate,
+  parseNumber,
+  parseJsonString,
+} from '../database/utilities';
 import { SETTINGS_KEYS } from '../settings';
 import { validateReport } from '../utilities';
 
 const { THIS_STORE_ID, THIS_STORE_TAGS, THIS_STORE_CODE, THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
-
-/**
-/**
- * Return a database Address object with the given address details (reuse if one
- * already exists).
- *
- * @param   {Realm}         database  The local database.
- * @param   {string}        line1     Line 1 of the address (can be undefined).
- * @param   {string}        line2     Line 2 of the address (can be undefined).
- * @param   {string}        line3     Line 3 of the address (can be undefined).
- * @param   {string}        line4     Line 4 of the address (can be undefined).
- * @param   {string}        zipCode   Zip code of the address (can be undefined).
- * @return  {Realm.object}            The Address object described by the params.
- */
-export const getOrCreateAddress = (database, line1, line2, line3, line4, zipCode) => {
-  let results = database.objects('Address');
-  if (typeof line1 === 'string') {
-    results = results.filtered('line1 == $0', line1);
-  }
-  if (typeof line2 === 'string') {
-    results = results.filtered('line2 == $0', line2);
-  }
-  if (typeof line3 === 'string') {
-    results = results.filtered('line3 == $0', line3);
-  }
-  if (typeof line4 === 'string') {
-    results = results.filtered('line4 == $0', line4);
-  }
-  if (typeof zipCode === 'string') {
-    results = results.filtered('zipCode == $0', zipCode);
-  }
-  if (results.length > 0) return results[0];
-
-  return createRecord(database, 'Address', { line1, line2, line3, line4, zipCode });
-};
 
 /**
  * Ensure the given record has the right data to create an internal record of the given

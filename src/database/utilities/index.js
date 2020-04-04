@@ -3,7 +3,13 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-export { createRecord, getNextNumber, getNumberSequence, reuseNumber } from './createRecord';
+export {
+  createRecord,
+  getOrCreateAddress,
+  getNextNumber,
+  getNumberSequence,
+  reuseNumber,
+} from './createRecord';
 export { deleteRecord } from './deleteRecord';
 export { parseNumber, parseDate, parseBoolean, parseJsonString } from './parsers';
 export { getTotal, addBatchToParent, millisecondsToDays } from './utilities';

@@ -12,6 +12,40 @@ import { NUMBER_SEQUENCE_KEYS } from './constants';
 import { generalStrings } from '../../localization';
 import { SETTINGS_KEYS } from '../../settings';
 
+/**
+ * Return a database Address object with the given address details (reuse if one
+ * already exists).
+ *
+ * @param   {Realm}         database  The local database.
+ * @param   {string}        line1     Line 1 of the address (can be undefined).
+ * @param   {string}        line2     Line 2 of the address (can be undefined).
+ * @param   {string}        line3     Line 3 of the address (can be undefined).
+ * @param   {string}        line4     Line 4 of the address (can be undefined).
+ * @param   {string}        zipCode   Zip code of the address (can be undefined).
+ * @return  {Realm.object}            The Address object described by the params.
+ */
+export const getOrCreateAddress = (database, line1, line2, line3, line4, zipCode) => {
+  let results = database.objects('Address');
+  if (typeof line1 === 'string') {
+    results = results.filtered('line1 == $0', line1);
+  }
+  if (typeof line2 === 'string') {
+    results = results.filtered('line2 == $0', line2);
+  }
+  if (typeof line3 === 'string') {
+    results = results.filtered('line3 == $0', line3);
+  }
+  if (typeof line4 === 'string') {
+    results = results.filtered('line4 == $0', line4);
+  }
+  if (typeof zipCode === 'string') {
+    results = results.filtered('zipCode == $0', zipCode);
+  }
+  if (results.length > 0) return results[0];
+
+  return createRecord(database, 'Address', { line1, line2, line3, line4, zipCode });
+};
+
 // Get the next highest number in an existing number sequence.
 export const getNextNumber = (database, sequenceKey) => {
   const numberSequence = getNumberSequence(database, sequenceKey);
