@@ -15,8 +15,16 @@ import PropTypes from 'prop-types';
  * @param {Number}     flex           The flex amount i.e. 1
  * @param {Object}     style          An additional styles object.
  */
-export const FlexView = ({ children, flex, style, onLayout }) => {
-  const internalStyle = React.useMemo(() => ({ flex, ...style }), [style, flex]);
+export const FlexView = ({ children, flex, style, onLayout, alignItems, justifyContent }) => {
+  const internalStyle = React.useMemo(
+    () => ({
+      flex,
+      ...style,
+      [alignItems ? 'alignItems' : undefined]: alignItems,
+      [justifyContent ? 'justifyContent' : undefined]: justifyContent,
+    }),
+    [style, flex]
+  );
   return (
     <View onLayout={onLayout} style={internalStyle}>
       {children}
@@ -29,6 +37,8 @@ FlexView.defaultProps = {
   flex: 1,
   style: {},
   onLayout: null,
+  alignItems: '',
+  justifyContent: '',
 };
 
 FlexView.propTypes = {
@@ -36,4 +46,6 @@ FlexView.propTypes = {
   flex: PropTypes.number,
   style: PropTypes.object,
   onLayout: PropTypes.func,
+  alignItems: PropTypes.string,
+  justifyContent: PropTypes.string,
 };
