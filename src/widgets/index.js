@@ -15,6 +15,7 @@ export { FlexColumn } from './FlexColumn';
 export { FlexRow } from './FlexRow';
 export { FlexView } from './FlexView';
 export { FormTextInput } from './FormInputs/FromTextInput';
+export { HeaderRight } from './HeaderRight';
 export { HazardPoint } from './HazardPoint';
 export { IconCell } from './IconCell';
 export { InfoBadge } from './InfoBadge';
