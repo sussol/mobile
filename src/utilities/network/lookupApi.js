@@ -3,6 +3,9 @@
  * Sustainable Solutions (NZ) Ltd. 2020
  */
 
+/* eslint-disable camelcase */
+/* eslint-disable no-unused-expressions */
+
 import { SETTINGS_KEYS } from '../../settings';
 import { UIDatabase } from '../../database';
 import { createRecord, parseBoolean, parseDate, parseNumber } from '../../database/utilities';
@@ -25,18 +28,22 @@ export const createPatientRecord = patient => {
   patient?.policies?.forEach(policy => createPolicyRecord(policy));
 };
 
-export const createPrescriberRecord = prescriber => UIDatabase.write(() => createRecord(UIDatabase, 'Prescriber', prescriber));
+export const createPrescriberRecord = prescriber =>
+  UIDatabase.write(() => createRecord(UIDatabase, 'Prescriber', prescriber));
 
 export const createPolicyRecord = policy => {
-  const {
-    nameId,
-    enteredById,
-    insuranceProviderId,
-  } = policy;
+  const { nameId, enteredById, insuranceProviderId } = policy;
   const enteredBy = UIDatabase.getOrCreate('User', enteredById);
   const patient = UIDatabase.getOrCreate('Name', nameId);
   const insuranceProvider = UIDatabase.getOrCreate('InsuranceProvider', insuranceProviderId);
-  UIDatabase.write(() => createRecord(UIDatabase, 'InsurancePolicy', { ...policy, enteredBy, patient, insuranceProvider }));
+  UIDatabase.write(() =>
+    createRecord(UIDatabase, 'InsurancePolicy', {
+      ...policy,
+      enteredBy,
+      patient,
+      insuranceProvider,
+    })
+  );
 };
 
 const getQueryString = params =>
@@ -90,29 +97,32 @@ const getPrescriberRequestUrl = params => {
   return baseUrl + endpoint + queryString;
 };
 
-const processInsuranceResponse = response => response.map(({
-    ID: id,
-    insuranceProviderID: insuranceProviderId,
-    nameID: nameId,
-    policyNumberFamily,
-    policyNumberPerson,
-    discountRate,
-    expiryDate,
-    isActive: isActive,
-    enteredByID: enteredById,
-    type,
-  }) => ({
-    id,
-    insuranceProviderId,
-    nameId,
-    policyNumberFamily,
-    policyNumberPerson,
-    discountRate: parseNumber(discountRate),
-    expiryDate: parseDate(expiryDate),
-    isActive: parseBoolean(isActive),
-    enteredById,
-    type,
-  }));
+const processInsuranceResponse = response =>
+  response.map(
+    ({
+      ID: id,
+      insuranceProviderID: insuranceProviderId,
+      nameID: nameId,
+      policyNumberFamily,
+      policyNumberPerson,
+      discountRate,
+      expiryDate,
+      isActive,
+      enteredByID: enteredById,
+      type,
+    }) => ({
+      id,
+      insuranceProviderId,
+      nameId,
+      policyNumberFamily,
+      policyNumberPerson,
+      discountRate: parseNumber(discountRate),
+      expiryDate: parseDate(expiryDate),
+      isActive: parseBoolean(isActive),
+      enteredById,
+      type,
+    })
+  );
 
 const processPatientResponse = response => {
   const patientData = response.map(
@@ -150,7 +160,6 @@ const processPatientResponse = response => {
       policies: processInsuranceResponse(nameInsuranceJoin),
     })
   );
-  console.log(patientData);
   return patientData;
 };
 
@@ -185,13 +194,11 @@ const processPrescriberResponse = response => {
 
 export const queryPatientApi = async params => {
   const requestUrl = getPatientRequestUrl(params);
-  console.log(requestUrl);
   try {
     const response = await fetch(requestUrl);
     const responseJson = await response.json();
     const { error } = responseJson;
     if (error) throw new Error(error);
-    console.log(responseJson);
     const patientData = processPatientResponse(responseJson);
     return patientData;
   } catch (error) {
