@@ -45,8 +45,20 @@ export const VaccineChart = ({
         <VictoryAxis offsetX={50} dependentAxis style={chartStyles.axis} tickFormat={yTickFormat} />
         <VictoryAxis offsetY={50} tickFormat={xTickFormat} style={chartStyles.axis} />
 
-        <VictoryLine interpolation="basis" data={minLine} y={y} x={x} style={chartStyles.minLine} />
-        <VictoryLine interpolation="basis" data={maxLine} y={y} x={x} style={chartStyles.maxLine} />
+        <VictoryLine
+          interpolation="natural"
+          data={minLine}
+          y={y}
+          x={x}
+          style={chartStyles.minLine}
+        />
+        <VictoryLine
+          interpolation="natural"
+          data={maxLine}
+          y={y}
+          x={x}
+          style={chartStyles.maxLine}
+        />
         <VictoryLine data={maxLine} y={maxBoundary} x={x} style={chartStyles.maxBoundaryLine} />
         <VictoryLine data={minLine} y={minBoundary} x={x} style={chartStyles.minBoundaryLine} />
 
