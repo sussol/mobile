@@ -5,6 +5,7 @@
 
 export { createRecord, getNextNumber, getNumberSequence, reuseNumber } from './createRecord';
 export { deleteRecord } from './deleteRecord';
+export { parseNumber, parseDate, parseBoolean, parseJsonString } from './parsers';
 export { getTotal, addBatchToParent, millisecondsToDays } from './utilities';
 export {
   MILLISECONDS_PER_MINUTE,

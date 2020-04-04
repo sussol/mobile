@@ -5,9 +5,9 @@
 
 import { SETTINGS_KEYS } from '../../settings';
 import { UIDatabase } from '../../database';
+import { createRecord, parseBoolean, parseDate, parseNumber } from '../../database/utilities';
 
 import { NAME_TYPES } from '../../sync/syncTranslators';
-import { getOrCreateAddress, parseBoolean, parseDate, parseNumber } from '../../sync/incomingSyncUtils';
 
 const { THIS_STORE_ID, SYNC_URL } = SETTINGS_KEYS;
 
