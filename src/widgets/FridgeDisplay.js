@@ -21,6 +21,7 @@ export const FridgeDisplay = ({
   minDomain,
   fridge,
   isActive,
+  onSelectFridge,
 }) => {
   const containerStyle = React.useMemo(
     () => ({ ...localStyles.container, height: isActive ? 300 : 45 }),
@@ -29,7 +30,7 @@ export const FridgeDisplay = ({
   const [render, setRender] = React.useState(false);
 
   React.useEffect(() => {
-    setTimeout(() => setRender(true), 1000);
+    setTimeout(() => setRender(isActive), 1000);
   }, [isActive]);
 
   const Chart = React.useCallback(
@@ -52,7 +53,7 @@ export const FridgeDisplay = ({
 
   return (
     <View style={containerStyle}>
-      <FridgeDisplayInfo fridge={fridge} isActive={isActive} />
+      <FridgeDisplayInfo onPress={onSelectFridge} fridge={fridge} isActive={isActive} />
 
       {isActive ? <Chart /> : null}
     </View>
@@ -75,6 +76,7 @@ FridgeDisplay.defaultProps = {
   breaches: [],
   maxDomain: Infinity,
   minDomain: -Infinity,
+  onSelectFridge: null,
 };
 
 FridgeDisplay.propTypes = {
@@ -85,4 +87,5 @@ FridgeDisplay.propTypes = {
   breaches: PropTypes.array,
   maxDomain: PropTypes.number,
   minDomain: PropTypes.number,
+  onSelectFridge: PropTypes.func,
 };
