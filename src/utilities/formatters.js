@@ -34,3 +34,16 @@ export const formatErrorItemNames = items => {
  */
 export const roundNumber = (number, fractionalDigits) =>
   Number(parseFloat(number).toFixed(fractionalDigits));
+
+export const formatTemperature = temperature => {
+  const degree = String.fromCharCode(176);
+  return `${temperature}${degree}C`;
+};
+
+export const formatTemperatureExposure = ({ minimumTemperature, maximumTemperature } = {}) => {
+  const undefinedProperties = !(minimumTemperature && maximumTemperature);
+  const infinityTemperatures = minimumTemperature === Infinity || maximumTemperature === -Infinity;
+  if (undefinedProperties || infinityTemperatures) return 'No temperatures recorded';
+
+  return `${formatTemperature(minimumTemperature)} - ${formatTemperature(maximumTemperature)}`;
+};
