@@ -62,7 +62,8 @@ export const VaccinePageComponent = ({
 
 const mapStateToProps = state => {
   const { fridge } = state;
-  const { fridges, selectedFridge, breaches } = fridge;
+  const { fridges, selectedFridge } = fridge;
+  const { breaches } = selectedFridge;
 
   const { minLine, maxLine } = selectMinAndMaxLogs(state);
   const { minDomain, maxDomain } = selectMinAndMaxDomains(state);
