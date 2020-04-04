@@ -5,7 +5,6 @@
  */
 
 import React from 'react';
-import { View } from 'react-native';
 import { VictoryAxis, VictoryChart, VictoryLine, VictoryScatter } from 'victory-native';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -13,6 +12,7 @@ import PropTypes from 'prop-types';
 import { useLayoutDimensions } from '../hooks/useLayoutDimensions';
 import { SUSSOL_ORANGE, APP_FONT_FAMILY, GREY } from '../globalStyles';
 import { HazardPoint } from './HazardPoint';
+import { FlexView } from './FlexView';
 
 export const VaccineChart = ({
   minLine,
@@ -35,7 +35,7 @@ export const VaccineChart = ({
   const chartMaxDomain = React.useMemo(() => ({ y: maxDomain + 1 }), [maxDomain]);
 
   return (
-    <View onLayout={setDimensions}>
+    <FlexView onLayout={setDimensions}>
       <VictoryChart
         width={width}
         height={height}
@@ -71,7 +71,7 @@ export const VaccineChart = ({
           dataComponent={<HazardPoint onPress={onPressBreach} />}
         />
       </VictoryChart>
-    </View>
+    </FlexView>
   );
 };
 

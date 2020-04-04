@@ -15,19 +15,25 @@ import PropTypes from 'prop-types';
  * @param {Number}     flex           The flex amount i.e. 1
  * @param {Object}     style          An additional styles object.
  */
-export const FlexView = ({ children, flex, style }) => {
+export const FlexView = ({ children, flex, style, onLayout }) => {
   const internalStyle = React.useMemo(() => ({ flex, ...style }), [style, flex]);
-  return <View style={internalStyle}>{children}</View>;
+  return (
+    <View onLayout={onLayout} style={internalStyle}>
+      {children}
+    </View>
+  );
 };
 
 FlexView.defaultProps = {
   children: null,
   flex: 1,
   style: {},
+  onLayout: null,
 };
 
 FlexView.propTypes = {
   children: PropTypes.oneOfType([PropTypes.node, PropTypes.arrayOf(PropTypes.node)]),
   flex: PropTypes.number,
   style: PropTypes.object,
+  onLayout: PropTypes.func,
 };
