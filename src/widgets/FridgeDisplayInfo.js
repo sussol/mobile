@@ -9,7 +9,7 @@ import { StyleSheet, View } from 'react-native';
 import PropTypes from 'prop-types';
 
 import { UIDatabase } from '../database';
-import { formatTemperatureExposure } from '../utilities/formatters';
+import { formatTemperatureExposure, formatTemperature } from '../utilities/formatters';
 
 import { FlexRow } from './FlexRow';
 import { ChevronDownIcon } from './icons';
@@ -25,7 +25,11 @@ export const FridgeDisplayInfo = ({ fridge, isActive }) => {
       <FlexRow flex={1} justifyContent="space-between" alignItems="center">
         <FlexRow flex={1} justifyContent="space-evenly">
           <ChevronDownIcon color={isActive ? WHITE : SUSSOL_ORANGE} style={localStyles.icon} />
-          <SimpleLabel label={description} size="large" text={currentTemperature} />
+          <SimpleLabel
+            label={description}
+            size="large"
+            text={formatTemperature(currentTemperature)}
+          />
         </FlexRow>
 
         <FlexRow flex={4} justifyContent="flex-end">
