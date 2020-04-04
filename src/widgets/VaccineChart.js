@@ -53,7 +53,7 @@ export const VaccineChart = ({
         <VictoryScatter data={maxLine} y={y} x={x} style={chartStyles.maxScatterPlot} />
         <VictoryScatter data={minLine} y={y} x={x} style={chartStyles.minScatterPlot} />
         <VictoryScatter
-          data={breaches}
+          data={breaches.slice()}
           y={y}
           x={x}
           dataComponent={<HazardPoint onPress={onPressBreach} />}
