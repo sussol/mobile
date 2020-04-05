@@ -36,6 +36,25 @@ export const refreshIndicatorRow = route => ({
   payload: { route },
 });
 
+export const editBatchVvmStatus = (vvmStatus, objectType, route) => (dispatch, getState) => {
+  const { modalValue, keyExtractor } = selectPageState(getState());
+
+  UIDatabase.write(() =>
+    UIDatabase.update(objectType, { ...modalValue, vaccineVialMonitorStatus: vvmStatus })
+  );
+
+  reduxBatch(() => {
+    dispatch(refreshRow(keyExtractor(modalValue), route));
+    dispatch(closeModal(route));
+  });
+};
+
+export const editTransactionBatchVvmStatus = (vvmStatus, route) =>
+  editBatchVvmStatus(vvmStatus, 'TransactionBatch', route);
+
+export const editStocktakeBatchVvmStatus = (vvmStatus, route) =>
+  editBatchVvmStatus(vvmStatus, 'StocktakeBatch', route);
+
 export const editBatchLocation = (location, objectType, route) => (dispatch, getState) => {
   const { modalValue, keyExtractor } = selectPageState(getState());
 
@@ -405,4 +424,6 @@ export const CellActionsLookup = {
   editTransactionBatchName,
   editTransactionBatchLocation,
   editStocktakeBatchLocation,
+  editTransactionBatchVvmStatus,
+  editStocktakeBatchVvmStatus,
 };
