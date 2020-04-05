@@ -31,6 +31,7 @@ const PAGE_COLUMN_WIDTHS = {
   [ROUTES.STOCKTAKE_EDITOR_WITH_REASONS]: [1, 2.4, 0.6, 1, 1.2, 1, 1, 0.8],
   [ROUTES.STOCKTAKE_MANAGER]: [2, 6, 1],
   [ROUTES.SUPPLIER_INVOICE]: [2, 3.5, 2, 1.5, 1.5, 1],
+  supplierInvoiceWithVaccines: [2, 3.5, 2, 3, 1.5, 1.5, 1],
   [ROUTES.SUPPLIER_INVOICE_WITH_PRICES]: [2, 3.5, 2, 1.5, 1.5, 1.5, 1.5, 1],
   [ROUTES.SUPPLIER_INVOICES]: [1.5, 2.5, 2, 1.5, 3, 1],
   [ROUTES.SUPPLIER_REQUISITION]: [1.4, 3.5, 2, 1.5, 2, 2, 1],
@@ -43,6 +44,15 @@ const PAGE_COLUMN_WIDTHS = {
 };
 
 const PAGE_COLUMNS = {
+  supplierInvoiceWithVaccines: [
+    COLUMN_NAMES.ITEM_CODE,
+    COLUMN_NAMES.ITEM_NAME,
+    COLUMN_NAMES.EDITABLE_BATCH_NAME,
+    COLUMN_NAMES.LOCATION,
+    COLUMN_NAMES.EDITABLE_TOTAL_QUANTITY,
+    COLUMN_NAMES.EDITABLE_EXPIRY_DATE,
+    COLUMN_NAMES.REMOVE,
+  ],
   [FORMS.PATIENT]: [
     COLUMN_NAMES.CODE,
     COLUMN_NAMES.FIRST_NAME,
@@ -865,7 +875,7 @@ const COLUMNS = () => ({
   },
   [COLUMN_NAMES.LOCATION]: {
     type: COLUMN_TYPES.DROP_DOWN,
-    key: COLUMN_KEYS.CURRENT_LOCATION,
+    key: 'currentLocationName',
     title: tableStrings.location,
     alignText: 'left',
     sortable: false,
@@ -882,9 +892,10 @@ const COLUMNS = () => ({
 });
 
 const getColumns = page => {
+  console.log(page);
   const widths = PAGE_COLUMN_WIDTHS[page];
   const columnKeys = PAGE_COLUMNS[page];
-
+  console.log(widths, columnKeys);
   if (!columnKeys) return [];
   if (!(columnKeys.length === widths.length)) return [];
   const columns = COLUMNS();
