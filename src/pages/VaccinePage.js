@@ -96,7 +96,7 @@ VaccinePageComponent.propTypes = {
   selectedFridge: PropTypes.object.isRequired,
   minLine: PropTypes.array.isRequired,
   maxLine: PropTypes.array.isRequired,
-  breaches: PropTypes.array,
+  breaches: PropTypes.object,
   maxDomain: PropTypes.number.isRequired,
   minDomain: PropTypes.number.isRequired,
   fridges: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,

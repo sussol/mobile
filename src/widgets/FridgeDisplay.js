@@ -86,7 +86,7 @@ FridgeDisplay.propTypes = {
   isActive: PropTypes.bool.isRequired,
   minLine: PropTypes.array,
   maxLine: PropTypes.array,
-  breaches: PropTypes.array,
+  breaches: PropTypes.object,
   maxDomain: PropTypes.number,
   minDomain: PropTypes.number,
   onSelectFridge: PropTypes.func,
