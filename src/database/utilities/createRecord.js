@@ -112,8 +112,6 @@ const createInsurancePolicy = (database, policyDetails) => {
     patient,
     insuranceProvider,
   });
-
-  database.save('InsurancePolicy', policy);
   return policy;
 };
 
@@ -171,8 +169,7 @@ const createPrescriber = (database, prescriberDetails) => {
     isVisible,
     isActive,
   });
-
-  database.save('Prescriber', prescriber);
+  return prescriber;
 };
 
 /**
@@ -255,8 +252,6 @@ const createPatient = (database, patientDetails) => {
     thisStoresPatient,
     isVisible,
   });
-
-  database.save('Name', patient);
   return patient;
 };
 
