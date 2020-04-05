@@ -15,7 +15,7 @@ VaccineVialMonitorStatus.schema = {
     description: { type: 'string', optional: true },
     code: { type: 'string', optional: true },
     level: { type: 'double', default: 0 },
-    isActive: { type: 'string', default: false },
+    isActive: { type: 'bool', default: false },
   },
 };
 
