@@ -7,6 +7,10 @@ import Realm from 'realm';
 import moment from 'moment';
 
 export class TemperatureBreach extends Realm.Object {
+  get colour() {
+    return this.temperatureBreachConfiguration.colour ?? null;
+  }
+
   get maximumTemperature() {
     return this.temperatureLogs.max('temperature');
   }
@@ -17,7 +21,12 @@ export class TemperatureBreach extends Realm.Object {
 
   get temperatureExposure() {
     const { maximumTemperature, minimumTemperature } = this;
+
     return { maximumTemperature, minimumTemperature };
+  }
+
+  get locationString() {
+    return this.location?.description;
   }
 
   get temperature() {
@@ -30,7 +39,7 @@ export class TemperatureBreach extends Realm.Object {
 
   get duration() {
     return moment
-      .duration(moment(this.endTimestamp).diff(moment(this.startTimestamp)))
+      .duration(moment(this.endTimestamp ?? new Date()).diff(moment(this.startTimestamp)))
       .asMilliseconds();
   }
 
@@ -52,14 +61,14 @@ export class TemperatureBreach extends Realm.Object {
 
     const incomingStock = transactionBatches.filtered(
       'transaction.confirmDate < $0 && (transaction.type == $1 || transaction.type == $2)',
-      this.endTimestamp,
+      this.endTimestamp ?? new Date(),
       'supplier_invoice',
       'customer_credit'
     );
 
     const outgoingStock = transactionBatches.filtered(
       'transaction.confirmDate < $0 && (transaction.type == $1 || transaction.type == $2)',
-      this.endTimestamp,
+      this.endTimestamp ?? new Date(),
       'customer_invoice',
       'supplier_credit'
     );
