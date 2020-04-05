@@ -57,6 +57,8 @@ export const SupplierInvoice = ({
   isSupplierInvoice,
   onSelectLocation,
   onApplyTransactionBatchLocation,
+  onSelectVvmStatus,
+  onApplyTransactionBatchVvmStatus,
 }) => {
   const { isFinalised, comment, theirRef } = pageObject;
 
@@ -81,6 +83,8 @@ export const SupplierInvoice = ({
         return onEditTransactionBatchName;
       case 'currentLocationName':
         return onSelectLocation;
+      case 'currentVvmStatusName':
+        return onSelectVvmStatus;
       default:
         return null;
     }
@@ -96,6 +100,8 @@ export const SupplierInvoice = ({
         return onEditTheirRef;
       case MODAL_KEYS.SELECT_LOCATION:
         return onApplyTransactionBatchLocation;
+      case MODAL_KEYS.SELECT_VVM_STATUS:
+        return onApplyTransactionBatchVvmStatus;
       default:
         return null;
     }
@@ -254,4 +260,6 @@ SupplierInvoice.propTypes = {
   isSupplierInvoice: PropTypes.bool.isRequired,
   onSelectLocation: PropTypes.func.isRequired,
   onApplyTransactionBatchLocation: PropTypes.func.isRequired,
+  onSelectVvmStatus: PropTypes.func.isRequired,
+  onApplyTransactionBatchVvmStatus: PropTypes.func.isRequired,
 };
