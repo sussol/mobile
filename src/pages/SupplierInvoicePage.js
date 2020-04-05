@@ -55,6 +55,8 @@ export const SupplierInvoice = ({
   onEditSellPrice,
   onEditTransactionBatchName,
   isSupplierInvoice,
+  onSelectLocation,
+  onApplyTransactionBatchLocation,
 }) => {
   const { isFinalised, comment, theirRef } = pageObject;
 
@@ -77,6 +79,8 @@ export const SupplierInvoice = ({
         return onEditSellPrice;
       case 'batch':
         return onEditTransactionBatchName;
+      case 'currentLocationName':
+        return onSelectLocation;
       default:
         return null;
     }
@@ -90,6 +94,8 @@ export const SupplierInvoice = ({
         return onEditComment;
       case MODAL_KEYS.THEIR_REF_EDIT:
         return onEditTheirRef;
+      case MODAL_KEYS.SELECT_LOCATION:
+        return onApplyTransactionBatchLocation;
       default:
         return null;
     }
@@ -246,4 +252,6 @@ SupplierInvoice.propTypes = {
   refund: PropTypes.func.isRequired,
   onEditTransactionBatchName: PropTypes.func.isRequired,
   isSupplierInvoice: PropTypes.bool.isRequired,
+  onSelectLocation: PropTypes.func.isRequired,
+  onApplyTransactionBatchLocation: PropTypes.func.isRequired,
 };
