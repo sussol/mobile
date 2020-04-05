@@ -3,8 +3,9 @@
  * Sustainable Solutions (NZ) Ltd. 2020
  */
 
+import { UIDatabase } from '../database';
+
 import { BREACH_ACTIONS } from '../actions/BreachActions';
-import { UIDatabase } from '../database/index';
 
 const initialState = () => ({
   isModalOpen: false,
