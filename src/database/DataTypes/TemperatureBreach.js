@@ -38,9 +38,9 @@ export class TemperatureBreach extends Realm.Object {
   }
 
   get duration() {
-    return moment
-      .duration(moment(this.endTimestamp ?? new Date()).diff(moment(this.startTimestamp)))
-      .asMilliseconds();
+    return moment.duration(
+      moment(this.endTimestamp ?? new Date()).diff(moment(this.startTimestamp))
+    );
   }
 
   affectedBatches(database) {

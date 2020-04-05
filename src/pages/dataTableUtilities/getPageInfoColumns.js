@@ -3,13 +3,12 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
  */
-import moment from 'moment';
 
 import { pageInfoStrings, programStrings, tableStrings } from '../../localization';
 import { MODAL_KEYS, formatDate } from '../../utilities';
 import { ROUTES } from '../../navigation/constants';
 import { PageActions } from './actions';
-import { formatTemperatureExposure } from '../../utilities/formatters';
+import { formatTemperatureExposure, formatTimeDifference } from '../../utilities/formatters';
 import { UIDatabase } from '../../database/index';
 
 /**
@@ -90,9 +89,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
   },
   breachDuration: {
     title: `${pageInfoStrings.duration}:`,
-    info: moment(pageObject.duration).format(
-      `H [hours]${pageObject.duration % (60 * 60 * 1000) > 0 ? ', M [minute(s)]' : ''}`
-    ),
+    info: formatTimeDifference(pageObject.duration),
   },
   location: {
     title: `${pageInfoStrings.location}:`,
