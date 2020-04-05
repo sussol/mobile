@@ -3,13 +3,14 @@
  * Sustainable Solutions (NZ) Ltd. 2020
  */
 
+/* eslint-disable camelcase */
+/* eslint-disable no-unused-expressions */
+
 import { SETTINGS_KEYS } from '../../settings';
 import { UIDatabase } from '../../database';
+import { createRecord, parseBoolean, parseDate, parseNumber } from '../../database/utilities';
 
-import { NAME_TYPES } from '../../sync/syncTranslators';
-import { getOrCreateAddress, parseBoolean, parseDate, parseNumber } from '../../sync/incomingSyncUtils';
-
-const { THIS_STORE_ID, SYNC_URL } = SETTINGS_KEYS;
+const { SYNC_URL } = SETTINGS_KEYS;
 
 const RESOURCES = {
   PATIENT: '/api/v4/patient',
@@ -22,118 +23,22 @@ const SEPARATORS = {
   POLICY_NUMBER: '-',
 };
 
-export const createInsurancePolicyRecord = response => {
-  const {
-    id,
-    policyNumberFamily,
-    policyNumberPerson,
-    type,
-    discountRate,
-    expiryDate,
-    enteredById,
-    nameId,
-    insuranceProviderId,
-    isActive,
-  } = response;
-  const policy = { 
-    id,
-    policyNumberFamily,
-    policyNumberPerson,
-    type,
-    discountRate: parseNumber(discountRate),
-    expiryDate: parseDate(expiryDate),
-    enteredBy: UIDatabase.getOrCreate('User', enteredById),
-    patient: UIDatabase.getOrCreate('Name', nameId),
-    insuranceProvider: UIDatabase.getOrCreate('InsuranceProvider', insuranceProviderId),
-    isActive: parseBoolean(isActive)
-  };
-  UIDatabase.write(() => UIDatabase.update('InsurancePolicy', policy));
+export const createPatientRecord = patient => {
+  UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patient));
+  patient?.policies?.forEach(createPolicyRecord);
 };
 
-export const createPatientRecord = response => {
-  const { 
-    id,
-    name,
-    code,
-    phoneNumber,
-    billAddress1,
-    billAddress2,
-    billAddress3,
-    billAddress4,
-    billPostalZipCode,
-    emailAddress,
-    type,
-    isCustomer,
-    isSupplier,
-    isManufacturer,
-    supplyingStoreId,
-    thisStoresPatient,
-    isPatient,
-    firstName,
-    lastName,
-    dateOfBirth,
-    policies,
-  } = response;
-  const billingAddress = getOrCreateAddress(
-    UIDatabase,
-    billAddress1,
-    billAddress2,
-    billAddress3,
-    billAddress4,
-    billPostalZipCode
-  );
-  const patient = {
-    id,
-    name,
-    code,
-    phoneNumber,
-    billingAddress,
-    emailAddress,
-    type,
-    isCustomer,
-    isSupplier,
-    isManufacturer,
-    supplyingStoreId,
-    thisStoresPatient,
-    isPatient,
-    firstName,
-    lastName,
-    dateOfBirth,
-    isVisible: true,
-  };
-  UIDatabase.write(() => UIDatabase.update('Name', patient));
-  policies.forEach(policy => createInsurancePolicyRecord(policy));
-};
+export const createPrescriberRecord = prescriber =>
+  UIDatabase.write(() => createRecord(UIDatabase, 'Prescriber', prescriber));
 
-export const createPrescriberRecord = response => {
-  const {
-    id,
-    firstName,
-    lastName,
-    registrationCode,
-    address1,
-    address2,
-    phoneNumber,
-    mobileNumber,
-    emailAddress,
-    fromThisStore,
-  } = response;
-  const address = getOrCreateAddress(UIDatabase, address1, address2);
-  const prescriber = {
-    id,
-    firstName,
-    lastName,
-    registrationCode,
-    address,
-    isVisible: true,
-    isActive: true,
-    phoneNumber,
-    mobileNumber,
-    emailAddress,
-    fromThisStore,
-  };
-  UIDatabase.write(() => UIDatabase.update('Prescriber', prescriber));
-}
+export const createPolicyRecord = policy => {
+  const { nameId, enteredById, insuranceProviderId } = policy;
+  const enteredBy = UIDatabase.getOrCreate('User', enteredById);
+  const patient = UIDatabase.getOrCreate('Name', nameId);
+  const insuranceProvider = UIDatabase.getOrCreate('InsuranceProvider', insuranceProviderId);
+  const policyRecord = { ...policy, enteredBy, patient, insuranceProvider };
+  UIDatabase.write(() => createRecord(UIDatabase, 'InsurancePolicy', policyRecord));
+};
 
 const getQueryString = params =>
   params.reduce((queryString, param) => {
@@ -186,29 +91,32 @@ const getPrescriberRequestUrl = params => {
   return baseUrl + endpoint + queryString;
 };
 
-const processInsuranceResponse = response => response.map(({
-    ID: id,
-    insuranceProviderID: insuranceProviderId,
-    nameID: nameId,
-    policyNumberFamily,
-    policyNumberPerson,
-    discountRate,
-    expiryDate,
-    isActive: isActive,
-    enteredByID: enteredById,
-    type,
-  }) => ({
-    id,
-    insuranceProviderId,
-    nameId,
-    policyNumberFamily,
-    policyNumberPerson,
-    discountRate,
-    expiryDate,
-    isActive,
-    enteredById,
-    type,
-  }));
+const processInsuranceResponse = response =>
+  response.map(
+    ({
+      ID: id,
+      insuranceProviderID: insuranceProviderId,
+      nameID: nameId,
+      policyNumberFamily,
+      policyNumberPerson,
+      discountRate,
+      expiryDate,
+      isActive,
+      enteredByID: enteredById,
+      type,
+    }) => ({
+      id,
+      insuranceProviderId,
+      nameId,
+      policyNumberFamily,
+      policyNumberPerson,
+      discountRate: parseNumber(discountRate),
+      expiryDate: parseDate(expiryDate),
+      isActive: parseBoolean(isActive),
+      enteredById,
+      type,
+    })
+  );
 
 const processPatientResponse = response => {
   const patientData = response.map(
@@ -223,10 +131,6 @@ const processPatientResponse = response => {
       bill_address4: billAddress4,
       bill_postal_zip_code: billPostalZipCode,
       email: emailAddress,
-      type,
-      customer,
-      supplier,
-      manufacturer,
       supplying_store_id: supplyingStoreId,
       first: firstName,
       last: lastName,
@@ -243,13 +147,7 @@ const processPatientResponse = response => {
       billAddress4,
       billPostalZipCode,
       emailAddress,
-      type: NAME_TYPES.translate(type),
-      isCustomer: parseBoolean(customer),
-      isSupplier: parseBoolean(supplier),
-      isManufacturer: parseBoolean(manufacturer),
       supplyingStoreId,
-      isPatient: true,
-      thisStoresPatient: supplyingStoreId === UIDatabase.getSetting(THIS_STORE_ID),
       firstName,
       lastName,
       dateOfBirth: parseDate(date_of_birth),
@@ -282,7 +180,7 @@ const processPrescriberResponse = response => {
       phoneNumber: phone,
       mobileNumber: mobile,
       emailAddress: email,
-      fromThisStore: store_ID === UIDatabase.getSetting(THIS_STORE_ID),
+      storeId: store_ID,
     })
   );
   return prescriberData;

@@ -12,6 +12,40 @@ import { NUMBER_SEQUENCE_KEYS } from './constants';
 import { generalStrings } from '../../localization';
 import { SETTINGS_KEYS } from '../../settings';
 
+/**
+ * Return a database Address object with the given address details (reuse if one
+ * already exists).
+ *
+ * @param   {Realm}         database  The local database.
+ * @param   {string}        line1     Line 1 of the address (can be undefined).
+ * @param   {string}        line2     Line 2 of the address (can be undefined).
+ * @param   {string}        line3     Line 3 of the address (can be undefined).
+ * @param   {string}        line4     Line 4 of the address (can be undefined).
+ * @param   {string}        zipCode   Zip code of the address (can be undefined).
+ * @return  {Realm.object}            The Address object described by the params.
+ */
+export const getOrCreateAddress = (database, line1, line2, line3, line4, zipCode) => {
+  let results = database.objects('Address');
+  if (typeof line1 === 'string') {
+    results = results.filtered('line1 == $0', line1);
+  }
+  if (typeof line2 === 'string') {
+    results = results.filtered('line2 == $0', line2);
+  }
+  if (typeof line3 === 'string') {
+    results = results.filtered('line3 == $0', line3);
+  }
+  if (typeof line4 === 'string') {
+    results = results.filtered('line4 == $0', line4);
+  }
+  if (typeof zipCode === 'string') {
+    results = results.filtered('zipCode == $0', zipCode);
+  }
+  if (results.length > 0) return results[0];
+
+  return createRecord(database, 'Address', { line1, line2, line3, line4, zipCode });
+};
+
 // Get the next highest number in an existing number sequence.
 export const getNextNumber = (database, sequenceKey) => {
   const numberSequence = getNumberSequence(database, sequenceKey);
@@ -40,32 +74,48 @@ export const getNumberSequence = (database, sequenceKey) => {
   return sequenceResults[0];
 };
 
-const createInsurancePolicy = (database, policyValues) => {
+/**
+ * Creates a insurance policy record. policyDetails can have the shape:
+ * {
+ *     id, firstName, lastName, registrationCode, address1, address2, isVisible,
+ *     isActive, phoneNumber, mobileNumber, emailAddress
+ * }
+ */
+const createInsurancePolicy = (database, policyDetails) => {
   const {
-    patient,
+    id: policyId,
     policyNumberFamily,
     policyNumberPerson,
     type,
     discountRate,
+    isActive: policyIsActive,
+    expiryDate: policyExpiryDate,
+    enteredBy,
+    patient,
     insuranceProvider,
-  } = policyValues;
+  } = policyDetails;
 
-  const expiryDate = moment(new Date())
-    .add(insuranceProvider.validityDays, 'days')
-    .toDate();
+  const id = policyId ?? generateUUID();
+  const expiryDate =
+    policyExpiryDate ??
+    moment(new Date())
+      .add(insuranceProvider.validityDays, 'days')
+      .toDate();
 
-  const policy = database.create('InsurancePolicy', {
-    id: generateUUID(),
-    discountRate,
-    patient,
+  const isActive = policyIsActive ?? true;
+
+  const policy = database.update('InsurancePolicy', {
+    id,
     policyNumberFamily,
     policyNumberPerson,
     type,
+    discountRate,
+    isActive,
     expiryDate,
+    enteredBy,
+    patient,
     insuranceProvider,
   });
-
-  database.save('InsurancePolicy', policy);
   return policy;
 };
 
@@ -82,63 +132,132 @@ const createAddress = (database, { line1, line2, line3, line4, zipCode } = {}) =
 /**
  * Creates a prescriber record. prescriberDetails can have the shape:
  * {
- *     firstName, lastName, registrationCode, line1, line2, isVisible,
+ *     id, firstName, lastName, registrationCode, address1, address2, isVisible,
  *     isActive, phoneNumber, mobileNumber, emailAddress
  * }
  */
 const createPrescriber = (database, prescriberDetails) => {
-  const { addressOne, addressTwo } = prescriberDetails;
-  const address = createAddress(database, { line1: addressOne, line2: addressTwo });
+  const {
+    id: prescriberId,
+    firstName,
+    lastName,
+    registrationCode,
+    address1,
+    address2,
+    phoneNumber,
+    mobileNumber,
+    emailAddress,
+    storeId: prescriberStoreId,
+    isActive: prescriberIsActive,
+  } = prescriberDetails;
+
+  const id = prescriberId ?? generateUUID();
+  const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
+  const supplyingStoreId = prescriberStoreId ?? thisStoreId;
+  const fromThisStore = supplyingStoreId === thisStoreId;
+
+  const address = getOrCreateAddress(database, address1, address2);
+
+  const isVisible = true;
+  const isActive = prescriberIsActive ?? true;
 
   const prescriber = database.create('Prescriber', {
-    id: generateUUID(),
-    ...prescriberDetails,
+    id,
+    firstName,
+    lastName,
+    registrationCode,
     address,
-    // Defaults:
-    fromThisStore: true,
-    isVisible: true,
-    isActive: true,
+    phoneNumber,
+    mobileNumber,
+    emailAddress,
+    fromThisStore,
+    isVisible,
+    isActive,
   });
-
-  database.save('Prescriber', prescriber);
+  return prescriber;
 };
 
 /**
- * Creates a patient record. Patient details passed can be in the shape:
+ * Gets a unique code for new patient record.
+ */
+const getPatientUniqueCode = database => {
+  const { PATIENT_CODE } = NUMBER_SEQUENCE_KEYS;
+  const patientSequenceNumber = getNextNumber(database, PATIENT_CODE);
+  const thisStoreCode = database.getSetting(SETTINGS_KEYS.THIS_STORE_CODE);
+  return `${thisStoreCode}${String(patientSequenceNumber)}`;
+};
+
+/**
+ * Creates a new patient record. Patient details passed can be in the shape:
  *  {
- *    firstName, lastName, dateOfBirth, code, emailAddress,
- *    phoneNumber, addressOne, addressTwo, country
+ *    id, name, firstName, lastName, code, dateOfBirth, phoneNumber, emailAddress,
+ *    billAddress1, billAddress2, billAddress3, billAddress4, billPostalZipCode,
+ *    country, supplyingStoreId,
  *  }
  */
 const createPatient = (database, patientDetails) => {
-  const { PATIENT_CODE } = NUMBER_SEQUENCE_KEYS;
-  const { dateOfBirth, addressOne, addressTwo, lastName, firstName } = patientDetails;
+  const {
+    id: patientId,
+    name: patientName,
+    firstName,
+    lastName,
+    code: patientCode,
+    dateOfBirth: patientDateOfBirth,
+    phoneNumber,
+    emailAddress,
+    billAddress1,
+    billAddress2,
+    billAddress3,
+    billAddress4,
+    billPostalZipCode,
+    country,
+    supplyingStoreId: patientSupplyingStoreId,
+  } = patientDetails;
 
-  const billingAddress = createAddress(database, { line1: addressOne, line2: addressTwo });
+  const id = patientId ?? generateUUID();
+  const name = patientName ?? `${lastName}, ${firstName}`;
+  const code = patientCode ?? getPatientUniqueCode(database);
+  const dateOfBirth = patientDateOfBirth ?? new Date();
+
+  const type = 'patient';
+  const isPatient = true;
+  const isCustomer = true;
+  const isSupplier = false;
+  const isManufacturer = false;
+
+  const billingAddress = getOrCreateAddress(
+    database,
+    billAddress1,
+    billAddress2,
+    billAddress3,
+    billAddress4,
+    billPostalZipCode
+  );
 
   const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
-  const thisStoreCode = database.getSetting(SETTINGS_KEYS.THIS_STORE_CODE);
-  const patientSequenceNumber = getNextNumber(database, PATIENT_CODE);
-  const uniqueCode = `${thisStoreCode}${String(patientSequenceNumber)}`;
+  const supplyingStoreId = patientSupplyingStoreId ?? thisStoreId;
+  const thisStoresPatient = supplyingStoreId === thisStoreId;
+  const isVisible = true;
 
-  const fullName = `${lastName}, ${firstName}`;
-
-  const patient = database.create('Name', {
-    id: generateUUID(),
-    ...patientDetails,
-    billingAddress,
+  const patient = database.update('Name', {
+    id,
+    name,
+    code,
+    type,
     dateOfBirth,
-    isVisible: true,
-    isPatient: true,
-    type: 'patient',
-    code: uniqueCode,
-    supplyingStoreId: thisStoreId,
-    isCustomer: true,
-    thisStoresPatient: true,
-    name: fullName,
+    isPatient,
+    isCustomer,
+    isSupplier,
+    isManufacturer,
+    phoneNumber,
+    emailAddress,
+    billingAddress,
+    country,
+    supplyingStoreId,
+    thisStoresPatient,
+    isVisible,
   });
-
-  database.save('Patient', patient);
+  return patient;
 };
 
 const createCashOut = (database, user, cashTransaction) => {

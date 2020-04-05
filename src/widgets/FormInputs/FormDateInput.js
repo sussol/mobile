@@ -174,5 +174,5 @@ FormDateInput.propTypes = {
   placeholderTextColor: PropTypes.string,
   underlineColorAndroid: PropTypes.string,
   onSubmit: PropTypes.func,
-  isDisabled: PropTypes.isDisabled,
+  isDisabled: PropTypes.bool,
 };

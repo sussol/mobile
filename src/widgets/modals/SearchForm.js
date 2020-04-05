@@ -6,13 +6,17 @@
 
 import React, { useMemo, useState } from 'react';
 import { View, StyleSheet, FlatList, Text, TouchableOpacity } from 'react-native';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { FormControl } from '../FormControl';
 
-import { getFormInputConfig } from '../../utilities/formInputConfigs';
+import { DispensaryActions } from '../../actions/DispensaryActions';
 
-import { APP_FONT_FAMILY, DARK_GREY } from '../../globalStyles';
+import { generalStrings } from '../../localization';
+
+import { APP_FONT_FAMILY, DARK_GREY, ROW_BLUE, WHITE } from '../../globalStyles';
+
 import {
   createPatientRecord,
   createPrescriberRecord,
@@ -20,104 +24,78 @@ import {
   queryPrescriberApi,
 } from '../../utilities/network/lookupApi';
 
-const RECORD_TYPES = {
-  PATIENT: 'patient',
-  PRESCRIBER: 'prescriber',
+import {
+  selectDataSetInUse,
+  selectLookupFormConfig,
+  selectLookupListConfig,
+} from '../../selectors/dispensary';
+
+const SearchListItemColumnComponent = ({ value, type }) => {
+  const valueText = type === 'date' ? value?.toDateString() ?? '' : value;
+  return (
+    <View style={localStyles.columnContainer}>
+      <Text style={localStyles.text}>{valueText}</Text>
+    </View>
+  );
 };
 
-const FORM_CONFIGS = {
-  [RECORD_TYPES.PATIENT]: 'searchPatient',
-  [RECORD_TYPES.PRESCRIBER]: 'searchPrescriber',
-};
-
-const LIST_CONFIGS = {
-  [RECORD_TYPES.PATIENT]: ['firstName', 'lastName', 'dateOfBirth'],
-  [RECORD_TYPES.PRESCRIBER]: ['firstName', 'lastName', 'registrationCode'],
-};
-
-const SearchListItemColumn = ({ value, type }) => (
-  <View style={localStyles.columnContainer}>
-    <Text style={localStyles.text}>{type === 'date' ? value.toDateString() : value}</Text>
-  </View>
-);
-
-const SearchListItem = ({ listItem, listConfig, onPress }) => {
-  const columns = listConfig.map(({ key, type }) => {
-    const value = listItem[key];
+const SearchListItemComponent = ({ item, config, onSelect }) => {
+  const columns = config.map(({ key, type }) => {
+    const value = item[key];
     return <SearchListItemColumn key={key} value={value} type={type} />;
   });
   return (
-    <TouchableOpacity onPress={onPress} style={localStyles.rowContainer}>
+    <TouchableOpacity onPress={onSelect} style={localStyles.rowContainer}>
       {columns}
     </TouchableOpacity>
   );
 };
 
-export const SearchForm = ({ dataSource, onClose }) => {
+const SearchListItemColumn = React.memo(SearchListItemColumnComponent);
+const SearchListItem = React.memo(SearchListItemComponent);
+
+export const SearchFormComponent = ({
+  isPatient,
+  isPrescriber,
+  formConfig,
+  listConfig,
+  selectPatient,
+  selectPrescriber,
+}) => {
   const [data, setData] = useState([]);
 
-  if (!Object.values(RECORD_TYPES).includes(dataSource)) return null;
-
-  const configKey = useMemo(() => FORM_CONFIGS[dataSource], [dataSource]);
-  const formConfig = useMemo(() => getFormInputConfig(configKey), [configKey]);
-
-  const listConfig = useMemo(() => {
-    const keys = LIST_CONFIGS[dataSource];
-    const keyTypes = keys.reduce(
-      (acc, key) => ({ ...acc, [key]: formConfig.find(config => config.key === key)?.type }),
-      {}
-    );
-    return keys.map(key => ({ key, type: keyTypes[key] }));
-  }, [formConfig]);
+  const selectRecord = useMemo(() => {
+    if (isPatient) return patient => selectPatient(patient);
+    if (isPrescriber) return prescriber => selectPrescriber(prescriber);
+    // Bugsnag here.
+    return () => null;
+  }, [isPatient, isPrescriber]);
 
   const renderItem = useMemo(
     () => ({ item }) => {
-      const { id: key } = item;
-      const onPress = () => {
-        switch (dataSource) {
-          case RECORD_TYPES.PATIENT:
-            createPatientRecord(item);
-            break;
-          case RECORD_TYPES.PRESCRIBER:
-            createPrescriberRecord(item);
-            break;
-          default:
-            break;
-        }
-        onClose();
-      };
-      return <SearchListItem key={key} listItem={item} listConfig={listConfig} onPress={onPress} />;
+      const onSelect = () => selectRecord(item);
+      return <SearchListItem item={item} config={listConfig} onSelect={onSelect} />;
     },
-    [dataSource, listConfig, onClose]
+    [listConfig]
   );
 
   const lookupRecords = useMemo(
     () => params => {
-      switch (dataSource) {
-        case RECORD_TYPES.PATIENT: {
-          queryPatientApi(params).then(patientData => setData(patientData));
-          break;
-        }
-        case RECORD_TYPES.PRESCRIBER: {
-          queryPrescriberApi(params).then(prescriberData => setData(prescriberData));
-          break;
-        }
-        default:
-          break;
-      }
+      if (isPatient) queryPatientApi(params).then(patientData => setData(patientData));
+      if (isPrescriber) queryPrescriberApi(params).then(prescriberData => setData(prescriberData));
+      // Bugsnag here.
     },
-    []
+    [isPatient, isPrescriber]
   );
 
   return (
     <View style={localStyles.container}>
       <View style={localStyles.formContainer}>
         <FormControl
-          isDisabled={false}
-          isSearchForm={true}
-          onSave={lookupRecords}
-          onCancel={() => null}
           inputConfig={formConfig}
+          onSave={lookupRecords}
+          showCancelButton={false}
+          saveButtonText={generalStrings.search}
         />
       </View>
       <View style={localStyles.verticalSeparator} />
@@ -128,18 +106,44 @@ export const SearchForm = ({ dataSource, onClose }) => {
   );
 };
 
-SearchForm.propTypes = {
-  dataSource: PropTypes.string.isRequired,
-  onClose: PropTypes.func.isRequired,
+const mapStateToProps = state => {
+  const [isPatient, isPrescriber] = selectDataSetInUse(state);
+  const formConfig = selectLookupFormConfig(state);
+  const listConfig = selectLookupListConfig(state);
+  return { isPatient, isPrescriber, formConfig, listConfig };
 };
 
-SearchListItem.propTypes = {
-  listItem: PropTypes.object.isRequired,
+const mapDispatchToProps = dispatch => ({
+  // TODO: update to use PatientActions.updatePatient()
+  selectPatient: patient => {
+    createPatientRecord(patient);
+    dispatch(DispensaryActions.closeLookupModal());
+  },
+  // TODO: update to use PrescriberActions.updatePrescriber()
+  selectPrescriber: prescriber => {
+    createPrescriberRecord(prescriber);
+    dispatch(DispensaryActions.closeLookupModal());
+  },
+});
+
+export const SearchForm = connect(mapStateToProps, mapDispatchToProps)(SearchFormComponent);
+
+SearchFormComponent.propTypes = {
+  isPatient: PropTypes.bool.isRequired,
+  isPrescriber: PropTypes.bool.isRequired,
+  formConfig: PropTypes.array.isRequired,
   listConfig: PropTypes.array.isRequired,
-  onPress: PropTypes.func.isRequired,
+  selectPatient: PropTypes.func.isRequired,
+  selectPrescriber: PropTypes.func.isRequired,
 };
 
-SearchListItemColumn.propTypes = {
+SearchListItemComponent.propTypes = {
+  item: PropTypes.object.isRequired,
+  config: PropTypes.array.isRequired,
+  onSelect: PropTypes.func.isRequired,
+};
+
+SearchListItemColumnComponent.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]).isRequired,
   type: PropTypes.string.isRequired,
 };
@@ -169,14 +173,22 @@ const localStyles = StyleSheet.create({
   },
   rowContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginVertical: 10,
+    justifyContent: 'space-between',
+    borderColor: WHITE,
+    backgroundColor: ROW_BLUE,
+    borderTopWidth: 0.5,
+    borderBottomWidth: 0.5,
   },
   columnContainer: {
-    marginHorizontal: 10,
+    flex: 1,
+    borderLeftWidth: 0.5,
+    borderRightWidth: 0.5,
+    borderColor: WHITE,
   },
   text: {
     fontSize: 20,
     fontFamily: APP_FONT_FAMILY,
+    marginHorizontal: 10,
+    marginVertical: 10,
   },
 });

@@ -5,7 +5,7 @@
  */
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { batch, connect } from 'react-redux';
+import { connect } from 'react-redux';
 import { View } from 'react-native';
 
 import { ToggleBar, DataTablePageView, SearchBar, PageButton } from '../widgets';
@@ -21,7 +21,6 @@ import { createPrescription } from '../navigation/actions';
 import { UIDatabase } from '../database';
 import { getFormInputConfig } from '../utilities/formInputConfigs';
 
-import { FormActions } from '../actions/FormActions';
 import { PatientActions } from '../actions/PatientActions';
 import { PrescriberActions } from '../actions/PrescriberActions';
 import { InsuranceActions } from '../actions/InsuranceActions';
@@ -259,7 +258,7 @@ const Dispensing = ({
         fullScreen
         isVisible={isLookupModalOpen}
       >
-        <SearchForm dataSource={usingPatientsDataSet ? 'patient' : 'prescriber'} onClose={cancelLookupRecord} />
+        <SearchForm />
       </ModalContainer>
     </>
   );
@@ -331,12 +330,8 @@ const mapDispatchToProps = dispatch => ({
   sort: sortKey => dispatch(DispensaryActions.sort(sortKey)),
   switchDataset: () => dispatch(DispensaryActions.switchDataSet()),
 
-  lookupRecord: () => dispatch(DispensaryActions.lookupRecord()),
-  cancelLookupRecord: () =>
-    batch(() => {
-      dispatch(DispensaryActions.cancelLookupRecord());
-      dispatch(FormActions.resetForm());
-    }),
+  lookupRecord: () => dispatch(DispensaryActions.openLookupModal()),
+  cancelLookupRecord: () => dispatch(DispensaryActions.closeLookupModal()),
 
   editPatient: patient => dispatch(PatientActions.editPatient(UIDatabase.get('Name', patient))),
   createPatient: () => dispatch(PatientActions.createPatient()),
