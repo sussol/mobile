@@ -227,6 +227,17 @@ const DataTablePageModalComponent = ({
             emptyMessage={modalStrings.no_masterlist_available}
           />
         );
+      case MODAL_KEYS.SELECT_LOCATION: {
+        const { currentLocationName } = currentValue;
+        return (
+          <GenericChoiceList
+            data={UIDatabase.objects('Fridge')}
+            highlightValue={currentLocationName}
+            onPress={onSelect}
+            keyToDisplay="description"
+          />
+        );
+      }
       default:
         return null;
     }
