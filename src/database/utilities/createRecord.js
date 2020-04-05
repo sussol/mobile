@@ -88,7 +88,7 @@ const createInsurancePolicy = (database, policyDetails) => {
     policyNumberPerson,
     type,
     discountRate,
-    isActive,
+    isActive: policyIsActive,
     expiryDate: policyExpiryDate,
     enteredBy,
     patient,
@@ -96,9 +96,13 @@ const createInsurancePolicy = (database, policyDetails) => {
   } = policyDetails;
 
   const id = policyId ?? generateUUID();
-  const expiryDate = policyExpiryDate ?? moment(new Date())
-    .add(insuranceProvider.validityDays, 'days')
-    .toDate();
+  const expiryDate =
+    policyExpiryDate ??
+    moment(new Date())
+      .add(insuranceProvider.validityDays, 'days')
+      .toDate();
+
+  const isActive = policyIsActive ?? true;
 
   const policy = database.update('InsurancePolicy', {
     id,
@@ -144,17 +148,18 @@ const createPrescriber = (database, prescriberDetails) => {
     mobileNumber,
     emailAddress,
     storeId: prescriberStoreId,
+    isActive: prescriberIsActive,
   } = prescriberDetails;
 
   const id = prescriberId ?? generateUUID();
-  const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID)
+  const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
   const supplyingStoreId = prescriberStoreId ?? thisStoreId;
   const fromThisStore = supplyingStoreId === thisStoreId;
 
   const address = getOrCreateAddress(database, address1, address2);
 
   const isVisible = true;
-  const isActive = true;
+  const isActive = prescriberIsActive ?? true;
 
   const prescriber = database.create('Prescriber', {
     id,
@@ -165,7 +170,7 @@ const createPrescriber = (database, prescriberDetails) => {
     phoneNumber,
     mobileNumber,
     emailAddress,
-    fromThisStore,  
+    fromThisStore,
     isVisible,
     isActive,
   });
@@ -180,14 +185,14 @@ const getPatientUniqueCode = database => {
   const patientSequenceNumber = getNextNumber(database, PATIENT_CODE);
   const thisStoreCode = database.getSetting(SETTINGS_KEYS.THIS_STORE_CODE);
   return `${thisStoreCode}${String(patientSequenceNumber)}`;
-}
+};
 
 /**
  * Creates a new patient record. Patient details passed can be in the shape:
  *  {
  *    id, name, firstName, lastName, code, dateOfBirth, phoneNumber, emailAddress,
  *    billAddress1, billAddress2, billAddress3, billAddress4, billPostalZipCode,
- *    country, supplyingStoreId, 
+ *    country, supplyingStoreId,
  *  }
  */
 const createPatient = (database, patientDetails) => {
@@ -200,10 +205,10 @@ const createPatient = (database, patientDetails) => {
     dateOfBirth: patientDateOfBirth,
     phoneNumber,
     emailAddress,
-    billAddress1, 
-    billAddress2, 
+    billAddress1,
+    billAddress2,
     billAddress3,
-    billAddress4, 
+    billAddress4,
     billPostalZipCode,
     country,
     supplyingStoreId: patientSupplyingStoreId,
@@ -229,11 +234,11 @@ const createPatient = (database, patientDetails) => {
     billPostalZipCode
   );
 
-  const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID)
+  const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
   const supplyingStoreId = patientSupplyingStoreId ?? thisStoreId;
   const thisStoresPatient = supplyingStoreId === thisStoreId;
   const isVisible = true;
-  
+
   const patient = database.update('Name', {
     id,
     name,
