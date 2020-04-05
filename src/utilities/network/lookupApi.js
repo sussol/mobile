@@ -32,7 +32,6 @@ const getRequestHeaders = () => {
 };
 
 export const createPatientRecord = patient => {
-  UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patient));
   patient?.policies?.forEach(createPolicyRecord);
 };
 

@@ -17,6 +17,7 @@ import { SETTINGS_KEYS } from '../../settings';
  * already exists).
  *
  * @param   {Realm}         database  The local database.
+ * @param   {string}        id        Id of the address (can be undefined).
  * @param   {string}        line1     Line 1 of the address (can be undefined).
  * @param   {string}        line2     Line 2 of the address (can be undefined).
  * @param   {string}        line3     Line 3 of the address (can be undefined).
@@ -24,8 +25,12 @@ import { SETTINGS_KEYS } from '../../settings';
  * @param   {string}        zipCode   Zip code of the address (can be undefined).
  * @return  {Realm.object}            The Address object described by the params.
  */
-export const getOrCreateAddress = (database, line1, line2, line3, line4, zipCode) => {
+export const getOrCreateAddress = (database, id, line1, line2, line3, line4, zipCode) => {
   let results = database.objects('Address');
+
+  if (typeof id === 'string') {
+    results = results.filtered('id == $0', id);
+  }
   if (typeof line1 === 'string') {
     results = results.filtered('line1 == $0', line1);
   }
@@ -198,35 +203,37 @@ const getPatientUniqueCode = database => {
 const createPatient = (database, patientDetails) => {
   const {
     id: patientId,
-    name: patientName,
-    firstName,
-    lastName,
     code: patientCode,
+    firstName: patientFirstName,
+    lastName: patientLastName,
+    name: patientName,
     dateOfBirth: patientDateOfBirth,
-    phoneNumber,
-    emailAddress,
+    emailAddress: patientEmailAddress,
+    phoneNumber: patientPhoneNumber,
+    billAddressId,
     billAddress1,
     billAddress2,
     billAddress3,
     billAddress4,
     billPostalZipCode,
-    country,
+    country: patientCountry,
+    female: patientFemale,
     supplyingStoreId: patientSupplyingStoreId,
+    isActive: patientIsActive,
   } = patientDetails;
 
   const id = patientId ?? generateUUID();
-  const name = patientName ?? `${lastName}, ${firstName}`;
   const code = patientCode ?? getPatientUniqueCode(database);
+  const firstName = patientFirstName ?? '';
+  const lastName = patientLastName ?? '';
+  const name = patientName ?? `${patientLastName}, ${patientFirstName}`;
   const dateOfBirth = patientDateOfBirth ?? new Date();
-
-  const type = 'patient';
-  const isPatient = true;
-  const isCustomer = true;
-  const isSupplier = false;
-  const isManufacturer = false;
+  const emailAddress = patientEmailAddress ?? '';
+  const phoneNumber = patientPhoneNumber ?? '';
 
   const billingAddress = getOrCreateAddress(
     database,
+    billAddressId,
     billAddress1,
     billAddress2,
     billAddress3,
@@ -234,13 +241,26 @@ const createPatient = (database, patientDetails) => {
     billPostalZipCode
   );
 
+  const country = patientCountry ?? '';
+  const female = patientFemale ?? true;
+
   const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
   const supplyingStoreId = patientSupplyingStoreId ?? thisStoreId;
   const thisStoresPatient = supplyingStoreId === thisStoreId;
+
+  const isActive = patientIsActive ?? true;
+
+  const type = 'patient';
+  const isPatient = true;
+  const isCustomer = true;
+  const isSupplier = false;
+  const isManufacturer = false;
   const isVisible = true;
 
   const patient = database.update('Name', {
     id,
+    firstName,
+    lastName,
     name,
     code,
     type,
@@ -253,8 +273,10 @@ const createPatient = (database, patientDetails) => {
     emailAddress,
     billingAddress,
     country,
+    female,
     supplyingStoreId,
     thisStoresPatient,
+    isActive,
     isVisible,
   });
   return patient;
