@@ -12,17 +12,13 @@ import PropTypes from 'prop-types';
 import { FormControl } from '../FormControl';
 
 import { PatientActions } from '../../actions/PatientActions';
-import { DispensaryActions } from '../../actions/DispensaryActions';
+import { PrescriberActions } from '../../actions/PrescriberActions';
 
 import { generalStrings } from '../../localization';
 
 import { APP_FONT_FAMILY, DARK_GREY, ROW_BLUE, WHITE } from '../../globalStyles';
 
-import {
-  createPrescriberRecord,
-  queryPatientApi,
-  queryPrescriberApi,
-} from '../../utilities/network/lookupApi';
+import { queryPatientApi, queryPrescriberApi } from '../../utilities/network/lookupApi';
 
 import {
   selectDataSetInUse,
@@ -117,10 +113,7 @@ const mapDispatchToProps = dispatch => ({
   // TODO: update to use PatientActions.updatePatient()
   selectPatient: patient => dispatch(PatientActions.patientUpdate(patient)),
   // TODO: update to use PrescriberActions.updatePrescriber()
-  selectPrescriber: prescriber => {
-    createPrescriberRecord(prescriber);
-    dispatch(DispensaryActions.closeLookupModal());
-  },
+  selectPrescriber: prescriber => dispatch(PrescriberActions.updatePrescriber(prescriber)),
 });
 
 export const SearchForm = connect(mapStateToProps, mapDispatchToProps)(SearchFormComponent);

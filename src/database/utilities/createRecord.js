@@ -137,36 +137,44 @@ const createAddress = (database, { line1, line2, line3, line4, zipCode } = {}) =
 /**
  * Creates a prescriber record. prescriberDetails can have the shape:
  * {
- *     id, firstName, lastName, registrationCode, address1, address2, isVisible,
- *     isActive, phoneNumber, mobileNumber, emailAddress
+ *     id, firstName, lastName, registrationCode, addressOne, addressTwo,
+ *     phoneNumber, mobileNumber, emailAddress, storeId, isActive
  * }
  */
 const createPrescriber = (database, prescriberDetails) => {
   const {
     id: prescriberId,
-    firstName,
-    lastName,
-    registrationCode,
-    address1,
-    address2,
-    phoneNumber,
-    mobileNumber,
-    emailAddress,
+    firstName: prescriberFirstName,
+    lastName: prescriberLastName,
+    registrationCode: prescriberRegistrationCode,
+    addressOne,
+    addressTwo,
+    phoneNumber: prescriberPhoneNumber,
+    mobileNumber: prescriberMobileNumber,
+    emailAddress: prescriberEmailAddress,
     storeId: prescriberStoreId,
     isActive: prescriberIsActive,
   } = prescriberDetails;
 
   const id = prescriberId ?? generateUUID();
-  const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
-  const supplyingStoreId = prescriberStoreId ?? thisStoreId;
-  const fromThisStore = supplyingStoreId === thisStoreId;
+  const firstName = prescriberFirstName ?? '';
+  const lastName = prescriberLastName ?? '';
+  const registrationCode = prescriberRegistrationCode ?? '';
 
-  const address = getOrCreateAddress(database, address1, address2);
+  const address = getOrCreateAddress(database, addressOne, addressTwo);
+
+  const phoneNumber = prescriberPhoneNumber ?? '';
+  const mobileNumber = prescriberMobileNumber ?? '';
+  const emailAddress = prescriberEmailAddress ?? '';
+
+  const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
+  const storeId = prescriberStoreId ?? thisStoreId;
+  const fromThisStore = storeId === thisStoreId;
 
   const isVisible = true;
   const isActive = prescriberIsActive ?? true;
 
-  const prescriber = database.create('Prescriber', {
+  const prescriber = database.update('Prescriber', {
     id,
     firstName,
     lastName,
@@ -195,9 +203,9 @@ const getPatientUniqueCode = database => {
 /**
  * Creates a new patient record. Patient details passed can be in the shape:
  *  {
- *    id, name, firstName, lastName, code, dateOfBirth, phoneNumber, emailAddress,
+ *    id, code, firstName, lastName, name, dateOfBirth, emailAddress, phoneNumber,
  *    billAddress1, billAddress2, billAddress3, billAddress4, billPostalZipCode,
- *    country, supplyingStoreId,
+ *    country, female, supplyingStoreId, isActive
  *  }
  */
 const createPatient = (database, patientDetails) => {

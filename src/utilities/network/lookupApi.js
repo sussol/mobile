@@ -35,9 +35,6 @@ export const createPatientRecord = patient => {
   patient?.policies?.forEach(createPolicyRecord);
 };
 
-export const createPrescriberRecord = prescriber =>
-  UIDatabase.write(() => createRecord(UIDatabase, 'Prescriber', prescriber));
-
 export const createPolicyRecord = policy => {
   const { nameId, enteredById, insuranceProviderId } = policy;
   const enteredBy = UIDatabase.getOrCreate('User', enteredById);
