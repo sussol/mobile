@@ -85,11 +85,11 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
   },
   numberOfAffectedBatches: {
     title: `${pageInfoStrings.number_of_affected_batches}:`,
-    info: pageObject.numberOfAffectedBatches(UIDatabase),
+    info: pageObject?.numberOfAffectedBatches?.(UIDatabase),
   },
   breachDuration: {
     title: `${pageInfoStrings.duration}:`,
-    info: formatTimeDifference(pageObject.duration),
+    info: pageObject.duration ? formatTimeDifference(pageObject.duration) : '',
   },
   location: {
     title: `${pageInfoStrings.location}:`,
@@ -97,7 +97,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
   },
   affectedQuantity: {
     title: `${pageInfoStrings.affected_quantity}:`,
-    info: pageObject.affectedQuantity(UIDatabase),
+    info: pageObject?.affectedQuantity?.(UIDatabase),
   },
   entryDate: {
     title: `${pageInfoStrings.entry_date}:`,
