@@ -13,6 +13,7 @@ import { FridgeDisplay, FlexView } from '../widgets';
 
 import { selectMinAndMaxLogs, selectMinAndMaxDomains } from '../selectors/fridge';
 import { FridgeActions } from '../actions/FridgeActions';
+import { BreachActions } from '../actions/BreachActions';
 
 import { APP_FONT_FAMILY } from '../globalStyles';
 import { vaccineStrings } from '../localization';
@@ -26,6 +27,7 @@ export const VaccinePageComponent = ({
   minDomain,
   fridges,
   onSelectFridge,
+  onOpenBreachModal,
 }) => {
   const Fridge = React.useCallback(
     ({ item }) => (
@@ -38,6 +40,7 @@ export const VaccinePageComponent = ({
         minDomain={minDomain}
         onSelectFridge={onSelectFridge}
         isActive={item.id === selectedFridge.id}
+        onOpenBreachModal={onOpenBreachModal}
       />
     ),
     minLine,
@@ -80,6 +83,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   onSelectFridge: fridge => dispatch(FridgeActions.select(fridge)),
+  onOpenBreachModal: breachId => {
+    dispatch(BreachActions.setFridgeBreach(breachId));
+  },
 });
 
 VaccinePageComponent.defaultProps = {
@@ -95,6 +101,7 @@ VaccinePageComponent.propTypes = {
   minDomain: PropTypes.number.isRequired,
   fridges: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   onSelectFridge: PropTypes.func.isRequired,
+  onOpenBreachModal: PropTypes.func.isRequired,
 };
 
 const localStyles = StyleSheet.create({

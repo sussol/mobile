@@ -14,9 +14,9 @@ export const BREACH_ACTIONS = {
 const open = () => ({ type: BREACH_ACTIONS.OPEN_MODAL });
 const close = () => ({ type: BREACH_ACTIONS.CLOSE_MODAL });
 
-const setFridgeBreach = (fridge, breach) => ({
+const setFridgeBreach = breachId => ({
   type: BREACH_ACTIONS.SET_FRIDGE_BREACH,
-  payload: { fridge, breach },
+  payload: { breachId },
 });
 
 const setBatchBreach = (batch, breach) => ({
