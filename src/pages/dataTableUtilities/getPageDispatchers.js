@@ -46,6 +46,8 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
       dispatch(BasePageActions.editIndicatorValue(value, rowKey, columnKey, route)),
 
     // Modals
+    onSelectLocation: rowKey =>
+      dispatch(BasePageActions.openModal(MODAL_KEYS.SELECT_LOCATION, rowKey, route)),
     onOpenRegimenDataModal: () =>
       dispatch(BasePageActions.openModal(MODAL_KEYS.VIEW_REGIMEN_DATA, route)),
     onOpenOutdatedItemModal: () =>
@@ -64,6 +66,11 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
     // Modal callbacks
     onApplyReason: ({ item }) => dispatch(BasePageActions.applyReason(item, route)),
     onConfirmBatchEdit: () => dispatch(BasePageActions.closeAndRefresh(route)),
+    onApplyTransactionBatchLocation: ({ item }) =>
+      dispatch(BasePageActions.editTransactionBatchLocation(item, route)),
+    onApplyStocktakeBatchLocation: ({ item }) =>
+      dispatch(BasePageActions.editStocktakeBatchLocation(item, route)),
+
     // Adding items/batch rows.
     onAddTransactionBatch: item => dispatch(BasePageActions.addTransactionBatch(item, route)),
     onAddStocktakeBatch: () => dispatch(BasePageActions.addStocktakeBatch(route)),
