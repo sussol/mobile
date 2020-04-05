@@ -4,6 +4,7 @@
  */
 
 import { BREACH_ACTIONS } from '../actions/BreachActions';
+import { UIDatabase } from '../database/index';
 
 const initialState = () => ({
   isModalOpen: false,
@@ -23,7 +24,7 @@ export const BreachReducer = (state = initialState(), action) => {
     }
 
     case BREACH_ACTIONS.CLOSE_MODAL: {
-      return { ...state, isModalOpen: false, forBatch: false, forFridge: false };
+      return initialState();
     }
 
     case BREACH_ACTIONS.SET_BATCH: {
@@ -42,9 +43,13 @@ export const BreachReducer = (state = initialState(), action) => {
 
     case BREACH_ACTIONS.SET_FRIDGE_BREACH: {
       const { payload } = action;
-      const { fridge, breach } = payload;
+      const { breachId } = payload;
 
-      return { ...state, breach, fridge, forFridge: true };
+      const breach = UIDatabase.get('TemperatureBreach', breachId) ?? {};
+
+      const { location: fridge } = breach;
+
+      return { ...state, fridge, breaches: [breach], forFridge: true, isModalOpen: true };
     }
 
     default:
