@@ -6,11 +6,13 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
 
+import { getAuthHeader } from 'sussol-utilities';
+
 import { SETTINGS_KEYS } from '../../settings';
 import { UIDatabase } from '../../database';
 import { createRecord, parseBoolean, parseDate, parseNumber } from '../../database/utilities';
 
-const { SYNC_URL } = SETTINGS_KEYS;
+const { SYNC_URL, SYNC_SITE_NAME, SYNC_SITE_PASSWORD_HASH } = SETTINGS_KEYS;
 
 const RESOURCES = {
   PATIENT: '/api/v4/patient',
@@ -21,6 +23,12 @@ const SEPARATORS = {
   QUERY_STRING: '?',
   QUERY_PARAMETERS: '&',
   POLICY_NUMBER: '-',
+};
+
+const getRequestHeaders = () => {
+  const username = UIDatabase.getSetting(SYNC_SITE_NAME);
+  const password = UIDatabase.getSetting(SYNC_SITE_PASSWORD_HASH);
+  return { Authorization: getAuthHeader(username, password) };
 };
 
 export const createPatientRecord = patient => {
@@ -188,8 +196,9 @@ const processPrescriberResponse = response => {
 
 export const queryPatientApi = async params => {
   const requestUrl = getPatientRequestUrl(params);
+  const headers = getRequestHeaders();
   try {
-    const response = await fetch(requestUrl);
+    const response = await fetch(requestUrl, { headers });
     const responseJson = await response.json();
     const { error } = responseJson;
     if (error) throw new Error(error);
@@ -203,8 +212,9 @@ export const queryPatientApi = async params => {
 
 export const queryPrescriberApi = async params => {
   const requestUrl = getPrescriberRequestUrl(params);
+  const headers = getRequestHeaders();
   try {
-    const response = await fetch(requestUrl);
+    const response = await fetch(requestUrl, { headers });
     const responseJson = await response.json();
     const { error } = responseJson;
     if (error) throw new Error(error);
