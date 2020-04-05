@@ -3,7 +3,8 @@
     "temperature_exposure": "Temperature exposure",
     "breaches": "Breaches",
     "total_stock": "Total stock",
-    "no_fridges": "No Fridges"
+    "no_fridges": "No Fridges",
+    "temperature_breaches_for": "Temperature breaches for"
   },
   "fr": {},
   "gil": {},
