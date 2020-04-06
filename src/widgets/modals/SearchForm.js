@@ -111,12 +111,10 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  // TODO: update to use PatientActions.updatePatient()
   selectPatient: patient => {
     dispatch(PatientActions.patientUpdate(patient));
     batch(() => patient.policies.forEach(policy => dispatch(InsuranceActions.update(policy))));
   },
-  // TODO: update to use PrescriberActions.updatePrescriber()
   selectPrescriber: prescriber => dispatch(PrescriberActions.updatePrescriber(prescriber)),
 });
 
