@@ -13,6 +13,19 @@ import { generalStrings } from '../../localization';
 import { SETTINGS_KEYS } from '../../settings';
 
 /**
+ * Creates a database Address object with the given address details.
+ */
+const createAddress = (database, { line1, line2, line3, line4, zipCode } = {}) =>
+  database.create('Address', {
+    id: generateUUID(),
+    line1,
+    line2,
+    line3,
+    line4,
+    zipCode,
+  });
+
+/**
  * Return a database Address object with the given address details (reuse if one
  * already exists).
  *
@@ -25,7 +38,7 @@ import { SETTINGS_KEYS } from '../../settings';
  * @param   {string}        zipCode   Zip code of the address (can be undefined).
  * @return  {Realm.object}            The Address object described by the params.
  */
-export const getOrCreateAddress = (database, id, line1, line2, line3, line4, zipCode) => {
+export const getOrCreateAddress = (database, { id, line1, line2, line3, line4, zipCode }) => {
   let results = database.objects('Address');
 
   if (typeof id === 'string') {
@@ -124,16 +137,6 @@ const createInsurancePolicy = (database, policyDetails) => {
   return policy;
 };
 
-const createAddress = (database, { line1, line2, line3, line4, zipCode } = {}) =>
-  database.create('Address', {
-    id: generateUUID(),
-    line1,
-    line2,
-    line3,
-    line4,
-    zipCode,
-  });
-
 /**
  * Creates a prescriber record. prescriberDetails can have the shape:
  * {
@@ -147,8 +150,8 @@ const createPrescriber = (database, prescriberDetails) => {
     firstName: prescriberFirstName,
     lastName: prescriberLastName,
     registrationCode: prescriberRegistrationCode,
-    addressOne,
-    addressTwo,
+    addressOne: line1,
+    addressTwo: line2,
     phoneNumber: prescriberPhoneNumber,
     mobileNumber: prescriberMobileNumber,
     emailAddress: prescriberEmailAddress,
@@ -161,7 +164,7 @@ const createPrescriber = (database, prescriberDetails) => {
   const lastName = prescriberLastName ?? '';
   const registrationCode = prescriberRegistrationCode ?? '';
 
-  const address = getOrCreateAddress(database, addressOne, addressTwo);
+  const address = getOrCreateAddress(database, { line1, line2 });
 
   const phoneNumber = prescriberPhoneNumber ?? '';
   const mobileNumber = prescriberMobileNumber ?? '';
@@ -218,12 +221,12 @@ const createPatient = (database, patientDetails) => {
     dateOfBirth: patientDateOfBirth,
     emailAddress: patientEmailAddress,
     phoneNumber: patientPhoneNumber,
-    billAddressId,
-    billAddress1,
-    billAddress2,
-    billAddress3,
-    billAddress4,
-    billPostalZipCode,
+    billAddressId: addressId,
+    billAddress1: line1,
+    billAddress2: line2,
+    billAddress3: line3,
+    billAddress4: line4,
+    billPostalZipCode: zipCode,
     country: patientCountry,
     female: patientFemale,
     supplyingStoreId: patientSupplyingStoreId,
@@ -239,15 +242,14 @@ const createPatient = (database, patientDetails) => {
   const emailAddress = patientEmailAddress ?? '';
   const phoneNumber = patientPhoneNumber ?? '';
 
-  const billingAddress = getOrCreateAddress(
-    database,
-    billAddressId,
-    billAddress1,
-    billAddress2,
-    billAddress3,
-    billAddress4,
-    billPostalZipCode
-  );
+  const billingAddress = getOrCreateAddress(database, {
+    id: addressId,
+    line1,
+    line2,
+    line3,
+    line4,
+    zipCode,
+  });
 
   const country = patientCountry ?? '';
   const female = patientFemale ?? true;
