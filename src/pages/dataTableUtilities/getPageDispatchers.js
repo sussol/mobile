@@ -111,6 +111,8 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
     // Editable cell callbacks
     onEditTransactionBatchName: (newValue, rowKey) =>
       dispatch(BasePageActions.editTransactionBatchName(newValue, rowKey, route)),
+    onEditBatchDoses: (newValue, rowKey) =>
+      dispatch(BasePageActions.editBatchDoses(newValue, rowKey, route)),
     onEditRequiredQuantityWithReason: (newValue, rowKey) =>
       dispatch(
         BasePageActions.editRequisitionItemRequiredQuantityWithReason(newValue, rowKey, route)

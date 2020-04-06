@@ -36,6 +36,17 @@ export const refreshIndicatorRow = route => ({
   payload: { route },
 });
 
+export const editBatchDoses = (newValue, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  if (objectToEdit) {
+    UIDatabase.write(() => objectToEdit.setDoses(UIDatabase, parsePositiveInteger(newValue)));
+    dispatch(refreshRow(rowKey, route));
+  }
+};
+
 export const editBatchVvmStatus = (vvmStatus, objectType, route) => (dispatch, getState) => {
   const { modalValue, keyExtractor } = selectPageState(getState());
 
@@ -426,4 +437,5 @@ export const CellActionsLookup = {
   editStocktakeBatchLocation,
   editTransactionBatchVvmStatus,
   editStocktakeBatchVvmStatus,
+  editBatchDoses,
 };

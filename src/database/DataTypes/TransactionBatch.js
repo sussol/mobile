@@ -193,9 +193,11 @@ export class TransactionBatch extends Realm.Object {
     return quantity;
   }
 
-  setDoses(newValue) {
+  setDoses(database, newValue) {
     const maximumDosesPossible = this.dosesPerVial * this.totalQuantity;
     this.doses = Math.min(newValue, maximumDosesPossible);
+
+    database.save('TransactionBatch', this);
   }
 
   /**
