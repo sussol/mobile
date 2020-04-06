@@ -30,6 +30,8 @@ const persistConfig = {
     'dispensary',
     'modules',
     'supplierCredit',
+    'fridge',
+    'breach',
   ],
 };
 

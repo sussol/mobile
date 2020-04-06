@@ -71,11 +71,15 @@ export const LockIcon = React.memo(({ style }) => <FAIcon name="lock" size={28} 
 LockIcon.defaultProps = { style: { color: FINALISED_RED } };
 LockIcon.propTypes = { style: PropTypes.object };
 
-export const ChevronDownIcon = React.memo(({ color, size }) => (
-  <FA5Icon name="chevron-down" color={color} size={size} />
+export const ChevronDownIcon = React.memo(({ color, size, style }) => (
+  <FA5Icon name="chevron-down" color={color} size={size} style={style} />
 ));
-ChevronDownIcon.defaultProps = { color: WHITE, size: 20 };
-ChevronDownIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
+ChevronDownIcon.defaultProps = { color: WHITE, size: 20, style: {} };
+ChevronDownIcon.propTypes = {
+  color: PropTypes.string,
+  size: PropTypes.number,
+  style: PropTypes.object,
+};
 
 export const PencilIcon = React.memo(({ color, size }) => (
   <FAIcon name="pencil" color={color} size={size} />

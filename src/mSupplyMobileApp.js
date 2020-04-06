@@ -39,6 +39,9 @@ import { SupplierCredit } from './widgets/modalChildren/SupplierCredit';
 
 import globalStyles, { SUSSOL_ORANGE } from './globalStyles';
 import { TemperatureSyncActions } from './actions/TemperatureSyncActions';
+import { BreachDisplay } from './widgets/modalChildren/BreachDisplay';
+import { selectIsBreachModalOpen, selectBreachModalTitle } from './selectors/breach';
+import { BreachActions } from './actions/BreachActions';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -174,6 +177,9 @@ class MSupplyMobileAppContainer extends React.Component {
       closeSupplierCreditModal,
       supplierCreditModalOpen,
       creditTitle,
+      isBreachModalOpen,
+      closeBreachModal,
+      breachModalTitle,
     } = this.props;
     const { isInitialised, isLoading } = this.state;
 
@@ -197,6 +203,7 @@ class MSupplyMobileAppContainer extends React.Component {
             onAuthentication={this.onAuthentication}
           />
           {isLoading && this.renderLoadingIndicator()}
+
           <ModalContainer
             isVisible={supplierCreditModalOpen}
             onClose={closeSupplierCreditModal}
@@ -204,6 +211,15 @@ class MSupplyMobileAppContainer extends React.Component {
             fullScreen
           >
             <SupplierCredit />
+          </ModalContainer>
+
+          <ModalContainer
+            isVisible={isBreachModalOpen}
+            onClose={closeBreachModal}
+            title={breachModalTitle}
+            fullScreen
+          >
+            <BreachDisplay />
           </ModalContainer>
         </View>
       </LoadingIndicatorContext.Provider>
@@ -216,6 +232,7 @@ const mapDispatchToProps = dispatch => {
   const closeFinaliseModal = () => dispatch(FinaliseActions.closeModal());
   const closeSupplierCreditModal = () => dispatch(SupplierCreditActions.close());
   const onOpenSyncModal = () => dispatch(openSyncModal());
+  const closeBreachModal = () => dispatch(BreachActions.close());
 
   return {
     dispatch,
@@ -223,6 +240,7 @@ const mapDispatchToProps = dispatch => {
     openFinaliseModal,
     closeFinaliseModal,
     closeSupplierCreditModal,
+    closeBreachModal,
   };
 };
 
@@ -230,14 +248,18 @@ const mapStateToProps = state => {
   const { finalise, supplierCredit } = state;
   const { open: supplierCreditModalOpen } = supplierCredit;
   const { finaliseModalOpen } = finalise;
+  const isBreachModalOpen = selectIsBreachModalOpen(state);
   const currentUser = selectCurrentUser(state);
   const isSyncing = selectIsSyncing(state);
+  const breachModalTitle = selectBreachModalTitle(state);
 
   return {
     isSyncing,
     currentUser,
     finaliseModalOpen,
     supplierCreditModalOpen,
+    isBreachModalOpen,
+    breachModalTitle,
     creditTitle: selectTitle(state),
   };
 };
@@ -254,6 +276,9 @@ MSupplyMobileAppContainer.propTypes = {
   closeSupplierCreditModal: PropTypes.func.isRequired,
   supplierCreditModalOpen: PropTypes.bool.isRequired,
   creditTitle: PropTypes.string,
+  isBreachModalOpen: PropTypes.bool.isRequired,
+  closeBreachModal: PropTypes.func.isRequired,
+  breachModalTitle: PropTypes.string.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MSupplyMobileAppContainer);

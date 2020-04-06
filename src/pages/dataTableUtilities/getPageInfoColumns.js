@@ -3,10 +3,13 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
  */
+
 import { pageInfoStrings, programStrings, tableStrings } from '../../localization';
 import { MODAL_KEYS, formatDate } from '../../utilities';
 import { ROUTES } from '../../navigation/constants';
 import { PageActions } from './actions';
+import { formatTemperatureExposure, formatTimeDifference } from '../../utilities/formatters';
+import { UIDatabase } from '../../database/index';
 
 /**
  * PageInfo rows/columns for use with the PageInfo component.
@@ -61,44 +64,40 @@ const PER_PAGE_INFO_COLUMNS = {
   ],
   requisitionItemDetail: [['openVialWastage', 'closedVialWastage']],
   breach: [
-    [
-      'breachTemperatureRange',
-      'numberOfAffectedBatches',
-      'breachDuration',
-      'location',
-      'affectedQuantity',
-    ],
+    ['breachTemperatureRange'],
+    ['breachDuration', 'location'],
+    ['numberOfAffectedBatches', 'affectedQuantity'],
   ],
 };
 
 const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
   openVialWastage: {
     title: `${pageInfoStrings.open_vial_wastage}:`,
-    info: pageObject.openVialWastage(pageObject.lastRequisitionDate),
+    info: pageObject?.openVialWastage?.(pageObject.lastRequisitionDate),
   },
   closedVialWastage: {
     title: `${pageInfoStrings.closed_vial_wastage}:`,
-    info: pageObject.closedVialWastage(pageObject.lastRequisitionDate),
+    info: pageObject?.closedVialWastage?.(pageObject.lastRequisitionDate),
   },
   breachTemperatureRange: {
     title: `${pageInfoStrings.temperature_range}:`,
-    info: pageObject.temperature_range,
+    info: formatTemperatureExposure(pageObject.temperatureExposure),
   },
   numberOfAffectedBatches: {
     title: `${pageInfoStrings.number_of_affected_batches}:`,
-    info: pageObject.numberOfAffectedBatches,
+    info: pageObject.numberOfAffectedBatches(UIDatabase),
   },
   breachDuration: {
     title: `${pageInfoStrings.duration}:`,
-    info: pageObject.duration,
+    info: formatTimeDifference(pageObject.duration),
   },
   location: {
     title: `${pageInfoStrings.location}:`,
-    info: pageObject.currentLocation,
+    info: pageObject.locationString,
   },
   affectedQuantity: {
     title: `${pageInfoStrings.affected_quantity}:`,
-    info: pageObject.affectedQuantity,
+    info: pageObject.affectedQuantity(UIDatabase),
   },
   entryDate: {
     title: `${pageInfoStrings.entry_date}:`,

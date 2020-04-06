@@ -39,7 +39,10 @@
     "batch_name": "Batch name",
     "save": "Save",
     "must_be_a_number_between": "Must be a number between",
-    "inclusive": "(inclusive)"
+    "inclusive": "(inclusive)",
+    "days": "days",
+    "hours": "hours",
+    "minutes": "minutes"
   },
   "fr": {
     "must_be_a_number_between": "Doit être un nombre entre",

@@ -24,18 +24,30 @@ export class Location extends Realm.Object {
   }
 
   get currentTemperature() {
-    const { temperature } = this.mostRecentTemperatureLog;
+    const { temperature } = this.mostRecentTemperatureLog ?? {};
     return temperature;
   }
 
-  batchesAtTime(database, timestamp = new Date()) {
+  get numberOfBreaches() {
+    return this.breaches.length;
+  }
+
+  get temperatureExposure() {
+    const minimumTemperature = this.temperatureLogs.min('temperature') ?? Infinity;
+    const maximumTemperature = this.temperatureLogs.max('temperature') ?? -Infinity;
+
+    return { minimumTemperature, maximumTemperature };
+  }
+
+  batchesAtTime(database, timestamp) {
     const locationMovements = this.locationMovements.filtered(
-      'inTime <= $0 && (outTime > $0 || outTime == null)',
-      timestamp
+      'enterTimestamp <= $0 && (exitTimestamp > $0 || exitTimestamp == null)',
+      timestamp ?? new Date()
     );
     const queryString = locationMovements.map(({ id }) => `id == "${id}"`).join(' OR ');
+    const itemBatches = database.objects('ItemBatch');
 
-    return database.objects('ItemBatch').filtered(queryString);
+    return queryString ? itemBatches.filtered(queryString) : itemBatches;
   }
 
   totalStock(database) {
