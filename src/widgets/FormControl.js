@@ -230,7 +230,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   const onUpdateForm = (key, value) => dispatch(FormActions.updateForm(key, value));
   const onCancel = () => {
     dispatch(FormActions.resetForm());
-    ownProps.showCancelButton && ownProps.onCancel();
+    ownProps.onCancel();
   };
   return { initialiseForm, onUpdateForm, onCancel };
 };
