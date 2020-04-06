@@ -40,12 +40,7 @@ export const VaccinePageComponent = ({
         isActive={item.id === selectedFridge.id}
       />
     ),
-    minLine,
-    maxLine,
-    breaches,
-    maxDomain,
-    minDomain,
-    onSelectFridge
+    [minLine, maxLine, breaches, maxDomain, minDomain, onSelectFridge, selectedFridge]
   );
 
   const BlankComponent = React.useCallback(
