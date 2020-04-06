@@ -46,17 +46,19 @@ const update = policyDetails => (dispatch, getState) => {
     discountRate: currentDiscountRate,
     policyProvider: currentProvider,
     isActive: currentIsActive,
+    expiryDate: currentExpiryDate,
     type: currentType,
   } = currentInsurancePolicy ?? {};
 
   const {
     id: policyId,
-    patientId,
+    nameId: patientId,
     policyNumberPerson,
     policyNumberFamily,
     discountRate: policyDiscountRate,
     insuranceProvider: policyProvider,
     isActive: policyIsActive,
+    expiryDate: policyExpiryDate,
     type: policyType,
   } = policyDetails ?? {};
 
@@ -68,6 +70,7 @@ const update = policyDetails => (dispatch, getState) => {
     insuranceProvider: policyProvider ?? currentProvider,
     isActive: policyIsActive ?? currentIsActive,
     type: policyType ?? currentType,
+    expiryDate: policyExpiryDate ?? currentExpiryDate,
     patient: patientId ? UIDatabase.getOrCreate('Name', patientId) : currentPatient,
     enteredBy: currentUser,
   };
