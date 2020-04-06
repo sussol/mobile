@@ -33,8 +33,9 @@ const save = insurancePolicy => ({
 });
 
 const update = policyDetails => (dispatch, getState) => {
-  const { insurance } = getState();
+  const { insurance, prescription } = getState();
   const { currentInsurancePolicy } = insurance;
+  const { transaction } = prescription;
 
   const currentUser = selectCurrentUser(getState());
   const currentPatient = selectCurrentPatient(getState());
@@ -80,10 +81,12 @@ const update = policyDetails => (dispatch, getState) => {
     insurancePolicy = createRecord(UIDatabase, 'InsurancePolicy', policyRecord);
   });
 
-  batch(() => {
-    dispatch(save(insurancePolicy));
-    dispatch(select(insurancePolicy));
-  });
+  if (transaction) {
+    batch(() => {
+      dispatch(save(insurancePolicy));
+      dispatch(select(insurancePolicy));
+    });
+  }
 };
 
 const select = insurancePolicy => (dispatch, getState) => {
