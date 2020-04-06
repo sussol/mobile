@@ -32,27 +32,50 @@ const save = insurancePolicy => ({
   payload: { insurancePolicy },
 });
 
-const update = completedForm => (dispatch, getState) => {
+const update = policyDetails => (dispatch, getState) => {
   const { insurance } = getState();
   const { currentInsurancePolicy } = insurance;
-  const user = selectCurrentUser(getState());
-  const patient = selectCurrentPatient(getState());
 
-  const policyValues = { ...completedForm, patient, user };
+  const currentUser = selectCurrentUser(getState());
+  const currentPatient = selectCurrentPatient(getState());
+
+  const {
+    id: currentId,
+    policyNumberPerson: currentNumberPerson,
+    policyNumberFamily: currentNumberFamily,
+    discountRate: currentDiscountRate,
+    policyProvider: currentProvider,
+    isActive: currentIsActive,
+    type: currentType,
+  } = currentInsurancePolicy ?? {};
+
+  const {
+    id: policyId,
+    patientId,
+    policyNumberPerson,
+    policyNumberFamily,
+    discountRate: policyDiscountRate,
+    insuranceProvider: policyProvider,
+    isActive: policyIsActive,
+    type: policyType,
+  } = policyDetails ?? {};
+
+  const policyRecord = {
+    id: policyId ?? currentId,
+    policyNumberPerson: policyNumberPerson ?? currentNumberPerson,
+    policyNumberFamily: policyNumberFamily ?? currentNumberFamily,
+    discountRate: policyDiscountRate ?? currentDiscountRate,
+    insuranceProvider: policyProvider ?? currentProvider,
+    isActive: policyIsActive ?? currentIsActive,
+    type: policyType ?? currentType,
+    patient: patientId ? UIDatabase.getOrCreate('Name', patientId) : currentPatient,
+    enteredBy: currentUser,
+  };
+
   let insurancePolicy;
-
-  if (currentInsurancePolicy) {
-    UIDatabase.write(() => {
-      insurancePolicy = UIDatabase.update('InsurancePolicy', {
-        ...currentInsurancePolicy,
-        ...completedForm,
-      });
-    });
-  } else {
-    UIDatabase.write(() => {
-      insurancePolicy = createRecord(UIDatabase, 'InsurancePolicy', policyValues);
-    });
-  }
+  UIDatabase.write(() => {
+    insurancePolicy = createRecord(UIDatabase, 'InsurancePolicy', policyRecord);
+  });
 
   batch(() => {
     dispatch(save(insurancePolicy));
