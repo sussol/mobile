@@ -211,7 +211,23 @@ export class StocktakeBatch extends Realm.Object {
    */
   set countedTotalQuantity(quantity) {
     // Handle packsize of 0.
-    this.countedNumberOfPacks = this.packSize ? quantity / this.packSize : 0;
+    const countedNumberOfPacks = this.packSize ? quantity / this.packSize : 0;
+
+    this.countedNumberOfPacks = countedNumberOfPacks;
+    this.doses = countedNumberOfPacks * this.dosesPerVial;
+  }
+
+  get isVaccine() {
+    return this.itemBatch?.item?.isVaccine ?? false;
+  }
+
+  get dosesPerVial() {
+    return this.isVaccine ? this.itemBatch?.item?.doses ?? 0 : 0;
+  }
+
+  setDoses(newValue) {
+    const maximumDosesPossible = this.dosesPerVial * this.totalQuantity;
+    this.doses = Math.min(newValue, maximumDosesPossible);
   }
 
   /**
@@ -296,6 +312,8 @@ export class StocktakeBatch extends Realm.Object {
       // (i.e. always treat as positive).
       const snapshotDifference = Math.abs(this.difference);
       transactionBatch.setTotalQuantity(database, snapshotDifference);
+      transactionBatch.doses = this.doses;
+
       database.save('TransactionBatch', transactionBatch);
     }
     database.save('ItemBatch', this.itemBatch);
