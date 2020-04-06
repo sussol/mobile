@@ -419,6 +419,7 @@ export class Transaction extends Realm.Object {
         expiryDate,
         costPrice,
         sellPrice,
+        doses,
       } = transactionBatch;
 
       // Pack to one all transactions in mobile, so multiply by |packSize| to get
@@ -430,12 +431,17 @@ export class Transaction extends Realm.Object {
       const newNumberOfPacks = isIncomingInvoice
         ? itemBatch.numberOfPacks + packedToOneQuantity
         : itemBatch.numberOfPacks - packedToOneQuantity;
+
+      const newDoses = isIncomingInvoice ? itemBatch.doses + doses : itemBatch.doses - doses;
+
       itemBatch.packSize = 1;
       itemBatch.numberOfPacks = newNumberOfPacks;
+      itemBatch.doses = newDoses;
       itemBatch.expiryDate = expiryDate;
       itemBatch.batch = this.adjustBatchName(batch);
       itemBatch.costPrice = packedToOneCostPrice;
       itemBatch.sellPrice = packedToOneSellPrice;
+
       if (isIncomingInvoice) itemBatch.supplier = this.otherParty;
 
       database.save('ItemBatch', itemBatch);
