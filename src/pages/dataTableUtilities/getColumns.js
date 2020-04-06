@@ -893,10 +893,9 @@ const COLUMNS = () => ({
 });
 
 const getColumns = page => {
-  console.log(page);
   const widths = PAGE_COLUMN_WIDTHS[page];
   const columnKeys = PAGE_COLUMNS[page];
-  console.log(widths, columnKeys);
+
   if (!columnKeys) return [];
   if (!(columnKeys.length === widths.length)) return [];
   const columns = COLUMNS();
