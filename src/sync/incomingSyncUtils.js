@@ -465,19 +465,22 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
 
       if (isPatient && !thisStoresPatient) break;
 
+      const {
+        bill_address1: line1,
+        bill_address2: line2,
+        bill_address3: line3,
+        bill_address4: line4,
+        bill_postal_zip_code: zipCode,
+      } = record;
+
+      const billingAddress = getOrCreateAddress(database, { line1, line2, line3, line4, zipCode });
+
       internalRecord = {
         id: record.ID,
         name: record.name,
         code: record.code,
         phoneNumber: record.phone,
-        billingAddress: getOrCreateAddress(
-          database,
-          record.bill_address1,
-          record.bill_address2,
-          record.bill_address3,
-          record.bill_address4,
-          record.bill_postal_zip_code
-        ),
+        billingAddress,
         emailAddress: record.email,
         type: NAME_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
         isCustomer: parseBoolean(record.customer),
@@ -803,12 +806,15 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
     case 'Prescriber': {
       const fromThisStore = record.store_ID === settings.get(THIS_STORE_ID);
 
+      const { address1: line1, address2: line2 } = record;
+      const address = getOrCreateAddress(database, { line1, line2 });
+
       database.update(recordType, {
         id: record.ID,
         firstName: record.first_name,
         lastName: record.last_name,
         registrationCode: record.registration_code,
-        address: getOrCreateAddress(database, record.address1, record.address2),
+        address,
         isVisible: true,
         isActive: true,
         phoneNumber: record.phone,

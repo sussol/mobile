@@ -13,10 +13,24 @@ import { generalStrings } from '../../localization';
 import { SETTINGS_KEYS } from '../../settings';
 
 /**
+ * Creates a database Address object with the given address details.
+ */
+const createAddress = (database, { line1, line2, line3, line4, zipCode } = {}) =>
+  database.create('Address', {
+    id: generateUUID(),
+    line1,
+    line2,
+    line3,
+    line4,
+    zipCode,
+  });
+
+/**
  * Return a database Address object with the given address details (reuse if one
  * already exists).
  *
  * @param   {Realm}         database  The local database.
+ * @param   {string}        id        Id of the address (can be undefined).
  * @param   {string}        line1     Line 1 of the address (can be undefined).
  * @param   {string}        line2     Line 2 of the address (can be undefined).
  * @param   {string}        line3     Line 3 of the address (can be undefined).
@@ -24,8 +38,12 @@ import { SETTINGS_KEYS } from '../../settings';
  * @param   {string}        zipCode   Zip code of the address (can be undefined).
  * @return  {Realm.object}            The Address object described by the params.
  */
-export const getOrCreateAddress = (database, line1, line2, line3, line4, zipCode) => {
+export const getOrCreateAddress = (database, { id, line1, line2, line3, line4, zipCode }) => {
   let results = database.objects('Address');
+
+  if (typeof id === 'string') {
+    results = results.filtered('id == $0', id);
+  }
   if (typeof line1 === 'string') {
     results = results.filtered('line1 == $0', line1);
   }
@@ -119,49 +137,47 @@ const createInsurancePolicy = (database, policyDetails) => {
   return policy;
 };
 
-const createAddress = (database, { line1, line2, line3, line4, zipCode } = {}) =>
-  database.create('Address', {
-    id: generateUUID(),
-    line1,
-    line2,
-    line3,
-    line4,
-    zipCode,
-  });
-
 /**
  * Creates a prescriber record. prescriberDetails can have the shape:
  * {
- *     id, firstName, lastName, registrationCode, address1, address2, isVisible,
- *     isActive, phoneNumber, mobileNumber, emailAddress
+ *     id, firstName, lastName, registrationCode, addressOne, addressTwo,
+ *     phoneNumber, mobileNumber, emailAddress, storeId, isActive
  * }
  */
 const createPrescriber = (database, prescriberDetails) => {
   const {
     id: prescriberId,
-    firstName,
-    lastName,
-    registrationCode,
-    address1,
-    address2,
-    phoneNumber,
-    mobileNumber,
-    emailAddress,
+    firstName: prescriberFirstName,
+    lastName: prescriberLastName,
+    registrationCode: prescriberRegistrationCode,
+    addressOne: line1,
+    addressTwo: line2,
+    phoneNumber: prescriberPhoneNumber,
+    mobileNumber: prescriberMobileNumber,
+    emailAddress: prescriberEmailAddress,
     storeId: prescriberStoreId,
     isActive: prescriberIsActive,
   } = prescriberDetails;
 
   const id = prescriberId ?? generateUUID();
-  const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
-  const supplyingStoreId = prescriberStoreId ?? thisStoreId;
-  const fromThisStore = supplyingStoreId === thisStoreId;
+  const firstName = prescriberFirstName ?? '';
+  const lastName = prescriberLastName ?? '';
+  const registrationCode = prescriberRegistrationCode ?? '';
 
-  const address = getOrCreateAddress(database, address1, address2);
+  const address = getOrCreateAddress(database, { line1, line2 });
+
+  const phoneNumber = prescriberPhoneNumber ?? '';
+  const mobileNumber = prescriberMobileNumber ?? '';
+  const emailAddress = prescriberEmailAddress ?? '';
+
+  const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
+  const storeId = prescriberStoreId ?? thisStoreId;
+  const fromThisStore = storeId === thisStoreId;
 
   const isVisible = true;
   const isActive = prescriberIsActive ?? true;
 
-  const prescriber = database.create('Prescriber', {
+  const prescriber = database.update('Prescriber', {
     id,
     firstName,
     lastName,
@@ -190,57 +206,71 @@ const getPatientUniqueCode = database => {
 /**
  * Creates a new patient record. Patient details passed can be in the shape:
  *  {
- *    id, name, firstName, lastName, code, dateOfBirth, phoneNumber, emailAddress,
+ *    id, code, firstName, lastName, name, dateOfBirth, emailAddress, phoneNumber,
  *    billAddress1, billAddress2, billAddress3, billAddress4, billPostalZipCode,
- *    country, supplyingStoreId,
+ *    country, female, supplyingStoreId, isActive
  *  }
  */
 const createPatient = (database, patientDetails) => {
   const {
     id: patientId,
-    name: patientName,
-    firstName,
-    lastName,
     code: patientCode,
+    firstName: patientFirstName,
+    lastName: patientLastName,
+    name: patientName,
     dateOfBirth: patientDateOfBirth,
-    phoneNumber,
-    emailAddress,
-    billAddress1,
-    billAddress2,
-    billAddress3,
-    billAddress4,
-    billPostalZipCode,
-    country,
+    emailAddress: patientEmailAddress,
+    phoneNumber: patientPhoneNumber,
+    billAddressId: addressId,
+    billAddress1: line1,
+    billAddress2: line2,
+    billAddress3: line3,
+    billAddress4: line4,
+    billPostalZipCode: zipCode,
+    country: patientCountry,
+    female: patientFemale,
     supplyingStoreId: patientSupplyingStoreId,
+    isActive: patientIsActive,
   } = patientDetails;
 
   const id = patientId ?? generateUUID();
-  const name = patientName ?? `${lastName}, ${firstName}`;
   const code = patientCode ?? getPatientUniqueCode(database);
+  const firstName = patientFirstName ?? '';
+  const lastName = patientLastName ?? '';
+  const name = patientName ?? `${patientLastName}, ${patientFirstName}`;
   const dateOfBirth = patientDateOfBirth ?? new Date();
+  const emailAddress = patientEmailAddress ?? '';
+  const phoneNumber = patientPhoneNumber ?? '';
+
+  const billingAddress = getOrCreateAddress(database, {
+    id: addressId,
+    line1,
+    line2,
+    line3,
+    line4,
+    zipCode,
+  });
+
+  const country = patientCountry ?? '';
+  const female = patientFemale ?? true;
+
+  const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
+  const supplyingStoreId = patientSupplyingStoreId ?? thisStoreId;
+  const thisStoresPatient = supplyingStoreId === thisStoreId;
+
+  const isActive = patientIsActive ?? true;
 
   const type = 'patient';
   const isPatient = true;
   const isCustomer = true;
   const isSupplier = false;
   const isManufacturer = false;
-
-  const billingAddress = getOrCreateAddress(
-    database,
-    billAddress1,
-    billAddress2,
-    billAddress3,
-    billAddress4,
-    billPostalZipCode
-  );
-
-  const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
-  const supplyingStoreId = patientSupplyingStoreId ?? thisStoreId;
-  const thisStoresPatient = supplyingStoreId === thisStoreId;
   const isVisible = true;
 
   const patient = database.update('Name', {
     id,
+    firstName,
+    lastName,
     name,
     code,
     type,
@@ -253,8 +283,10 @@ const createPatient = (database, patientDetails) => {
     emailAddress,
     billingAddress,
     country,
+    female,
     supplyingStoreId,
     thisStoresPatient,
+    isActive,
     isVisible,
   });
   return patient;

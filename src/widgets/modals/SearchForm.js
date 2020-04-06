@@ -11,18 +11,14 @@ import PropTypes from 'prop-types';
 
 import { FormControl } from '../FormControl';
 
-import { DispensaryActions } from '../../actions/DispensaryActions';
+import { PatientActions } from '../../actions/PatientActions';
+import { PrescriberActions } from '../../actions/PrescriberActions';
 
 import { generalStrings } from '../../localization';
 
 import { APP_FONT_FAMILY, DARK_GREY, ROW_BLUE, WHITE } from '../../globalStyles';
 
-import {
-  createPatientRecord,
-  createPrescriberRecord,
-  queryPatientApi,
-  queryPrescriberApi,
-} from '../../utilities/network/lookupApi';
+import { queryPatientApi, queryPrescriberApi } from '../../utilities/network/lookupApi';
 
 import {
   selectDataSetInUse,
@@ -115,15 +111,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   // TODO: update to use PatientActions.updatePatient()
-  selectPatient: patient => {
-    createPatientRecord(patient);
-    dispatch(DispensaryActions.closeLookupModal());
-  },
+  selectPatient: patient => dispatch(PatientActions.patientUpdate(patient)),
   // TODO: update to use PrescriberActions.updatePrescriber()
-  selectPrescriber: prescriber => {
-    createPrescriberRecord(prescriber);
-    dispatch(DispensaryActions.closeLookupModal());
-  },
+  selectPrescriber: prescriber => dispatch(PrescriberActions.updatePrescriber(prescriber)),
 });
 
 export const SearchForm = connect(mapStateToProps, mapDispatchToProps)(SearchFormComponent);
