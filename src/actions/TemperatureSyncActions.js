@@ -42,6 +42,9 @@ export const TEMPERATURE_SYNC_ACTIONS = {
   UPDATE_SENSOR_PROGRESS: 'TemperatureSync/updateSensorProgress',
 };
 
+const openModal = () => ({ type: TEMPERATURE_SYNC_ACTIONS.OPEN_MODAL });
+const closeModal = () => ({ type: TEMPERATURE_SYNC_ACTIONS.CLOSE_MODAL });
+
 const scanStart = () => ({ type: TEMPERATURE_SYNC_ACTIONS.SCAN_START });
 const scanComplete = () => ({ type: TEMPERATURE_SYNC_ACTIONS.SCAN_COMPLETE });
 const scanError = () => ({ type: TEMPERATURE_SYNC_ACTIONS.SCAN_ERROR });
@@ -256,4 +259,6 @@ const syncTemperatures = () => async (dispatch, getState) => {
 export const TemperatureSyncActions = {
   scanForSensors,
   syncTemperatures,
+  openModal,
+  closeModal,
 };

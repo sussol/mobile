@@ -71,11 +71,15 @@ export const LockIcon = React.memo(({ style }) => <FAIcon name="lock" size={28} 
 LockIcon.defaultProps = { style: { color: FINALISED_RED } };
 LockIcon.propTypes = { style: PropTypes.object };
 
-export const ChevronDownIcon = React.memo(({ color, size }) => (
-  <FA5Icon name="chevron-down" color={color} size={size} />
+export const ChevronDownIcon = React.memo(({ color, size, style }) => (
+  <FA5Icon name="chevron-down" color={color} size={size} style={style} />
 ));
-ChevronDownIcon.defaultProps = { color: WHITE, size: 20 };
-ChevronDownIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
+ChevronDownIcon.defaultProps = { color: WHITE, size: 20, style: {} };
+ChevronDownIcon.propTypes = {
+  color: PropTypes.string,
+  size: PropTypes.number,
+  style: PropTypes.object,
+};
 
 export const PencilIcon = React.memo(({ color, size }) => (
   <FAIcon name="pencil" color={color} size={size} />
@@ -126,3 +130,13 @@ export const WifiIcon = ({ color, size, style }) => (
 );
 WifiIcon.defaultProps = { color: DARK_GREY, size: 22, style: { marginLeft: 10 } };
 WifiIcon.propTypes = { color: PropTypes.string, size: PropTypes.number, style: PropTypes.object };
+
+export const TemperatureIcon = ({ color, size, style }) => (
+  <FA5Icon name="temperature-high" size={size} style={style} color={color} />
+);
+TemperatureIcon.defaultProps = { color: DARK_GREY, size: 25, style: { marginLeft: 10 } };
+TemperatureIcon.propTypes = {
+  color: PropTypes.string,
+  size: PropTypes.number,
+  style: PropTypes.object,
+};
