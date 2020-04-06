@@ -5,7 +5,7 @@
  */
 
 import { truncateString } from 'sussol-utilities';
-import { modalStrings } from '../localization';
+import { generalStrings, modalStrings } from '../localization';
 
 export const formatErrorItemNames = items => {
   const MAX_ITEMS_IN_ERROR_MESSAGE = 4; // Number of items to display in finalise error modal.
@@ -36,8 +36,10 @@ export const roundNumber = (number, fractionalDigits) =>
   Number(parseFloat(number).toFixed(fractionalDigits));
 
 export const formatTemperature = temperature => {
+  const validTemperature = temperature != null;
   const degree = String.fromCharCode(176);
-  return `${temperature}${degree}C`;
+
+  return validTemperature ? `${temperature}${degree}C` : generalStrings.not_available;
 };
 
 export const formatTemperatureExposure = ({ minimumTemperature, maximumTemperature } = {}) => {
@@ -46,4 +48,18 @@ export const formatTemperatureExposure = ({ minimumTemperature, maximumTemperatu
   if (undefinedProperties || infinityTemperatures) return 'No temperatures recorded';
 
   return `${formatTemperature(minimumTemperature)} - ${formatTemperature(maximumTemperature)}`;
+};
+
+export const formatTimeDifference = duration => {
+  const suffixes = [generalStrings.days, generalStrings.hours, generalStrings.minutes];
+  const durations = [duration.days(), duration.hours(), duration.minutes()];
+
+  // merges the above arrays to give a string for example: 3 days, 4 hours, 3 minutes
+  return durations.reduce(
+    (acc, value, index) =>
+      value
+        ? `${acc} ${value} ${suffixes[index]}${durations.length - 1 === index ? '' : ','}`
+        : acc,
+    ''
+  );
 };

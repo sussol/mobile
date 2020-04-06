@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { TouchableOpacity, StyleSheet, View } from 'react-native';
 import PropTypes from 'prop-types';
 
 import { UIDatabase } from '../database';
@@ -18,10 +18,15 @@ import { SimpleLabel } from './SimpleLabel';
 import { WHITE, SUSSOL_ORANGE } from '../globalStyles';
 import { vaccineStrings } from '../localization';
 
-export const FridgeDisplayInfo = ({ fridge, isActive }) => {
+export const FridgeDisplayInfo = ({ fridge, isActive, onPress }) => {
   const { description, currentTemperature, temperatureExposure, numberOfBreaches } = fridge;
+
+  const Container = isActive ? View : TouchableOpacity;
+
+  const onSelectFridge = React.useCallback(() => onPress(fridge), []);
+
   return (
-    <View style={localStyles.container}>
+    <Container onPress={onSelectFridge} style={localStyles.container}>
       <FlexRow flex={1} justifyContent="space-between" alignItems="center">
         <FlexRow flex={1} justifyContent="space-evenly">
           <ChevronDownIcon color={isActive ? WHITE : SUSSOL_ORANGE} style={localStyles.icon} />
@@ -55,7 +60,7 @@ export const FridgeDisplayInfo = ({ fridge, isActive }) => {
           />
         </FlexRow>
       </FlexRow>
-    </View>
+    </Container>
   );
 };
 
@@ -67,4 +72,5 @@ const localStyles = StyleSheet.create({
 FridgeDisplayInfo.propTypes = {
   fridge: PropTypes.object.isRequired,
   isActive: PropTypes.bool.isRequired,
+  onPress: PropTypes.func.isRequired,
 };

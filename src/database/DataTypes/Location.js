@@ -24,7 +24,7 @@ export class Location extends Realm.Object {
   }
 
   get currentTemperature() {
-    const { temperature } = this.mostRecentTemperatureLog;
+    const { temperature } = this.mostRecentTemperatureLog ?? {};
     return temperature;
   }
 
@@ -39,10 +39,10 @@ export class Location extends Realm.Object {
     return { minimumTemperature, maximumTemperature };
   }
 
-  batchesAtTime(database, timestamp = new Date()) {
+  batchesAtTime(database, timestamp) {
     const locationMovements = this.locationMovements.filtered(
       'enterTimestamp <= $0 && (exitTimestamp > $0 || exitTimestamp == null)',
-      timestamp
+      timestamp ?? new Date()
     );
     const queryString = locationMovements.map(({ id }) => `id == "${id}"`).join(' OR ');
     const itemBatches = database.objects('ItemBatch');

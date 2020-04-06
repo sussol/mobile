@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { Svg } from 'react-native-svg';
 import { VictoryAxis, VictoryChart, VictoryLine, VictoryScatter } from 'victory-native';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -36,41 +37,48 @@ export const VaccineChart = ({
 
   return (
     <FlexView onLayout={setDimensions}>
-      <VictoryChart
-        width={width}
-        height={height}
-        minDomain={chartMinDomain}
-        maxDomain={chartMaxDomain}
-      >
-        <VictoryAxis offsetX={50} dependentAxis style={chartStyles.axis} tickFormat={yTickFormat} />
-        <VictoryAxis offsetY={50} tickFormat={xTickFormat} style={chartStyles.axis} />
+      <Svg>
+        <VictoryChart
+          width={width}
+          height={height}
+          minDomain={chartMinDomain}
+          maxDomain={chartMaxDomain}
+        >
+          <VictoryAxis
+            offsetX={50}
+            dependentAxis
+            style={chartStyles.axis}
+            tickFormat={yTickFormat}
+          />
+          <VictoryAxis offsetY={50} tickFormat={xTickFormat} style={chartStyles.axis} />
 
-        <VictoryLine
-          interpolation="natural"
-          data={minLine}
-          y={y}
-          x={x}
-          style={chartStyles.minLine}
-        />
-        <VictoryLine
-          interpolation="natural"
-          data={maxLine}
-          y={y}
-          x={x}
-          style={chartStyles.maxLine}
-        />
-        <VictoryLine data={maxLine} y={maxBoundary} x={x} style={chartStyles.maxBoundaryLine} />
-        <VictoryLine data={minLine} y={minBoundary} x={x} style={chartStyles.minBoundaryLine} />
+          <VictoryLine
+            interpolation="natural"
+            data={minLine}
+            y={y}
+            x={x}
+            style={chartStyles.minLine}
+          />
+          <VictoryLine
+            interpolation="natural"
+            data={maxLine}
+            y={y}
+            x={x}
+            style={chartStyles.maxLine}
+          />
+          <VictoryLine data={maxLine} y={maxBoundary} x={x} style={chartStyles.maxBoundaryLine} />
+          <VictoryLine data={minLine} y={minBoundary} x={x} style={chartStyles.minBoundaryLine} />
 
-        <VictoryScatter data={maxLine} y={y} x={x} style={chartStyles.maxScatterPlot} />
-        <VictoryScatter data={minLine} y={y} x={x} style={chartStyles.minScatterPlot} />
-        <VictoryScatter
-          data={breaches.slice()}
-          y={y}
-          x={x}
-          dataComponent={<HazardPoint onPress={onPressBreach} />}
-        />
-      </VictoryChart>
+          <VictoryScatter data={maxLine} y={y} x={x} style={chartStyles.maxScatterPlot} />
+          <VictoryScatter data={minLine} y={y} x={x} style={chartStyles.minScatterPlot} />
+          <VictoryScatter
+            data={breaches.slice()}
+            y={y}
+            x={x}
+            dataComponent={<HazardPoint onPress={onPressBreach} />}
+          />
+        </VictoryChart>
+      </Svg>
     </FlexView>
   );
 };
