@@ -22,6 +22,7 @@ export const FridgeDisplay = ({
   fridge,
   isActive,
   onSelectFridge,
+  onOpenBreachModal,
 }) => {
   const containerStyle = React.useMemo(
     () => ({ ...localStyles.container, height: isActive ? 300 : 45 }),
@@ -42,6 +43,7 @@ export const FridgeDisplay = ({
           minDomain={minDomain}
           maxLine={maxLine}
           breaches={breaches}
+          onPressBreach={onOpenBreachModal}
         />
       ) : (
         <FlexView justifyContent="center" flex={1} alignItems="center">
@@ -84,8 +86,9 @@ FridgeDisplay.propTypes = {
   isActive: PropTypes.bool.isRequired,
   minLine: PropTypes.array,
   maxLine: PropTypes.array,
-  breaches: PropTypes.array,
+  breaches: PropTypes.object,
   maxDomain: PropTypes.number,
   minDomain: PropTypes.number,
   onSelectFridge: PropTypes.func,
+  onOpenBreachModal: PropTypes.func.isRequired,
 };

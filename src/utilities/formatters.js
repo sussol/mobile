@@ -49,3 +49,17 @@ export const formatTemperatureExposure = ({ minimumTemperature, maximumTemperatu
 
   return `${formatTemperature(minimumTemperature)} - ${formatTemperature(maximumTemperature)}`;
 };
+
+export const formatTimeDifference = duration => {
+  const suffixes = [generalStrings.days, generalStrings.hours, generalStrings.minutes];
+  const durations = [duration.days(), duration.hours(), duration.minutes()];
+
+  // merges the above arrays to give a string for example: 3 days, 4 hours, 3 minutes
+  return durations.reduce(
+    (acc, value, index) =>
+      value
+        ? `${acc} ${value} ${suffixes[index]}${durations.length - 1 === index ? '' : ','}`
+        : acc,
+    ''
+  );
+};

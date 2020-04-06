@@ -31,6 +31,7 @@ const persistConfig = {
     'modules',
     'supplierCredit',
     'fridge',
+    'breach',
   ],
 };
 

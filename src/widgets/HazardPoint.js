@@ -23,7 +23,7 @@ export const HazardPoint = props => {
   const { x, y, onPress, datum } = props;
   const { xOffset, yOffset, scale, fill } = hazardPointStyles;
 
-  const onPressWrapper = React.useCallback(() => onPress && onPress(datum), []);
+  const onPressWrapper = React.useCallback(() => onPress?.(datum?.id), []);
 
   return (
     <Svg>
