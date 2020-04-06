@@ -21,6 +21,10 @@ import Realm from 'realm';
  * @property  {List.<TransactionBatch>}  transactionBatches
  */
 export class ItemBatch extends Realm.Object {
+  get isVaccine() {
+    return this.item?.isVaccine ?? false;
+  }
+
   get isInBreach() {
     return this.location?.isInBreach() ?? false;
   }
