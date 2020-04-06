@@ -6,11 +6,12 @@
 
 import React, { useMemo, useState } from 'react';
 import { View, StyleSheet, FlatList, Text, TouchableOpacity } from 'react-native';
-import { connect } from 'react-redux';
+import { connect, batch } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { FormControl } from '../FormControl';
 
+import { InsuranceActions } from '../../actions/InsuranceActions';
 import { PatientActions } from '../../actions/PatientActions';
 import { PrescriberActions } from '../../actions/PrescriberActions';
 
@@ -110,9 +111,10 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  // TODO: update to use PatientActions.updatePatient()
-  selectPatient: patient => dispatch(PatientActions.patientUpdate(patient)),
-  // TODO: update to use PrescriberActions.updatePrescriber()
+  selectPatient: patient => {
+    dispatch(PatientActions.patientUpdate(patient));
+    batch(() => patient.policies.forEach(policy => dispatch(InsuranceActions.update(policy))));
+  },
   selectPrescriber: prescriber => dispatch(PrescriberActions.updatePrescriber(prescriber)),
 });
 
