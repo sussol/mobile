@@ -1,6 +1,6 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2019
+ * Sustainable Solutions (NZ) Ltd. 2020
  */
 
 import React from 'react';
@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { GREY, DARK_GREY } from '../globalStyles';
 import { CloudIcon, ArrowIcon, TemperatureIcon } from './icons';
 
-export const TemperatureSyncIcon = ({ isActive }) => {
+export const TemperatureSyncIcon = React.memo(({ isActive }) => {
   const iconColor = isActive ? DARK_GREY : GREY;
 
   return (
@@ -19,7 +19,7 @@ export const TemperatureSyncIcon = ({ isActive }) => {
       <TemperatureIcon color={iconColor} />
     </>
   );
-};
+});
 
 TemperatureSyncIcon.defaultProps = {
   isActive: true,

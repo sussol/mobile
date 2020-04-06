@@ -43,12 +43,7 @@ export const VaccinePageComponent = ({
         onOpenBreachModal={onOpenBreachModal}
       />
     ),
-    minLine,
-    maxLine,
-    breaches,
-    maxDomain,
-    minDomain,
-    onSelectFridge
+    [minLine, maxLine, breaches, maxDomain, minDomain, onSelectFridge, selectedFridge]
   );
 
   const BlankComponent = React.useCallback(
