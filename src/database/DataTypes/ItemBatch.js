@@ -4,6 +4,7 @@
  */
 
 import Realm from 'realm';
+import { createRecord } from '../utilities';
 
 /**
  * A batch of items.
@@ -148,6 +149,20 @@ export class ItemBatch extends Realm.Object {
     const { id: currentLocationId } = this.location;
 
     return newLocationId !== currentLocationId;
+  }
+
+  applyLocation(database, newLocation) {
+    if (!this.shouldApplyLocation(newLocation)) return null;
+
+    this.location = newLocation;
+
+    return createRecord(database, 'LocationMovement', this, newLocation);
+  }
+
+  applyVvmStatus(database, newVvmStatus) {
+    return this.shouldApplyVvmStatus(newVvmStatus)
+      ? createRecord(database, 'VaccineVialMonitorStatusLog', this, newVvmStatus)
+      : null;
   }
 }
 
