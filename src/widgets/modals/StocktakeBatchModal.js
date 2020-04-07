@@ -100,6 +100,18 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: re
   const onEditSellPrice = (newValue, rowKey) =>
     dispatch(PageActions.editSellPrice(newValue, rowKey));
 
+  const onEditBatchDoses = (newValue, rowKey) =>
+    dispatch(PageActions.editBatchDoses(newValue, rowKey));
+
+  const onSelectLocation = rowKey =>
+    dispatch(PageActions.openModal(MODAL_KEYS.SELECT_LOCATION, rowKey));
+  const onSelectVvmStatus = rowKey =>
+    dispatch(PageActions.openModal(MODAL_KEYS.SELECT_VVM_STATUS, rowKey));
+  const onApplyStocktakeBatchLocation = ({ item }) =>
+    dispatch(PageActions.editStocktakeBatchLocation(item));
+  const onApplyStocktakeBatchVvmStatus = ({ item }) =>
+    dispatch(PageActions.editStocktakeBatchVvmStatus(item));
+
   const toggles = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), []);
 
   const getCallback = useCallback(colKey => {
@@ -116,6 +128,12 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: re
         return onEditSellPrice;
       case 'otherPartyName':
         return onSelectSupplier;
+      case 'doses':
+        return onEditBatchDoses;
+      case 'currentLocationName':
+        return onSelectLocation;
+      case 'currentVvmStatusName':
+        return onSelectVvmStatus;
       default:
         return null;
     }
@@ -153,6 +171,51 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: re
     [sortKey, isAscending]
   );
 
+  const renderModal = useCallback(() => {
+    const { currentLocationName, currentVvmStatusName } = modalValue ?? {};
+    switch (modalKey) {
+      case MODAL_KEYS.SELECT_ITEM_BATCH_SUPPLIER:
+        return (
+          <AutocompleteSelector
+            options={suppliers}
+            onSelect={onEditSupplier}
+            sortKeyString="name"
+            queryString="name contains[c] $0"
+            renderRightText={({ code }) => code}
+          />
+        );
+      case MODAL_KEYS.STOCKTAKE_REASON:
+        return (
+          <GenericChoiceList
+            data={reasonsSelection}
+            highlightValue={(modalValue && modalValue.reasonTitle) || ''}
+            keyToDisplay="title"
+            onPress={onApplyReason}
+          />
+        );
+      case MODAL_KEYS.SELECT_LOCATION:
+        return (
+          <GenericChoiceList
+            data={UIDatabase.objects('Fridge')}
+            highlightValue={currentLocationName}
+            onPress={onApplyStocktakeBatchLocation}
+            keyToDisplay="description"
+          />
+        );
+      case MODAL_KEYS.SELECT_VVM_STATUS:
+        return (
+          <GenericChoiceList
+            data={UIDatabase.objects('VaccineVialMonitorStatus')}
+            highlightValue={currentVvmStatusName}
+            onPress={onApplyStocktakeBatchVvmStatus}
+            keyToDisplay="description"
+          />
+        );
+      default:
+        return null;
+    }
+  }, [modalKey, modalValue]);
+
   const {
     pageTopSectionContainer,
     pageTopLeftSectionContainer,
@@ -189,22 +252,7 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: re
         onClose={onCloseModal}
         title={getModalTitle(modalKey)}
       >
-        {modalKey === MODAL_KEYS.SELECT_ITEM_BATCH_SUPPLIER ? (
-          <AutocompleteSelector
-            options={suppliers}
-            onSelect={onEditSupplier}
-            sortKeyString="name"
-            queryString="name contains[c] $0"
-            renderRightText={({ code }) => code}
-          />
-        ) : (
-          <GenericChoiceList
-            data={reasonsSelection}
-            highlightValue={(modalValue && modalValue.reasonTitle) || ''}
-            keyToDisplay="title"
-            onPress={onApplyReason}
-          />
-        )}
+        {renderModal()}
       </ModalContainer>
     </DataTablePageView>
   );
@@ -216,11 +264,15 @@ StocktakeBatchModalComponent.propTypes = {
   dispatch: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
+  const { stocktakeItem } = ownProps;
+  const { isVaccine } = stocktakeItem;
   const usingPaymentsModule = selectUsingPayments(state);
   const usingReasons =
     UIDatabase.objects('NegativeAdjustmentReason').length > 0 &&
     UIDatabase.objects('PositiveAdjustmentReason').length > 0;
+
+  if (isVaccine) return { page: 'stocktakeBatchEditModalWithDoses' };
 
   if (usingReasons) {
     if (usingPaymentsModule) return { page: 'stocktakeBatchEditModalWithReasonsAndPrices' };
