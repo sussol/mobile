@@ -27,6 +27,10 @@ export class StocktakeItem extends Realm.Object {
     return this.batches.every(({ hasValidDoses }) => hasValidDoses);
   }
 
+  get isVaccine() {
+    return this.item?.isVaccine ?? false;
+  }
+
   /**
    * Get snapshot of total quantity of item.
    *
