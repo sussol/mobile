@@ -59,6 +59,7 @@ export const SupplierInvoice = ({
   onApplyTransactionBatchLocation,
   onSelectVvmStatus,
   onApplyTransactionBatchVvmStatus,
+  onEditBatchDoses,
 }) => {
   const { isFinalised, comment, theirRef } = pageObject;
 
@@ -85,6 +86,8 @@ export const SupplierInvoice = ({
         return onSelectLocation;
       case 'currentVvmStatusName':
         return onSelectVvmStatus;
+      case 'doses':
+        return onEditBatchDoses;
       default:
         return null;
     }
@@ -209,12 +212,18 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 const mapStateToProps = state => {
   const { pages, modules } = state;
   const { supplierInvoice } = pages;
-  const { usingPayments } = modules;
+  const { usingPayments, usingVaccines } = modules;
 
   const { pageObject } = supplierInvoice ?? {};
 
   const { isSupplierInvoice } = pageObject ?? {};
-  const columnsKey = usingPayments ? 'supplierInvoiceWithPrices' : 'supplierInvoice';
+
+  const columnsKey =
+    usingPayments || usingVaccines
+      ? (usingPayments && ROUTES.SUPPLIER_INVOICE_WITH_PRICES) ||
+        ROUTES.SUPPLIER_INVOICE_WITH_VACCINES
+      : ROUTES.SUPPLIER_INVOICE;
+
   const columns = getColumns(columnsKey);
 
   return { ...supplierInvoice, isSupplierInvoice, columns };
@@ -262,4 +271,5 @@ SupplierInvoice.propTypes = {
   onApplyTransactionBatchLocation: PropTypes.func.isRequired,
   onSelectVvmStatus: PropTypes.func.isRequired,
   onApplyTransactionBatchVvmStatus: PropTypes.func.isRequired,
+  onEditBatchDoses: PropTypes.func.isRequired,
 };

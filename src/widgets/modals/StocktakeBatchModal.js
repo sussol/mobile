@@ -272,7 +272,7 @@ const mapStateToProps = (state, ownProps) => {
     UIDatabase.objects('NegativeAdjustmentReason').length > 0 &&
     UIDatabase.objects('PositiveAdjustmentReason').length > 0;
 
-  if (isVaccine) return { page: 'stocktakeBatchEditModalWithDoses' };
+  if (isVaccine) return { page: 'stocktakeBatchEditModalWithVaccines' };
 
   if (usingReasons) {
     if (usingPaymentsModule) return { page: 'stocktakeBatchEditModalWithReasonsAndPrices' };
