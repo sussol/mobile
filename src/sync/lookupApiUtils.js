@@ -215,7 +215,7 @@ export const queryPatientApi = async params => {
     }
     switch (status) {
       case 400:
-        throw new Error(ERROR_CODES.INVALID_URL);
+        throw new Error(ERROR_CODES.CONNECTION_FAILURE);
       case 401:
         throw new Error(ERROR_CODES.INVALID_PASSWORD);
       default:
@@ -245,7 +245,7 @@ export const queryPrescriberApi = async params => {
     }
     switch (status) {
       case 400:
-        throw new Error(ERROR_CODES.INVALID_URL);
+        throw new Error(ERROR_CODES.CONNECTION_FAILURE);
       case 401:
         throw new Error(ERROR_CODES.INVALID_PASSWORD);
       default:
