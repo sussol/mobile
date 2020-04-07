@@ -32,7 +32,19 @@ const PER_PAGE_INFO_COLUMNS = {
     ['entryDate', 'confirmDate', 'enteredBy'],
     ['customer', 'theirRef', 'transactionComment'],
   ],
+  [ROUTES.CUSTOMER_INVOICE_WITH_VACCINES]: [
+    ['entryDate', 'confirmDate', 'enteredBy'],
+    ['customer', 'theirRef', 'transactionComment'],
+  ],
   [ROUTES.SUPPLIER_INVOICE]: [
+    ['entryDate', 'confirmDate'],
+    ['otherParty', 'theirRef', 'transactionComment'],
+  ],
+  [ROUTES.SUPPLIER_INVOICE_WITH_VACCINES]: [
+    ['entryDate', 'confirmDate'],
+    ['otherParty', 'theirRef', 'transactionComment'],
+  ],
+  [ROUTES.SUPPLIER_INVOICE_WITH_PRICES]: [
     ['entryDate', 'confirmDate'],
     ['otherParty', 'theirRef', 'transactionComment'],
   ],
@@ -58,7 +70,7 @@ const PER_PAGE_INFO_COLUMNS = {
   stocktakeBatchEditModalWithReasons: [['itemName']],
   stocktakeBatchEditModalWithPrices: [['itemName']],
   stocktakeBatchEditModalWithReasonsAndPrices: [['itemName']],
-  stocktakeBatchEditModalWithDoses: [['itemName']],
+  stocktakeBatchEditModalWithVaccines: [['itemName']],
   supplierCredit: [
     ['entryDate', 'confirmDate', 'transactionCategory'],
     ['enteredBy', 'otherParty'],
