@@ -63,6 +63,7 @@ export const CustomerInvoice = ({
   onAddMasterList,
   onApplyMasterLists,
   route,
+  onEditBatchDoses,
 }) => {
   const { isFinalised, comment, theirRef } = pageObject;
 
@@ -79,6 +80,8 @@ export const CustomerInvoice = ({
       case 'remove':
         if (propName === 'onCheck') return onCheck;
         return onUncheck;
+      case 'doses':
+        return onEditBatchDoses;
       default:
         return null;
     }
@@ -247,4 +250,5 @@ CustomerInvoice.propTypes = {
   onAddTransactionItem: PropTypes.func.isRequired,
   onApplyMasterLists: PropTypes.func.isRequired,
   route: PropTypes.string.isRequired,
+  onEditBatchDoses: PropTypes.func.isRequired,
 };
