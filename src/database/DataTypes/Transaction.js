@@ -420,7 +420,12 @@ export class Transaction extends Realm.Object {
         costPrice,
         sellPrice,
         doses,
+        location,
+        vaccineVialMonitorStatus,
       } = transactionBatch;
+
+      itemBatch.applyVvmStatus(database, vaccineVialMonitorStatus);
+      itemBatch.applyLocation(database, location);
 
       // Pack to one all transactions in mobile, so multiply by |packSize| to get
       // quantity and price.
