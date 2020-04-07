@@ -226,7 +226,7 @@ export class StocktakeBatch extends Realm.Object {
   }
 
   setDoses(database, newValue) {
-    const maximumDosesPossible = this.dosesPerVial * this.totalQuantity;
+    const maximumDosesPossible = this.dosesPerVial * this.countedTotalQuantity;
     this.doses = Math.min(newValue, maximumDosesPossible);
 
     database.save('StocktakeBatch', this);
@@ -285,6 +285,9 @@ export class StocktakeBatch extends Realm.Object {
     this.itemBatch.expiryDate = this.expiryDate;
     this.itemBatch.sellPrice = this.sellPrice;
     this.itemBatch.supplier = this.supplier;
+
+    this.itemBatch.applyVvmStatus(database, this.vaccineVialMonitorStatus);
+    this.itemBatch.applyLocation(database, this.location);
 
     // Make inventory adjustments if there is a difference to apply.
     if (this.difference !== 0) {
@@ -357,7 +360,7 @@ StocktakeBatch.schema = {
     option: { type: 'Options', optional: true },
     supplier: { type: 'Name', optional: true },
     location: { type: 'Location', optional: true },
-    doses: 'double?',
+    doses: { type: 'double', defualt: 0 },
     vaccineVialMonitorStatus: { type: 'VaccineVialMonitorStatus', optional: true },
   },
 };
