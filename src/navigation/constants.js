@@ -20,9 +20,11 @@ export const ROUTES = {
   SUPPLIER_REQUISITIONS: 'supplierRequisitions',
 
   CUSTOMER_INVOICE: 'customerInvoice',
+  CUSTOMER_INVOICE_WITH_VACCINES: 'customerInvoiceWithVaccines',
   CUSTOMER_INVOICES: 'customerInvoices',
 
   SUPPLIER_INVOICE: 'supplierInvoice',
+  SUPPLIER_INVOICE_WITH_VACCINES: 'supplierInvoiceWithVaccines',
   SUPPLIER_INVOICE_WITH_PRICES: 'supplierInvoiceWithPrices',
   SUPPLIER_INVOICES: 'supplierInvoices',
 
