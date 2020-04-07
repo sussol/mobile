@@ -58,6 +58,7 @@ const PER_PAGE_INFO_COLUMNS = {
   stocktakeBatchEditModalWithReasons: [['itemName']],
   stocktakeBatchEditModalWithPrices: [['itemName']],
   stocktakeBatchEditModalWithReasonsAndPrices: [['itemName']],
+  stocktakeBatchEditModalWithDoses: [['itemName']],
   supplierCredit: [
     ['entryDate', 'confirmDate', 'transactionCategory'],
     ['enteredBy', 'otherParty'],

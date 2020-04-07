@@ -480,6 +480,7 @@ const pageInitialisers = {
   stock: stockInitialiser,
   stocktakeBatchEditModal: stocktakeBatchInitialiser,
   stocktakeBatchEditModalWithReasons: stocktakeBatchInitialiser,
+  stocktakeBatchEditModalWithDoses: stocktakeBatchInitialiser,
   stocktakeBatchEditModalWithPrices: stocktakeBatchInitialiser,
   stocktakeBatchEditModalWithReasonsAndPrices: stocktakeBatchInitialiser,
   stocktakeEditor: stocktakeEditorInitialiser,
