@@ -51,7 +51,6 @@ export const selectPrescriberModalOpen = ({ prescriber }) => {
 
 export const selectCanEditPrescriber = ({ prescriber }) => {
   const { currentPrescriber } = prescriber;
-  const { fromThisStore } = currentPrescriber ?? {};
-
-  return fromThisStore ?? true;
+  const { isEditable = true } = currentPrescriber ?? {};
+  return isEditable;
 };
