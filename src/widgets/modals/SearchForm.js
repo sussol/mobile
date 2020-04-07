@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 
 import { FormControl } from '../FormControl';
 
+import { Spinner } from '..';
 import { ConfirmForm } from '../modalChildren/ConfirmForm';
 import { ModalContainer } from '.';
 
@@ -20,7 +21,7 @@ import { PrescriberActions } from '../../actions/PrescriberActions';
 
 import { generalStrings } from '../../localization';
 
-import { APP_FONT_FAMILY, DARK_GREY, ROW_BLUE, WHITE } from '../../globalStyles';
+import { APP_FONT_FAMILY, DARK_GREY, ROW_BLUE, WHITE, SUSSOL_ORANGE } from '../../globalStyles';
 
 import { queryPatientApi, queryPrescriberApi } from '../../sync/lookupApiUtils';
 
@@ -29,6 +30,15 @@ import {
   selectLookupFormConfig,
   selectLookupListConfig,
 } from '../../selectors/dispensary';
+
+const QueryingIndicatorComponent = ({ isQuerying }) =>
+  isQuerying ? (
+    <View style={localStyles.spinnerContainer}>
+      <Spinner isSpinning={isQuerying} color={SUSSOL_ORANGE} />
+    </View>
+  ) : null;
+
+const QueryingIndicator = React.memo(QueryingIndicatorComponent);
 
 const SearchListItemColumnComponent = ({ value, type }) => {
   const valueText = type === 'date' ? value?.toDateString() ?? generalStrings.not_available : value;
@@ -63,10 +73,15 @@ export const SearchFormComponent = ({
   selectPrescriber,
 }) => {
   const [data, setData] = useState([]);
-  const [error, setError] = useState();
 
-  const isError = useMemo(() => !!error, [error]);
-  const resetError = useCallback(() => setError(), []);
+  const [isQuerying, setIsQuerying] = useState(false);
+
+  const [isError, setIsError] = useState(false);
+  const [error, setError] = useState('');
+  const resetError = useCallback(() => {
+    setIsError(false);
+    setError('');
+  }, []);
 
   const renderItem = useMemo(
     () => ({ item }) => {
@@ -83,16 +98,26 @@ export const SearchFormComponent = ({
   }, [isPatient, isPrescriber]);
 
   const lookupPatient = useCallback(params => {
+    setIsQuerying(true);
     queryPatientApi(params).then(({ error: patientError, data: patientData }) => {
-      setError(patientError);
+      if (patientError) {
+        setIsError(true);
+        setError(patientError);
+      }
       setData(patientData);
+      setIsQuerying(false);
     });
   }, []);
 
   const lookupPrescriber = useCallback(params => {
+    setIsQuerying(true);
     queryPrescriberApi(params).then(({ error: prescriberError, data: prescriberData }) => {
-      setError(prescriberError);
+      if (prescriberError) {
+        setIsError(true);
+        setError(prescriberError);
+      }
       setData(prescriberData);
+      setIsQuerying(false);
     });
   }, []);
 
@@ -116,6 +141,7 @@ export const SearchFormComponent = ({
       </View>
       <View style={localStyles.verticalSeparator} />
       <View style={localStyles.listContainer}>
+        <QueryingIndicator isQuerying={isQuerying} />
         <FlatList data={data} keyExtractor={record => record.id} renderItem={renderItem} />
       </View>
       <ModalContainer fullScreen={true} isVisible={isError}>
@@ -146,6 +172,10 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export const SearchForm = connect(mapStateToProps, mapDispatchToProps)(SearchFormComponent);
+
+QueryingIndicatorComponent.propTypes = {
+  isQuerying: PropTypes.bool.isRequired,
+};
 
 SearchFormComponent.propTypes = {
   isPatient: PropTypes.bool.isRequired,
@@ -189,6 +219,17 @@ const localStyles = StyleSheet.create({
     flex: 3,
     flexDirection: 'row',
     backgroundColor: 'white',
+  },
+  spinnerContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    opacity: 0.88,
+    zIndex: 2,
   },
   rowContainer: {
     flexDirection: 'row',
