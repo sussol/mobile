@@ -4,12 +4,15 @@
  * Sustainable Solutions (NZ) Ltd. 2020
  */
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import { View, StyleSheet, FlatList, Text, TouchableOpacity } from 'react-native';
 import { connect, batch } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { FormControl } from '../FormControl';
+
+import { ConfirmForm } from '../modalChildren/ConfirmForm';
+import { ModalContainer } from '.';
 
 import { InsuranceActions } from '../../actions/InsuranceActions';
 import { PatientActions } from '../../actions/PatientActions';
@@ -19,7 +22,7 @@ import { generalStrings } from '../../localization';
 
 import { APP_FONT_FAMILY, DARK_GREY, ROW_BLUE, WHITE } from '../../globalStyles';
 
-import { queryPatientApi, queryPrescriberApi } from '../../utilities/network/lookupApi';
+import { queryPatientApi, queryPrescriberApi } from '../../sync/lookupApiUtils';
 
 import {
   selectDataSetInUse,
@@ -60,13 +63,10 @@ export const SearchFormComponent = ({
   selectPrescriber,
 }) => {
   const [data, setData] = useState([]);
+  const [error, setError] = useState();
 
-  const selectRecord = useMemo(() => {
-    if (isPatient) return patient => selectPatient(patient);
-    if (isPrescriber) return prescriber => selectPrescriber(prescriber);
-    // Bugsnag here.
-    return () => null;
-  }, [isPatient, isPrescriber]);
+  const isError = useMemo(() => !!error, [error]);
+  const resetError = useCallback(() => setError(), []);
 
   const renderItem = useMemo(
     () => ({ item }) => {
@@ -76,11 +76,30 @@ export const SearchFormComponent = ({
     [listConfig]
   );
 
+  const selectRecord = useMemo(() => {
+    if (isPatient) return patient => selectPatient(patient);
+    if (isPrescriber) return prescriber => selectPrescriber(prescriber);
+    return () => null;
+  }, [isPatient, isPrescriber]);
+
+  const lookupPatient = useCallback(params => {
+    queryPatientApi(params).then(({ error: patientError, data: patientData }) => {
+      setError(patientError);
+      setData(patientData);
+    });
+  }, []);
+
+  const lookupPrescriber = useCallback(params => {
+    queryPrescriberApi(params).then(({ error: prescriberError, data: prescriberData }) => {
+      setError(prescriberError);
+      setData(prescriberData);
+    });
+  }, []);
+
   const lookupRecords = useMemo(
     () => params => {
-      if (isPatient) queryPatientApi(params).then(patientData => setData(patientData));
-      if (isPrescriber) queryPrescriberApi(params).then(prescriberData => setData(prescriberData));
-      // Bugsnag here.
+      if (isPatient) lookupPatient(params);
+      if (isPrescriber) lookupPrescriber(params);
     },
     [isPatient, isPrescriber]
   );
@@ -99,6 +118,14 @@ export const SearchFormComponent = ({
       <View style={localStyles.listContainer}>
         <FlatList data={data} keyExtractor={record => record.id} renderItem={renderItem} />
       </View>
+      <ModalContainer fullScreen={true} isVisible={isError}>
+        <ConfirmForm
+          isOpen={isError}
+          questionText={error}
+          onConfirm={resetError}
+          confirmText="Close"
+        />
+      </ModalContainer>
     </View>
   );
 };

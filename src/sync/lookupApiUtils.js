@@ -6,13 +6,20 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
 
-import { getAuthHeader } from 'sussol-utilities';
+import { getAuthHeader, AUTH_ERROR_CODES } from 'sussol-utilities';
 
-import { SETTINGS_KEYS } from '../../settings';
-import { UIDatabase } from '../../database';
-import { createRecord, parseBoolean, parseDate, parseNumber } from '../../database/utilities';
+import { SETTINGS_KEYS } from '../settings';
+import { UIDatabase } from '../database';
+import { createRecord, parseBoolean, parseDate, parseNumber } from '../database/utilities';
 
 const { SYNC_URL, SYNC_SITE_NAME, SYNC_SITE_PASSWORD_HASH } = SETTINGS_KEYS;
+
+const CONNECTION_TIMEOUT_PERIOD = 10000;
+
+const ERROR_CODES = {
+  ...AUTH_ERROR_CODES,
+  NO_MATCHING_RECORDS: 'No matching records found',
+};
 
 const RESOURCES = {
   PATIENT: '/api/v4/patient',
@@ -193,31 +200,75 @@ const processPrescriberResponse = response => {
 export const queryPatientApi = async params => {
   const requestUrl = getPatientRequestUrl(params);
   const headers = getRequestHeaders();
+  const options = { headers };
   try {
-    const response = await fetch(requestUrl, { headers });
-    const responseJson = await response.json();
-    const { error } = responseJson;
-    if (error) throw new Error(error);
-    const patientData = processPatientResponse(responseJson);
-    return patientData;
+    const response = await fetchTimeout(requestUrl, options, CONNECTION_TIMEOUT_PERIOD);
+    const { ok, status } = response;
+    if (ok) {
+      const responseJson = await response.json();
+      const { error } = responseJson;
+      if (error) throw new Error(error);
+      const patientData = processPatientResponse(responseJson);
+      return patientData?.length
+        ? { data: patientData }
+        : { error: ERROR_CODES.NO_MATCHING_RECORDS };
+    }
+    switch (status) {
+      case 400:
+        throw new Error(ERROR_CODES.INVALID_URL);
+      case 401:
+        throw new Error(ERROR_CODES.INVALID_PASSWORD);
+      default:
+        throw new Error(ERROR_CODES.CONNECTION_FAILURE);
+    }
   } catch (error) {
     // TODO: add bugsnag.
-    return [];
+    return { error: error.message };
   }
 };
 
 export const queryPrescriberApi = async params => {
   const requestUrl = getPrescriberRequestUrl(params);
   const headers = getRequestHeaders();
+  const options = { headers };
   try {
-    const response = await fetch(requestUrl, { headers });
-    const responseJson = await response.json();
-    const { error } = responseJson;
-    if (error) throw new Error(error);
-    const prescriberData = await processPrescriberResponse(responseJson);
-    return prescriberData;
+    const response = await fetchTimeout(requestUrl, options, CONNECTION_TIMEOUT_PERIOD);
+    const { ok, status } = response;
+    if (ok) {
+      const responseJson = await response.json();
+      const { error } = responseJson;
+      if (error) throw new Error(error);
+      const prescriberData = await processPrescriberResponse(responseJson);
+      return prescriberData?.length
+        ? { data: prescriberData }
+        : { error: ERROR_CODES.NO_MATCHING_RECORDS };
+    }
+    switch (status) {
+      case 400:
+        throw new Error(ERROR_CODES.INVALID_URL);
+      case 401:
+        throw new Error(ERROR_CODES.INVALID_PASSWORD);
+      default:
+        throw new Error(ERROR_CODES.CONNECTION_FAILURE);
+    }
   } catch (error) {
     // TODO: add bugsnag.
-    return [];
+    return { error: error.message };
   }
 };
+
+/**
+ * A simple wrapper which adds a timeout to a fetch functionality.
+ *
+ * @param {String} url
+ * @param {Object} options
+ * @param {Number} timeout
+ */
+const fetchTimeout = (url, options, timeout) =>
+  new Promise((resolve, reject) => {
+    if (timeout) {
+      const error = new Error(ERROR_CODES.CONNECTION_FAILURE);
+      setTimeout(reject, timeout, error);
+    }
+    fetch(url, options).then(resolve, reject);
+  });
