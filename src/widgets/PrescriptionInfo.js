@@ -24,6 +24,9 @@ import {
   selectPatientName,
 } from '../selectors/prescription';
 
+import { selectCanEditPatient } from '../selectors/patient';
+import { selectCanEditPrescriber } from '../selectors/prescriber';
+
 import { dispensingStrings } from '../localization';
 
 const PrescriptionInfoComponent = ({
@@ -31,20 +34,24 @@ const PrescriptionInfoComponent = ({
   prescriptionPrescriber,
   patientName,
   prescriberName,
+  canEditPatient,
+  canEditPrescriber,
   editPatient,
-  viewHistory,
   editPrescriber,
+  viewHistory,
 }) => {
-  const editPatientCallback = React.useCallback(() => editPatient(prescriptionPatient), [
-    prescriptionPatient,
-  ]);
+  const editPatientCallback = React.useCallback(
+    () => canEditPatient && editPatient(prescriptionPatient),
+    [prescriptionPatient, canEditPatient]
+  );
+
+  const prescriberEditCallback = React.useCallback(
+    () => canEditPrescriber && editPrescriber(prescriptionPrescriber),
+    [prescriptionPrescriber, canEditPrescriber]
+  );
 
   const viewHistoryCallback = React.useCallback(() => viewHistory(prescriptionPatient), [
     prescriptionPatient,
-  ]);
-
-  const prescriberEditCallback = React.useCallback(() => editPrescriber(prescriptionPrescriber), [
-    prescriptionPrescriber,
   ]);
 
   return (
@@ -58,7 +65,11 @@ const PrescriptionInfoComponent = ({
 
           <FlexRow flex={1}>
             <CircleButton IconComponent={HistoryIcon} onPress={viewHistoryCallback} />
-            <CircleButton IconComponent={PencilIcon} onPress={editPatientCallback} />
+            <CircleButton
+              IconComponent={PencilIcon}
+              isDisabled={!canEditPatient}
+              onPress={editPatientCallback}
+            />
           </FlexRow>
         </FlexRow>
       </FlexColumn>
@@ -76,7 +87,11 @@ const PrescriptionInfoComponent = ({
 
           <FlexRow flex={1} justifyContent="">
             {prescriptionPrescriber && (
-              <CircleButton IconComponent={PencilIcon} onPress={prescriberEditCallback} />
+              <CircleButton
+                IconComponent={PencilIcon}
+                isDisabled={!canEditPrescriber}
+                onPress={prescriberEditCallback}
+              />
             )}
           </FlexRow>
         </FlexRow>
@@ -96,9 +111,17 @@ const mapStateToProps = state => {
   const prescriptionPatient = selectPrescriptionPatient(state);
   const prescriptionPrescriber = selectPrescriptionPrescriber(state);
   const patientName = selectPatientName(state);
-
   const prescriberName = selectPrescriberName(state);
-  return { prescriptionPatient, prescriptionPrescriber, patientName, prescriberName };
+  const canEditPatient = selectCanEditPatient(state);
+  const canEditPrescriber = selectCanEditPrescriber(state);
+  return {
+    prescriptionPatient,
+    prescriptionPrescriber,
+    patientName,
+    prescriberName,
+    canEditPatient,
+    canEditPrescriber,
+  };
 };
 
 PrescriptionInfoComponent.defaultProps = {
@@ -112,9 +135,11 @@ PrescriptionInfoComponent.propTypes = {
   patientName: PropTypes.string.isRequired,
   prescriberName: PropTypes.string,
   prescriptionPrescriber: PropTypes.object,
+  canEditPatient: PropTypes.bool.isRequired,
+  canEditPrescriber: PropTypes.bool.isRequired,
   editPatient: PropTypes.func.isRequired,
-  viewHistory: PropTypes.func.isRequired,
   editPrescriber: PropTypes.func.isRequired,
+  viewHistory: PropTypes.func.isRequired,
 };
 
 export const PrescriptionInfo = connect(
