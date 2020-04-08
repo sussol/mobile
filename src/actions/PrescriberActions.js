@@ -61,6 +61,7 @@ const updatePrescriber = prescriberDetails => (dispatch, getState) => {
     phoneNumber: prescriberPhoneNumber,
     emailAddress: prescriberEmailAddress,
     female: prescriberFemale,
+    storeId: prescriberStoreId,
   } = prescriberDetails ?? {};
 
   const id = prescriberId ?? currentPrescriberId;
@@ -73,7 +74,7 @@ const updatePrescriber = prescriberDetails => (dispatch, getState) => {
   const mobileNumber = currentMobileNumber;
   const emailAddress = prescriberEmailAddress ?? currentEmailAddress;
   const female = prescriberFemale ?? currentFemale;
-  const storeId = currentStoreId;
+  const storeId = prescriberStoreId ?? currentStoreId;
   const isActive = currentIsActive;
 
   const prescriberRecord = {
