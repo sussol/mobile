@@ -5,7 +5,17 @@
 
 import Realm from 'realm';
 
-export class LocationMovement extends Realm.Object {}
+export class LocationMovement extends Realm.Object {
+  get breaches() {
+    return (
+      this.location?.breaches?.filtered(
+        'startTimestamp <= $0 && (endTimestamp >= $1 || endTimestamp == null)',
+        this.enterTimestamp,
+        this.exitTimestamp ?? new Date()
+      ) ?? []
+    );
+  }
+}
 
 LocationMovement.schema = {
   name: 'LocationMovement',
