@@ -49,10 +49,9 @@ const QueryingIndicator = React.memo(QueryingIndicatorComponent);
 
 const QueryHandlerComponent = ({ queryUrl, onData, onError }) => {
   const [data, error, isFetching] = useFetch(queryUrl);
-  if (isFetching) return <QueryingIndicator isQuerying={isFetching} />;
   if (data) onData(data);
   if (error) onError(error.message);
-  return null;
+  return <QueryingIndicator isQuerying={isFetching} />;
 };
 
 const QueryHandler = React.memo(QueryHandlerComponent);
@@ -101,8 +100,8 @@ export const SearchFormComponent = ({
 
   const isError = useMemo(() => !!error, [error]);
   const onError = useCallback(responseError => {
-    resetQueryUrl();
     setError(responseError);
+    resetQueryUrl();
   }, []);
   const resetError = useCallback(() => setError(''), []);
 
