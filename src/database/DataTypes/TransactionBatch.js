@@ -209,6 +209,10 @@ export class TransactionBatch extends Realm.Object {
     return `${this?.itemBatch} in a ${this.transaction.type}`;
   }
 
+  get breaches() {
+    return this.itemBatch?.breaches;
+  }
+
   get otherPartyName() {
     return this.transaction?.otherParty?.name || '';
   }

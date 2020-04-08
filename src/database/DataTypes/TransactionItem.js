@@ -1,5 +1,5 @@
 import Realm from 'realm';
-import { complement } from 'set-manipulator';
+import { complement, union } from 'set-manipulator';
 
 import { createRecord, getTotal } from '../utilities';
 
@@ -297,6 +297,16 @@ export class TransactionItem extends Realm.Object {
 
   get doses() {
     return this.batches.sum('doses');
+  }
+
+  get isInBreach() {
+    return this.batches.some(({ isInBreach }) => isInBreach);
+  }
+
+  get breaches() {
+    return (
+      this.batches?.reduce((acc, { breaches }) => union(acc, breaches, ({ id }) => id), []) ?? []
+    );
   }
 
   /**
