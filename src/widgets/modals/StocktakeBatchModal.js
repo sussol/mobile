@@ -26,6 +26,7 @@ import { ROUTES } from '../../navigation/constants';
 
 import { selectUsingPayments } from '../../selectors/modules';
 import { AutocompleteSelector } from '../modalChildren';
+import { BreachActions } from '../../actions/BreachActions';
 
 /**
  * Renders a stateful modal with a stocktake item and it's batches loaded
@@ -111,6 +112,7 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: re
     dispatch(PageActions.editStocktakeBatchLocation(item));
   const onApplyStocktakeBatchVvmStatus = ({ item }) =>
     dispatch(PageActions.editStocktakeBatchVvmStatus(item));
+  const onViewBreach = rowKey => reduxDispatch(BreachActions.setStocktakeBatch(rowKey));
 
   const toggles = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), []);
 
@@ -134,6 +136,8 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: re
         return onSelectLocation;
       case 'currentVvmStatusName':
         return onSelectVvmStatus;
+      case 'isInBreach':
+        return onViewBreach;
       default:
         return null;
     }
