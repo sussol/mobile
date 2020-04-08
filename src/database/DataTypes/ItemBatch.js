@@ -30,6 +30,10 @@ export class ItemBatch extends Realm.Object {
     return this.location?.isInBreach() ?? false;
   }
 
+  get breaches() {
+    return this.locationMovements?.reduce((acc, { breaches }) => [...acc, ...breaches], []) ?? [];
+  }
+
   get currentVvmStatus() {
     return this.vaccineVialMonitorStatusLogs.sorted('timestamp', true)[0];
   }
@@ -134,8 +138,8 @@ export class ItemBatch extends Realm.Object {
    * @return {Bool} Indicator whether the new vvm status should be applied to this batch.
    */
   shouldApplyVvmStatus(newVvmStatus) {
-    const { id: newStatusId } = newVvmStatus;
-    const { id: currentStatusId } = this.currentVvmStatus;
+    const { id: newStatusId } = newVvmStatus || {};
+    const { id: currentStatusId } = this.currentVvmStatus || {};
 
     return newStatusId !== currentStatusId;
   }
@@ -145,8 +149,8 @@ export class ItemBatch extends Realm.Object {
    * @return {Bool} Indicator whether the new location should be applied to this batch.
    */
   shouldApplyLocation(newLocation) {
-    const { id: newLocationId } = newLocation;
-    const { id: currentLocationId } = this.location;
+    const { id: newLocationId } = newLocation || {};
+    const { id: currentLocationId } = this.location || {};
 
     return newLocationId !== currentLocationId;
   }
