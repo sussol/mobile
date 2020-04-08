@@ -199,7 +199,7 @@ SearchListItemColumnComponent.propTypes = {
 
 const localStyles = StyleSheet.create({
   container: {
-    height: 720,
+    height: '95%',
     marginVertical: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
