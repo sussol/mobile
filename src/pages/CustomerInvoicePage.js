@@ -20,6 +20,7 @@ import { BottomConfirmModal } from '../widgets/bottomModals';
 
 import { buttonStrings, modalStrings, generalStrings } from '../localization';
 import globalStyles from '../globalStyles';
+import { BreachActions } from '../actions/BreachActions';
 
 /**
  * Renders a mSupply mobile page with customer invoice loaded for editing
@@ -64,6 +65,7 @@ export const CustomerInvoice = ({
   onApplyMasterLists,
   route,
   onEditBatchDoses,
+  onViewBreach,
 }) => {
   const { isFinalised, comment, theirRef } = pageObject;
 
@@ -82,6 +84,8 @@ export const CustomerInvoice = ({
         return onUncheck;
       case 'doses':
         return onEditBatchDoses;
+      case 'isInBreach':
+        return onViewBreach;
       default:
         return null;
     }
@@ -201,11 +205,14 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   const { otherParty } = transaction || {};
   const hasMasterLists = otherParty?.masterLists?.length > 0;
 
+  const onViewBreach = rowKey => dispatch(BreachActions.setTransactionItem(rowKey));
+
   const noMasterLists = () =>
     ToastAndroid.show(modalStrings.customer_no_masterlist_available, ToastAndroid.LONG);
   return {
     ...getPageDispatchers(dispatch, 'Transaction', ROUTES.CUSTOMER_INVOICE),
     [hasMasterLists ? null : 'onAddMasterList']: noMasterLists,
+    onViewBreach,
   };
 };
 
@@ -255,4 +262,5 @@ CustomerInvoice.propTypes = {
   onApplyMasterLists: PropTypes.func.isRequired,
   route: PropTypes.string.isRequired,
   onEditBatchDoses: PropTypes.func.isRequired,
+  onViewBreach: PropTypes.func.isRequired,
 };
