@@ -338,6 +338,14 @@ export class StocktakeBatch extends Realm.Object {
     return `Stocktake batch representing ${this.itemBatch}`;
   }
 
+  get breaches() {
+    return this.itemBatch?.breaches;
+  }
+
+  get itemName() {
+    return this?.itemBatch?.itemName;
+  }
+
   get costPriceString() {
     return currency(this.costPrice ?? 0, { formatWithSymbol: true }).format();
   }
