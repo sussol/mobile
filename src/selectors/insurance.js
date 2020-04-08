@@ -17,17 +17,11 @@ export const selectInsurancePolicyDiscountRate = ({ insurancePolicy }) => {
 export const selectInsuranceDiscountRate = ({ insurance }) =>
   selectInsurancePolicyDiscountRate(insurance);
 
-export const selectIsSelectedPolicyEditable = ({ user, insurance }) => {
+export const selectIsSelectedPolicyEditable = ({ insurance }) => {
   const { selectedInsurancePolicy } = insurance ?? {};
-  const { patient: policyPatient, enteredBy: policyUser } = selectedInsurancePolicy ?? {};
-
+  const { patient: policyPatient } = selectedInsurancePolicy ?? {};
   const { isEditable: isPatientEditable } = policyPatient ?? {};
-
-  const { currentUser } = user ?? {};
-  const { id: currentUserId } = currentUser ?? {};
-  const { id: policyUserId } = policyUser ?? {};
-
-  return isPatientEditable || (currentUserId && policyUserId && currentUserId === policyUserId);
+  return isPatientEditable;
 };
 
 export const selectInsuranceModalOpen = ({ insurance }) => {
