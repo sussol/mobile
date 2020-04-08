@@ -273,6 +273,43 @@ export class TransactionItem extends Realm.Object {
       });
     });
   };
+
+  /**
+   * Sets the doses for all underlying transaction batches. Rather than applying
+   * all doses in FEFO, apply an even distribution of doses over the transaction
+   * batches.
+   * @param {Number} value The number of doses to set for this item
+   */
+  setDoses(database, value) {
+    const dosesToSet = Math.min(value, this.totalQuantity * this.dosesPerVial);
+    const dosesToAssignToEachBatch = dosesToSet / this.totalQuantity;
+
+    this.resetAllDoses(database);
+    this.batches.sorted('expiryDate', false).forEach(batch => {
+      const { totalQuantity: thisBatchesQuantity } = batch;
+      batch.setDoses(database, Math.floor(dosesToAssignToEachBatch * thisBatchesQuantity));
+    });
+  }
+
+  get dosesPerVial() {
+    return this.isVaccine ? this.item?.doses ?? 0 : 0;
+  }
+
+  get doses() {
+    return this.batches.sum('doses');
+  }
+
+  /**
+   * Sets the doses for this TransactionItem to 0.
+   */
+  resetAllDoses(database) {
+    const { batches } = this;
+    batches.forEach(batch => {
+      batch.doses = 0;
+
+      database.save('TransactionBatch', batch);
+    });
+  }
 }
 
 TransactionItem.schema = {

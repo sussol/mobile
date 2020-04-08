@@ -36,6 +36,53 @@ export const refreshIndicatorRow = route => ({
   payload: { route },
 });
 
+export const editBatchDoses = (newValue, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  if (objectToEdit) {
+    UIDatabase.write(() => objectToEdit.setDoses(UIDatabase, parsePositiveInteger(newValue)));
+    dispatch(refreshRow(rowKey, route));
+  }
+};
+
+export const editBatchVvmStatus = (vvmStatus, objectType, route) => (dispatch, getState) => {
+  const { modalValue, keyExtractor } = selectPageState(getState());
+
+  UIDatabase.write(() =>
+    UIDatabase.update(objectType, { ...modalValue, vaccineVialMonitorStatus: vvmStatus })
+  );
+
+  reduxBatch(() => {
+    dispatch(refreshRow(keyExtractor(modalValue), route));
+    dispatch(closeModal(route));
+  });
+};
+
+export const editTransactionBatchVvmStatus = (vvmStatus, route) =>
+  editBatchVvmStatus(vvmStatus, 'TransactionBatch', route);
+
+export const editStocktakeBatchVvmStatus = (vvmStatus, route) =>
+  editBatchVvmStatus(vvmStatus, 'StocktakeBatch', route);
+
+export const editBatchLocation = (location, objectType, route) => (dispatch, getState) => {
+  const { modalValue, keyExtractor } = selectPageState(getState());
+
+  UIDatabase.write(() => UIDatabase.update(objectType, { ...modalValue, location }));
+
+  reduxBatch(() => {
+    dispatch(refreshRow(keyExtractor(modalValue), route));
+    dispatch(closeModal(route));
+  });
+};
+
+export const editTransactionBatchLocation = (location, route) =>
+  editBatchLocation(location, 'TransactionBatch', route);
+
+export const editStocktakeBatchLocation = (location, route) =>
+  editBatchLocation(location, 'StocktakeBatch', route);
+
 /**
  * Edits a rows underlying `batch` field.
  *
@@ -386,4 +433,9 @@ export const CellActionsLookup = {
   editBatchSupplier,
   editRequisitionItemRequiredQuantityWithReason,
   editTransactionBatchName,
+  editTransactionBatchLocation,
+  editStocktakeBatchLocation,
+  editTransactionBatchVvmStatus,
+  editStocktakeBatchVvmStatus,
+  editBatchDoses,
 };

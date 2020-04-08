@@ -32,7 +32,19 @@ const PER_PAGE_INFO_COLUMNS = {
     ['entryDate', 'confirmDate', 'enteredBy'],
     ['customer', 'theirRef', 'transactionComment'],
   ],
+  [ROUTES.CUSTOMER_INVOICE_WITH_VACCINES]: [
+    ['entryDate', 'confirmDate', 'enteredBy'],
+    ['customer', 'theirRef', 'transactionComment'],
+  ],
   [ROUTES.SUPPLIER_INVOICE]: [
+    ['entryDate', 'confirmDate'],
+    ['otherParty', 'theirRef', 'transactionComment'],
+  ],
+  [ROUTES.SUPPLIER_INVOICE_WITH_VACCINES]: [
+    ['entryDate', 'confirmDate'],
+    ['otherParty', 'theirRef', 'transactionComment'],
+  ],
+  [ROUTES.SUPPLIER_INVOICE_WITH_PRICES]: [
     ['entryDate', 'confirmDate'],
     ['otherParty', 'theirRef', 'transactionComment'],
   ],
@@ -58,6 +70,7 @@ const PER_PAGE_INFO_COLUMNS = {
   stocktakeBatchEditModalWithReasons: [['itemName']],
   stocktakeBatchEditModalWithPrices: [['itemName']],
   stocktakeBatchEditModalWithReasonsAndPrices: [['itemName']],
+  stocktakeBatchEditModalWithVaccines: [['itemName']],
   supplierCredit: [
     ['entryDate', 'confirmDate', 'transactionCategory'],
     ['enteredBy', 'otherParty'],
@@ -85,11 +98,11 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
   },
   numberOfAffectedBatches: {
     title: `${pageInfoStrings.number_of_affected_batches}:`,
-    info: pageObject.numberOfAffectedBatches(UIDatabase),
+    info: pageObject?.numberOfAffectedBatches?.(UIDatabase),
   },
   breachDuration: {
     title: `${pageInfoStrings.duration}:`,
-    info: formatTimeDifference(pageObject.duration),
+    info: pageObject.duration ? formatTimeDifference(pageObject.duration) : '',
   },
   location: {
     title: `${pageInfoStrings.location}:`,
@@ -97,7 +110,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
   },
   affectedQuantity: {
     title: `${pageInfoStrings.affected_quantity}:`,
-    info: pageObject.affectedQuantity(UIDatabase),
+    info: pageObject?.affectedQuantity?.(UIDatabase),
   },
   entryDate: {
     title: `${pageInfoStrings.entry_date}:`,

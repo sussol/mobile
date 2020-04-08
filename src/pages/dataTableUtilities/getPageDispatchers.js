@@ -46,6 +46,10 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
       dispatch(BasePageActions.editIndicatorValue(value, rowKey, columnKey, route)),
 
     // Modals
+    onSelectLocation: rowKey =>
+      dispatch(BasePageActions.openModal(MODAL_KEYS.SELECT_LOCATION, rowKey, route)),
+    onSelectVvmStatus: rowKey =>
+      dispatch(BasePageActions.openModal(MODAL_KEYS.SELECT_VVM_STATUS, rowKey, route)),
     onOpenRegimenDataModal: () =>
       dispatch(BasePageActions.openModal(MODAL_KEYS.VIEW_REGIMEN_DATA, route)),
     onOpenOutdatedItemModal: () =>
@@ -64,6 +68,15 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
     // Modal callbacks
     onApplyReason: ({ item }) => dispatch(BasePageActions.applyReason(item, route)),
     onConfirmBatchEdit: () => dispatch(BasePageActions.closeAndRefresh(route)),
+    onApplyTransactionBatchLocation: ({ item }) =>
+      dispatch(BasePageActions.editTransactionBatchLocation(item, route)),
+    onApplyStocktakeBatchLocation: ({ item }) =>
+      dispatch(BasePageActions.editStocktakeBatchLocation(item, route)),
+    onApplyTransactionBatchVvmStatus: ({ item }) =>
+      dispatch(BasePageActions.editTransactionBatchVvmStatus(item, route)),
+    onApplyStocktakeBatchVvmStatus: ({ item }) =>
+      dispatch(BasePageActions.editStocktakeBatchVvmStatus(item, route)),
+
     // Adding items/batch rows.
     onAddTransactionBatch: item => dispatch(BasePageActions.addTransactionBatch(item, route)),
     onAddStocktakeBatch: () => dispatch(BasePageActions.addStocktakeBatch(route)),
@@ -98,6 +111,8 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
     // Editable cell callbacks
     onEditTransactionBatchName: (newValue, rowKey) =>
       dispatch(BasePageActions.editTransactionBatchName(newValue, rowKey, route)),
+    onEditBatchDoses: (newValue, rowKey) =>
+      dispatch(BasePageActions.editBatchDoses(newValue, rowKey, route)),
     onEditRequiredQuantityWithReason: (newValue, rowKey) =>
       dispatch(
         BasePageActions.editRequisitionItemRequiredQuantityWithReason(newValue, rowKey, route)

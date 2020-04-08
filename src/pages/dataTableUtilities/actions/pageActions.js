@@ -67,6 +67,8 @@ export const openModal = (modalKey, value, route) => {
     case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
     case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
     case MODAL_KEYS.SELECT_ITEM_BATCH_SUPPLIER:
+    case MODAL_KEYS.SELECT_LOCATION:
+    case MODAL_KEYS.SELECT_VVM_STATUS:
       return { type: ACTIONS.OPEN_MODAL, payload: { modalKey, rowKey: value, route } };
     case MODAL_KEYS.CREATE_CASH_TRANSACTION:
     case MODAL_KEYS.MONTHS_SELECT:

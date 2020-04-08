@@ -41,11 +41,10 @@ const DropDownCell = React.memo(
             {value || placeholder}
           </Text>
         </View>
-        {!!value && (
-          <View style={dropDownCellIconContainer}>
-            <ExpandIcon />
-          </View>
-        )}
+
+        <View style={dropDownCellIconContainer}>
+          <ExpandIcon />
+        </View>
       </View>
     );
 
@@ -57,7 +56,7 @@ const DropDownCell = React.memo(
         debug={debug}
         isLastCell={isLastCell}
         onPress={onPress}
-        isDisabled={!value || isDisabled}
+        isDisabled={isDisabled}
         width={width}
         renderChildren={TouchableChild}
         containerStyle={touchableCellContainer}

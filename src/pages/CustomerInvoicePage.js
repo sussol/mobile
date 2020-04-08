@@ -10,7 +10,7 @@ import { View, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
-import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
+import { getItemLayout, getPageDispatchers, getColumns } from './dataTableUtilities';
 import { ROUTES } from '../navigation/constants';
 
 import { DataTablePageModal } from '../widgets/modals';
@@ -63,6 +63,7 @@ export const CustomerInvoice = ({
   onAddMasterList,
   onApplyMasterLists,
   route,
+  onEditBatchDoses,
 }) => {
   const { isFinalised, comment, theirRef } = pageObject;
 
@@ -79,6 +80,8 @@ export const CustomerInvoice = ({
       case 'remove':
         if (propName === 'onCheck') return onCheck;
         return onUncheck;
+      case 'doses':
+        return onEditBatchDoses;
       default:
         return null;
     }
@@ -207,9 +210,13 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 };
 
 const mapStateToProps = state => {
-  const { pages } = state;
+  const { pages, modules } = state;
   const { customerInvoice } = pages;
-  return customerInvoice;
+  const { usingVaccines } = modules;
+
+  const columnKey = usingVaccines ? ROUTES.CUSTOMER_INVOICE_WITH_VACCINES : ROUTES.CUSTOMER_INVOICE;
+
+  return { ...customerInvoice, columns: getColumns(columnKey) };
 };
 
 export const CustomerInvoicePage = connect(mapStateToProps, mapDispatchToProps)(CustomerInvoice);
@@ -247,4 +254,5 @@ CustomerInvoice.propTypes = {
   onAddTransactionItem: PropTypes.func.isRequired,
   onApplyMasterLists: PropTypes.func.isRequired,
   route: PropTypes.string.isRequired,
+  onEditBatchDoses: PropTypes.func.isRequired,
 };

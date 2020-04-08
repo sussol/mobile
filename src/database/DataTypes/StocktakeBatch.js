@@ -211,7 +211,25 @@ export class StocktakeBatch extends Realm.Object {
    */
   set countedTotalQuantity(quantity) {
     // Handle packsize of 0.
-    this.countedNumberOfPacks = this.packSize ? quantity / this.packSize : 0;
+    const countedNumberOfPacks = this.packSize ? quantity / this.packSize : 0;
+
+    this.countedNumberOfPacks = countedNumberOfPacks;
+    this.doses = countedNumberOfPacks * this.dosesPerVial;
+  }
+
+  get isVaccine() {
+    return this.itemBatch?.isVaccine ?? false;
+  }
+
+  get dosesPerVial() {
+    return this.isVaccine ? this.itemBatch?.item?.doses ?? 0 : 0;
+  }
+
+  setDoses(database, newValue) {
+    const maximumDosesPossible = this.dosesPerVial * this.countedTotalQuantity;
+    this.doses = Math.min(newValue, maximumDosesPossible);
+
+    database.save('StocktakeBatch', this);
   }
 
   /**
@@ -268,6 +286,14 @@ export class StocktakeBatch extends Realm.Object {
     this.itemBatch.sellPrice = this.sellPrice;
     this.itemBatch.supplier = this.supplier;
 
+    if (this.itemBatch.shouldApplyVvmStatus(this.vaccineVialMonitorStatus)) {
+      this.itemBatch.applyVvmStatus(database, this.vaccineVialMonitorStatus);
+    }
+
+    if (this.itemBatch.shouldApplyLocation(this.location)) {
+      this.itemBatch.applyLocation(database, this.location);
+    }
+
     // Make inventory adjustments if there is a difference to apply.
     if (this.difference !== 0) {
       const isAddition = this.countedTotalQuantity > this.snapshotTotalQuantity;
@@ -296,6 +322,8 @@ export class StocktakeBatch extends Realm.Object {
       // (i.e. always treat as positive).
       const snapshotDifference = Math.abs(this.difference);
       transactionBatch.setTotalQuantity(database, snapshotDifference);
+      transactionBatch.doses = this.doses;
+
       database.save('TransactionBatch', transactionBatch);
     }
     database.save('ItemBatch', this.itemBatch);
@@ -337,7 +365,7 @@ StocktakeBatch.schema = {
     option: { type: 'Options', optional: true },
     supplier: { type: 'Name', optional: true },
     location: { type: 'Location', optional: true },
-    doses: 'double?',
+    doses: { type: 'double', default: 0 },
     vaccineVialMonitorStatus: { type: 'VaccineVialMonitorStatus', optional: true },
   },
 };
