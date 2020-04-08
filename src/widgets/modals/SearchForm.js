@@ -9,6 +9,8 @@ import { View, StyleSheet, FlatList, Text, TouchableOpacity } from 'react-native
 import { connect, batch } from 'react-redux';
 import PropTypes from 'prop-types';
 
+import { useFetch } from '../../hooks/useFetch';
+
 import { FormControl } from '../FormControl';
 
 import { Spinner } from '..';
@@ -23,7 +25,12 @@ import { generalStrings } from '../../localization';
 
 import { APP_FONT_FAMILY, DARK_GREY, ROW_BLUE, WHITE, SUSSOL_ORANGE } from '../../globalStyles';
 
-import { queryPatientApi, queryPrescriberApi } from '../../sync/lookupApiUtils';
+import {
+  getPatientRequestUrl,
+  getPrescriberRequestUrl,
+  processPatientResponse,
+  processPrescriberResponse,
+} from '../../sync/lookupApiUtils';
 
 import {
   selectDataSetInUse,
@@ -39,6 +46,16 @@ const QueryingIndicatorComponent = ({ isQuerying }) =>
   ) : null;
 
 const QueryingIndicator = React.memo(QueryingIndicatorComponent);
+
+const QueryHandlerComponent = ({ queryUrl, onData, onError }) => {
+  const [data, error, isFetching] = useFetch(queryUrl);
+  if (isFetching) return <QueryingIndicator isQuerying={isFetching} />;
+  if (data) onData(data);
+  if (error) onError(error.message);
+  return null;
+};
+
+const QueryHandler = React.memo(QueryHandlerComponent);
 
 const SearchListItemColumnComponent = ({ value, type }) => {
   const valueText = type === 'date' ? value?.toDateString() ?? generalStrings.not_available : value;
@@ -73,21 +90,35 @@ export const SearchFormComponent = ({
   selectPrescriber,
 }) => {
   const [data, setData] = useState([]);
-
-  const [isQuerying, setIsQuerying] = useState(false);
-
-  const [isError, setIsError] = useState(false);
   const [error, setError] = useState('');
-  const resetError = useCallback(() => {
-    setIsError(false);
-    setError('');
+  const [queryUrl, setQueryUrl] = useState('');
+
+  const onData = useCallback(responseData => {
+    if (isPatient) setData(processPatientResponse(responseData));
+    if (isPrescriber) setData(processPrescriberResponse(responseData));
+    resetQueryUrl();
   }, []);
 
-  const renderItem = useMemo(
-    () => ({ item }) => {
-      const onSelect = () => selectRecord(item);
-      return <SearchListItem item={item} config={listConfig} onSelect={onSelect} />;
-    },
+  const isError = useMemo(() => !!error, [error]);
+  const onError = useCallback(responseError => {
+    resetQueryUrl();
+    setError(responseError);
+  }, []);
+  const resetError = useCallback(() => setError(''), []);
+
+  const isQueryUrl = useMemo(() => !!queryUrl, [queryUrl]);
+  const resetQueryUrl = useCallback(() => setQueryUrl(''), []);
+
+  const lookupRecords = useMemo(() => {
+    if (isPatient) return params => setQueryUrl(getPatientRequestUrl(params));
+    if (isPrescriber) return params => setQueryUrl(getPrescriberRequestUrl(params));
+    return () => null;
+  }, [isPatient, isPrescriber]);
+
+  const renderRecord = useMemo(
+    () => ({ item }) => (
+      <SearchListItem item={item} config={listConfig} onSelect={() => selectRecord(item)} />
+    ),
     [listConfig]
   );
 
@@ -97,61 +128,54 @@ export const SearchFormComponent = ({
     return () => null;
   }, [isPatient, isPrescriber]);
 
-  const lookupPatient = useCallback(params => {
-    setIsQuerying(true);
-    queryPatientApi(params).then(({ error: patientError, data: patientData }) => {
-      if (patientError) {
-        setIsError(true);
-        setError(patientError);
-      }
-      setData(patientData);
-      setIsQuerying(false);
-    });
-  }, []);
+  const FormView = useCallback(
+    () => (
+      <FormControl
+        inputConfig={formConfig}
+        onSave={lookupRecords}
+        showCancelButton={false}
+        saveButtonText={generalStrings.search}
+      />
+    ),
+    [formConfig, lookupRecords]
+  );
 
-  const lookupPrescriber = useCallback(params => {
-    setIsQuerying(true);
-    queryPrescriberApi(params).then(({ error: prescriberError, data: prescriberData }) => {
-      if (prescriberError) {
-        setIsError(true);
-        setError(prescriberError);
-      }
-      setData(prescriberData);
-      setIsQuerying(false);
-    });
-  }, []);
+  const ListView = useCallback(
+    () =>
+      isQueryUrl ? (
+        <QueryHandler queryUrl={queryUrl} onData={onData} onError={onError} />
+      ) : (
+        <FlatList data={data} keyExtractor={record => record.id} renderItem={renderRecord} />
+      ),
+    [isQueryUrl]
+  );
 
-  const lookupRecords = useMemo(
-    () => params => {
-      if (isPatient) lookupPatient(params);
-      if (isPrescriber) lookupPrescriber(params);
-    },
-    [isPatient, isPrescriber]
+  const ErrorView = useCallback(
+    () => (
+      <>
+        <ModalContainer fullScreen={true} isVisible={isError}>
+          <ConfirmForm
+            isOpen={isError}
+            questionText={error}
+            onConfirm={resetError}
+            confirmText="Close"
+          />
+        </ModalContainer>
+      </>
+    ),
+    [isError, error, resetError]
   );
 
   return (
     <View style={localStyles.container}>
       <View style={localStyles.formContainer}>
-        <FormControl
-          inputConfig={formConfig}
-          onSave={lookupRecords}
-          showCancelButton={false}
-          saveButtonText={generalStrings.search}
-        />
+        <FormView />
       </View>
       <View style={localStyles.verticalSeparator} />
       <View style={localStyles.listContainer}>
-        <QueryingIndicator isQuerying={isQuerying} />
-        <FlatList data={data} keyExtractor={record => record.id} renderItem={renderItem} />
+        <ListView />
       </View>
-      <ModalContainer fullScreen={true} isVisible={isError}>
-        <ConfirmForm
-          isOpen={isError}
-          questionText={error}
-          onConfirm={resetError}
-          confirmText="Close"
-        />
-      </ModalContainer>
+      <ErrorView />
     </View>
   );
 };
@@ -175,6 +199,12 @@ export const SearchForm = connect(mapStateToProps, mapDispatchToProps)(SearchFor
 
 QueryingIndicatorComponent.propTypes = {
   isQuerying: PropTypes.bool.isRequired,
+};
+
+QueryHandlerComponent.propTypes = {
+  queryUrl: PropTypes.string.isRequired,
+  onData: PropTypes.func.isRequired,
+  onError: PropTypes.func.isRequired,
 };
 
 SearchFormComponent.propTypes = {
