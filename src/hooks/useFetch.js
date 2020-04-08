@@ -40,8 +40,8 @@ export const useFetch = (url, options = {}, timeout = CONNECTION_TIMEOUT_PERIOD)
   React.useEffect(() => {
     let mounted = true;
     const abortController = new AbortController();
-    setIsFetching(true);
     (async () => {
+      setIsFetching(true);
       try {
         const { authorization } = getAuthorizationHeader();
         const { signal } = abortController;
@@ -53,8 +53,8 @@ export const useFetch = (url, options = {}, timeout = CONNECTION_TIMEOUT_PERIOD)
           if (responseError) throw new Error(responseError);
           if (!responseData.length) throw new Error(ERROR_CODES.RESPONSE_NO_RECORDS);
           if (mounted) {
-            setData(responseData);
             setIsFetching(false);
+            setData(responseData);
           }
         } else {
           switch (status) {
@@ -68,8 +68,8 @@ export const useFetch = (url, options = {}, timeout = CONNECTION_TIMEOUT_PERIOD)
         }
       } catch (responseError) {
         if (mounted) {
-          setError(responseError);
           setIsFetching(false);
+          setError(responseError);
         }
       }
     })();
