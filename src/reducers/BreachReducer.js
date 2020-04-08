@@ -11,6 +11,7 @@ const initialState = () => ({
   isModalOpen: false,
   forBatch: false,
   forFridge: false,
+  forItem: false,
   batch: null,
   fridge: null,
   breaches: null,
@@ -39,7 +40,7 @@ export const BreachReducer = (state = initialState(), action) => {
       const { payload } = action;
       const { batch } = payload;
 
-      return { ...state, batch, forBatch: true };
+      return { ...state, itemName: batch.itemName, batch, forBatch: true };
     }
 
     case BREACH_ACTIONS.SET_FRIDGE_BREACH: {
@@ -51,6 +52,22 @@ export const BreachReducer = (state = initialState(), action) => {
       const { location: fridge } = breach;
 
       return { ...state, fridge, breaches: [breach], forFridge: true, isModalOpen: true };
+    }
+
+    case BREACH_ACTIONS.SET_TRANSACTION_ITEM: {
+      const { payload } = action;
+      const { breaches, transactionItem } = payload;
+      const { itemName } = transactionItem;
+
+      return { ...state, breaches, itemName, forItem: true, isModalOpen: true };
+    }
+
+    case BREACH_ACTIONS.SET_STOCKTAKE_BATCH: {
+      const { payload } = action;
+      const { breaches, stocktakeBatch } = payload;
+      const { itemName } = stocktakeBatch;
+
+      return { ...state, breaches, itemName, forItem: true, isModalOpen: true };
     }
 
     default:
