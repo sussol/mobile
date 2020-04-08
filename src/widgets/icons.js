@@ -140,3 +140,13 @@ TemperatureIcon.propTypes = {
   size: PropTypes.number,
   style: PropTypes.object,
 };
+
+export const HazardIcon = ({ color, size, style }) => (
+  <FA5Icon name="exclamation-triangle" size={size} style={style} color={color} />
+);
+HazardIcon.defaultProps = { color: SUSSOL_ORANGE, size: 25, style: {} };
+HazardIcon.propTypes = {
+  color: PropTypes.string,
+  size: PropTypes.number,
+  style: PropTypes.object,
+};
