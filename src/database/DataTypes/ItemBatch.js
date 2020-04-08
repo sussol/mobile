@@ -152,17 +152,13 @@ export class ItemBatch extends Realm.Object {
   }
 
   applyLocation(database, newLocation) {
-    if (!this.shouldApplyLocation(newLocation)) return null;
-
     this.location = newLocation;
 
     return createRecord(database, 'LocationMovement', this, newLocation);
   }
 
   applyVvmStatus(database, newVvmStatus) {
-    return this.shouldApplyVvmStatus(newVvmStatus)
-      ? createRecord(database, 'VaccineVialMonitorStatusLog', this, newVvmStatus)
-      : null;
+    return createRecord(database, 'VaccineVialMonitorStatusLog', this, newVvmStatus);
   }
 }
 

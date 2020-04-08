@@ -286,8 +286,13 @@ export class StocktakeBatch extends Realm.Object {
     this.itemBatch.sellPrice = this.sellPrice;
     this.itemBatch.supplier = this.supplier;
 
-    this.itemBatch.applyVvmStatus(database, this.vaccineVialMonitorStatus);
-    this.itemBatch.applyLocation(database, this.location);
+    if (this.itemBatch.shouldApplyVvmStatus(this.vaccineVialMonitorStatus)) {
+      this.itemBatch.applyVvmStatus(database, this.vaccineVialMonitorStatus);
+    }
+
+    if (this.itemBatch.shouldApplyLocation(this.location)) {
+      this.itemBatch.applyLocation(database, this.location);
+    }
 
     // Make inventory adjustments if there is a difference to apply.
     if (this.difference !== 0) {
