@@ -218,7 +218,7 @@ export class StocktakeBatch extends Realm.Object {
   }
 
   get isVaccine() {
-    return this.itemBatch?.item?.isVaccine ?? false;
+    return this.itemBatch?.isVaccine ?? false;
   }
 
   get dosesPerVial() {
