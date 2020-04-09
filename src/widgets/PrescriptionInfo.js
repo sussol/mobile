@@ -40,15 +40,13 @@ const PrescriptionInfoComponent = ({
   editPrescriber,
   viewHistory,
 }) => {
-  const editPatientCallback = React.useCallback(
-    () => canEditPatient && editPatient(prescriptionPatient),
-    [prescriptionPatient, canEditPatient]
-  );
+  const editPatientCallback = React.useCallback(() => editPatient(prescriptionPatient), [
+    prescriptionPatient,
+  ]);
 
-  const prescriberEditCallback = React.useCallback(
-    () => canEditPrescriber && editPrescriber(prescriptionPrescriber),
-    [prescriptionPrescriber, canEditPrescriber]
-  );
+  const prescriberEditCallback = React.useCallback(() => editPrescriber(prescriptionPrescriber), [
+    prescriptionPrescriber,
+  ]);
 
   const viewHistoryCallback = React.useCallback(() => viewHistory(prescriptionPatient), [
     prescriptionPatient,
