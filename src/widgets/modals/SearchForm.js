@@ -21,7 +21,9 @@ import { InsuranceActions } from '../../actions/InsuranceActions';
 import { PatientActions } from '../../actions/PatientActions';
 import { PrescriberActions } from '../../actions/PrescriberActions';
 
-import { generalStrings } from '../../localization';
+import { recordKeyExtractor } from '../../pages/dataTableUtilities';
+
+import { modalStrings, generalStrings } from '../../localization';
 
 import { APP_FONT_FAMILY, DARK_GREY, ROW_BLUE, WHITE, SUSSOL_ORANGE } from '../../globalStyles';
 
@@ -71,7 +73,7 @@ const SearchListItemComponent = ({ item, config, onSelect }) => {
     return <SearchListItemColumn key={key} value={value} type={type} />;
   });
   return (
-    <TouchableOpacity onPress={onSelect} style={localStyles.rowContainer}>
+    <TouchableOpacity onPress={() => onSelect(item)} style={localStyles.rowContainer}>
       {columns}
     </TouchableOpacity>
   );
@@ -98,14 +100,12 @@ export const SearchFormComponent = ({
     resetQueryUrl();
   }, []);
 
-  const isError = useMemo(() => !!error, [error]);
   const onError = useCallback(responseError => {
     setError(responseError);
     resetQueryUrl();
   }, []);
-  const resetError = useCallback(() => setError(''), []);
 
-  const isQueryUrl = useMemo(() => !!queryUrl, [queryUrl]);
+  const resetError = useCallback(() => setError(''), []);
   const resetQueryUrl = useCallback(() => setQueryUrl(''), []);
 
   const lookupRecords = useMemo(() => {
@@ -114,10 +114,8 @@ export const SearchFormComponent = ({
     return () => null;
   }, [isPatient, isPrescriber]);
 
-  const renderRecord = useMemo(
-    () => ({ item }) => (
-      <SearchListItem item={item} config={listConfig} onSelect={() => selectRecord(item)} />
-    ),
+  const renderRecord = useCallback(
+    ({ item }) => <SearchListItem item={item} config={listConfig} onSelect={selectRecord} />,
     [listConfig]
   );
 
@@ -141,28 +139,28 @@ export const SearchFormComponent = ({
 
   const ListView = useCallback(
     () =>
-      isQueryUrl ? (
+      queryUrl ? (
         <QueryHandler queryUrl={queryUrl} onData={onData} onError={onError} />
       ) : (
-        <FlatList data={data} keyExtractor={record => record.id} renderItem={renderRecord} />
+        <FlatList data={data} keyExtractor={recordKeyExtractor} renderItem={renderRecord} />
       ),
-    [isQueryUrl]
+    [queryUrl, onData, onError, data, renderRecord]
   );
 
   const ErrorView = useCallback(
     () => (
       <>
-        <ModalContainer fullScreen={true} isVisible={isError}>
+        <ModalContainer fullScreen={true} isVisible={!!error}>
           <ConfirmForm
-            isOpen={isError}
+            isOpen={!!error}
             questionText={error}
             onConfirm={resetError}
-            confirmText="Close"
+            confirmText={modalStrings.confirm}
           />
         </ModalContainer>
       </>
     ),
-    [isError, error, resetError]
+    [error, resetError]
   );
 
   return (

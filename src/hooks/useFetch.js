@@ -5,8 +5,6 @@
 
 import React from 'react';
 
-import 'abortcontroller-polyfill';
-
 import { getAuthHeader, AUTH_ERROR_CODES } from 'sussol-utilities';
 
 import { SETTINGS_KEYS } from '../settings';
@@ -20,9 +18,6 @@ const ERROR_CODES = {
   EMPTY_RESPONSE: 'No records found',
 };
 
-/* eslint-disable no-undef */
-const { AbortController } = window;
-
 const getAuthorizationHeader = () => {
   const username = UIDatabase.getSetting(SYNC_SITE_NAME);
   const password = UIDatabase.getSetting(SYNC_SITE_PASSWORD_HASH);
@@ -30,63 +25,60 @@ const getAuthorizationHeader = () => {
 };
 
 /**
- * Simple custom hook to fetch data inside mounted component.
+ * Custom hook to fetch data inside mounted component.
+ *
+ * Fetches data on component mount. If the calling component is unmounted or the timeout is reached,
+ * the fetch is aborted.
  */
 export const useFetch = (url, options = {}, timeout = CONNECTION_TIMEOUT_PERIOD) => {
   const [data, setData] = React.useState(null);
   const [error, setError] = React.useState(null);
-  const [isFetching, setIsFetching] = React.useState(false);
-
   const isMounted = React.useRef(true);
-
   React.useEffect(() => {
-    const abortController = new AbortController();
-    (async () => {
-      setIsFetching(true);
-      try {
-        const { authorization } = getAuthorizationHeader();
-        const { signal } = abortController;
-        const response = await fetch(url, { headers: { authorization }, signal, ...options });
-        const { ok, status } = response;
-        if (ok) {
-          const responseData = await response.json();
-          const { error: responseError } = responseData;
-          if (responseError) throw new Error(responseError);
-          if (!responseData.length) throw new Error(ERROR_CODES.RESPONSE_NO_RECORDS);
+    if (url) {
+      (async () => {
+        try {
+          /* eslint-disable no-undef */
+          const abortController = new AbortController();
+          const { signal } = abortController;
+          const { authorization } = getAuthorizationHeader();
+          const response = await fetch(url, { headers: { authorization }, signal, ...options });
+          const { ok, status } = response;
+          if (ok) {
+            const responseData = await response.json();
+            const { error: responseError } = responseData;
+            if (responseError) throw new Error(responseError);
+            if (!responseData.length) throw new Error(ERROR_CODES.RESPONSE_NO_RECORDS);
+            if (isMounted.current) setData(responseData);
+          } else {
+            switch (status) {
+              case 400:
+              default:
+                throw new Error(ERROR_CODES.CONNECTION_FAILURE);
+              case 401:
+                throw new Error(ERROR_CODES.INVALID_PASSWORD);
+            }
+          }
+        } catch (responseError) {
           if (isMounted.current) {
-            setIsFetching(false);
-            setData(responseData);
-          }
-        } else {
-          switch (status) {
-            case 400:
-              throw new Error(ERROR_CODES.CONNECTION_FAILURE);
-            case 401:
-              throw new Error(ERROR_CODES.INVALID_PASSWORD);
-            default:
-              throw new Error(ERROR_CODES.CONNECTION_FAILURE);
+            setError(responseError);
           }
         }
-      } catch (responseError) {
-        if (isMounted.current) {
-          setIsFetching(false);
-          setError(responseError);
-        }
-      }
-    })();
-
-    const cleanup = () => {
+      })();
+      const timer = setTimeout(() => {
+        if (isMounted.current) setData();
+        abortController.abort();
+      }, timeout);
+      return () => {
+        isMounted.current = false;
+        clearTimeout(timer);
+        abortController.abort();
+      };
+    }
+    return () => {
       isMounted.current = false;
-      abortController.abort();
     };
-
-    setTimeout(() => {
-      if (isMounted.current) setData();
-      abortController.abort();
-    }, timeout);
-
-    return cleanup;
-  }, []);
-
+  }, [url]);
+  const isFetching = !(data || error);
   return [data, error, isFetching];
 };

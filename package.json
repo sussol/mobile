@@ -64,7 +64,6 @@
     "@react-navigation/core": "^3.5.1",
     "@react-navigation/native": "^5.0.9",
     "@react-navigation/stack": "^5.1.1",
-    "abortcontroller-polyfill": "^1.4.0",
     "ajv": "^6.12.0",
     "bugsnag-react-native": "^2.23.6",
     "currency.js": "^1.2.2",
