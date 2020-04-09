@@ -6,20 +6,11 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
 
-import { getAuthHeader, AUTH_ERROR_CODES } from 'sussol-utilities';
-
 import { SETTINGS_KEYS } from '../settings';
 import { UIDatabase } from '../database';
 import { createRecord, parseBoolean, parseDate, parseNumber } from '../database/utilities';
 
-const { SYNC_URL, SYNC_SITE_NAME, SYNC_SITE_PASSWORD_HASH } = SETTINGS_KEYS;
-
-const CONNECTION_TIMEOUT_PERIOD = 10000;
-
-const ERROR_CODES = {
-  ...AUTH_ERROR_CODES,
-  NO_MATCHING_RECORDS: 'No matching records found',
-};
+const { SYNC_URL } = SETTINGS_KEYS;
 
 const RESOURCES = {
   PATIENT: '/api/v4/patient',
@@ -30,12 +21,6 @@ const SEPARATORS = {
   QUERY_STRING: '?',
   QUERY_PARAMETERS: '&',
   POLICY_NUMBER: '-',
-};
-
-const getRequestHeaders = () => {
-  const username = UIDatabase.getSetting(SYNC_SITE_NAME);
-  const password = UIDatabase.getSetting(SYNC_SITE_PASSWORD_HASH);
-  return { Authorization: getAuthHeader(username, password) };
 };
 
 export const createPatientRecord = patient => {
@@ -88,14 +73,14 @@ const getPatientQueryString = ({
   return getQueryString(queryParams);
 };
 
-const getPatientRequestUrl = params => {
+export const getPatientRequestUrl = params => {
   const baseUrl = UIDatabase.getSetting(SYNC_URL);
   const endpoint = RESOURCES.PATIENT;
   const queryString = getPatientQueryString(params);
   return baseUrl + endpoint + queryString;
 };
 
-const getPrescriberRequestUrl = params => {
+export const getPrescriberRequestUrl = params => {
   const baseUrl = UIDatabase.getSetting(SYNC_URL);
   const endpoint = RESOURCES.PRESCRIBER;
   const queryString = getPrescriberQueryString(params);
@@ -129,7 +114,7 @@ const processInsuranceResponse = response =>
     })
   );
 
-const processPatientResponse = response => {
+export const processPatientResponse = response => {
   const patientData = response.map(
     ({
       ID: id,
@@ -168,7 +153,7 @@ const processPatientResponse = response => {
   return patientData;
 };
 
-const processPrescriberResponse = response => {
+export const processPrescriberResponse = response => {
   const prescriberData = response.map(
     ({
       ID,
@@ -196,79 +181,3 @@ const processPrescriberResponse = response => {
   );
   return prescriberData;
 };
-
-export const queryPatientApi = async params => {
-  const requestUrl = getPatientRequestUrl(params);
-  const headers = getRequestHeaders();
-  const options = { headers };
-  try {
-    const response = await fetchTimeout(requestUrl, options, CONNECTION_TIMEOUT_PERIOD);
-    const { ok, status } = response;
-    if (ok) {
-      const responseJson = await response.json();
-      const { error } = responseJson;
-      if (error) throw new Error(error);
-      const patientData = processPatientResponse(responseJson);
-      return patientData?.length
-        ? { data: patientData }
-        : { error: ERROR_CODES.NO_MATCHING_RECORDS };
-    }
-    switch (status) {
-      case 400:
-        throw new Error(ERROR_CODES.CONNECTION_FAILURE);
-      case 401:
-        throw new Error(ERROR_CODES.INVALID_PASSWORD);
-      default:
-        throw new Error(ERROR_CODES.CONNECTION_FAILURE);
-    }
-  } catch (error) {
-    // TODO: add bugsnag.
-    return { error: error.message };
-  }
-};
-
-export const queryPrescriberApi = async params => {
-  const requestUrl = getPrescriberRequestUrl(params);
-  const headers = getRequestHeaders();
-  const options = { headers };
-  try {
-    const response = await fetchTimeout(requestUrl, options, CONNECTION_TIMEOUT_PERIOD);
-    const { ok, status } = response;
-    if (ok) {
-      const responseJson = await response.json();
-      const { error } = responseJson;
-      if (error) throw new Error(error);
-      const prescriberData = await processPrescriberResponse(responseJson);
-      return prescriberData?.length
-        ? { data: prescriberData }
-        : { error: ERROR_CODES.NO_MATCHING_RECORDS };
-    }
-    switch (status) {
-      case 400:
-        throw new Error(ERROR_CODES.CONNECTION_FAILURE);
-      case 401:
-        throw new Error(ERROR_CODES.INVALID_PASSWORD);
-      default:
-        throw new Error(ERROR_CODES.CONNECTION_FAILURE);
-    }
-  } catch (error) {
-    // TODO: add bugsnag.
-    return { error: error.message };
-  }
-};
-
-/**
- * A simple wrapper which adds a timeout to a fetch functionality.
- *
- * @param {String} url
- * @param {Object} options
- * @param {Number} timeout
- */
-const fetchTimeout = (url, options, timeout) =>
-  new Promise((resolve, reject) => {
-    if (timeout) {
-      const error = new Error(ERROR_CODES.CONNECTION_FAILURE);
-      setTimeout(reject, timeout, error);
-    }
-    fetch(url, options).then(resolve, reject);
-  });
