@@ -112,7 +112,7 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: re
     dispatch(PageActions.editStocktakeBatchLocation(item));
   const onApplyStocktakeBatchVvmStatus = ({ item }) =>
     dispatch(PageActions.editStocktakeBatchVvmStatus(item));
-  const onViewBreach = rowKey => reduxDispatch(BreachActions.setStocktakeBatch(rowKey));
+  const onViewBreach = rowKey => reduxDispatch(BreachActions.viewStocktakeBatchBreaches(rowKey));
 
   const toggles = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), []);
 

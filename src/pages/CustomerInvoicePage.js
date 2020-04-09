@@ -205,7 +205,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   const { otherParty } = transaction || {};
   const hasMasterLists = otherParty?.masterLists?.length > 0;
 
-  const onViewBreach = rowKey => dispatch(BreachActions.setTransactionItem(rowKey));
+  const onViewBreach = rowKey => dispatch(BreachActions.viewTransactionItemBreaches(rowKey));
 
   const noMasterLists = () =>
     ToastAndroid.show(modalStrings.customer_no_masterlist_available, ToastAndroid.LONG);

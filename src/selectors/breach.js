@@ -21,8 +21,7 @@ export const selectBreachModalTitle = ({ breach }) => {
     return `${vaccineStrings.temperature_breaches_for} ${itemName}`;
   }
 
-  const { fridge } = breach;
-  const { description } = fridge;
+  const { fridgeName } = breach;
 
-  return `${vaccineStrings.temperature_breaches_for} ${description}`;
+  return `${vaccineStrings.temperature_breaches_for} ${fridgeName}`;
 };
