@@ -37,8 +37,9 @@ export const useFetch = (url, options = {}, timeout = CONNECTION_TIMEOUT_PERIOD)
   const [error, setError] = React.useState(null);
   const [isFetching, setIsFetching] = React.useState(false);
 
+  const isMounted = React.useRef(true);
+
   React.useEffect(() => {
-    let mounted = true;
     const abortController = new AbortController();
     (async () => {
       setIsFetching(true);
@@ -52,7 +53,7 @@ export const useFetch = (url, options = {}, timeout = CONNECTION_TIMEOUT_PERIOD)
           const { error: responseError } = responseData;
           if (responseError) throw new Error(responseError);
           if (!responseData.length) throw new Error(ERROR_CODES.RESPONSE_NO_RECORDS);
-          if (mounted) {
+          if (isMounted.current) {
             setIsFetching(false);
             setData(responseData);
           }
@@ -67,7 +68,7 @@ export const useFetch = (url, options = {}, timeout = CONNECTION_TIMEOUT_PERIOD)
           }
         }
       } catch (responseError) {
-        if (mounted) {
+        if (isMounted.current) {
           setIsFetching(false);
           setError(responseError);
         }
@@ -75,12 +76,12 @@ export const useFetch = (url, options = {}, timeout = CONNECTION_TIMEOUT_PERIOD)
     })();
 
     const cleanup = () => {
-      mounted = false;
+      isMounted.current = false;
       abortController.abort();
     };
 
     setTimeout(() => {
-      if (mounted) setData();
+      if (isMounted.current) setData();
       abortController.abort();
     }, timeout);
 
