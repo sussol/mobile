@@ -15,7 +15,7 @@ import { Separator } from './Separator';
 import { CurrencyInputRow } from './CurrencyInputRow';
 import { FlexRow } from './FlexRow';
 import { CircleButton } from './CircleButton';
-import { PencilIcon, AddIcon } from './icons';
+import { PencilIcon, AddIcon, BookIcon } from './icons';
 import { DropDown } from './DropDown';
 
 import { UIDatabase } from '../database';
@@ -30,10 +30,7 @@ import {
 import { selectPatientInsurancePolicies, selectAvailableCredit } from '../selectors/patient';
 
 import { InsuranceActions } from '../actions/InsuranceActions';
-import {
-  selectInsuranceDiscountRate,
-  selectIsSelectedPolicyEditable,
-} from '../selectors/insurance';
+import { selectInsuranceDiscountRate, selectCanEditInsurancePolicy } from '../selectors/insurance';
 import { selectUsingPaymentTypes } from '../selectors/modules';
 
 import { dispensingStrings } from '../localization';
@@ -51,7 +48,7 @@ const paymentState = state => {
   const creditUsed = selectCreditBeingUsed(state);
   const availableCredit = selectAvailableCredit(state);
   const insurancePolicies = selectPatientInsurancePolicies(state);
-  const isSelectedPolicyEditable = selectIsSelectedPolicyEditable(state);
+  const isPolicyEditable = selectCanEditInsurancePolicy(state);
   const paymentTypes = UIDatabase.objects('PaymentType').sorted('description');
   const discountRate = selectInsuranceDiscountRate(state);
   const discountAmount = selectDiscountAmount(state);
@@ -72,7 +69,7 @@ const paymentState = state => {
     paymentTypes,
     paymentType,
     selectedInsurancePolicy,
-    isSelectedPolicyEditable,
+    isPolicyEditable,
     availableCredit,
     changeRequired,
     usingInsurance,
@@ -104,7 +101,7 @@ const PaymentSummaryComponent = ({
   choosePaymentType,
   paymentType,
   selectedInsurancePolicy,
-  isSelectedPolicyEditable,
+  isPolicyEditable,
   editPolicy,
   newPolicy,
   discountRate,
@@ -150,8 +147,7 @@ const PaymentSummaryComponent = ({
             />
             {!!selectedInsurancePolicy && (
               <CircleButton
-                IconComponent={PencilIcon}
-                isDisabled={!isSelectedPolicyEditable}
+                IconComponent={isPolicyEditable ? PencilIcon : BookIcon}
                 onPress={editPolicy}
               />
             )}
@@ -232,7 +228,7 @@ const PaymentSummaryComponent = ({
 PaymentSummaryComponent.defaultProps = {
   paymentType: null,
   selectedInsurancePolicy: null,
-  isSelectedPolicyEditable: false,
+  isPolicyEditable: false,
   creditOverflow: false,
 };
 
@@ -247,7 +243,7 @@ PaymentSummaryComponent.propTypes = {
   insurancePolicies: PropTypes.array.isRequired,
   choosePolicy: PropTypes.func.isRequired,
   selectedInsurancePolicy: PropTypes.object,
-  isSelectedPolicyEditable: PropTypes.bool,
+  isPolicyEditable: PropTypes.bool,
   editPolicy: PropTypes.func.isRequired,
   newPolicy: PropTypes.func.isRequired,
   paymentTypes: PropTypes.object.isRequired,
