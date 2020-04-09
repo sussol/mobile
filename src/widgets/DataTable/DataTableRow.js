@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 
 import currency from '../../localization/currency';
 
-import { dataTableStyles, SUSSOL_ORANGE, GREY } from '../../globalStyles';
+import { dataTableStyles, SUSSOL_ORANGE } from '../../globalStyles';
 
 import Row from './Row';
 import Cell from './Cell';
@@ -28,6 +28,7 @@ import {
   ChevronRightIcon,
   HistoryIcon,
   PencilIcon,
+  BookIcon,
 } from '../icons';
 import TextInputCell from './TextInputCell';
 
@@ -87,18 +88,9 @@ const DataTableRow = React.memo(
           // - the pageObject is finalised
           // - the row has been explicitly set as disabled
           // - the rowData is disabled (i.e. data is a finalised invoice)
-          // - the cell contains an icon for editing a disabled patient or prescriber
-          const { isFinalised: isFinalisedPage = false } = rowData;
-          const { isDisabled: isDisabledRow = false } = rowState;
-          const isDisabledPatient = columnKey === COLUMN_KEYS.PATIENT_EDIT && !rowData.isEditable;
-          const isDisabledPrescriber =
-            columnKey === COLUMN_KEYS.PRESCRIBER_EDIT && !rowData.isEditable;
-          const isDisabled =
-            isFinalised ||
-            isFinalisedPage ||
-            isDisabledRow ||
-            isDisabledPatient ||
-            isDisabledPrescriber;
+          const { isFinalised: isFinalisedPage = false } = rowData ?? {};
+          const { isDisabled: isDisabledRow = false } = rowState ?? {};
+          const isDisabled = isFinalised || isFinalisedPage || isDisabledRow;
 
           // Alignment of this particular column. Default to left hand ide.
           const cellAlignment = alignText || 'left';
@@ -236,18 +228,23 @@ const DataTableRow = React.memo(
               );
 
             case COLUMN_TYPES.ICON: {
-              const color = isDisabled ? GREY : SUSSOL_ORANGE;
-
               const icons = {
                 chevron_right: ChevronRightIcon,
-                history: () => <HistoryIcon color={color} />,
-                pencil: () => <PencilIcon color={color} />,
+                history: () => <HistoryIcon color={SUSSOL_ORANGE} />,
+                pencil: () => <PencilIcon color={SUSSOL_ORANGE} />,
+                book: () => <BookIcon color={SUSSOL_ORANGE} />,
               };
+
+              const isEditReadOnlyRecord =
+                (columnKey === COLUMN_KEYS.PATIENT_EDIT ||
+                  columnKey === COLUMN_KEYS.PRESCRIBER_EDIT) &&
+                !rowData.isEditable;
+              const iconComponent = isEditReadOnlyRecord ? icons.book : icons[icon];
 
               return (
                 <TouchableCell
                   key={columnKey}
-                  renderChildren={icons[icon]}
+                  renderChildren={iconComponent}
                   rowKey={rowKey}
                   columnKey={columnKey}
                   onPress={getCallback(columnKey)}

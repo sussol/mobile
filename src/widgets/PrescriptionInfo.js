@@ -13,7 +13,7 @@ import { FlexView } from './FlexView';
 import { FlexColumn } from './FlexColumn';
 import { SimpleLabel } from './SimpleLabel';
 import { CircleButton } from './CircleButton';
-import { PencilIcon, HistoryIcon } from './icons';
+import { PencilIcon, HistoryIcon, BookIcon } from './icons';
 
 import { PatientActions } from '../actions/PatientActions';
 import { PrescriberActions } from '../actions/PrescriberActions';
@@ -66,8 +66,7 @@ const PrescriptionInfoComponent = ({
           <FlexRow flex={1}>
             <CircleButton IconComponent={HistoryIcon} onPress={viewHistoryCallback} />
             <CircleButton
-              IconComponent={PencilIcon}
-              isDisabled={!canEditPatient}
+              IconComponent={canEditPatient ? PencilIcon : BookIcon}
               onPress={editPatientCallback}
             />
           </FlexRow>
@@ -88,8 +87,7 @@ const PrescriptionInfoComponent = ({
           <FlexRow flex={1} justifyContent="">
             {prescriptionPrescriber && (
               <CircleButton
-                IconComponent={PencilIcon}
-                isDisabled={!canEditPrescriber}
+                IconComponent={canEditPrescriber ? PencilIcon : BookIcon}
                 onPress={prescriberEditCallback}
               />
             )}
