@@ -22,7 +22,7 @@ export const selectCanEditInsurancePolicy = ({ insurance }) => {
   if (isCreatingInsurancePolicy) return true;
   const { patient: policyPatient } = selectedInsurancePolicy ?? {};
   const { isEditable: isPatientEditable } = policyPatient ?? {};
-  return isPatientEditable;
+  return isPatientEditable ?? false;
 };
 
 export const selectInsuranceModalOpen = ({ insurance }) => {
