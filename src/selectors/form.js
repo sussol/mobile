@@ -7,7 +7,7 @@
  * Selects a the form state.
  * @return {Object}
  */
-export const selectForm = ({ form }) => form;
+export const selectForm = ({ form }) => form?.formConfig ?? {};
 
 /**
  * Selects a boolean from the form state which is an indicator
@@ -15,8 +15,8 @@ export const selectForm = ({ form }) => form;
  * @return {bool}
  */
 export const selectCanSaveForm = ({ form }) => {
-  const allAreValid = Object.values(form).every(({ isValid }) => isValid);
-  return allAreValid;
+  const { formConfig } = form;
+  return Object.values(formConfig).every(({ isValid }) => isValid);
 };
 
 /**
@@ -26,8 +26,16 @@ export const selectCanSaveForm = ({ form }) => {
  *
  * @return {Object}
  */
-export const selectCompletedForm = ({ form }) =>
-  Object.keys(form).reduce(
-    (acc, formField) => ({ ...acc, [formField]: form[formField].value }),
+export const selectCompletedForm = ({ form }) => {
+  const { formConfig } = form;
+  return Object.keys(formConfig).reduce(
+    (acc, formField) => ({ ...acc, [formField]: formConfig[formField].value }),
     {}
   );
+};
+
+export const selectIsConfirmFormOpen = ({ form }) => {
+  const { formState } = form;
+  const { isConfirmFormOpen = false } = formState;
+  return isConfirmFormOpen;
+};

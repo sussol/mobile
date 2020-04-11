@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable react/forbid-prop-types */
-import React, { useCallback } from 'react';
+import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 
 import PropTypes from 'prop-types';
@@ -17,8 +17,14 @@ import { FormSlider } from './FormInputs/FormSlider';
 
 import globalStyles, { SUSSOL_ORANGE, WHITE } from '../globalStyles';
 import { modalStrings, generalStrings } from '../localization';
-import { selectForm, selectCanSaveForm, selectCompletedForm } from '../selectors/form';
+import {
+  selectForm,
+  selectCanSaveForm,
+  selectCompletedForm,
+  selectIsConfirmFormOpen,
+} from '../selectors/form';
 import { FormActions } from '../actions/FormActions';
+import { ConfirmForm } from './modalChildren';
 
 /**
  * Component which will manage and control a set of user inputs of a form.
@@ -34,6 +40,8 @@ import { FormActions } from '../actions/FormActions';
  * @param {func}  completedForm   Object containing key:value pairs of valid inputs from the form.
  * @param {func}  initialiseForm  Dispatcher to initialise the redux state with the correct config.
  * @param {func}  onSave          Callback to invoke on saving the form, passing back completedForm.
+ * @param {func}  confirmText     Text to display on save confirmation. If blank, no confirmation
+ *                                form is shown before saving.
  * @param {bool}  isDisabled      Indicator whether this Form is disabled.
  * @param {Array} inputConfig     Configuration array of input config objects.
  *                                See { getFormInputConfig } from src/utilities/formInputConfigs.
@@ -47,12 +55,17 @@ const FormControlComponent = ({
   // Save button state
   canSaveForm,
   saveButtonText,
+  // Confirm form state
+  confirmOnSave,
+  isConfirmFormOpen,
+  confirmText,
   // Cancel button state
   showCancelButton,
   cancelButtonText,
   // Form callbacks
   initialiseForm,
   onUpdateForm,
+  showConfirmForm,
   // Save button callbacks
   onSave,
   // Cancel button callbacks
@@ -175,8 +188,12 @@ const FormControlComponent = ({
       }
     );
 
-  const onSaveCompletedForm = useCallback(() => onSave(completedForm), [onSave, completedForm]);
-  const SaveButton = useCallback(
+  const onSaveCompletedForm = React.useCallback(
+    () => (!confirmOnSave || isConfirmFormOpen ? onSave(completedForm) : showConfirmForm()),
+    [confirmOnSave, onSave, showConfirmForm, completedForm]
+  );
+
+  const SaveButton = React.useCallback(
     () => (
       <PageButton
         onPress={onSaveCompletedForm}
@@ -188,7 +205,8 @@ const FormControlComponent = ({
     ),
     [isDisabled, showCancelButton, canSaveForm, saveButtonText, onSaveCompletedForm]
   );
-  const CancelButton = useCallback(
+
+  const CancelButton = React.useCallback(
     () =>
       showCancelButton ? (
         <PageButton
@@ -201,7 +219,7 @@ const FormControlComponent = ({
     [showCancelButton, cancelButtonText, onCancel]
   );
 
-  const Buttons = useCallback(
+  const Buttons = React.useCallback(
     () => (
       <View style={localStyles.buttonsRow}>
         <SaveButton />
@@ -211,7 +229,16 @@ const FormControlComponent = ({
     [SaveButton, CancelButton]
   );
 
-  return (
+  const InputConfirm = (
+    <ConfirmForm
+      isOpen={isConfirmFormOpen}
+      questionText={confirmText}
+      onConfirm={onSaveCompletedForm}
+      confirmText={modalStrings.confirm}
+    />
+  );
+
+  const InputDetails = (
     <View style={localStyles.flexOne}>
       <ScrollView style={localStyles.whiteBackground}>
         <View style={localStyles.flexRow}>
@@ -223,23 +250,29 @@ const FormControlComponent = ({
       <Buttons />
     </View>
   );
+
+  return isConfirmFormOpen ? InputConfirm : InputDetails;
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   const initialiseForm = config => dispatch(FormActions.initialiseForm(config));
+  const showConfirmForm = () => dispatch(FormActions.showConfirmForm());
   const onUpdateForm = (key, value) => dispatch(FormActions.updateForm(key, value));
-  const onCancel = () => {
-    dispatch(FormActions.resetForm());
-    ownProps.onCancel();
-  };
-  return { initialiseForm, onUpdateForm, onCancel };
+  const onCancel = () => ownProps.onCancel() && dispatch(FormActions.resetForm());
+  return { initialiseForm, showConfirmForm, onUpdateForm, onCancel };
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   const form = selectForm(state);
   const canSaveForm = selectCanSaveForm(state);
+  const isConfirmFormOpen = selectIsConfirmFormOpen(state);
   const completedForm = selectCompletedForm(state);
-  return { form, canSaveForm, completedForm };
+  const { confirmOnSave } = ownProps;
+  console.log('FORM:', form);
+  console.log('CANSAVEFORM:', canSaveForm);
+  console.log('ISCONFIRMFORMOPEN:', isConfirmFormOpen);
+  console.log('COMPLETEDFORM:', completedForm);
+  return { form, canSaveForm, confirmOnSave, isConfirmFormOpen, completedForm };
 };
 
 FormControlComponent.defaultProps = {

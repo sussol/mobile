@@ -234,6 +234,8 @@ const Dispensing = ({
       >
         <FormControl
           isDisabled={!canEditInsurancePolicy}
+          confirmOnSave={!canEditPatient}
+          confirmText={dispensingStrings.confirm_new_policy}
           onSave={saveInsurancePolicy}
           onCancel={cancelInsuranceEdit}
           inputConfig={getFormInputConfig(

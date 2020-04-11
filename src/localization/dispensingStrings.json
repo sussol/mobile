@@ -9,6 +9,7 @@
     "choose_a_reason": "Choose a reason",
     "choose_a_payment_type": "Choose a payment type",
     "click_on_an_item_to_add_it": "Click on an item to add it",
+    "confirm_new_policy": "This policy is associated with a read-only patient record and will only be editable on this patient's home store. Please ensure that all details are correct before confirming.",
     "credit_used": "Credit used",
     "customer": "Customer",
     "date_of_birth": "D.O.B",
