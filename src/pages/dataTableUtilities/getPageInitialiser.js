@@ -144,6 +144,12 @@ const customerRequisitionsInitialiser = () => {
   const filteredData = backingData.filtered('status != $0', 'finalised');
   const sortedData = sortDataBy(filteredData.slice(), 'serialNumber', false);
 
+  const hasPrograms = backingData.some(requisition => requisition.hasProgram);
+
+  const route = hasPrograms
+    ? ROUTES.CUSTOMER_REQUISITIONS_WITH_PROGRAMS
+    : ROUTES.CUSTOMER_REQUISITIONS;
+
   return {
     backingData,
     data: sortedData,
@@ -152,9 +158,9 @@ const customerRequisitionsInitialiser = () => {
     filterDataKeys: ['serialNumber'],
     sortKey: 'serialNumber',
     isAscending: false,
-    route: ROUTES.CUSTOMER_REQUISITIONS,
-    columns: getColumns(ROUTES.CUSTOMER_REQUISITIONS),
-    getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_REQUISITIONS),
+    route,
+    columns: getColumns(route),
+    getPageInfoColumns: getPageInfoColumns(route),
   };
 };
 
@@ -453,6 +459,12 @@ const supplierRequisitionsInitialiser = () => {
   const backingData = UIDatabase.objects('RequestRequisition');
 
   const filteredData = backingData.filtered('status != $0', 'finalised').slice();
+  const hasPrograms = backingData.some(requisition => requisition.hasProgram);
+
+  const route = hasPrograms
+    ? ROUTES.SUPPLIER_REQUISITIONS_WITH_PROGRAMS
+    : ROUTES.SUPPLIER_REQUISITIONS;
+
   const sortedData = sortDataBy(filteredData, 'serialNumber', false);
 
   return {
@@ -466,9 +478,9 @@ const supplierRequisitionsInitialiser = () => {
     isAscending: false,
     modalKey: '',
     hasSelection: false,
-    route: ROUTES.SUPPLIER_REQUISITIONS,
-    columns: getColumns(ROUTES.SUPPLIER_REQUISITIONS),
-    getPageInfoColumns: getPageInfoColumns(ROUTES.SUPPLIER_REQUISITIONS),
+    route,
+    columns: getColumns(route),
+    getPageInfoColumns: getPageInfoColumns(route),
   };
 };
 

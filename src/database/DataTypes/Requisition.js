@@ -9,7 +9,7 @@ import { complement } from 'set-manipulator';
 import { createRecord, getTotal } from '../utilities';
 import { UIDatabase } from '..';
 import { programDailyUsage } from '../../utilities/dailyUsage';
-import { modalStrings } from '../../localization';
+import { generalStrings, modalStrings } from '../../localization';
 import { SETTINGS_KEYS } from '../../settings';
 
 /**
@@ -91,12 +91,27 @@ export class Requisition extends Realm.Object {
   }
 
   /**
+   * Get if is program requisition.
+   */
+  get hasProgram() {
+    return !!this.program;
+  }
+
+  /**
    * Get name of user who entered requisition.
    *
    * @return  {string}
    */
   get enteredByName() {
     return this.enteredBy ? this.enteredBy.username : '';
+  }
+
+  /* Get description of requisition program.
+   *
+   * @return  {string}
+   */
+  get programName() {
+    return this.hasProgram ? this.program.name : generalStrings.not_available;
   }
 
   /**

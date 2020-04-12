@@ -14,10 +14,12 @@ export const ROUTES = {
 
   CUSTOMER_REQUISITION: 'customerRequisition',
   CUSTOMER_REQUISITIONS: 'customerRequisitions',
+  CUSTOMER_REQUISITIONS_WITH_PROGRAMS: 'customerRequisitionsWithPrograms',
 
   SUPPLIER_REQUISITION: 'supplierRequisition',
   SUPPLIER_REQUISITION_WITH_PROGRAM: 'supplierRequisitionWithProgram',
   SUPPLIER_REQUISITIONS: 'supplierRequisitions',
+  SUPPLIER_REQUISITIONS_WITH_PROGRAMS: 'supplierRequisitionsWithPrograms',
 
   CUSTOMER_INVOICE: 'customerInvoice',
   CUSTOMER_INVOICES: 'customerInvoices',
