@@ -42,7 +42,6 @@ const PER_PAGE_INFO_COLUMNS = {
     ['period', 'otherParty', 'monthsToSupply', 'requisitionComment'],
   ],
   [ROUTES.STOCKTAKE_EDITOR]: [['stocktakeName', 'stocktakeComment']],
-  [ROUTES.STOCKTAKE_EDITOR_WITH_REASONS]: [['stocktakeName', 'stocktakeComment']],
   [ROUTES.CUSTOMER_REQUISITION]: [
     ['monthsToSupply', 'entryDate'],
     ['customer', 'requisitionComment'],
