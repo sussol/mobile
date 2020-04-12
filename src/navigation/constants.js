@@ -32,6 +32,7 @@ export const ROUTES = {
   STOCK_WITH_CREDITS: 'stockWithCredits',
 
   STOCKTAKES: 'stocktakes',
+  STOCKTAKES_WITH_PROGRAMS: 'stocktakesWithPrograms',
   STOCKTAKE_MANAGER: 'stocktakeManager',
   STOCKTAKE_EDITOR: 'stocktakeEditor',
   STOCKTAKE_EDITOR_WITH_REASONS: 'stocktakeEditorWithReasons',

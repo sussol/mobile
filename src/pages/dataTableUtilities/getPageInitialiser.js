@@ -197,6 +197,10 @@ const stocktakesInitialiser = () => {
   const backingData = UIDatabase.objects('Stocktake');
 
   const filteredData = backingData.filtered('status != $0', 'finalised');
+  const hasPrograms = backingData.some(stocktake => stocktake.hasProgram);
+
+  const route = hasPrograms ? ROUTES.STOCKTAKES_WITH_PROGRAMS : ROUTES.STOCKTAKES;
+
   const sortedData = filteredData.sorted('createdDate', true).slice();
 
   return {
@@ -210,9 +214,9 @@ const stocktakesInitialiser = () => {
     isAscending: false,
     modalKey: '',
     hasSelection: false,
-    route: ROUTES.STOCKTAKES,
-    columns: getColumns(ROUTES.STOCKTAKES),
-    getPageInfoColumns: getPageInfoColumns(ROUTES.STOCKTAKES),
+    route,
+    columns: getColumns(route),
+    getPageInfoColumns: getPageInfoColumns(route),
   };
 };
 
