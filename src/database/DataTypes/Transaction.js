@@ -184,6 +184,11 @@ export class Transaction extends Realm.Object {
     return this.paymentType?.description ?? generalStrings.not_available;
   }
 
+  /*
+   * Get name of transaction program.
+   *
+   * @return  {string}
+   */
   get programName() {
     return this.hasProgram ? this.linkedRequisition?.programName : generalStrings.not_available;
   }

@@ -146,6 +146,11 @@ export class Stocktake extends Realm.Object {
     return !!this.program;
   }
 
+  /*
+   * Get name of stocktake program.
+   *
+   * @return  {string}
+   */
   get programName() {
     return this.hasProgram ? this.program.name : generalStrings.not_available;
   }

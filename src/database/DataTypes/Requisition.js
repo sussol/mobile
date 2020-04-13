@@ -106,7 +106,8 @@ export class Requisition extends Realm.Object {
     return this.enteredBy ? this.enteredBy.username : '';
   }
 
-  /* Get description of requisition program.
+  /*
+   * Get name of requisition program.
    *
    * @return  {string}
    */
