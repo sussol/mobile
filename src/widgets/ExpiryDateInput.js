@@ -6,15 +6,14 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import { View, TextInput } from 'react-native';
+import moment from 'moment';
 
 import Cell from './DataTable/Cell';
 
 import { useExpiryDateMask } from '../hooks/useExpiryDateMask';
 
 import { dataTableStyles } from '../globalStyles/index';
-import { parseExpiryDate, formatExpiryDate } from '../utilities';
 
 import { getAdjustedStyle } from './DataTable/utilities';
 import RefContext from './DataTable/RefContext';
@@ -63,6 +62,21 @@ export const ExpiryDateInput = React.memo(
 
     const refIndex = getRefIndex(rowIndex, columnKey);
 
+    const parseExpiryDate = React.useCallback(expiryDate => {
+      const parsedExpiryDate = moment(expiryDate, 'DD/MM/YYYY');
+      return parsedExpiryDate.isValid() ? parsedExpiryDate : null;
+    }, []);
+
+    const convertExpiryDate = React.useCallback(expiryDate => {
+      const parsedExpiryDate = parseExpiryDate(expiryDate);
+      return parsedExpiryDate?.toDate();
+    }, []);
+
+    const formatExpiryDate = React.useCallback(expiryDate => {
+      const parsedExpiryDate = parseExpiryDate(expiryDate);
+      return parsedExpiryDate?.format('DD/MM/YYYY') ?? '';
+    }, []);
+
     // Customhook managing the editing of an expiry date to stay valid.
     const [expiryDate, setExpiryDate, finaliseExpiryDate] = useExpiryDateMask(
       formatExpiryDate(value)
@@ -73,7 +87,7 @@ export const ExpiryDateInput = React.memo(
     // to the underlying model are not committed until a valid date is entered.
     const finishEditingExpiryDate = () => {
       finaliseExpiryDate();
-      onEndEditing(parseExpiryDate(expiryDate), rowKey, columnKey);
+      onEndEditing(convertExpiryDate(expiryDate), rowKey, columnKey);
     };
 
     const onSubmit = () => {
@@ -143,7 +157,7 @@ ExpiryDateInput.defaultProps = {
   isLastCell: false,
   width: 0,
   debug: false,
-  placeholder: 'mm/yyyy',
+  placeholder: 'dd/mm/yyyy',
   placeholderColour: '#CDCDCD',
   underlineColor: '#CDCDCD',
 };
