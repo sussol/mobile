@@ -73,8 +73,12 @@ export class UserAuthenticator {
             id: userJson.UserID,
             username,
             passwordHash,
-            isAdmin: userJson.isAdmin || false,
           });
+          user.permissions = {
+            isAdmin: userJson.isAdmin ?? false,
+            showStocktakeCurrentQuantity: userJson.showStocktakeCurrentQuantity ?? true,
+          };
+          this.database.save(user);
         });
       }
     } catch (error) {

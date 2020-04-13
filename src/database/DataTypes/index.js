@@ -14,7 +14,6 @@ export class ItemDepartment extends Realm.Object {}
 export class Setting extends Realm.Object {}
 export class SyncOut extends Realm.Object {}
 export class TransactionCategory extends Realm.Object {}
-export class User extends Realm.Object {}
 
 export { Item } from './Item';
 export { InsurancePolicy } from './InsurancePolicy';
@@ -47,6 +46,7 @@ export { Transaction } from './Transaction';
 export { TransactionBatch } from './TransactionBatch';
 export { TransactionItem } from './TransactionItem';
 export { Unit } from './Unit';
+export { User } from './User';
 export { Prescriber } from './Prescriber';
 export { Abbreviation } from './Abbreviation';
 export { ItemDirection } from './ItemDirection';
