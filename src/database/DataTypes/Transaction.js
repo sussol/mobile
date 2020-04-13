@@ -10,7 +10,7 @@ import {
   NUMBER_SEQUENCE_KEYS,
 } from '../utilities';
 
-import { modalStrings } from '../../localization';
+import { generalStrings, modalStrings } from '../../localization';
 
 /**
  * A transaction.
@@ -158,6 +158,13 @@ export class Transaction extends Realm.Object {
   }
 
   /**
+   * Get if transaction is associated with a program.
+   */
+  get hasProgram() {
+    return this.linkedRequisition?.hasProgram ?? false;
+  }
+
+  /**
    * Get name of other party to transaction.
    *
    * @return  {string}
@@ -170,11 +177,15 @@ export class Transaction extends Realm.Object {
    * @return {String} This transaction reason title, or an empty string.
    */
   get reasonTitle() {
-    return (this.option && this.option.title) || 'N/A';
+    return (this.option && this.option.title) || generalStrings.not_available;
   }
 
   get paymentTypeDescription() {
-    return this.paymentType?.description ?? 'N/A';
+    return this.paymentType?.description ?? generalStrings.not_available;
+  }
+
+  get programName() {
+    return this.hasProgram ? this.linkedRequisition?.programName : generalStrings.not_available;
   }
 
   /**

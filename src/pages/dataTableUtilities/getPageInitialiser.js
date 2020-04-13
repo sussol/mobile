@@ -77,6 +77,10 @@ export const customerInvoicesInitialiser = () => {
   const filteredData = backingData.filtered('status != $0', 'finalised').slice();
   const sortedData = sortDataBy(filteredData, 'serialNumber', false);
 
+  const hasPrograms = backingData.some(invoice => invoice.hasProgram);
+
+  const route = hasPrograms ? ROUTES.CUSTOMER_INVOICES_WITH_PROGRAMS : ROUTES.CUSTOMER_INVOICES;
+
   return {
     backingData,
     data: sortedData,
@@ -88,9 +92,9 @@ export const customerInvoicesInitialiser = () => {
     isAscending: false,
     modalKey: '',
     hasSelection: false,
-    route: ROUTES.CUSTOMER_INVOICES,
-    columns: getColumns(ROUTES.CUSTOMER_INVOICES),
-    getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_INVOICES),
+    route,
+    columns: getColumns(route),
+    getPageInfoColumns: getPageInfoColumns(route),
   };
 };
 
@@ -387,6 +391,10 @@ const supplierInvoicesInitialiser = () => {
   const filteredData = backingData.filtered('status != $0', 'finalised').slice();
   const sortedData = sortDataBy(filteredData, 'serialNumber', false);
 
+  const hasPrograms = backingData.some(invoice => invoice.hasProgram);
+
+  const route = hasPrograms ? ROUTES.SUPPLIER_INVOICES_WITH_PROGRAMS : ROUTES.SUPPLIER_INVOICES;
+
   return {
     backingData,
     data: sortedData,
@@ -398,9 +406,9 @@ const supplierInvoicesInitialiser = () => {
     isAscending: false,
     modalKey: '',
     hasSelection: false,
-    route: ROUTES.SUPPLIER_INVOICES,
-    columns: getColumns(ROUTES.SUPPLIER_INVOICES),
-    getPageInfoColumns: getPageInfoColumns(ROUTES.SUPPLIER_INVOICES),
+    route,
+    columns: getColumns(route),
+    getPageInfoColumns: getPageInfoColumns(route),
   };
 };
 
