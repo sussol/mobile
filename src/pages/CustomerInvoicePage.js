@@ -10,7 +10,7 @@ import { View, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
-import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
+import { getColumns, getItemLayout, getPageDispatchers } from './dataTableUtilities';
 import { ROUTES } from '../navigation/constants';
 
 import { DataTablePageModal } from '../widgets/modals';
@@ -64,7 +64,7 @@ export const CustomerInvoice = ({
   onApplyMasterLists,
   route,
 }) => {
-  const { isFinalised, comment, theirRef } = pageObject;
+  const { isCredit, isFinalised, comment, theirRef } = pageObject;
 
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, route), [
     comment,
@@ -154,12 +154,12 @@ export const CustomerInvoice = ({
               style={{ ...topButton, marginLeft: 0 }}
               text={buttonStrings.new_item}
               onPress={onSelectNewItem}
-              isDisabled={isFinalised}
+              isDisabled={isFinalised || isCredit}
             />
             <PageButton
               text={buttonStrings.add_master_list_items}
               onPress={onAddMasterList}
-              isDisabled={isFinalised}
+              isDisabled={isFinalised || isCredit}
             />
           </View>
         </View>
@@ -209,7 +209,11 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 const mapStateToProps = state => {
   const { pages } = state;
   const { customerInvoice } = pages;
-  return customerInvoice;
+  const { pageObject } = customerInvoice ?? {};
+  const { isCredit } = pageObject ?? {};
+  const columnsKey = isCredit ? 'customerCredit' : 'customerInvoice';
+  const columns = getColumns(columnsKey);
+  return { ...customerInvoice, columns };
 };
 
 export const CustomerInvoicePage = connect(mapStateToProps, mapDispatchToProps)(CustomerInvoice);

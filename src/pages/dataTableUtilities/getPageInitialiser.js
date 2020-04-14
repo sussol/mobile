@@ -73,7 +73,7 @@ export const customerInvoiceInitialiser = transaction => {
  * @returns  {object}
  */
 export const customerInvoicesInitialiser = () => {
-  const backingData = UIDatabase.objects('CustomerInvoice');
+  const backingData = UIDatabase.objects('CustomerTransaction');
   const filteredData = backingData.filtered('status != $0', 'finalised').slice();
   const sortedData = sortDataBy(filteredData, 'serialNumber', false);
 
