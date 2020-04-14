@@ -25,7 +25,7 @@ import { ModalContainer } from './ModalContainer';
 import { buttonStrings } from '../../localization';
 import { ROUTES } from '../../navigation/constants';
 
-import { selectUsingPayments, selectHideSnapshotColumn } from '../../selectors/modules';
+import { selectUsingPayments, selectUsingHideSnapshotColumn } from '../../selectors/modules';
 import { AutocompleteSelector } from '../modalChildren';
 
 /**
@@ -50,7 +50,7 @@ export const StocktakeBatchModalComponent = ({
   stocktakeItem,
   usingPayments,
   usingReasons,
-  hideSnapshotColumn,
+  usingHideSnapshotColumn,
   dispatch: reduxDispatch,
 }) => {
   const initialState = {
@@ -80,7 +80,7 @@ export const StocktakeBatchModalComponent = ({
     suppliers,
   } = state;
 
-  const columns = hideSnapshotColumn
+  const columns = usingHideSnapshotColumn
     ? pageColumns.filter(({ key }) => key !== COLUMN_KEYS.SNAPSHOT_TOTAL_QUANTITY)
     : pageColumns;
 
@@ -230,7 +230,7 @@ StocktakeBatchModalComponent.propTypes = {
   stocktakeItem: PropTypes.object.isRequired,
   usingPayments: PropTypes.bool.isRequired,
   usingReasons: PropTypes.bool.isRequired,
-  hideSnapshotColumn: PropTypes.bool.isRequired,
+  usingHideSnapshotColumn: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
 };
 
@@ -239,8 +239,8 @@ const mapStateToProps = state => {
   const usingReasons =
     UIDatabase.objects('NegativeAdjustmentReason').length > 0 &&
     UIDatabase.objects('PositiveAdjustmentReason').length > 0;
-  const hideSnapshotColumn = selectHideSnapshotColumn(state);
-  return { usingPayments, usingReasons, hideSnapshotColumn };
+  const usingHideSnapshotColumn = selectUsingHideSnapshotColumn(state);
+  return { usingPayments, usingReasons, usingHideSnapshotColumn };
 };
 
 export const StocktakeBatchModal = connect(mapStateToProps)(StocktakeBatchModalComponent);
