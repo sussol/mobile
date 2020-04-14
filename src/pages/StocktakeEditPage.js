@@ -205,7 +205,6 @@ const mapDispatchToProps = dispatch => {
   const editQuantity = usesReasons
     ? PageActions.editCountedQuantityWithReason
     : PageActions.editCountedQuantity;
-
   return {
     ...getPageDispatchers(dispatch, 'Stocktake', ROUTES.STOCKTAKE_EDITOR),
     onEditCountedQuantity: (newValue, rowKey) =>

@@ -18,6 +18,7 @@ import {
 import { ACTIONS } from './constants';
 import { openModal, closeModal } from './pageActions';
 import { selectPageState } from '../../../selectors/pages';
+import { ROUTES } from '../../../navigation/index';
 
 /**
  * Refreshes a row in the DataTable component.
@@ -286,12 +287,24 @@ export const enforceReasonChoice = (rowKey, route) => (dispatch, getState) => {
   if (!objectToEdit) return null;
 
   const { difference } = objectToEdit;
+
   // If there's no difference, just remove the reason
   if (!difference) return dispatch(removeReason(rowKey, route));
 
   const { validateReason } = objectToEdit;
+
   if (!validateReason) {
-    return dispatch(openModal(MODAL_KEYS.ENFORCE_STOCKTAKE_REASON, rowKey, route));
+    // If updated counted quantity in stocktake page, set batches with default
+    // adjustment reason.
+    if (route === ROUTES.STOCKTAKE_EDITOR) {
+      const [defaultReason] = UIDatabase.objects(
+        difference > 0 ? 'PositiveAdjustmentReason' : 'NegativeAdjustmentReason'
+      );
+      objectToEdit.applyReason(UIDatabase, defaultReason);
+    } else {
+      // If updated counted quantity in batch modal, prompt user with reason modal.
+      return dispatch(openModal(MODAL_KEYS.ENFORCE_STOCKTAKE_REASON, rowKey, route));
+    }
   }
   return null;
 };
