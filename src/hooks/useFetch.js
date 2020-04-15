@@ -21,7 +21,7 @@ const ERROR_CODES = {
 const getAuthorizationHeader = () => {
   const username = UIDatabase.getSetting(SYNC_SITE_NAME);
   const password = UIDatabase.getSetting(SYNC_SITE_PASSWORD_HASH);
-  return { authorization: getAuthHeader(username, password) };
+  return getAuthHeader(username, password);
 };
 
 /**
@@ -37,12 +37,13 @@ export const useFetch = (url, options = {}, timeout = CONNECTION_TIMEOUT_PERIOD)
   React.useEffect(() => {
     if (url) {
       (async () => {
+        /* eslint-disable no-undef */
+        const abortController = new AbortController();
+        const bugsnagClient = new BugsnagClient();
+        const { signal } = abortController;
+        const headers = { authorization: getAuthorizationHeader() };
         try {
-          /* eslint-disable no-undef */
-          const abortController = new AbortController();
-          const { signal } = abortController;
-          const { authorization } = getAuthorizationHeader();
-          const response = await fetch(url, { headers: { authorization }, signal, ...options });
+          const response = await fetch(url, { headers, signal, ...options });
           const { ok, status } = response;
           if (ok) {
             const responseData = await response.json();
@@ -51,15 +52,27 @@ export const useFetch = (url, options = {}, timeout = CONNECTION_TIMEOUT_PERIOD)
             if (!responseData.length) throw new Error(ERROR_CODES.RESPONSE_NO_RECORDS);
             if (isMounted.current) setData(responseData);
           } else {
+            const connectionError = new Error(ERROR_CODES.CONNECTION_FAILURE);
+            const authorizationError = new Error(ERROR_CODES.INVALID_PASSWORD);
             switch (status) {
               case 400:
-              default:
-                throw new Error(ERROR_CODES.CONNECTION_FAILURE);
+                throw connectionError;
               case 401:
-                throw new Error(ERROR_CODES.INVALID_PASSWORD);
+                throw authorizationError;
+              default:
+                bugsnagClient.notify(connectionError, content => {
+                  content.requestUrl = url;
+                  content.requestHeaders = headers;
+                  content.responseStatus = status;
+                });
+                throw connectionError;
             }
           }
         } catch (responseError) {
+          bugsnagClient.notify(responseError, content => {
+            content.requestUrl = url;
+            content.requestHeaders = headers;
+          });
           if (isMounted.current) {
             setError(responseError);
           }
