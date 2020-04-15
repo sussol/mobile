@@ -276,6 +276,7 @@ FormControlComponent.defaultProps = {
   completedForm: {},
   isDisabled: false,
   saveButtonText: generalStrings.save,
+  confirmText: modalStrings.confirm,
   showCancelButton: true,
   cancelButtonText: modalStrings.cancel,
 };
@@ -287,6 +288,9 @@ FormControlComponent.propTypes = {
   isDisabled: PropTypes.bool,
   canSaveForm: PropTypes.bool.isRequired,
   saveButtonText: PropTypes.string,
+  confirmOnSave: PropTypes.bool.isRequired,
+  isConfirmFormOpen: PropTypes.bool.isRequired,
+  confirmText: PropTypes.text,
   showCancelButton: PropTypes.bool,
   cancelButtonText: PropTypes.string,
   initialiseForm: PropTypes.func.isRequired,
