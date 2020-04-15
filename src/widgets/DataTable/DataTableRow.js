@@ -86,11 +86,11 @@ const DataTableRow = React.memo(
 
           // This cell is disabled if:
           // - the pageObject is finalised
-          // - the row has been explicitly set as disabled
           // - the rowData is disabled (i.e. data is a finalised invoice)
-          const { isFinalised: isFinalisedPage = false } = rowData ?? {};
+          // - the row has been explicitly set as disabled
+          const { isFinalised: isFinalisedRow = false } = rowData ?? {};
           const { isDisabled: isDisabledRow = false } = rowState ?? {};
-          const isDisabled = isFinalised || isFinalisedPage || isDisabledRow;
+          const isDisabled = isFinalised || isFinalisedRow || isDisabledRow;
 
           // Alignment of this particular column. Default to left hand ide.
           const cellAlignment = alignText || 'left';
