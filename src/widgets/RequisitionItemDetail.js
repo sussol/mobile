@@ -6,16 +6,16 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 import { PageInfo } from './PageInfo';
 
 import { getPageInfoColumns } from '../pages/dataTableUtilities';
 
-import { WHITE, SUSSOL_ORANGE } from '../globalStyles';
+import { DARKER_GREY, WHITE, SUSSOL_ORANGE } from '../globalStyles';
 
 const RequisitionItemDetailsComponent = ({ item }) => (
-  <View style={{ paddingLeft: 50 }}>
+  <View style={localStyles.container}>
     <PageInfo
       titleColor={SUSSOL_ORANGE}
       infoColor={WHITE}
@@ -23,6 +23,16 @@ const RequisitionItemDetailsComponent = ({ item }) => (
     />
   </View>
 );
+
+const localStyles = StyleSheet.create({
+  container: {
+    paddingLeft: 50,
+    backgroundColor: DARKER_GREY,
+    height: 250,
+    marginLeft: 20,
+    marginRight: 20,
+  },
+});
 
 RequisitionItemDetailsComponent.propTypes = { item: PropTypes.object.isRequired };
 
