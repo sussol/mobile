@@ -1,6 +1,5 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable import/prefer-default-export */
-
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -8,29 +7,18 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, ScrollView, TouchableOpacity } from 'react-native';
-
-import Modal from 'react-native-modalbox';
+import { ScrollView } from 'react-native';
 
 import { formatExpiryDate } from '../../utilities';
 
-import { PageInfo, CloseIcon } from '..';
+import { PageInfo } from '../PageInfo';
 
 import { tableStrings, generalStrings } from '../../localization';
 import { DARKER_GREY, SUSSOL_ORANGE } from '../../globalStyles';
 
-/**
- * Modal like component. Opens a small pop-over at the bottom of the screen
- * displaying item details.
- *
- * @param {Bool}   isOpen     Indicator if this modal is open.
- * @param {Object} item       Realm Item object to display details for.
- * @param {Func}   onClose    Callback for closing the modal.
- * @param {Any}    modalProps Any additional props for the modal component.
- */
-export const ItemDetailsComponent = ({ isOpen, item, onClose, ...modalProps }) => {
+export const ItemDetailsComponent = ({ item }) => {
   const headers = {
-    batch: tableStrings.batch_name,
+    batch: generalStrings.batch_name,
     expiryDate: generalStrings.expiry_date,
     numberOfPacks: generalStrings.quantity,
     category: tableStrings.category,
@@ -79,72 +67,26 @@ export const ItemDetailsComponent = ({ isOpen, item, onClose, ...modalProps }) =
     return [[categoryRow, departmentRow, usageRow]];
   };
 
-  const { modalContainer, scrollView, scrollViewContentContainer, headerRow } = localStyles;
   return (
-    <Modal style={modalContainer} isOpen={isOpen} {...modalProps}>
-      {isOpen && item && (
-        <>
-          <View style={headerRow}>
-            <TouchableOpacity onPress={onClose}>
-              <CloseIcon />
-            </TouchableOpacity>
-          </View>
-
-          <ScrollView
-            indicatorStyle="white"
-            contentContainerStyle={scrollViewContentContainer}
-            style={scrollView}
-          >
-            <PageInfo titleColor={SUSSOL_ORANGE} infoColor="white" columns={getItemInfo()} />
-            <PageInfo titleColor={SUSSOL_ORANGE} infoColor="white" columns={getBatchInfo()} />
-          </ScrollView>
-        </>
-      )}
-    </Modal>
+    <ScrollView indicatorStyle="white" style={localStyles.container}>
+      <PageInfo titleColor={SUSSOL_ORANGE} infoColor="white" columns={getItemInfo()} />
+      <PageInfo titleColor={SUSSOL_ORANGE} infoColor="white" columns={getBatchInfo()} />
+    </ScrollView>
   );
 };
 
-/**
- * This component re-renders only when isOpen changes, or the underlying
- * item object changes.
- */
-const propsAreEqual = (
-  { item: prevItem, isOpen: prevIsOpen },
-  { item: nextItem, isOpen: nextIsOpen }
-) => {
-  const itemsEqual = prevItem === nextItem;
-  const isOpenEqual = prevIsOpen === nextIsOpen;
-  return itemsEqual && isOpenEqual;
-};
-
-export const ItemDetails = React.memo(ItemDetailsComponent, propsAreEqual);
+export const ItemDetails = React.memo(ItemDetailsComponent);
 
 const localStyles = {
-  scrollView: {
-    height: 170,
-    marginBottom: 15,
-    marginRight: 10,
-    marginLeft: 10,
+  container: {
+    height: 250,
+    marginLeft: 20,
+    marginRight: 20,
+    paddingLeft: 50,
+    backgroundColor: DARKER_GREY,
   },
-  modalContainer: { height: 200, backgroundColor: DARKER_GREY },
-  scrollViewContentContainer: { paddingLeft: 50 },
-  headerRow: { flexDirection: 'row', justifyContent: 'flex-end', marginRight: 10 },
-};
-
-ItemDetailsComponent.defaultProps = {
-  item: null,
-  swipeToClose: false,
-  backdropPressToClose: false,
-  position: 'bottom',
-  backdrop: false,
 };
 
 ItemDetailsComponent.propTypes = {
-  item: PropTypes.object,
-  onClose: PropTypes.func.isRequired,
-  isOpen: PropTypes.bool.isRequired,
-  swipeToClose: PropTypes.bool,
-  backdropPressToClose: PropTypes.bool,
-  position: PropTypes.string,
-  backdrop: PropTypes.bool,
+  item: PropTypes.object.isRequired,
 };
