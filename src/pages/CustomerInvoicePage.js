@@ -84,7 +84,7 @@ export const CustomerInvoice = ({
         return onUncheck;
       case 'doses':
         return onEditBatchDoses;
-      case 'isInBreach':
+      case 'hasBreached':
         return onViewBreach;
       default:
         return null;

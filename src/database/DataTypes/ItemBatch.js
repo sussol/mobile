@@ -26,8 +26,8 @@ export class ItemBatch extends Realm.Object {
     return this.item?.isVaccine ?? false;
   }
 
-  get isInBreach() {
-    return this.location?.isInBreach() ?? false;
+  get hasBreached() {
+    return this.location?.hasBreached() ?? false;
   }
 
   get breaches() {

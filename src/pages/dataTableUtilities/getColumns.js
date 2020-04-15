@@ -804,7 +804,7 @@ const COLUMNS = () => ({
 
   [COLUMN_NAMES.BREACH]: {
     type: COLUMN_TYPES.ICON,
-    key: COLUMN_KEYS.IS_IN_BREACH,
+    key: COLUMN_KEYS.HAS_BREACHED,
     title: tableStrings.breach,
     sortable: false,
     alignText: 'center',

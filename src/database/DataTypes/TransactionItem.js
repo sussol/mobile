@@ -299,8 +299,8 @@ export class TransactionItem extends Realm.Object {
     return this.batches.sum('doses');
   }
 
-  get isInBreach() {
-    return this.batches.some(({ isInBreach }) => isInBreach);
+  get hasBreached() {
+    return this.batches.some(({ hasBreached }) => hasBreached);
   }
 
   get breaches() {

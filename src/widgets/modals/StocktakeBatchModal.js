@@ -136,7 +136,7 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: re
         return onSelectLocation;
       case 'currentVvmStatusName':
         return onSelectVvmStatus;
-      case 'isInBreach':
+      case 'hasBreached':
         return onViewBreach;
       default:
         return null;

@@ -38,8 +38,8 @@ export class StocktakeBatch extends Realm.Object {
     return this.vaccineVialMonitorStatus?.description ?? '';
   }
 
-  get isInBreach() {
-    return this.itemBatch?.isInBreach ?? false;
+  get hasBreached() {
+    return this.itemBatch?.hasBreached ?? false;
   }
 
   get otherPartyName() {
