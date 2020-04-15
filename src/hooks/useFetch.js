@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import { Client as BugsnagClient } from 'bugsnag-react-native';
 
 import { getAuthHeader, AUTH_ERROR_CODES } from 'sussol-utilities';
 
@@ -34,12 +35,14 @@ export const useFetch = (url, options = {}, timeout = CONNECTION_TIMEOUT_PERIOD)
   const [data, setData] = React.useState(null);
   const [error, setError] = React.useState(null);
   const isMounted = React.useRef(true);
+
+  /* eslint-disable no-undef */
+  const abortController = new AbortController();
+  const bugsnagClient = new BugsnagClient();
+
   React.useEffect(() => {
     if (url) {
       (async () => {
-        /* eslint-disable no-undef */
-        const abortController = new AbortController();
-        const bugsnagClient = new BugsnagClient();
         const { signal } = abortController;
         const headers = { authorization: getAuthorizationHeader() };
         try {
@@ -56,22 +59,17 @@ export const useFetch = (url, options = {}, timeout = CONNECTION_TIMEOUT_PERIOD)
             const authorizationError = new Error(ERROR_CODES.INVALID_PASSWORD);
             switch (status) {
               case 400:
+              default:
                 throw connectionError;
               case 401:
                 throw authorizationError;
-              default:
-                bugsnagClient.notify(connectionError, content => {
-                  content.requestUrl = url;
-                  content.requestHeaders = headers;
-                  content.responseStatus = status;
-                });
-                throw connectionError;
             }
           }
         } catch (responseError) {
-          bugsnagClient.notify(responseError, content => {
-            content.requestUrl = url;
-            content.requestHeaders = headers;
+          bugsnagClient.notify(responseError, report => {
+            report.context = 'FETCH ERROR';
+            report.errorMessage = responseError.message;
+            report.metadata = { error: { url, headers } };
           });
           if (isMounted.current) {
             setError(responseError);
@@ -92,6 +90,7 @@ export const useFetch = (url, options = {}, timeout = CONNECTION_TIMEOUT_PERIOD)
       isMounted.current = false;
     };
   }, [url]);
+
   const isFetching = !(data || error);
   return [data, error, isFetching];
 };
