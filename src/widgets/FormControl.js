@@ -268,10 +268,6 @@ const mapStateToProps = (state, ownProps) => {
   const isConfirmFormOpen = selectIsConfirmFormOpen(state);
   const completedForm = selectCompletedForm(state);
   const { confirmOnSave } = ownProps;
-  console.log('FORM:', form);
-  console.log('CANSAVEFORM:', canSaveForm);
-  console.log('ISCONFIRMFORMOPEN:', isConfirmFormOpen);
-  console.log('COMPLETEDFORM:', completedForm);
   return { form, canSaveForm, confirmOnSave, isConfirmFormOpen, completedForm };
 };
 
