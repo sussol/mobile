@@ -11,11 +11,11 @@ export const selectIsBreachModalOpen = ({ breach }) => {
 };
 
 export const selectBreachModalTitle = ({ breach }) => {
-  const { forItem, forBatch, forFridge } = breach;
+  const { forItem, forFridge } = breach;
 
-  if (!forBatch && !forFridge && !forItem) return '';
+  if (!forFridge && !forItem) return '';
 
-  if (forBatch || forItem) {
+  if (forItem) {
     const { itemName } = breach;
 
     return `${vaccineStrings.temperature_breaches_for} ${itemName}`;

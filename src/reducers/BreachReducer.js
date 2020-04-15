@@ -7,7 +7,6 @@ import { BREACH_ACTIONS } from '../actions/BreachActions';
 
 const initialState = () => ({
   isModalOpen: false,
-  forBatch: false,
   forFridge: false,
   forItem: false,
   batch: null,
