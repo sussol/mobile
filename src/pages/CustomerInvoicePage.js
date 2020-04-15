@@ -65,7 +65,7 @@ export const CustomerInvoice = ({
   onApplyMasterLists,
   route,
   onEditBatchDoses,
-  onViewBreach,
+  onViewBreaches,
 }) => {
   const { isFinalised, comment, theirRef } = pageObject;
 
@@ -85,7 +85,7 @@ export const CustomerInvoice = ({
       case 'doses':
         return onEditBatchDoses;
       case 'hasBreached':
-        return onViewBreach;
+        return onViewBreaches;
       default:
         return null;
     }
@@ -205,14 +205,14 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   const { otherParty } = transaction || {};
   const hasMasterLists = otherParty?.masterLists?.length > 0;
 
-  const onViewBreach = rowKey => dispatch(BreachActions.viewTransactionItemBreaches(rowKey));
+  const onViewBreaches = rowKey => dispatch(BreachActions.viewTransactionItemBreaches(rowKey));
 
   const noMasterLists = () =>
     ToastAndroid.show(modalStrings.customer_no_masterlist_available, ToastAndroid.LONG);
   return {
     ...getPageDispatchers(dispatch, 'Transaction', ROUTES.CUSTOMER_INVOICE),
     [hasMasterLists ? null : 'onAddMasterList']: noMasterLists,
-    onViewBreach,
+    onViewBreaches,
   };
 };
 
@@ -262,5 +262,5 @@ CustomerInvoice.propTypes = {
   onApplyMasterLists: PropTypes.func.isRequired,
   route: PropTypes.string.isRequired,
   onEditBatchDoses: PropTypes.func.isRequired,
-  onViewBreach: PropTypes.func.isRequired,
+  onViewBreaches: PropTypes.func.isRequired,
 };
