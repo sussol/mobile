@@ -256,7 +256,7 @@ export class Item extends Realm.Object {
     if (!this.isVaccine || !fromDate) return 0;
 
     const customerInvoiceTransactionItems = this.transactionItems.filtered(
-      "transaction.confirmDate > $0 && transaction.type == 'customer_invoice",
+      "transaction.confirmDate > $0 && transaction.type == 'customer_invoice'",
       fromDate
     );
 
