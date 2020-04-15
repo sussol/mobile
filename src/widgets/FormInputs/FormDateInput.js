@@ -60,8 +60,8 @@ export const FormDateInput = React.forwardRef(
 
     const [inputState, setInputState] = React.useState({
       isValid: true,
-      inputValue: moment(initialValue).format('DD/MM/YYYY'),
-      pickerSeedValue: initialValue.toDate(),
+      inputValue: initialValue.isValid() ? moment(initialValue).format('DD/MM/YYYY') : '',
+      pickerSeedValue: initialValue.isValid() ? initialValue.toDate() : new Date(),
       datePickerOpen: false,
     });
 
@@ -174,5 +174,5 @@ FormDateInput.propTypes = {
   placeholderTextColor: PropTypes.string,
   underlineColorAndroid: PropTypes.string,
   onSubmit: PropTypes.func,
-  isDisabled: PropTypes.isDisabled,
+  isDisabled: PropTypes.bool,
 };

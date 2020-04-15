@@ -1,12 +1,14 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable react/forbid-prop-types */
-import React from 'react';
+import React, { useCallback } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { PageButton } from './PageButton';
+
+import { FORM_INPUT_TYPES } from '../utilities/formInputConfigs';
 import { FormTextInput } from './FormInputs/FromTextInput';
 import { FormDateInput } from './FormInputs/FormDateInput';
 import { FormToggle } from './FormInputs/FormToggle';
@@ -37,15 +39,24 @@ import { FormActions } from '../actions/FormActions';
  *                                See { getFormInputConfig } from src/utilities/formInputConfigs.
  */
 const FormControlComponent = ({
-  onUpdateForm,
-  onCancelPressed,
-  canSaveForm,
-  completedForm,
+  // Form state
   form,
-  initialiseForm,
-  onSave,
+  completedForm,
   inputConfig,
   isDisabled,
+  // Save button state
+  canSaveForm,
+  saveButtonText,
+  // Cancel button state
+  showCancelButton,
+  cancelButtonText,
+  // Form callbacks
+  initialiseForm,
+  onUpdateForm,
+  // Save button callbacks
+  onSave,
+  // Cancel button callbacks
+  onCancel,
 }) => {
   const [refs, setRefs] = React.useState([]);
 
@@ -53,11 +64,6 @@ const FormControlComponent = ({
     initialiseForm(inputConfig);
     setRefs({ length: inputConfig.length });
   }, []);
-
-  const onSaveCompletedForm = React.useCallback(() => onSave(completedForm), [
-    onSave,
-    completedForm,
-  ]);
 
   const nextFocus = (index, key) => value => {
     onUpdateForm(key, value);
@@ -82,7 +88,7 @@ const FormControlComponent = ({
       ) => {
         refs[index] = React.useRef();
         switch (type) {
-          case 'text': {
+          case FORM_INPUT_TYPES.TEXT: {
             return (
               <FormTextInput
                 ref={refs[index]}
@@ -100,7 +106,7 @@ const FormControlComponent = ({
               />
             );
           }
-          case 'date': {
+          case FORM_INPUT_TYPES.DATE: {
             return (
               <FormDateInput
                 ref={refs[index]}
@@ -116,7 +122,7 @@ const FormControlComponent = ({
               />
             );
           }
-          case 'dropdown': {
+          case FORM_INPUT_TYPES.DROPDOWN: {
             const { options, optionKey } = rest;
             return (
               <FormDropdown
@@ -131,7 +137,7 @@ const FormControlComponent = ({
               />
             );
           }
-          case 'toggle': {
+          case FORM_INPUT_TYPES.TOGGLE: {
             const { options, optionLabels } = rest;
             return (
               <FormToggle
@@ -146,7 +152,7 @@ const FormControlComponent = ({
               />
             );
           }
-          case 'slider': {
+          case FORM_INPUT_TYPES.SLIDER: {
             const { maximumValue, minimumValue, step } = rest;
             return (
               <FormSlider
@@ -169,6 +175,42 @@ const FormControlComponent = ({
       }
     );
 
+  const onSaveCompletedForm = useCallback(() => onSave(completedForm), [onSave, completedForm]);
+  const SaveButton = useCallback(
+    () => (
+      <PageButton
+        onPress={onSaveCompletedForm}
+        style={localStyles.saveButton}
+        isDisabled={!canSaveForm || isDisabled}
+        textStyle={localStyles.saveButtonTextStyle}
+        text={saveButtonText}
+      />
+    ),
+    [isDisabled, showCancelButton, canSaveForm, saveButtonText, onSaveCompletedForm]
+  );
+  const CancelButton = useCallback(
+    () =>
+      showCancelButton ? (
+        <PageButton
+          onPress={onCancel}
+          style={localStyles.cancelButton}
+          textStyle={localStyles.cancelButtonTextStyle}
+          text={cancelButtonText}
+        />
+      ) : null,
+    [showCancelButton, cancelButtonText, onCancel]
+  );
+
+  const Buttons = useCallback(
+    () => (
+      <View style={localStyles.buttonsRow}>
+        <SaveButton />
+        <CancelButton />
+      </View>
+    ),
+    [SaveButton, CancelButton]
+  );
+
   return (
     <View style={localStyles.flexOne}>
       <ScrollView style={localStyles.whiteBackground}>
@@ -178,35 +220,19 @@ const FormControlComponent = ({
           <View style={localStyles.flexOne} />
         </View>
       </ScrollView>
-      <View style={localStyles.buttonsRow}>
-        <PageButton
-          onPress={onSaveCompletedForm}
-          style={localStyles.saveButton}
-          isDisabled={!canSaveForm || isDisabled}
-          textStyle={localStyles.saveButtonTextStyle}
-          text={generalStrings.save}
-        />
-        <PageButton
-          style={localStyles.cancelButton}
-          onPress={onCancelPressed}
-          textStyle={localStyles.cancelButtonTextStyle}
-          text={modalStrings.cancel}
-        />
-      </View>
+      <Buttons />
     </View>
   );
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
-  const { onCancel } = ownProps;
-
   const initialiseForm = config => dispatch(FormActions.initialiseForm(config));
   const onUpdateForm = (key, value) => dispatch(FormActions.updateForm(key, value));
-  const onCancelPressed = () => {
+  const onCancel = () => {
     dispatch(FormActions.resetForm());
-    onCancel();
+    ownProps.onCancel();
   };
-  return { initialiseForm, onUpdateForm, onCancelPressed };
+  return { initialiseForm, onUpdateForm, onCancel };
 };
 
 const mapStateToProps = state => {
@@ -217,21 +243,27 @@ const mapStateToProps = state => {
 };
 
 FormControlComponent.defaultProps = {
-  completedForm: null,
-  isDisabled: false,
   form: {},
+  completedForm: {},
+  isDisabled: false,
+  saveButtonText: generalStrings.save,
+  showCancelButton: true,
+  cancelButtonText: modalStrings.cancel,
 };
 
 FormControlComponent.propTypes = {
-  canSaveForm: PropTypes.bool.isRequired,
-  completedForm: PropTypes.object,
   form: PropTypes.object,
-  initialiseForm: PropTypes.func.isRequired,
-  onSave: PropTypes.func.isRequired,
-  onUpdateForm: PropTypes.func.isRequired,
+  completedForm: PropTypes.object,
   inputConfig: PropTypes.array.isRequired,
-  onCancelPressed: PropTypes.func.isRequired,
   isDisabled: PropTypes.bool,
+  canSaveForm: PropTypes.bool.isRequired,
+  saveButtonText: PropTypes.string,
+  showCancelButton: PropTypes.bool,
+  cancelButtonText: PropTypes.string,
+  initialiseForm: PropTypes.func.isRequired,
+  onUpdateForm: PropTypes.func.isRequired,
+  onSave: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
 };
 
 export const FormControl = connect(mapStateToProps, mapDispatchToProps)(FormControlComponent);
@@ -239,6 +271,7 @@ export const FormControl = connect(mapStateToProps, mapDispatchToProps)(FormCont
 const localStyles = StyleSheet.create({
   saveButton: {
     ...globalStyles.button,
+    flex: 1,
     backgroundColor: SUSSOL_ORANGE,
     alignSelf: 'center',
   },
@@ -249,7 +282,7 @@ const localStyles = StyleSheet.create({
   },
   cancelButton: {
     ...globalStyles.button,
-
+    flex: 1,
     alignSelf: 'center',
   },
   cancelButtonTextStyle: {

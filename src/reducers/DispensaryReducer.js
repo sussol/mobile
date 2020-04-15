@@ -16,6 +16,7 @@ const initialState = () => ({
   dataSet: 'patient',
   columns: getColumns(FORMS.PATIENT),
   data: UIDatabase.objects('Patient'),
+  isLookupModalOpen: false,
 });
 
 export const DispensaryReducer = (state = initialState(), action) => {
@@ -70,6 +71,14 @@ export const DispensaryReducer = (state = initialState(), action) => {
       const newData = UIDatabase.objects(objectType);
 
       return { ...state, data: newData };
+    }
+
+    case DISPENSARY_ACTIONS.OPEN_LOOKUP_MODAL: {
+      return { ...state, isLookupModalOpen: true };
+    }
+
+    case DISPENSARY_ACTIONS.CLOSE_LOOKUP_MODAL: {
+      return { ...state, isLookupModalOpen: false };
     }
 
     default:

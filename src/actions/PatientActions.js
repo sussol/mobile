@@ -27,27 +27,94 @@ const editPatient = patient => ({
   },
 });
 
-const patientUpdate = completedForm => (dispatch, getState) => {
+const patientUpdate = patientDetails => (dispatch, getState) => {
   const { patient } = getState();
   const { currentPatient } = patient;
 
-  if (currentPatient) {
-    const { addressOne: line1, addressTwo: line2 } = completedForm;
-    const { firstName = '', lastName = '', billingAddress = {} } = currentPatient;
-    const patientName = `${lastName}, ${firstName}`;
+  const {
+    id: currentPatientId,
+    code: currentCode,
+    name: currentName,
+    firstName: currentFirstName,
+    lastName: currentLastName,
+    dateOfBirth: currentDateOfBirth,
+    emailAddress: currentEmailAddress,
+    phoneNumber: currentPhoneNumber,
+    billingAddress: currentBillingAddress,
+    country: currentCountry,
+    supplyingStoreId: currentSupplyingStoreId,
+    isActive: currentIsActive,
+    female: currentFemale,
+  } = currentPatient ?? {};
 
-    UIDatabase.write(() => {
-      UIDatabase.update('Address', { ...billingAddress, line1, line2 });
-      UIDatabase.update('Name', { ...currentPatient, ...completedForm, name: patientName });
-    });
-  } else {
-    UIDatabase.write(() => {
-      createRecord(UIDatabase, 'Patient', completedForm);
-    });
-  }
+  const {
+    id: currentBillAddressId,
+    line1: currentLine1,
+    line2: currentLine2,
+    line3: currentLine3,
+    line4: currentLine4,
+    zipCode: currentZipCode,
+  } = currentBillingAddress ?? {};
+
+  const {
+    id: patientId,
+    code: patientCode,
+    firstName: patientFirstName,
+    lastName: patientLastName,
+    dateOfBirth: patientDateOfBirth,
+    emailAddress: patientEmailAddress,
+    phoneNumber: patientPhoneNumber,
+    addressOne: patientLine1,
+    addressTwo: patientLine2,
+    country: patientCountry,
+    female: patientFemale,
+  } = patientDetails ?? {};
+
+  const id = patientId ?? currentPatientId;
+  const code = patientCode ?? currentCode;
+  const firstName = patientFirstName ?? currentFirstName;
+  const lastName = patientLastName ?? currentLastName;
+  const name = `${lastName}, ${firstName}` || currentName;
+  const dateOfBirth = patientDateOfBirth ?? currentDateOfBirth;
+  const emailAddress = patientEmailAddress ?? currentEmailAddress;
+  const phoneNumber = patientPhoneNumber ?? currentPhoneNumber;
+  const billAddressId = currentBillAddressId;
+  const billAddress1 = patientLine1 ?? currentLine1;
+  const billAddress2 = patientLine2 ?? currentLine2;
+  const billAddress3 = currentLine3;
+  const billAddress4 = currentLine4;
+  const billPostalZipCode = currentZipCode;
+  const country = patientCountry ?? currentCountry;
+  const female = patientFemale ?? currentFemale;
+  const supplyingStoreId = currentSupplyingStoreId;
+  const isActive = currentIsActive;
+
+  const patientRecord = {
+    id,
+    code,
+    firstName,
+    lastName,
+    name,
+    dateOfBirth,
+    emailAddress,
+    phoneNumber,
+    billAddressId,
+    billAddress1,
+    billAddress2,
+    billAddress3,
+    billAddress4,
+    billPostalZipCode,
+    country,
+    female,
+    supplyingStoreId,
+    isActive,
+  };
+
+  UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patientRecord));
 
   batch(() => {
     dispatch(closeModal());
+    dispatch(DispensaryActions.closeLookupModal());
     dispatch(DispensaryActions.refresh());
   });
 };
