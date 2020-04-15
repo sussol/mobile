@@ -43,6 +43,7 @@ import { BreachDisplay } from './widgets/modalChildren/BreachDisplay';
 import { selectIsBreachModalOpen, selectBreachModalTitle } from './selectors/breach';
 import { BreachActions } from './actions/BreachActions';
 import { TemperatureSync } from './widgets/modalChildren/TemperatureSync';
+import { RowDetail } from './widgets/RowDetail';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -231,6 +232,7 @@ class MSupplyMobileAppContainer extends React.Component {
           >
             <TemperatureSync />
           </ModalContainer>
+          <RowDetail />
         </View>
       </LoadingIndicatorContext.Provider>
     );
