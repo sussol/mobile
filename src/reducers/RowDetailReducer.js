@@ -3,12 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { ROW_DETAIL_ACTIONS } from '../actions/RowDetailActions';
-
-const ROW_DETAIL_KEYS = {
-  ITEM_DETAIL: 'itemDetail',
-  REQUISITION_ITEM_DETAIL: 'requisitionItemDetail',
-};
+import { ROW_DETAIL_KEYS, ROW_DETAIL_ACTIONS } from '../actions/RowDetailActions';
 
 const initialState = () => ({
   rowData: null,
