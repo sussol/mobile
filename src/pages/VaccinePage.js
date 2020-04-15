@@ -79,7 +79,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => ({
   onSelectFridge: fridge => dispatch(FridgeActions.select(fridge)),
   onOpenBreachModal: breachId => {
-    dispatch(BreachActions.setFridgeBreach(breachId));
+    dispatch(BreachActions.viewFridgeBreach(breachId));
   },
 });
 

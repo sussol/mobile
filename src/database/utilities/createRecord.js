@@ -786,7 +786,7 @@ const createLocationMovement = (database, itemBatch, location) => {
 };
 
 const createVvmStatusLog = (database, itemBatch, status) => {
-  const vvmStatus = database.create('VaccineVialMonitorStatus', {
+  const vvmStatus = database.create('VaccineVialMonitorStatusLog', {
     id: generateUUID(),
     itemBatch,
     status,
@@ -943,7 +943,7 @@ export const createRecord = (database, type, ...args) => {
       return createSensor(database, ...args);
     case 'LocationMovement':
       return createLocationMovement(database, ...args);
-    case 'VaccineVialMonitorStatus':
+    case 'VaccineVialMonitorStatusLog':
       return createVvmStatusLog(database, ...args);
     case 'SensorLog':
       return createSensorLog(database, ...args);

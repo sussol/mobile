@@ -18,9 +18,9 @@ export class Location extends Realm.Object {
    * This location is currently experiencing a temperature breach
    * if the most recent breach for the location has no end timestamp.
    */
-  get isInBreach() {
-    const hasBeenInABreach = this.mostRecentTemperatureBreach;
-    return hasBeenInABreach && !hasBeenInABreach.endTimestamp;
+  get hasBreached() {
+    const mostRecentBreach = this.mostRecentTemperatureBreach;
+    return mostRecentBreach && !mostRecentBreach.endTimestamp;
   }
 
   get currentTemperature() {

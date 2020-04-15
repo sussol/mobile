@@ -3,14 +3,12 @@
  * Sustainable Solutions (NZ) Ltd. 2020
  */
 
-import { UIDatabase } from '../database';
-
 import { BREACH_ACTIONS } from '../actions/BreachActions';
 
 const initialState = () => ({
   isModalOpen: false,
-  forBatch: false,
   forFridge: false,
+  forItem: false,
   batch: null,
   fridge: null,
   breaches: null,
@@ -20,37 +18,22 @@ export const BreachReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
-    case BREACH_ACTIONS.OPEN_MODAL: {
-      return { ...state, isModalOpen: true };
-    }
-
     case BREACH_ACTIONS.CLOSE_MODAL: {
       return initialState();
     }
 
-    case BREACH_ACTIONS.SET_BATCH: {
+    case BREACH_ACTIONS.VIEW_ITEM_BREACHES: {
       const { payload } = action;
-      const { batch } = payload;
+      const { breaches, itemName } = payload;
 
-      return { ...state, batch, forBatch: true };
+      return { ...state, breaches, itemName, forItem: true, isModalOpen: true };
     }
 
-    case BREACH_ACTIONS.SET_BATCH_BREACH: {
+    case BREACH_ACTIONS.VIEW_FRIDGE_BREACHES: {
       const { payload } = action;
-      const { batch } = payload;
+      const { breaches, fridgeName } = payload;
 
-      return { ...state, batch, forBatch: true };
-    }
-
-    case BREACH_ACTIONS.SET_FRIDGE_BREACH: {
-      const { payload } = action;
-      const { breachId } = payload;
-
-      const breach = UIDatabase.get('TemperatureBreach', breachId) ?? {};
-
-      const { location: fridge } = breach;
-
-      return { ...state, fridge, breaches: [breach], forFridge: true, isModalOpen: true };
+      return { ...state, breaches, fridgeName, forFridge: true, isModalOpen: true };
     }
 
     default:

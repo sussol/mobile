@@ -45,8 +45,8 @@ export class TransactionBatch extends Realm.Object {
     return this.vaccineVialMonitorStatus?.description ?? '';
   }
 
-  get isInBreach() {
-    return this.itemBatch?.isInBreach ?? false;
+  get hasBreached() {
+    return this.itemBatch?.hasBreached ?? false;
   }
 
   /**
@@ -207,6 +207,10 @@ export class TransactionBatch extends Realm.Object {
    */
   toString() {
     return `${this?.itemBatch} in a ${this.transaction.type}`;
+  }
+
+  get breaches() {
+    return this.itemBatch?.breaches;
   }
 
   get otherPartyName() {

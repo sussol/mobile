@@ -2,7 +2,7 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2020
  */
-import { vaccineStrings } from '../localization/index';
+import { vaccineStrings } from '../localization';
 
 export const selectIsBreachModalOpen = ({ breach }) => {
   const { isModalOpen } = breach;
@@ -11,19 +11,17 @@ export const selectIsBreachModalOpen = ({ breach }) => {
 };
 
 export const selectBreachModalTitle = ({ breach }) => {
-  const { forBatch, forFridge } = breach;
+  const { forItem, forFridge } = breach;
 
-  if (!forBatch && !forFridge) return '';
+  if (!forFridge && !forItem) return '';
 
-  if (forBatch) {
-    const { batch } = breach;
-    const { itemName } = batch;
+  if (forItem) {
+    const { itemName } = breach;
 
     return `${vaccineStrings.temperature_breaches_for} ${itemName}`;
   }
 
-  const { fridge } = breach;
-  const { description } = fridge;
+  const { fridgeName } = breach;
 
-  return `${vaccineStrings.temperature_breaches_for} ${description}`;
+  return `${vaccineStrings.temperature_breaches_for} ${fridgeName}`;
 };

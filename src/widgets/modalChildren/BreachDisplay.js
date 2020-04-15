@@ -65,6 +65,7 @@ Breach.propTypes = {
 const mapStateToProps = state => {
   const { breach } = state;
   const { breaches } = breach;
+
   return { breaches };
 };
 
@@ -80,7 +81,7 @@ const BreachDisplayComponent = ({ breaches }) => {
 };
 
 BreachDisplayComponent.propTypes = {
-  breaches: PropTypes.object.isRequired,
+  breaches: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
 };
 
 export const BreachDisplay = connect(mapStateToProps)(BreachDisplayComponent);

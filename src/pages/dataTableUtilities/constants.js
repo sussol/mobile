@@ -35,7 +35,7 @@ export const COLUMN_KEYS = {
   ENTRY_DATE: 'entryDate',
   EXPIRY_DATE: 'expiryDate',
   FIRST_NAME: 'firstName',
-  IS_IN_BREACH: 'isInBreach',
+  HAS_BREACHED: 'hasBreached',
   ITEM_CODE: 'itemCode',
   ITEM_NAME: 'itemName',
   LAST_NAME: 'lastName',

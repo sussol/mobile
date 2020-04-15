@@ -28,6 +28,7 @@ import {
   ChevronRightIcon,
   HistoryIcon,
   PencilIcon,
+  HazardIcon,
 } from '../icons';
 import TextInputCell from './TextInputCell';
 
@@ -228,6 +229,7 @@ const DataTableRow = React.memo(
                 chevron_right: ChevronRightIcon,
                 history: () => <HistoryIcon color={SUSSOL_ORANGE} />,
                 pencil: () => <PencilIcon color={SUSSOL_ORANGE} />,
+                breach: () => <HazardIcon />,
               };
 
               return (

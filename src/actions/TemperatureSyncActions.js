@@ -179,7 +179,7 @@ const createTemperatureLogs = sensor => dispatch => {
 
   UIDatabase.write(() => {
     groupedSensorLogs.forEach(sensorLogGroup => {
-      const { isInBreach, mostRecentTemperatureBreach } = sensor;
+      const { hasBreached, mostRecentTemperatureBreach } = sensor;
       const newLogTemperature = Math.min(...sensorLogGroup.map(({ temperature }) => temperature));
       const newLogTimestamp = Math.min(...sensorLogGroup.map(({ timestamp }) => timestamp));
 
@@ -191,7 +191,7 @@ const createTemperatureLogs = sensor => dispatch => {
         location
       );
 
-      if (isInBreach) {
+      if (hasBreached) {
         if (mostRecentTemperatureBreach?.willContinueBreach(newLog)) {
           UIDatabase.update('TemperatureLog', { ...newLog, breach: mostRecentTemperatureBreach });
         } else {
