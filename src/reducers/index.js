@@ -22,6 +22,7 @@ import { WizardReducer } from './WizardReducer';
 import { TemperatureSyncReducer } from './TemperatureSyncReducer';
 import { FridgeReducer } from './FridgeReducer';
 import { BreachReducer } from './BreachReducer';
+import { RowDetailReducer } from './RowDetailReducer';
 
 import SyncReducer from './SyncReducer';
 
@@ -44,4 +45,5 @@ export default combineReducers({
   wizard: WizardReducer,
   fridge: FridgeReducer,
   breach: BreachReducer,
+  rowDetail: RowDetailReducer,
 });
