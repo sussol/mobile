@@ -8,9 +8,9 @@ import { UIDatabase } from '../database/index';
 import { INSURANCE_POLICY_FIELDS } from '../utilities/modules/dispensary/constants';
 
 const initialState = config => {
-  if (!config) return {};
+  if (!config) return { formConfig: {}, isConfirmFormOpen: false };
 
-  return config.reduce(
+  const formConfig = config.reduce(
     (acc, { key, initialValue, validator, isRequired }) => ({
       ...acc,
       [key]: {
@@ -22,9 +22,12 @@ const initialState = config => {
     }),
     {}
   );
+
+  return { formConfig, isConfirmFormOpen: false };
 };
 
 export const FormReducer = (state = initialState(), action) => {
+  const { formConfig, isConfirmFormOpen } = state;
   const { type } = action;
 
   switch (type) {
@@ -33,6 +36,14 @@ export const FormReducer = (state = initialState(), action) => {
       const { config } = payload;
       return initialState(config);
     }
+
+    case FORM_ACTIONS.SHOW_CONFIRM_FORM: {
+      return {
+        formConfig,
+        isConfirmFormOpen: true,
+      };
+    }
+
     case FORM_ACTIONS.UPDATE: {
       const { payload } = action;
       const { key, value } = payload;
@@ -41,12 +52,12 @@ export const FormReducer = (state = initialState(), action) => {
       const updatePolicyNumberFamily = key === INSURANCE_POLICY_FIELDS.POLICY_NUMBER_FAMILY;
 
       if (updatePolicyNumberPerson || updatePolicyNumberFamily) {
-        const { policyNumberPerson: policyNumberPersonState } = state;
+        const { policyNumberPerson: policyNumberPersonState } = formConfig;
         const { value: policyNumberPersonValue } = updatePolicyNumberPerson
           ? { value }
           : policyNumberPersonState;
 
-        const { policyNumberFamily: policyNumberFamilyState } = state;
+        const { policyNumberFamily: policyNumberFamilyState } = formConfig;
         const { value: policyNumberFamilyValue } = updatePolicyNumberFamily
           ? { value }
           : policyNumberFamilyState;
@@ -81,27 +92,35 @@ export const FormReducer = (state = initialState(), action) => {
         };
 
         return {
-          ...state,
-          policyNumberPerson: newPolicyNumberPersonState,
-          policyNumberFamily: newPolicyNumberFamilyState,
+          formConfig: {
+            ...formConfig,
+            policyNumberPerson: newPolicyNumberPersonState,
+            policyNumberFamily: newPolicyNumberFamilyState,
+          },
+          isConfirmFormOpen,
         };
       }
 
-      const stateData = state[key];
+      const configData = formConfig[key];
 
-      const { validator } = stateData;
+      const { validator } = configData;
 
-      const newStateData = {
-        ...stateData,
+      const newConfigData = {
+        ...configData,
         value,
         isValid: validator ? validator(value) : true,
       };
 
-      return { ...state, [key]: newStateData };
+      return {
+        formConfig: { ...formConfig, [key]: newConfigData },
+        isConfirmFormOpen,
+      };
     }
+
     case FORM_ACTIONS.CANCEL: {
       return initialState();
     }
+
     default:
       return state;
   }

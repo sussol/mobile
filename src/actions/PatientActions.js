@@ -67,6 +67,7 @@ const patientUpdate = patientDetails => (dispatch, getState) => {
     addressOne: patientLine1,
     addressTwo: patientLine2,
     country: patientCountry,
+    supplyingStoreId: patientSupplyingStoreId,
     female: patientFemale,
   } = patientDetails ?? {};
 
@@ -86,7 +87,7 @@ const patientUpdate = patientDetails => (dispatch, getState) => {
   const billPostalZipCode = currentZipCode;
   const country = patientCountry ?? currentCountry;
   const female = patientFemale ?? currentFemale;
-  const supplyingStoreId = currentSupplyingStoreId;
+  const supplyingStoreId = patientSupplyingStoreId ?? currentSupplyingStoreId;
   const isActive = currentIsActive;
 
   const patientRecord = {

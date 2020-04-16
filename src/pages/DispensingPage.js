@@ -32,7 +32,7 @@ import {
   selectLookupModalOpen,
 } from '../selectors/dispensary';
 import { selectPrescriberModalOpen, selectCanEditPrescriber } from '../selectors/prescriber';
-import { selectInsuranceModalOpen } from '../selectors/insurance';
+import { selectInsuranceModalOpen, selectCanEditInsurancePolicy } from '../selectors/insurance';
 import { selectPatientModalOpen, selectCanEditPatient } from '../selectors/patient';
 
 import globalStyles from '../globalStyles';
@@ -87,6 +87,7 @@ const Dispensing = ({
   // Insurance variables
   insuranceModalOpen,
   selectedInsurancePolicy,
+  canEditInsurancePolicy,
   isCreatingInsurancePolicy,
   // Insurance callbacks
   cancelInsuranceEdit,
@@ -232,6 +233,9 @@ const Dispensing = ({
         isVisible={insuranceModalOpen}
       >
         <FormControl
+          isDisabled={!canEditInsurancePolicy}
+          confirmOnSave={!canEditPatient}
+          confirmText={dispensingStrings.confirm_new_policy}
           onSave={saveInsurancePolicy}
           onCancel={cancelInsuranceEdit}
           inputConfig={getFormInputConfig(
@@ -291,6 +295,7 @@ const mapStateToProps = state => {
   const prescriberModalOpen = selectPrescriberModalOpen(state);
   const canEditPrescriber = selectCanEditPrescriber(state);
   const canEditPatient = selectCanEditPatient(state);
+  const canEditInsurancePolicy = selectCanEditInsurancePolicy(state);
   const [patientEditModalOpen, patientHistoryModalOpen] = selectPatientModalOpen(state);
   const insuranceModalOpen = selectInsuranceModalOpen(state);
   const data = selectSortedData(state);
@@ -319,6 +324,7 @@ const mapStateToProps = state => {
     // Insurance
     insuranceModalOpen,
     selectedInsurancePolicy,
+    canEditInsurancePolicy,
     isCreatingInsurancePolicy,
   };
 };
@@ -392,6 +398,7 @@ Dispensing.propTypes = {
   patientHistoryModalOpen: PropTypes.bool.isRequired,
   selectedInsurancePolicy: PropTypes.object,
   insuranceModalOpen: PropTypes.bool.isRequired,
+  canEditInsurancePolicy: PropTypes.bool.isRequired,
   cancelInsuranceEdit: PropTypes.func.isRequired,
   isCreatingInsurancePolicy: PropTypes.bool.isRequired,
   saveInsurancePolicy: PropTypes.func.isRequired,

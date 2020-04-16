@@ -28,10 +28,11 @@ import {
   ChevronRightIcon,
   HistoryIcon,
   PencilIcon,
+  BookIcon,
 } from '../icons';
 import TextInputCell from './TextInputCell';
 
-import { COLUMN_TYPES, COLUMN_NAMES } from '../../pages/dataTableUtilities';
+import { COLUMN_KEYS, COLUMN_TYPES, COLUMN_NAMES } from '../../pages/dataTableUtilities';
 import { generalStrings, tableStrings } from '../../localization/index';
 
 import { formatStatus, formatDate } from '../../utilities';
@@ -83,10 +84,13 @@ const DataTableRow = React.memo(
           // Indicator if the right hand border should be removed from styles for this cell.
           const isLastCell = index === columns.length - 1;
 
-          // This cell is disabled if the pageObject is finalised, the row has been explicitly set
-          // as disabled, or the rowData is disabled (i.e. data is an invoice),
-          const isDisabled =
-            isFinalised || (rowState && rowState.isDisabled) || rowData.isFinalised;
+          // This cell is disabled if:
+          // - the pageObject is finalised
+          // - the rowData is disabled (i.e. data is a finalised invoice)
+          // - the row has been explicitly set as disabled
+          const { isFinalised: isFinalisedRow = false } = rowData ?? {};
+          const { isDisabled: isDisabledRow = false } = rowState ?? {};
+          const isDisabled = isFinalised || isFinalisedRow || isDisabledRow;
 
           // Alignment of this particular column. Default to left hand ide.
           const cellAlignment = alignText || 'left';
@@ -228,17 +232,25 @@ const DataTableRow = React.memo(
                 chevron_right: ChevronRightIcon,
                 history: () => <HistoryIcon color={SUSSOL_ORANGE} />,
                 pencil: () => <PencilIcon color={SUSSOL_ORANGE} />,
+                book: () => <BookIcon color={SUSSOL_ORANGE} />,
               };
+
+              const isEditReadOnlyRecord =
+                (columnKey === COLUMN_KEYS.PATIENT_EDIT ||
+                  columnKey === COLUMN_KEYS.PRESCRIBER_EDIT) &&
+                !rowData.isEditable;
+              const iconComponent = isEditReadOnlyRecord ? icons.book : icons[icon];
 
               return (
                 <TouchableCell
                   key={columnKey}
-                  renderChildren={icons[icon]}
+                  renderChildren={iconComponent}
                   rowKey={rowKey}
                   columnKey={columnKey}
                   onPress={getCallback(columnKey)}
                   width={width}
                   isLastCell={isLastCell}
+                  isDisabled={isDisabled}
                   containerStyle={iconCell}
                 />
               );
