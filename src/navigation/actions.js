@@ -282,7 +282,7 @@ export const gotoStocktakeEditPage = stocktake => dispatch => {
  * @param {Object} dispatch    Redux dispatch method.
  */
 export const gotoCustomerInvoice = transaction => dispatch => {
-  const { isConfirmed, isFinalised } = transaction;
+  const { isCredit, isConfirmed, isFinalised } = transaction;
 
   // Customer invoices are generally created with the status confirmed. This handles unexpected
   // cases of an incoming sycned invoice with status 'nw' or 'sg'.
@@ -296,7 +296,7 @@ export const gotoCustomerInvoice = transaction => dispatch => {
   const navigationAction = NavigationActions.navigate({
     routeName: ROUTES.CUSTOMER_INVOICE,
     params: {
-      title: `${navStrings.invoice} ${transaction.serialNumber}`,
+      title: `${isCredit ? navStrings.credit : navStrings.invoice} ${transaction.serialNumber}`,
       transaction,
       pageObject: transaction,
     },
