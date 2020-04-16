@@ -10,7 +10,7 @@ import {
   NUMBER_SEQUENCE_KEYS,
 } from '../utilities';
 
-import { modalStrings } from '../../localization';
+import { generalStrings, modalStrings } from '../../localization';
 
 /**
  * A transaction.
@@ -155,6 +155,15 @@ export class Transaction extends Realm.Object {
    */
   get isInventoryAdjustment() {
     return this.otherParty && this.otherParty.type === 'inventory_adjustment';
+  }
+
+  /**
+   * Get invoice type: credit or invoice.
+   *
+   * @return  {string}
+   */
+  get invoiceType() {
+    return this.isCredit ? generalStrings.credit : generalStrings.invoice;
   }
 
   /**

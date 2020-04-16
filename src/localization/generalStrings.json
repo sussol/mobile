@@ -1,5 +1,6 @@
 {
   "gb": {
+    "credit": "Credit",
     "submit": "Submit",
     "submitting": "Submitting...",
     "submitted": "Submitted",
@@ -21,6 +22,7 @@
     "reports": "Reports",
     "no_reports": "No Reports to show",
     "search_by": "Search by",
+    "invoice": "Invoice",
     "invoice_number": "invoice number",
     "requisition_number": "requisition number",
     "indicator_name": "indicator description",
