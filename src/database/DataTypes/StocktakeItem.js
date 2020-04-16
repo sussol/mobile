@@ -303,29 +303,6 @@ export class StocktakeItem extends Realm.Object {
     );
     return createRecord(database, 'StocktakeBatch', this, itemBatch, true);
   }
-
-  /**
-   * Removes reasons from related batches if they have no difference between
-   * snapshot and counted quantity.
-   *
-   * @param {Realm} database App-wide database interface
-   */
-  removeReason(database) {
-    this.batches.forEach(batch => {
-      if (!this.difference) batch.removeReason(database);
-    });
-  }
-
-  /**
-   * Applies the given Options object to all stocktake batches associated to
-   * this stocktake item, if there is a difference between countedTotalQuantity
-   * and snapshotTotalQuantity.
-   * @param {Realm}   database App-wide database interface.
-   * @param {Options} option   Option object to apply.
-   */
-  applyReason(database, option) {
-    this.batches.forEach(batch => batch.applyReason(database, option));
-  }
 }
 
 StocktakeItem.schema = {

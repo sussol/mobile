@@ -184,7 +184,7 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: re
         initialNumToRender={0}
       />
       <ModalContainer
-        fullScreen={modalKey === MODAL_KEYS.ENFORCE_STOCKTAKE_REASON}
+        fullScreen={false}
         isVisible={!!modalKey}
         onClose={onCloseModal}
         title={getModalTitle(modalKey)}

@@ -18,7 +18,6 @@ import {
 import { ACTIONS } from './constants';
 import { openModal, closeModal } from './pageActions';
 import { selectPageState } from '../../../selectors/pages';
-import { ROUTES } from '../../../navigation/index';
 
 /**
  * Refreshes a row in the DataTable component.
@@ -269,47 +268,6 @@ export const removeReason = (rowKey, route) => (dispatch, getState) => {
 };
 
 /**
- * Handles reason logic for a particular object (stocktakeBatch or
- * StocktakeItem) - if there is a difference (between snapshot and
- * countedTotalQuantity) - then a reason should be related to this
- * object. For negative adjustments, a negativeInventoryAdjustment
- * reason should be applied. If positive, a positiveInventoryAdjustment.
- * A correct reason
- * If there is already a reason, do nothing. If there is no
- * difference, but a reason has been previously applied, remove it.
- *
- * @param {String} rowKey Key of the row to enforce a reason on
- */
-export const enforceReasonChoice = (rowKey, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = selectPageState(getState());
-
-  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
-  if (!objectToEdit) return null;
-
-  const { difference } = objectToEdit;
-
-  // If there's no difference, just remove the reason
-  if (!difference) return dispatch(removeReason(rowKey, route));
-
-  const { validateReason } = objectToEdit;
-
-  if (!validateReason) {
-    // If updated counted quantity in stocktake page, set batches with default
-    // adjustment reason.
-    if (route === ROUTES.STOCKTAKE_EDITOR) {
-      const [defaultReason] = UIDatabase.objects(
-        difference > 0 ? 'PositiveAdjustmentReason' : 'NegativeAdjustmentReason'
-      );
-      objectToEdit.applyReason(UIDatabase, defaultReason);
-    } else {
-      // If updated counted quantity in batch modal, prompt user with reason modal.
-      return dispatch(openModal(MODAL_KEYS.ENFORCE_STOCKTAKE_REASON, rowKey, route));
-    }
-  }
-  return null;
-};
-
-/**
  * Applys a passed reason to the underlying row data. Can be a StocktakeItem
  * or StocktakeBatch.
  *
@@ -351,30 +309,6 @@ export const editRequisitionItemRequiredQuantityWithReason = (value, rowKey, rou
   dispatch(enforceRequisitionReasonChoice(rowKey, route));
 };
 
-/**
- * Wrapper around `editCountedTotalQuantity`, splitting the action to enforce a
- * reason also.
- *
- * @param {String|Number}   value  New value for the underlying `countedTotalQuantity` field
- * @param {String}          rowKey Key of the row to edit.
- */
-export const editCountedQuantityWithReason = (value, rowKey, route) => dispatch => {
-  dispatch(editCountedQuantity(value, rowKey, route));
-  dispatch(enforceReasonChoice(rowKey, route));
-};
-
-/**
- * Wrapper around `editStocktakeBatchCountedQuantity`, splitting the action to enforce a
- * reason also.
- *
- * @param {String|Number}   value  New value for the underlying `countedTotalQuantity` field
- * @param {String}          rowKey Key of the row to edit.
- */
-export const editStocktakeBatchCountedQuantityWithReason = (value, rowKey, route) => dispatch => {
-  dispatch(editStocktakeBatchCountedQuantity(value, rowKey, route));
-  dispatch(enforceReasonChoice(rowKey, route));
-};
-
 export const CellActionsLookup = {
   refreshRow,
   refreshIndicatorRow,
@@ -388,13 +322,10 @@ export const CellActionsLookup = {
   editCountedQuantity,
   editStocktakeBatchCountedQuantity,
   removeReason,
-  enforceReasonChoice,
   applyReason,
   editBatchName,
   editIndicatorValue,
   editStocktakeBatchName,
-  editCountedQuantityWithReason,
-  editStocktakeBatchCountedQuantityWithReason,
   editSellPrice,
   editBatchSupplier,
   editRequisitionItemRequiredQuantityWithReason,
