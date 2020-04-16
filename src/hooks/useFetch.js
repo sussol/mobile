@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import { Client as BugsnagClient } from 'bugsnag-react-native';
 
 import { getAuthHeader, AUTH_ERROR_CODES } from 'sussol-utilities';
 
@@ -21,7 +22,7 @@ const ERROR_CODES = {
 const getAuthorizationHeader = () => {
   const username = UIDatabase.getSetting(SYNC_SITE_NAME);
   const password = UIDatabase.getSetting(SYNC_SITE_PASSWORD_HASH);
-  return { authorization: getAuthHeader(username, password) };
+  return getAuthHeader(username, password);
 };
 
 /**
@@ -34,15 +35,18 @@ export const useFetch = (url, options = {}, timeout = CONNECTION_TIMEOUT_PERIOD)
   const [data, setData] = React.useState(null);
   const [error, setError] = React.useState(null);
   const isMounted = React.useRef(true);
+
+  /* eslint-disable no-undef */
+  const abortController = new AbortController();
+  const bugsnagClient = new BugsnagClient();
+
   React.useEffect(() => {
     if (url) {
       (async () => {
+        const { signal } = abortController;
+        const headers = { authorization: getAuthorizationHeader() };
         try {
-          /* eslint-disable no-undef */
-          const abortController = new AbortController();
-          const { signal } = abortController;
-          const { authorization } = getAuthorizationHeader();
-          const response = await fetch(url, { headers: { authorization }, signal, ...options });
+          const response = await fetch(url, { headers, signal, ...options });
           const { ok, status } = response;
           if (ok) {
             const responseData = await response.json();
@@ -51,15 +55,22 @@ export const useFetch = (url, options = {}, timeout = CONNECTION_TIMEOUT_PERIOD)
             if (!responseData.length) throw new Error(ERROR_CODES.RESPONSE_NO_RECORDS);
             if (isMounted.current) setData(responseData);
           } else {
+            const connectionError = new Error(ERROR_CODES.CONNECTION_FAILURE);
+            const authorizationError = new Error(ERROR_CODES.INVALID_PASSWORD);
             switch (status) {
               case 400:
               default:
-                throw new Error(ERROR_CODES.CONNECTION_FAILURE);
+                throw connectionError;
               case 401:
-                throw new Error(ERROR_CODES.INVALID_PASSWORD);
+                throw authorizationError;
             }
           }
         } catch (responseError) {
+          bugsnagClient.notify(responseError, report => {
+            report.context = 'FETCH ERROR';
+            report.errorMessage = responseError.message;
+            report.metadata = { error: { url, headers } };
+          });
           if (isMounted.current) {
             setError(responseError);
           }
@@ -79,6 +90,7 @@ export const useFetch = (url, options = {}, timeout = CONNECTION_TIMEOUT_PERIOD)
       isMounted.current = false;
     };
   }, [url]);
+
   const isFetching = !(data || error);
   return [data, error, isFetching];
 };
