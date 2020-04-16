@@ -8,7 +8,7 @@ import { UIDatabase } from '../database/index';
 import { INSURANCE_POLICY_FIELDS } from '../utilities/modules/dispensary/constants';
 
 const initialState = config => {
-  if (!config) return { formConfig: {}, formState: {} };
+  if (!config) return { formConfig: {}, isConfirmFormOpen: false };
 
   const formConfig = config.reduce(
     (acc, { key, initialValue, validator, isRequired }) => ({
@@ -22,13 +22,12 @@ const initialState = config => {
     }),
     {}
   );
-  const formState = { isConfirmFormOpen: false };
 
-  return { formConfig, formState };
+  return { formConfig, isConfirmFormOpen: false };
 };
 
 export const FormReducer = (state = initialState(), action) => {
-  const { formConfig, formState } = state;
+  const { formConfig, isConfirmFormOpen } = state;
   const { type } = action;
 
   switch (type) {
@@ -41,7 +40,7 @@ export const FormReducer = (state = initialState(), action) => {
     case FORM_ACTIONS.SHOW_CONFIRM_FORM: {
       return {
         formConfig,
-        formState: { ...formState, isConfirmFormOpen: true },
+        isConfirmFormOpen: true,
       };
     }
 
@@ -98,7 +97,7 @@ export const FormReducer = (state = initialState(), action) => {
             policyNumberPerson: newPolicyNumberPersonState,
             policyNumberFamily: newPolicyNumberFamilyState,
           },
-          formState,
+          isConfirmFormOpen,
         };
       }
 
@@ -114,7 +113,7 @@ export const FormReducer = (state = initialState(), action) => {
 
       return {
         formConfig: { ...formConfig, [key]: newConfigData },
-        formState,
+        isConfirmFormOpen,
       };
     }
 
