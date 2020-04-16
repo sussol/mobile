@@ -12,6 +12,7 @@ import { connect, batch } from 'react-redux';
 import { MODAL_KEYS, getModalTitle } from '../../utilities';
 import { usePageReducer } from '../../hooks';
 import { getItemLayout } from '../../pages/dataTableUtilities';
+import { COLUMN_KEYS } from '../../pages/dataTableUtilities/constants';
 
 import { GenericChoiceList } from '../modalChildren/GenericChoiceList';
 import { PageInfo, DataTablePageView, PageButton } from '..';
@@ -24,7 +25,7 @@ import { ModalContainer } from './ModalContainer';
 import { buttonStrings } from '../../localization';
 import { ROUTES } from '../../navigation/constants';
 
-import { selectUsingPayments } from '../../selectors/modules';
+import { selectUsingPayments, selectUsingHideSnapshotColumn } from '../../selectors/modules';
 import { AutocompleteSelector } from '../modalChildren';
 
 /**
@@ -41,15 +42,26 @@ import { AutocompleteSelector } from '../modalChildren';
  * holding the state of a given row. Each object has the shape :
  * { isSelected, isFocused, isDisabled },
  *
- * @prop {Object} stocktakeItem The realm transaction object for this invoice.
+ * @prop {Object} stocktakeItem The realm transsingHaction object for this invoice.
  * @prop {Object} page the current routeName for this modal.
  *
  */
-export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: reduxDispatch }) => {
+export const StocktakeBatchModalComponent = ({
+  stocktakeItem,
+  usingPayments,
+  usingReasons,
+  usingHideSnapshotColumn,
+  dispatch: reduxDispatch,
+}) => {
   const initialState = {
-    page,
+    page: 'stocktakeBatchEditModal',
     pageObject: stocktakeItem,
   };
+
+  if (usingReasons) {
+    initialState.page += 'WithReasons';
+    if (usingPayments) initialState.page += 'AndPrices';
+  } else if (usingPayments) initialState.page += 'WithPrices';
 
   const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
@@ -63,10 +75,14 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: re
     modalValue,
     keyExtractor,
     PageActions,
-    columns,
+    columns: pageColumns,
     getPageInfoColumns,
     suppliers,
   } = state;
+
+  const columns = usingHideSnapshotColumn
+    ? pageColumns.filter(({ key }) => key !== COLUMN_KEYS.SNAPSHOT_TOTAL_QUANTITY)
+    : pageColumns;
 
   const { stocktake = {} } = stocktakeItem;
   const { isFinalised = false } = stocktake;
@@ -212,23 +228,19 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: re
 
 StocktakeBatchModalComponent.propTypes = {
   stocktakeItem: PropTypes.object.isRequired,
-  page: PropTypes.string.isRequired,
+  usingPayments: PropTypes.bool.isRequired,
+  usingReasons: PropTypes.bool.isRequired,
+  usingHideSnapshotColumn: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
-  const usingPaymentsModule = selectUsingPayments(state);
+  const usingPayments = selectUsingPayments(state);
   const usingReasons =
     UIDatabase.objects('NegativeAdjustmentReason').length > 0 &&
     UIDatabase.objects('PositiveAdjustmentReason').length > 0;
-
-  if (usingReasons) {
-    if (usingPaymentsModule) return { page: 'stocktakeBatchEditModalWithReasonsAndPrices' };
-    return { page: 'stocktakeBatchEditModalWithReasons' };
-  }
-
-  if (usingPaymentsModule) return { page: 'stocktakeBatchEditModalWithPrices' };
-  return { page: 'stocktakeBatchEditModal' };
+  const usingHideSnapshotColumn = selectUsingHideSnapshotColumn(state);
+  return { usingPayments, usingReasons, usingHideSnapshotColumn };
 };
 
 export const StocktakeBatchModal = connect(mapStateToProps)(StocktakeBatchModalComponent);
