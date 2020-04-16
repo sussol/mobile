@@ -64,7 +64,7 @@ export const CustomerInvoice = ({
   onApplyMasterLists,
   route,
 }) => {
-  const { isCredit, isFinalised, comment, theirRef } = pageObject;
+  const { isFinalised, comment, theirRef } = pageObject;
 
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, route), [
     comment,
@@ -154,12 +154,12 @@ export const CustomerInvoice = ({
               style={{ ...topButton, marginLeft: 0 }}
               text={buttonStrings.new_item}
               onPress={onSelectNewItem}
-              isDisabled={isFinalised || isCredit}
+              isDisabled={isFinalised}
             />
             <PageButton
               text={buttonStrings.add_master_list_items}
               onPress={onAddMasterList}
-              isDisabled={isFinalised || isCredit}
+              isDisabled={isFinalised}
             />
           </View>
         </View>
@@ -210,7 +210,7 @@ const mapStateToProps = state => {
   const { pages } = state;
   const { customerInvoice } = pages;
   const { pageObject } = customerInvoice ?? {};
-  const { isCredit } = pageObject ?? {};
+  const { isCredit = false } = pageObject ?? {};
   const columnsKey = isCredit ? 'customerCredit' : 'customerInvoice';
   const columns = getColumns(columnsKey);
   return { ...customerInvoice, columns };
