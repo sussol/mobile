@@ -192,8 +192,12 @@ SearchListItemComponent.propTypes = {
   onSelect: PropTypes.func.isRequired,
 };
 
+SearchListItemColumnComponent.defaultProps = {
+  value: null,
+};
+
 SearchListItemColumnComponent.propTypes = {
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]).isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
   type: PropTypes.string.isRequired,
 };
 
