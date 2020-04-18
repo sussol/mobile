@@ -150,7 +150,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.INVOICE_NUMBER,
     COLUMN_NAMES.CUSTOMER,
     COLUMN_NAMES.ENTRY_DATE,
-    COLUMN_NAMES.INVOICE_TYPE,
+    COLUMN_NAMES.TRANSACTION_TYPE,
     COLUMN_NAMES.COMMENT,
     COLUMN_NAMES.REMOVE,
   ],
@@ -357,7 +357,6 @@ const COLUMNS = () => ({
     sortable: true,
     editable: false,
   },
-
   [COLUMN_NAMES.OTHER_PARTY_NAME]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.OTHER_PARTY_NAME,
@@ -372,14 +371,6 @@ const COLUMNS = () => ({
     title: tableStrings.prescriber,
     alignText: 'right',
     sortable: false,
-    editable: false,
-  },
-  [COLUMN_NAMES.INVOICE_TYPE]: {
-    type: COLUMN_TYPES.STRING,
-    key: COLUMN_KEYS.INVOICE_TYPE,
-    title: tableStrings.type,
-    alignText: 'left',
-    sortable: true,
     editable: false,
   },
   [COLUMN_NAMES.ITEM_NAME]: {

@@ -14,6 +14,8 @@
     "created_date": "CREATED DATE",
     "current_stock": "CURRENT STOCK",
     "customer": "CUSTOMER",
+    "customer_credit": "Customer credit",
+    "customer_invoice": "Customer invoice",
     "delete": "DELETE",
     "department": "Department",
     "description": "DESCRIPTION",
