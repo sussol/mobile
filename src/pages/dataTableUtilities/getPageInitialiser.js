@@ -76,11 +76,7 @@ export const customerInvoicesInitialiser = () => {
   const backingData = UIDatabase.objects('CustomerInvoice');
   const filteredData = backingData.filtered('status != $0', 'finalised').slice();
   const sortedData = sortDataBy(filteredData, 'serialNumber', false);
-
-  const hasPrograms = backingData.some(invoice => invoice.hasProgram);
-
-  const route = hasPrograms ? ROUTES.CUSTOMER_INVOICES_WITH_PROGRAMS : ROUTES.CUSTOMER_INVOICES;
-
+  const route = ROUTES.CUSTOMER_INVOICES;
   return {
     backingData,
     data: sortedData,
@@ -387,14 +383,9 @@ const supplierInvoiceInitialiser = transaction => {
  */
 const supplierInvoicesInitialiser = () => {
   const backingData = UIDatabase.objects('SupplierTransaction');
-
   const filteredData = backingData.filtered('status != $0', 'finalised').slice();
   const sortedData = sortDataBy(filteredData, 'serialNumber', false);
-
-  const hasPrograms = backingData.some(invoice => invoice.hasProgram);
-
-  const route = hasPrograms ? ROUTES.SUPPLIER_INVOICES_WITH_PROGRAMS : ROUTES.SUPPLIER_INVOICES;
-
+  const route = ROUTES.SUPPLIER_INVOICES;
   return {
     backingData,
     data: sortedData,
