@@ -1,6 +1,6 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2019
+ * Sustainable Solutions (NZ) Ltd. 2020
  */
 
 import { ROW_DETAIL_KEYS, ROW_DETAIL_ACTIONS } from '../actions/RowDetailActions';
