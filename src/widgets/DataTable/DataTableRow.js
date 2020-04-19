@@ -31,7 +31,7 @@ import {
 } from '../icons';
 import TextInputCell from './TextInputCell';
 
-import { COLUMN_TYPES, COLUMN_NAMES } from '../../pages/dataTableUtilities';
+import { COLUMN_TYPES, COLUMN_KEYS } from '../../pages/dataTableUtilities';
 import { generalStrings, tableStrings } from '../../localization/index';
 
 import { formatStatus, formatDate } from '../../utilities';
@@ -83,10 +83,16 @@ const DataTableRow = React.memo(
           // Indicator if the right hand border should be removed from styles for this cell.
           const isLastCell = index === columns.length - 1;
 
-          // This cell is disabled if the pageObject is finalised, the row has been explicitly set
-          // as disabled, or the rowData is disabled (i.e. data is an invoice),
-          const isDisabled =
-            isFinalised || (rowState && rowState.isDisabled) || rowData.isFinalised;
+          // This cell is disabled if:
+          // - the page is finalised.
+          // - the row has been explicitly set as disabled.
+          // - the data is disabled (i.e. data is an invoice).
+          // - the cell is a reason dropdown for a row with a difference of zero.
+          const rowIsDisabled = rowState?.isDisabled ?? false;
+          const dataIsDisabled = rowData?.isFinalised ?? false;
+          const reasonIsDisabled =
+            columnKey === COLUMN_KEYS.REASON_TITLE && rowData?.difference === 0;
+          const isDisabled = isFinalised || rowIsDisabled || dataIsDisabled || reasonIsDisabled;
 
           // Alignment of this particular column. Default to left hand ide.
           const cellAlignment = alignText || 'left';
@@ -98,7 +104,7 @@ const DataTableRow = React.memo(
               // Use the placeholder 'Not counted' when a stocktake item or batch
               // has not been counted yet.
               let placeholder = '';
-              if (columnKey === COLUMN_NAMES.COUNTED_TOTAL_QUANTITY) {
+              if (columnKey === COLUMN_KEYS.COUNTED_TOTAL_QUANTITY) {
                 placeholder = rowData.hasBeenCounted ? '' : tableStrings.not_counted;
               }
 
@@ -195,7 +201,7 @@ const DataTableRow = React.memo(
               // Use the placeholder 'Not counted' when a stocktake item or batch
               // has not been counted yet.
               const value =
-                columnKey === COLUMN_NAMES.DIFFERENCE && !rowData.hasBeenCounted
+                columnKey === COLUMN_KEYS.DIFFERENCE && !rowData.hasBeenCounted
                   ? generalStrings.not_available
                   : Math.round(rowData[columnKey]);
 
@@ -248,7 +254,7 @@ const DataTableRow = React.memo(
               return (
                 <DropDownCell
                   key={columnKey}
-                  isDisabled={isFinalised}
+                  isDisabled={isDisabled}
                   onPress={getCallback(columnKey)}
                   rowKey={rowKey}
                   columnKey={columnKey}

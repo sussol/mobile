@@ -280,12 +280,6 @@ const stocktakeEditorInitialiser = stocktake => {
   const { items: backingData } = stocktake;
   const sortedData = backingData.sorted('item.name').slice();
 
-  const hasNegativeAdjustmentReasons = UIDatabase.objects('NegativeAdjustmentReason').length > 0;
-  const hasPositiveAdjustmentReasons = UIDatabase.objects('PositiveAdjustmentReason').length > 0;
-  const usesReasons = hasNegativeAdjustmentReasons && hasPositiveAdjustmentReasons;
-
-  const customCode = usesReasons ? ROUTES.STOCKTAKE_EDITOR_WITH_REASONS : ROUTES.STOCKTAKE_EDITOR;
-
   return {
     pageObject: stocktake,
     backingData,
@@ -299,37 +293,8 @@ const stocktakeEditorInitialiser = stocktake => {
     modalKey: '',
     modalValue: null,
     route: ROUTES.STOCKTAKE_EDITOR,
-    columns: getColumns(customCode),
-    getPageInfoColumns: getPageInfoColumns(customCode, !!stocktake.program),
-  };
-};
-
-/**
- * Gets data for initialising an edit stocktake page when reasons
- * are defined from an associated stocktake.
- *
- * @param    {Stocktake}  stocktake
- * @returns  {object}
- */
-const stocktakeEditorWithReasonsInitialiser = stocktake => {
-  const { items: backingData } = stocktake;
-  const sortedData = backingData.sorted('item.name').slice();
-
-  return {
-    pageObject: stocktake,
-    backingData,
-    data: sortedData,
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    searchTerm: '',
-    filterDataKeys: ['item.name', 'item.code'],
-    sortKey: 'itemName',
-    isAscending: true,
-    modalKey: '',
-    modalValue: null,
-    route: ROUTES.STOCKTAKE_EDITOR_WITH_REASONS,
-    columns: getColumns(ROUTES.STOCKTAKE_EDITOR_WITH_REASONS),
-    getPageInfoColumns: getPageInfoColumns(ROUTES.STOCKTAKE_EDITOR_WITH_REASONS),
+    columns: getColumns(ROUTES.STOCKTAKE_EDITOR),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.STOCKTAKE_EDITOR, !!stocktake.program),
   };
 };
 
@@ -486,7 +451,6 @@ const pageInitialisers = {
   stocktakeBatchEditModalWithPrices: stocktakeBatchInitialiser,
   stocktakeBatchEditModalWithReasonsAndPrices: stocktakeBatchInitialiser,
   stocktakeEditor: stocktakeEditorInitialiser,
-  stocktakeEditorWithReasons: stocktakeEditorWithReasonsInitialiser,
   stocktakeManager: stocktakeManagerInitialiser,
   stocktakes: stocktakesInitialiser,
   supplierInvoice: supplierInvoiceInitialiser,
