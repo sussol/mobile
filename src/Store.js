@@ -32,6 +32,7 @@ const persistConfig = {
     'supplierCredit',
     'fridge',
     'breach',
+    'rowDetail',
   ],
 };
 

@@ -37,8 +37,8 @@ export const TemperatureSyncReducer = (state = initialState(), action) => {
   switch (type) {
     case REHYDRATE: {
       const { payload: previousState } = action;
-      const { temperatureSync: previousTemperatureSyncState } = previousState;
-      const { lastTemperatureSync } = previousTemperatureSyncState;
+      const { temperatureSync: previousTemperatureSyncState } = previousState ?? {};
+      const { lastTemperatureSync = null } = previousTemperatureSyncState ?? {};
 
       return { ...initialState(), lastTemperatureSync };
     }

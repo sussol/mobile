@@ -212,8 +212,24 @@ export class RequisitionItem extends Realm.Object {
     }
   }
 
+  get isVaccine() {
+    return this.item?.isVaccine ?? false;
+  }
+
   get reasonTitle() {
     return this.option?.title ?? '';
+  }
+
+  openVialWastage(fromDate) {
+    return this.item?.openVialWastage(fromDate);
+  }
+
+  closedVialWastage(fromDate) {
+    return this.item?.closedVialWastage(fromDate);
+  }
+
+  get lastRequisitionDate() {
+    return this.item?.lastRequisitionDate;
   }
 }
 

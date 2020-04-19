@@ -4,7 +4,7 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import { pageInfoStrings, programStrings, tableStrings } from '../../localization';
+import { generalStrings, pageInfoStrings, programStrings, tableStrings } from '../../localization';
 import { MODAL_KEYS, formatDate } from '../../utilities';
 import { ROUTES } from '../../navigation/constants';
 import { PageActions } from './actions';
@@ -75,7 +75,7 @@ const PER_PAGE_INFO_COLUMNS = {
     ['entryDate', 'confirmDate', 'transactionCategory'],
     ['enteredBy', 'otherParty'],
   ],
-  requisitionItemDetail: [['openVialWastage', 'closedVialWastage']],
+  requisitionItemDetail: [['lastRequisitionDate', 'openVialWastage', 'closedVialWastage']],
   breach: [
     ['breachTemperatureRange'],
     ['breachDuration', 'location'],
@@ -84,13 +84,21 @@ const PER_PAGE_INFO_COLUMNS = {
 };
 
 const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
+  lastRequisitionDate: {
+    title: `${pageInfoStrings.last_requisition_date}:`,
+    info: formatDate(pageObject?.lastRequisitionDate, 'll') || generalStrings.not_available,
+  },
   openVialWastage: {
     title: `${pageInfoStrings.open_vial_wastage}:`,
-    info: pageObject?.openVialWastage?.(pageObject.lastRequisitionDate),
+    info: pageObject?.isVaccine
+      ? pageObject?.openVialWastage?.(pageObject.lastRequisitionDate)
+      : generalStrings.not_available,
   },
   closedVialWastage: {
     title: `${pageInfoStrings.closed_vial_wastage}:`,
-    info: pageObject?.closedVialWastage?.(pageObject.lastRequisitionDate),
+    info: pageObject?.isVaccine
+      ? pageObject?.closedVialWastage?.(pageObject.lastRequisitionDate)
+      : generalStrings.not_available,
   },
   breachTemperatureRange: {
     title: `${pageInfoStrings.temperature_range}:`,
