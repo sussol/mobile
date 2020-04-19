@@ -10,7 +10,7 @@ import { View, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
-import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
+import { getColumns, getItemLayout, getPageDispatchers } from './dataTableUtilities';
 import { ROUTES } from '../navigation/constants';
 
 import { DataTablePageModal } from '../widgets/modals';
@@ -209,7 +209,11 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 const mapStateToProps = state => {
   const { pages } = state;
   const { customerInvoice } = pages;
-  return customerInvoice;
+  const { pageObject } = customerInvoice ?? {};
+  const { isCredit = false } = pageObject ?? {};
+  const columnsKey = isCredit ? 'customerCredit' : 'customerInvoice';
+  const columns = getColumns(columnsKey);
+  return { ...customerInvoice, columns };
 };
 
 export const CustomerInvoicePage = connect(mapStateToProps, mapDispatchToProps)(CustomerInvoice);

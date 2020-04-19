@@ -21,6 +21,7 @@ export const ROUTES = {
   SUPPLIER_REQUISITIONS: 'supplierRequisitions',
   SUPPLIER_REQUISITIONS_WITH_PROGRAMS: 'supplierRequisitionsWithPrograms',
 
+  CUSTOMER_CREDIT: 'customerCredit',
   CUSTOMER_INVOICE: 'customerInvoice',
   CUSTOMER_INVOICES: 'customerInvoices',
 
