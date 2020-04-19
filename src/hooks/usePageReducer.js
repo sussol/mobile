@@ -7,13 +7,13 @@ import { useRef, useState, useCallback, useMemo } from 'react';
 
 import {
   DataTablePageReducer,
+  PageActions,
   getColumns,
   getPageInfoColumns,
   getPageInitialiser,
 } from '../pages/dataTableUtilities';
-import { getPageActions } from '../pages/dataTableUtilities/actions/getPageActions';
 
-import { debounce } from '../utilities/index';
+import { debounce } from '../utilities';
 
 /**
  * Wrapper around useState, reimplementing useReducer with thunks.
@@ -52,7 +52,6 @@ export const usePageReducer = (
   const { page, pageObject } = initialState;
   const columns = useMemo(() => getColumns(page), []);
   const pageInfoColumns = useMemo(() => getPageInfoColumns(page), []);
-  const PageActions = useMemo(() => getPageActions(page), []);
   const pageInitialiser = useMemo(() => initialiser || getPageInitialiser(page), []);
 
   const [pageState, setPageState] = useState({
