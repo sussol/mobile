@@ -5,7 +5,7 @@
 
 import { createSelector } from 'reselect';
 
-import { selectHideSnapshotColumn } from './modules';
+import { selectUsingHideSnapshotColumn } from './modules';
 import { COLUMN_KEYS } from '../pages/dataTableUtilities/constants';
 
 /**
@@ -44,11 +44,11 @@ export const selectStocktakeEditor = createSelector([selectPages], pages => {
  * Selects stocktake editor columns.
  */
 export const selectStocktakeEditorColumns = createSelector(
-  [selectHideSnapshotColumn, selectStocktakeEditor],
-  (hideSnapshotColumn, stocktakeEditor) => {
+  [selectUsingHideSnapshotColumn, selectStocktakeEditor],
+  (usingHideSnapshotColumn, stocktakeEditor) => {
     const { columns } = stocktakeEditor;
     const stocktakeColumns = [...columns];
-    return hideSnapshotColumn
+    return usingHideSnapshotColumn
       ? stocktakeColumns.filter(({ key }) => key !== COLUMN_KEYS.SNAPSHOT_TOTAL_QUANTITY)
       : stocktakeColumns;
   }

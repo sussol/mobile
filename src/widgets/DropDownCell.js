@@ -6,6 +6,7 @@ import { View, Text } from 'react-native';
 import TouchableCell from './DataTable/TouchableCell';
 import { ExpandIcon } from './icons';
 import { dataTableStyles } from '../globalStyles/index';
+import { generalStrings } from '../localization';
 
 const {
   dropDownCellTextContainer,
@@ -41,11 +42,9 @@ const DropDownCell = React.memo(
             {value || placeholder}
           </Text>
         </View>
-        {!!value && (
-          <View style={dropDownCellIconContainer}>
-            <ExpandIcon />
-          </View>
-        )}
+        <View style={dropDownCellIconContainer}>
+          <ExpandIcon />
+        </View>
       </View>
     );
 
@@ -57,7 +56,7 @@ const DropDownCell = React.memo(
         debug={debug}
         isLastCell={isLastCell}
         onPress={onPress}
-        isDisabled={!value || isDisabled}
+        isDisabled={isDisabled}
         width={width}
         renderChildren={TouchableChild}
         containerStyle={touchableCellContainer}
@@ -71,7 +70,7 @@ DropDownCell.defaultProps = {
   isDisabled: false,
   value: '',
   isLastCell: false,
-  placeholder: 'N/A',
+  placeholder: generalStrings.not_available,
   debug: false,
 };
 DropDownCell.propTypes = {

@@ -50,6 +50,7 @@
     "payment_type": "PAYMENT TYPE",
     "prescriber": "PRESCRIBER",
     "price": "PRICE",
+    "program": "PROGRAM",
     "quantity": "QUANTITY",
     "question": "QUESTION",
     "reason": "REASON",

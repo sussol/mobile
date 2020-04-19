@@ -76,7 +76,7 @@ export const customerInvoicesInitialiser = () => {
   const backingData = UIDatabase.objects('CustomerTransaction');
   const filteredData = backingData.filtered('status != $0', 'finalised').slice();
   const sortedData = sortDataBy(filteredData, 'serialNumber', false);
-
+  const route = ROUTES.CUSTOMER_INVOICES;
   return {
     backingData,
     data: sortedData,
@@ -88,9 +88,9 @@ export const customerInvoicesInitialiser = () => {
     isAscending: false,
     modalKey: '',
     hasSelection: false,
-    route: ROUTES.CUSTOMER_INVOICES,
-    columns: getColumns(ROUTES.CUSTOMER_INVOICES),
-    getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_INVOICES),
+    route,
+    columns: getColumns(route),
+    getPageInfoColumns: getPageInfoColumns(route),
   };
 };
 
@@ -140,10 +140,12 @@ const customerRequisitionInitialiser = requisition => {
  */
 const customerRequisitionsInitialiser = () => {
   const backingData = UIDatabase.objects('ResponseRequisition');
-
+  const hasPrograms = backingData.filtered('program != $0', null).length > 0;
   const filteredData = backingData.filtered('status != $0', 'finalised');
   const sortedData = sortDataBy(filteredData.slice(), 'serialNumber', false);
-
+  const route = hasPrograms
+    ? ROUTES.CUSTOMER_REQUISITIONS_WITH_PROGRAMS
+    : ROUTES.CUSTOMER_REQUISITIONS;
   return {
     backingData,
     data: sortedData,
@@ -152,9 +154,9 @@ const customerRequisitionsInitialiser = () => {
     filterDataKeys: ['serialNumber'],
     sortKey: 'serialNumber',
     isAscending: false,
-    route: ROUTES.CUSTOMER_REQUISITIONS,
-    columns: getColumns(ROUTES.CUSTOMER_REQUISITIONS),
-    getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_REQUISITIONS),
+    route,
+    columns: getColumns(route),
+    getPageInfoColumns: getPageInfoColumns(route),
   };
 };
 
@@ -189,10 +191,10 @@ const stockInitialiser = () => {
  */
 const stocktakesInitialiser = () => {
   const backingData = UIDatabase.objects('Stocktake');
-
+  const hasPrograms = backingData.filtered('program != $0', null).length > 0;
   const filteredData = backingData.filtered('status != $0', 'finalised');
   const sortedData = filteredData.sorted('createdDate', true).slice();
-
+  const route = hasPrograms ? ROUTES.STOCKTAKES_WITH_PROGRAMS : ROUTES.STOCKTAKES;
   return {
     backingData,
     data: sortedData,
@@ -204,9 +206,9 @@ const stocktakesInitialiser = () => {
     isAscending: false,
     modalKey: '',
     hasSelection: false,
-    route: ROUTES.STOCKTAKES,
-    columns: getColumns(ROUTES.STOCKTAKES),
-    getPageInfoColumns: getPageInfoColumns(ROUTES.STOCKTAKES),
+    route,
+    columns: getColumns(route),
+    getPageInfoColumns: getPageInfoColumns(route),
   };
 };
 
@@ -278,12 +280,6 @@ const stocktakeEditorInitialiser = stocktake => {
   const { items: backingData } = stocktake;
   const sortedData = backingData.sorted('item.name').slice();
 
-  const hasNegativeAdjustmentReasons = UIDatabase.objects('NegativeAdjustmentReason').length > 0;
-  const hasPositiveAdjustmentReasons = UIDatabase.objects('PositiveAdjustmentReason').length > 0;
-  const usesReasons = hasNegativeAdjustmentReasons && hasPositiveAdjustmentReasons;
-
-  const customCode = usesReasons ? ROUTES.STOCKTAKE_EDITOR_WITH_REASONS : ROUTES.STOCKTAKE_EDITOR;
-
   return {
     pageObject: stocktake,
     backingData,
@@ -297,37 +293,8 @@ const stocktakeEditorInitialiser = stocktake => {
     modalKey: '',
     modalValue: null,
     route: ROUTES.STOCKTAKE_EDITOR,
-    columns: getColumns(customCode),
-    getPageInfoColumns: getPageInfoColumns(customCode, !!stocktake.program),
-  };
-};
-
-/**
- * Gets data for initialising an edit stocktake page when reasons
- * are defined from an associated stocktake.
- *
- * @param    {Stocktake}  stocktake
- * @returns  {object}
- */
-const stocktakeEditorWithReasonsInitialiser = stocktake => {
-  const { items: backingData } = stocktake;
-  const sortedData = backingData.sorted('item.name').slice();
-
-  return {
-    pageObject: stocktake,
-    backingData,
-    data: sortedData,
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    searchTerm: '',
-    filterDataKeys: ['item.name', 'item.code'],
-    sortKey: 'itemName',
-    isAscending: true,
-    modalKey: '',
-    modalValue: null,
-    route: ROUTES.STOCKTAKE_EDITOR_WITH_REASONS,
-    columns: getColumns(ROUTES.STOCKTAKE_EDITOR_WITH_REASONS),
-    getPageInfoColumns: getPageInfoColumns(ROUTES.STOCKTAKE_EDITOR_WITH_REASONS),
+    columns: getColumns(ROUTES.STOCKTAKE_EDITOR),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.STOCKTAKE_EDITOR, !!stocktake.program),
   };
 };
 
@@ -373,10 +340,9 @@ const supplierInvoiceInitialiser = transaction => {
  */
 const supplierInvoicesInitialiser = () => {
   const backingData = UIDatabase.objects('SupplierTransaction');
-
   const filteredData = backingData.filtered('status != $0', 'finalised').slice();
   const sortedData = sortDataBy(filteredData, 'serialNumber', false);
-
+  const route = ROUTES.SUPPLIER_INVOICES;
   return {
     backingData,
     data: sortedData,
@@ -388,9 +354,9 @@ const supplierInvoicesInitialiser = () => {
     isAscending: false,
     modalKey: '',
     hasSelection: false,
-    route: ROUTES.SUPPLIER_INVOICES,
-    columns: getColumns(ROUTES.SUPPLIER_INVOICES),
-    getPageInfoColumns: getPageInfoColumns(ROUTES.SUPPLIER_INVOICES),
+    route,
+    columns: getColumns(route),
+    getPageInfoColumns: getPageInfoColumns(route),
   };
 };
 
@@ -451,10 +417,12 @@ const supplierRequisitionInitialiser = requisition => {
  */
 const supplierRequisitionsInitialiser = () => {
   const backingData = UIDatabase.objects('RequestRequisition');
-
+  const hasPrograms = backingData.filtered('program != $0', null).length > 0;
   const filteredData = backingData.filtered('status != $0', 'finalised').slice();
   const sortedData = sortDataBy(filteredData, 'serialNumber', false);
-
+  const route = hasPrograms
+    ? ROUTES.SUPPLIER_REQUISITIONS_WITH_PROGRAMS
+    : ROUTES.SUPPLIER_REQUISITIONS;
   return {
     backingData,
     data: sortedData,
@@ -466,9 +434,9 @@ const supplierRequisitionsInitialiser = () => {
     isAscending: false,
     modalKey: '',
     hasSelection: false,
-    route: ROUTES.SUPPLIER_REQUISITIONS,
-    columns: getColumns(ROUTES.SUPPLIER_REQUISITIONS),
-    getPageInfoColumns: getPageInfoColumns(ROUTES.SUPPLIER_REQUISITIONS),
+    route,
+    columns: getColumns(route),
+    getPageInfoColumns: getPageInfoColumns(route),
   };
 };
 
@@ -483,7 +451,6 @@ const pageInitialisers = {
   stocktakeBatchEditModalWithPrices: stocktakeBatchInitialiser,
   stocktakeBatchEditModalWithReasonsAndPrices: stocktakeBatchInitialiser,
   stocktakeEditor: stocktakeEditorInitialiser,
-  stocktakeEditorWithReasons: stocktakeEditorWithReasonsInitialiser,
   stocktakeManager: stocktakeManagerInitialiser,
   stocktakes: stocktakesInitialiser,
   supplierInvoice: supplierInvoiceInitialiser,
