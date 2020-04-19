@@ -140,16 +140,12 @@ const customerRequisitionInitialiser = requisition => {
  */
 const customerRequisitionsInitialiser = () => {
   const backingData = UIDatabase.objects('ResponseRequisition');
-
+  const hasPrograms = backingData.filtered('program != $0', null).length > 0;
   const filteredData = backingData.filtered('status != $0', 'finalised');
   const sortedData = sortDataBy(filteredData.slice(), 'serialNumber', false);
-
-  const hasPrograms = backingData.some(requisition => requisition.hasProgram);
-
   const route = hasPrograms
     ? ROUTES.CUSTOMER_REQUISITIONS_WITH_PROGRAMS
     : ROUTES.CUSTOMER_REQUISITIONS;
-
   return {
     backingData,
     data: sortedData,
@@ -195,14 +191,10 @@ const stockInitialiser = () => {
  */
 const stocktakesInitialiser = () => {
   const backingData = UIDatabase.objects('Stocktake');
-
+  const hasPrograms = backingData.filtered('program != $0', null).length > 0;
   const filteredData = backingData.filtered('status != $0', 'finalised');
-  const hasPrograms = backingData.some(stocktake => stocktake.hasProgram);
-
-  const route = hasPrograms ? ROUTES.STOCKTAKES_WITH_PROGRAMS : ROUTES.STOCKTAKES;
-
   const sortedData = filteredData.sorted('createdDate', true).slice();
-
+  const route = hasPrograms ? ROUTES.STOCKTAKES_WITH_PROGRAMS : ROUTES.STOCKTAKES;
   return {
     backingData,
     data: sortedData,
@@ -460,16 +452,12 @@ const supplierRequisitionInitialiser = requisition => {
  */
 const supplierRequisitionsInitialiser = () => {
   const backingData = UIDatabase.objects('RequestRequisition');
-
+  const hasPrograms = backingData.filtered('program != $0', null).length > 0;
   const filteredData = backingData.filtered('status != $0', 'finalised').slice();
-  const hasPrograms = backingData.some(requisition => requisition.hasProgram);
-
+  const sortedData = sortDataBy(filteredData, 'serialNumber', false);
   const route = hasPrograms
     ? ROUTES.SUPPLIER_REQUISITIONS_WITH_PROGRAMS
     : ROUTES.SUPPLIER_REQUISITIONS;
-
-  const sortedData = sortDataBy(filteredData, 'serialNumber', false);
-
   return {
     backingData,
     data: sortedData,
