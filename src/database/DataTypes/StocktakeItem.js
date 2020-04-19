@@ -183,9 +183,9 @@ export class StocktakeItem extends Realm.Object {
    * for positive differences and vice versa for negative differences and no reason
    * when there is no difference.
    */
-  get validateReason() {
+  get hasValidReason() {
     return this.batches.every(
-      ({ validateReason: batchHasValidatedReason }) => batchHasValidatedReason
+      ({ hasValidReason: batchHasValidatedReason }) => batchHasValidatedReason
     );
   }
 
@@ -302,6 +302,18 @@ export class StocktakeItem extends Realm.Object {
       inventoryAdjustmentName
     );
     return createRecord(database, 'StocktakeBatch', this, itemBatch, true);
+  }
+
+  /**
+   * Removes reasons from related batches if they have no difference between
+   * snapshot and counted quantity.
+   *
+   * @param {Realm} database App-wide database interface
+   */
+  removeReason(database) {
+    this.batches.forEach(batch => {
+      if (!batch.hasValidReason) batch.removeReason(database);
+    });
   }
 }
 

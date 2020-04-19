@@ -5,23 +5,23 @@
  */
 
 import React, { useCallback, useEffect, useMemo } from 'react';
-import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { selectStocktakeEditor, selectStocktakeEditorColumns } from '../selectors/pages';
-
+import { UIDatabase } from '../database';
+import { ROUTES } from '../navigation/constants';
 import { MODAL_KEYS } from '../utilities';
+
+import { selectStocktakeEditor, selectStocktakeEditorColumns } from '../selectors/pages';
 import { PageActions, getItemLayout, getPageDispatchers } from './dataTableUtilities';
 
-import { DataTablePageModal } from '../widgets/modals';
 import { PageButton, PageInfo, DataTablePageView, SearchBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+import { DataTablePageModal } from '../widgets/modals';
 
 import { buttonStrings, generalStrings } from '../localization';
 import globalStyles from '../globalStyles';
-
-import { ROUTES } from '../navigation/constants';
 
 /**
  * Renders a mSupply page with a stocktake loaded for editing
@@ -196,11 +196,19 @@ export const StocktakeEdit = ({
   );
 };
 
-const mapDispatchToProps = dispatch => ({
-  ...getPageDispatchers(dispatch, 'Stocktake', ROUTES.STOCKTAKE_EDITOR),
-  onEditCountedQuantity: (newValue, rowKey) =>
-    dispatch(PageActions.onEditCountedQuantity(newValue, rowKey, ROUTES.STOCKTAKE_EDITOR)),
-});
+const mapDispatchToProps = dispatch => {
+  const hasNegativeAdjustmentReasons = UIDatabase.objects('NegativeAdjustmentReason').length > 0;
+  const hasPositiveAdjustmentReasons = UIDatabase.objects('PositiveAdjustmentReason').length > 0;
+  const usesReasons = hasNegativeAdjustmentReasons && hasPositiveAdjustmentReasons;
+  const onEditCountedQuantity = usesReasons
+    ? PageActions.editCountedQuantityWithReason
+    : PageActions.editCountedQuantity;
+  return {
+    ...getPageDispatchers(dispatch, 'Stocktake', ROUTES.STOCKTAKE_EDITOR),
+    onEditCountedQuantity: (newValue, rowKey) =>
+      dispatch(onEditCountedQuantity(newValue, rowKey, ROUTES.STOCKTAKE_EDITOR)),
+  };
+};
 
 const mapStateToProps = state => {
   const stocktakeEditor = selectStocktakeEditor(state);

@@ -77,6 +77,14 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: re
       ? UIDatabase.objects('PositiveAdjustmentReason')
       : UIDatabase.objects('NegativeAdjustmentReason');
 
+  const usesReasons =
+    page === 'stocktakeBatchEditModalWithReasons' ||
+    page === 'stocktakeBatchEditModalWithReasonsAndPrices';
+
+  const editStocktakeBatchCountedQuantity = usesReasons
+    ? PageActions.editStocktakeBatchCountedQuantityWithReason
+    : PageActions.editStocktakeBatchCountedQuantity;
+
   const onEditSupplier = value => dispatch(PageActions.editBatchSupplier(value, modalValue));
   const onSelectSupplier = rowKey =>
     dispatch(PageActions.openModal('selectItemBatchSupplier', rowKey));
@@ -92,7 +100,7 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: re
     });
   const onEditCountedQuantity = (newValue, rowKey, columnKey) =>
     batch(() => {
-      dispatch(PageActions.editStocktakeBatchCountedQuantity(newValue, rowKey, columnKey));
+      dispatch(editStocktakeBatchCountedQuantity(newValue, rowKey, columnKey));
       reduxDispatch(PageActions.refreshRow(stocktakeItem.id, ROUTES.STOCKTAKE_EDITOR));
     });
   const onEditDate = (date, rowKey, columnKey) =>
