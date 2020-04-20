@@ -4,10 +4,13 @@
  */
 
 const sortKeyToType = {
+  macAddress: 'string',
+  batteryLevelString: 'string',
   itemCode: 'string',
   itemName: 'string',
   batch: 'string',
   dateOfBirth: 'date',
+  description: 'string',
   doses: 'number',
   availableQuantity: 'number',
   totalQuantity: 'number',
