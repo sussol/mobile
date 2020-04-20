@@ -50,6 +50,6 @@ export const selectPatientModalOpen = ({ patient }) => {
 
 export const selectCanEditPatient = ({ patient }) => {
   const { currentPatient } = patient;
-  const { isEditable = false } = currentPatient ?? {};
+  const { isEditable = true } = currentPatient ?? {};
   return isEditable;
 };
