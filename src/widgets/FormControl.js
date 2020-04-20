@@ -24,6 +24,8 @@ import {
   selectIsConfirmFormOpen,
 } from '../selectors/form';
 import { FormActions } from '../actions/FormActions';
+
+import { ModalContainer } from './modals';
 import { ConfirmForm } from './modalChildren';
 
 /**
@@ -56,25 +58,23 @@ const FormControlComponent = ({
   canSaveForm,
   saveButtonText,
   // Confirm form state
-  confirmOnSave,
   isConfirmFormOpen,
   confirmText,
   // Cancel button state
   showCancelButton,
   cancelButtonText,
   // Form callbacks
-  initialiseForm,
+  onInitialiseForm,
   onUpdateForm,
-  showConfirmForm,
   // Save button callbacks
-  onSave,
+  onSaveForm,
   // Cancel button callbacks
-  onCancel,
+  onCancelForm,
 }) => {
   const [refs, setRefs] = React.useState([]);
 
   React.useEffect(() => {
-    initialiseForm(inputConfig);
+    onInitialiseForm();
     setRefs({ length: inputConfig.length });
   }, []);
 
@@ -188,35 +188,30 @@ const FormControlComponent = ({
       }
     );
 
-  const onSaveCompletedForm = React.useCallback(
-    () => (!confirmOnSave || isConfirmFormOpen ? onSave(completedForm) : showConfirmForm()),
-    [confirmOnSave, onSave, showConfirmForm, completedForm]
-  );
-
   const SaveButton = React.useCallback(
     () => (
       <PageButton
-        onPress={onSaveCompletedForm}
+        onPress={onSaveForm}
         style={localStyles.saveButton}
         isDisabled={!canSaveForm || isDisabled}
         textStyle={localStyles.saveButtonTextStyle}
         text={saveButtonText}
       />
     ),
-    [isDisabled, showCancelButton, canSaveForm, saveButtonText, onSaveCompletedForm]
+    [isDisabled, showCancelButton, canSaveForm, saveButtonText, onSaveForm]
   );
 
   const CancelButton = React.useCallback(
     () =>
       showCancelButton ? (
         <PageButton
-          onPress={onCancel}
+          onPress={onCancelForm}
           style={localStyles.cancelButton}
           textStyle={localStyles.cancelButtonTextStyle}
           text={cancelButtonText}
         />
       ) : null,
-    [showCancelButton, cancelButtonText, onCancel]
+    [showCancelButton, cancelButtonText, onCancelForm]
   );
 
   const Buttons = React.useCallback(
@@ -229,16 +224,7 @@ const FormControlComponent = ({
     [SaveButton, CancelButton]
   );
 
-  const InputConfirm = (
-    <ConfirmForm
-      isOpen={isConfirmFormOpen}
-      questionText={confirmText}
-      onConfirm={onSaveCompletedForm}
-      confirmText={modalStrings.confirm}
-    />
-  );
-
-  const InputDetails = (
+  return (
     <View style={localStyles.flexOne}>
       <ScrollView style={localStyles.whiteBackground}>
         <View style={localStyles.flexRow}>
@@ -248,27 +234,71 @@ const FormControlComponent = ({
         </View>
       </ScrollView>
       <Buttons />
+      <ModalContainer fullScreen isVisible={isConfirmFormOpen} noCancel>
+        <ConfirmForm
+          isOpen={isConfirmFormOpen}
+          questionText={confirmText}
+          onConfirm={onSaveForm}
+          onCancel={onCancelForm}
+          confirmText={modalStrings.confirm}
+        />
+      </ModalContainer>
     </View>
   );
-
-  return isConfirmFormOpen ? InputConfirm : InputDetails;
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+  const { form, completedForm, saveButtonText, canSaveForm, isConfirmFormOpen } = stateProps;
+  const { initialiseForm, showConfirmForm, hideConfirmForm, updateForm, resetForm } = dispatchProps;
+  const {
+    inputConfig,
+    isDisabled,
+    confirmOnSave,
+    confirmText,
+    onSave,
+    showCancelButton,
+    cancelButtonText,
+    onCancel,
+  } = ownProps;
+  const onInitialiseForm = () => initialiseForm(inputConfig);
+  const onUpdateForm = (key, value) => !isDisabled && updateForm(key, value);
+  const onSaveForm = () =>
+    confirmOnSave && !isConfirmFormOpen ? showConfirmForm() : onSave(completedForm);
+  const onCancelForm = () =>
+    confirmOnSave && isConfirmFormOpen ? hideConfirmForm() : onCancel() && resetForm();
+  return {
+    form,
+    completedForm,
+    inputConfig,
+    isDisabled,
+    canSaveForm,
+    saveButtonText,
+    isConfirmFormOpen,
+    confirmText,
+    showCancelButton,
+    cancelButtonText,
+    onInitialiseForm,
+    onUpdateForm,
+    onSaveForm,
+    onCancelForm,
+  };
+};
+
+const mapDispatchToProps = dispatch => {
   const initialiseForm = config => dispatch(FormActions.initialiseForm(config));
   const showConfirmForm = () => dispatch(FormActions.showConfirmForm());
-  const onUpdateForm = (key, value) => dispatch(FormActions.updateForm(key, value));
-  const onCancel = () => ownProps.onCancel() && dispatch(FormActions.resetForm());
-  return { initialiseForm, showConfirmForm, onUpdateForm, onCancel };
+  const hideConfirmForm = () => dispatch(FormActions.hideConfirmForm());
+  const updateForm = (key, value) => dispatch(FormActions.updateForm(key, value));
+  const resetForm = () => dispatch(FormActions.resetForm());
+  return { initialiseForm, showConfirmForm, hideConfirmForm, updateForm, resetForm };
 };
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = state => {
   const form = selectForm(state);
+  const completedForm = selectCompletedForm(state);
   const canSaveForm = selectCanSaveForm(state);
   const isConfirmFormOpen = selectIsConfirmFormOpen(state);
-  const completedForm = selectCompletedForm(state);
-  const { confirmOnSave } = ownProps;
-  return { form, canSaveForm, confirmOnSave, isConfirmFormOpen, completedForm };
+  return { form, canSaveForm, isConfirmFormOpen, completedForm };
 };
 
 FormControlComponent.defaultProps = {
@@ -276,7 +306,6 @@ FormControlComponent.defaultProps = {
   completedForm: {},
   isDisabled: false,
   saveButtonText: generalStrings.save,
-  confirmOnSave: false,
   confirmText: modalStrings.confirm,
   showCancelButton: true,
   cancelButtonText: modalStrings.cancel,
@@ -289,18 +318,21 @@ FormControlComponent.propTypes = {
   isDisabled: PropTypes.bool,
   canSaveForm: PropTypes.bool.isRequired,
   saveButtonText: PropTypes.string,
-  confirmOnSave: PropTypes.bool,
   isConfirmFormOpen: PropTypes.bool.isRequired,
   confirmText: PropTypes.string,
   showCancelButton: PropTypes.bool,
   cancelButtonText: PropTypes.string,
-  initialiseForm: PropTypes.func.isRequired,
+  onInitialiseForm: PropTypes.func.isRequired,
   onUpdateForm: PropTypes.func.isRequired,
-  onSave: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired,
+  onSaveForm: PropTypes.func.isRequired,
+  onCancelForm: PropTypes.func.isRequired,
 };
 
-export const FormControl = connect(mapStateToProps, mapDispatchToProps)(FormControlComponent);
+export const FormControl = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps
+)(FormControlComponent);
 
 const localStyles = StyleSheet.create({
   saveButton: {

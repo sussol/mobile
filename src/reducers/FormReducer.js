@@ -37,13 +37,6 @@ export const FormReducer = (state = initialState(), action) => {
       return initialState(config);
     }
 
-    case FORM_ACTIONS.SHOW_CONFIRM_FORM: {
-      return {
-        formConfig,
-        isConfirmFormOpen: true,
-      };
-    }
-
     case FORM_ACTIONS.UPDATE: {
       const { payload } = action;
       const { key, value } = payload;
@@ -119,6 +112,20 @@ export const FormReducer = (state = initialState(), action) => {
 
     case FORM_ACTIONS.CANCEL: {
       return initialState();
+    }
+
+    case FORM_ACTIONS.SHOW_CONFIRM_FORM: {
+      return {
+        formConfig,
+        isConfirmFormOpen: true,
+      };
+    }
+
+    case FORM_ACTIONS.HIDE_CONFIRM_FORM: {
+      return {
+        formConfig,
+        isConfirmFormOpen: false,
+      };
     }
 
     default:
