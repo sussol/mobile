@@ -24,6 +24,8 @@ import {
   selectIsConfirmFormOpen,
 } from '../selectors/form';
 import { FormActions } from '../actions/FormActions';
+
+import { ModalContainer } from './modals';
 import { ConfirmForm } from './modalChildren';
 
 /**
@@ -223,30 +225,16 @@ const FormControlComponent = ({
   );
 
   return (
-    <>
-      <View
-        style={
-          isConfirmFormOpen
-            ? { ...localStyles.flexOne, ...localStyles.hidden }
-            : localStyles.flexOne
-        }
-      >
-        <ScrollView style={localStyles.whiteBackground}>
-          <View style={localStyles.flexRow}>
-            <View style={localStyles.flexOne} />
-            <View style={localStyles.flexTen}>{formInputs()}</View>
-            <View style={localStyles.flexOne} />
-          </View>
-        </ScrollView>
-        <Buttons />
-      </View>
-      <View
-        style={
-          isConfirmFormOpen
-            ? localStyles.flexOne
-            : { ...localStyles.flexOne, ...localStyles.hidden }
-        }
-      >
+    <View style={localStyles.flexOne}>
+      <ScrollView style={localStyles.whiteBackground}>
+        <View style={localStyles.flexRow}>
+          <View style={localStyles.flexOne} />
+          <View style={localStyles.flexTen}>{formInputs()}</View>
+          <View style={localStyles.flexOne} />
+        </View>
+      </ScrollView>
+      <Buttons />
+      <ModalContainer fullScreen isVisible={isConfirmFormOpen} noCancel>
         <ConfirmForm
           isOpen={isConfirmFormOpen}
           questionText={confirmText}
@@ -254,8 +242,8 @@ const FormControlComponent = ({
           onCancel={onCancelForm}
           confirmText={modalStrings.confirm}
         />
-      </View>
-    </>
+      </ModalContainer>
+    </View>
   );
 };
 
@@ -373,5 +361,4 @@ const localStyles = StyleSheet.create({
   flexRow: { flex: 1, flexDirection: 'row' },
   buttonsRow: { marginTop: 10, flexDirection: 'row-reverse' },
   whiteBackground: { backgroundColor: WHITE },
-  hidden: { display: 'none' },
 });
