@@ -7,10 +7,20 @@ export const FORM_ACTIONS = {
   INITIALISE: 'Form/Initialise',
   UPDATE: 'Form/Update',
   CANCEL: 'Form/Cancel',
+  SHOW_CONFIRM_FORM: 'Form/ShowConfirmForm',
+  HIDE_CONFIRM_FORM: 'Form/HideConfirmForm',
 };
 
 const initialiseForm = config => ({ type: FORM_ACTIONS.INITIALISE, payload: { config } });
 const updateForm = (key, value) => ({ type: FORM_ACTIONS.UPDATE, payload: { key, value } });
 const resetForm = () => ({ type: FORM_ACTIONS.CANCEL });
+const showConfirmForm = () => ({ type: FORM_ACTIONS.SHOW_CONFIRM_FORM });
+const hideConfirmForm = () => ({ type: FORM_ACTIONS.HIDE_CONFIRM_FORM });
 
-export const FormActions = { initialiseForm, updateForm, resetForm };
+export const FormActions = {
+  initialiseForm,
+  updateForm,
+  resetForm,
+  showConfirmForm,
+  hideConfirmForm,
+};

@@ -2,8 +2,26 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
+
 import { createSelector } from 'reselect';
 import moment from 'moment';
+
+import { getFormInputConfig } from '../utilities/formInputConfigs';
+
+export const RECORD_TYPES = {
+  PATIENT: 'patient',
+  PRESCRIBER: 'prescriber',
+};
+
+export const LOOKUP_FORM_CONFIGS = {
+  [RECORD_TYPES.PATIENT]: 'searchPatient',
+  [RECORD_TYPES.PRESCRIBER]: 'searchPrescriber',
+};
+
+export const LOOKUP_LIST_CONFIGS = {
+  [RECORD_TYPES.PATIENT]: ['firstName', 'lastName', 'dateOfBirth'],
+  [RECORD_TYPES.PRESCRIBER]: ['firstName', 'lastName', 'registrationCode'],
+};
 
 export const selectSortKey = ({ dispensary }) => {
   const { sortKey } = dispensary;
@@ -38,6 +56,11 @@ export const selectDataSetInUse = ({ dispensary }) => {
   return [usingPatientsDataSet, usingPrescribersDataSet];
 };
 
+export const selectLookupModalOpen = ({ dispensary }) => {
+  const { isLookupModalOpen } = dispensary;
+  return isLookupModalOpen;
+};
+
 export const selectFilteredData = createSelector(
   [selectData, selectSearchTerm, selectDataSetInUse],
   (data, searchTerm, [usingPatientsDataSet]) => {
@@ -61,4 +84,20 @@ export const selectFilteredData = createSelector(
 export const selectSortedData = createSelector(
   [selectFilteredData, selectIsAscending, selectSortKey],
   (data, isAscending, sortKey) => data.sorted(sortKey, !isAscending)
+);
+
+export const selectLookupFormConfig = createSelector([selectDataSet], dataSource =>
+  getFormInputConfig(LOOKUP_FORM_CONFIGS[dataSource])
+);
+
+export const selectLookupListConfig = createSelector(
+  [selectDataSet, selectLookupFormConfig],
+  (dataSource, formConfig) => {
+    const listKeys = LOOKUP_LIST_CONFIGS[dataSource];
+    const listTypes = listKeys.reduce(
+      (acc, key) => ({ ...acc, [key]: formConfig.find(config => config.key === key)?.type }),
+      {}
+    );
+    return listKeys.map(key => ({ key, type: listTypes[key] }));
+  }
 );

@@ -28,6 +28,7 @@ import {
   ChevronRightIcon,
   HistoryIcon,
   PencilIcon,
+  BookIcon,
 } from '../icons';
 import TextInputCell from './TextInputCell';
 
@@ -234,17 +235,25 @@ const DataTableRow = React.memo(
                 chevron_right: ChevronRightIcon,
                 history: () => <HistoryIcon color={SUSSOL_ORANGE} />,
                 pencil: () => <PencilIcon color={SUSSOL_ORANGE} />,
+                book: () => <BookIcon color={SUSSOL_ORANGE} />,
               };
+
+              const isEditReadOnlyRecord =
+                (columnKey === COLUMN_KEYS.PATIENT_EDIT ||
+                  columnKey === COLUMN_KEYS.PRESCRIBER_EDIT) &&
+                !rowData.isEditable;
+              const iconComponent = isEditReadOnlyRecord ? icons.book : icons[icon];
 
               return (
                 <TouchableCell
                   key={columnKey}
-                  renderChildren={icons[icon]}
+                  renderChildren={iconComponent}
                   rowKey={rowKey}
                   columnKey={columnKey}
                   onPress={getCallback(columnKey)}
                   width={width}
                   isLastCell={isLastCell}
+                  isDisabled={isDisabled}
                   containerStyle={iconCell}
                 />
               );

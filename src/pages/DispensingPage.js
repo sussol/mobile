@@ -10,6 +10,7 @@ import { View } from 'react-native';
 
 import { ToggleBar, DataTablePageView, SearchBar, PageButton } from '../widgets';
 import { DataTable, DataTableRow, DataTableHeaderRow } from '../widgets/DataTable';
+import { SearchForm } from '../widgets/modals/SearchForm';
 import { PatientHistoryModal } from '../widgets/modals/PatientHistory';
 import { FormControl } from '../widgets/FormControl';
 import { ModalContainer } from '../widgets/modals/ModalContainer';
@@ -25,9 +26,13 @@ import { PrescriberActions } from '../actions/PrescriberActions';
 import { InsuranceActions } from '../actions/InsuranceActions';
 import { DispensaryActions } from '../actions/DispensaryActions';
 
-import { selectDataSetInUse, selectSortedData } from '../selectors/dispensary';
+import {
+  selectDataSetInUse,
+  selectSortedData,
+  selectLookupModalOpen,
+} from '../selectors/dispensary';
 import { selectPrescriberModalOpen, selectCanEditPrescriber } from '../selectors/prescriber';
-import { selectInsuranceModalOpen } from '../selectors/insurance';
+import { selectInsuranceModalOpen, selectCanEditInsurancePolicy } from '../selectors/insurance';
 import { selectPatientModalOpen, selectCanEditPatient } from '../selectors/patient';
 
 import globalStyles from '../globalStyles';
@@ -47,6 +52,13 @@ const Dispensing = ({
   sort,
   gotoPrescription,
   switchDataset,
+
+  // Dispensary lookup API callbacks
+  lookupRecord,
+  cancelLookupRecord,
+
+  // Dispensary lookup API variables
+  isLookupModalOpen,
 
   // Patient variable
   patientEditModalOpen,
@@ -75,6 +87,7 @@ const Dispensing = ({
   // Insurance variables
   insuranceModalOpen,
   selectedInsurancePolicy,
+  canEditInsurancePolicy,
   isCreatingInsurancePolicy,
   // Insurance callbacks
   cancelInsuranceEdit,
@@ -140,6 +153,26 @@ const Dispensing = ({
     [usingPatientsDataSet, usingPrescribersDataSet, switchDataset]
   );
 
+  const newRecordText = useMemo(
+    () =>
+      usingPatientsDataSet
+        ? `${dispensingStrings.new_patient}`
+        : `${dispensingStrings.new} ${dispensingStrings.prescriber}`,
+    [usingPatientsDataSet]
+  );
+  const lookupRecordText = useMemo(
+    () =>
+      usingPatientsDataSet
+        ? `${dispensingStrings.lookup_patient}`
+        : `${dispensingStrings.lookup_prescriber}`,
+    [usingPatientsDataSet]
+  );
+
+  const newRecordAction = useMemo(() => (usingPatientsDataSet ? createPatient : createPrescriber), [
+    usingPatientsDataSet,
+  ]);
+  const lookupRecordAction = useMemo(() => lookupRecord, []);
+
   const { pageTopSectionContainer } = globalStyles;
   return (
     <>
@@ -153,13 +186,11 @@ const Dispensing = ({
             placeholder={dispensingStrings.search_by_last_name_first_name}
           />
           <PageButton
-            text={
-              usingPatientsDataSet
-                ? `${dispensingStrings.new_patient}`
-                : `${dispensingStrings.new} ${dispensingStrings.prescriber}`
-            }
-            onPress={usingPatientsDataSet ? createPatient : createPrescriber}
+            text={lookupRecordText}
+            onPress={lookupRecordAction}
+            style={localStyles.button}
           />
+          <PageButton text={newRecordText} onPress={newRecordAction} style={localStyles.button} />
         </View>
         <DataTable
           data={data}
@@ -202,6 +233,9 @@ const Dispensing = ({
         isVisible={insuranceModalOpen}
       >
         <FormControl
+          isDisabled={!canEditInsurancePolicy}
+          confirmOnSave={!canEditPatient}
+          confirmText={dispensingStrings.confirm_new_policy}
           onSave={saveInsurancePolicy}
           onCancel={cancelInsuranceEdit}
           inputConfig={getFormInputConfig(
@@ -218,6 +252,18 @@ const Dispensing = ({
       >
         <PatientHistoryModal />
       </ModalContainer>
+      <ModalContainer
+        title={
+          usingPatientsDataSet
+            ? `${dispensingStrings.lookup_patient}`
+            : `${dispensingStrings.lookup_prescriber}`
+        }
+        onClose={cancelLookupRecord}
+        fullScreen
+        isVisible={isLookupModalOpen}
+      >
+        <SearchForm />
+      </ModalContainer>
     </>
   );
 };
@@ -231,11 +277,16 @@ const localStyles = {
     flex: 1,
     flexGrow: 1,
   },
+  button: {
+    marginHorizontal: 2.5,
+  },
 };
 
 const mapStateToProps = state => {
   const { patient, prescriber, insurance, dispensary } = state;
   const { sortKey, isAscending, searchTerm, columns } = dispensary;
+
+  const isLookupModalOpen = selectLookupModalOpen(state);
 
   const { currentPatient } = patient;
   const { currentPrescriber } = prescriber;
@@ -244,6 +295,7 @@ const mapStateToProps = state => {
   const prescriberModalOpen = selectPrescriberModalOpen(state);
   const canEditPrescriber = selectCanEditPrescriber(state);
   const canEditPatient = selectCanEditPatient(state);
+  const canEditInsurancePolicy = selectCanEditInsurancePolicy(state);
   const [patientEditModalOpen, patientHistoryModalOpen] = selectPatientModalOpen(state);
   const insuranceModalOpen = selectInsuranceModalOpen(state);
   const data = selectSortedData(state);
@@ -258,6 +310,8 @@ const mapStateToProps = state => {
     isAscending,
     searchTerm,
     columns,
+    // Dispensary lookup API
+    isLookupModalOpen,
     // Patient
     patientEditModalOpen,
     currentPatient,
@@ -270,6 +324,7 @@ const mapStateToProps = state => {
     // Insurance
     insuranceModalOpen,
     selectedInsurancePolicy,
+    canEditInsurancePolicy,
     isCreatingInsurancePolicy,
   };
 };
@@ -280,6 +335,9 @@ const mapDispatchToProps = dispatch => ({
   filter: searchTerm => dispatch(DispensaryActions.filter(searchTerm)),
   sort: sortKey => dispatch(DispensaryActions.sort(sortKey)),
   switchDataset: () => dispatch(DispensaryActions.switchDataSet()),
+
+  lookupRecord: () => dispatch(DispensaryActions.openLookupModal()),
+  cancelLookupRecord: () => dispatch(DispensaryActions.closeLookupModal()),
 
   editPatient: patient => dispatch(PatientActions.editPatient(UIDatabase.get('Name', patient))),
   createPatient: () => dispatch(PatientActions.createPatient()),
@@ -317,6 +375,9 @@ Dispensing.propTypes = {
   searchTerm: PropTypes.string.isRequired,
   filter: PropTypes.func.isRequired,
   switchDataset: PropTypes.func.isRequired,
+  lookupRecord: PropTypes.func.isRequired,
+  cancelLookupRecord: PropTypes.func.isRequired,
+  isLookupModalOpen: PropTypes.bool.isRequired,
   gotoPrescription: PropTypes.func.isRequired,
   editPatient: PropTypes.func.isRequired,
   patientEditModalOpen: PropTypes.bool.isRequired,
@@ -337,6 +398,7 @@ Dispensing.propTypes = {
   patientHistoryModalOpen: PropTypes.bool.isRequired,
   selectedInsurancePolicy: PropTypes.object,
   insuranceModalOpen: PropTypes.bool.isRequired,
+  canEditInsurancePolicy: PropTypes.bool.isRequired,
   cancelInsuranceEdit: PropTypes.func.isRequired,
   isCreatingInsurancePolicy: PropTypes.bool.isRequired,
   saveInsurancePolicy: PropTypes.func.isRequired,

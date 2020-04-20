@@ -7,6 +7,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { PageButton } from './PageButton';
+
+import { FORM_INPUT_TYPES } from '../utilities/formInputConfigs';
 import { FormTextInput } from './FormInputs/FromTextInput';
 import { FormDateInput } from './FormInputs/FormDateInput';
 import { FormToggle } from './FormInputs/FormToggle';
@@ -15,8 +17,16 @@ import { FormSlider } from './FormInputs/FormSlider';
 
 import globalStyles, { SUSSOL_ORANGE, WHITE } from '../globalStyles';
 import { modalStrings, generalStrings } from '../localization';
-import { selectForm, selectCanSaveForm, selectCompletedForm } from '../selectors/form';
+import {
+  selectForm,
+  selectCanSaveForm,
+  selectCompletedForm,
+  selectIsConfirmFormOpen,
+} from '../selectors/form';
 import { FormActions } from '../actions/FormActions';
+
+import { ModalContainer } from './modals';
+import { ConfirmForm } from './modalChildren';
 
 /**
  * Component which will manage and control a set of user inputs of a form.
@@ -32,32 +42,41 @@ import { FormActions } from '../actions/FormActions';
  * @param {func}  completedForm   Object containing key:value pairs of valid inputs from the form.
  * @param {func}  initialiseForm  Dispatcher to initialise the redux state with the correct config.
  * @param {func}  onSave          Callback to invoke on saving the form, passing back completedForm.
+ * @param {func}  confirmText     Text to display on save confirmation. If blank, no confirmation
+ *                                form is shown before saving.
  * @param {bool}  isDisabled      Indicator whether this Form is disabled.
  * @param {Array} inputConfig     Configuration array of input config objects.
  *                                See { getFormInputConfig } from src/utilities/formInputConfigs.
  */
 const FormControlComponent = ({
-  onUpdateForm,
-  onCancelPressed,
-  canSaveForm,
-  completedForm,
+  // Form state
   form,
-  initialiseForm,
-  onSave,
+  completedForm,
   inputConfig,
   isDisabled,
+  // Save button state
+  canSaveForm,
+  saveButtonText,
+  // Confirm form state
+  isConfirmFormOpen,
+  confirmText,
+  // Cancel button state
+  showCancelButton,
+  cancelButtonText,
+  // Form callbacks
+  onInitialiseForm,
+  onUpdateForm,
+  // Save button callbacks
+  onSaveForm,
+  // Cancel button callbacks
+  onCancelForm,
 }) => {
   const [refs, setRefs] = React.useState([]);
 
   React.useEffect(() => {
-    initialiseForm(inputConfig);
+    onInitialiseForm();
     setRefs({ length: inputConfig.length });
   }, []);
-
-  const onSaveCompletedForm = React.useCallback(() => onSave(completedForm), [
-    onSave,
-    completedForm,
-  ]);
 
   const nextFocus = (index, key) => value => {
     onUpdateForm(key, value);
@@ -82,7 +101,7 @@ const FormControlComponent = ({
       ) => {
         refs[index] = React.useRef();
         switch (type) {
-          case 'text': {
+          case FORM_INPUT_TYPES.TEXT: {
             return (
               <FormTextInput
                 ref={refs[index]}
@@ -100,7 +119,7 @@ const FormControlComponent = ({
               />
             );
           }
-          case 'date': {
+          case FORM_INPUT_TYPES.DATE: {
             return (
               <FormDateInput
                 ref={refs[index]}
@@ -116,7 +135,7 @@ const FormControlComponent = ({
               />
             );
           }
-          case 'dropdown': {
+          case FORM_INPUT_TYPES.DROPDOWN: {
             const { options, optionKey } = rest;
             return (
               <FormDropdown
@@ -131,7 +150,7 @@ const FormControlComponent = ({
               />
             );
           }
-          case 'toggle': {
+          case FORM_INPUT_TYPES.TOGGLE: {
             const { options, optionLabels } = rest;
             return (
               <FormToggle
@@ -146,7 +165,7 @@ const FormControlComponent = ({
               />
             );
           }
-          case 'slider': {
+          case FORM_INPUT_TYPES.SLIDER: {
             const { maximumValue, minimumValue, step } = rest;
             return (
               <FormSlider
@@ -169,6 +188,42 @@ const FormControlComponent = ({
       }
     );
 
+  const SaveButton = React.useCallback(
+    () => (
+      <PageButton
+        onPress={onSaveForm}
+        style={localStyles.saveButton}
+        isDisabled={!canSaveForm || isDisabled}
+        textStyle={localStyles.saveButtonTextStyle}
+        text={saveButtonText}
+      />
+    ),
+    [isDisabled, showCancelButton, canSaveForm, saveButtonText, onSaveForm]
+  );
+
+  const CancelButton = React.useCallback(
+    () =>
+      showCancelButton ? (
+        <PageButton
+          onPress={onCancelForm}
+          style={localStyles.cancelButton}
+          textStyle={localStyles.cancelButtonTextStyle}
+          text={cancelButtonText}
+        />
+      ) : null,
+    [showCancelButton, cancelButtonText, onCancelForm]
+  );
+
+  const Buttons = React.useCallback(
+    () => (
+      <View style={localStyles.buttonsRow}>
+        <SaveButton />
+        <CancelButton />
+      </View>
+    ),
+    [SaveButton, CancelButton]
+  );
+
   return (
     <View style={localStyles.flexOne}>
       <ScrollView style={localStyles.whiteBackground}>
@@ -178,67 +233,111 @@ const FormControlComponent = ({
           <View style={localStyles.flexOne} />
         </View>
       </ScrollView>
-      <View style={localStyles.buttonsRow}>
-        <PageButton
-          onPress={onSaveCompletedForm}
-          style={localStyles.saveButton}
-          isDisabled={!canSaveForm || isDisabled}
-          textStyle={localStyles.saveButtonTextStyle}
-          text={generalStrings.save}
+      <Buttons />
+      <ModalContainer fullScreen isVisible={isConfirmFormOpen} noCancel>
+        <ConfirmForm
+          isOpen={isConfirmFormOpen}
+          questionText={confirmText}
+          onConfirm={onSaveForm}
+          onCancel={onCancelForm}
+          confirmText={modalStrings.confirm}
         />
-        <PageButton
-          style={localStyles.cancelButton}
-          onPress={onCancelPressed}
-          textStyle={localStyles.cancelButtonTextStyle}
-          text={modalStrings.cancel}
-        />
-      </View>
+      </ModalContainer>
     </View>
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
-  const { onCancel } = ownProps;
-
-  const initialiseForm = config => dispatch(FormActions.initialiseForm(config));
-  const onUpdateForm = (key, value) => dispatch(FormActions.updateForm(key, value));
-  const onCancelPressed = () => {
-    dispatch(FormActions.resetForm());
-    onCancel();
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+  const { form, completedForm, saveButtonText, canSaveForm, isConfirmFormOpen } = stateProps;
+  const { initialiseForm, showConfirmForm, hideConfirmForm, updateForm, resetForm } = dispatchProps;
+  const {
+    inputConfig,
+    isDisabled,
+    confirmOnSave,
+    confirmText,
+    onSave,
+    showCancelButton,
+    cancelButtonText,
+    onCancel,
+  } = ownProps;
+  const onInitialiseForm = () => initialiseForm(inputConfig);
+  const onUpdateForm = (key, value) => !isDisabled && updateForm(key, value);
+  const onSaveForm = () =>
+    confirmOnSave && !isConfirmFormOpen ? showConfirmForm() : onSave(completedForm);
+  const onCancelForm = () =>
+    confirmOnSave && isConfirmFormOpen ? hideConfirmForm() : onCancel() && resetForm();
+  return {
+    form,
+    completedForm,
+    inputConfig,
+    isDisabled,
+    canSaveForm,
+    saveButtonText,
+    isConfirmFormOpen,
+    confirmText,
+    showCancelButton,
+    cancelButtonText,
+    onInitialiseForm,
+    onUpdateForm,
+    onSaveForm,
+    onCancelForm,
   };
-  return { initialiseForm, onUpdateForm, onCancelPressed };
+};
+
+const mapDispatchToProps = dispatch => {
+  const initialiseForm = config => dispatch(FormActions.initialiseForm(config));
+  const showConfirmForm = () => dispatch(FormActions.showConfirmForm());
+  const hideConfirmForm = () => dispatch(FormActions.hideConfirmForm());
+  const updateForm = (key, value) => dispatch(FormActions.updateForm(key, value));
+  const resetForm = () => dispatch(FormActions.resetForm());
+  return { initialiseForm, showConfirmForm, hideConfirmForm, updateForm, resetForm };
 };
 
 const mapStateToProps = state => {
   const form = selectForm(state);
-  const canSaveForm = selectCanSaveForm(state);
   const completedForm = selectCompletedForm(state);
-  return { form, canSaveForm, completedForm };
+  const canSaveForm = selectCanSaveForm(state);
+  const isConfirmFormOpen = selectIsConfirmFormOpen(state);
+  return { form, canSaveForm, isConfirmFormOpen, completedForm };
 };
 
 FormControlComponent.defaultProps = {
-  completedForm: null,
-  isDisabled: false,
   form: {},
+  completedForm: {},
+  isDisabled: false,
+  saveButtonText: generalStrings.save,
+  confirmText: modalStrings.confirm,
+  showCancelButton: true,
+  cancelButtonText: modalStrings.cancel,
 };
 
 FormControlComponent.propTypes = {
-  canSaveForm: PropTypes.bool.isRequired,
-  completedForm: PropTypes.object,
   form: PropTypes.object,
-  initialiseForm: PropTypes.func.isRequired,
-  onSave: PropTypes.func.isRequired,
-  onUpdateForm: PropTypes.func.isRequired,
+  completedForm: PropTypes.object,
   inputConfig: PropTypes.array.isRequired,
-  onCancelPressed: PropTypes.func.isRequired,
   isDisabled: PropTypes.bool,
+  canSaveForm: PropTypes.bool.isRequired,
+  saveButtonText: PropTypes.string,
+  isConfirmFormOpen: PropTypes.bool.isRequired,
+  confirmText: PropTypes.string,
+  showCancelButton: PropTypes.bool,
+  cancelButtonText: PropTypes.string,
+  onInitialiseForm: PropTypes.func.isRequired,
+  onUpdateForm: PropTypes.func.isRequired,
+  onSaveForm: PropTypes.func.isRequired,
+  onCancelForm: PropTypes.func.isRequired,
 };
 
-export const FormControl = connect(mapStateToProps, mapDispatchToProps)(FormControlComponent);
+export const FormControl = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps
+)(FormControlComponent);
 
 const localStyles = StyleSheet.create({
   saveButton: {
     ...globalStyles.button,
+    flex: 1,
     backgroundColor: SUSSOL_ORANGE,
     alignSelf: 'center',
   },
@@ -249,7 +348,7 @@ const localStyles = StyleSheet.create({
   },
   cancelButton: {
     ...globalStyles.button,
-
+    flex: 1,
     alignSelf: 'center',
   },
   cancelButtonTextStyle: {
