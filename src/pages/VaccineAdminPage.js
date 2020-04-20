@@ -19,7 +19,7 @@ import { ROUTES } from '../navigation';
 import { generalStrings, vaccineStrings } from '../localization';
 import globalStyles from '../globalStyles';
 
-export const VaccineAdminPageComponent = ({
+const VaccineAdminPageComponent = ({
   data,
   sortKey,
   isAscending,
