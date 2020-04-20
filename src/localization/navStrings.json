@@ -23,7 +23,8 @@
     "supplier_credit": "Supplier Credit",
     "supplier_invoices": "Supplier Invoices",
     "supplier_requisitions": "Supplier Requisitions",
-    "vaccines": "Vaccines"
+    "vaccines": "Vaccines",
+    "vaccine_admin": "Vaccines admin"
   },
   "fr": {
     "supplier_credit": "Crédit Fournisseur",
