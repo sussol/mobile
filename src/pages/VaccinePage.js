@@ -9,14 +9,15 @@ import { connect } from 'react-redux';
 import { StyleSheet, Text, FlatList } from 'react-native';
 import PropTypes from 'prop-types';
 
-import { FridgeDisplay, FlexView } from '../widgets';
+import { PageButton, DataTablePageView, FridgeDisplay, FlexView } from '../widgets';
 
-import { selectMinAndMaxLogs, selectMinAndMaxDomains } from '../selectors/fridge';
+import { selectMinAndMaxLogs, selectMinAndMaxDomains, selectBreaches } from '../selectors/fridge';
 import { FridgeActions } from '../actions/FridgeActions';
 import { BreachActions } from '../actions/BreachActions';
+import { gotoVaccineAdminPage } from '../navigation/actions';
 
 import { APP_FONT_FAMILY } from '../globalStyles';
-import { vaccineStrings } from '../localization';
+import { vaccineStrings, generalStrings } from '../localization';
 
 export const VaccinePageComponent = ({
   selectedFridge,
@@ -28,6 +29,7 @@ export const VaccinePageComponent = ({
   fridges,
   onSelectFridge,
   onOpenBreachModal,
+  onViewAdminPage,
 }) => {
   const Fridge = React.useCallback(
     ({ item }) => (
@@ -55,13 +57,21 @@ export const VaccinePageComponent = ({
     []
   );
 
-  return fridges.length ? <FlatList data={fridges} renderItem={Fridge} /> : <BlankComponent />;
+  return (
+    <DataTablePageView>
+      <FlexView flex={0} alignItems="flex-end" style={{ margin: 10 }}>
+        <PageButton text={generalStrings.admin} onPress={onViewAdminPage} />
+      </FlexView>
+
+      {fridges.length ? <FlatList data={fridges} renderItem={Fridge} /> : <BlankComponent />}
+    </DataTablePageView>
+  );
 };
 
 const mapStateToProps = state => {
   const { fridge } = state;
   const { fridges, selectedFridge } = fridge;
-  const { breaches } = selectedFridge;
+  const { breaches } = selectBreaches(state);
 
   const { minLine, maxLine } = selectMinAndMaxLogs(state);
   const { minDomain, maxDomain } = selectMinAndMaxDomains(state);
@@ -77,6 +87,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
+  onViewAdminPage: () => dispatch(gotoVaccineAdminPage()),
   onSelectFridge: fridge => dispatch(FridgeActions.select(fridge)),
   onOpenBreachModal: breachId => {
     dispatch(BreachActions.viewFridgeBreach(breachId));
@@ -97,6 +108,7 @@ VaccinePageComponent.propTypes = {
   fridges: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   onSelectFridge: PropTypes.func.isRequired,
   onOpenBreachModal: PropTypes.func.isRequired,
+  onViewAdminPage: PropTypes.func.isRequired,
 };
 
 const localStyles = StyleSheet.create({

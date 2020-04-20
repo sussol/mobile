@@ -34,6 +34,8 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
       dispatch(BasePageActions.refreshData(route));
     },
     onToggleTransactionType: () => dispatch(BasePageActions.toggleTransactionType(route)),
+    onToggleFridges: () => dispatch(BasePageActions.toggleFridges(route)),
+    onToggleSensors: () => dispatch(BasePageActions.toggleSensors(route)),
     onSelectIndicator: indicatorCode =>
       dispatch(BasePageActions.selectIndicator(indicatorCode, route)),
     onShowOverStocked: () => dispatch(BasePageActions.showOverStocked(route)),
@@ -109,6 +111,10 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
     onDeleteBatches: () => dispatch(BasePageActions.deleteSelectedBatches(dataType, route)),
 
     // Editable cell callbacks
+    onEditLocationCode: (newValue, rowKey) =>
+      dispatch(BasePageActions.editLocationCode(newValue, rowKey, route)),
+    onEditLocationDescription: (newValue, rowKey) =>
+      dispatch(BasePageActions.editLocationDescription(newValue, rowKey, route)),
     onEditTransactionBatchName: (newValue, rowKey) =>
       dispatch(BasePageActions.editTransactionBatchName(newValue, rowKey, route)),
     onEditBatchDoses: (newValue, rowKey) =>

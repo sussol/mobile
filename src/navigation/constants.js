@@ -46,6 +46,7 @@ export const ROUTES = {
   DASHBOARD: 'dashboard',
 
   VACCINES: 'vaccines',
+  VACCINES_ADMIN: 'vaccinesAdmin',
 };
 
 export const FINALISABLE_PAGES = [

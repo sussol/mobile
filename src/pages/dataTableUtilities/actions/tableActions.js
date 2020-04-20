@@ -301,6 +301,9 @@ export const filterDataWithOverStockToggle = (searchTerm, route) => ({
   payload: { searchTerm, route },
 });
 
+export const toggleSensors = route => ({ type: ACTIONS.TOGGLE_SENSORS, payload: { route } });
+export const toggleFridges = route => ({ type: ACTIONS.TOGGLE_FRIDGES, payload: { route } });
+
 export const TableActionsLookup = {
   sortData,
   filterData,
@@ -326,4 +329,6 @@ export const TableActionsLookup = {
   refreshDataWithFinalisedToggle,
   filterDataWithFinalisedToggle,
   filterDataWithOverStockToggle,
+  toggleSensors,
+  toggleFridges,
 };

@@ -1,5 +1,6 @@
 {
   "gb": {
+    "admin": "admin",
     "submit": "Submit",
     "submitting": "Submitting...",
     "submitted": "Submitted",
@@ -33,6 +34,7 @@
     "total_price": "total price",
     "name": "name",
     "or": "or",
+    "description": "description",
     "expiry_date": "Expiry date",
     "quantity": "Quantity",
     "to": "to",

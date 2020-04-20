@@ -14,6 +14,27 @@ import { COLUMN_KEYS } from './constants';
 import { ROUTES } from '../../navigation/constants';
 import { SETTINGS_KEYS } from '../../settings';
 
+export const vaccinesAdminInitialiser = () => {
+  const backingData = UIDatabase.objects('Fridge');
+  const data = backingData.slice();
+  const sortedData = sortDataBy(data, COLUMN_KEYS.CODE, false);
+
+  return {
+    backingData,
+    data: sortedData,
+    dataState: new Map(),
+    sortKey: COLUMN_KEYS.CODE,
+    isAscending: true,
+    keyExtractor: recordKeyExtractor,
+    searchTerm: '',
+    modalKey: '',
+    columns: getColumns('fridges'),
+    route: ROUTES.VACCINES_ADMIN,
+    dataSet: 'fridges',
+    filterDataKeys: ['description', 'code'],
+  };
+};
+
 export const cashRegisterInitialiser = () => {
   const backingData = UIDatabase.objects('CashTransaction');
   const filteredData = backingData.slice();
@@ -492,6 +513,7 @@ const pageInitialisers = {
   supplierRequisition: supplierRequisitionInitialiser,
   supplierRequisitions: supplierRequisitionsInitialiser,
   cashRegister: cashRegisterInitialiser,
+  vaccinesAdmin: vaccinesAdminInitialiser,
 };
 
 /**

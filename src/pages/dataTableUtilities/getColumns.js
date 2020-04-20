@@ -41,11 +41,20 @@ const PAGE_COLUMN_WIDTHS = {
   [ROUTES.SUPPLIER_REQUISITIONS]: [1.5, 2, 1, 1, 1, 1],
   [ROUTES.PRESCRIPTION]: [2, 4, 2, 2, 1],
   [ROUTES.PRESCRIPTIONS]: [1.5, 2.5, 2, 1.5, 3, 1],
+  fridges: [1, 3],
+  sensors: [1, 3, 2, 2],
   [TABS.ITEM]: [1, 3, 1],
   [TABS.PRESCRIBER]: [3, 3, 1],
 };
 
 const PAGE_COLUMNS = {
+  sensors: [
+    COLUMN_NAMES.LOCATION,
+    COLUMN_NAMES.EDITABLE_NAME,
+    COLUMN_NAMES.BATTERY_LEVEL,
+    COLUMN_NAMES.MAC_ADDRESS,
+  ],
+  fridges: [COLUMN_NAMES.CODE, COLUMN_NAMES.DESCRIPTION],
   [ROUTES.SUPPLIER_INVOICE_WITH_VACCINES]: [
     COLUMN_NAMES.ITEM_CODE,
     COLUMN_NAMES.ITEM_NAME,
@@ -374,6 +383,24 @@ const COLUMNS = () => ({
 
   // STRING COLUMNS
 
+  [COLUMN_NAMES.MAC_ADDRESS]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.MAC_ADDRESS,
+    title: tableStrings.mac_address,
+    alignText: 'left',
+    sortable: true,
+    editable: false,
+  },
+
+  [COLUMN_NAMES.BATTERY_LEVEL]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.BATTERY_LEVEL,
+    title: tableStrings.battery_level,
+    alignText: 'center',
+    sortable: true,
+    editable: false,
+  },
+
   [COLUMN_NAMES.TRANSACTION_TYPE]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.TYPE,
@@ -517,6 +544,15 @@ const COLUMNS = () => ({
   },
 
   // EDITABLE STRING COLUMNS
+
+  [COLUMN_NAMES.DESCRIPTION]: {
+    type: COLUMN_TYPES.EDITABLE_STRING,
+    key: COLUMN_KEYS.DESCRIPTION,
+    title: tableStrings.description,
+    alignText: 'left',
+    sortable: true,
+    editable: false,
+  },
 
   [COLUMN_NAMES.EDITABLE_BATCH_NAME]: {
     type: COLUMN_TYPES.EDITABLE_STRING,

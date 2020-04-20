@@ -17,6 +17,8 @@ export const COLUMN_TYPES = {
 };
 
 export const COLUMN_KEYS = {
+  BATTERY_LEVEL: 'batteryLevelString',
+  MAC_ADDRESS: 'macAddress',
   AVAILABLE_QUANTITY: 'availableQuantity',
   DOSES: 'doses',
   BATCH: 'batch',
@@ -74,6 +76,9 @@ export const COLUMN_KEYS = {
 };
 
 export const COLUMN_NAMES = {
+  TOTAL_STOCK: 'totalStock',
+  BATTERY_LEVEL: 'batteryLevel',
+  MAC_ADDRESS: 'macAddress',
   AVAILABLE_QUANTITY: 'availableQuantity',
   BATCH_NAME: 'batch',
   BATCHES: 'batches',

@@ -24,3 +24,4 @@ export { StocktakeManagePage } from './StocktakeManagePage';
 export { StocktakeEditPage } from './StocktakeEditPage';
 export { StockPage } from './StockPage';
 export { VaccinePage } from './VaccinePage';
+export { VaccineAdminPage } from './VaccineAdminPage';

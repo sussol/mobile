@@ -87,3 +87,9 @@ export const selectMinAndMaxDomains = createSelector(selectMinAndMaxLogs, minAnd
     maxDomain: Math.max(...maxLine.map(({ temperature }) => temperature)),
   };
 });
+
+export const selectBreaches = createSelector([selectSelectedFridge], fridge => {
+  const { breaches } = fridge;
+
+  return breaches;
+});

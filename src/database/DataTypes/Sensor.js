@@ -42,6 +42,10 @@ export class Sensor extends Realm.Object {
   get mostRecentTemperatureBreach() {
     return this.location?.mostRecentTemperatureBreach;
   }
+
+  get batteryLevelString() {
+    return `${this.batteryLevel}%`;
+  }
 }
 
 Sensor.schema = {
@@ -50,7 +54,7 @@ Sensor.schema = {
   properties: {
     id: 'string',
     macAddress: { type: 'string', optional: true },
-    name: { type: 'string', optional: true },
+    name: { type: 'string', default: '' },
     location: { type: 'Location', optional: true },
     batteryLevel: { type: 'double', default: 0 },
     sensorLogs: { type: 'linkingObjects', objectType: 'SensorLog', property: 'sensor' },

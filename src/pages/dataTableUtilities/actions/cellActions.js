@@ -36,6 +36,30 @@ export const refreshIndicatorRow = route => ({
   payload: { route },
 });
 
+export const editLocationDescription = (newValue, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  if (objectToEdit) {
+    UIDatabase.write(() =>
+      UIDatabase.update('Location', { ...objectToEdit, description: newValue })
+    );
+    dispatch(refreshRow(rowKey, route));
+  }
+};
+
+export const editLocationCode = (newValue, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  if (objectToEdit) {
+    UIDatabase.write(() => UIDatabase.update('Location', { ...objectToEdit, code: newValue }));
+    dispatch(refreshRow(rowKey, route));
+  }
+};
+
 export const editBatchDoses = (newValue, rowKey, route) => (dispatch, getState) => {
   const { data, keyExtractor } = selectPageState(getState());
 
@@ -438,4 +462,6 @@ export const CellActionsLookup = {
   editTransactionBatchVvmStatus,
   editStocktakeBatchVvmStatus,
   editBatchDoses,
+  editLocationCode,
+  editLocationDescription,
 };
