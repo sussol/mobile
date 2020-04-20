@@ -280,6 +280,7 @@ export const toggleFridges = state => {
     isAscending: false,
     searchTerm: '',
     columns: getColumns('fridges'),
+    filterDataKeys: ['description', 'code'],
   };
 };
 
@@ -296,6 +297,7 @@ export const toggleSensors = state => {
     isAscending: false,
     searchTerm: '',
     columns: getColumns('sensors'),
+    filterDataKeys: ['name'],
   };
 };
 

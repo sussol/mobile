@@ -61,8 +61,8 @@ const VaccineAdminPageComponent = ({
   const renderRow = React.useCallback(
     listItem => {
       const { item, index } = listItem;
-
       const rowKey = recordKeyExtractor(item);
+
       return (
         <DataTableRow
           rowData={data[index]}
@@ -77,6 +77,11 @@ const VaccineAdminPageComponent = ({
     [data, dataState]
   );
 
+  const placeholderString =
+    dataSet === 'fridges'
+      ? `${generalStrings.search_by} ${generalStrings.code} ${generalStrings.or} ${generalStrings.description}`
+      : `${generalStrings.search_by} ${generalStrings.name}`;
+
   const toggles = React.useMemo(
     () => [
       { text: vaccineStrings.fridges, onPress: onToggleFridges, isOn: dataSet === 'fridges' },
@@ -89,11 +94,7 @@ const VaccineAdminPageComponent = ({
     <DataTablePageView>
       <View style={globalStyles.pageTopSectionContainer}>
         <ToggleBar toggles={toggles} />
-        <SearchBar
-          onChangeText={onFilterData}
-          value={searchTerm}
-          placeholder={`${generalStrings.search_by} ${generalStrings.code} ${generalStrings.or} ${generalStrings.description}`}
-        />
+        <SearchBar onChangeText={onFilterData} value={searchTerm} placeholder={placeholderString} />
         <PageButton text="" />
       </View>
       <DataTable
