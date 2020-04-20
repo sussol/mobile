@@ -60,7 +60,7 @@ export const VaccinePageComponent = ({
   return (
     <DataTablePageView>
       <FlexView flex={0} alignItems="flex-end" style={{ margin: 10 }}>
-        <PageButton text={generalStrings.admin} style={{}} onPress={onViewAdminPage} />
+        <PageButton text={generalStrings.admin} onPress={onViewAdminPage} />
       </FlexView>
 
       {fridges.length ? <FlatList data={fridges} renderItem={Fridge} /> : <BlankComponent />}
