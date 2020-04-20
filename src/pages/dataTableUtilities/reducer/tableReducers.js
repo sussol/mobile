@@ -5,7 +5,7 @@
 
 import { ROUTES } from '../../../navigation/constants';
 import { sortDataBy } from '../../../utilities';
-import { UIDatabase } from '../../../database/index';
+import { UIDatabase } from '../../../database';
 import getColumns from '../getColumns';
 
 /**

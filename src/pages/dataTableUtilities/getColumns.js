@@ -391,6 +391,7 @@ const COLUMNS = () => ({
     sortable: true,
     editable: false,
   },
+
   [COLUMN_NAMES.BATTERY_LEVEL]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.BATTERY_LEVEL,
@@ -399,14 +400,7 @@ const COLUMNS = () => ({
     sortable: true,
     editable: false,
   },
-  [COLUMN_NAMES.DESCRIPTION]: {
-    type: COLUMN_TYPES.EDITABLE_STRING,
-    key: COLUMN_KEYS.DESCRIPTION,
-    title: tableStrings.description,
-    alignText: 'left',
-    sortable: true,
-    editable: false,
-  },
+
   [COLUMN_NAMES.TRANSACTION_TYPE]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.TYPE,
@@ -550,6 +544,15 @@ const COLUMNS = () => ({
   },
 
   // EDITABLE STRING COLUMNS
+
+  [COLUMN_NAMES.DESCRIPTION]: {
+    type: COLUMN_TYPES.EDITABLE_STRING,
+    key: COLUMN_KEYS.DESCRIPTION,
+    title: tableStrings.description,
+    alignText: 'left',
+    sortable: true,
+    editable: false,
+  },
 
   [COLUMN_NAMES.EDITABLE_BATCH_NAME]: {
     type: COLUMN_TYPES.EDITABLE_STRING,
