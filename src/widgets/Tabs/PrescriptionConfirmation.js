@@ -40,9 +40,8 @@ import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 const { pageTopViewContainer } = globalStyles;
 const mapStateToProps = state => {
   const { payment, wizard, modules } = state;
-  const { transaction, paymentValid, paymentAmount } = payment;
+  const { transaction, paymentValid, paymentAmount, paymentType } = payment;
   const { isComplete } = wizard;
-
   const { usingPayments } = modules;
   const currentPatient = selectCurrentPatient(state);
   const currentUser = selectCurrentUser(state);
@@ -61,6 +60,7 @@ const mapStateToProps = state => {
     transaction,
     canConfirm,
     paymentAmount,
+    paymentType,
     currentUser,
     currentPatient,
     usingPayments,
@@ -84,6 +84,7 @@ const PrescriptionConfirmationComponent = ({
   currentUser,
   currentPatient,
   paymentAmount,
+  paymentType,
   canConfirm,
   usingPayments,
   onDelete,
@@ -101,7 +102,8 @@ const PrescriptionConfirmationComponent = ({
       total.value,
       subtotal.value,
       discountAmount.value,
-      discountRate
+      discountRate,
+      paymentType
     );
   }, [
     currentUser,
@@ -112,6 +114,7 @@ const PrescriptionConfirmationComponent = ({
     total.value,
     discountAmount.value,
     discountRate,
+    paymentType,
   ]);
 
   const confirmPrescription = React.useCallback(
@@ -171,6 +174,7 @@ PrescriptionConfirmationComponent.propTypes = {
   currentUser: PropTypes.object.isRequired,
   currentPatient: PropTypes.object.isRequired,
   paymentAmount: PropTypes.object.isRequired,
+  paymentType: PropTypes.object.isRequired,
   canConfirm: PropTypes.bool.isRequired,
   usingPayments: PropTypes.bool.isRequired,
   onDelete: PropTypes.func.isRequired,

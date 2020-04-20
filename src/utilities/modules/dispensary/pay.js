@@ -50,7 +50,8 @@ export const pay = (
   scriptTotal,
   subtotal,
   discountAmount,
-  discountRate
+  discountRate,
+  paymentType
 ) => {
   if (!patient.isPatient) throw new Error('Patient is not a patient');
   if (!script.isPrescription) throw new Error('Script is not a script');
@@ -74,7 +75,7 @@ export const pay = (
     currentUser,
     patient,
     cashAmount,
-    null,
+    paymentType,
     receiptDescription
   );
 
