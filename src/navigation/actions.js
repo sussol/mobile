@@ -81,6 +81,12 @@ export const createPrescription = patientID => (dispatch, getState) => {
   dispatch(gotoPrescription(newPrescription));
 };
 
+export const gotoVaccineAdminPage = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.VACCINES_ADMIN,
+    params: { title: navStrings.vaccine_admin },
+  });
+
 export const goToVaccines = () =>
   NavigationActions.navigate({
     routeName: ROUTES.VACCINES,
