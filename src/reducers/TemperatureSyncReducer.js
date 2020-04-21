@@ -58,7 +58,7 @@ export const TemperatureSyncReducer = (state = initialState(), action) => {
       return { ...state, modalIsOpen: false };
     }
 
-    case TEMPERATURE_SYNC_ACTIONS.START_SCAN: {
+    case TEMPERATURE_SYNC_ACTIONS.SCAN_START: {
       return { ...state, syncState: TEMPERATURE_SYNC_STATES.SCANNING, isSyncing: true };
     }
     case TEMPERATURE_SYNC_ACTIONS.SCAN_COMPLETE: {
