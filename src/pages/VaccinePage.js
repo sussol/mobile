@@ -18,6 +18,7 @@ import { gotoVaccineAdminPage } from '../navigation/actions';
 
 import { APP_FONT_FAMILY } from '../globalStyles';
 import { vaccineStrings, generalStrings } from '../localization';
+import { selectCurrentUserIsAdmin } from '../selectors/user';
 
 export const VaccinePageComponent = ({
   selectedFridge,
@@ -30,6 +31,7 @@ export const VaccinePageComponent = ({
   onSelectFridge,
   onOpenBreachModal,
   onViewAdminPage,
+  isAdmin,
 }) => {
   const Fridge = React.useCallback(
     ({ item }) => (
@@ -59,9 +61,11 @@ export const VaccinePageComponent = ({
 
   return (
     <DataTablePageView>
-      <FlexView flex={0} alignItems="flex-end" style={{ marginRight: 20, marginTop: 10 }}>
-        <PageButton text={generalStrings.admin} onPress={onViewAdminPage} />
-      </FlexView>
+      {isAdmin && (
+        <FlexView flex={0} alignItems="flex-end" style={{ marginRight: 20, marginTop: 10 }}>
+          <PageButton text={generalStrings.admin} onPress={onViewAdminPage} />
+        </FlexView>
+      )}
 
       {fridges.length ? <FlatList data={fridges} renderItem={Fridge} /> : <BlankComponent />}
     </DataTablePageView>
@@ -72,10 +76,12 @@ const mapStateToProps = state => {
   const { fridge } = state;
   const { fridges, selectedFridge } = fridge;
   const { breaches } = selectBreaches(state);
+  const isAdmin = selectCurrentUserIsAdmin(state);
 
   const { minLine, maxLine } = selectMinAndMaxLogs(state);
   const { minDomain, maxDomain } = selectMinAndMaxDomains(state);
   return {
+    isAdmin,
     minLine,
     maxLine,
     minDomain,
@@ -109,6 +115,7 @@ VaccinePageComponent.propTypes = {
   onSelectFridge: PropTypes.func.isRequired,
   onOpenBreachModal: PropTypes.func.isRequired,
   onViewAdminPage: PropTypes.func.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
 };
 
 const localStyles = StyleSheet.create({
