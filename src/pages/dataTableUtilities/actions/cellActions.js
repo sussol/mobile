@@ -36,6 +36,28 @@ export const refreshIndicatorRow = route => ({
   payload: { route },
 });
 
+export const editSensorLocation = (location, route) => (dispatch, getState) => {
+  const { modalValue, keyExtractor } = selectPageState(getState());
+
+  UIDatabase.write(() => UIDatabase.update('Sensor', { ...modalValue, location }));
+
+  reduxBatch(() => {
+    dispatch(refreshRow(keyExtractor(modalValue), route));
+    dispatch(closeModal(route));
+  });
+};
+
+export const editSensorName = (newValue, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  if (objectToEdit) {
+    UIDatabase.write(() => UIDatabase.update('Sensor', { ...objectToEdit, name: newValue }));
+    dispatch(refreshRow(rowKey, route));
+  }
+};
+
 export const editLocationDescription = (newValue, rowKey, route) => (dispatch, getState) => {
   const { data, keyExtractor } = selectPageState(getState());
 
@@ -464,4 +486,6 @@ export const CellActionsLookup = {
   editBatchDoses,
   editLocationCode,
   editLocationDescription,
+  editSensorLocation,
+  editSensorName,
 };
