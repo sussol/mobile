@@ -46,6 +46,10 @@ export class Sensor extends Realm.Object {
   get batteryLevelString() {
     return `${this.batteryLevel}%`;
   }
+
+  get currentLocationName() {
+    return this.location?.description ?? '';
+  }
 }
 
 Sensor.schema = {

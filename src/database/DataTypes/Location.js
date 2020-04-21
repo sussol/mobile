@@ -61,8 +61,8 @@ Location.schema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
-    description: { type: 'string', optional: true },
-    code: { type: 'string', optional: true },
+    description: { type: 'string', default: '' },
+    code: { type: 'string', default: '' },
     locationType: { type: 'LocationType', optional: true },
     locationMovements: {
       type: 'linkingObjects',
