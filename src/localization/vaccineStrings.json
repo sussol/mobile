@@ -1,5 +1,7 @@
 {
   "gb": {
+    "found_sensors": "Updated {0} sensor(s)",
+    "could_not__find_sensors": "Could not find any sensors",
     "temperature_exposure": "Temperature exposure",
     "breaches": "Breaches",
     "total_stock": "Total stock",

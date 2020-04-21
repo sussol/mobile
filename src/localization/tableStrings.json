@@ -1,7 +1,7 @@
 {
   "gb": {
     "mac_address": "MAC ADDRESS",
-    "battery_level": "BATTERY_LEVEL",
+    "battery_level": "BATTERY LEVEL",
     "actual_quantity": "ACTUAL\nQUANTITY",
     "available_stock": "AVAILABLE STOCK",
     "batch_expiry": "EXPIRY",

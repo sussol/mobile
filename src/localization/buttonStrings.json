@@ -1,5 +1,7 @@
 {
   "gb": {
+    "add_fridge": "Add Fridge",
+    "start_scan": "Start scan",
     "next": "Next",
     "cancel": "Cancel",
     "add_batch": "Add Batch",
