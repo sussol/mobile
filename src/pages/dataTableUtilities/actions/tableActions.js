@@ -161,6 +161,19 @@ export const addItem = (item, addedItemType, route) => (dispatch, getState) => {
   }
 };
 
+export const addFridge = route => dispatch => {
+  UIDatabase.write(() => {
+    const fridgeLocationType = UIDatabase.objects('LocationType').filtered(
+      'description == $0',
+      'fridge'
+    )[0];
+
+    const addedLocation = createRecord(UIDatabase, 'Location', fridgeLocationType);
+
+    dispatch(addRecord(addedLocation, route));
+  });
+};
+
 /**
  * Creates a cash transaction for a given cash transaction object.
  * @param {Object} cashTransaction Cash transaction object.
@@ -331,4 +344,5 @@ export const TableActionsLookup = {
   filterDataWithOverStockToggle,
   toggleSensors,
   toggleFridges,
+  addFridge,
 };
