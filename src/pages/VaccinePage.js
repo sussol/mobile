@@ -59,7 +59,7 @@ export const VaccinePageComponent = ({
 
   return (
     <DataTablePageView>
-      <FlexView flex={0} alignItems="flex-end" style={{ margin: 10 }}>
+      <FlexView flex={0} alignItems="flex-end" style={{ marginRight: 20, marginTop: 10 }}>
         <PageButton text={generalStrings.admin} onPress={onViewAdminPage} />
       </FlexView>
 
