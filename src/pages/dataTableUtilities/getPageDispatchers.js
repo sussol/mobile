@@ -70,6 +70,7 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
     // Modal callbacks
     onApplyReason: ({ item }) => dispatch(BasePageActions.applyReason(item, route)),
     onConfirmBatchEdit: () => dispatch(BasePageActions.closeAndRefresh(route)),
+    onApplySensorLocation: ({ item }) => dispatch(BasePageActions.editSensorLocation(item, route)),
     onApplyTransactionBatchLocation: ({ item }) =>
       dispatch(BasePageActions.editTransactionBatchLocation(item, route)),
     onApplyStocktakeBatchLocation: ({ item }) =>
@@ -80,6 +81,7 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
       dispatch(BasePageActions.editStocktakeBatchVvmStatus(item, route)),
 
     // Adding items/batch rows.
+    onAddFridge: () => dispatch(BasePageActions.addFridge(route)),
     onAddTransactionBatch: item => dispatch(BasePageActions.addTransactionBatch(item, route)),
     onAddStocktakeBatch: () => dispatch(BasePageActions.addStocktakeBatch(route)),
     onAddTransactionItem: item => dispatch(BasePageActions.addItem(item, 'TransactionItem', route)),
@@ -111,6 +113,8 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
     onDeleteBatches: () => dispatch(BasePageActions.deleteSelectedBatches(dataType, route)),
 
     // Editable cell callbacks
+    onEditSensorName: (newValue, rowKey) =>
+      dispatch(BasePageActions.editSensorName(newValue, rowKey, route)),
     onEditLocationCode: (newValue, rowKey) =>
       dispatch(BasePageActions.editLocationCode(newValue, rowKey, route)),
     onEditLocationDescription: (newValue, rowKey) =>

@@ -41,20 +41,22 @@ const PAGE_COLUMN_WIDTHS = {
   [ROUTES.SUPPLIER_REQUISITIONS]: [1.5, 2, 1, 1, 1, 1],
   [ROUTES.PRESCRIPTION]: [2, 4, 2, 2, 1],
   [ROUTES.PRESCRIPTIONS]: [1.5, 2.5, 2, 1.5, 3, 1],
-  fridges: [1, 3],
-  sensors: [1, 3, 2, 2],
+  fridges: [1, 3, 1],
+  sensors: [3, 3, 1, 1, 1],
   [TABS.ITEM]: [1, 3, 1],
   [TABS.PRESCRIBER]: [3, 3, 1],
 };
 
 const PAGE_COLUMNS = {
   sensors: [
-    COLUMN_NAMES.LOCATION,
     COLUMN_NAMES.EDITABLE_NAME,
+    COLUMN_NAMES.LOCATION,
     COLUMN_NAMES.BATTERY_LEVEL,
     COLUMN_NAMES.MAC_ADDRESS,
+    COLUMN_NAMES.REMOVE,
   ],
-  fridges: [COLUMN_NAMES.CODE, COLUMN_NAMES.DESCRIPTION],
+  fridges: [COLUMN_NAMES.EDITABLE_CODE, COLUMN_NAMES.DESCRIPTION, COLUMN_NAMES.REMOVE],
+
   [ROUTES.SUPPLIER_INVOICE_WITH_VACCINES]: [
     COLUMN_NAMES.ITEM_CODE,
     COLUMN_NAMES.ITEM_NAME,
@@ -545,6 +547,15 @@ const COLUMNS = () => ({
 
   // EDITABLE STRING COLUMNS
 
+  [COLUMN_NAMES.EDITABLE_CODE]: {
+    type: COLUMN_TYPES.EDITABLE_STRING,
+    key: COLUMN_KEYS.CODE,
+    title: tableStrings.code,
+    alignText: 'left',
+    sortable: true,
+    editable: true,
+  },
+
   [COLUMN_NAMES.DESCRIPTION]: {
     type: COLUMN_TYPES.EDITABLE_STRING,
     key: COLUMN_KEYS.DESCRIPTION,
@@ -572,8 +583,8 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.EDITABLE_NAME]: {
     type: COLUMN_TYPES.EDITABLE_STRING,
     key: COLUMN_KEYS.NAME,
-    title: tableStrings.value,
-    textAlign: 'right',
+    title: tableStrings.name,
+    textAlign: 'left',
     sortable: true,
     editable: true,
   },

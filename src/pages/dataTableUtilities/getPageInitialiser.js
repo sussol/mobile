@@ -23,6 +23,7 @@ export const vaccinesAdminInitialiser = () => {
     backingData,
     data: sortedData,
     dataState: new Map(),
+    hasSelection: false,
     sortKey: COLUMN_KEYS.CODE,
     isAscending: true,
     keyExtractor: recordKeyExtractor,

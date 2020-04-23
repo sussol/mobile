@@ -4,6 +4,7 @@
  * Sustainable Solutions (NZ) Ltd. 2020
  */
 
+import { ToastAndroid } from 'react-native';
 import { generateUUID } from 'react-native-database';
 
 import { UIDatabase } from '../database';
@@ -11,6 +12,8 @@ import { Sensor } from '../database/DataTypes';
 import { createRecord } from '../database/utilities';
 import { MILLISECONDS } from '../utilities';
 import { chunk } from '../utilities/chunk';
+
+import { vaccineStrings } from '../localization';
 
 export const TEMPERATURE_SYNC_ACTIONS = {
   OPEN_MODAL: 'TemperatureSync/openModal',
@@ -77,7 +80,15 @@ const scanForSensors = () => async dispatch => {
 
   dispatch(updateSensors(data));
 
-  if (success) dispatch(scanComplete());
+  if (success) {
+    ToastAndroid.show(
+      vaccineStrings.formatString(vaccineStrings.found_sensors, data.length),
+      ToastAndroid.LONG
+    );
+    dispatch(scanComplete());
+  } else {
+    ToastAndroid.show(vaccineStrings.could_not_find_sensors, ToastAndroid.LONG);
+  }
 };
 
 const downloadLogsError = () => ({ type: TEMPERATURE_SYNC_ACTIONS.DOWNLOAD_LOGS_ERROR });

@@ -750,7 +750,7 @@ const createTransactionItem = (database, transaction, item, initialQuantity = 0)
   return transactionItem;
 };
 
-const createLocation = (database, description, code, locationType) => {
+const createLocation = (database, locationType, description, code) => {
   const location = database.create('Location', {
     id: generateUUID(),
     description,
