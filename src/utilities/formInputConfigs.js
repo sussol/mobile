@@ -51,13 +51,12 @@ const FORM_INPUT_KEYS = {
   REGISTRATION_CODE: 'registrationCode',
   SEARCH_REGISTRATION_CODE: 'searchRegistrationCode',
   POLICY_NUMBER_FAMILY: 'policyNumberFamily',
-  SEARCH_POLICY_NUMBER_FAMILY: 'searchPolicyNumberFamily',
   POLICY_NUMBER_PERSON: 'policyNumberPerson',
-  SEARCH_POLICY_NUMBER_PERSON: 'searchPolicyNumberPerson',
   POLICY_PROVIDER: 'insuranceProvider',
   POLICY_TYPE: 'policyType',
   IS_ACTIVE: 'isActive',
   DISCOUNT_RATE: 'discountRate',
+  SEARCH_POLICY_NUMBER: 'searchPolicyNumber',
 };
 
 const FORM_INPUT_CONFIGS = seedObject => ({
@@ -227,16 +226,6 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     label: formInputStrings.personal_policy_number,
     isEditable: !seedObject,
   },
-  [FORM_INPUT_KEYS.SEARCH_POLICY_NUMBER_PERSON]: {
-    type: FORM_INPUT_TYPES.TEXT,
-    initialValue: '',
-    key: 'policyNumberPerson',
-    validator: null,
-    isRequired: false,
-    invalidMessage: '',
-    label: formInputStrings.personal_policy_number,
-    isEditable: true,
-  },
   [FORM_INPUT_KEYS.POLICY_NUMBER_FAMILY]: {
     type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
@@ -246,16 +235,6 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     invalidMessage: formInputStrings.unique_policy,
     label: formInputStrings.family_policy_number,
     isEditable: !seedObject,
-  },
-  [FORM_INPUT_KEYS.SEARCH_POLICY_NUMBER_FAMILY]: {
-    type: FORM_INPUT_TYPES.TEXT,
-    initialValue: '',
-    key: 'policyNumberFamily',
-    validator: null,
-    isRequired: false,
-    invalidMessage: '',
-    label: formInputStrings.family_policy_number,
-    isEditable: true,
   },
   [FORM_INPUT_KEYS.POLICY_PROVIDER]: {
     type: FORM_INPUT_TYPES.DROPDOWN,
@@ -294,6 +273,17 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     label: formInputStrings.discount_rate,
     isEditable: true,
   },
+  },
+  [FORM_INPUT_KEYS.SEARCH_POLICY_NUMBER]: {
+    type: FORM_INPUT_TYPES.TEXT,
+    initialValue: '',
+    key: 'policyNumber',
+    validator: null,
+    isRequired: false,
+    invalidMessage: '',
+    label: formInputStrings.policy_number,
+    isEditable: true,
+  },
 });
 
 const FORM_CONFIGS = {
@@ -330,8 +320,7 @@ const FORM_CONFIGS = {
     FORM_INPUT_KEYS.SEARCH_FIRST_NAME,
     FORM_INPUT_KEYS.SEARCH_LAST_NAME,
     FORM_INPUT_KEYS.SEARCH_DATE_OF_BIRTH,
-    FORM_INPUT_KEYS.SEARCH_POLICY_NUMBER_PERSON,
-    FORM_INPUT_KEYS.SEARCH_POLICY_NUMBER_FAMILY,
+    FORM_INPUT_KEYS.SEARCH_POLICY_NUMBER,
   ],
   searchPrescriber: [
     FORM_INPUT_KEYS.SEARCH_FIRST_NAME,
