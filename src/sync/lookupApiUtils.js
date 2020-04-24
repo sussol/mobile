@@ -20,6 +20,7 @@ const RESOURCES = {
 const SEPARATORS = {
   QUERY_STRING: '?',
   QUERY_PARAMETERS: '&',
+  QUERY_WILDCARD: '@',
   POLICY_NUMBER: '-',
 };
 
@@ -40,7 +41,7 @@ const getQueryString = params =>
   params.reduce((queryString, param) => {
     const [[key, value]] = Object.entries(param);
     if (!value) return queryString;
-    const paramString = `${key}=${value}`;
+    const paramString = `${key}=${SEPARATORS.QUERY_WILDCARD}${value}${SEPARATORS.QUERY_WILDCARD}`;
     const paramSeparator = queryString.length > 0 ? SEPARATORS.PARAMETERS : SEPARATORS.QUERY_STRING;
     return queryString + paramSeparator + paramString;
   }, '');
