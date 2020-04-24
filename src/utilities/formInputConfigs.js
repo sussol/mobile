@@ -37,25 +37,25 @@ export const FORM_INPUT_TYPES = {
 
 const FORM_INPUT_KEYS = {
   FIRST_NAME: 'firstName',
-  SEARCH_FIRST_NAME: 'searchFirstName',
   LAST_NAME: 'lastName',
-  SEARCH_LAST_NAME: 'searchLastName',
   CODE: 'code',
   DATE_OF_BIRTH: 'dateOfBirth',
-  SEARCH_DATE_OF_BIRTH: 'searchDateOfBirth',
   EMAIL: 'emailAddress',
   PHONE: 'phoneNumber',
   COUNTRY: 'country',
   ADDRESS_ONE: 'addressOne',
   ADDRESS_TWO: 'addressTwo',
   REGISTRATION_CODE: 'registrationCode',
-  SEARCH_REGISTRATION_CODE: 'searchRegistrationCode',
   POLICY_NUMBER_FAMILY: 'policyNumberFamily',
   POLICY_NUMBER_PERSON: 'policyNumberPerson',
   POLICY_PROVIDER: 'insuranceProvider',
   POLICY_TYPE: 'policyType',
   IS_ACTIVE: 'isActive',
   DISCOUNT_RATE: 'discountRate',
+  SEARCH_FIRST_NAME: 'searchFirstName',
+  SEARCH_LAST_NAME: 'searchLastName',
+  SEARCH_DATE_OF_BIRTH: 'searchDateOfBirth',
+  SEARCH_REGISTRATION_CODE: 'searchRegistrationCode',
   SEARCH_POLICY_NUMBER: 'searchPolicyNumber',
 };
 
@@ -70,16 +70,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     invalidMessage: formInputStrings.must_not_be_empty,
     isEditable: true,
   },
-  [FORM_INPUT_KEYS.SEARCH_FIRST_NAME]: {
-    type: FORM_INPUT_TYPES.TEXT,
-    initialValue: '',
-    key: 'firstName',
-    validator: () => true,
-    isRequired: false,
-    label: formInputStrings.first_name,
-    invalidMessage: '',
-    isEditable: true,
-  },
+
   [FORM_INPUT_KEYS.LAST_NAME]: {
     type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
@@ -88,16 +79,6 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isRequired: true,
     label: formInputStrings.last_name,
     invalidMessage: formInputStrings.must_not_be_empty,
-    isEditable: true,
-  },
-  [FORM_INPUT_KEYS.SEARCH_LAST_NAME]: {
-    type: FORM_INPUT_TYPES.TEXT,
-    initialValue: '',
-    key: 'lastName',
-    validator: () => true,
-    isRequired: false,
-    label: formInputStrings.last_name,
-    invalidMessage: '',
     isEditable: true,
   },
   [FORM_INPUT_KEYS.CODE]: {
@@ -117,22 +98,6 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     invalidMessage: formInputStrings.must_be_a_date,
     isRequired: true,
     validator: input => {
-      const inputDate = moment(input, 'DD/MM/YYYY', null, true);
-      const isValid = inputDate.isValid();
-      const isDateOfBirth = inputDate.isSameOrBefore(new Date());
-      return isValid && isDateOfBirth;
-    },
-    label: formInputStrings.date_of_birth,
-    isEditable: true,
-  },
-  [FORM_INPUT_KEYS.SEARCH_DATE_OF_BIRTH]: {
-    type: FORM_INPUT_TYPES.DATE,
-    initialValue: '',
-    key: 'dateOfBirth',
-    invalidMessage: formInputStrings.must_be_a_date,
-    isRequired: false,
-    validator: input => {
-      if (input === '') return true;
       const inputDate = moment(input, 'DD/MM/YYYY', null, true);
       const isValid = inputDate.isValid();
       const isDateOfBirth = inputDate.isSameOrBefore(new Date());
@@ -206,16 +171,6 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     invalidMessage: formInputStrings.must_be_between_0_and_50,
     isEditable: true,
   },
-  [FORM_INPUT_KEYS.SEARCH_REGISTRATION_CODE]: {
-    type: FORM_INPUT_TYPES.TEXT,
-    initialValue: '',
-    key: 'registrationCode',
-    validator: () => true,
-    isRequired: false,
-    label: formInputStrings.registration_code,
-    invalidMessage: '',
-    isEditable: true,
-  },
   [FORM_INPUT_KEYS.POLICY_NUMBER_PERSON]: {
     type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
@@ -273,6 +228,51 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     label: formInputStrings.discount_rate,
     isEditable: true,
   },
+  [FORM_INPUT_KEYS.SEARCH_FIRST_NAME]: {
+    type: FORM_INPUT_TYPES.TEXT,
+    initialValue: '',
+    key: 'firstName',
+    validator: () => true,
+    isRequired: false,
+    label: formInputStrings.first_name,
+    invalidMessage: '',
+    isEditable: true,
+  },
+  [FORM_INPUT_KEYS.SEARCH_LAST_NAME]: {
+    type: FORM_INPUT_TYPES.TEXT,
+    initialValue: '',
+    key: 'lastName',
+    validator: () => true,
+    isRequired: false,
+    label: formInputStrings.last_name,
+    invalidMessage: '',
+    isEditable: true,
+  },
+  [FORM_INPUT_KEYS.SEARCH_DATE_OF_BIRTH]: {
+    type: FORM_INPUT_TYPES.DATE,
+    initialValue: '',
+    key: 'dateOfBirth',
+    invalidMessage: formInputStrings.must_be_a_date,
+    isRequired: false,
+    validator: input => {
+      if (input === '') return true;
+      const inputDate = moment(input, 'DD/MM/YYYY', null, true);
+      const isValid = inputDate.isValid();
+      const isDateOfBirth = inputDate.isSameOrBefore(new Date());
+      return isValid && isDateOfBirth;
+    },
+    label: formInputStrings.date_of_birth,
+    isEditable: true,
+  },
+  [FORM_INPUT_KEYS.SEARCH_REGISTRATION_CODE]: {
+    type: FORM_INPUT_TYPES.TEXT,
+    initialValue: '',
+    key: 'registrationCode',
+    validator: () => true,
+    isRequired: false,
+    label: formInputStrings.registration_code,
+    invalidMessage: '',
+    isEditable: true,
   },
   [FORM_INPUT_KEYS.SEARCH_POLICY_NUMBER]: {
     type: FORM_INPUT_TYPES.TEXT,
