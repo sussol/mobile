@@ -34,6 +34,11 @@ import { PREFERENCE_KEYS } from '../database/utilities/constants';
  *
  */
 
+/**
+ * Action creator for handling back navigation.
+ *
+ * Triggers back navigation and cleans up current state.
+ */
 export const goBack = () => dispatch => {
   if (!RootNavigator.canGoBack()) BackHandler.exitApp();
   else {
@@ -44,16 +49,22 @@ export const goBack = () => dispatch => {
       const prevRouteName = RootNavigator.getPrevRouteName();
       const currRouteName = RootNavigator.getCurrentRouteName();
 
-      if (FINALISABLE_PAGES.includes(currRouteName)) dispatch(FinaliseActions.resetFinaliseItem());
-
-      batch(() => {
+      const navigateBack = () =>
         dispatch({
           ...NavigationActions.back(),
-          payload: {
-            prevRouteName,
-          },
+          payload: { prevRouteName },
         });
+
+      const cleanUp = () => {
         dispatch(PrescriptionActions.deletePrescription());
+        if (FINALISABLE_PAGES.includes(currRouteName)) {
+          dispatch(FinaliseActions.resetFinaliseItem());
+        }
+      };
+
+      batch(() => {
+        navigateBack();
+        cleanUp();
       });
     });
   }
@@ -189,14 +200,13 @@ export const gotoCustomerRequisitions = () =>
 /**
  * Pushes the Supplier Invoices route onto the main navigation stack.
  */
-export const gotoSupplierInvoices = () => {
+export const gotoSupplierInvoices = () =>
   NavigationActions.navigate({
     routeName: ROUTES.SUPPLIER_INVOICES,
     params: {
       title: navStrings.supplier_invoices,
     },
   });
-};
 
 /**
  * Pushes the Supplier Requisitions route onto the main navigation stack.
@@ -212,14 +222,13 @@ export const gotoSupplierRequisitions = () =>
 /**
  * Pushes the Stocktakes route onto the main navigation stack.
  */
-export const gotoStocktakes = () => {
+export const gotoStocktakes = () =>
   NavigationActions.navigate({
     routeName: ROUTES.STOCKTAKES,
     params: {
       title: navStrings.stocktakes,
     },
   });
-};
 
 /**
  * Pushes the Stock route onto the main navigation stack.
