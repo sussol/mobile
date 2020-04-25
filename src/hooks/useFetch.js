@@ -52,7 +52,7 @@ export const useFetch = (url, options = {}, timeout = CONNECTION_TIMEOUT_PERIOD)
             const responseData = await response.json();
             const { error: responseError } = responseData;
             if (responseError) throw new Error(responseError);
-            if (!responseData.length) throw new Error(ERROR_CODES.RESPONSE_NO_RECORDS);
+            if (!responseData.length) throw new Error(ERROR_CODES.EMPTY_RESPONSE);
             if (isMounted.current) setData(responseData);
           } else {
             const connectionError = new Error(ERROR_CODES.CONNECTION_FAILURE);
