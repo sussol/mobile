@@ -10,7 +10,7 @@ import { NavigationActions, StackActions } from '@react-navigation/core';
 import { UIDatabase } from '../database';
 import { createRecord } from '../database/utilities';
 import { navStrings } from '../localization';
-import { ROUTES } from './constants';
+import { ROUTES, FINALISABLE_PAGES } from './constants';
 import { RootNavigator } from './RootNavigator';
 import { PrescriptionActions } from '../actions/PrescriptionActions';
 import { FinaliseActions } from '../actions/FinaliseActions';
@@ -41,11 +41,16 @@ export const goBack = () => dispatch => {
       const prescriptions = UIDatabase.objects('Prescription').filtered('status != "finalised"');
       UIDatabase.delete('Transaction', prescriptions);
 
+      const prevRouteName = RootNavigator.getPrevRouteName();
+      const currRouteName = RootNavigator.getCurrentRouteName();
+
+      if (FINALISABLE_PAGES.includes(currRouteName)) dispatch(FinaliseActions.resetFinaliseItem());
+
       batch(() => {
         dispatch({
           ...NavigationActions.back(),
           payload: {
-            prevRouteName: RootNavigator.getPrevRouteName(),
+            prevRouteName,
           },
         });
         dispatch(PrescriptionActions.deletePrescription());
@@ -184,13 +189,14 @@ export const gotoCustomerRequisitions = () =>
 /**
  * Pushes the Supplier Invoices route onto the main navigation stack.
  */
-export const gotoSupplierInvoices = () =>
+export const gotoSupplierInvoices = () => {
   NavigationActions.navigate({
     routeName: ROUTES.SUPPLIER_INVOICES,
     params: {
       title: navStrings.supplier_invoices,
     },
   });
+};
 
 /**
  * Pushes the Supplier Requisitions route onto the main navigation stack.
@@ -206,13 +212,14 @@ export const gotoSupplierRequisitions = () =>
 /**
  * Pushes the Stocktakes route onto the main navigation stack.
  */
-export const gotoStocktakes = () =>
+export const gotoStocktakes = () => {
   NavigationActions.navigate({
     routeName: ROUTES.STOCKTAKES,
     params: {
       title: navStrings.stocktakes,
     },
   });
+};
 
 /**
  * Pushes the Stock route onto the main navigation stack.
