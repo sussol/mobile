@@ -244,6 +244,8 @@ const DataTableRow = React.memo(
                 !rowData.isEditable;
               const iconComponent = isEditReadOnlyRecord ? icons.book : icons[icon];
 
+              const isDisabledIcon = isDisabled && columnKey !== COLUMN_KEYS.BATCH;
+
               return (
                 <TouchableCell
                   key={columnKey}
@@ -253,7 +255,7 @@ const DataTableRow = React.memo(
                   onPress={getCallback(columnKey)}
                   width={width}
                   isLastCell={isLastCell}
-                  isDisabled={isDisabled}
+                  isDisabled={isDisabledIcon}
                   containerStyle={iconCell}
                 />
               );
