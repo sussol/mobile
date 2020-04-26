@@ -72,11 +72,6 @@ export const StocktakeBatchModalComponent = ({
     return { page: STOCKTAKE_BATCH_EDIT, pageObject };
   }, [stocktakeItem, usingPayments, usingReasons]);
 
-  if (usingReasons) {
-    initialState.page += 'WithReasons';
-    if (usingPayments) initialState.page += 'AndPrices';
-  } else if (usingPayments) initialState.page += 'WithPrices';
-
   const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
   const {
