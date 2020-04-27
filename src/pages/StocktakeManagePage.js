@@ -46,10 +46,13 @@ export const StocktakeManage = ({
   route,
 }) => {
   const runWithLoadingIndicator = useLoadingIndicator();
+
   // On navigating to this screen, if a stocktake is passed through, update the selection with
   // the items already in the stocktake.
   useEffect(() => {
-    if (pageObject) dispatch(PageActions.selectItems(pageObject.itemsInStocktake, route));
+    const { itemsInStocktake = [] } = pageObject ?? {};
+    const stocktakeHasItems = !!itemsInStocktake.length;
+    if (stocktakeHasItems) dispatch(PageActions.selectItems(itemsInStocktake, route));
   }, []);
 
   const getCallback = (colKey, propName) => {
@@ -139,7 +142,7 @@ export const StocktakeManage = ({
       />
 
       <BottomTextEditor
-        isOpen
+        isOpen={hasSelection}
         buttonText={pageObject ? modalStrings.confirm : modalStrings.create}
         value={name}
         placeholder={modalStrings.give_your_stocktake_a_name}

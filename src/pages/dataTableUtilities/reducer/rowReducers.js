@@ -104,27 +104,28 @@ export const toggleSelectAll = state => {
 };
 
 /**
- * Sets the rowState of each of the array of items from the undering data
+ * Sets the rowState of each of the array of items from the underlying data
  * in the current store within dataState to true.
  */
 export const selectRows = (state, action) => {
-  const { dataState, keyExtractor } = state;
+  const { dataState, hasSelection, keyExtractor } = state;
   const { payload } = action;
   const { items } = payload;
 
   const newDataState = new Map(dataState);
 
-  items.forEach(item => {
+  const isSelectionUpdated = items.reduce((_, item) => {
     const rowKey = keyExtractor(item);
     newDataState.set(rowKey, { ...dataState.get(rowKey), isSelected: true });
-  });
+    return true;
+  }, false);
 
   return {
     ...state,
     dataState: newDataState,
     showAll: true,
     allSelected: false,
-    hasSelection: true,
+    hasSelection: isSelectionUpdated || hasSelection,
   };
 };
 
