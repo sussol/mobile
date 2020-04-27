@@ -489,7 +489,7 @@ const COLUMNS = () => ({
     key: COLUMN_KEYS.PROGRAM,
     title: tableStrings.program,
     textAlign: 'left',
-    sortable: false,
+    sortable: true,
     editable: false,
   },
 
