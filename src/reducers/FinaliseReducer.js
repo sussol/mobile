@@ -28,6 +28,10 @@ export const FinaliseReducer = (state = initialState(), action) => {
       return { ...state, finaliseModalOpen: false };
     }
 
+    case FINALISE_ACTIONS.RESET_FINALISE_ITEM: {
+      return { ...state, finaliseItem: null };
+    }
+
     case FINALISE_ACTIONS.SET_FINALISE_ITEM: {
       const { payload } = action;
       const { finaliseItem } = payload;

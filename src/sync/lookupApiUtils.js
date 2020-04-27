@@ -59,17 +59,13 @@ const getPatientQueryString = ({
   firstName = '',
   lastName = '',
   dateOfBirth = '',
-  policyNumberPerson = '',
-  policyNumberFamily = '',
+  policyNumber = '',
 } = {}) => {
-  const policyNumberSeparator =
-    policyNumberPerson && policyNumberFamily ? SEPARATORS.POLICY_NUMBER : '';
-  const policyNumberFull = policyNumberPerson + policyNumberSeparator + policyNumberFamily;
   const queryParams = [
     { first_name: firstName },
     { last_name: lastName },
     { dob: dateOfBirth },
-    { policy_number: policyNumberFull },
+    { policy_number: policyNumber },
   ];
   return getQueryString(queryParams);
 };

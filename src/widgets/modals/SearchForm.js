@@ -102,9 +102,11 @@ export const SearchFormComponent = ({
 
   const onError = useCallback(responseError => {
     setError(responseError);
+    resetData();
     resetQueryUrl();
   }, []);
 
+  const resetData = useCallback(() => setData(''), []);
   const resetError = useCallback(() => setError(''), []);
   const resetQueryUrl = useCallback(() => setQueryUrl(''), []);
 
