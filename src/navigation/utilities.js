@@ -44,8 +44,14 @@ export const getRouteTitle = (pageObject, routeName) => {
 /**
  * Simple hardware backhandler which dispatches a goBack action on a
  * provided store.
+ *
+ * WARNING: if returns falsey value, event will be "double handled",
+ * which will result in the stack being popped twice.
  */
-export const backHandler = store => () => store.dispatch(goBack());
+export const backHandler = store => () => {
+  store.dispatch(goBack());
+  return true;
+};
 
 /**
  * Simple middleware which intercepts navigation actions and calls a function
