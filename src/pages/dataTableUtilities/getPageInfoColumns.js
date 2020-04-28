@@ -6,6 +6,7 @@
 import { pageInfoStrings, programStrings, tableStrings } from '../../localization';
 import { MODAL_KEYS, formatDate } from '../../utilities';
 import { ROUTES } from '../../navigation/constants';
+import { MODALS } from '../../widgets/constants';
 import { PageActions } from './actions';
 
 /**
@@ -50,10 +51,10 @@ const PER_PAGE_INFO_COLUMNS = {
     ['entryDate', 'enteredBy'],
     ['customer', 'transactionComment', 'prescriber'],
   ],
-  stocktakeBatchEditModal: [['itemName']],
-  stocktakeBatchEditModalWithReasons: [['itemName']],
-  stocktakeBatchEditModalWithPrices: [['itemName']],
-  stocktakeBatchEditModalWithReasonsAndPrices: [['itemName']],
+  [MODALS.STOCKTAKE_BATCH_EDIT]: [['itemName']],
+  [MODALS.STOCKTAKE_BATCH_EDIT_WITH_REASONS]: [['itemName']],
+  [MODALS.STOCKTAKE_BATCH_EDIT_WITH_PRICES]: [['itemName']],
+  [MODALS.STOCKTAKE_BATCH_EDIT_WITH_REASONS_AND_PRICES]: [['itemName']],
   supplierCredit: [
     ['entryDate', 'confirmDate', 'transactionCategory'],
     ['enteredBy', 'otherParty'],
