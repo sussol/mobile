@@ -28,7 +28,7 @@ export const PagesReducer = (state = {}, action) => {
       const { pageObject } = params;
 
       const pageInitialiser = getPageInitialiser(routeName);
-      const pageInitialState = pageInitialiser ? pageInitialiser(pageObject) : pageObject;
+      const pageInitialState = pageInitialiser(pageObject);
 
       return { ...state, [routeName]: pageInitialState, currentRoute: routeName };
     }

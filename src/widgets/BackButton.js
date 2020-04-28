@@ -23,7 +23,7 @@ const mapStateToProps = state => {
   const { pages = {} } = state;
   const { currentRoute = '' } = pages;
   const { [currentRoute]: currentPageState = {} } = pages;
-  const { pageObject = currentPageState } = currentPageState;
+  const { pageObject } = currentPageState;
   return { title: getRouteTitle(pageObject, currentRoute) };
 };
 
