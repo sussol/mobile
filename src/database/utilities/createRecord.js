@@ -238,7 +238,7 @@ const createPatient = (database, patientDetails) => {
   const firstName = patientFirstName ?? '';
   const lastName = patientLastName ?? '';
   const name = patientName ?? `${patientLastName}, ${patientFirstName}`;
-  const dateOfBirth = patientDateOfBirth ?? new Date();
+  const dateOfBirth = patientDateOfBirth ?? null;
   const emailAddress = patientEmailAddress ?? '';
   const phoneNumber = patientPhoneNumber ?? '';
 
