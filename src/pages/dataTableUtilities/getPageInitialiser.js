@@ -466,6 +466,9 @@ const pageInitialisers = {
  * @param    {object}    A mapper from page names to initialisation functions.
  * @returns  {Function}  A lookup function for retrieving page initialisers.
  */
-const getPageInitialiser = pageToInitialiser => page => pageToInitialiser[page];
+const getPageInitialiser = pageToInitialiser => page => {
+  const initialPage = pageToInitialiser[page];
+  return initialPage ?? (pageObject => (pageObject ? { pageObject } : {}));
+};
 
 export default getPageInitialiser(pageInitialisers);
