@@ -37,6 +37,7 @@ const sortKeyToType = {
   reasonTitle: 'string',
   confirmDate: 'date',
   type: 'string',
+  programName: 'string',
 };
 
 /**
