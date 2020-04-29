@@ -105,7 +105,7 @@ export const CustomerRequisitions = ({
           <SearchBar
             onChangeText={onFilterData}
             value={searchTerm}
-            placeholder={`${generalStrings.search_by} ${generalStrings.requisition_number}`}
+            placeholder={`${generalStrings.search_by} ${generalStrings.requisition_number} ${generalStrings.or} ${generalStrings.customer}`}
           />
         </View>
       </View>
