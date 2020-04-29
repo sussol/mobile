@@ -67,7 +67,7 @@ export const selectFilteredData = createSelector(
     const [names, birthYearString] = searchTerm.split(/-d/).map(name => name.trim());
     const [lastName, firstName] = names.split(/,/).map(name => name.trim());
 
-    const birthYearDate = moment(birthYearString || new Date(1900, 0, 0), 'Y', null, true);
+    const birthYearDate = moment(birthYearString, 'Y', null, true);
     const filterByBirthDate = usingPatientsDataSet && birthYearDate.isValid();
 
     let filteredData = lastName ? data.filtered('lastName BEGINSWITH[c] $0', lastName) : data;
