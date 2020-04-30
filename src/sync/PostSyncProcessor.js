@@ -208,7 +208,7 @@ export class PostSyncProcessor {
     // Auto-finalise all incoming consumer credits.
     if (record.type === 'customer_credit' && !record.isFinalised) {
       funcs.push(() => {
-        record.finalise();
+        record.finalise(this.database);
       });
     }
 
