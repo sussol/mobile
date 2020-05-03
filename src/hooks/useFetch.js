@@ -12,6 +12,7 @@ import { SETTINGS_KEYS } from '../settings';
 import { UIDatabase } from '../database';
 
 const { SYNC_SITE_NAME, SYNC_SITE_PASSWORD_HASH } = SETTINGS_KEYS;
+
 const CONNECTION_TIMEOUT_PERIOD = 10000;
 
 const ERROR_CODES = {
@@ -19,11 +20,25 @@ const ERROR_CODES = {
   EMPTY_RESPONSE: 'No records found',
 };
 
+const bugsnagClient = new BugsnagClient();
+
+class BugsnagError extends Error {
+  constructor(message, data, ...args) {
+    super(message, ...args);
+    bugsnagClient.notify(this, report => {
+      report.errorMessage = message;
+      report.metadata = data;
+    });
+  }
+}
+
 const getAuthorizationHeader = () => {
   const username = UIDatabase.getSetting(SYNC_SITE_NAME);
   const password = UIDatabase.getSetting(SYNC_SITE_PASSWORD_HASH);
   return getAuthHeader(username, password);
 };
+
+const isValidError = error => Object.values(ERROR_CODES).includes(error?.message);
 
 /**
  * Custom hook to fetch data inside mounted component.
@@ -38,7 +53,6 @@ export const useFetch = (url, options = {}, timeout = CONNECTION_TIMEOUT_PERIOD)
 
   /* eslint-disable no-undef */
   const abortController = new AbortController();
-  const bugsnagClient = new BugsnagClient();
 
   React.useEffect(() => {
     if (url) {
@@ -51,27 +65,23 @@ export const useFetch = (url, options = {}, timeout = CONNECTION_TIMEOUT_PERIOD)
           if (ok) {
             const responseData = await response.json();
             const { error: responseError } = responseData;
-            if (responseError) throw new Error(responseError);
+            if (responseError) throw new BugsnagError(responseError, { url, headers });
             if (!responseData.length) throw new Error(ERROR_CODES.EMPTY_RESPONSE);
             if (isMounted.current) setData(responseData);
           } else {
-            const connectionError = new Error(ERROR_CODES.CONNECTION_FAILURE);
-            const authorizationError = new Error(ERROR_CODES.INVALID_PASSWORD);
             switch (status) {
               case 400:
               default:
-                throw connectionError;
+                throw new Error(ERROR_CODES.CONNECTION_FAILURE);
               case 401:
-                throw authorizationError;
+                throw new BugsnagError(ERROR_CODES.INVALID_PASSWORD, { url, headers });
             }
           }
         } catch (responseError) {
-          bugsnagClient.notify(responseError, report => {
-            report.context = 'FETCH ERROR';
-            report.errorMessage = responseError.message;
-            report.metadata = { error: { url, headers } };
-          });
           if (isMounted.current) {
+            if (!isValidError(responseError)) {
+              responseError.message = ERROR_CODES.CONNECTION_FAILURE;
+            }
             setError(responseError);
           }
         }
