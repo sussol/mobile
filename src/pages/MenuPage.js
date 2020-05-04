@@ -6,6 +6,7 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Text, View, ToastAndroid } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 
 import { Button } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -66,6 +67,8 @@ const Menu = ({
   const { image, originalContainer, moduleContainer, container, bottomIcon, moduleRow } = styles;
 
   const containerStyle = { ...container, ...(usingModules ? moduleContainer : originalContainer) };
+
+  const isFocused = useIsFocused();
 
   const MenuButton = useCallback(
     props => <Button style={menuButton} textStyle={buttonText} {...props} />,
@@ -193,6 +196,8 @@ const Menu = ({
     ),
     [usingModules]
   );
+
+  if (!isFocused) return null;
 
   return (
     <View style={{ ...appBackground }}>
