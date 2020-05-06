@@ -21,7 +21,12 @@ export const parseBoolean = booleanString => {
  * @return  {Date}             The Date representing |ISODate| (and |ISOTime|).
  */
 export const parseDate = (ISODate, ISOTime) => {
-  if (!ISODate || ISODate.length < 1 || ISODate === '0000-00-00T00:00:00') {
+  if (
+    !ISODate ||
+    ISODate.length < 1 ||
+    ISODate === '0000-00-00T00:00:00' ||
+    ISODate === '0000-00-00T00:00:00Z'
+  ) {
     return null;
   }
   const date = new Date(ISODate);
