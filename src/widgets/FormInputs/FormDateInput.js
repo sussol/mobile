@@ -68,14 +68,16 @@ export const FormDateInput = React.forwardRef(
     const { inputValue, isValid, pickerSeedValue, datePickerOpen } = inputState;
 
     const onUpdate = (newValue, validity = true, pickerVisibility = false) => {
+      const newDate = moment(newValue, 'DD/MM/YYYY');
       const newState = {
         isValid: validity,
         inputValue: newValue,
-        pickerSeedValue: validity ? moment(newValue, 'DD/MM/YYYY').toDate() : new Date(),
+        pickerSeedValue:
+          validity && newDate.isValid() ? moment(newValue, 'DD/MM/YYYY').toDate() : new Date(),
         datePickerOpen: pickerVisibility,
       };
       setInputState(newState);
-      onChangeDate(moment(newValue, 'DD/MM/YYYY').toDate());
+      onChangeDate(newValue);
     };
 
     // When changing the value of the input, check the new validity and set the new input.
