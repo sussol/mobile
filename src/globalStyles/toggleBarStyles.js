@@ -14,12 +14,12 @@ export const toggleBarStyles = {
   },
   toggleText: {
     fontFamily: APP_FONT_FAMILY,
-    fontSize: 16,
+    fontSize: 12,
     color: SUSSOL_ORANGE,
   },
   toggleTextSelected: {
     fontFamily: APP_FONT_FAMILY,
-    fontSize: 16,
+    fontSize: 12,
     color: 'white',
   },
 };
