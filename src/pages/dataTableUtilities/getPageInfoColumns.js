@@ -55,7 +55,7 @@ const PER_PAGE_INFO_COLUMNS = {
   [MODALS.STOCKTAKE_BATCH_EDIT_WITH_REASONS]: [['itemName']],
   [MODALS.STOCKTAKE_BATCH_EDIT_WITH_PRICES]: [['itemName']],
   [MODALS.STOCKTAKE_BATCH_EDIT_WITH_REASONS_AND_PRICES]: [['itemName']],
-  supplierCredit: [
+  [ROUTES.SUPPLIER_CREDIT]: [
     ['entryDate', 'confirmDate', 'transactionCategory'],
     ['enteredBy', 'otherParty'],
   ],
@@ -71,7 +71,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
     info: formatDate(pageObject.confirmDate),
   },
   transactionCategory: {
-    title: `${pageInfoStrings.entered_by}:`,
+    title: `${pageInfoStrings.category}:`,
     info: pageObject?.category?.name ?? '',
   },
   enteredBy: {
