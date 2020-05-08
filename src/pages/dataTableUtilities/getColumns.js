@@ -499,7 +499,8 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.EDITABLE_STRING,
     key: COLUMN_KEYS.BATCH,
     title: tableStrings.batch_name,
-    alignText: 'center',
+    alignText: 'left',
+    sortable: true,
     editable: true,
   },
   [COLUMN_NAMES.EDITABLE_COMMENT]: {
