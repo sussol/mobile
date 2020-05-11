@@ -1,6 +1,7 @@
 import Realm from 'realm';
 
 import currency from '../../localization/currency';
+import { generalStrings } from '../../localization';
 
 /**
  * A transaction batch.
@@ -39,13 +40,13 @@ export class TransactionBatch extends Realm.Object {
 
   /**
    * Returns either the prescriber name who prescribed the medicine
-   * to a patient, or an empty string.
+   * to a patient, or an N/A.
    * @return {String}
    */
   get prescriber() {
     const { prescriber } = this.transaction;
-    const { firstName = '', lastName = '' } = prescriber || {};
-    if (!firstName && !lastName) return '';
+    const { firstName = '', lastName = '' } = prescriber ?? {};
+    if (!firstName && !lastName) return generalStrings.not_available;
     return `${firstName} ${lastName}`.trim();
   }
 
@@ -74,6 +75,10 @@ export class TransactionBatch extends Realm.Object {
    */
   get itemBatchId() {
     return this.itemBatch?.id || '';
+  }
+
+  get confirmDate() {
+    return this.transaction?.confirmDate ?? null;
   }
 
   /**

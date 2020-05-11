@@ -248,13 +248,14 @@ const FormControlComponent = ({
 };
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
-  const { form, completedForm, saveButtonText, canSaveForm, isConfirmFormOpen } = stateProps;
+  const { form, completedForm, canSaveForm, isConfirmFormOpen } = stateProps;
   const { initialiseForm, showConfirmForm, hideConfirmForm, updateForm, resetForm } = dispatchProps;
   const {
     inputConfig,
     isDisabled,
     confirmOnSave,
     confirmText,
+    saveButtonText,
     onSave,
     showCancelButton,
     cancelButtonText,

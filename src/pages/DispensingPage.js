@@ -185,12 +185,12 @@ const Dispensing = ({
             viewStyle={localStyles.searchBar}
             placeholder={dispensingStrings.search_by_last_name_first_name}
           />
+          <PageButton text={newRecordText} onPress={newRecordAction} style={localStyles.button} />
           <PageButton
             text={lookupRecordText}
             onPress={lookupRecordAction}
             style={localStyles.button}
           />
-          <PageButton text={newRecordText} onPress={newRecordAction} style={localStyles.button} />
         </View>
         <DataTable
           data={data}

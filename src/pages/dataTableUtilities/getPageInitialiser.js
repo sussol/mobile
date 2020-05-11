@@ -320,7 +320,7 @@ const supplierInvoiceInitialiser = transaction => {
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
-    filterDataKeys: ['item.name', 'item.code'],
+    filterDataKeys: ['itemName', 'itemBatch.item.code'],
     sortKey: 'itemName',
     isAscending: true,
     modalKey: '',
