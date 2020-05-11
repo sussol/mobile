@@ -46,14 +46,13 @@ export const createPolicyRecord = policy => {
 };
 
 const getQueryString = params => {
-  const object = params.reduce((queryObject, param) => {
+  const query = params.reduce((queryObject, param) => {
     const [[key, value], [, type]] = Object.entries(param);
     if (!value) return queryObject;
-    const paramValue = type !== TYPES.DATE ? `@${value}@` : moment(value).format('YYYYMMDD');
+    const paramValue = type !== TYPES.DATE ? `@${value}@` : moment(value).format('DDMMYYYY');
     return { ...queryObject, [key]: paramValue };
   }, {});
-  const queryString = `?${querystring.stringify(object)}`;
-  return queryString;
+  return `?${querystring.stringify(query)}`;
 };
 
 const getPrescriberQueryString = ({ firstName = '', lastName = '', registrationCode = '' }) => {
