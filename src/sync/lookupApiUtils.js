@@ -6,6 +6,8 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
 
+import moment from 'moment';
+import querystring from 'querystring';
 import { SETTINGS_KEYS } from '../settings';
 import { UIDatabase } from '../database';
 import { createRecord, parseBoolean, parseDate, parseNumber } from '../database/utilities';
@@ -17,11 +19,17 @@ const RESOURCES = {
   PRESCRIBER: '/api/v4/prescriber',
 };
 
-const SEPARATORS = {
-  QUERY_STRING: '?',
-  QUERY_PARAMETERS: '&',
-  QUERY_WILDCARD: '@',
-  POLICY_NUMBER: '-',
+const TYPES = {
+  STRING: 'string',
+  DATE: 'date',
+};
+
+const PARAMETERS = {
+  firstName: { key: 'first_name', type: TYPES.STRING },
+  lastName: { key: 'last_name', type: TYPES.STRING },
+  dateOfBirth: { key: 'dob', type: TYPES.DATE },
+  policyNumber: { key: 'policy_number', type: TYPES.STRING },
+  registrationCode: { key: 'code', type: TYPES.STRING },
 };
 
 export const createPatientRecord = patient => {
@@ -37,21 +45,21 @@ export const createPolicyRecord = policy => {
   UIDatabase.write(() => createRecord(UIDatabase, 'InsurancePolicy', policyRecord));
 };
 
-const getQueryString = params =>
-  params.reduce((queryString, param) => {
-    const [[key, value]] = Object.entries(param);
-    if (!value) return queryString;
-    const paramString = `${key}=${SEPARATORS.QUERY_WILDCARD}${value}${SEPARATORS.QUERY_WILDCARD}`;
-    const paramSeparator =
-      queryString.length > 0 ? SEPARATORS.QUERY_PARAMETERS : SEPARATORS.QUERY_STRING;
-    return queryString + paramSeparator + paramString;
-  }, '');
+const getQueryString = params => {
+  const query = params.reduce((queryObject, param) => {
+    const [[key, value], [, type]] = Object.entries(param);
+    if (!value) return queryObject;
+    const paramValue = type !== TYPES.DATE ? `@${value}@` : moment(value).format('DDMMYYYY');
+    return { ...queryObject, [key]: paramValue };
+  }, {});
+  return `?${querystring.stringify(query)}`;
+};
 
 const getPrescriberQueryString = ({ firstName = '', lastName = '', registrationCode = '' }) => {
   const queryParams = [
-    { first_name: firstName },
-    { last_name: lastName },
-    { code: registrationCode },
+    { [PARAMETERS.firstName.key]: firstName, type: PARAMETERS.firstName.type },
+    { [PARAMETERS.lastName.key]: lastName, type: PARAMETERS.lastName.type },
+    { [PARAMETERS.registrationCode.key]: registrationCode, type: PARAMETERS.registrationCode.type },
   ];
   return getQueryString(queryParams);
 };
@@ -63,10 +71,10 @@ const getPatientQueryString = ({
   policyNumber = '',
 } = {}) => {
   const queryParams = [
-    { first_name: firstName },
-    { last_name: lastName },
-    { dob: dateOfBirth },
-    { policy_number: policyNumber },
+    { [PARAMETERS.firstName.key]: firstName, type: PARAMETERS.firstName.type },
+    { [PARAMETERS.lastName.key]: lastName, type: PARAMETERS.lastName.type },
+    { [PARAMETERS.dateOfBirth.key]: dateOfBirth, type: PARAMETERS.dateOfBirth.type },
+    { [PARAMETERS.policyNumber.key]: policyNumber, type: PARAMETERS.policyNumber.type },
   ];
   return getQueryString(queryParams);
 };
