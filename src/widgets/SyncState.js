@@ -33,7 +33,7 @@ export const SyncStateComponent = ({
   onOpenSyncModal,
 }) => {
   const syncMessage = isSyncing ? syncStrings.sync_in_progress : syncStrings.sync_enabled;
-  const formattedDate = formatDate(lastSyncTime, 'dots');
+  const formattedDate = formatDate(new Date(lastSyncTime), 'dots');
   const errorText = `${syncStrings.sync_error}. ${syncStrings.last_sync} ${formattedDate}`;
   const hasError = !!errorMessage?.length;
 
