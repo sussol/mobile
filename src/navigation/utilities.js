@@ -28,7 +28,8 @@ export const SCREEN_TITLES = {
     `${navStrings.requisition} ${serialNumber}`,
   [ROUTES.CUSTOMER_INVOICE]: ({ isCredit, serialNumber } = {}) =>
     `${isCredit ? navStrings.credit : navStrings.invoice} ${serialNumber}`,
-  [ROUTES.SUPPLIER_INVOICE]: ({ serialNumber } = {}) => `${navStrings.invoice} ${serialNumber}`,
+  [ROUTES.SUPPLIER_INVOICE]: ({ isCredit, serialNumber } = {}) =>
+    `${isCredit ? navStrings.credit : navStrings.invoice} ${serialNumber}`,
   [ROUTES.STOCKTAKE_EDITOR]: ({ serialNumber } = {}) => `${navStrings.stocktake} ${serialNumber}`,
   [ROUTES.STOCKTAKE_MANAGER]: () => navStrings.manage_stocktake,
   [ROUTES.PRESCRIPTION]: ({ serialNumber } = {}) => `${navStrings.prescription} ${serialNumber}`,
