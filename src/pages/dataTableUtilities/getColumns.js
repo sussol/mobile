@@ -12,7 +12,7 @@ import { FORMS, MODALS, TABS } from '../../widgets/constants';
 const PAGE_COLUMN_WIDTHS = {
   [FORMS.PATIENT]: [2.5, 4, 4, 2.5, 2, 2, 2],
   [FORMS.PRESCRIBER]: [1, 3, 3, 1],
-  [MODALS.PATIENT_HISTORY]: [1, 3, 1, 3],
+  [MODALS.PATIENT_HISTORY]: [1, 4, 1, 1, 2],
   [MODALS.REGIMEN_DATA]: [4, 1, 5],
   [MODALS.STOCKTAKE_BATCH_EDIT]: [1, 2, 1, 1, 1, 1],
   [MODALS.STOCKTAKE_BATCH_EDIT_WITH_REASONS]: [1, 2, 1, 1, 1, 1, 1],
@@ -65,6 +65,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.ITEM_CODE,
     COLUMN_NAMES.ITEM_NAME,
     COLUMN_NAMES.TOTAL_QUANTITY,
+    COLUMN_NAMES.PRESCRIPTION_DATE,
     COLUMN_NAMES.PRESCRIBER,
   ],
   [MODALS.REGIMEN_DATA]: [
@@ -363,8 +364,8 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.PRESCRIBER,
     title: tableStrings.prescriber,
-    alignText: 'right',
-    sortable: false,
+    alignText: 'left',
+    sortable: true,
     editable: false,
   },
   [COLUMN_NAMES.ITEM_NAME]: {
@@ -699,7 +700,6 @@ const COLUMNS = () => ({
     sortable: true,
     editable: false,
   },
-
   [COLUMN_NAMES.DATE_OF_BIRTH]: {
     type: COLUMN_TYPES.DATE,
     key: COLUMN_KEYS.DATE_OF_BIRTH,
@@ -728,6 +728,13 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.DATE,
     key: COLUMN_KEYS.ENTRY_DATE,
     title: tableStrings.entered_date,
+    sortable: true,
+    editable: false,
+  },
+  [COLUMN_NAMES.PRESCRIPTION_DATE]: {
+    type: COLUMN_TYPES.DATE,
+    key: COLUMN_KEYS.PRESCRIPTION_DATE,
+    title: tableStrings.prescription_date,
     sortable: true,
     editable: false,
   },
