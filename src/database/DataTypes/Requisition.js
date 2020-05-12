@@ -9,6 +9,8 @@ import { complement } from 'set-manipulator';
 import { createRecord, getTotal } from '../utilities';
 import { UIDatabase } from '..';
 import { programDailyUsage } from '../../utilities/dailyUsage';
+import { generalStrings, modalStrings } from '../../localization';
+import { SETTINGS_KEYS } from '../../settings';
 
 /**
  * A requisition.
@@ -89,12 +91,28 @@ export class Requisition extends Realm.Object {
   }
 
   /**
+   * Get if is program requisition.
+   */
+  get hasProgram() {
+    return !!this.program;
+  }
+
+  /**
    * Get name of user who entered requisition.
    *
    * @return  {string}
    */
   get enteredByName() {
     return this.enteredBy ? this.enteredBy.username : '';
+  }
+
+  /*
+   * Get name of requisition program.
+   *
+   * @return  {string}
+   */
+  get programName() {
+    return this.hasProgram ? this.program.name : generalStrings.not_available;
   }
 
   /**
@@ -371,6 +389,35 @@ export class Requisition extends Realm.Object {
       }
     });
     database.delete('RequisitionItem', itemsToPrune);
+  }
+
+  get canFinaliseRequest() {
+    const finaliseStatus = { success: true, message: modalStrings.finalise_supplier_requisition };
+
+    if (!this.numberOfOrderedItems) {
+      finaliseStatus.success = false;
+      finaliseStatus.message = modalStrings.add_at_least_one_item_before_finalising;
+    }
+    if (!this.totalRequiredQuantity) {
+      finaliseStatus.success = false;
+      finaliseStatus.message = modalStrings.record_stock_required_before_finalising;
+    }
+
+    const thisStoresTags = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_TAGS);
+    const maxLinesForOrder = this.program?.getMaxLines?.(this.orderType, thisStoresTags);
+
+    if (this.numberOfOrderedItems > maxLinesForOrder) {
+      finaliseStatus.success = false;
+      finaliseStatus.message = `${modalStrings.emergency_orders_can_only_have} ${maxLinesForOrder} ${modalStrings.items_remove_some}`;
+    }
+
+    return finaliseStatus;
+  }
+
+  get canFinalise() {
+    return this.isRequest
+      ? this.canFinaliseRequest
+      : { success: true, message: modalStrings.finalise_customer_requisition };
   }
 
   /**

@@ -21,5 +21,25 @@
   },
   "gil": {},
   "tl": {},
-  "la": {}
+  "la": {},
+  "pt": {
+    "email_required": "Insira e-mail",
+    "email_valid": "Insira um e-mail válido",
+    "password_contains_spaces": "Senha não pode conter espaços.",
+    "password_length_invalid": "Senha deve conter de 8-32 dígitos",
+    "password_match_repeat": "A senha e confirmação devem ser iguais",
+    "password_required": "Insira a senha",
+    "repeat_password_required": "Confirmação da senha",
+    "username_required": "Insira o nome de usuário"
+  },
+  "es": {
+    "email_required": "Ingresar el e-mail",
+    "email_valid": "Ingresar un e-mail válido",
+    "password_contains_spaces": "La contraseña no puede contener espacios.",
+    "password_length_invalid": "La contraseña debe tener entre 8 y 32 caracteres.",
+    "password_match_repeat": "Las contraseñas deben coincidir",
+    "password_required": "Ingresar la contraseña",
+    "repeat_password_required": "Confirmar la contraseña",
+    "username_required": "Ingresar el nombre de usuario"
+  }
 }

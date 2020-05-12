@@ -137,12 +137,20 @@ export class StocktakeBatch extends Realm.Object {
   }
 
   /**
+   * Returns a string representing the units for this stocktake batch.
+   * @return {string} the unit for this stocktake batch, or N/A if none has been assigned.
+   */
+  get unitString() {
+    return this.itemBatch?.unitString;
+  }
+
+  /**
    * Returns an indicator that this batches reason/option state is valid.
    * Valid being: negative differences require a negativeInventoryAdjustment
    * option. Positive differences require a positiveInventoryAdjustment option
    * while no difference requires there to be no option applied.
    */
-  get validateReason() {
+  get hasValidReason() {
     // Short circuits for simple cases
     if (!this.difference && !this.option) return true;
     if (this.difference && !this.option) return false;

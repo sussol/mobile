@@ -170,14 +170,22 @@ export class StocktakeItem extends Realm.Object {
   }
 
   /**
+   * Returns a string representing the units for this stocktake item.
+   * @return {string} the unit for this stocktake item, or N/A if none has been assigned.
+   */
+  get unitString() {
+    return this.item?.unitString;
+  }
+
+  /**
    * Returns an indicator that all batches related to this item have a correct
    * reason/option applied. A correct reason being a `positiveInventoryAdjustment`
    * for positive differences and vice versa for negative differences and no reason
    * when there is no difference.
    */
-  get validateReason() {
+  get hasValidReason() {
     return this.batches.every(
-      ({ validateReason: batchHasValidatedReason }) => batchHasValidatedReason
+      ({ hasValidReason: batchHasValidatedReason }) => batchHasValidatedReason
     );
   }
 
@@ -304,19 +312,8 @@ export class StocktakeItem extends Realm.Object {
    */
   removeReason(database) {
     this.batches.forEach(batch => {
-      if (!this.difference) batch.removeReason(database);
+      if (!batch.hasValidReason) batch.removeReason(database);
     });
-  }
-
-  /**
-   * Applies the given Options object to all stocktake batches associated to
-   * this stocktake item, if there is a difference between countedTotalQuantity
-   * and snapshotTotalQuantity.
-   * @param {Realm}   database App-wide database interface.
-   * @param {Options} option   Option object to apply.
-   */
-  applyReason(database, option) {
-    this.batches.forEach(batch => batch.applyReason(database, option));
   }
 }
 

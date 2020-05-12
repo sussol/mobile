@@ -1,4 +1,5 @@
 /* eslint-disable import/no-mutable-exports */
+/* eslint-disable no-restricted-globals */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -7,19 +8,21 @@
 import RNFS from 'react-native-fs';
 
 import { SETTINGS_KEYS } from '../settings';
+import { PREFERENCE_TYPE_KEYS } from './utilities/constants';
 import { formatDate, requestPermission, backupValidation } from '../utilities';
 
 const { THIS_STORE_NAME_ID } = SETTINGS_KEYS;
 
 const translateToCoreDatabaseType = type => {
   switch (type) {
-    case 'CustomerInvoice':
-    case 'Prescription':
-    case 'SupplierInvoice':
-    case 'Receipt':
-    case 'CustomerCredit':
-    case 'Payment':
     case 'CashTransaction':
+    case 'CustomerCredit':
+    case 'CustomerInvoice':
+    case 'CustomerTransaction':
+    case 'Payment':
+    case 'Prescription':
+    case 'Receipt':
+    case 'SupplierInvoice':
     case 'SupplierTransaction':
       return 'Transaction';
     case 'CashTransactionName':
@@ -47,6 +50,34 @@ const translateToCoreDatabaseType = type => {
       return 'TransactionCategory';
     default:
       return type;
+  }
+};
+
+const isBooleanData = data => {
+  switch (data.toLowerCase()) {
+    case 'true':
+    case 'false':
+      return true;
+    default:
+      return false;
+  }
+};
+
+const isNumericData = data => !isNaN(data);
+
+const isNonNegativeNumericData = data => isNumericData(data) && Number(data) >= 0;
+
+const parseBooleanData = data => (isBooleanData(data) ? JSON.parse(data) : false);
+
+const parseNumericData = data => (isNumericData(data) ? JSON.parse(data) : 0);
+
+const parseNonNegativeNumericData = data => (isNonNegativeNumericData(data) ? JSON.parse(data) : 0);
+
+const parseUntypedData = data => {
+  try {
+    return JSON.parse(data);
+  } catch {
+    return '';
   }
 };
 
@@ -116,6 +147,10 @@ class UIDatabase {
     const thisStoreNameId = thisStoreNameIdSetting && thisStoreNameIdSetting.value;
 
     switch (type) {
+      case 'CashTransaction':
+        return results.filtered('type == $0 OR type == $1', 'receipt', 'payment');
+      case 'CustomerCredit':
+        return results.filtered('type == $0', 'customer_credit');
       case 'CustomerInvoice':
         // Only show invoices generated from requisitions once finalised.
         return results.filtered(
@@ -123,6 +158,37 @@ class UIDatabase {
           'customer_invoice',
           null,
           'finalised'
+        );
+      case 'CustomerTransaction': {
+        const creditQueryString = 'type == $0';
+        const invoiceQueryString = 'type == $1 AND (linkedRequisition == $2 OR status == $3)';
+        const queryString = `${creditQueryString} OR ${invoiceQueryString}`;
+        return results.filtered(
+          queryString,
+          'customer_credit',
+          'customer_invoice',
+          null,
+          'finalised'
+        );
+      }
+      case 'Payment':
+        return results.filtered('type == $0', 'payment');
+      case 'Prescription':
+        return results.filtered(
+          'type == $0 AND otherParty.type == $1 AND (linkedRequisition == $2 OR status == $3)',
+          'customer_invoice',
+          'patient',
+          null,
+          'finalised'
+        );
+      case 'Receipt':
+        return results.filtered('type == $0', 'receipt');
+      case 'SupplierInvoice':
+        return results.filtered(
+          'type == $0 AND mode == $1 AND otherParty.type != $2',
+          'supplier_invoice',
+          'store',
+          'inventory_adjustment'
         );
       case 'SupplierTransaction': {
         const queryString =
@@ -138,27 +204,13 @@ class UIDatabase {
           'inventory_adjustment'
         );
       }
-      case 'SupplierInvoice':
-        return results.filtered(
-          'type == $0 AND mode == $1 AND otherParty.type != $2',
-          'supplier_invoice',
-          'store',
-          'inventory_adjustment'
-        );
-      case 'Receipt':
-        return results.filtered('type == $0', 'receipt');
-      case 'Payment':
-        return results.filtered('type == $0', 'payment');
-      case 'CashTransaction':
-        return results.filtered('type == $0 OR type == $1', 'receipt', 'payment');
       case 'CashTransactionName':
         return results
           .filtered('isVisible == true && id != $0', thisStoreNameId)
           .filtered('isSupplier == true || isCustomer == true || isPatient == true');
       case 'CashTransactionReason':
         return results.filtered('type == $0', 'newCashOutTransaction');
-      case 'CustomerCredit':
-        return results.filtered('type == $0', 'customer_credit');
+
       case 'Policy':
         return results.filtered(
           'insuranceProvider.isActive == $0 && expiryDate > $1',
@@ -199,14 +251,6 @@ class UIDatabase {
         return results.filtered('type == $0 && isActive == true', 'negativeInventoryAdjustment');
       case 'PositiveAdjustmentReason':
         return results.filtered('type == $0 && isActive == true', 'positiveInventoryAdjustment');
-      case 'Prescription':
-        return results.filtered(
-          'type == $0 AND otherParty.type == $1 AND (linkedRequisition == $2 OR status == $3)',
-          'customer_invoice',
-          'patient',
-          null,
-          'finalised'
-        );
       case 'PrescriptionCategory':
         return results.filtered('type == $0', 'prescription');
       case 'SupplierCreditCategory':
@@ -262,9 +306,45 @@ class UIDatabase {
     return this.database.write(...args);
   }
 
+  /**
+   * Get preference by key.
+   *
+   * If the preference is not found in the database, returns null.
+   *
+   * If the preference is found, returns object data cast to the
+   * expected data type. If the data is not in the correct format,
+   * returns a default value according to the preference type:
+   *
+   * - BOOL: false
+   * - NUMERIC: 0
+   * - NON_NEGATIVE_NUMERIC: 0
+   *
+   * If the data type is null or not recognised, returns the raw object
+   * data as a string, or an empty string if the data is invalid JSON.
+   *
+   * @param {String} key
+   * @return {Boolean|Number|String|Null}
+   */
+  getPreference(key) {
+    const preference = this.database.get('Preference', key);
+    if (!preference) return null;
+    const { data, type } = preference;
+    if (!data) return null;
+    switch (type) {
+      case PREFERENCE_TYPE_KEYS.BOOL:
+        return parseBooleanData(data);
+      case PREFERENCE_TYPE_KEYS.NUMERIC:
+        return parseNumericData(data);
+      case PREFERENCE_TYPE_KEYS.NON_NEGATIVE_NUMERIC:
+        return parseNonNegativeNumericData(data);
+      default:
+        return parseUntypedData(data);
+    }
+  }
+
   getSetting(key) {
     const setting = this.database.get('Setting', key, 'key');
-    return (setting && setting.value) || '';
+    return setting?.value ?? '';
   }
 }
 

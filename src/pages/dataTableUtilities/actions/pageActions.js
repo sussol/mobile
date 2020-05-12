@@ -6,7 +6,7 @@
 import { UIDatabase } from '../../../database/index';
 import { MODAL_KEYS } from '../../../utilities';
 import { ACTIONS } from './constants';
-import { pageObjectSelector, pageStateSelector } from '../../../selectors/pageSelectors';
+import { selectPageObject, selectPageState } from '../../../selectors/pages';
 
 /**
  * Refreshes the underlying data array by slicing backingData.
@@ -43,7 +43,7 @@ export const closeModal = route => ({ type: ACTIONS.CLOSE_MODAL, payload: { rout
  * use case: opening a stocktake batch and refreshing the stocktake edit page row.
  */
 export const closeAndRefresh = route => (dispatch, getState) => {
-  const { modalValue, keyExtractor } = pageStateSelector(getState());
+  const { modalValue, keyExtractor } = selectPageState(getState());
 
   const rowKey = keyExtractor(modalValue);
 
@@ -65,7 +65,6 @@ export const openModal = (modalKey, value, route) => {
     case MODAL_KEYS.ENFORCE_REQUISITION_REASON:
     case MODAL_KEYS.STOCKTAKE_REASON:
     case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
-    case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
     case MODAL_KEYS.SELECT_ITEM_BATCH_SUPPLIER:
       return { type: ACTIONS.OPEN_MODAL, payload: { modalKey, rowKey: value, route } };
     case MODAL_KEYS.CREATE_CASH_TRANSACTION:
@@ -90,7 +89,7 @@ export const openModal = (modalKey, value, route) => {
 };
 
 export const editPrescriber = (value, route) => (dispatch, getState) => {
-  const pageObject = pageObjectSelector(getState());
+  const pageObject = selectPageObject(getState());
 
   UIDatabase.write(() => {
     UIDatabase.update('Transaction', {
@@ -109,7 +108,7 @@ export const editPrescriber = (value, route) => (dispatch, getState) => {
  * @param {String} pageObjectType PageObject type to edit i.e. Transaction.
  */
 export const editPageObjectName = (value, pageObjectType, route) => (dispatch, getState) => {
-  const pageObject = pageObjectSelector(getState());
+  const pageObject = selectPageObject(getState());
 
   const { name } = pageObject;
 
@@ -132,7 +131,7 @@ export const editPageObjectName = (value, pageObjectType, route) => (dispatch, g
  * @param {String} pageObjectType PageObject type to edit i.e. Transaction.
  */
 export const editTheirRef = (value, pageObjectType, route) => (dispatch, getState) => {
-  const pageObject = pageObjectSelector(getState());
+  const pageObject = selectPageObject(getState());
 
   const { theirRef } = pageObject;
 
@@ -152,7 +151,7 @@ export const editTheirRef = (value, pageObjectType, route) => (dispatch, getStat
  * @param {String} pageObjectType Type of the pageObject to edit i.e. Transaction.
  */
 export const editComment = (value, pageObjectType, route) => (dispatch, getState) => {
-  const pageObject = pageObjectSelector(getState());
+  const pageObject = selectPageObject(getState());
 
   const { comment } = pageObject;
 
@@ -172,7 +171,7 @@ export const editComment = (value, pageObjectType, route) => (dispatch, getState
  * @param {Number} value  New months of supply value.
  */
 export const editMonthsToSupply = (value, route) => (dispatch, getState) => {
-  const pageObject = pageObjectSelector(getState());
+  const pageObject = selectPageObject(getState());
 
   const { monthsToSupply } = pageObject;
 
@@ -196,7 +195,7 @@ export const editMonthsToSupply = (value, route) => (dispatch, getState) => {
  *           outdated when revisiting an un-finalised Stocktake.
  */
 export const resetStocktake = route => (dispatch, getState) => {
-  const pageObject = pageObjectSelector(getState());
+  const pageObject = selectPageObject(getState());
 
   pageObject.resetStocktake(UIDatabase);
 

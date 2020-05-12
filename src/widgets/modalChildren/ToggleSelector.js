@@ -29,10 +29,8 @@ export const ToggleSelector = props => {
   return (
     <ToggleBar
       style={globalStyles.toggleBar}
-      textOffStyle={globalStyles.toggleText}
-      textOnStyle={globalStyles.toggleTextSelected}
-      toggleOffStyle={globalStyles.toggleOption}
-      toggleOnStyle={globalStyles.toggleOptionSelected}
+      textOnStyle={{ ...globalStyles.toggleTextSelected, fontSize: 14 }}
+      textOffStyle={{ ...globalStyles.toggleText, fontSize: 14 }}
       toggles={toggles}
     />
   );

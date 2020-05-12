@@ -45,7 +45,6 @@ import { modalStrings } from '../../localization';
 
 const ADDITIONAL_MODAL_PROPS = {
   [MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM]: { noCancel: true, fullScreen: true },
-  [MODAL_KEYS.ENFORCE_STOCKTAKE_REASON]: { noCancel: true, fullScreen: true },
   [MODAL_KEYS.ENFORCE_REQUISITION_REASON]: { noCancel: true, fullScreen: true },
 };
 
@@ -199,7 +198,6 @@ const DataTablePageModalComponent = ({
         );
       }
 
-      case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
       case MODAL_KEYS.STOCKTAKE_REASON: {
         const { difference, reasonTitle } = currentValue;
         const reasonsSelection =
@@ -232,12 +230,16 @@ const DataTablePageModalComponent = ({
     }
   };
 
+  const modalTitle = getModalTitle(modalKey);
+  const numberOfTitleLines = modalTitle.split('\n').length;
+
   return (
     <ModalContainer
       fullScreen={fullScreen}
       isVisible={isOpen}
       onClose={onClose}
-      title={getModalTitle(modalKey)}
+      title={modalTitle}
+      numberOfLines={numberOfTitleLines}
       {...ADDITIONAL_MODAL_PROPS[modalKey]}
     >
       <ModalContent />

@@ -37,3 +37,5 @@ export {
   INDICATOR_COLUMN_CODES,
   INDICATOR_VALUE_TYPES,
 } from './indicatorConstants';
+
+export { PREFERENCE_KEYS, PREFERENCE_TYPE_KEYS, PREFERENCE_TYPES } from './preferenceConstants';

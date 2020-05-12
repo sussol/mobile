@@ -16,11 +16,11 @@
     "pushing_changes": "Pushing changes to the server"
   },
   "fr": {
-    "last_sync": "Dernier SYNC",
+    "last_sync": "DERNIER SYNC",
     "manual_sync": "SYNC Manuel",
-    "sync_enabled": "SYNC Activé",
-    "sync_error": "Erreur Sync",
-    "sync_in_progress": "SYNC en cours",
+    "sync_enabled": "SYNC ACTIVÉ",
+    "sync_error": "ERREUR SYNC",
+    "sync_in_progress": "SYNC EN COURS",
     "checking_server_for_records": "Vérifier le serveur pour des enregistrements",
     "records_waiting": "Enregistrements en attente",
     "sync_complete": "Sync complété",
@@ -59,5 +59,37 @@
     "all_records_updated": "ລາຍ​ການ​ທັງ​ໝົດ​ຖື​ກ​ອັບ​ເດດ​ແລ້ວ",
     "loading_change_count": "ກຳ​ລັງ​ໂຫຼດ​ຮັບ​ການ​ປ່ຽນ​ແປງ",
     "last_successful_sync": "Last successful sync"
+  },
+  "pt": {
+    "last_sync": "ÚLTIMO SYNC",
+    "manual_sync": "Sync Manual",
+    "sync_enabled": "SYNC ATIVO",
+    "sync_error": "ERRO no SYNC",
+    "sync_in_progress": "SYNC EM ANDAMENTO",
+    "checking_server_for_records": "Solicitando dados do servidor...",
+    "records_waiting": "Dados aguardando envio SYNC",
+    "sync_complete": "Sync finalizado",
+    "all_records_updated": "Todos os dados foram atualizados",
+    "loading_change_count": "Carregando contagem dos dados...",
+    "last_successful_sync": "Último SYNC finalizado",
+    "initialising": "Inicializando...",
+    "pulling_changes": "Obtendo dados do servidor",
+    "pushing_changes": "Enviando dados ao servidor"
+  },
+  "es": {
+    "last_sync": "ÚLTIMO SYNC",
+    "manual_sync": "Sync manual",
+    "sync_enabled": "SYNC HABILITADO",
+    "sync_error": "SYNC ERROR",
+    "sync_in_progress": "SYNC EN PROGRESO",
+    "checking_server_for_records": "Solicitando datos al servidor...",
+    "records_waiting": "Datos es espera",
+    "sync_complete": "Sync finalizado",
+    "all_records_updated": "Todos los datos fueron actualizados.",
+    "loading_change_count": "Cargando conteo de cambios...",
+    "last_successful_sync": "Último SYNC finalizado",
+    "initialising": "Inicializando...",
+    "pulling_changes": "Obteniendo datos del servidor",
+    "pushing_changes": "Enviando datos al servidor"
   }
 }

@@ -3,14 +3,18 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import { NavigationActions, StackActions } from 'react-navigation';
+import { BackHandler } from 'react-native';
+import { batch } from 'react-redux';
+import { NavigationActions, StackActions } from '@react-navigation/core';
+
 import { UIDatabase } from '../database';
-import Settings from '../settings/MobileAppSettings';
-import { createRecord } from '../database/utilities/index';
-import { navStrings } from '../localization/index';
-import { SETTINGS_KEYS } from '../settings/index';
-import { getCurrentRouteName } from './selectors';
-import { ROUTES } from './constants';
+import { createRecord } from '../database/utilities';
+import { navStrings } from '../localization';
+import { ROUTES, FINALISABLE_PAGES } from './constants';
+import { RootNavigator } from './RootNavigator';
+import { PrescriptionActions } from '../actions/PrescriptionActions';
+import { FinaliseActions } from '../actions/FinaliseActions';
+import { PREFERENCE_KEYS } from '../database/utilities/constants';
 
 /**
  * Navigation Action Creators.
@@ -29,6 +33,42 @@ import { ROUTES } from './constants';
  * - `params` (See: Pages/pageContainer and pages/index FINALISABLE_PAGES for requirements)
  *
  */
+
+/**
+ * Action creator for handling back navigation.
+ *
+ * Triggers back navigation and cleans up current state.
+ */
+export const goBack = () => dispatch => {
+  if (!RootNavigator.canGoBack()) BackHandler.exitApp();
+  else {
+    UIDatabase.write(() => {
+      const prescriptions = UIDatabase.objects('Prescription').filtered('status != "finalised"');
+      UIDatabase.delete('Transaction', prescriptions);
+
+      const prevRouteName = RootNavigator.getPrevRouteName();
+      const currRouteName = RootNavigator.getCurrentRouteName();
+
+      const navigateBack = () =>
+        dispatch({
+          ...NavigationActions.back(),
+          payload: { prevRouteName },
+        });
+
+      const cleanUp = () => {
+        dispatch(PrescriptionActions.deletePrescription());
+        if (FINALISABLE_PAGES.includes(currRouteName)) {
+          dispatch(FinaliseActions.resetFinaliseItem());
+        }
+      };
+
+      batch(() => {
+        navigateBack();
+        cleanUp();
+      });
+    });
+  }
+};
 
 /**
  * Action creator which first creates a prescription, and then navigates to it
@@ -206,10 +246,8 @@ export const gotoStock = () =>
  *
  * @param {Object} requisition The requisition to pass to the next screen.
  */
-export const gotoStocktakeManagePage = (stocktakeName, stocktake) => (dispatch, getState) => {
-  const { nav } = getState();
-
-  const currentRouteName = getCurrentRouteName(nav);
+export const gotoStocktakeManagePage = (stocktakeName, stocktake) => dispatch => {
+  const currentRouteName = RootNavigator.getCurrentRouteName();
 
   const navigationActionCreator =
     currentRouteName === ROUTES.STOCKTAKES ? NavigationActions.navigate : StackActions.replace;
@@ -217,7 +255,6 @@ export const gotoStocktakeManagePage = (stocktakeName, stocktake) => (dispatch, 
   const navigationParameters = {
     routeName: ROUTES.STOCKTAKE_MANAGER,
     params: {
-      title: stocktake ? navStrings.manage_stocktake : navStrings.new_stocktake,
       stocktakeName,
       stocktake,
       pageObject: stocktake,
@@ -232,9 +269,8 @@ export const gotoStocktakeManagePage = (stocktakeName, stocktake) => (dispatch, 
  *
  * @param {Object} stocktake  The requisition to navigate to.
  */
-export const gotoStocktakeEditPage = stocktake => (dispatch, getState) => {
-  const { nav } = getState();
-  const currentRouteName = getCurrentRouteName(nav);
+export const gotoStocktakeEditPage = stocktake => dispatch => {
+  const currentRouteName = RootNavigator.getCurrentRouteName();
 
   // If navigating from the stocktakesPage, go straight to the StocktakeEditPage. Otherwise,
   // replace the current page as the user is coming from StocktakeManagePage.
@@ -246,7 +282,10 @@ export const gotoStocktakeEditPage = stocktake => (dispatch, getState) => {
     params: { title: navStrings.stocktake, stocktake, pageObject: stocktake },
   };
 
-  dispatch(navigationActionCreator(navigationParameters));
+  batch(() => {
+    dispatch(navigationActionCreator(navigationParameters));
+    dispatch(FinaliseActions.setFinaliseItem(stocktake));
+  });
 };
 
 /**
@@ -259,7 +298,7 @@ export const gotoStocktakeEditPage = stocktake => (dispatch, getState) => {
  * @param {Object} dispatch    Redux dispatch method.
  */
 export const gotoCustomerInvoice = transaction => dispatch => {
-  const { isConfirmed, isFinalised } = transaction;
+  const { isCredit, isConfirmed, isFinalised } = transaction;
 
   // Customer invoices are generally created with the status confirmed. This handles unexpected
   // cases of an incoming sycned invoice with status 'nw' or 'sg'.
@@ -273,13 +312,16 @@ export const gotoCustomerInvoice = transaction => dispatch => {
   const navigationAction = NavigationActions.navigate({
     routeName: ROUTES.CUSTOMER_INVOICE,
     params: {
-      title: `${navStrings.invoice} ${transaction.serialNumber}`,
+      title: `${isCredit ? navStrings.credit : navStrings.invoice} ${transaction.serialNumber}`,
       transaction,
       pageObject: transaction,
     },
   });
 
-  dispatch(navigationAction);
+  batch(() => {
+    dispatch(navigationAction);
+    dispatch(FinaliseActions.setFinaliseItem(transaction));
+  });
 };
 
 /**
@@ -315,7 +357,10 @@ export const gotoSupplierInvoice = transaction => dispatch => {
     },
   });
 
-  dispatch(navigationAction);
+  batch(() => {
+    dispatch(navigationAction);
+    dispatch(FinaliseActions.setFinaliseItem(transaction));
+  });
 };
 
 /**
@@ -323,30 +368,42 @@ export const gotoSupplierInvoice = transaction => dispatch => {
  *
  * @param {Object} requisition  SupplierRequisition to navigate to.
  */
-export const gotoSupplierRequisition = requisition =>
-  NavigationActions.navigate({
-    routeName: ROUTES.SUPPLIER_REQUISITION,
-    params: {
-      title: `${navStrings.requisition} ${requisition.serialNumber}`,
-      requisition,
-      pageObject: requisition,
-    },
+export const gotoSupplierRequisition = requisition => dispatch => {
+  batch(() => {
+    dispatch(
+      NavigationActions.navigate({
+        routeName: ROUTES.SUPPLIER_REQUISITION,
+        params: {
+          title: `${navStrings.requisition} ${requisition.serialNumber}`,
+          requisition,
+          pageObject: requisition,
+        },
+      })
+    );
+    dispatch(FinaliseActions.setFinaliseItem(requisition));
   });
+};
 
 /**
  * Navigate to the CustomerRequisitionPage.
  *
  * @param {Object} requisition  Customer requisition to navigate to.
  */
-export const gotoCustomerRequisition = requisition =>
-  NavigationActions.navigate({
-    routeName: ROUTES.CUSTOMER_REQUISITION,
-    params: {
-      title: `${navStrings.requisition} ${requisition.serialNumber}`,
-      requisition,
-      pageObject: requisition,
-    },
+export const gotoCustomerRequisition = requisition => dispatch => {
+  batch(() => {
+    dispatch(
+      NavigationActions.navigate({
+        routeName: ROUTES.CUSTOMER_REQUISITION,
+        params: {
+          title: `${navStrings.requisition} ${requisition.serialNumber}`,
+          requisition,
+          pageObject: requisition,
+        },
+      })
+    );
+    dispatch(FinaliseActions.setFinaliseItem(requisition));
   });
+};
 
 /**
  * Action creator for creating, and navigating to a Supplier Requsition.
@@ -360,17 +417,8 @@ export const createSupplierRequisition = ({
   currentUser,
   ...requisitionParameters
 }) => dispatch => {
-  // Fetch this stores custom data to find if this store has customized
-  // monthsLeadTime.
-  const customData = Settings.get(SETTINGS_KEYS.THIS_STORE_CUSTOM_DATA);
-
-  // CustomData is a stringified JSON object.
-  const parsedCustomData = customData ? JSON.parse(customData) : '';
-
   // Months lead time has an effect on daysToSupply for a requisition.
-  const monthsLeadTime = parsedCustomData.monthsLeadTime
-    ? Number(parsedCustomData.monthsLeadTime.data)
-    : 0;
+  const monthsLeadTime = UIDatabase.getPreference(PREFERENCE_KEYS.MONTHS_LEAD_TIME) ?? 0;
 
   // Create the requisition. If a program was supplied, add items from that
   // program, otherwise just navigate to it.

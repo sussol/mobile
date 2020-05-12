@@ -9,6 +9,8 @@ import { View, Text } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import { MODALS } from '../constants';
+
 import { getColumns, recordKeyExtractor, getItemLayout } from '../../pages/dataTableUtilities';
 
 import { DataTable, DataTableRow, DataTableHeaderRow } from '../DataTable';
@@ -21,12 +23,12 @@ import { WHITE, APP_FONT_FAMILY } from '../../globalStyles';
 import { dispensingStrings } from '../../localization';
 
 const PatientHistory = ({ sortKey, onSortColumn, isAscending, data }) => {
-  const columns = React.useMemo(() => getColumns('patientHistory'), []);
+  const columns = React.useMemo(() => getColumns(MODALS.PATIENT_HISTORY), []);
 
   const renderHeader = React.useCallback(
     () => (
       <DataTableHeaderRow
-        columns={getColumns('patientHistory')}
+        columns={getColumns(MODALS.PATIENT_HISTORY)}
         onPress={onSortColumn}
         isAscending={isAscending}
         sortKey={sortKey}
@@ -71,7 +73,7 @@ const PatientHistory = ({ sortKey, onSortColumn, isAscending, data }) => {
           renderHeader={renderHeader}
           keyExtractor={recordKeyExtractor}
           getItemLayout={getItemLayout}
-          columns={getColumns('patientHistory')}
+          columns={getColumns(MODALS.PATIENT_HISTORY)}
         />
       ) : (
         <FlexRow alignItems="center" justifyContent="center" flex={1}>

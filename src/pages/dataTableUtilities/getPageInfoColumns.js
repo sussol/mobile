@@ -6,6 +6,7 @@
 import { pageInfoStrings, programStrings, tableStrings } from '../../localization';
 import { MODAL_KEYS, formatDate } from '../../utilities';
 import { ROUTES } from '../../navigation/constants';
+import { MODALS } from '../../widgets/constants';
 import { PageActions } from './actions';
 
 /**
@@ -42,7 +43,6 @@ const PER_PAGE_INFO_COLUMNS = {
     ['period', 'otherParty', 'monthsToSupply', 'requisitionComment'],
   ],
   [ROUTES.STOCKTAKE_EDITOR]: [['stocktakeName', 'stocktakeComment']],
-  [ROUTES.STOCKTAKE_EDITOR_WITH_REASONS]: [['stocktakeName', 'stocktakeComment']],
   [ROUTES.CUSTOMER_REQUISITION]: [
     ['monthsToSupply', 'entryDate'],
     ['customer', 'requisitionComment'],
@@ -51,11 +51,11 @@ const PER_PAGE_INFO_COLUMNS = {
     ['entryDate', 'enteredBy'],
     ['customer', 'transactionComment', 'prescriber'],
   ],
-  stocktakeBatchEditModal: [['itemName']],
-  stocktakeBatchEditModalWithReasons: [['itemName']],
-  stocktakeBatchEditModalWithPrices: [['itemName']],
-  stocktakeBatchEditModalWithReasonsAndPrices: [['itemName']],
-  supplierCredit: [
+  [MODALS.STOCKTAKE_BATCH_EDIT]: [['itemName']],
+  [MODALS.STOCKTAKE_BATCH_EDIT_WITH_REASONS]: [['itemName']],
+  [MODALS.STOCKTAKE_BATCH_EDIT_WITH_PRICES]: [['itemName']],
+  [MODALS.STOCKTAKE_BATCH_EDIT_WITH_REASONS_AND_PRICES]: [['itemName']],
+  [ROUTES.SUPPLIER_CREDIT]: [
     ['entryDate', 'confirmDate', 'transactionCategory'],
     ['enteredBy', 'otherParty'],
   ],
@@ -71,7 +71,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
     info: formatDate(pageObject.confirmDate),
   },
   transactionCategory: {
-    title: `${pageInfoStrings.entered_by}:`,
+    title: `${pageInfoStrings.category}:`,
     info: pageObject?.category?.name ?? '',
   },
   enteredBy: {

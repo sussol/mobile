@@ -17,7 +17,7 @@ import {
 } from '../../../database/utilities/getIndicatorData';
 import { ACTIONS } from './constants';
 import { openModal, closeModal } from './pageActions';
-import { pageStateSelector } from '../../../selectors/pageSelectors';
+import { selectPageState } from '../../../selectors/pages';
 
 /**
  * Refreshes a row in the DataTable component.
@@ -44,32 +44,24 @@ export const refreshIndicatorRow = route => ({
  * @param {String}  objectType  Type of object to edit i.e. 'TransactionBatch'
  */
 export const editBatchName = (value, rowKey, objectType, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = pageStateSelector(getState());
-
+  const { data, keyExtractor } = selectPageState(getState());
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
-
   if (objectToEdit) {
     const { batch } = objectToEdit;
-
     if (value !== batch) {
       UIDatabase.write(() => UIDatabase.update(objectType, { ...objectToEdit, batch: value }));
-
       dispatch(refreshRow(rowKey, route));
     }
   }
 };
 
 export const editSellPrice = (value, rowKey, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = pageStateSelector(getState());
-
+  const { data, keyExtractor } = selectPageState(getState());
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
   const objectDataType = objectToEdit.stocktake ? 'StocktakeBatch' : 'TransactionBatch';
-
   const { sellPrice } = objectToEdit;
-
   const valueAsCurrency = currency(value);
   const { value: currencyValue } = valueAsCurrency;
-
   if (currencyValue !== sellPrice) {
     UIDatabase.write(() => {
       UIDatabase.update(objectDataType, { ...objectToEdit, sellPrice: currencyValue });
@@ -93,7 +85,7 @@ export const editBatchSupplier = (supplier, batch, route) => dispatch => {
 };
 
 export const editIndicatorValue = (value, rowKey, columnKey, route) => (dispatch, getState) => {
-  const { indicatorRows, indicatorColumns, pageObject } = pageStateSelector(getState());
+  const { indicatorRows, indicatorColumns, pageObject } = selectPageState(getState());
   const { period } = pageObject;
   const row = getIndicatorRow(indicatorRows, rowKey);
   const column = getIndicatorColumn(indicatorColumns, columnKey);
@@ -119,10 +111,8 @@ export const editTransactionBatchName = (value, rowKey, route) =>
  * @param {String}  objectType  Type of object to edit i.e. 'TransactionBatch'
  */
 export const editExpiryDate = (newDate, rowKey, objectType, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = pageStateSelector(getState());
-
+  const { data, keyExtractor } = selectPageState(getState());
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
-
   if (objectToEdit) {
     UIDatabase.write(() => {
       objectToEdit.expiryDate = newDate;
@@ -149,15 +139,12 @@ export const editStocktakeBatchExpiryDate = (newDate, rowKey, route) =>
  * @param {String}        rowKey     The key of the row to edit.
  */
 export const editTotalQuantity = (value, rowKey, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = pageStateSelector(getState());
-
+  const { data, keyExtractor } = selectPageState(getState());
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
-
   if (objectToEdit) {
     UIDatabase.write(() => {
       objectToEdit.setTotalQuantity(UIDatabase, parsePositiveInteger(value));
     });
-
     dispatch(refreshRow(rowKey, route));
   }
 };
@@ -170,16 +157,13 @@ export const editTotalQuantity = (value, rowKey, route) => (dispatch, getState) 
  * @param {String}          objectType  Type of object to edit i.e. 'RequisitionItem'
  */
 export const editSuppliedQuantity = (value, rowKey, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = pageStateSelector(getState());
-
+  const { data, keyExtractor } = selectPageState(getState());
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
-
   if (objectToEdit) {
     UIDatabase.write(() =>
       objectToEdit.setSuppliedQuantity(UIDatabase, parsePositiveInteger(value))
     );
   }
-
   dispatch(refreshRow(rowKey, route));
 };
 
@@ -191,80 +175,15 @@ export const editSuppliedQuantity = (value, rowKey, route) => (dispatch, getStat
  * @param {String}          objectType  Type of object to edit i.e. 'RequisitionItem'
  */
 export const editRequiredQuantity = (value, rowKey, objectType, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = pageStateSelector(getState());
-
+  const { data, keyExtractor } = selectPageState(getState());
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
-
   if (objectToEdit) {
     UIDatabase.write(() => {
       objectToEdit.requiredQuantity = parsePositiveInteger(value);
       UIDatabase.save(objectType, objectToEdit);
     });
-
     dispatch(refreshRow(rowKey, route));
   }
-};
-
-/**
- * Wrapper around editRequiredQuantity.
- */
-export const editRequisitionItemRequiredQuantity = (value, rowKey, route) =>
-  editRequiredQuantity(value, rowKey, 'RequisitionItem', route);
-
-/**
- * Edits a rows underlying countedTotalQuantity field.
- *
- * @param {String|Number}   value   The new value to set as the ccounted total quantity.
- * @param {String}          rowKey  Key of the row to edit.
- */
-export const editCountedQuantity = (value, rowKey, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = pageStateSelector(getState());
-
-  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
-
-  if (objectToEdit) {
-    objectToEdit.setCountedTotalQuantity(UIDatabase, parsePositiveInteger(value));
-  }
-
-  dispatch(refreshRow(rowKey, route));
-};
-
-/**
- * Edits a StocktakeBatches underlying `countedTotalQuantity`
- *
- * @param {String|Number}   value  New value for the underlying `countedTotalQuantity` field
- * @param {String}          rowKey Key of the row to edit.
- */
-export const editStocktakeBatchCountedQuantity = (value, rowKey, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = pageStateSelector(getState());
-
-  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
-
-  if (objectToEdit) {
-    UIDatabase.write(() => {
-      objectToEdit.countedTotalQuantity = parsePositiveInteger(value);
-      UIDatabase.save('StocktakeBatch', objectToEdit);
-    });
-  }
-
-  dispatch(refreshRow(rowKey, route));
-};
-
-/**
- * Removes a reason from a rows underlying data.
- *
- * @param {String} rowKey   Key for the row to edit.
- */
-export const removeReason = (rowKey, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = pageStateSelector(getState());
-
-  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
-
-  if (objectToEdit) {
-    objectToEdit.removeReason(UIDatabase);
-  }
-
-  dispatch(refreshRow(rowKey, route));
 };
 
 /**
@@ -280,63 +199,20 @@ export const removeReason = (rowKey, route) => (dispatch, getState) => {
  * @param {String} rowKey Key of the row to enforce a reason on
  */
 export const enforceReasonChoice = (rowKey, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = pageStateSelector(getState());
-
+  const { data, keyExtractor } = selectPageState(getState());
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
   if (!objectToEdit) return null;
-
-  const { difference } = objectToEdit;
-  // If there's no difference, just remove the reason
-  if (!difference) return dispatch(removeReason(rowKey, route));
-
-  const { validateReason } = objectToEdit;
-  if (!validateReason) {
-    return dispatch(openModal(MODAL_KEYS.ENFORCE_STOCKTAKE_REASON, rowKey, route));
-  }
-  return null;
+  // If no difference, remove the reason.
+  // If positive difference, remove reason if negative.
+  // If negative difference, remove reason if positive.
+  return dispatch(removeReason(rowKey, route));
 };
 
 /**
- * Applys a passed reason to the underlying row data. Can be a StocktakeItem
- * or StocktakeBatch.
- *
- * @param {Realm.Option} value Reason to apply to the underlying rorw.
+ * Wrapper around editRequiredQuantity.
  */
-export const applyReason = (value, route) => (dispatch, getState) => {
-  const { modalValue, keyExtractor } = pageStateSelector(getState());
-
-  modalValue.applyReason(UIDatabase, value);
-
-  const rowKey = keyExtractor(modalValue);
-
-  dispatch(closeModal(route));
-  dispatch(refreshRow(rowKey, route));
-};
-
-export const enforceRequisitionReasonChoice = (rowKey, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = pageStateSelector(getState());
-
-  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
-
-  if (!objectToEdit) return null;
-
-  const { hasVariance } = objectToEdit;
-
-  // If there's no difference, just remove the reason
-  if (!hasVariance) return dispatch(removeReason(rowKey, route));
-
-  const { validateReason } = objectToEdit;
-
-  if (!validateReason) {
-    return dispatch(openModal(MODAL_KEYS.ENFORCE_REQUISITION_REASON, rowKey, route));
-  }
-  return null;
-};
-
-export const editRequisitionItemRequiredQuantityWithReason = (value, rowKey, route) => dispatch => {
-  dispatch(editRequiredQuantity(value, rowKey, 'RequisitionItem', route));
-  dispatch(enforceRequisitionReasonChoice(rowKey, route));
-};
+export const editRequisitionItemRequiredQuantity = (value, rowKey, route) =>
+  editRequiredQuantity(value, rowKey, 'RequisitionItem', route);
 
 /**
  * Wrapper around `editCountedTotalQuantity`, splitting the action to enforce a
@@ -351,6 +227,19 @@ export const editCountedQuantityWithReason = (value, rowKey, route) => dispatch 
 };
 
 /**
+ * Edits a rows underlying countedTotalQuantity field.
+ *
+ * @param {String|Number}   value   The new value to set as the ccounted total quantity.
+ * @param {String}          rowKey  Key of the row to edit.
+ */
+export const editCountedQuantity = (value, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+  if (objectToEdit) objectToEdit.setCountedTotalQuantity(UIDatabase, parsePositiveInteger(value));
+  dispatch(refreshRow(rowKey, route));
+};
+
+/**
  * Wrapper around `editStocktakeBatchCountedQuantity`, splitting the action to enforce a
  * reason also.
  *
@@ -360,6 +249,69 @@ export const editCountedQuantityWithReason = (value, rowKey, route) => dispatch 
 export const editStocktakeBatchCountedQuantityWithReason = (value, rowKey, route) => dispatch => {
   dispatch(editStocktakeBatchCountedQuantity(value, rowKey, route));
   dispatch(enforceReasonChoice(rowKey, route));
+};
+
+/**
+ * Edits a StocktakeBatches underlying `countedTotalQuantity`
+ *
+ * @param {String|Number}   value  New value for the underlying `countedTotalQuantity` field
+ * @param {String}          rowKey Key of the row to edit.
+ */
+export const editStocktakeBatchCountedQuantity = (value, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+  if (objectToEdit) {
+    UIDatabase.write(() => {
+      objectToEdit.countedTotalQuantity = parsePositiveInteger(value);
+      UIDatabase.save('StocktakeBatch', objectToEdit);
+    });
+  }
+  dispatch(refreshRow(rowKey, route));
+};
+
+/**
+ * Removes a reason from a rows underlying data.
+ *
+ * @param {String} rowKey   Key for the row to edit.
+ */
+export const removeReason = (rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+  if (objectToEdit) objectToEdit.removeReason(UIDatabase);
+  dispatch(refreshRow(rowKey, route));
+};
+
+/**
+ * Applys a passed reason to the underlying row data. Can be a StocktakeItem
+ * or StocktakeBatch.
+ *
+ * @param {Realm.Option} value Reason to apply to the underlying rorw.
+ */
+export const applyReason = (value, route) => (dispatch, getState) => {
+  const { modalValue, keyExtractor } = selectPageState(getState());
+  modalValue.applyReason(UIDatabase, value);
+  const rowKey = keyExtractor(modalValue);
+  dispatch(closeModal(route));
+  dispatch(refreshRow(rowKey, route));
+};
+
+export const enforceRequisitionReasonChoice = (rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+  if (!objectToEdit) return null;
+  const { hasVariance } = objectToEdit;
+  // If there's no difference, just remove the reason
+  if (!hasVariance) return dispatch(removeReason(rowKey, route));
+  const { hasValidReason } = objectToEdit;
+  if (!hasValidReason) {
+    return dispatch(openModal(MODAL_KEYS.ENFORCE_REQUISITION_REASON, rowKey, route));
+  }
+  return null;
+};
+
+export const editRequisitionItemRequiredQuantityWithReason = (value, rowKey, route) => dispatch => {
+  dispatch(editRequiredQuantity(value, rowKey, 'RequisitionItem', route));
+  dispatch(enforceRequisitionReasonChoice(rowKey, route));
 };
 
 export const CellActionsLookup = {
@@ -373,15 +325,14 @@ export const CellActionsLookup = {
   editRequiredQuantity,
   editRequisitionItemRequiredQuantity,
   editCountedQuantity,
+  editCountedQuantityWithReason,
   editStocktakeBatchCountedQuantity,
+  editStocktakeBatchCountedQuantityWithReason,
   removeReason,
-  enforceReasonChoice,
   applyReason,
   editBatchName,
   editIndicatorValue,
   editStocktakeBatchName,
-  editCountedQuantityWithReason,
-  editStocktakeBatchCountedQuantityWithReason,
   editSellPrice,
   editBatchSupplier,
   editRequisitionItemRequiredQuantityWithReason,

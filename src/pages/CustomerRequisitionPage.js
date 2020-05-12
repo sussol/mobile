@@ -30,10 +30,10 @@ import {
   selectCurrentIndicatorCode,
   selectIndicatorTableColumns,
   selectIndicatorTableRows,
-} from '../selectors/indicatorSelectors';
+} from '../selectors/indicators';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
-import { useRecordListener } from '../hooks';
+import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
 import globalStyles from '../globalStyles';
 import { buttonStrings, generalStrings, programStrings } from '../localization';
@@ -52,7 +52,6 @@ import { buttonStrings, generalStrings, programStrings } from '../localization';
  * { isSelected, isDisabled },
  */
 export const CustomerRequisition = ({
-  runWithLoadingIndicator,
   data,
   dispatch,
   dataState,
@@ -69,7 +68,6 @@ export const CustomerRequisition = ({
   searchTerm,
   columns,
   getPageInfoColumns,
-  refreshData,
   onEditComment,
   onFilterData,
   onCloseModal,
@@ -79,20 +77,19 @@ export const CustomerRequisition = ({
   onEditSuppliedQuantity,
   route,
 }) => {
-  // Listen for changes to this pages requisition. Refreshing data on side effects i.e. finalizing.
-  useRecordListener(refreshData, pageObject, 'Requisition');
-
   const { isFinalised, comment } = pageObject;
-
-  const onSetSuppliedToRequested = () =>
-    runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToRequested(route)));
-  const onSetSuppliedToSuggested = () =>
-    runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToSuggested(route)));
 
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, route), [
     comment,
     isFinalised,
   ]);
+
+  const runWithLoadingIndicator = useLoadingIndicator();
+
+  const onSetSuppliedToRequested = () =>
+    runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToRequested(route)));
+  const onSetSuppliedToSuggested = () =>
+    runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToSuggested(route)));
 
   const getCallback = useCallback(colKey => {
     switch (colKey) {
@@ -301,13 +298,13 @@ export const CustomerRequisition = ({
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) =>
-  getPageDispatchers(dispatch, ownProps, 'Requisition', ROUTES.CUSTOMER_REQUISITION);
+const mapDispatchToProps = dispatch =>
+  getPageDispatchers(dispatch, 'Requisition', ROUTES.CUSTOMER_REQUISITION);
 
 const mapStateToProps = state => {
-  const { pages } = state;
-  const { customerRequisition } = pages;
-  const { usingIndicators, showIndicators } = customerRequisition;
+  const { pages = {} } = state;
+  const { customerRequisition = {} } = pages;
+  const { usingIndicators = false, showIndicators = false } = customerRequisition;
 
   if (usingIndicators && showIndicators) {
     return {
@@ -350,13 +347,11 @@ CustomerRequisition.propTypes = {
   searchTerm: PropTypes.string.isRequired,
   columns: PropTypes.array.isRequired,
   keyExtractor: PropTypes.func.isRequired,
-  runWithLoadingIndicator: PropTypes.func.isRequired,
   dataState: PropTypes.object.isRequired,
   modalKey: PropTypes.string.isRequired,
   pageObject: PropTypes.object.isRequired,
   modalValue: PropTypes.any,
   getPageInfoColumns: PropTypes.func.isRequired,
-  refreshData: PropTypes.func.isRequired,
   onEditComment: PropTypes.func.isRequired,
   onFilterData: PropTypes.func.isRequired,
   onCloseModal: PropTypes.func.isRequired,

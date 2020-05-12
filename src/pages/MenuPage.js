@@ -6,13 +6,14 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Text, View, ToastAndroid } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 
 import { Button } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { CustomerImage, SupplierImage, StockImage, ModulesImage, InfoBadge } from '../widgets';
 
 import { ROUTES } from '../navigation/constants';
-import { navStrings } from '../localization';
+import { buttonStrings, navStrings } from '../localization';
 
 import { SETTINGS_KEYS } from '../settings';
 import { UIDatabase } from '../database';
@@ -33,6 +34,7 @@ import {
 
 import globalStyles, { SHADOW_BORDER, GREY } from '../globalStyles';
 import { UserActions } from '../actions/index';
+import { selectCurrentUserIsAdmin } from '../selectors/user';
 
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
@@ -65,6 +67,8 @@ const Menu = ({
   const { image, originalContainer, moduleContainer, container, bottomIcon, moduleRow } = styles;
 
   const containerStyle = { ...container, ...(usingModules ? moduleContainer : originalContainer) };
+
+  const isFocused = useIsFocused();
 
   const MenuButton = useCallback(
     props => <Button style={menuButton} textStyle={buttonText} {...props} />,
@@ -158,7 +162,7 @@ const Menu = ({
             backgroundColor="rgba(255,255,255,0)"
             onPress={toSettings}
           >
-            <Text>SETTINGS</Text>
+            <Text>{buttonStrings.settings}</Text>
           </Icon.Button>
         )}
       </View>
@@ -192,6 +196,8 @@ const Menu = ({
     ),
     [usingModules]
   );
+
+  if (!isFocused) return null;
 
   return (
     <View style={{ ...appBackground }}>
@@ -250,8 +256,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const mapStateToProps = state => {
-  const { modules, user } = state;
-  const { currentUser } = user;
+  const { modules } = state;
+
   const {
     usingDashboard,
     usingDispensary,
@@ -259,13 +265,16 @@ const mapStateToProps = state => {
     usingCashRegister,
     usingModules,
   } = modules;
+
+  const isAdmin = selectCurrentUserIsAdmin(state);
+
   return {
     usingDashboard,
     usingDispensary,
     usingVaccines,
     usingCashRegister,
     usingModules,
-    isAdmin: currentUser?.isAdmin,
+    isAdmin,
   };
 };
 

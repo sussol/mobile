@@ -1,17 +1,11 @@
 /* eslint-disable react/forbid-prop-types */
-import React, { useMemo, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { createAppContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from 'react-navigation-tabs';
-import { NavigationActions } from 'react-navigation';
+import { useNavigation } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-const getTabNavigator = (routes, options) => {
-  const TabNavigator = createBottomTabNavigator(routes, options);
-  const Container = createAppContainer(TabNavigator);
-  return Container;
-};
-
-const DEFAULT_TAB_CONFIG = { navigationOptions: { tabBarVisible: false } };
+const DEFAULT_TAB_CONFIG = { options: { tabBarVisible: false } };
+const Tab = createBottomTabNavigator();
 
 /**
  * Simple TabNavigator component managing lazily loaded
@@ -23,26 +17,24 @@ const DEFAULT_TAB_CONFIG = { navigationOptions: { tabBarVisible: false } };
  * @prop {Number} currentTabIndex The index of the tab to show.
  */
 export const TabNavigator = ({ tabs, currentTabIndex }) => {
-  const navigatorRef = useRef(React.createRef());
-
-  // Create the tab navigator component dynamically. Will not re-calculate until unmounted.
-  const Container = useMemo(() => {
-    const tabsConfig = tabs.reduce(
-      (acc, value, index) => ({ ...acc, [index]: { ...DEFAULT_TAB_CONFIG, screen: value } }),
-      {}
-    );
-    const defaultNavigationConfig = { initialRouteName: String(currentTabIndex) };
-    return getTabNavigator(tabsConfig, defaultNavigationConfig);
-  }, []);
+  const navigatorRef = useRef(useNavigation());
 
   // When `currentTabIndex` changes, dispatch an action to trigger a switch on the
   // base navigation component to the passed tab index.
-  useEffect(() => {
-    const navigationAction = NavigationActions.navigate({ routeName: String(currentTabIndex) });
-    navigatorRef.current.dispatch(navigationAction);
-  }, [currentTabIndex]);
+  useEffect(() => navigatorRef.current.navigate(String(currentTabIndex)), [currentTabIndex]);
 
-  return <Container ref={navigatorRef} />;
+  return (
+    <Tab.Navigator>
+      {tabs.map((tab, idx) => (
+        <Tab.Screen
+          {...DEFAULT_TAB_CONFIG}
+          name={`${idx}`}
+          key={tab.name}
+          component={tab.component}
+        />
+      ))}
+    </Tab.Navigator>
+  );
 };
 
 TabNavigator.propTypes = {

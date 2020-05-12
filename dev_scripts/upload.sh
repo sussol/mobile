@@ -7,7 +7,8 @@
 
 BUGSNAG_URL=https://upload.bugsnag.com/react-native-source-map
 BUGSNAG_KEY=16a680e189b1e5f03f28665870f1401f
-APP_VERSION=4.0.3
+
+APP_VERSION=$(node -e "console.log(require('./package.json').version)")
 
 PLATFORM=android
 DEV=false

@@ -7,14 +7,16 @@ import { DISPENSARY_ACTIONS } from '../actions/DispensaryActions';
 import { getColumns } from '../pages/dataTableUtilities';
 import { UIDatabase } from '../database';
 import { ROUTES } from '../navigation';
+import { FORMS } from '../widgets/constants';
 
 const initialState = () => ({
   searchTerm: '',
   sortKey: 'firstName',
   isAscending: true,
   dataSet: 'patient',
-  columns: getColumns('patient'),
+  columns: getColumns(FORMS.PATIENT),
   data: UIDatabase.objects('Patient'),
+  isLookupModalOpen: false,
 });
 
 export const DispensaryReducer = (state = initialState(), action) => {
@@ -69,6 +71,14 @@ export const DispensaryReducer = (state = initialState(), action) => {
       const newData = UIDatabase.objects(objectType);
 
       return { ...state, data: newData };
+    }
+
+    case DISPENSARY_ACTIONS.OPEN_LOOKUP_MODAL: {
+      return { ...state, isLookupModalOpen: true };
+    }
+
+    case DISPENSARY_ACTIONS.CLOSE_LOOKUP_MODAL: {
+      return { ...state, isLookupModalOpen: false };
     }
 
     default:

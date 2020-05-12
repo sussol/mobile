@@ -7,6 +7,7 @@ import Realm from 'realm';
 import { complement } from 'set-manipulator';
 
 import { addBatchToParent, createRecord, getTotal } from '../utilities';
+import { generalStrings, modalStrings } from '../../localization';
 
 /**
  * A stocktake.
@@ -139,6 +140,22 @@ export class Stocktake extends Realm.Object {
   }
 
   /**
+   * Get if stocktake is associated with a program,
+   */
+  get hasProgram() {
+    return !!this.program;
+  }
+
+  /*
+   * Get name of stocktake program.
+   *
+   * @return  {string}
+   */
+  get programName() {
+    return this.hasProgram ? this.program.name : generalStrings.not_available;
+  }
+
+  /**
    * Get any stocktake items that have a batch that would cause a reduction larger than
    * the amount of available stock in inventory if it were finalised.
    *
@@ -225,6 +242,16 @@ export class Stocktake extends Realm.Object {
       );
     }
     return this.additions;
+  }
+
+  get canFinalise() {
+    const finaliseStatus = { success: true, message: modalStrings.finalise_stocktake };
+    if (!this.hasSomeCountedItems) {
+      finaliseStatus.success = false;
+      finaliseStatus.errorMessage = modalStrings.stocktake_no_counted_items;
+    }
+
+    return finaliseStatus;
   }
 
   /**

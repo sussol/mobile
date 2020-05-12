@@ -10,8 +10,7 @@ import { View, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
-import { useRecordListener } from '../hooks';
-import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
+import { getColumns, getItemLayout, getPageDispatchers } from './dataTableUtilities';
 import { ROUTES } from '../navigation/constants';
 
 import { DataTablePageModal } from '../widgets/modals';
@@ -49,7 +48,6 @@ export const CustomerInvoice = ({
   modalValue,
   columns,
   getPageInfoColumns,
-  refreshData,
   onSelectNewItem,
   onEditComment,
   onEditTheirRef,
@@ -67,10 +65,6 @@ export const CustomerInvoice = ({
   route,
 }) => {
   const { isFinalised, comment, theirRef } = pageObject;
-
-  // Listen for this invoice being finalised which will prune items and cause side effects
-  // outside of the reducer. Reconcile differences when triggered.
-  useRecordListener(refreshData, pageObject, 'Transaction');
 
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, route), [
     comment,
@@ -200,14 +194,14 @@ export const CustomerInvoice = ({
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
-  const { transaction } = ownProps || {};
-  const { otherParty } = transaction;
-  const hasMasterLists = otherParty.masterLists.length > 0;
+  const { transaction } = ownProps?.navigation?.route?.param || {};
+  const { otherParty } = transaction || {};
+  const hasMasterLists = otherParty?.masterLists?.length > 0;
 
   const noMasterLists = () =>
     ToastAndroid.show(modalStrings.customer_no_masterlist_available, ToastAndroid.LONG);
   return {
-    ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.CUSTOMER_INVOICE),
+    ...getPageDispatchers(dispatch, 'Transaction', ROUTES.CUSTOMER_INVOICE),
     [hasMasterLists ? null : 'onAddMasterList']: noMasterLists,
   };
 };
@@ -215,7 +209,11 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 const mapStateToProps = state => {
   const { pages } = state;
   const { customerInvoice } = pages;
-  return customerInvoice;
+  const { pageObject } = customerInvoice ?? {};
+  const { isCredit = false } = pageObject ?? {};
+  const columnsKey = isCredit ? 'customerCredit' : 'customerInvoice';
+  const columns = getColumns(columnsKey);
+  return { ...customerInvoice, columns };
 };
 
 export const CustomerInvoicePage = connect(mapStateToProps, mapDispatchToProps)(CustomerInvoice);
@@ -238,7 +236,6 @@ CustomerInvoice.propTypes = {
   modalValue: PropTypes.any,
   columns: PropTypes.array.isRequired,
   getPageInfoColumns: PropTypes.func.isRequired,
-  refreshData: PropTypes.func.isRequired,
   onSelectNewItem: PropTypes.func.isRequired,
   onAddMasterList: PropTypes.func.isRequired,
   onEditComment: PropTypes.func.isRequired,

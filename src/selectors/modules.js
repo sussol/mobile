@@ -27,3 +27,8 @@ export const selectUsingSupplierCreditCategories = ({ modules }) => {
   const { usingSupplierCreditCategories } = modules;
   return usingSupplierCreditCategories;
 };
+
+export const selectUsingHideSnapshotColumn = ({ modules }) => {
+  const { usingHideSnapshotColumn } = modules;
+  return usingHideSnapshotColumn;
+};

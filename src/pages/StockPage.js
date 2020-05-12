@@ -110,8 +110,8 @@ export const Stock = ({
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  ...getPageDispatchers(dispatch, ownProps, '', 'stock'),
+const mapDispatchToProps = dispatch => ({
+  ...getPageDispatchers(dispatch, '', 'stock'),
   refund: rowKey => dispatch(SupplierCreditActions.createFromItem(rowKey)),
 });
 

@@ -13,6 +13,8 @@ import { MODAL_KEYS } from '../utilities';
 import { useNavigationFocus, useSyncListener } from '../hooks';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 import { gotoCustomerInvoice, createCustomerInvoice } from '../navigation/actions';
+import { ROUTES } from '../navigation/constants';
+import { selectCurrentUser } from '../selectors/user';
 
 import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets';
 import { DataTablePageModal } from '../widgets/modals';
@@ -21,7 +23,6 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 
 import { buttonStrings, modalStrings, generalStrings } from '../localization';
 import globalStyles from '../globalStyles';
-import { ROUTES } from '../navigation/constants';
 
 export const CustomerInvoices = ({
   currentUser,
@@ -131,7 +132,7 @@ export const CustomerInvoices = ({
           <SearchBar
             onChangeText={onFilterData}
             value={searchTerm}
-            placeholder={`${generalStrings.search_by} ${generalStrings.customer}`}
+            placeholder={`${generalStrings.search_by} ${generalStrings.invoice_number} ${generalStrings.or} ${generalStrings.customer}`}
           />
         </View>
         <View style={pageTopRightSectionContainer}>
@@ -166,8 +167,8 @@ export const CustomerInvoices = ({
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.CUSTOMER_INVOICES),
+const mapDispatchToProps = dispatch => ({
+  ...getPageDispatchers(dispatch, 'Transaction', ROUTES.CUSTOMER_INVOICES),
   refreshData: () => dispatch(PageActions.refreshDataWithFinalisedToggle(ROUTES.CUSTOMER_INVOICES)),
   onFilterData: value =>
     dispatch(PageActions.filterDataWithFinalisedToggle(value, ROUTES.CUSTOMER_INVOICES)),
@@ -176,7 +177,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 const mapStateToProps = state => {
   const { pages } = state;
   const { customerInvoices } = pages;
-  return customerInvoices;
+  const currentUser = selectCurrentUser(state);
+
+  return { ...customerInvoices, currentUser };
 };
 
 export const CustomerInvoicesPage = connect(mapStateToProps, mapDispatchToProps)(CustomerInvoices);

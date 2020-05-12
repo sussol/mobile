@@ -5,23 +5,23 @@
  */
 
 import React, { useCallback, useEffect, useMemo } from 'react';
-import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import { UIDatabase } from '../database';
+import { ROUTES } from '../navigation/constants';
 import { MODAL_KEYS } from '../utilities';
-import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
-import { DataTablePageModal } from '../widgets/modals';
+import { selectStocktakeEditor, selectStocktakeEditorColumns } from '../selectors/pages';
+import { PageActions, getItemLayout, getPageDispatchers } from './dataTableUtilities';
+
 import { PageButton, PageInfo, DataTablePageView, SearchBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+import { DataTablePageModal } from '../widgets/modals';
 
 import { buttonStrings, generalStrings } from '../localization';
 import globalStyles from '../globalStyles';
-import { useRecordListener, useNavigationFocus } from '../hooks/index';
-
-import { UIDatabase } from '../database/index';
-import { ROUTES } from '../navigation/constants';
 
 /**
  * Renders a mSupply page with a stocktake loaded for editing
@@ -38,7 +38,6 @@ import { ROUTES } from '../navigation/constants';
  */
 export const StocktakeEdit = ({
   dispatch,
-  navigation,
   pageObject,
   data,
   dataState,
@@ -64,16 +63,15 @@ export const StocktakeEdit = ({
   onEditCountedQuantity,
   onResetStocktake,
   onSortColumn,
-  refreshData,
   onOpenOutdatedItemModal,
   route,
 }) => {
   const { isFinalised, comment, program, name } = pageObject;
 
-  // Listen to the stocktake become the top of the stack or being finalised,
-  // as these events are side-effects. Refreshing makes the state consistent again.
-  useRecordListener(refreshData, pageObject, 'Stocktake');
-  useNavigationFocus(navigation, refreshData);
+  const onPressManageStocktake = React.useCallback(() => onManageStocktake(name, pageObject), [
+    name,
+    pageObject,
+  ]);
 
   // If the Stocktake is outdated, force a reset of the stocktake on mount.
   useEffect(() => {
@@ -112,7 +110,6 @@ export const StocktakeEdit = ({
         return onConfirmBatchEdit;
       case MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM:
         return onResetStocktake;
-      case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
       case MODAL_KEYS.STOCKTAKE_REASON:
         return onApplyReason;
       default:
@@ -171,7 +168,7 @@ export const StocktakeEdit = ({
           {!program && (
             <PageButton
               text={buttonStrings.manage_stocktake}
-              onPress={onManageStocktake}
+              onPress={onPressManageStocktake}
               isDisabled={isFinalised}
             />
           )}
@@ -199,25 +196,24 @@ export const StocktakeEdit = ({
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = dispatch => {
   const hasNegativeAdjustmentReasons = UIDatabase.objects('NegativeAdjustmentReason').length > 0;
   const hasPositiveAdjustmentReasons = UIDatabase.objects('PositiveAdjustmentReason').length > 0;
   const usesReasons = hasNegativeAdjustmentReasons && hasPositiveAdjustmentReasons;
-  const editQuantity = usesReasons
+  const onEditCountedQuantity = usesReasons
     ? PageActions.editCountedQuantityWithReason
     : PageActions.editCountedQuantity;
-
   return {
-    ...getPageDispatchers(dispatch, ownProps, 'Stocktake', ROUTES.STOCKTAKE_EDITOR),
+    ...getPageDispatchers(dispatch, 'Stocktake', ROUTES.STOCKTAKE_EDITOR),
     onEditCountedQuantity: (newValue, rowKey) =>
-      dispatch(editQuantity(newValue, rowKey, ROUTES.STOCKTAKE_EDITOR)),
+      dispatch(onEditCountedQuantity(newValue, rowKey, ROUTES.STOCKTAKE_EDITOR)),
   };
 };
 
 const mapStateToProps = state => {
-  const { pages } = state;
-  const { stocktakeEditor } = pages;
-  return stocktakeEditor;
+  const stocktakeEditor = selectStocktakeEditor(state);
+  const columns = selectStocktakeEditorColumns(state);
+  return { ...stocktakeEditor, columns };
 };
 
 export const StocktakeEditPage = connect(mapStateToProps, mapDispatchToProps)(StocktakeEdit);
@@ -228,7 +224,6 @@ StocktakeEdit.defaultProps = {
 
 StocktakeEdit.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  navigation: PropTypes.object.isRequired,
   pageObject: PropTypes.object.isRequired,
   data: PropTypes.array.isRequired,
   dataState: PropTypes.object.isRequired,
@@ -254,7 +249,6 @@ StocktakeEdit.propTypes = {
   onEditCountedQuantity: PropTypes.func.isRequired,
   onResetStocktake: PropTypes.func.isRequired,
   onSortColumn: PropTypes.func.isRequired,
-  refreshData: PropTypes.func.isRequired,
   onOpenOutdatedItemModal: PropTypes.func.isRequired,
   route: PropTypes.string.isRequired,
 };

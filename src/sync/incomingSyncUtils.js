@@ -12,105 +12,18 @@ import {
   TRANSACTION_TYPES,
 } from './syncTranslators';
 import { CHANGE_TYPES } from '../database';
-import { deleteRecord, createRecord } from '../database/utilities';
+import {
+  deleteRecord,
+  getOrCreateAddress,
+  parseBoolean,
+  parseDate,
+  parseNumber,
+  parseJsonString,
+} from '../database/utilities';
 import { SETTINGS_KEYS } from '../settings';
 import { validateReport } from '../utilities';
 
-const { THIS_STORE_ID, THIS_STORE_TAGS, THIS_STORE_CODE, THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
-
-/**
- * Returns the number string as a float, or null if none passed.
- *
- * @param   {string}  numberString  The string to convert to a number.
- * @return  {float}                 The numeric representation of the string.
- */
-export const parseNumber = numberString => {
-  if (!numberString) return null;
-  const result = parseFloat(numberString);
-  return Number.isNaN(result) ? null : result;
-};
-
-/**
- * Return a Date object representing the given date, time.
- *
- * @param   {string}  ISODate  The date in ISO 8601 format.
- * @param   {string}  ISOTime  The time in ISO 8601 format. Optional.
- * @return  {Date}             The Date representing |ISODate| (and |ISOTime|).
- */
-export const parseDate = (ISODate, ISOTime) => {
-  if (!ISODate || ISODate.length < 1 || ISODate === '0000-00-00T00:00:00') {
-    return null;
-  }
-  const date = new Date(ISODate);
-  if (ISOTime && ISOTime.length >= 6) {
-    const hours = ISOTime.substring(0, 2);
-    const minutes = ISOTime.substring(3, 5);
-    const seconds = ISOTime.substring(6, 8);
-    date.setHours(hours, minutes, seconds);
-  }
-  return date;
-};
-
-/**
- * Returns the boolean string as a boolean (false if none passed)
- * @param  {string} numberString The string to convert to a boolean
- * @return {boolean}               The boolean representation of the string
- */
-export const parseBoolean = booleanString => {
-  const trueStrings = ['true', 'True', 'TRUE'];
-  return trueStrings.includes(booleanString);
-};
-
-/**
- * Returns jsonString prepared correctly for mobile realm database
- * @param  {string} jsonString The string to parse
- * @return {string}            The parsed string or |null|
- */
-export const parseJsonString = jsonString => {
-  // 4D adds extra backslashes, remove them so JSON.parse doesn't break
-  let validatedString = jsonString && jsonString.replace(/\\/g, '');
-  const nullValues = ['null', 'undefined'];
-  // 'undefined' is stored as string on 4D, but as an optional field
-  // in our realm schemas we can prefer |null|
-  if (!validatedString || nullValues.includes(validatedString.toLowerCase())) {
-    validatedString = null;
-  }
-  return validatedString;
-};
-
-/**
- * Return a database Address object with the given address details (reuse if one
- * already exists).
- *
- * @param   {Realm}         database  The local database.
- * @param   {string}        line1     Line 1 of the address (can be undefined).
- * @param   {string}        line2     Line 2 of the address (can be undefined).
- * @param   {string}        line3     Line 3 of the address (can be undefined).
- * @param   {string}        line4     Line 4 of the address (can be undefined).
- * @param   {string}        zipCode   Zip code of the address (can be undefined).
- * @return  {Realm.object}            The Address object described by the params.
- */
-const getOrCreateAddress = (database, line1, line2, line3, line4, zipCode) => {
-  let results = database.objects('Address');
-  if (typeof line1 === 'string') {
-    results = results.filtered('line1 == $0', line1);
-  }
-  if (typeof line2 === 'string') {
-    results = results.filtered('line2 == $0', line2);
-  }
-  if (typeof line3 === 'string') {
-    results = results.filtered('line3 == $0', line3);
-  }
-  if (typeof line4 === 'string') {
-    results = results.filtered('line4 == $0', line4);
-  }
-  if (typeof zipCode === 'string') {
-    results = results.filtered('zipCode == $0', zipCode);
-  }
-  if (results.length > 0) return results[0];
-
-  return createRecord(database, 'Address', { line1, line2, line3, line4, zipCode });
-};
+const { THIS_STORE_ID, THIS_STORE_TAGS, THIS_STORE_CODE } = SETTINGS_KEYS;
 
 /**
  * Ensure the given record has the right data to create an internal record of the given
@@ -192,6 +105,10 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     NumberReuse: {
       cannotBeBlank: ['name', 'number_to_use'],
       canBeBlank: [],
+    },
+    Preference: {
+      cannotBeBlank: ['ID', 'store_ID', 'item', 'data'],
+      canBeBlank: ['user_ID', 'network_ID'],
     },
     Requisition: {
       cannotBeBlank: ['status', 'type', 'daysToSupply'],
@@ -552,19 +469,22 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
 
       if (isPatient && !thisStoresPatient) break;
 
+      const {
+        bill_address1: line1,
+        bill_address2: line2,
+        bill_address3: line3,
+        bill_address4: line4,
+        bill_postal_zip_code: zipCode,
+      } = record;
+
+      const billingAddress = getOrCreateAddress(database, { line1, line2, line3, line4, zipCode });
+
       internalRecord = {
         id: record.ID,
         name: record.name,
         code: record.code,
         phoneNumber: record.phone,
-        billingAddress: getOrCreateAddress(
-          database,
-          record.bill_address1,
-          record.bill_address2,
-          record.bill_address3,
-          record.bill_address4,
-          record.bill_postal_zip_code
-        ),
+        billingAddress,
         emailAddress: record.email,
         type: NAME_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
         isCustomer: parseBoolean(record.customer),
@@ -630,6 +550,22 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       const numberToReuse = database.update(recordType, internalRecord);
       // Attach the number to reuse to the number sequence.
       numberSequence.addNumberToReuse(numberToReuse);
+      break;
+    }
+    case 'Preference': {
+      const { item, data: recordData } = record;
+      if (item === 'store_preferences') {
+        try {
+          const parsedData = JSON.parse(recordData);
+          Object.entries(parsedData).forEach(([id, value]) => {
+            const data = JSON.stringify(value ?? {});
+            internalRecord = { id, data };
+            database.update(recordType, internalRecord);
+          });
+        } catch (error) {
+          // Silently ignore malformed prefs.
+        }
+      }
       break;
     }
     case 'Report': {
@@ -747,15 +683,10 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'Store': {
-      const { tags, custom_data, code } = record;
-      const customData = parseJsonString(custom_data);
+      const { tags, code } = record;
       if (settings.get(THIS_STORE_ID) === record.ID) {
         database.update('Setting', { key: THIS_STORE_TAGS, value: tags });
         database.update('Setting', { key: THIS_STORE_CODE, value: code });
-        database.update('Setting', {
-          key: THIS_STORE_CUSTOM_DATA,
-          value: customData ?? '',
-        });
       }
       break;
     }
@@ -890,12 +821,15 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
     case 'Prescriber': {
       const fromThisStore = record.store_ID === settings.get(THIS_STORE_ID);
 
+      const { address1: line1, address2: line2 } = record;
+      const address = getOrCreateAddress(database, { line1, line2 });
+
       database.update(recordType, {
         id: record.ID,
         firstName: record.first_name,
         lastName: record.last_name,
         registrationCode: record.registration_code,
-        address: getOrCreateAddress(database, record.address1, record.address2),
+        address,
         isVisible: true,
         isActive: true,
         phoneNumber: record.phone,

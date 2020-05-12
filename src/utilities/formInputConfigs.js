@@ -27,6 +27,14 @@ import { formInputStrings } from '../localization';
  * }
  */
 
+export const FORM_INPUT_TYPES = {
+  TEXT: 'text',
+  DATE: 'date',
+  DROPDOWN: 'dropdown',
+  TOGGLE: 'toggle',
+  SLIDER: 'slider',
+};
+
 const FORM_INPUT_KEYS = {
   FIRST_NAME: 'firstName',
   LAST_NAME: 'lastName',
@@ -44,11 +52,16 @@ const FORM_INPUT_KEYS = {
   POLICY_TYPE: 'policyType',
   IS_ACTIVE: 'isActive',
   DISCOUNT_RATE: 'discountRate',
+  SEARCH_FIRST_NAME: 'searchFirstName',
+  SEARCH_LAST_NAME: 'searchLastName',
+  SEARCH_DATE_OF_BIRTH: 'searchDateOfBirth',
+  SEARCH_REGISTRATION_CODE: 'searchRegistrationCode',
+  SEARCH_POLICY_NUMBER: 'searchPolicyNumber',
 };
 
 const FORM_INPUT_CONFIGS = seedObject => ({
   [FORM_INPUT_KEYS.FIRST_NAME]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'firstName',
     validator: input => input.length > 0,
@@ -57,8 +70,9 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     invalidMessage: formInputStrings.must_not_be_empty,
     isEditable: true,
   },
+
   [FORM_INPUT_KEYS.LAST_NAME]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'lastName',
     validator: input => input.length > 0,
@@ -68,7 +82,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.CODE]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'code',
     validator: input => input.length > 0 && input.length < 20,
@@ -78,7 +92,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.DATE_OF_BIRTH]: {
-    type: 'date',
+    type: FORM_INPUT_TYPES.DATE,
     initialValue: new Date(),
     key: 'dateOfBirth',
     invalidMessage: formInputStrings.must_be_a_date,
@@ -93,7 +107,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.GENDER]: {
-    type: 'toggle',
+    type: FORM_INPUT_TYPES.TOGGLE,
     initialValue: false,
     key: 'female',
     options: [true, false],
@@ -102,7 +116,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.EMAIL]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'emailAddress',
     isRequired: false,
@@ -110,7 +124,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.PHONE]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'phoneNumber',
     isRequired: false,
@@ -118,7 +132,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.COUNTRY]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'country',
     validator: input => input.length < 20,
@@ -128,7 +142,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.ADDRESS_ONE]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'addressOne',
     validator: input => input.length < 50,
@@ -138,7 +152,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.ADDRESS_TWO]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'addressTwo',
     validator: input => input.length < 50,
@@ -148,7 +162,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.REGISTRATION_CODE]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'registrationCode',
     validator: input => input.length > 0 && input.length < 50,
@@ -158,27 +172,27 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.POLICY_NUMBER_PERSON]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'policyNumberPerson',
-    validator: null,
+    validator: input => input.length > 0 && input.length < 50,
     isRequired: true,
     invalidMessage: formInputStrings.unique_policy,
     label: formInputStrings.personal_policy_number,
     isEditable: !seedObject,
   },
   [FORM_INPUT_KEYS.POLICY_NUMBER_FAMILY]: {
-    type: 'text',
+    type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'policyNumberFamily',
-    validator: null,
+    validator: input => input.length > 0 && input.length < 50,
     isRequired: true,
     invalidMessage: formInputStrings.unique_policy,
     label: formInputStrings.family_policy_number,
     isEditable: !seedObject,
   },
   [FORM_INPUT_KEYS.POLICY_PROVIDER]: {
-    type: 'dropdown',
+    type: FORM_INPUT_TYPES.DROPDOWN,
     initialValue: UIDatabase.objects('InsuranceProvider')[0],
     key: 'insuranceProvider',
     label: formInputStrings.policy_provider,
@@ -187,7 +201,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: !seedObject,
   },
   [FORM_INPUT_KEYS.IS_ACTIVE]: {
-    type: 'toggle',
+    type: FORM_INPUT_TYPES.TOGGLE,
     initialValue: true,
     key: 'isActive',
     options: [true, false],
@@ -196,7 +210,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: true,
   },
   [FORM_INPUT_KEYS.POLICY_TYPE]: {
-    type: 'toggle',
+    type: FORM_INPUT_TYPES.TOGGLE,
     initialValue: 'personal',
     key: 'type',
     options: ['personal', 'business'],
@@ -205,7 +219,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isEditable: !seedObject,
   },
   [FORM_INPUT_KEYS.DISCOUNT_RATE]: {
-    type: 'slider',
+    type: FORM_INPUT_TYPES.SLIDER,
     initialValue: 25,
     key: 'discountRate',
     maximumValue: 100,
@@ -214,12 +228,68 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     label: formInputStrings.discount_rate,
     isEditable: true,
   },
+  [FORM_INPUT_KEYS.SEARCH_FIRST_NAME]: {
+    type: FORM_INPUT_TYPES.TEXT,
+    initialValue: '',
+    key: 'firstName',
+    validator: () => true,
+    isRequired: false,
+    label: formInputStrings.first_name,
+    invalidMessage: '',
+    isEditable: true,
+  },
+  [FORM_INPUT_KEYS.SEARCH_LAST_NAME]: {
+    type: FORM_INPUT_TYPES.TEXT,
+    initialValue: '',
+    key: 'lastName',
+    validator: () => true,
+    isRequired: false,
+    label: formInputStrings.last_name,
+    invalidMessage: '',
+    isEditable: true,
+  },
+  [FORM_INPUT_KEYS.SEARCH_DATE_OF_BIRTH]: {
+    type: FORM_INPUT_TYPES.DATE,
+    initialValue: '',
+    key: 'dateOfBirth',
+    invalidMessage: formInputStrings.must_be_a_date,
+    isRequired: false,
+    validator: input => {
+      if (input === '') return true;
+      const inputDate = moment(input, 'DD/MM/YYYY', null, true);
+      const isValid = inputDate.isValid();
+      const isDateOfBirth = inputDate.isSameOrBefore(new Date());
+      return isValid && isDateOfBirth;
+    },
+    label: formInputStrings.date_of_birth,
+    isEditable: true,
+  },
+  [FORM_INPUT_KEYS.SEARCH_REGISTRATION_CODE]: {
+    type: FORM_INPUT_TYPES.TEXT,
+    initialValue: '',
+    key: 'registrationCode',
+    validator: () => true,
+    isRequired: false,
+    label: formInputStrings.registration_code,
+    invalidMessage: '',
+    isEditable: true,
+  },
+  [FORM_INPUT_KEYS.SEARCH_POLICY_NUMBER]: {
+    type: FORM_INPUT_TYPES.TEXT,
+    initialValue: '',
+    key: 'policyNumber',
+    validator: null,
+    isRequired: false,
+    invalidMessage: '',
+    label: formInputStrings.policy_number,
+    isEditable: true,
+  },
 });
 
 const FORM_CONFIGS = {
   patient: [
-    FORM_INPUT_KEYS.FIRST_NAME,
     FORM_INPUT_KEYS.LAST_NAME,
+    FORM_INPUT_KEYS.FIRST_NAME,
     FORM_INPUT_KEYS.DATE_OF_BIRTH,
     FORM_INPUT_KEYS.EMAIL,
     FORM_INPUT_KEYS.PHONE,
@@ -229,8 +299,8 @@ const FORM_CONFIGS = {
     FORM_INPUT_KEYS.GENDER,
   ],
   prescriber: [
-    FORM_INPUT_KEYS.FIRST_NAME,
     FORM_INPUT_KEYS.LAST_NAME,
+    FORM_INPUT_KEYS.FIRST_NAME,
     FORM_INPUT_KEYS.REGISTRATION_CODE,
     FORM_INPUT_KEYS.EMAIL,
     FORM_INPUT_KEYS.PHONE,
@@ -245,6 +315,17 @@ const FORM_CONFIGS = {
     FORM_INPUT_KEYS.POLICY_PROVIDER,
     FORM_INPUT_KEYS.IS_ACTIVE,
     FORM_INPUT_KEYS.POLICY_TYPE,
+  ],
+  searchPatient: [
+    FORM_INPUT_KEYS.SEARCH_LAST_NAME,
+    FORM_INPUT_KEYS.SEARCH_FIRST_NAME,
+    FORM_INPUT_KEYS.SEARCH_DATE_OF_BIRTH,
+    FORM_INPUT_KEYS.SEARCH_POLICY_NUMBER,
+  ],
+  searchPrescriber: [
+    FORM_INPUT_KEYS.SEARCH_LAST_NAME,
+    FORM_INPUT_KEYS.SEARCH_FIRST_NAME,
+    FORM_INPUT_KEYS.SEARCH_REGISTRATION_CODE,
   ],
 };
 

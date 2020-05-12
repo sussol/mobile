@@ -5,6 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import { Dimensions, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -12,19 +13,31 @@ import Modal from 'react-native-modalbox';
 
 import { PROGRESS_LOADING } from './constants';
 import { syncStrings } from '../localization';
-import { formatPlural, formatDate } from '../utilities';
+import { formatDate } from '../utilities';
 import { Button, ProgressBar } from '../widgets';
 
 import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../globalStyles';
+import { UIDatabase } from '../database';
+import { closeSyncModal } from '../actions/SyncActions';
 
-export const SyncModal = ({ database, isOpen, onClose, onPressManualSync, state }) => {
-  const getStatusMessage = (progress, total, isSyncing, errorMessage, progressMessage) => {
+export const SyncModalComponent = ({
+  syncModalIsOpen,
+  onClose,
+  onPressManualSync,
+  progress,
+  total,
+  isSyncing,
+  lastSyncTime,
+  errorMessage,
+  progressMessage,
+}) => {
+  const getStatusMessage = React.useCallback(() => {
     let message = '';
 
     if (errorMessage !== '') {
       message = errorMessage;
     } else if (!isSyncing) {
-      const recordsToSyncCount = database.objects('SyncOut').length;
+      const recordsToSyncCount = UIDatabase.objects('SyncOut').length;
       message =
         recordsToSyncCount > 0
           ? `${recordsToSyncCount} ${syncStrings.records_waiting}`
@@ -35,24 +48,22 @@ export const SyncModal = ({ database, isOpen, onClose, onPressManualSync, state 
       message = syncStrings.loading_change_count;
     } else {
       message = progressMessage ? `${progressMessage}\n` : '';
-      message += `${progress} of ${formatPlural('@count record', '@count records', total)} updated`;
+      message += `${progress} of ${total} record(s) updated`;
     }
 
     return message;
-  };
+  }, [progress, total, isSyncing, errorMessage, progressMessage]);
 
-  const getSyncDateLabel = syncTime => {
+  const getSyncDateLabel = React.useCallback(syncTime => {
     if (syncTime > 0) {
       return formatDate(new Date(syncTime), 'H:mm, MMMM D, YYYY');
     }
     return '-';
-  };
-
-  const { progress, total, isSyncing, lastSyncTime, errorMessage, progressMessage } = state;
+  }, []);
 
   return (
     <Modal
-      isOpen={isOpen}
+      isOpen={syncModalIsOpen}
       style={[globalStyles.modal, localStyles.modal]}
       backdropPressToClose={false}
       backdropOpacity={1}
@@ -89,8 +100,6 @@ export const SyncModal = ({ database, isOpen, onClose, onPressManualSync, state 
     </Modal>
   );
 };
-
-export default SyncModal;
 
 const localStyles = StyleSheet.create({
   modal: {
@@ -148,20 +157,30 @@ const localStyles = StyleSheet.create({
   },
 });
 
-/* eslint-disable react/require-default-props, react/forbid-prop-types */
-SyncModal.propTypes = {
-  database: PropTypes.object.isRequired,
-  state: PropTypes.object.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onPressManualSync: PropTypes.func.isRequired,
-  isOpen: PropTypes.bool,
+SyncModalComponent.defaultProps = {
+  syncModalIsOpen: false,
 };
 
-/* eslint-disable react/default-props-match-prop-types */
-SyncModal.defaultProps = {
-  progress: 0,
-  total: 0,
-  errorMessage: '',
-  lastSyncDate: undefined,
-  isSyncing: false,
+SyncModalComponent.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  onPressManualSync: PropTypes.func.isRequired,
+  syncModalIsOpen: PropTypes.bool,
+  progress: PropTypes.number.isRequired,
+  total: PropTypes.number.isRequired,
+  isSyncing: PropTypes.bool.isRequired,
+  errorMessage: PropTypes.string.isRequired,
+  progressMessage: PropTypes.string.isRequired,
+  lastSyncTime: PropTypes.number.isRequired,
 };
+
+const mapStateToProps = state => {
+  const { sync } = state;
+  return sync;
+};
+
+const mapDispatchToProps = dispatch => {
+  const onClose = () => dispatch(closeSyncModal());
+  return { onClose };
+};
+
+export const SyncModal = connect(mapStateToProps, mapDispatchToProps)(SyncModalComponent);

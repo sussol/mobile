@@ -5,8 +5,8 @@
 
 import { batch } from 'react-redux';
 import { createRecord, UIDatabase } from '../database';
-import { getCurrentRouteName } from '../navigation/selectors';
 import { refreshData } from '../pages/dataTableUtilities/actions/tableActions';
+import { RootNavigator } from '../navigation';
 
 export const SUPPLIER_CREDIT_ACTIONS = {
   CREATE_FROM_ITEM: 'SupplierCredit/createFromItem',
@@ -28,7 +28,8 @@ const close = () => ({ type: SUPPLIER_CREDIT_ACTIONS.CLOSE });
 
 const create = () => (dispatch, getState) => {
   const { supplierCredit, user } = getState();
-  const currentRouteName = getCurrentRouteName(getState().nav);
+  const currentRouteName = RootNavigator.getCurrentRouteName();
+
   const { batches, category } = supplierCredit;
   const { currentUser } = user;
 

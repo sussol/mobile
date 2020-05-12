@@ -1,3 +1,4 @@
+/* eslint-disable react/default-props-match-prop-types */
 /* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
@@ -19,6 +20,7 @@ import {
   FINALISE_GREEN,
   SUSSOL_ORANGE,
   FINALISED_RED,
+  DARK_GREY,
   dataTableColors,
 } from '../globalStyles';
 
@@ -66,7 +68,7 @@ ConfirmIcon.defaultProps = { style: { color: FINALISE_GREEN, fontSize: 40 } };
 ConfirmIcon.propTypes = { style: PropTypes.object };
 
 export const LockIcon = React.memo(({ style }) => <FAIcon name="lock" size={28} style={style} />);
-LockIcon.defaultProps = { style: { color: FINALISED_RED, marginHorizontal: 8, bottom: 6 } };
+LockIcon.defaultProps = { style: { color: FINALISED_RED } };
 LockIcon.propTypes = { style: PropTypes.object };
 
 export const ChevronDownIcon = React.memo(({ color, size }) => (
@@ -90,9 +92,15 @@ HistoryIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
 export const ChevronRightIcon = () => (
   <FA5Icon name="chevron-right" color={SUSSOL_ORANGE} size={20} />
 );
-
 export const FavouriteStarIcon = () => <FAIcon name="star-o" color={SUSSOL_ORANGE} size={20} />;
 export const BurgerMenuIcon = () => <EntypoIcon name="menu" color={SUSSOL_ORANGE} size={30} />;
+
+export const BookIcon = ({ color, size }) => (
+  <EntypoIcon name="open-book" color={color} size={size} />
+);
+BookIcon.defaultProps = { color: WHITE, size: 20 };
+BookIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
+
 export const AddIcon = ({ size, color }) => <IonIcon name="ios-add" size={size} color={color} />;
 AddIcon.defaultProps = { color: WHITE, size: 30 };
 AddIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
@@ -104,3 +112,23 @@ MinusIcon.defaultProps = { color: WHITE, size: 30 };
 MinusIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
 
 export const CalendarIcon = () => <FAIcon name="calendar" size={20} color={WHITE} />;
+
+export const BackIcon = () => <FAIcon name="chevron-left" size={16} color="black" />;
+
+export const CloudIcon = ({ color, size, style }) => (
+  <IonIcon name="md-cloud" size={size} color={color} style={style} />
+);
+CloudIcon.defaultProps = { color: DARK_GREY, size: 30, style: {} };
+CloudIcon.propTypes = { color: PropTypes.string, size: PropTypes.number, style: PropTypes.object };
+
+export const ArrowIcon = ({ color, size, style }) => (
+  <FAIcon name="exchange" size={size} style={style} color={color} />
+);
+ArrowIcon.defaultProps = { color: DARK_GREY, size: 16, style: { marginLeft: 10 } };
+ArrowIcon.propTypes = { color: PropTypes.string, size: PropTypes.number, style: PropTypes.object };
+
+export const WifiIcon = ({ color, size, style }) => (
+  <IonIcon name="logo-rss" size={size} style={style} color={color} />
+);
+WifiIcon.defaultProps = { color: DARK_GREY, size: 22, style: { marginLeft: 10 } };
+WifiIcon.propTypes = { color: PropTypes.string, size: PropTypes.number, style: PropTypes.object };
