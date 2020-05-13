@@ -14,6 +14,8 @@ import { MILLISECONDS } from '../utilities';
 import { chunk } from '../utilities/chunk';
 
 import { vaccineStrings } from '../localization';
+import { PageActions } from '../pages/dataTableUtilities/actions';
+import { ROUTES } from '../navigation';
 
 export const TEMPERATURE_SYNC_ACTIONS = {
   OPEN_MODAL: 'TemperatureSync/openModal',
@@ -70,6 +72,11 @@ const updateSensors = sensorAdvertisements => dispatch => {
       });
     });
   }
+};
+
+const startSensorScan = () => async dispatch => {
+  await dispatch(scanForSensors());
+  dispatch(PageActions.refreshData(ROUTES.VACCINE_ADMIN_PAGE));
 };
 
 const scanForSensors = () => async dispatch => {
@@ -268,8 +275,8 @@ const syncTemperatures = () => async (dispatch, getState) => {
 };
 
 export const TemperatureSyncActions = {
-  scanForSensors,
   syncTemperatures,
   openModal,
   closeModal,
+  startSensorScan,
 };
