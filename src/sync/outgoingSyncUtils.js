@@ -317,7 +317,8 @@ const generateSyncData = (settings, recordType, record) => {
         time: getTimeString(record.timestamp),
         date: getDateString(record.timestamp),
         location_ID: record.location?.id,
-        breach_ID: record.breach?.id,
+        temperature_breach_ID: record.breach?.id,
+        store_ID: settings.get(THIS_STORE_ID),
       };
     }
     case 'TemperatureBreach': {
@@ -328,6 +329,7 @@ const generateSyncData = (settings, recordType, record) => {
         end_time: getTimeString(record.endTimestamp),
         end_date: getDateString(record.endTimestamp),
         location_ID: record.location?.id,
+        store_ID: settings.get(THIS_STORE_ID),
       };
     }
     case 'LocationMovement': {
@@ -339,15 +341,17 @@ const generateSyncData = (settings, recordType, record) => {
         exit_date: getDateString(record.exitTimestamp),
         item_line_ID: record.itemBatch?.id,
         location_ID: record.location?.id,
+        store_ID: settings.get(THIS_STORE_ID),
       };
     }
     case 'VaccineVialMonitorStatusLog': {
       return {
         ID: record.id,
-        status: record.status?.id,
+        status_ID: record.status?.id,
         time: getTimeString(record.timestamp),
         date: getDateString(record.timestamp),
         item_line_ID: record.itemBatch?.id,
+        store_ID: settings.get(THIS_STORE_ID),
       };
     }
     case 'Sensor': {
