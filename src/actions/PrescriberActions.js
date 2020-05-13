@@ -32,24 +32,71 @@ const editPrescriber = prescriber => ({
   payload: { prescriber },
 });
 
-const updatePrescriber = completedForm => (dispatch, getState) => {
+const updatePrescriber = prescriberDetails => (dispatch, getState) => {
   const { prescriber } = getState();
   const { currentPrescriber } = prescriber;
 
-  if (currentPrescriber) {
-    const { addressOne, addressTwo } = completedForm;
-    const { address } = currentPrescriber;
+  const {
+    id: currentPrescriberId,
+    firstName: currentFirstName,
+    lastName: currentLastName,
+    registrationCode: currentRegistrationCode,
+    addressOne: currentAddressOne,
+    addressTwo: currentAddressTwo,
+    phoneNumber: currentPhoneNumber,
+    mobileNumber: currentMobileNumber,
+    emailAddress: currentEmailAddress,
+    female: currentFemale,
+    storeId: currentStoreId,
+    isActive: currentIsActive,
+  } = currentPrescriber ?? {};
 
-    UIDatabase.write(() => {
-      UIDatabase.update('Address', { ...address, line1: addressOne, line2: addressTwo });
-      UIDatabase.update('Prescriber', { ...currentPrescriber, ...completedForm });
-    });
-  } else {
-    UIDatabase.write(() => createRecord(UIDatabase, 'Prescriber', completedForm));
-  }
+  const {
+    id: prescriberId,
+    firstName: prescriberFirstName,
+    lastName: prescriberLastName,
+    registrationCode: prescriberRegistrationCode,
+    addressOne: prescriberAddressOne,
+    addressTwo: prescriberAddressTwo,
+    phoneNumber: prescriberPhoneNumber,
+    emailAddress: prescriberEmailAddress,
+    female: prescriberFemale,
+    storeId: prescriberStoreId,
+  } = prescriberDetails ?? {};
+
+  const id = prescriberId ?? currentPrescriberId;
+  const firstName = prescriberFirstName ?? currentFirstName;
+  const lastName = prescriberLastName ?? currentLastName;
+  const registrationCode = prescriberRegistrationCode ?? currentRegistrationCode;
+  const addressOne = prescriberAddressOne ?? currentAddressOne;
+  const addressTwo = prescriberAddressTwo ?? currentAddressTwo;
+  const phoneNumber = prescriberPhoneNumber ?? currentPhoneNumber;
+  const mobileNumber = currentMobileNumber;
+  const emailAddress = prescriberEmailAddress ?? currentEmailAddress;
+  const female = prescriberFemale ?? currentFemale;
+  const storeId = prescriberStoreId ?? currentStoreId;
+  const isActive = currentIsActive;
+
+  const prescriberRecord = {
+    id,
+    firstName,
+    lastName,
+    registrationCode,
+    addressOne,
+    addressTwo,
+    phoneNumber,
+    mobileNumber,
+    emailAddress,
+    female,
+    storeId,
+    isActive,
+  };
+
+  UIDatabase.write(() => createRecord(UIDatabase, 'Prescriber', prescriberRecord));
 
   batch(() => {
     dispatch(closeModal());
+    dispatch(DispensaryActions.closeLookupModal());
     dispatch(DispensaryActions.refresh());
   });
 };

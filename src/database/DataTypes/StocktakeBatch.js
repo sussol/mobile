@@ -179,7 +179,7 @@ export class StocktakeBatch extends Realm.Object {
    * option. Positive differences require a positiveInventoryAdjustment option
    * while no difference requires there to be no option applied.
    */
-  get validateReason() {
+  get hasValidReason() {
     // Short circuits for simple cases
     if (!this.difference && !this.option) return true;
     if (this.difference && !this.option) return false;

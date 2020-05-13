@@ -132,7 +132,7 @@ export const CustomerInvoices = ({
           <SearchBar
             onChangeText={onFilterData}
             value={searchTerm}
-            placeholder={`${generalStrings.search_by} ${generalStrings.customer}`}
+            placeholder={`${generalStrings.search_by} ${generalStrings.invoice_number} ${generalStrings.or} ${generalStrings.customer}`}
           />
         </View>
         <View style={pageTopRightSectionContainer}>

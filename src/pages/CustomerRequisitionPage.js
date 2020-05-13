@@ -33,6 +33,8 @@ import {
 } from '../selectors/indicators';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
+import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
+
 import globalStyles from '../globalStyles';
 import { buttonStrings, generalStrings, programStrings } from '../localization';
 
@@ -50,7 +52,6 @@ import { buttonStrings, generalStrings, programStrings } from '../localization';
  * { isSelected, isDisabled },
  */
 export const CustomerRequisition = ({
-  runWithLoadingIndicator,
   data,
   dispatch,
   dataState,
@@ -78,15 +79,17 @@ export const CustomerRequisition = ({
 }) => {
   const { isFinalised, comment } = pageObject;
 
-  const onSetSuppliedToRequested = () =>
-    runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToRequested(route)));
-  const onSetSuppliedToSuggested = () =>
-    runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToSuggested(route)));
-
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, route), [
     comment,
     isFinalised,
   ]);
+
+  const runWithLoadingIndicator = useLoadingIndicator();
+
+  const onSetSuppliedToRequested = () =>
+    runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToRequested(route)));
+  const onSetSuppliedToSuggested = () =>
+    runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToSuggested(route)));
 
   const getCallback = useCallback(colKey => {
     switch (colKey) {
@@ -344,7 +347,6 @@ CustomerRequisition.propTypes = {
   searchTerm: PropTypes.string.isRequired,
   columns: PropTypes.array.isRequired,
   keyExtractor: PropTypes.func.isRequired,
-  runWithLoadingIndicator: PropTypes.func.isRequired,
   dataState: PropTypes.object.isRequired,
   modalKey: PropTypes.string.isRequired,
   pageObject: PropTypes.object.isRequired,

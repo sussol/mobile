@@ -32,14 +32,12 @@ export const MODAL_KEYS = {
   REQUISITION_REASON: 'requisitionReason',
   STOCKTAKE_REASON: 'stocktakeReason',
   ENFORCE_REQUISITION_REASON: 'enforceRequisitionReason',
-  ENFORCE_STOCKTAKE_REASON: 'enforceStocktakeReason',
   SELECT_MASTER_LISTS: 'selectMasterList',
   SELECT_LOCATION: 'selectLocation',
   SELECT_VVM_STATUS: 'selectVvmStatus',
 };
 
 export const getModalTitle = modalKey => {
-  console.log(modalKey);
   switch (modalKey) {
     default:
       return '';
@@ -75,7 +73,6 @@ export const getModalTitle = modalKey => {
       return buttonStrings.view_regimen_data;
     case MODAL_KEYS.REQUISITION_REASON:
     case MODAL_KEYS.ENFORCE_REQUISITION_REASON:
-    case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
     case MODAL_KEYS.STOCKTAKE_REASON:
       return modalStrings.select_a_reason;
     case MODAL_KEYS.SYNC_URL_EDIT:

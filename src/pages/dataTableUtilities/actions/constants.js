@@ -34,7 +34,6 @@ export const ACTIONS = {
   EDIT_COUNTED_QUANTITY: 'editCountedQuantity',
   EDIT_REQUIRED_QUANTITY: 'editRequiredQuantity',
   EDIT_EXPIRY_DATE: 'editExpiryDate',
-  ENFORCE_REASON: 'enforceReasonChoice',
 
   // cellAction constants
   FOCUS_CELL: 'focusCell',

@@ -14,15 +14,19 @@ export const ROUTES = {
 
   CUSTOMER_REQUISITION: 'customerRequisition',
   CUSTOMER_REQUISITIONS: 'customerRequisitions',
+  CUSTOMER_REQUISITIONS_WITH_PROGRAMS: 'customerRequisitionsWithPrograms',
 
   SUPPLIER_REQUISITION: 'supplierRequisition',
   SUPPLIER_REQUISITION_WITH_PROGRAM: 'supplierRequisitionWithProgram',
   SUPPLIER_REQUISITIONS: 'supplierRequisitions',
+  SUPPLIER_REQUISITIONS_WITH_PROGRAMS: 'supplierRequisitionsWithPrograms',
 
+  CUSTOMER_CREDIT: 'customerCredit',
   CUSTOMER_INVOICE: 'customerInvoice',
   CUSTOMER_INVOICE_WITH_VACCINES: 'customerInvoiceWithVaccines',
   CUSTOMER_INVOICES: 'customerInvoices',
 
+  SUPPLIER_CREDIT: 'supplierCredit',
   SUPPLIER_INVOICE: 'supplierInvoice',
   SUPPLIER_INVOICE_WITH_VACCINES: 'supplierInvoiceWithVaccines',
   SUPPLIER_INVOICE_WITH_PRICES: 'supplierInvoiceWithPrices',
@@ -32,9 +36,9 @@ export const ROUTES = {
   STOCK_WITH_CREDITS: 'stockWithCredits',
 
   STOCKTAKES: 'stocktakes',
+  STOCKTAKES_WITH_PROGRAMS: 'stocktakesWithPrograms',
   STOCKTAKE_MANAGER: 'stocktakeManager',
   STOCKTAKE_EDITOR: 'stocktakeEditor',
-  STOCKTAKE_EDITOR_WITH_REASONS: 'stocktakeEditorWithReasons',
 
   DISPENSARY: 'dispensary',
   PRESCRIPTIONS: 'prescriptions',

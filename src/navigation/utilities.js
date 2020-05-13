@@ -26,11 +26,13 @@ export const SCREEN_TITLES = {
     `${navStrings.requisition} ${serialNumber}`,
   [ROUTES.SUPPLIER_REQUISITION]: ({ serialNumber } = {}) =>
     `${navStrings.requisition} ${serialNumber}`,
-  [ROUTES.CUSTOMER_INVOICE]: ({ serialNumber } = {}) => `${navStrings.invoice} ${serialNumber}`,
-  [ROUTES.SUPPLIER_INVOICE]: ({ serialNumber } = {}) => `${navStrings.invoice} ${serialNumber}`,
+  [ROUTES.CUSTOMER_INVOICE]: ({ isCredit, serialNumber } = {}) =>
+    `${isCredit ? navStrings.credit : navStrings.invoice} ${serialNumber}`,
+  [ROUTES.SUPPLIER_INVOICE]: ({ isCredit, serialNumber } = {}) =>
+    `${isCredit ? navStrings.credit : navStrings.invoice} ${serialNumber}`,
   [ROUTES.STOCKTAKE_EDITOR]: ({ serialNumber } = {}) => `${navStrings.stocktake} ${serialNumber}`,
   [ROUTES.STOCKTAKE_MANAGER]: () => navStrings.manage_stocktake,
-  [ROUTES.PRESCRIPTION]: ({ serialNumber } = {}) => `${navStrings.invoice} ${serialNumber}`,
+  [ROUTES.PRESCRIPTION]: ({ serialNumber } = {}) => `${navStrings.prescription} ${serialNumber}`,
   [ROUTES.VACCINES]: () => navStrings.vaccines,
 };
 
@@ -44,8 +46,14 @@ export const getRouteTitle = (pageObject, routeName) => {
 /**
  * Simple hardware backhandler which dispatches a goBack action on a
  * provided store.
+ *
+ * WARNING: if returns falsey value, event will be "double handled",
+ * which will result in the stack being popped twice.
  */
-export const backHandler = store => () => store.dispatch(goBack());
+export const backHandler = store => () => {
+  store.dispatch(goBack());
+  return true;
+};
 
 /**
  * Simple middleware which intercepts navigation actions and calls a function

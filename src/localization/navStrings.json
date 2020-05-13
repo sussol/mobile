@@ -1,6 +1,7 @@
 {
   "gb": {
     "cash_register": "Cash Register",
+    "credit": "Credit",
     "current_stock": "Current Stock",
     "customer_invoices": "Customer Invoices",
     "customer_requisitions": "Customer Requisitions",

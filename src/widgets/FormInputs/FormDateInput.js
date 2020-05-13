@@ -60,22 +60,28 @@ export const FormDateInput = React.forwardRef(
 
     const [inputState, setInputState] = React.useState({
       isValid: true,
-      inputValue: moment(initialValue).format('DD/MM/YYYY'),
-      pickerSeedValue: initialValue.toDate(),
+      inputValue: initialValue.isValid() ? moment(initialValue).format('DD/MM/YYYY') : '',
+      pickerSeedValue: initialValue.isValid() ? initialValue.toDate() : new Date(),
       datePickerOpen: false,
     });
 
     const { inputValue, isValid, pickerSeedValue, datePickerOpen } = inputState;
 
     const onUpdate = (newValue, validity = true, pickerVisibility = false) => {
-      const newState = {
-        isValid: validity,
+      const newDate = moment(newValue, 'DD/MM/YYYY');
+      const newValidity = newDate.isValid();
+      const updatedIsValid = validity && newValidity;
+      const updatedDate = updatedIsValid ? newDate.toDate() : new Date();
+
+      const updatedState = {
+        isValid: updatedIsValid,
         inputValue: newValue,
-        pickerSeedValue: validity ? moment(newValue, 'DD/MM/YYYY').toDate() : new Date(),
         datePickerOpen: pickerVisibility,
+        pickerSeedValue: updatedDate,
       };
-      setInputState(newState);
-      onChangeDate(moment(newValue, 'DD/MM/YYYY').toDate());
+
+      setInputState(updatedState);
+      onChangeDate(updatedDate);
     };
 
     // When changing the value of the input, check the new validity and set the new input.
@@ -174,5 +180,5 @@ FormDateInput.propTypes = {
   placeholderTextColor: PropTypes.string,
   underlineColorAndroid: PropTypes.string,
   onSubmit: PropTypes.func,
-  isDisabled: PropTypes.isDisabled,
+  isDisabled: PropTypes.bool,
 };

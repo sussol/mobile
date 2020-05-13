@@ -4,7 +4,7 @@
  */
 
 // eslint-disable-next-line import/no-cycle
-import { BasePageActions } from './actions/getPageActions';
+import { PageActions } from './actions';
 import { MODAL_KEYS } from '../../utilities/getModalTitle';
 import { debounce } from '../../utilities/underscoreMethods';
 import { gotoStocktakeManagePage } from '../../navigation/actions';
@@ -12,89 +12,85 @@ import { gotoStocktakeManagePage } from '../../navigation/actions';
 export const getPageDispatchers = (dispatch, dataType, route) => {
   const dispatches = {
     // Editing of PageInfo
-    onEditName: value => dispatch(BasePageActions.editPageObjectName(value, dataType, route)),
-    onNameChange: value => dispatch(BasePageActions.editName(value, route)),
-    onEditComment: value => dispatch(BasePageActions.editComment(value, dataType, route)),
-    onEditTheirRef: value => dispatch(BasePageActions.editTheirRef(value, dataType, route)),
-    onEditMonth: value => dispatch(BasePageActions.editMonthsToSupply(value, route)),
+    onEditName: value => dispatch(PageActions.editPageObjectName(value, dataType, route)),
+    onNameChange: value => dispatch(PageActions.editName(value, route)),
+    onEditComment: value => dispatch(PageActions.editComment(value, dataType, route)),
+    onEditTheirRef: value => dispatch(PageActions.editTheirRef(value, dataType, route)),
+    onEditMonth: value => dispatch(PageActions.editMonthsToSupply(value, route)),
 
     // Full table manipulation
-    refreshData: () => dispatch(BasePageActions.refreshData(route)),
-    onResetStocktake: () => dispatch(BasePageActions.resetStocktake(route)),
-    toggleSelectAll: () => dispatch(BasePageActions.toggleSelectAll(route)),
-    toggleFinalised: () => dispatch(BasePageActions.toggleShowFinalised(route)),
-    toggleStockOut: () => dispatch(BasePageActions.toggleStockOut(route)),
-    onFilterData: debounce(value => dispatch(BasePageActions.filterData(value, route)), 75),
+    refreshData: () => dispatch(PageActions.refreshData(route)),
+    onResetStocktake: () => dispatch(PageActions.resetStocktake(route)),
+    toggleSelectAll: () => dispatch(PageActions.toggleSelectAll(route)),
+    toggleFinalised: () => dispatch(PageActions.toggleShowFinalised(route)),
+    toggleStockOut: () => dispatch(PageActions.toggleStockOut(route)),
+    onFilterData: debounce(value => dispatch(PageActions.filterData(value, route)), 75),
     onFilterIndicatorData: debounce(
-      value => dispatch(BasePageActions.filterIndicatorData(value, route)),
+      value => dispatch(PageActions.filterIndicatorData(value, route)),
       75
     ),
     onToggleIndicators: () => {
-      dispatch(BasePageActions.toggleIndicators(route));
-      dispatch(BasePageActions.refreshData(route));
+      dispatch(PageActions.toggleIndicators(route));
+      dispatch(PageActions.refreshData(route));
     },
-    onToggleTransactionType: () => dispatch(BasePageActions.toggleTransactionType(route)),
-    onToggleFridges: () => dispatch(BasePageActions.toggleFridges(route)),
-    onToggleSensors: () => dispatch(BasePageActions.toggleSensors(route)),
-    onSelectIndicator: indicatorCode =>
-      dispatch(BasePageActions.selectIndicator(indicatorCode, route)),
-    onShowOverStocked: () => dispatch(BasePageActions.showOverStocked(route)),
-    onHideOverStocked: () => dispatch(BasePageActions.hideOverStocked(route)),
-    onDeselectAll: () => dispatch(BasePageActions.deselectAll(route)),
-    onSetRequestedToSuggested: () => dispatch(BasePageActions.setRequestedToSuggested(route)),
-    onSortColumn: columnKey => dispatch(BasePageActions.sortData(columnKey, route)),
-
+    onToggleTransactionType: () => dispatch(PageActions.toggleTransactionType(route)),
+    onToggleFridges: () => dispatch(PageActions.toggleFridges(route)),
+    onToggleSensors: () => dispatch(PageActions.toggleSensors(route)),
+    onSelectIndicator: indicatorCode => dispatch(PageActions.selectIndicator(indicatorCode, route)),
     onEditIndicatorValue: (value, rowKey, columnKey) =>
-      dispatch(BasePageActions.editIndicatorValue(value, rowKey, columnKey, route)),
+      dispatch(PageActions.editIndicatorValue(value, rowKey, columnKey, route)),
+    onShowOverStocked: () => dispatch(PageActions.showOverStocked(route)),
+    onHideOverStocked: () => dispatch(PageActions.hideOverStocked(route)),
+    onDeselectAll: () => dispatch(PageActions.deselectAll(route)),
+    onSetRequestedToSuggested: () => dispatch(PageActions.setRequestedToSuggested(route)),
+    onSortColumn: columnKey => dispatch(PageActions.sortData(columnKey, route)),
 
     // Modals
     onSelectLocation: rowKey =>
-      dispatch(BasePageActions.openModal(MODAL_KEYS.SELECT_LOCATION, rowKey, route)),
+      dispatch(PageActions.openModal(MODAL_KEYS.SELECT_LOCATION, rowKey, route)),
     onSelectVvmStatus: rowKey =>
-      dispatch(BasePageActions.openModal(MODAL_KEYS.SELECT_VVM_STATUS, rowKey, route)),
+      dispatch(PageActions.openModal(MODAL_KEYS.SELECT_VVM_STATUS, rowKey, route)),
     onOpenRegimenDataModal: () =>
-      dispatch(BasePageActions.openModal(MODAL_KEYS.VIEW_REGIMEN_DATA, route)),
+      dispatch(PageActions.openModal(MODAL_KEYS.VIEW_REGIMEN_DATA, route)),
     onOpenOutdatedItemModal: () =>
-      dispatch(BasePageActions.openModal(MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM, route)),
+      dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM, route)),
     onEditReason: rowKey =>
-      dispatch(BasePageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey, route)),
+      dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey, route)),
     onEditRequisitionReason: rowKey =>
-      dispatch(BasePageActions.openModal(MODAL_KEYS.REQUISITION_REASON, rowKey, route)),
+      dispatch(PageActions.openModal(MODAL_KEYS.REQUISITION_REASON, rowKey, route)),
     onNewCashTransaction: () =>
-      dispatch(BasePageActions.openModal(MODAL_KEYS.CREATE_CASH_TRANSACTION, route)),
-    onNewCustomerInvoice: () =>
-      dispatch(BasePageActions.openModal(MODAL_KEYS.SELECT_CUSTOMER, route)),
-    onNewPrescription: () => dispatch(BasePageActions.openModal(MODAL_KEYS.SELECT_PATIENT, route)),
-    onCloseModal: () => dispatch(BasePageActions.closeModal(route)),
+      dispatch(PageActions.openModal(MODAL_KEYS.CREATE_CASH_TRANSACTION, route)),
+    onNewCustomerInvoice: () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_CUSTOMER, route)),
+    onNewPrescription: () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_PATIENT, route)),
+    onCloseModal: () => dispatch(PageActions.closeModal(route)),
 
     // Modal callbacks
-    onApplyReason: ({ item }) => dispatch(BasePageActions.applyReason(item, route)),
-    onConfirmBatchEdit: () => dispatch(BasePageActions.closeAndRefresh(route)),
-    onApplySensorLocation: ({ item }) => dispatch(BasePageActions.editSensorLocation(item, route)),
+    onApplyReason: ({ item }) => dispatch(PageActions.applyReason(item, route)),
+    onConfirmBatchEdit: () => dispatch(PageActions.closeAndRefresh(route)),
+    onApplySensorLocation: ({ item }) => dispatch(PageActions.editSensorLocation(item, route)),
     onApplyTransactionBatchLocation: ({ item }) =>
-      dispatch(BasePageActions.editTransactionBatchLocation(item, route)),
+      dispatch(PageActions.editTransactionBatchLocation(item, route)),
     onApplyStocktakeBatchLocation: ({ item }) =>
-      dispatch(BasePageActions.editStocktakeBatchLocation(item, route)),
+      dispatch(PageActions.editStocktakeBatchLocation(item, route)),
     onApplyTransactionBatchVvmStatus: ({ item }) =>
-      dispatch(BasePageActions.editTransactionBatchVvmStatus(item, route)),
+      dispatch(PageActions.editTransactionBatchVvmStatus(item, route)),
     onApplyStocktakeBatchVvmStatus: ({ item }) =>
-      dispatch(BasePageActions.editStocktakeBatchVvmStatus(item, route)),
+      dispatch(PageActions.editStocktakeBatchVvmStatus(item, route)),
 
     // Adding items/batch rows.
-    onAddFridge: () => dispatch(BasePageActions.addFridge(route)),
-    onAddTransactionBatch: item => dispatch(BasePageActions.addTransactionBatch(item, route)),
-    onAddStocktakeBatch: () => dispatch(BasePageActions.addStocktakeBatch(route)),
-    onAddTransactionItem: item => dispatch(BasePageActions.addItem(item, 'TransactionItem', route)),
-    onAddStocktakeItem: item => dispatch(BasePageActions.addItem(item, 'StocktakeItem', route)),
-    onAddRequisitionItem: item => dispatch(BasePageActions.addItem(item, 'RequisitionItem', route)),
-    onAddCashTransaction: item => dispatch(BasePageActions.addCashTransaction(item, route)),
-    onSelectNewItem: () => dispatch(BasePageActions.openModal(MODAL_KEYS.SELECT_ITEM, route)),
+    onAddFridge: () => dispatch(PageActions.addFridge(route)),
+    onAddTransactionBatch: item => dispatch(PageActions.addTransactionBatch(item, route)),
+    onAddStocktakeBatch: () => dispatch(PageActions.addStocktakeBatch(route)),
+    onAddTransactionItem: item => dispatch(PageActions.addItem(item, 'TransactionItem', route)),
+    onAddStocktakeItem: item => dispatch(PageActions.addItem(item, 'StocktakeItem', route)),
+    onAddRequisitionItem: item => dispatch(PageActions.addItem(item, 'RequisitionItem', route)),
+    onAddCashTransaction: item => dispatch(PageActions.addCashTransaction(item, route)),
+    onSelectNewItem: () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_ITEM, route)),
 
     // Master list
-    onAddMasterList: () =>
-      dispatch(BasePageActions.openModal(MODAL_KEYS.SELECT_MASTER_LISTS, route)),
+    onAddMasterList: () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_MASTER_LISTS, route)),
     onApplyMasterLists: (selected, pageObject) =>
-      dispatch(BasePageActions.addMasterListItems(selected, pageObject, route)),
+      dispatch(PageActions.addMasterListItems(selected, pageObject, route)),
 
     // Navigation
     onManageStocktake: (name, pageObject) => {
@@ -102,43 +98,41 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
     },
 
     // Row selections
-    onSelectRow: ({ id }) => dispatch(BasePageActions.selectOneRow(id, route)),
-    onDeselectRow: () => dispatch(BasePageActions.deselectOneRow(route)),
-    onCheck: rowKey => dispatch(BasePageActions.selectRow(rowKey, route)),
-    onUncheck: rowKey => dispatch(BasePageActions.deselectRow(rowKey, route)),
+    onSelectRow: ({ id }) => dispatch(PageActions.selectOneRow(id, route)),
+    onDeselectRow: () => dispatch(PageActions.deselectOneRow(route)),
+    onCheck: rowKey => dispatch(PageActions.selectRow(rowKey, route)),
+    onUncheck: rowKey => dispatch(PageActions.deselectRow(rowKey, route)),
 
     // Deletions
-    onDeleteRecords: () => dispatch(BasePageActions.deleteSelectedRecords(dataType, route)),
-    onDeleteItems: () => dispatch(BasePageActions.deleteSelectedItems(dataType, route)),
-    onDeleteBatches: () => dispatch(BasePageActions.deleteSelectedBatches(dataType, route)),
+    onDeleteRecords: () => dispatch(PageActions.deleteSelectedRecords(dataType, route)),
+    onDeleteItems: () => dispatch(PageActions.deleteSelectedItems(dataType, route)),
+    onDeleteBatches: () => dispatch(PageActions.deleteSelectedBatches(dataType, route)),
 
     // Editable cell callbacks
     onEditSensorName: (newValue, rowKey) =>
-      dispatch(BasePageActions.editSensorName(newValue, rowKey, route)),
+      dispatch(PageActions.editSensorName(newValue, rowKey, route)),
     onEditLocationCode: (newValue, rowKey) =>
-      dispatch(BasePageActions.editLocationCode(newValue, rowKey, route)),
+      dispatch(PageActions.editLocationCode(newValue, rowKey, route)),
     onEditLocationDescription: (newValue, rowKey) =>
-      dispatch(BasePageActions.editLocationDescription(newValue, rowKey, route)),
+      dispatch(PageActions.editLocationDescription(newValue, rowKey, route)),
     onEditTransactionBatchName: (newValue, rowKey) =>
-      dispatch(BasePageActions.editTransactionBatchName(newValue, rowKey, route)),
+      dispatch(PageActions.editTransactionBatchName(newValue, rowKey, route)),
     onEditBatchDoses: (newValue, rowKey) =>
-      dispatch(BasePageActions.editBatchDoses(newValue, rowKey, route)),
+      dispatch(PageActions.editBatchDoses(newValue, rowKey, route)),
     onEditRequiredQuantityWithReason: (newValue, rowKey) =>
-      dispatch(
-        BasePageActions.editRequisitionItemRequiredQuantityWithReason(newValue, rowKey, route)
-      ),
+      dispatch(PageActions.editRequisitionItemRequiredQuantityWithReason(newValue, rowKey, route)),
     onEditRequiredQuantity: (newValue, rowKey) =>
-      dispatch(BasePageActions.editRequisitionItemRequiredQuantity(newValue, rowKey, route)),
+      dispatch(PageActions.editRequisitionItemRequiredQuantity(newValue, rowKey, route)),
     onEditTotalQuantity: (newValue, rowKey) =>
-      dispatch(BasePageActions.editTotalQuantity(newValue, rowKey, route)),
+      dispatch(PageActions.editTotalQuantity(newValue, rowKey, route)),
     onEditSuppliedQuantity: (newValue, rowKey) =>
-      dispatch(BasePageActions.editSuppliedQuantity(newValue, rowKey, route)),
+      dispatch(PageActions.editSuppliedQuantity(newValue, rowKey, route)),
     onEditDate: (date, rowKey) =>
-      dispatch(BasePageActions.editTransactionBatchExpiryDate(date, rowKey, route)),
+      dispatch(PageActions.editTransactionBatchExpiryDate(date, rowKey, route)),
     onEditBatch: rowKey =>
-      dispatch(BasePageActions.openModal(MODAL_KEYS.EDIT_STOCKTAKE_BATCH, rowKey, route)),
+      dispatch(PageActions.openModal(MODAL_KEYS.EDIT_STOCKTAKE_BATCH, rowKey, route)),
     onEditSellPrice: (newValue, rowKey) =>
-      dispatch(BasePageActions.editSellPrice(newValue, rowKey, route)),
+      dispatch(PageActions.editSellPrice(newValue, rowKey, route)),
     dispatch,
   };
 

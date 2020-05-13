@@ -7,7 +7,7 @@ import Realm from 'realm';
 import { complement } from 'set-manipulator';
 
 import { addBatchToParent, createRecord, getTotal } from '../utilities';
-import { modalStrings } from '../../localization';
+import { generalStrings, modalStrings } from '../../localization';
 
 /**
  * A stocktake.
@@ -137,6 +137,22 @@ export class Stocktake extends Realm.Object {
    */
   get isFinalised() {
     return this.status === 'finalised';
+  }
+
+  /**
+   * Get if stocktake is associated with a program,
+   */
+  get hasProgram() {
+    return !!this.program;
+  }
+
+  /*
+   * Get name of stocktake program.
+   *
+   * @return  {string}
+   */
+  get programName() {
+    return this.hasProgram ? this.program.name : generalStrings.not_available;
   }
 
   /**

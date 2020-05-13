@@ -10,7 +10,7 @@ import { View, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
-import { getItemLayout, getPageDispatchers, getColumns } from './dataTableUtilities';
+import { getColumns, getItemLayout, getPageDispatchers } from './dataTableUtilities';
 import { ROUTES } from '../navigation/constants';
 
 import { DataTablePageModal } from '../widgets/modals';
@@ -220,10 +220,13 @@ const mapStateToProps = state => {
   const { pages, modules } = state;
   const { customerInvoice } = pages;
   const { usingVaccines } = modules;
-
-  const columnKey = usingVaccines ? ROUTES.CUSTOMER_INVOICE_WITH_VACCINES : ROUTES.CUSTOMER_INVOICE;
-
-  return { ...customerInvoice, columns: getColumns(columnKey) };
+  const { pageObject } = customerInvoice ?? {};
+  const { isCredit = false } = pageObject ?? {};
+  if (isCredit) return { ...customerInvoice, columns: getColumns(ROUTES.CUSTOMER_CREDIT) };
+  if (usingVaccines) {
+    return { ...customerInvoice, columns: getColumns(ROUTES.CUSTOMER_INVOICE_WITH_VACCINES) };
+  }
+  return { ...customerInvoice, columns: getColumns(ROUTES.CUSTOMER_INVOICE) };
 };
 
 export const CustomerInvoicePage = connect(mapStateToProps, mapDispatchToProps)(CustomerInvoice);

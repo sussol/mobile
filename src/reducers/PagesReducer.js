@@ -8,6 +8,7 @@ import getPageInitialiser from '../pages/dataTableUtilities/getPageInitialiser';
 
 /**
  * Redux reducer controlling the `pages` field.
+ *
  * @param {Object} state  Redux state, `pages` field.
  * @param {Object} action An action object, following the FSA-standard for action objects
  */
@@ -27,7 +28,7 @@ export const PagesReducer = (state = {}, action) => {
       const { pageObject } = params;
 
       const pageInitialiser = getPageInitialiser(routeName);
-      const pageInitialState = pageInitialiser?.(pageObject);
+      const pageInitialState = pageInitialiser(pageObject);
 
       return { ...state, [routeName]: pageInitialState, currentRoute: routeName };
     }

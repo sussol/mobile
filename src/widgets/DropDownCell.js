@@ -36,14 +36,13 @@ const DropDownCell = React.memo(
 
     const TouchableChild = () => (
       <View style={{ flexDirection: 'row' }}>
+        <View style={dropDownCellIconContainer}>
+          <ExpandIcon />
+        </View>
         <View style={dropDownCellTextContainer}>
           <Text numberOfLines={1} ellipsizeMode="tail" style={internalFontStyle}>
             {value || placeholder}
           </Text>
-        </View>
-
-        <View style={dropDownCellIconContainer}>
-          <ExpandIcon />
         </View>
       </View>
     );

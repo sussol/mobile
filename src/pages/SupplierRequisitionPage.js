@@ -103,7 +103,7 @@ const SupplierRequisition = ({
   const runWithLoadingIndicator = useLoadingIndicator();
 
   const usingReasons = !!UIDatabase.objects('RequisitionReason').length;
-  const onAddMasterLists = React.useCallback(selected => onApplyMasterLists(pageObject, selected), [
+  const onAddMasterLists = React.useCallback(selected => onApplyMasterLists(selected, pageObject), [
     pageObject,
   ]);
 

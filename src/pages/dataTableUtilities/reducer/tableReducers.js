@@ -215,10 +215,9 @@ export const toggleIndicators = state => {
 export const selectIndicator = (state, action) => {
   const { payload } = action;
   const { indicatorCode } = payload;
-
   const { indicators } = state;
 
-  const [currentIndicator] = indicators.filtered('code == $0', indicatorCode);
+  const currentIndicator = indicators.find(indicator => indicator.code === indicatorCode);
   const indicatorColumns = currentIndicator?.columns;
   const indicatorRows = currentIndicator?.rows;
 

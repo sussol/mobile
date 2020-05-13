@@ -96,6 +96,15 @@ export class Name extends Realm.Object {
   }
 
   /**
+   * Get if this name record can be edited.
+   *
+   * @return  {boolean}
+   */
+  get isEditable() {
+    return this.thisStoresPatient;
+  }
+
+  /**
    * Add master list to name, if it has not already been added.
    *
    * @param  {MasterList}  masterList

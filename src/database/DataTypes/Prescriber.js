@@ -1,6 +1,10 @@
 import Realm from 'realm';
 
-export class Prescriber extends Realm.Object {}
+export class Prescriber extends Realm.Object {
+  get isEditable() {
+    return this.fromThisStore;
+  }
+}
 
 Prescriber.schema = {
   name: 'Prescriber',

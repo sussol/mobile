@@ -28,7 +28,7 @@ export const selectUsingSupplierCreditCategories = ({ modules }) => {
   return usingSupplierCreditCategories;
 };
 
-export const selectHideSnapshotColumn = ({ modules }) => {
+export const selectUsingHideSnapshotColumn = ({ modules }) => {
   const { usingHideSnapshotColumn } = modules;
   return usingHideSnapshotColumn;
 };

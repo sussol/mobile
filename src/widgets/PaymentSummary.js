@@ -15,7 +15,7 @@ import { Separator } from './Separator';
 import { CurrencyInputRow } from './CurrencyInputRow';
 import { FlexRow } from './FlexRow';
 import { CircleButton } from './CircleButton';
-import { PencilIcon, AddIcon } from './icons';
+import { PencilIcon, AddIcon, BookIcon } from './icons';
 import { DropDown } from './DropDown';
 
 import { UIDatabase } from '../database';
@@ -30,7 +30,7 @@ import {
 import { selectPatientInsurancePolicies, selectAvailableCredit } from '../selectors/patient';
 
 import { InsuranceActions } from '../actions/InsuranceActions';
-import { selectInsuranceDiscountRate } from '../selectors/insurance';
+import { selectInsuranceDiscountRate, selectCanEditInsurancePolicy } from '../selectors/insurance';
 import { selectUsingPaymentTypes } from '../selectors/modules';
 
 import { dispensingStrings } from '../localization';
@@ -41,13 +41,14 @@ const paymentState = state => {
   const { usingInsurance } = modules;
   const { isComplete } = wizard;
   const { paymentAmount, creditOverflow, paymentType } = payment;
-  const { selectedInsurancePolicy, currentInsurancePolicy } = insurance;
+  const { selectedInsurancePolicy } = insurance;
 
   const subtotal = selectPrescriptionSubTotal(state);
   const total = selectPrescriptionTotal(state);
   const creditUsed = selectCreditBeingUsed(state);
   const availableCredit = selectAvailableCredit(state);
   const insurancePolicies = selectPatientInsurancePolicies(state);
+  const isPolicyEditable = selectCanEditInsurancePolicy(state);
   const paymentTypes = UIDatabase.objects('PaymentType').sorted('description');
   const discountRate = selectInsuranceDiscountRate(state);
   const discountAmount = selectDiscountAmount(state);
@@ -56,7 +57,6 @@ const paymentState = state => {
 
   return {
     usingPaymentTypes,
-    currentInsurancePolicy,
     discountRate,
     discountAmount,
     subtotal,
@@ -69,6 +69,7 @@ const paymentState = state => {
     paymentTypes,
     paymentType,
     selectedInsurancePolicy,
+    isPolicyEditable,
     availableCredit,
     changeRequired,
     usingInsurance,
@@ -100,6 +101,7 @@ const PaymentSummaryComponent = ({
   choosePaymentType,
   paymentType,
   selectedInsurancePolicy,
+  isPolicyEditable,
   editPolicy,
   newPolicy,
   discountRate,
@@ -144,7 +146,10 @@ const PaymentSummaryComponent = ({
               style={localStyles.dropdown}
             />
             {!!selectedInsurancePolicy && (
-              <CircleButton IconComponent={PencilIcon} onPress={editPolicy} />
+              <CircleButton
+                IconComponent={isPolicyEditable ? PencilIcon : BookIcon}
+                onPress={editPolicy}
+              />
             )}
             <CircleButton IconComponent={AddIcon} onPress={newPolicy} />
           </FlexRow>
@@ -223,6 +228,7 @@ const PaymentSummaryComponent = ({
 PaymentSummaryComponent.defaultProps = {
   paymentType: null,
   selectedInsurancePolicy: null,
+  isPolicyEditable: false,
   creditOverflow: false,
 };
 
@@ -237,6 +243,7 @@ PaymentSummaryComponent.propTypes = {
   insurancePolicies: PropTypes.array.isRequired,
   choosePolicy: PropTypes.func.isRequired,
   selectedInsurancePolicy: PropTypes.object,
+  isPolicyEditable: PropTypes.bool,
   editPolicy: PropTypes.func.isRequired,
   newPolicy: PropTypes.func.isRequired,
   paymentTypes: PropTypes.object.isRequired,

@@ -5,24 +5,23 @@
  */
 
 import React, { useCallback, useEffect, useMemo } from 'react';
-import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
-import { selectStocktakeEditor, selectStocktakeEditorColumns } from '../selectors/pages';
-
-import { MODAL_KEYS } from '../utilities';
-import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
-
-import { DataTablePageModal } from '../widgets/modals';
-import { PageButton, PageInfo, DataTablePageView, SearchBar } from '../widgets';
-import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
-
-import { buttonStrings, generalStrings } from '../localization';
-import globalStyles from '../globalStyles';
 
 import { UIDatabase } from '../database';
 import { ROUTES } from '../navigation/constants';
+import { MODAL_KEYS } from '../utilities';
+
+import { selectStocktakeEditor, selectStocktakeEditorColumns } from '../selectors/pages';
+import { PageActions, getItemLayout, getPageDispatchers } from './dataTableUtilities';
+
+import { PageButton, PageInfo, DataTablePageView, SearchBar } from '../widgets';
+import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+import { DataTablePageModal } from '../widgets/modals';
+
+import { buttonStrings, generalStrings } from '../localization';
+import globalStyles from '../globalStyles';
 
 /**
  * Renders a mSupply page with a stocktake loaded for editing
@@ -111,7 +110,6 @@ export const StocktakeEdit = ({
         return onConfirmBatchEdit;
       case MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM:
         return onResetStocktake;
-      case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
       case MODAL_KEYS.STOCKTAKE_REASON:
         return onApplyReason;
       default:
@@ -202,14 +200,13 @@ const mapDispatchToProps = dispatch => {
   const hasNegativeAdjustmentReasons = UIDatabase.objects('NegativeAdjustmentReason').length > 0;
   const hasPositiveAdjustmentReasons = UIDatabase.objects('PositiveAdjustmentReason').length > 0;
   const usesReasons = hasNegativeAdjustmentReasons && hasPositiveAdjustmentReasons;
-  const editQuantity = usesReasons
+  const onEditCountedQuantity = usesReasons
     ? PageActions.editCountedQuantityWithReason
     : PageActions.editCountedQuantity;
-
   return {
     ...getPageDispatchers(dispatch, 'Stocktake', ROUTES.STOCKTAKE_EDITOR),
     onEditCountedQuantity: (newValue, rowKey) =>
-      dispatch(editQuantity(newValue, rowKey, ROUTES.STOCKTAKE_EDITOR)),
+      dispatch(onEditCountedQuantity(newValue, rowKey, ROUTES.STOCKTAKE_EDITOR)),
   };
 };
 

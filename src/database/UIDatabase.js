@@ -15,13 +15,14 @@ const { THIS_STORE_NAME_ID } = SETTINGS_KEYS;
 
 const translateToCoreDatabaseType = type => {
   switch (type) {
-    case 'CustomerInvoice':
-    case 'Prescription':
-    case 'SupplierInvoice':
-    case 'Receipt':
-    case 'CustomerCredit':
-    case 'Payment':
     case 'CashTransaction':
+    case 'CustomerCredit':
+    case 'CustomerInvoice':
+    case 'CustomerTransaction':
+    case 'Payment':
+    case 'Prescription':
+    case 'Receipt':
+    case 'SupplierInvoice':
     case 'SupplierTransaction':
       return 'Transaction';
     case 'CashTransactionName':
@@ -148,6 +149,10 @@ class UIDatabase {
     const thisStoreNameId = thisStoreNameIdSetting && thisStoreNameIdSetting.value;
 
     switch (type) {
+      case 'CashTransaction':
+        return results.filtered('type == $0 OR type == $1', 'receipt', 'payment');
+      case 'CustomerCredit':
+        return results.filtered('type == $0', 'customer_credit');
       case 'CustomerInvoice':
         // Only show invoices generated from requisitions once finalised.
         return results.filtered(
@@ -155,6 +160,37 @@ class UIDatabase {
           'customer_invoice',
           null,
           'finalised'
+        );
+      case 'CustomerTransaction': {
+        const creditQueryString = 'type == $0';
+        const invoiceQueryString = 'type == $1 AND (linkedRequisition == $2 OR status == $3)';
+        const queryString = `${creditQueryString} OR ${invoiceQueryString}`;
+        return results.filtered(
+          queryString,
+          'customer_credit',
+          'customer_invoice',
+          null,
+          'finalised'
+        );
+      }
+      case 'Payment':
+        return results.filtered('type == $0', 'payment');
+      case 'Prescription':
+        return results.filtered(
+          'type == $0 AND otherParty.type == $1 AND (linkedRequisition == $2 OR status == $3)',
+          'customer_invoice',
+          'patient',
+          null,
+          'finalised'
+        );
+      case 'Receipt':
+        return results.filtered('type == $0', 'receipt');
+      case 'SupplierInvoice':
+        return results.filtered(
+          'type == $0 AND mode == $1 AND otherParty.type != $2',
+          'supplier_invoice',
+          'store',
+          'inventory_adjustment'
         );
       case 'SupplierTransaction': {
         const queryString =
@@ -170,27 +206,13 @@ class UIDatabase {
           'inventory_adjustment'
         );
       }
-      case 'SupplierInvoice':
-        return results.filtered(
-          'type == $0 AND mode == $1 AND otherParty.type != $2',
-          'supplier_invoice',
-          'store',
-          'inventory_adjustment'
-        );
-      case 'Receipt':
-        return results.filtered('type == $0', 'receipt');
-      case 'Payment':
-        return results.filtered('type == $0', 'payment');
-      case 'CashTransaction':
-        return results.filtered('type == $0 OR type == $1', 'receipt', 'payment');
       case 'CashTransactionName':
         return results
           .filtered('isVisible == true && id != $0', thisStoreNameId)
           .filtered('isSupplier == true || isCustomer == true || isPatient == true');
       case 'CashTransactionReason':
         return results.filtered('type == $0', 'newCashOutTransaction');
-      case 'CustomerCredit':
-        return results.filtered('type == $0', 'customer_credit');
+
       case 'Policy':
         return results.filtered(
           'insuranceProvider.isActive == $0 && expiryDate > $1',
@@ -231,14 +253,6 @@ class UIDatabase {
         return results.filtered('type == $0 && isActive == true', 'negativeInventoryAdjustment');
       case 'PositiveAdjustmentReason':
         return results.filtered('type == $0 && isActive == true', 'positiveInventoryAdjustment');
-      case 'Prescription':
-        return results.filtered(
-          'type == $0 AND otherParty.type == $1 AND (linkedRequisition == $2 OR status == $3)',
-          'customer_invoice',
-          'patient',
-          null,
-          'finalised'
-        );
       case 'PrescriptionCategory':
         return results.filtered('type == $0', 'prescription');
       case 'SupplierCreditCategory':

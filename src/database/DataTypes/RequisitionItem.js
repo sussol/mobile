@@ -195,9 +195,8 @@ export class RequisitionItem extends Realm.Object {
     });
   }
 
-  get validateReason() {
+  get hasValidReason() {
     if (!this.option && this.hasVariance) return false;
-
     return true;
   }
 

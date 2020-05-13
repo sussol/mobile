@@ -96,9 +96,15 @@ HistoryIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
 export const ChevronRightIcon = () => (
   <FA5Icon name="chevron-right" color={SUSSOL_ORANGE} size={20} />
 );
-
 export const FavouriteStarIcon = () => <FAIcon name="star-o" color={SUSSOL_ORANGE} size={20} />;
 export const BurgerMenuIcon = () => <EntypoIcon name="menu" color={SUSSOL_ORANGE} size={30} />;
+
+export const BookIcon = ({ color, size }) => (
+  <EntypoIcon name="open-book" color={color} size={size} />
+);
+BookIcon.defaultProps = { color: WHITE, size: 20 };
+BookIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
+
 export const AddIcon = ({ size, color }) => <IonIcon name="ios-add" size={size} color={color} />;
 AddIcon.defaultProps = { color: WHITE, size: 30 };
 AddIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };

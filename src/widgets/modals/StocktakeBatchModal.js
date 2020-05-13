@@ -4,14 +4,18 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect, batch } from 'react-redux';
 
+import { ROUTES } from '../../navigation/constants';
+import { MODALS } from '../constants';
+
 import { MODAL_KEYS, getModalTitle } from '../../utilities';
 import { usePageReducer } from '../../hooks';
 import { getItemLayout } from '../../pages/dataTableUtilities';
+import { COLUMN_KEYS } from '../../pages/dataTableUtilities/constants';
 
 import { GenericChoiceList } from '../modalChildren/GenericChoiceList';
 import { PageInfo, DataTablePageView, PageButton } from '..';
@@ -22,9 +26,8 @@ import globalStyles from '../../globalStyles';
 import { UIDatabase } from '../../database';
 import { ModalContainer } from './ModalContainer';
 import { buttonStrings } from '../../localization';
-import { ROUTES } from '../../navigation/constants';
 
-import { selectUsingPayments } from '../../selectors/modules';
+import { selectUsingPayments, selectUsingHideSnapshotColumn } from '../../selectors/modules';
 import { AutocompleteSelector } from '../modalChildren';
 import { BreachActions } from '../../actions/BreachActions';
 
@@ -42,15 +45,28 @@ import { BreachActions } from '../../actions/BreachActions';
  * holding the state of a given row. Each object has the shape :
  * { isSelected, isFocused, isDisabled },
  *
- * @prop {Object} stocktakeItem The realm transaction object for this invoice.
+ * @prop {Object} stocktakeItem The realm transsingHaction object for this invoice.
  * @prop {Object} page the current routeName for this modal.
  *
  */
-export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: reduxDispatch }) => {
-  const initialState = {
-    page,
-    pageObject: stocktakeItem,
-  };
+export const StocktakeBatchModalComponent = ({
+  stocktakeItem,
+  usingPayments,
+  usingReasons,
+  usingVaccines,
+  usingHideSnapshotColumn,
+  dispatch: reduxDispatch,
+}) => {
+  const initialState = useMemo(() => {
+    const pageObject = stocktakeItem;
+    if (usingVaccines) return { page: MODALS.STOCKTAKE_BATCH_EDIT_WITH_VACCINES, pageObject };
+    if (usingReasons && usingPayments) {
+      return { page: MODALS.STOCKTAKE_BATCH_EDIT_WITH_REASONS_AND_PRICES, pageObject };
+    }
+    if (usingReasons) return { page: MODALS.STOCKTAKE_BATCH_EDIT_WITH_REASONS, pageObject };
+    if (usingPayments) return { page: MODALS.STOCKTAKE_BATCH_EDIT_WITH_PAYMENTS, pageObject };
+    return { page: MODALS.STOCKTAKE_BATCH_EDIT, pageObject };
+  }, [stocktakeItem, usingPayments, usingReasons]);
 
   const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
@@ -64,10 +80,14 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: re
     modalValue,
     keyExtractor,
     PageActions,
-    columns,
+    columns: pageColumns,
     getPageInfoColumns,
     suppliers,
   } = state;
+
+  const columns = usingHideSnapshotColumn
+    ? pageColumns.filter(({ key }) => key !== COLUMN_KEYS.SNAPSHOT_TOTAL_QUANTITY)
+    : pageColumns;
 
   const { stocktake = {} } = stocktakeItem;
   const { isFinalised = false } = stocktake;
@@ -77,6 +97,10 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: re
     difference > 0
       ? UIDatabase.objects('PositiveAdjustmentReason')
       : UIDatabase.objects('NegativeAdjustmentReason');
+
+  const editStocktakeBatchCountedQuantity = usingReasons
+    ? PageActions.editStocktakeBatchCountedQuantityWithReason
+    : PageActions.editStocktakeBatchCountedQuantity;
 
   const onEditSupplier = value => dispatch(PageActions.editBatchSupplier(value, modalValue));
   const onSelectSupplier = rowKey =>
@@ -93,7 +117,7 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: re
     });
   const onEditCountedQuantity = (newValue, rowKey, columnKey) =>
     batch(() => {
-      dispatch(PageActions.editStocktakeBatchCountedQuantity(newValue, rowKey, columnKey));
+      dispatch(editStocktakeBatchCountedQuantity(newValue, rowKey, columnKey));
       reduxDispatch(PageActions.refreshRow(stocktakeItem.id, ROUTES.STOCKTAKE_EDITOR));
     });
   const onEditDate = (date, rowKey, columnKey) =>
@@ -251,7 +275,7 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: re
         initialNumToRender={0}
       />
       <ModalContainer
-        fullScreen={modalKey === MODAL_KEYS.ENFORCE_STOCKTAKE_REASON}
+        fullScreen={false}
         isVisible={!!modalKey}
         onClose={onCloseModal}
         title={getModalTitle(modalKey)}
@@ -264,27 +288,21 @@ export const StocktakeBatchModalComponent = ({ stocktakeItem, page, dispatch: re
 
 StocktakeBatchModalComponent.propTypes = {
   stocktakeItem: PropTypes.object.isRequired,
-  page: PropTypes.string.isRequired,
+  usingPayments: PropTypes.bool.isRequired,
+  usingReasons: PropTypes.bool.isRequired,
+  usingVaccines: PropTypes.bool.isRequired,
+  usingHideSnapshotColumn: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const { stocktakeItem } = ownProps;
-  const { isVaccine } = stocktakeItem;
-  const usingPaymentsModule = selectUsingPayments(state);
+  const usingPayments = selectUsingPayments(state);
   const usingReasons =
     UIDatabase.objects('NegativeAdjustmentReason').length > 0 &&
     UIDatabase.objects('PositiveAdjustmentReason').length > 0;
-
-  if (isVaccine) return { page: 'stocktakeBatchEditModalWithVaccines' };
-
-  if (usingReasons) {
-    if (usingPaymentsModule) return { page: 'stocktakeBatchEditModalWithReasonsAndPrices' };
-    return { page: 'stocktakeBatchEditModalWithReasons' };
-  }
-
-  if (usingPaymentsModule) return { page: 'stocktakeBatchEditModalWithPrices' };
-  return { page: 'stocktakeBatchEditModal' };
+  const { isVaccine: usingVaccines = false } = ownProps?.stocktakeItem ?? {};
+  const usingHideSnapshotColumn = selectUsingHideSnapshotColumn(state);
+  return { usingPayments, usingReasons, usingVaccines, usingHideSnapshotColumn };
 };
 
 export const StocktakeBatchModal = connect(mapStateToProps)(StocktakeBatchModalComponent);
