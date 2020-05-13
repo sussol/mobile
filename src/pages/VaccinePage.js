@@ -43,7 +43,7 @@ export const VaccinePageComponent = ({
         maxDomain={maxDomain}
         minDomain={minDomain}
         onSelectFridge={onSelectFridge}
-        isActive={item.id === selectedFridge.id}
+        isActive={item.id === selectedFridge?.id}
         onOpenBreachModal={onOpenBreachModal}
       />
     ),
@@ -75,9 +75,8 @@ export const VaccinePageComponent = ({
 const mapStateToProps = state => {
   const { fridge } = state;
   const { fridges, selectedFridge } = fridge;
-  const { breaches } = selectBreaches(state);
+  const breaches = selectBreaches(state);
   const isAdmin = selectCurrentUserIsAdmin(state);
-
   const { minLine, maxLine } = selectMinAndMaxLogs(state);
   const { minDomain, maxDomain } = selectMinAndMaxDomains(state);
   return {
