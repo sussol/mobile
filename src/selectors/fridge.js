@@ -89,7 +89,7 @@ export const selectMinAndMaxDomains = createSelector(selectMinAndMaxLogs, minAnd
 });
 
 export const selectBreaches = createSelector([selectSelectedFridge], fridge => {
-  const { breaches } = fridge;
+  const { breaches } = fridge ?? {};
 
   return breaches;
 });
