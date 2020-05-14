@@ -83,7 +83,7 @@ export const RECORD_TYPES = new SyncTranslator({
   LocationMovement: 'location_movement',
   TemperatureLog: 'temperature_log',
   TemperatureBreach: 'temperature_breach',
-  TemperatureBreachConfiguration: 'temperature_breach_configuration',
+  TemperatureBreachConfiguration: 'temperature_breach_config',
 });
 
 export const REQUISITION_TYPES = new SyncTranslator({

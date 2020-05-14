@@ -245,20 +245,20 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       canBeBlank: [],
     },
     TemperatureLog: {
-      cannotBeBlank: ['temperature', 'date', 'time', 'location_ID'],
-      canBeBlank: ['breach_ID'],
+      cannotBeBlank: ['temperature', 'date', 'time', 'location_ID', 'store_ID'],
+      canBeBlank: ['temperature_breach_ID'],
     },
     TemperatureBreach: {
       cannotBeBlank: ['start_time', 'start_date', 'location_ID'],
       canBeBlank: ['end_time', 'end_date'],
     },
-    MovementLog: {
+    LocationMovement: {
       cannotBeBlank: ['item_line_ID', 'enter_time', 'enter_date', 'location_ID'],
       canBeBlank: ['exit_time', 'exit_date'],
     },
     VaccineVialMonitorStatus: {
       cannotBeBlank: [],
-      canBeBlank: ['description', 'code', 'level', 'isActive'],
+      canBeBlank: ['description', 'code', 'level', 'is_active'],
     },
     VaccineVialMonitorStatusLog: {
       cannotBeBlank: ['vaccine_vial_monitor_status_ID', 'item_line_ID', 'time', 'date'],
@@ -310,7 +310,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
  * @return  {none}
  */
 export const createOrUpdateRecord = (database, settings, recordType, record) => {
-  if (!sanityCheckIncomingRecord(recordType, record)) return; // Unsupported or malformed record.
+  if (!sanityCheckIncomingRecord(recordType, record)) return;
   let internalRecord;
 
   switch (recordType) {
@@ -949,7 +949,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         temperature: parseNumber(record.temperature),
         timestamp: parseDate(record.date, record.time),
         location: database.getOrCreate('Location', record.location_ID),
-        breach: database.getOrCreate('TemperatureBreach', record.breach_ID),
+        breach: database.getOrCreate('TemperatureBreach', record.temperature_breach_ID),
       });
       break;
     }
@@ -959,6 +959,10 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         startTimestamp: parseDate(record.start_date, record.start_time),
         endTimestamp: parseDate(record.end_date, record.end_time),
         location: database.getOrCreate('Location', record.location_ID),
+        temperatureBreachConfiguration: database.getOrCreate(
+          'TemperatureBreachConfiguration',
+          record.temperature_breach_config_ID
+        ),
       });
       break;
     }
@@ -1008,7 +1012,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
     case 'Location': {
       database.update(recordType, {
         id: record.ID,
-        description: record.description,
+        description: record.Description,
         code: record.code,
         locationType: database.getOrCreate('LocationType', record.type_ID),
       });
@@ -1017,7 +1021,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
     case 'LocationType': {
       database.update(recordType, {
         id: record.ID,
-        description: record.description,
+        description: record.Description,
       });
       break;
     }
@@ -1050,7 +1054,9 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
 
 export const integrateRecord = (database, settings, syncRecord) => {
   // Ignore sync record if missing data, record type, sync type, or record ID.
+
   if (!syncRecord.RecordType || !syncRecord.SyncType) return;
+
   const syncType = syncRecord.SyncType;
   const recordType = syncRecord.RecordType;
   const changeType = SYNC_TYPES.translate(syncType, EXTERNAL_TO_INTERNAL);

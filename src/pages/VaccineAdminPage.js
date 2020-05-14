@@ -202,7 +202,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => {
-  const scanForSensors = () => dispatch(TemperatureSyncActions.scanForSensors());
+  const scanForSensors = () => dispatch(TemperatureSyncActions.startSensorScan());
 
   return { ...getPageDispatchers(dispatch, 'Location', ROUTES.VACCINES_ADMIN), scanForSensors };
 };
