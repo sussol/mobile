@@ -39,7 +39,6 @@ export const MODAL_KEYS = {
 };
 
 export const getModalTitle = modalKey => {
-  console.log(modalKey);
   switch (modalKey) {
     default:
       return '';
