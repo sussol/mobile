@@ -1091,7 +1091,6 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'Location': {
-      console.log(record);
       database.update(recordType, {
         id: record.ID,
         description: record.Description,
