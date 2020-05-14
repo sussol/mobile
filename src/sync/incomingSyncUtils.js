@@ -345,7 +345,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     },
     VaccineVialMonitorStatus: {
       cannotBeBlank: [],
-      canBeBlank: ['description', 'code', 'level', 'isActive'],
+      canBeBlank: ['description', 'code', 'level', 'is_active'],
     },
     VaccineVialMonitorStatusLog: {
       cannotBeBlank: ['vaccine_vial_monitor_status_ID', 'item_line_ID', 'time', 'date'],
