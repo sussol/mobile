@@ -57,7 +57,10 @@ export class Synchroniser {
     this.settings = settings;
     this.syncQueue = new SyncQueue(this.database);
     this.dispatch = dispatch;
-    this.extraHeaders = { 'msupply-site-uuid': DeviceInfo.getUniqueId() };
+    this.extraHeaders = {
+      'msupply-site-uuid': DeviceInfo.getUniqueId(),
+      'mobile-version': '5.0.0',
+    };
     this.refreshSyncParams();
     if (this.isInitialised()) this.syncQueue.enable();
   }
