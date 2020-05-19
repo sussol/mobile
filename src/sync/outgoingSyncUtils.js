@@ -360,6 +360,7 @@ export const generateSyncJson = (database, settings, syncOutRecord) => {
         content.syncSite = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
         content.record = syncOutRecord;
       });
+      error.canDeleteSyncOut = true;
       throw error;
     }
     if (recordResults.length > 1) {
