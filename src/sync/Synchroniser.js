@@ -6,10 +6,7 @@
 /* eslint-disable no-await-in-loop */
 
 import DeviceInfo from 'react-native-device-info';
-
 import { Client as BugsnagClient } from 'bugsnag-react-native';
-
-import { syncStrings } from '../localization/index';
 
 import {
   incrementSyncProgress,
@@ -20,11 +17,14 @@ import {
   setSyncIsSyncing,
   setSyncCompletionTime,
 } from '../actions';
+import { syncStrings } from '../localization';
 import { integrateRecord } from './incomingSyncUtils';
 import { generateSyncJson } from './outgoingSyncUtils';
 import { SyncDatabase } from './SyncDatabase';
 import { SyncQueue } from './SyncQueue';
 import { SETTINGS_KEYS } from '../settings';
+
+import { version as mobileVersion } from '../../package.json';
 
 const bugsnagClient = new BugsnagClient();
 
@@ -59,8 +59,9 @@ export class Synchroniser {
     this.dispatch = dispatch;
     this.extraHeaders = {
       'msupply-site-uuid': DeviceInfo.getUniqueId(),
-      'mobile-version': '5.0.0',
+      'mobile-version': mobileVersion,
     };
+    console.log(this.extraHeaders);
     this.refreshSyncParams();
     if (this.isInitialised()) this.syncQueue.enable();
   }
