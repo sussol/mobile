@@ -631,7 +631,7 @@ const createInventoryAdjustment = (database, user, date, isAddition) => {
  */
 const createItemBatch = (database, item, batchString, supplier) => {
   // Handle cross-reference items.
-  const { realItem } = item;
+  const { realItem, isVaccine } = item;
 
   const itemBatch = database.create('ItemBatch', {
     id: generateUUID(),
@@ -646,6 +646,14 @@ const createItemBatch = (database, item, batchString, supplier) => {
 
   realItem.addBatch(itemBatch);
   database.save('Item', realItem);
+
+  // If this item batch is for an underlying vaccine item, auto apply a VVM status
+  if (isVaccine) {
+    const vaccineVialMonitorStatus = database
+      .objects('VaccineVialMonitorStatus')
+      .sorted('level')[0];
+    itemBatch.applyVvmStatus(database, vaccineVialMonitorStatus);
+  }
 
   return itemBatch;
 };
@@ -785,7 +793,19 @@ const createStocktakeItem = (database, stocktake, item) => {
  * @return  {StocktakeBatch}
  */
 const createStocktakeBatch = (database, stocktakeItem, itemBatch) => {
-  const { numberOfPacks, supplier, packSize, expiryDate, batch, costPrice, sellPrice } = itemBatch;
+  const {
+    numberOfPacks,
+    item,
+    supplier,
+    packSize,
+    expiryDate,
+    batch,
+    costPrice,
+    sellPrice,
+  } = itemBatch;
+  const { isVaccine } = item;
+
+  const vaccineVialMonitorStatus = database.objects('VaccineVialMonitorStatus').sorted('level')[0];
 
   const stocktakeBatch = database.create('StocktakeBatch', {
     id: generateUUID(),
@@ -799,6 +819,9 @@ const createStocktakeBatch = (database, stocktakeItem, itemBatch) => {
     costPrice,
     sellPrice,
     sortIndex: (stocktakeItem?.stocktake?.numberOfBatches || 0) + 1 || 1,
+
+    // If the underlying item is a vaccine, auto apply a VVM status
+    vaccineVialMonitorStatus: isVaccine ? vaccineVialMonitorStatus : null,
   });
 
   stocktakeItem.addBatch(stocktakeBatch);
@@ -847,6 +870,8 @@ const createSupplierInvoice = (database, supplier, user) => {
 const createTransactionBatch = (database, transactionItem, itemBatch, isAddition = true) => {
   const { item, batch, expiryDate, packSize, costPrice, sellPrice, donor } = itemBatch;
   const { transaction, note } = transactionItem || {};
+  const vaccineVialMonitorStatus = database.objects('VaccineVialMonitorStatus').sorted('level')[0];
+  const { isVaccine } = item;
 
   const transactionBatch = database.create('TransactionBatch', {
     id: generateUUID(),
@@ -864,6 +889,9 @@ const createTransactionBatch = (database, transactionItem, itemBatch, isAddition
     transaction,
     type: isAddition ? 'stock_in' : 'stock_out',
     sortIndex: (transactionItem?.transaction?.numberOfBatches || 0) + 1 || 1,
+
+    // If the underlying item is a vaccine, auto apply a VVM status.
+    vaccineVialMonitorStatus: isVaccine ? vaccineVialMonitorStatus : null,
   });
 
   transactionItem.addBatch(transactionBatch);
