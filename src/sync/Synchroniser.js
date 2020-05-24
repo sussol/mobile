@@ -61,7 +61,6 @@ export class Synchroniser {
       'msupply-site-uuid': DeviceInfo.getUniqueId(),
       'mobile-version': mobileVersion,
     };
-    console.log(this.extraHeaders);
     this.refreshSyncParams();
     if (this.isInitialised()) this.syncQueue.enable();
   }
