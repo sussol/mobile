@@ -631,7 +631,7 @@ const createInventoryAdjustment = (database, user, date, isAddition) => {
  */
 const createItemBatch = (database, item, batchString, supplier) => {
   // Handle cross-reference items.
-  const { realItem, isVaccine } = item;
+  const { realItem, isVaccine, id: itemId } = item;
 
   const itemBatch = database.create('ItemBatch', {
     id: generateUUID(),
@@ -649,9 +649,22 @@ const createItemBatch = (database, item, batchString, supplier) => {
 
   // If this item batch is for an underlying vaccine item, auto apply a VVM status
   if (isVaccine) {
+    // Find a VVM Status with the lowest level to auto assign to new item batches.
     const vaccineVialMonitorStatus = database
       .objects('VaccineVialMonitorStatus')
       .sorted('level')[0];
+
+    // An item has a restriction of the location type a location must be related to,
+    // in order to be assigned to the item.
+    const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
+    const itemStoreJoin = database
+      .objects('ItemStoreJoin')
+      .filtered('itemId == $0 && storeId == $1', itemId, thisStoreId)[0];
+    const { restrictedLocationType } = itemStoreJoin ?? {};
+    const { id: locationTypeId = '' } = restrictedLocationType ?? {};
+    const location = database.objects('Location').filtered('locationType.id == $0', locationTypeId);
+
+    itemBatch.applyLocation(database, location);
     itemBatch.applyVvmStatus(database, vaccineVialMonitorStatus);
   }
 
@@ -802,6 +815,7 @@ const createStocktakeBatch = (database, stocktakeItem, itemBatch) => {
     batch,
     costPrice,
     sellPrice,
+    location,
   } = itemBatch;
   const { isVaccine } = item;
 
@@ -818,6 +832,7 @@ const createStocktakeBatch = (database, stocktakeItem, itemBatch) => {
     batch,
     costPrice,
     sellPrice,
+    location,
     sortIndex: (stocktakeItem?.stocktake?.numberOfBatches || 0) + 1 || 1,
 
     // If the underlying item is a vaccine, auto apply a VVM status
@@ -868,7 +883,7 @@ const createSupplierInvoice = (database, supplier, user) => {
  * @return  {TransactionBatch}
  */
 const createTransactionBatch = (database, transactionItem, itemBatch, isAddition = true) => {
-  const { item, batch, expiryDate, packSize, costPrice, sellPrice, donor } = itemBatch;
+  const { item, batch, expiryDate, packSize, costPrice, sellPrice, donor, location } = itemBatch;
   const { transaction, note } = transactionItem || {};
   const vaccineVialMonitorStatus = database.objects('VaccineVialMonitorStatus').sorted('level')[0];
   const { isVaccine } = item;
@@ -887,6 +902,7 @@ const createTransactionBatch = (database, transactionItem, itemBatch, isAddition
     sellPrice,
     donor,
     transaction,
+    location,
     type: isAddition ? 'stock_in' : 'stock_out',
     sortIndex: (transactionItem?.transaction?.numberOfBatches || 0) + 1 || 1,
 
