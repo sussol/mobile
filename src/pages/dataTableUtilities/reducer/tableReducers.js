@@ -284,7 +284,7 @@ export const toggleFridges = state => {
 };
 
 export const toggleSensors = state => {
-  const backingData = UIDatabase.objects('Sensor');
+  const backingData = UIDatabase.objects('Sensor').filtered('isActive == true');
   const data = backingData.slice();
 
   return {
