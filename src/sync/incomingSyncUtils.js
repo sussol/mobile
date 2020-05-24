@@ -266,7 +266,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     },
     Location: { cannotBeBlank: [], canBeBlank: ['Description', 'code', 'type_ID'] },
     LocationType: { cannotBeBlank: [], canBeBlank: ['Description'] },
-    Sensor: { cannotBeBlank: ['macAddress', 'name'], canBeBlank: ['batteryLevel'] },
+    Sensor: { cannotBeBlank: ['macAddress', 'name'], canBeBlank: ['batteryLevel', 'is_active'] },
     TemperatureBreachConfiguration: {
       cannotBeBlank: [
         'minimum_temperature',
@@ -1032,6 +1032,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         location: database.getOrCreate('Location', record.locationID),
         batteryLevel: parseNumber(record.batteryLevel),
         name: record.name,
+        isActive: record.is_active,
       });
       break;
     }
