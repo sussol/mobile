@@ -58,7 +58,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.MAC_ADDRESS,
     COLUMN_NAMES.REMOVE,
   ],
-  fridges: [COLUMN_NAMES.EDITABLE_CODE, COLUMN_NAMES.DESCRIPTION, COLUMN_NAMES.REMOVE],
+  fridges: [COLUMN_NAMES.CODE, COLUMN_NAMES.DESCRIPTION, COLUMN_NAMES.EDIT],
 
   [ROUTES.SUPPLIER_INVOICE_WITH_VACCINES]: [
     COLUMN_NAMES.ITEM_CODE,
@@ -570,7 +570,7 @@ const COLUMNS = () => ({
   },
 
   [COLUMN_NAMES.DESCRIPTION]: {
-    type: COLUMN_TYPES.EDITABLE_STRING,
+    type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.DESCRIPTION,
     title: tableStrings.description,
     alignText: 'left',
@@ -868,6 +868,16 @@ const COLUMNS = () => ({
   },
 
   // ICON COLUMNS
+
+  [COLUMN_NAMES.EDIT]: {
+    type: COLUMN_TYPES.ICON,
+    key: COLUMN_KEYS.EDIT,
+    title: 'edit',
+    sortable: false,
+    alignText: 'center',
+    editable: false,
+    icon: 'pencil',
+  },
 
   [COLUMN_NAMES.BREACH]: {
     type: COLUMN_TYPES.ICON,

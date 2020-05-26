@@ -15,7 +15,7 @@ import { ROUTES } from '../../navigation/constants';
 import { SETTINGS_KEYS } from '../../settings';
 
 export const vaccinesAdminInitialiser = () => {
-  const backingData = UIDatabase.objects('Fridge');
+  const backingData = UIDatabase.objects('Location');
   const data = backingData.slice();
   const sortedData = sortDataBy(data, COLUMN_KEYS.CODE, false);
 
@@ -33,6 +33,7 @@ export const vaccinesAdminInitialiser = () => {
     route: ROUTES.VACCINES_ADMIN,
     dataSet: 'fridges',
     filterDataKeys: ['description', 'code'],
+    modalValue: null,
   };
 };
 
