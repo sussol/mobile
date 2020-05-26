@@ -35,6 +35,7 @@ export const MODAL_KEYS = {
   SELECT_MASTER_LISTS: 'selectMasterList',
   SELECT_LOCATION: 'selectLocation',
   SELECT_VVM_STATUS: 'selectVvmStatus',
+  EDIT_LOCATION: 'editLocation',
 };
 
 export const getModalTitle = modalKey => {
@@ -86,5 +87,7 @@ export const getModalTitle = modalKey => {
       return modalStrings.select_a_location;
     case MODAL_KEYS.SELECT_VVM_STATUS:
       return modalStrings.select_vvm_status;
+    case MODAL_KEYS.EDIT_LOCATION:
+      return 'Location Detail';
   }
 };
