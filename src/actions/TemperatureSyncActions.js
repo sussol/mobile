@@ -244,7 +244,7 @@ const syncTemperatures = () => async (dispatch, getState) => {
   const { temperatureSync } = getState();
   const { isSyncing } = temperatureSync;
 
-  const sensors = UIDatabase.objects('Sensor').filtered('location != null');
+  const sensors = UIDatabase.objects('Sensor').filtered('location != null && isActive == true');
   const { length: numberOfSensors } = sensors;
 
   if (isSyncing) return null;
