@@ -87,7 +87,5 @@ export const getModalTitle = modalKey => {
       return modalStrings.select_a_location;
     case MODAL_KEYS.SELECT_VVM_STATUS:
       return modalStrings.select_vvm_status;
-    case MODAL_KEYS.EDIT_LOCATION:
-      return 'Location Detail';
   }
 };
