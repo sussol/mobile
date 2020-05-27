@@ -4,7 +4,7 @@
  */
 import { batch } from 'react-redux';
 
-import { UIDatabase } from '../../../database/index';
+import { UIDatabase, generateUUID } from '../../../database';
 import { MODAL_KEYS } from '../../../utilities';
 import { ACTIONS } from './constants';
 import { selectPageObject, selectPageState } from '../../../selectors/pages';
@@ -214,6 +214,7 @@ export const saveLocation = (locationValues, route) => (dispatch, getState) => {
     const { id = '' } = modalValue ?? {};
     const location = UIDatabase.getOrCreate('Location', id);
     UIDatabase.update('Location', {
+      id: generateUUID(),
       ...location,
       ...locationValues,
     });
