@@ -8,7 +8,7 @@ import { UIDatabase } from '../database';
 import { FRIDGE_ACTIONS } from '../actions/FridgeActions';
 
 const initialState = () => {
-  const fridges = UIDatabase.objects('Fridge');
+  const fridges = UIDatabase.objects('Location');
 
   return {
     fridges,

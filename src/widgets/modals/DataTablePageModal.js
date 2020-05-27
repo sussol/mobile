@@ -229,7 +229,7 @@ const DataTablePageModalComponent = ({
         const { currentLocationName } = currentValue;
         return (
           <GenericChoiceList
-            data={UIDatabase.objects('Fridge')}
+            data={UIDatabase.objects('Location')}
             highlightValue={currentLocationName}
             onPress={onSelect}
             keyToDisplay="description"
