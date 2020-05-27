@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { ToastAndroid, View, StyleSheet, ActivityIndicator } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -16,8 +16,10 @@ import { DataTablePageModal, ModalContainer } from '../widgets/modals';
 import { recordKeyExtractor, getItemLayout, getPageDispatchers } from './dataTableUtilities';
 
 import { TemperatureSyncActions } from '../actions/TemperatureSyncActions';
+import { PageActions } from './dataTableUtilities/actions';
 import { selectIsSyncingTemperatures } from '../selectors/temperatureSync';
 
+import { UIDatabase } from '../database';
 import { ROUTES } from '../navigation';
 import { MODAL_KEYS } from '../utilities';
 
@@ -47,7 +49,6 @@ const VaccineAdminPageComponent = ({
   onCloseModal,
   modalValue,
   dispatch,
-  onAddFridge,
   onCheck,
   scanForSensors,
   isScanning,
@@ -114,7 +115,7 @@ const VaccineAdminPageComponent = ({
     }
   };
 
-  const onPress = dataSet === 'fridges' ? onAddFridge : scanForSensors;
+  const onPress = dataSet === 'fridges' ? onEditLocation : scanForSensors;
   const buttonText = dataSet === 'fridges' ? buttonStrings.add_fridge : buttonStrings.start_scan;
   const placeholderString =
     dataSet === 'fridges'
@@ -211,8 +212,19 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   const scanForSensors = () => dispatch(TemperatureSyncActions.startSensorScan());
+  const editLocation = rowKey =>
+    dispatch(PageActions.openModal(MODAL_KEYS.EDIT_LOCATION, rowKey, ROUTES.VACCINES_ADMIN));
 
-  return { ...getPageDispatchers(dispatch, 'Location', ROUTES.VACCINES_ADMIN), scanForSensors };
+  const hasLocationTypes = !UIDatabase.objects('LocationType').length;
+  const noLocationTypesToast = () =>
+    ToastAndroid.show(generalStrings.no_location_types, ToastAndroid.LONG);
+  const onEditLocation = hasLocationTypes ? editLocation : noLocationTypesToast;
+
+  return {
+    ...getPageDispatchers(dispatch, 'Location', ROUTES.VACCINES_ADMIN),
+    scanForSensors,
+    onEditLocation,
+  };
 };
 
 VaccineAdminPageComponent.defaultProps = { modalValue: null };
@@ -238,7 +250,6 @@ VaccineAdminPageComponent.propTypes = {
   onCloseModal: PropTypes.func.isRequired,
   modalValue: PropTypes.any,
   dispatch: PropTypes.func.isRequired,
-  onAddFridge: PropTypes.func.isRequired,
   onCheck: PropTypes.func.isRequired,
   scanForSensors: PropTypes.func.isRequired,
   isScanning: PropTypes.bool.isRequired,
