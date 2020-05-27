@@ -348,7 +348,7 @@ const FORM_CONFIGS = {
     FORM_INPUT_KEYS.SEARCH_FIRST_NAME,
     FORM_INPUT_KEYS.SEARCH_REGISTRATION_CODE,
   ],
-  location: ['code', 'description', 'locationType'],
+  location: [FORM_INPUT_KEYS.CODE, FORM_INPUT_KEYS.DESCRIPTION, FORM_INPUT_KEYS.LOCATION_TYPE],
 };
 
 export const getFormInputConfig = (formName, seedObject) => {
