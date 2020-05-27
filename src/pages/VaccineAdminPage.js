@@ -215,7 +215,7 @@ const mapDispatchToProps = dispatch => {
   const editLocation = rowKey =>
     dispatch(PageActions.openModal(MODAL_KEYS.EDIT_LOCATION, rowKey, ROUTES.VACCINES_ADMIN));
 
-  const hasLocationTypes = !UIDatabase.objects('LocationType').length;
+  const hasLocationTypes = !!UIDatabase.objects('LocationType').length;
   const noLocationTypesToast = () =>
     ToastAndroid.show(generalStrings.no_location_types, ToastAndroid.LONG);
   const onEditLocation = hasLocationTypes ? editLocation : noLocationTypesToast;
