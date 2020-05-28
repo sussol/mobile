@@ -14,7 +14,7 @@ const initialState = () => {
     fridges,
     selectedFridge: fridges[0],
     fromDate: moment(new Date())
-      .subtract(150, 'd')
+      .subtract(30, 'd')
       .toDate(),
     toDate: new Date(),
   };
