@@ -5,13 +5,13 @@
  */
 
 import React from 'react';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { VaccineChart } from './VaccineChart';
 import { FridgeDisplayInfo } from './FridgeDisplayInfo';
-import { WHITE, SUSSOL_ORANGE } from '../globalStyles';
+import { textStyles, WHITE, SUSSOL_ORANGE } from '../globalStyles';
 import { FlexView } from './FlexView';
 
 import { FridgeActions } from '../actions/FridgeActions';
@@ -39,12 +39,23 @@ export const FridgeDisplayComponent = ({
   const [render, setRender] = React.useState(false);
 
   React.useEffect(() => {
-    setTimeout(() => setRender(isActive), 1000);
+    setTimeout(() => setRender(isActive), 500);
   }, [isActive]);
+
+  const NoLogsComponent = React.useCallback(
+    () => (
+      <FlexView justifyContent="center" alignItems="center">
+        <Text style={{ ...textStyles }}>
+          Oops! There are no temperatures recorded during this time
+        </Text>
+      </FlexView>
+    ),
+    []
+  );
 
   const Chart = React.useCallback(
     () =>
-      render && minLine?.length ? (
+      render ? (
         <VaccineChart
           minLine={minLine}
           maxDomain={maxDomain}
@@ -73,7 +84,7 @@ export const FridgeDisplayComponent = ({
         onChangeToDate={onChangeToDate}
       />
 
-      {isActive ? <Chart /> : null}
+      {isActive ? (minLine.length && <Chart />) || <NoLogsComponent /> : null}
     </View>
   );
 };
