@@ -57,7 +57,7 @@ export const selectChunkedTemperatureLogs = createSelector(
   }
 );
 
-export const selectMinAndMaxLogs = createSelector(selectChunkedTemperatureLogs, logs =>
+export const selectMinAndMaxLogs = createSelector([selectChunkedTemperatureLogs], logs =>
   logs.reduce(
     (acc, logGroup) => {
       const temperatures = logGroup.map(({ temperature }) => temperature);
@@ -65,7 +65,6 @@ export const selectMinAndMaxLogs = createSelector(selectChunkedTemperatureLogs, 
 
       const maxTemperature = Math.max(...temperatures);
       const minTemperature = Math.min(...temperatures);
-
       const timestamp = Math.min(...timestamps);
 
       const { minLine, maxLine } = acc;
@@ -79,7 +78,7 @@ export const selectMinAndMaxLogs = createSelector(selectChunkedTemperatureLogs, 
   )
 );
 
-export const selectMinAndMaxDomains = createSelector(selectMinAndMaxLogs, minAndMaxLogs => {
+export const selectMinAndMaxDomains = createSelector([selectMinAndMaxLogs], minAndMaxLogs => {
   const { minLine, maxLine } = minAndMaxLogs;
 
   return {
@@ -88,8 +87,16 @@ export const selectMinAndMaxDomains = createSelector(selectMinAndMaxLogs, minAnd
   };
 });
 
-export const selectBreaches = createSelector([selectSelectedFridge], fridge => {
-  const { breaches } = fridge ?? {};
+export const selectBreaches = createSelector(
+  [selectTemperatureLogsFromDate, selectTemperatureLogsToDate, selectSelectedFridge],
+  (fromDate, toDate, fridge) => {
+    const { breaches } = fridge ?? {};
+    const breachesInDateRange = breaches.filtered(
+      'startTimestamp >= $0 && endTimestamp <= $1',
+      fromDate,
+      toDate
+    );
 
-  return breaches;
-});
+    return breachesInDateRange;
+  }
+);
