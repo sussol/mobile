@@ -6,6 +6,7 @@
 
 import React from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { VaccineChart } from './VaccineChart';
@@ -13,7 +14,10 @@ import { FridgeDisplayInfo } from './FridgeDisplayInfo';
 import { WHITE, SUSSOL_ORANGE } from '../globalStyles';
 import { FlexView } from './FlexView';
 
-export const FridgeDisplay = ({
+import { FridgeActions } from '../actions/FridgeActions';
+import { selectTemperatureLogsFromDate, selectTemperatureLogsToDate } from '../selectors/fridge';
+
+export const FridgeDisplayComponent = ({
   minLine,
   maxLine,
   breaches,
@@ -23,6 +27,10 @@ export const FridgeDisplay = ({
   isActive,
   onSelectFridge,
   onOpenBreachModal,
+  onChangeFromDate,
+  onChangeToDate,
+  fromDate,
+  toDate,
 }) => {
   const containerStyle = React.useMemo(
     () => ({ ...localStyles.container, height: isActive ? 300 : 45 }),
@@ -36,7 +44,7 @@ export const FridgeDisplay = ({
 
   const Chart = React.useCallback(
     () =>
-      render ? (
+      render && minLine?.length ? (
         <VaccineChart
           minLine={minLine}
           maxDomain={maxDomain}
@@ -50,12 +58,20 @@ export const FridgeDisplay = ({
           <ActivityIndicator size="small" color={SUSSOL_ORANGE} />
         </FlexView>
       ),
-    [render]
+    [render, minLine, maxDomain, minDomain, maxLine, breaches, onOpenBreachModal]
   );
 
   return (
     <View style={containerStyle}>
-      <FridgeDisplayInfo onPress={onSelectFridge} fridge={fridge} isActive={isActive} />
+      <FridgeDisplayInfo
+        onPress={onSelectFridge}
+        fridge={fridge}
+        isActive={isActive}
+        fromDate={fromDate}
+        toDate={toDate}
+        onChangeFromDate={onChangeFromDate}
+        onChangeToDate={onChangeToDate}
+      />
 
       {isActive ? <Chart /> : null}
     </View>
@@ -72,7 +88,7 @@ const localStyles = StyleSheet.create({
   },
 });
 
-FridgeDisplay.defaultProps = {
+FridgeDisplayComponent.defaultProps = {
   minLine: [],
   maxLine: [],
   breaches: [],
@@ -81,7 +97,7 @@ FridgeDisplay.defaultProps = {
   onSelectFridge: null,
 };
 
-FridgeDisplay.propTypes = {
+FridgeDisplayComponent.propTypes = {
   fridge: PropTypes.object.isRequired,
   isActive: PropTypes.bool.isRequired,
   minLine: PropTypes.array,
@@ -91,4 +107,23 @@ FridgeDisplay.propTypes = {
   minDomain: PropTypes.number,
   onSelectFridge: PropTypes.func,
   onOpenBreachModal: PropTypes.func.isRequired,
+  onChangeFromDate: PropTypes.func.isRequired,
+  onChangeToDate: PropTypes.func.isRequired,
+  fromDate: PropTypes.instanceOf(Date).isRequired,
+  toDate: PropTypes.instanceOf(Date).isRequired,
 };
+
+const mapStateToProps = state => {
+  const fromDate = selectTemperatureLogsFromDate(state);
+  const toDate = selectTemperatureLogsToDate(state);
+  return { fromDate, toDate };
+};
+
+const mapDispatchToProps = dispatch => {
+  const onChangeToDate = date => dispatch(FridgeActions.changeToDate(date));
+  const onChangeFromDate = date => dispatch(FridgeActions.changeFromDate(date));
+
+  return { onChangeFromDate, onChangeToDate };
+};
+
+export const FridgeDisplay = connect(mapStateToProps, mapDispatchToProps)(FridgeDisplayComponent);

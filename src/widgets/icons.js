@@ -81,6 +81,16 @@ ChevronDownIcon.propTypes = {
   style: PropTypes.object,
 };
 
+export const ChevronUpIcon = React.memo(({ color, size, style }) => (
+  <FA5Icon name="chevron-up" color={color} size={size} style={style} />
+));
+ChevronUpIcon.defaultProps = { color: WHITE, size: 20, style: {} };
+ChevronUpIcon.propTypes = {
+  color: PropTypes.string,
+  size: PropTypes.number,
+  style: PropTypes.object,
+};
+
 export const PencilIcon = React.memo(({ color, size }) => (
   <FAIcon name="pencil" color={color} size={size} />
 ));
