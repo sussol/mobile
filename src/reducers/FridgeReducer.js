@@ -14,7 +14,7 @@ const initialState = () => {
     fridges,
     selectedFridge: fridges[0],
     fromDate: moment(new Date())
-      .subtract(30, 'd')
+      .subtract(150, 'd')
       .toDate(),
     toDate: new Date(),
   };
@@ -30,6 +30,20 @@ export const FridgeReducer = (state = initialState(), action) => {
 
       return { ...state, selectedFridge: fridge };
     }
+
+    case FRIDGE_ACTIONS.CHANGE_FROM_DATE: {
+      const { payload } = action;
+      const { date } = payload;
+
+      return { ...state, toDate: date };
+    }
+    case FRIDGE_ACTIONS.CHANGE_TO_DATE: {
+      const { payload } = action;
+      const { date } = payload;
+
+      return { ...state, fromDate: date };
+    }
+
     default:
       return state;
   }
