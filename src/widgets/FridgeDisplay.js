@@ -16,6 +16,7 @@ import { FlexView } from './FlexView';
 
 import { FridgeActions } from '../actions/FridgeActions';
 import { selectTemperatureLogsFromDate, selectTemperatureLogsToDate } from '../selectors/fridge';
+import { vaccineStrings } from '../localization';
 
 export const FridgeDisplayComponent = ({
   minLine,
@@ -45,9 +46,7 @@ export const FridgeDisplayComponent = ({
   const NoLogsComponent = React.useCallback(
     () => (
       <FlexView justifyContent="center" alignItems="center">
-        <Text style={{ ...textStyles }}>
-          Oops! There are no temperatures recorded during this time
-        </Text>
+        <Text style={{ ...textStyles }}>{vaccineStrings.oops_no_temperatures}</Text>
       </FlexView>
     ),
     []
