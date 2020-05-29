@@ -6,6 +6,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Text, View, TouchableOpacity, ToastAndroid } from 'react-native';
+import { connect } from 'react-redux';
 
 import moment from 'moment';
 import currency from '../../localization/currency';
@@ -15,6 +16,9 @@ import {
   CASH_TRANSACTION_FIELDS,
   CASH_TRANSACTION_TYPES,
 } from '../../utilities/modules/dispensary/constants';
+
+import { CashTransactionActions } from '../../actions';
+import { CashTransactionSelectors } from '../../selectors';
 
 import { ToggleBar } from '../ToggleBar';
 import { ModalContainer } from './ModalContainer';
@@ -27,14 +31,7 @@ import globalStyles, { WARM_GREY, SUSSOL_ORANGE, COMPONENT_HEIGHT } from '../../
 import { buttonStrings, dispensingStrings, generalStrings } from '../../localization';
 import { FlexRow } from '../FlexRow';
 
-export const CashTransactionModal = ({ onConfirm }) => {
-  const [name, setName] = useState(null);
-  const [isCashIn, setIsCashIn] = useState(true);
-  const [amount, setAmount] = useState(null);
-  const [paymentType, setPaymentType] = useState(null);
-  const [reason, setReason] = useState(null);
-  const [description, setDescription] = useState(null);
-
+const CashTransactionModalComponent = ({ name, type, amount, paymentType, reason, description, onUpdateName, onToggleType, onUpdateAmount, onUpdatePaymentType, onUpdateReason, onUpdateDescription, onConfirm }) => {
   const [amountBuffer, setAmountBuffer] = useState(currency(0).format());
   const [descriptionBuffer, setDescriptionBuffer] = useState('');
 
@@ -57,17 +54,13 @@ export const CashTransactionModal = ({ onConfirm }) => {
   }, [paymentType]);
 
   const names = useMemo(() => UIDatabase.objects('CashTransactionName'), []);
-  const type = useMemo(
-    () => (isCashIn ? CASH_TRANSACTION_TYPES.CASH_IN : CASH_TRANSACTION_TYPES.CASH_OUT),
-    [isCashIn]
-  );
   const paymentTypes = useMemo(() => UIDatabase.objects('PaymentType'), []);
   const reasons = useMemo(() => UIDatabase.objects('CashTransactionReason'), []);
 
   const isValidTransaction = useMemo(
     () =>
-      !!name && !!amount && currency(amount) > currency(0) && (isCashIn || !!reason) && paymentType,
-    [name, amount, reason, isCashIn, paymentType]
+      !!name && !!amount && currency(amount) > currency(0) && (type === CASH_TRANSACTION_TYPES.CASH_IN || !!reason) && paymentType,
+    [name, amount, reason, type, paymentType]
   );
 
   const isModalOpen = useMemo(
@@ -87,7 +80,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
   );
 
   const onCreate = useCallback(() => {
-    if (amount.value > balance.value && !isCashIn) {
+    if (amount.value > balance.value && type !== CASH_TRANSACTION_TYPES.CASH_IN) {
       ToastAndroid.show(dispensingStrings.unable_to_create_withdrawl, ToastAndroid.LONG);
     } else {
       onConfirm({ name, type, amount: amount.value, paymentType, reason, description });
@@ -134,6 +127,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
   const onPressAmount = () => {
     resetBottomModal();
     if (amount) {
+      console.log(amount);
       setAmountBuffer(amount.format(false));
     }
     setIsAmountModalOpen(true);
@@ -157,30 +151,30 @@ export const CashTransactionModal = ({ onConfirm }) => {
     setIsDescriptionModalOpen(true);
   };
 
-  const onSubmitName = nameItem => {
-    setName(nameItem);
+  const onSubmitName = name => {
+    onUpdateName(name);
     setIsNameModalOpen(false);
   };
 
   const onCloseName = () => setIsNameModalOpen(false);
 
   const onSubmitAmount = () => {
-    setAmount(currency(amountBuffer));
+    onUpdateAmount(currency(amountBuffer));
     setIsAmountModalOpen(false);
   };
 
-  const onSubmitPaymentType = ({ item: paymentTypeItem }) => {
-    setPaymentType(paymentTypeItem);
+  const onSubmitPaymentType = ({ item: paymentType }) => {
+    onUpdatePaymentType(paymentType);
     setIsPaymentTypeModalOpen(false);
   };
 
-  const onSubmitReason = ({ item: reasonItem }) => {
-    setReason(reasonItem);
+  const onSubmitReason = ({ item: reason }) => {
+    onUpdateReason(reason);
     setIsReasonModalOpen(false);
   };
 
   const onSubmitDescription = () => {
-    setDescription(descriptionBuffer);
+    onUpdateDescription(descriptionBuffer);
     setIsDescriptionModalOpen(false);
   };
 
@@ -196,19 +190,18 @@ export const CashTransactionModal = ({ onConfirm }) => {
   const descriptionText = useMemo(() => description ?? dispensingStrings.enter_a_description, [
     description,
   ]);
-  const toggleTransactionType = () => setIsCashIn(!isCashIn);
 
   const toggles = useMemo(
     () => [
-      { text: dispensingStrings.cash_in, onPress: toggleTransactionType, isOn: isCashIn },
-      { text: dispensingStrings.cash_out, onPress: toggleTransactionType, isOn: !isCashIn },
+      { text: dispensingStrings.cash_in, onPress: onToggleType, isOn: type === CASH_TRANSACTION_TYPES.CASH_IN },
+      { text: dispensingStrings.cash_out, onPress: onToggleType, isOn: type === CASH_TRANSACTION_TYPES.CASH_OUT },
     ],
-    [isCashIn]
+    [type]
   );
 
   const PressReason = useCallback(
     () =>
-      isCashIn ? null : (
+      type === CASH_TRANSACTION_TYPES.CASH_IN ? null : (
         <TouchableOpacity style={localStyles.containerStyle} onPress={onPressReason}>
           <View style={localStyles.textContainerStyle}>
             <Text style={localStyles.textStyle}>{reasonText}</Text>
@@ -218,7 +211,7 @@ export const CashTransactionModal = ({ onConfirm }) => {
           </View>
         </TouchableOpacity>
       ),
-    [isCashIn, reason]
+    [type, reason]
   );
 
   const ConfirmButton = useCallback(
@@ -333,11 +326,52 @@ export const CashTransactionModal = ({ onConfirm }) => {
   );
 };
 
-CashTransactionModal.defaultProps = {};
+const mapDispatchToProps = dispatch => {
+  const onUpdateName = name => dispatch(CashTransactionActions.updateName(name));
+  const onToggleType = () => dispatch(CashTransactionActions.toggleType());
+  const onUpdateAmount = amount => dispatch(CashTransactionActions.updateAmount(amount));
+  const onUpdatePaymentType = paymentType => dispatch(CashTransactionActions.updatePaymentType(paymentType));
+  const onUpdateReason = reason => dispatch(CashTransactionActions.updateReason(reason));
+  const onUpdateDescription = description => dispatch(CashTransactionActions.updateDescription(description));
+  return { onUpdateName, onToggleType, onUpdateAmount, onUpdatePaymentType, onUpdateReason, onUpdateDescription };
+}
 
-CashTransactionModal.propTypes = {
+const mapStateToProps = state => {
+  const name = CashTransactionSelectors.name(state);
+  const type = CashTransactionSelectors.type(state);
+  const amount = CashTransactionSelectors.amount(state);
+  const paymentType = CashTransactionSelectors.paymentType(state);
+  const reason = CashTransactionSelectors.reason(state);
+  const description = CashTransactionSelectors.description(state);
+  return { name, type, amount, paymentType, reason, description };
+}
+
+export const CashTransactionModal = connect(mapStateToProps, mapDispatchToProps)(CashTransactionModalComponent);
+
+CashTransactionModalComponent.defaultProps = {
+  name: null,
+  amount: null,
+  paymentType: null,
+  reason: null,
+  description: null,
+};
+
+CashTransactionModalComponent.propTypes = {
+  name: PropTypes.object,
+  type: PropTypes.string.isRequired,
+  amount: PropTypes.object,
+  paymentType: PropTypes.object,
+  reason: PropTypes.object,
+  description: PropTypes.string,
+  onConfirm: PropTypes.func.isRequired,
+  onToggleType: PropTypes.func.isRequired,
+  onUpdateAmount: PropTypes.func.isRequired,
+  onUpdatePaymentType: PropTypes.func.isRequired,
+  onUpdateReason: PropTypes.func.isRequired,
+  onUpdateDescription: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
 };
+
 
 const localStyles = StyleSheet.create({
   containerStyle: {
