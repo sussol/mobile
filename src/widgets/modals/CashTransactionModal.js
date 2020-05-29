@@ -109,61 +109,35 @@ const CashTransactionModalComponent = ({
     return '';
   }, []);
 
-  const onPressName = () => {
-    onCloseInputModal();
-    onOpenInputNameModal();
-  };
+  const onPressName = () => onOpenInputNameModal();
 
   const onPressAmount = () => {
-    onCloseInputModal();
     if (amount) {
       setAmountBuffer(amount.format(false));
     }
     onOpenInputAmountModal();
   };
 
-  const onPressPaymentType = () => {
-    onCloseInputModal();
-    onOpenInputPaymentTypeModal();
-  };
+  const onPressPaymentType = () => onOpenInputPaymentTypeModal();
 
-  const onPressReason = () => {
-    onCloseInputModal();
-    onOpenInputReasonModal();
-  };
+  const onPressReason = () => onOpenInputReasonModal();
 
   const onPressDescription = () => {
-    onCloseInputModal();
     if (description) {
       setDescriptionBuffer(description);
     }
     onOpenInputDescriptionModal();
   };
 
-  const onSubmitName = newName => {
-    onUpdateName(newName);
-    onCloseInputModal();
-  };
+  const onSubmitName = newName => onUpdateName(newName);
 
-  const onSubmitAmount = () => {
-    onUpdateAmount(currency(amountBuffer));
-    onCloseInputModal();
-  };
+  const onSubmitAmount = () => onUpdateAmount(currency(amountBuffer));
 
-  const onSubmitPaymentType = ({ item: newPaymentType }) => {
-    onUpdatePaymentType(newPaymentType);
-    onCloseInputModal();
-  };
+  const onSubmitPaymentType = ({ item: newPaymentType }) => onUpdatePaymentType(newPaymentType);
 
-  const onSubmitReason = ({ item: newReason }) => {
-    onUpdateReason(newReason);
-    onCloseInputModal();
-  };
+  const onSubmitReason = ({ item: newReason }) => onUpdateReason(newReason);
 
-  const onSubmitDescription = () => {
-    onUpdateDescription(descriptionBuffer);
-    onCloseInputModal();
-  };
+  const onSubmitDescription = () => onUpdateDescription(descriptionBuffer);
 
   const nameText = useMemo(() => name?.name ?? dispensingStrings.choose_a_name, [name]);
   const amountText = useMemo(() => amount?.format(false) ?? dispensingStrings.enter_the_amount, [
@@ -322,28 +296,51 @@ const CashTransactionModalComponent = ({
 };
 
 const mapDispatchToProps = dispatch => {
-  const onUpdateName = name => dispatch(CashTransactionActions.updateName(name));
+  const onUpdateName = name => {
+    dispatch(CashTransactionActions.updateName(name));
+    dispatch(CashTransactionActions.closeInputModal());
+  };
   const onToggleType = () => dispatch(CashTransactionActions.toggleType());
-  const onUpdateAmount = amount => dispatch(CashTransactionActions.updateAmount(amount));
-  const onUpdatePaymentType = paymentType =>
+  const onUpdateAmount = amount => {
+    dispatch(CashTransactionActions.updateAmount(amount));
+    dispatch(CashTransactionActions.closeInputModal());
+  };
+  const onUpdatePaymentType = paymentType => {
     dispatch(CashTransactionActions.updatePaymentType(paymentType));
-  const onUpdateReason = reason => dispatch(CashTransactionActions.updateReason(reason));
-  const onUpdateDescription = description =>
+    dispatch(CashTransactionActions.closeInputModal());
+  };
+  const onUpdateReason = reason => {
+    dispatch(CashTransactionActions.updateReason(reason));
+    dispatch(CashTransactionActions.closeInputModal());
+  };
+  const onUpdateDescription = description => {
     dispatch(CashTransactionActions.updateDescription(description));
-  const onOpenInputNameModal = () =>
+    dispatch(CashTransactionActions.closeInputModal());
+  };
+  const onOpenInputNameModal = () => {
+    dispatch(CashTransactionActions.closeInputModal());
     dispatch(CashTransactionActions.openInputModal(CASH_TRANSACTION_INPUT_MODAL_FIELDS.NAME));
-  const onOpenInputAmountModal = () =>
+  };
+  const onOpenInputAmountModal = () => {
+    dispatch(CashTransactionActions.closeInputModal());
     dispatch(CashTransactionActions.openInputModal(CASH_TRANSACTION_INPUT_MODAL_FIELDS.AMOUNT));
-  const onOpenInputPaymentTypeModal = () =>
+  };
+  const onOpenInputPaymentTypeModal = () => {
+    dispatch(CashTransactionActions.closeInputModal());
     dispatch(
       CashTransactionActions.openInputModal(CASH_TRANSACTION_INPUT_MODAL_FIELDS.PAYMENT_TYPE)
     );
-  const onOpenInputReasonModal = () =>
+  };
+  const onOpenInputReasonModal = () => {
+    dispatch(CashTransactionActions.closeInputModal());
     dispatch(CashTransactionActions.openInputModal(CASH_TRANSACTION_INPUT_MODAL_FIELDS.REASON));
-  const onOpenInputDescriptionModal = () =>
+  };
+  const onOpenInputDescriptionModal = () => {
+    dispatch(CashTransactionActions.closeInputModal());
     dispatch(
       CashTransactionActions.openInputModal(CASH_TRANSACTION_INPUT_MODAL_FIELDS.DESCRIPTION)
     );
+  };
   const onCloseInputModal = () => dispatch(CashTransactionActions.closeInputModal());
   return {
     onUpdateName,
