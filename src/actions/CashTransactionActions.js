@@ -10,6 +10,8 @@ export const CASH_TRANSACTION_ACTION_TYPES = {
   UPDATE_PAYMENT_TYPE: 'CashTransaction/updatePaymentType',
   UPDATE_REASON: 'CashTransaction/updateReason',
   UPDATE_DESCRIPTION: 'CashTransaction/updateDescription',
+  OPEN_INPUT_MODAL: 'CashTransaction/openInputModal',
+  CLOSE_INPUT_MODAL: 'CashTransaction/closeInputModal',
 };
 
 export const CashTransactionActions = {
@@ -31,4 +33,9 @@ export const CashTransactionActions = {
     type: CASH_TRANSACTION_ACTION_TYPES.UPDATE_DESCRIPTION,
     payload: { description },
   }),
+  openInputModal: modalField => ({
+    type: CASH_TRANSACTION_ACTION_TYPES.OPEN_INPUT_MODAL,
+    payload: { modalField },
+  }),
+  closeInputModal: () => ({ type: CASH_TRANSACTION_ACTION_TYPES.CLOSE_INPUT_MODAL }),
 };
