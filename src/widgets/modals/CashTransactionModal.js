@@ -39,6 +39,7 @@ const CashTransactionModalComponent = ({
   paymentType,
   reason,
   description,
+  balance,
   isInputModalOpen,
   isInputNameModalOpen,
   isInputAmountModalOpen,
@@ -61,18 +62,6 @@ const CashTransactionModalComponent = ({
 }) => {
   const [amountBuffer, setAmountBuffer] = useState(currency(0).format());
   const [descriptionBuffer, setDescriptionBuffer] = useState('');
-
-  const balance = React.useMemo(() => {
-    const receiptBalance = UIDatabase.objects('Transaction')
-      .filtered('type == "receipt" && paymentType.code == $0', paymentType?.code)
-      .sum('subtotal');
-
-    const paymentBalance = UIDatabase.objects('Transaction')
-      .filtered('type == "payment" && paymentType.code == $0', paymentType?.code)
-      .sum('subtotal');
-
-    return currency(receiptBalance - paymentBalance);
-  }, [paymentType]);
 
   const names = useMemo(() => UIDatabase.objects('CashTransactionName'), []);
   const paymentTypes = useMemo(() => UIDatabase.objects('PaymentType'), []);
@@ -379,6 +368,7 @@ const mapStateToProps = state => {
   const paymentType = CashTransactionSelectors.paymentType(state);
   const reason = CashTransactionSelectors.reason(state);
   const description = CashTransactionSelectors.description(state);
+  const balance = CashTransactionSelectors.balance(state);
   const isInputModalOpen = CashTransactionSelectors.isInputModalOpen(state);
   const isInputNameModalOpen = CashTransactionSelectors.isInputNameModalOpen(state);
   const isInputAmountModalOpen = CashTransactionSelectors.isInputAmountModalOpen(state);
@@ -392,6 +382,7 @@ const mapStateToProps = state => {
     paymentType,
     reason,
     description,
+    balance,
     isInputModalOpen,
     isInputNameModalOpen,
     isInputAmountModalOpen,
@@ -412,6 +403,7 @@ CashTransactionModalComponent.defaultProps = {
   paymentType: null,
   reason: null,
   description: null,
+  balance: null,
 };
 
 /* eslint-disable react/forbid-prop-types */
@@ -422,6 +414,7 @@ CashTransactionModalComponent.propTypes = {
   paymentType: PropTypes.object,
   reason: PropTypes.object,
   description: PropTypes.string,
+  balance: PropTypes.object,
   isInputModalOpen: PropTypes.bool.isRequired,
   isInputNameModalOpen: PropTypes.bool.isRequired,
   isInputAmountModalOpen: PropTypes.bool.isRequired,
