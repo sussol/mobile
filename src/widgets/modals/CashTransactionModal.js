@@ -39,7 +39,7 @@ const CashTransactionModalComponent = ({
   paymentType,
   reason,
   description,
-  balance,
+  isValid,
   isInputModalOpen,
   isInputNameModalOpen,
   isInputAmountModalOpen,
@@ -60,30 +60,12 @@ const CashTransactionModalComponent = ({
   onCloseInputModal,
   onConfirm,
 }) => {
-  const [amountBuffer, setAmountBuffer] = useState(currency(0).format());
-  const [descriptionBuffer, setDescriptionBuffer] = useState('');
-
   const names = useMemo(() => UIDatabase.objects('CashTransactionName'), []);
   const paymentTypes = useMemo(() => UIDatabase.objects('PaymentType'), []);
   const reasons = useMemo(() => UIDatabase.objects('CashTransactionReason'), []);
 
-  const isValidTransaction = useMemo(
-    () =>
-      !!name &&
-      !!amount &&
-      currency(amount) > currency(0) &&
-      (type === CASH_TRANSACTION_TYPES.CASH_IN || !!reason) &&
-      paymentType,
-    [name, amount, reason, type, paymentType]
-  );
-
-  const onCreate = useCallback(() => {
-    if (amount.value > balance.value && type !== CASH_TRANSACTION_TYPES.CASH_IN) {
-      ToastAndroid.show(dispensingStrings.unable_to_create_withdrawl, ToastAndroid.LONG);
-    } else {
-      onConfirm({ name, type, amount: amount.value, paymentType, reason, description });
-    }
-  }, [name, type, amount, paymentType, reason, description, balance]);
+  const [amountBuffer, setAmountBuffer] = useState(currency(0).format());
+  const [descriptionBuffer, setDescriptionBuffer] = useState('');
 
   const onChangeText = useMemo(() => text => setDescriptionBuffer(text), []);
   const onChangeAmount = useMemo(() => value => setAmountBuffer(value), []);
@@ -188,14 +170,14 @@ const CashTransactionModalComponent = ({
       isInputModalOpen || (
         <PageButton
           text={buttonStrings.confirm}
-          onPress={onCreate}
-          isDisabled={!isValidTransaction}
+          onPress={onConfirm}
+          isDisabled={!isValid}
           disabledColor={WARM_GREY}
           style={localStyles.okButton}
           textStyle={localStyles.pageButtonTextStyle}
         />
       ),
-    [isInputModalOpen]
+    [isInputModalOpen, isValid]
   );
 
   return (
@@ -278,6 +260,7 @@ const CashTransactionModalComponent = ({
         onConfirm={onSubmitDescription}
       />
       <ModalContainer
+        text={buttonStrings.confirm}
         title={dispensingStrings.choose_a_name}
         isVisible={isInputNameModalOpen}
         onClose={onCloseInputModal}
@@ -293,6 +276,27 @@ const CashTransactionModalComponent = ({
       </ModalContainer>
     </>
   );
+};
+
+const mergeProps = (state, dispatch, ownProps) => {
+  const { name, type, amount, paymentType, reason, description, balance } = state;
+  const { onConfirm } = ownProps;
+
+  const onConfirmValidTransaction = () =>
+    onConfirm({ name, type, amount: amount.value, paymentType, reason, description });
+  const onConfirmInvalidTransaction = () =>
+    ToastAndroid.show(dispensingStrings.unable_to_create_withdrawl, ToastAndroid.LONG);
+
+  const isValidWithdrawal = !(
+    type === CASH_TRANSACTION_TYPES.CASH_OUT && amount.value > balance.value
+  );
+
+  return {
+    ...state,
+    ...dispatch,
+    ...ownProps,
+    onConfirm: isValidWithdrawal ? onConfirmValidTransaction : onConfirmInvalidTransaction,
+  };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -342,6 +346,7 @@ const mapDispatchToProps = dispatch => {
     );
   };
   const onCloseInputModal = () => dispatch(CashTransactionActions.closeInputModal());
+
   return {
     onUpdateName,
     onToggleType,
@@ -366,6 +371,7 @@ const mapStateToProps = state => {
   const reason = CashTransactionSelectors.reason(state);
   const description = CashTransactionSelectors.description(state);
   const balance = CashTransactionSelectors.balance(state);
+  const isValid = CashTransactionSelectors.isValid(state);
   const isInputModalOpen = CashTransactionSelectors.isInputModalOpen(state);
   const isInputNameModalOpen = CashTransactionSelectors.isInputNameModalOpen(state);
   const isInputAmountModalOpen = CashTransactionSelectors.isInputAmountModalOpen(state);
@@ -380,6 +386,7 @@ const mapStateToProps = state => {
     reason,
     description,
     balance,
+    isValid,
     isInputModalOpen,
     isInputNameModalOpen,
     isInputAmountModalOpen,
@@ -391,7 +398,8 @@ const mapStateToProps = state => {
 
 export const CashTransactionModal = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
+  mergeProps
 )(CashTransactionModalComponent);
 
 CashTransactionModalComponent.defaultProps = {
@@ -400,7 +408,7 @@ CashTransactionModalComponent.defaultProps = {
   paymentType: null,
   reason: null,
   description: null,
-  balance: null,
+  isValid: false,
 };
 
 /* eslint-disable react/forbid-prop-types */
@@ -411,7 +419,7 @@ CashTransactionModalComponent.propTypes = {
   paymentType: PropTypes.object,
   reason: PropTypes.object,
   description: PropTypes.string,
-  balance: PropTypes.object,
+  isValid: PropTypes.bool,
   isInputModalOpen: PropTypes.bool.isRequired,
   isInputNameModalOpen: PropTypes.bool.isRequired,
   isInputAmountModalOpen: PropTypes.bool.isRequired,

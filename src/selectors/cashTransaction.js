@@ -8,7 +8,10 @@ import { createSelector } from 'reselect';
 import { UIDatabase } from '../database';
 import currency from '../localization/currency';
 
-import { CASH_TRANSACTION_INPUT_MODAL_FIELDS } from '../utilities/modules/dispensary/constants';
+import {
+  CASH_TRANSACTION_TYPES,
+  CASH_TRANSACTION_INPUT_MODAL_FIELDS,
+} from '../utilities/modules/dispensary/constants';
 
 const selectTransaction = ({ cashTransaction }) => cashTransaction;
 
@@ -33,6 +36,16 @@ const selectBalance = createSelector([selectPaymentType], paymentType => {
     .sum('subtotal');
   return currency(receiptBalance - paymentBalance);
 });
+
+const selectIsValid = createSelector(
+  [selectName, selectType, selectAmount, selectPaymentType, selectReason],
+  (name, type, amount, paymentType, reason) =>
+    !!name &&
+    !!amount &&
+    currency(amount) > currency(0) &&
+    (type === CASH_TRANSACTION_TYPES.CASH_IN || !!reason) &&
+    paymentType
+);
 
 const selectInputModal = createSelector([selectTransaction], ({ inputModal }) => inputModal);
 
@@ -78,6 +91,7 @@ export const CashTransactionSelectors = {
   reason: selectReason,
   description: selectDescription,
   balance: selectBalance,
+  isValid: selectIsValid,
   isInputModalOpen: selectIsInputModalOpen,
   isInputNameModalOpen: selectIsInputNameModalOpen,
   isInputAmountModalOpen: selectIsInputAmountModalOpen,
