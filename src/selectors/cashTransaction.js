@@ -37,14 +37,11 @@ const selectBalance = createSelector([selectPaymentType], paymentType => {
   return currency(receiptBalance - paymentBalance);
 });
 
-const selectIsValid = createSelector(
-  [selectName, selectType, selectAmount, selectPaymentType, selectReason],
-  (name, type, amount, paymentType, reason) =>
-    !!name &&
-    !!amount &&
-    currency(amount) > currency(0) &&
-    (type === CASH_TRANSACTION_TYPES.CASH_IN || !!reason) &&
-    paymentType
+const selectAmountBuffer = createSelector([selectTransaction], ({ amountBuffer }) => amountBuffer);
+
+const selectDescriptionBuffer = createSelector(
+  [selectTransaction],
+  ({ descriptionBuffer }) => descriptionBuffer
 );
 
 const selectInputModal = createSelector([selectTransaction], ({ inputModal }) => inputModal);
@@ -83,6 +80,16 @@ const selectIsInputDescriptionModalOpen = createSelector(
     isInputModalOpen && inputModalField === CASH_TRANSACTION_INPUT_MODAL_FIELDS.DESCRIPTION
 );
 
+const selectIsValid = createSelector(
+  [selectName, selectType, selectAmount, selectPaymentType, selectReason],
+  (name, type, amount, paymentType, reason) =>
+    !!name &&
+    !!amount &&
+    amount > currency(0) &&
+    (type === CASH_TRANSACTION_TYPES.CASH_IN || !!reason) &&
+    paymentType
+);
+
 export const CashTransactionSelectors = {
   name: selectName,
   type: selectType,
@@ -90,12 +97,14 @@ export const CashTransactionSelectors = {
   paymentType: selectPaymentType,
   reason: selectReason,
   description: selectDescription,
+  amountBuffer: selectAmountBuffer,
+  descriptionBuffer: selectDescriptionBuffer,
   balance: selectBalance,
-  isValid: selectIsValid,
   isInputModalOpen: selectIsInputModalOpen,
   isInputNameModalOpen: selectIsInputNameModalOpen,
   isInputAmountModalOpen: selectIsInputAmountModalOpen,
   isInputPaymentTypeModalOpen: selectIsInputPaymentTypeModalOpen,
   isInputReasonModalOpen: selectIsInputReasonModalOpen,
   isInputDescriptionModalOpen: selectIsInputDescriptionModalOpen,
+  isValid: selectIsValid,
 };

@@ -12,6 +12,10 @@ export const CASH_TRANSACTION_ACTION_TYPES = {
   UPDATE_PAYMENT_TYPE: 'CashTransaction/updatePaymentType',
   UPDATE_REASON: 'CashTransaction/updateReason',
   UPDATE_DESCRIPTION: 'CashTransaction/updateDescription',
+  INITIALISE_AMOUNT_BUFFER: 'CashTransaction/initialiseAmountBuffer',
+  INITIALISE_DESCRIPTION_BUFFER: 'CashTransaction/initialiseDescriptionBuffer',
+  UPDATE_AMOUNT_BUFFER: 'CashTransaction/updateAmountBuffer',
+  UPDATE_DESCRIPTION_BUFFER: 'CashTransaction/updateDescriptionBuffer',
   OPEN_INPUT_MODAL: 'CashTransaction/openInputModal',
   CLOSE_INPUT_MODAL: 'CashTransaction/closeInputModal',
 };
@@ -35,6 +39,18 @@ export const CashTransactionActions = {
   }),
   updateDescription: description => ({
     type: CASH_TRANSACTION_ACTION_TYPES.UPDATE_DESCRIPTION,
+    payload: { description },
+  }),
+  initialiseAmountBuffer: () => ({ type: CASH_TRANSACTION_ACTION_TYPES.INITIALISE_AMOUNT_BUFFER }),
+  initialiseDescriptionBuffer: () => ({
+    type: CASH_TRANSACTION_ACTION_TYPES.INITIALISE_DESCRIPTION_BUFFER,
+  }),
+  updateAmountBuffer: amount => ({
+    type: CASH_TRANSACTION_ACTION_TYPES.UPDATE_AMOUNT_BUFFER,
+    payload: { amount },
+  }),
+  updateDescriptionBuffer: description => ({
+    type: CASH_TRANSACTION_ACTION_TYPES.UPDATE_DESCRIPTION_BUFFER,
     payload: { description },
   }),
   openInputModal: modalField => ({

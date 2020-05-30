@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Text, View, TouchableOpacity, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
@@ -39,26 +39,30 @@ const CashTransactionModalComponent = ({
   paymentType,
   reason,
   description,
-  isValid,
+  amountBuffer,
+  descriptionBuffer,
   isInputModalOpen,
   isInputNameModalOpen,
   isInputAmountModalOpen,
   isInputPaymentTypeModalOpen,
   isInputReasonModalOpen,
   isInputDescriptionModalOpen,
+  isValid,
   onOpen,
   onClose,
-  onUpdateName,
   onToggleType,
-  onUpdateAmount,
-  onUpdatePaymentType,
-  onUpdateReason,
-  onUpdateDescription,
-  onOpenInputNameModal,
-  onOpenInputAmountModal,
-  onOpenInputPaymentTypeModal,
-  onOpenInputReasonModal,
-  onOpenInputDescriptionModal,
+  onPressName,
+  onPressAmount,
+  onPressPaymentType,
+  onPressReason,
+  onPressDescription,
+  onUpdateAmountBuffer,
+  onUpdateDescriptionBuffer,
+  onSubmitName,
+  onSubmitAmount,
+  onSubmitPaymentType,
+  onSubmitReason,
+  onSubmitDescription,
   onCloseInputModal,
   onConfirm,
 }) => {
@@ -70,12 +74,6 @@ const CashTransactionModalComponent = ({
   const names = useMemo(() => UIDatabase.objects('CashTransactionName'), []);
   const paymentTypes = useMemo(() => UIDatabase.objects('PaymentType'), []);
   const reasons = useMemo(() => UIDatabase.objects('CashTransactionReason'), []);
-
-  const [amountBuffer, setAmountBuffer] = useState(currency(0).format());
-  const [descriptionBuffer, setDescriptionBuffer] = useState('');
-
-  const onChangeText = useMemo(() => text => setDescriptionBuffer(text), []);
-  const onChangeAmount = useMemo(() => value => setAmountBuffer(value), []);
 
   const renderNameLeftText = useCallback(
     ({ firstName, lastName, name: fullName, isPatient }) =>
@@ -97,36 +95,6 @@ const CashTransactionModalComponent = ({
     }
     return '';
   }, []);
-
-  const onPressName = () => onOpenInputNameModal();
-
-  const onPressAmount = () => {
-    if (amount) {
-      setAmountBuffer(amount.format(false));
-    }
-    onOpenInputAmountModal();
-  };
-
-  const onPressPaymentType = () => onOpenInputPaymentTypeModal();
-
-  const onPressReason = () => onOpenInputReasonModal();
-
-  const onPressDescription = () => {
-    if (description) {
-      setDescriptionBuffer(description);
-    }
-    onOpenInputDescriptionModal();
-  };
-
-  const onSubmitName = newName => onUpdateName(newName);
-
-  const onSubmitAmount = () => onUpdateAmount(currency(amountBuffer));
-
-  const onSubmitPaymentType = ({ item: newPaymentType }) => onUpdatePaymentType(newPaymentType);
-
-  const onSubmitReason = ({ item: newReason }) => onUpdateReason(newReason);
-
-  const onSubmitDescription = () => onUpdateDescription(descriptionBuffer);
 
   const nameText = useMemo(() => name?.name ?? dispensingStrings.choose_a_name, [name]);
   const amountText = useMemo(() => amount?.format(false) ?? dispensingStrings.enter_the_amount, [
@@ -233,7 +201,7 @@ const CashTransactionModalComponent = ({
         buttonText={buttonStrings.confirm}
         value={amountBuffer}
         placeholder={dispensingStrings.enter_the_amount}
-        onChangeText={onChangeAmount}
+        onChangeText={onUpdateAmountBuffer}
         onConfirm={onSubmitAmount}
       />
       <BottomModalContainer
@@ -263,7 +231,7 @@ const CashTransactionModalComponent = ({
         buttonText={buttonStrings.confirm}
         value={descriptionBuffer}
         placeholder={dispensingStrings.enter_a_description}
-        onChangeText={onChangeText}
+        onChangeText={onUpdateDescriptionBuffer}
         onConfirm={onSubmitDescription}
       />
       <ModalContainer
@@ -286,14 +254,55 @@ const CashTransactionModalComponent = ({
 };
 
 const mergeProps = (state, dispatch, ownProps) => {
-  const { name, type, amount, paymentType, reason, description, balance } = state;
+  const {
+    name,
+    type,
+    amount,
+    paymentType,
+    reason,
+    description,
+    amountBuffer,
+    descriptionBuffer,
+    balance,
+  } = state;
+  const {
+    onUpdateName,
+    onUpdateAmount,
+    onUpdatePaymentType,
+    onUpdateReason,
+    onUpdateDescription,
+    onInitialiseAmountBuffer,
+    onInitialiseDescriptionBuffer,
+    onOpenInputNameModal,
+    onOpenInputAmountModal,
+    onOpenInputPaymentTypeModal,
+    onOpenInputReasonModal,
+    onOpenInputDescriptionModal,
+  } = dispatch;
   const { onConfirm } = ownProps;
+
+  const onPressName = () => onOpenInputNameModal();
+  const onPressAmount = () => {
+    onInitialiseAmountBuffer();
+    onOpenInputAmountModal();
+  };
+  const onPressPaymentType = () => onOpenInputPaymentTypeModal();
+  const onPressReason = () => onOpenInputReasonModal();
+  const onPressDescription = () => {
+    onInitialiseDescriptionBuffer();
+    onOpenInputDescriptionModal();
+  };
+
+  const onSubmitName = newName => onUpdateName(newName);
+  const onSubmitAmount = () => onUpdateAmount(currency(amountBuffer));
+  const onSubmitPaymentType = ({ item: newPaymentType }) => onUpdatePaymentType(newPaymentType);
+  const onSubmitReason = ({ item: newReason }) => onUpdateReason(newReason);
+  const onSubmitDescription = () => onUpdateDescription(descriptionBuffer);
 
   const onConfirmValidTransaction = () =>
     onConfirm({ name, type, amount: amount.value, paymentType, reason, description });
   const onConfirmInvalidTransaction = () =>
     ToastAndroid.show(dispensingStrings.unable_to_create_withdrawl, ToastAndroid.LONG);
-
   const isValidWithdrawal = !(
     type === CASH_TRANSACTION_TYPES.CASH_OUT && amount.value > balance.value
   );
@@ -302,6 +311,16 @@ const mergeProps = (state, dispatch, ownProps) => {
     ...state,
     ...dispatch,
     ...ownProps,
+    onPressName,
+    onPressAmount,
+    onPressPaymentType,
+    onPressReason,
+    onPressDescription,
+    onSubmitName,
+    onSubmitAmount,
+    onSubmitPaymentType,
+    onSubmitReason,
+    onSubmitDescription,
     onConfirm: isValidWithdrawal ? onConfirmValidTransaction : onConfirmInvalidTransaction,
   };
 };
@@ -329,6 +348,15 @@ const mapDispatchToProps = dispatch => {
   const onUpdateDescription = description => {
     dispatch(CashTransactionActions.updateDescription(description));
     dispatch(CashTransactionActions.closeInputModal());
+  };
+  const onInitialiseAmountBuffer = () => dispatch(CashTransactionActions.initialiseAmountBuffer());
+  const onInitialiseDescriptionBuffer = () =>
+    dispatch(CashTransactionActions.initialiseDescriptionBuffer());
+  const onUpdateAmountBuffer = amount => {
+    dispatch(CashTransactionActions.updateAmountBuffer(amount));
+  };
+  const onUpdateDescriptionBuffer = description => {
+    dispatch(CashTransactionActions.updateDescriptionBuffer(description));
   };
   const onOpenInputNameModal = () => {
     dispatch(CashTransactionActions.closeInputModal());
@@ -365,6 +393,10 @@ const mapDispatchToProps = dispatch => {
     onUpdatePaymentType,
     onUpdateReason,
     onUpdateDescription,
+    onInitialiseAmountBuffer,
+    onInitialiseDescriptionBuffer,
+    onUpdateAmountBuffer,
+    onUpdateDescriptionBuffer,
     onOpenInputNameModal,
     onOpenInputAmountModal,
     onOpenInputPaymentTypeModal,
@@ -382,13 +414,15 @@ const mapStateToProps = state => {
   const reason = CashTransactionSelectors.reason(state);
   const description = CashTransactionSelectors.description(state);
   const balance = CashTransactionSelectors.balance(state);
-  const isValid = CashTransactionSelectors.isValid(state);
+  const amountBuffer = CashTransactionSelectors.amountBuffer(state);
+  const descriptionBuffer = CashTransactionSelectors.descriptionBuffer(state);
   const isInputModalOpen = CashTransactionSelectors.isInputModalOpen(state);
   const isInputNameModalOpen = CashTransactionSelectors.isInputNameModalOpen(state);
   const isInputAmountModalOpen = CashTransactionSelectors.isInputAmountModalOpen(state);
   const isInputPaymentTypeModalOpen = CashTransactionSelectors.isInputPaymentTypeModalOpen(state);
   const isInputReasonModalOpen = CashTransactionSelectors.isInputReasonModalOpen(state);
   const isInputDescriptionModalOpen = CashTransactionSelectors.isInputDescriptionModalOpen(state);
+  const isValid = CashTransactionSelectors.isValid(state);
   return {
     name,
     type,
@@ -397,13 +431,15 @@ const mapStateToProps = state => {
     reason,
     description,
     balance,
-    isValid,
+    amountBuffer,
+    descriptionBuffer,
     isInputModalOpen,
     isInputNameModalOpen,
     isInputAmountModalOpen,
     isInputPaymentTypeModalOpen,
     isInputReasonModalOpen,
     isInputDescriptionModalOpen,
+    isValid,
   };
 };
 
@@ -419,6 +455,8 @@ CashTransactionModalComponent.defaultProps = {
   paymentType: null,
   reason: null,
   description: null,
+  amountBuffer: '',
+  descriptionBuffer: '',
   isValid: false,
 };
 
@@ -430,26 +468,30 @@ CashTransactionModalComponent.propTypes = {
   paymentType: PropTypes.object,
   reason: PropTypes.object,
   description: PropTypes.string,
-  isValid: PropTypes.bool,
-  onOpen: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
+  amountBuffer: PropTypes.string,
+  descriptionBuffer: PropTypes.string,
   isInputModalOpen: PropTypes.bool.isRequired,
   isInputNameModalOpen: PropTypes.bool.isRequired,
   isInputAmountModalOpen: PropTypes.bool.isRequired,
   isInputPaymentTypeModalOpen: PropTypes.bool.isRequired,
   isInputReasonModalOpen: PropTypes.bool.isRequired,
   isInputDescriptionModalOpen: PropTypes.bool.isRequired,
+  isValid: PropTypes.bool,
+  onOpen: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
   onToggleType: PropTypes.func.isRequired,
-  onUpdateName: PropTypes.func.isRequired,
-  onUpdateAmount: PropTypes.func.isRequired,
-  onUpdatePaymentType: PropTypes.func.isRequired,
-  onUpdateReason: PropTypes.func.isRequired,
-  onUpdateDescription: PropTypes.func.isRequired,
-  onOpenInputNameModal: PropTypes.func.isRequired,
-  onOpenInputAmountModal: PropTypes.func.isRequired,
-  onOpenInputPaymentTypeModal: PropTypes.func.isRequired,
-  onOpenInputReasonModal: PropTypes.func.isRequired,
-  onOpenInputDescriptionModal: PropTypes.func.isRequired,
+  onPressName: PropTypes.func.isRequired,
+  onPressAmount: PropTypes.func.isRequired,
+  onPressPaymentType: PropTypes.func.isRequired,
+  onPressReason: PropTypes.func.isRequired,
+  onPressDescription: PropTypes.func.isRequired,
+  onUpdateAmountBuffer: PropTypes.func.isRequired,
+  onUpdateDescriptionBuffer: PropTypes.func.isRequired,
+  onSubmitName: PropTypes.func.isRequired,
+  onSubmitAmount: PropTypes.func.isRequired,
+  onSubmitPaymentType: PropTypes.func.isRequired,
+  onSubmitReason: PropTypes.func.isRequired,
+  onSubmitDescription: PropTypes.func.isRequired,
   onCloseInputModal: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
 };
