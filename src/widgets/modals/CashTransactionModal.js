@@ -75,6 +75,19 @@ const CashTransactionModalComponent = ({
   const paymentTypes = useMemo(() => UIDatabase.objects('PaymentType'), []);
   const reasons = useMemo(() => UIDatabase.objects('CashTransactionReason'), []);
 
+  const nameText = useMemo(() => name?.name ?? dispensingStrings.choose_a_name, [name]);
+  const amountText = useMemo(() => amount?.format(false) ?? dispensingStrings.enter_the_amount, [
+    amount,
+  ]);
+  const paymentTypeText = useMemo(
+    () => paymentType?.description ?? dispensingStrings.choose_a_payment_type,
+    [paymentType]
+  );
+  const reasonText = useMemo(() => reason?.title ?? dispensingStrings.choose_a_reason, [reason]);
+  const descriptionText = useMemo(() => description ?? dispensingStrings.enter_a_description, [
+    description,
+  ]);
+
   const renderNameLeftText = useCallback(
     ({ firstName, lastName, name: fullName, isPatient }) =>
       isPatient ? `${lastName}, ${firstName}` : `${fullName}`,
@@ -95,19 +108,6 @@ const CashTransactionModalComponent = ({
     }
     return '';
   }, []);
-
-  const nameText = useMemo(() => name?.name ?? dispensingStrings.choose_a_name, [name]);
-  const amountText = useMemo(() => amount?.format(false) ?? dispensingStrings.enter_the_amount, [
-    amount,
-  ]);
-  const paymentTypeText = useMemo(
-    () => paymentType?.description ?? dispensingStrings.choose_a_payment_type,
-    [paymentType]
-  );
-  const reasonText = useMemo(() => reason?.title ?? dispensingStrings.choose_a_reason, [reason]);
-  const descriptionText = useMemo(() => description ?? dispensingStrings.enter_a_description, [
-    description,
-  ]);
 
   const toggles = useMemo(
     () => [
