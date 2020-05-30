@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Text, View, TouchableOpacity, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
@@ -46,6 +46,8 @@ const CashTransactionModalComponent = ({
   isInputPaymentTypeModalOpen,
   isInputReasonModalOpen,
   isInputDescriptionModalOpen,
+  onOpen,
+  onClose,
   onUpdateName,
   onToggleType,
   onUpdateAmount,
@@ -60,6 +62,11 @@ const CashTransactionModalComponent = ({
   onCloseInputModal,
   onConfirm,
 }) => {
+  useEffect(() => {
+    onOpen();
+    return onClose;
+  }, []);
+
   const names = useMemo(() => UIDatabase.objects('CashTransactionName'), []);
   const paymentTypes = useMemo(() => UIDatabase.objects('PaymentType'), []);
   const reasons = useMemo(() => UIDatabase.objects('CashTransactionReason'), []);
@@ -300,6 +307,8 @@ const mergeProps = (state, dispatch, ownProps) => {
 };
 
 const mapDispatchToProps = dispatch => {
+  const onOpen = () => dispatch(CashTransactionActions.initialise());
+  const onClose = () => dispatch(CashTransactionActions.reset());
   const onUpdateName = name => {
     dispatch(CashTransactionActions.updateName(name));
     dispatch(CashTransactionActions.closeInputModal());
@@ -348,6 +357,8 @@ const mapDispatchToProps = dispatch => {
   const onCloseInputModal = () => dispatch(CashTransactionActions.closeInputModal());
 
   return {
+    onOpen,
+    onClose,
     onUpdateName,
     onToggleType,
     onUpdateAmount,
@@ -420,6 +431,8 @@ CashTransactionModalComponent.propTypes = {
   reason: PropTypes.object,
   description: PropTypes.string,
   isValid: PropTypes.bool,
+  onOpen: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
   isInputModalOpen: PropTypes.bool.isRequired,
   isInputNameModalOpen: PropTypes.bool.isRequired,
   isInputAmountModalOpen: PropTypes.bool.isRequired,

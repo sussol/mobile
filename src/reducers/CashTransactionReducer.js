@@ -23,6 +23,10 @@ export const CashTransactionReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
+    case CASH_TRANSACTION_ACTION_TYPES.INITIALISE:
+    case CASH_TRANSACTION_ACTION_TYPES.RESET:
+      return initialState();
+
     case CASH_TRANSACTION_ACTION_TYPES.UPDATE_NAME: {
       const { payload } = action;
       const { name } = payload;

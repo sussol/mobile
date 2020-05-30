@@ -4,6 +4,8 @@
  */
 
 export const CASH_TRANSACTION_ACTION_TYPES = {
+  INITIALISE: 'CashTransaction/initialise',
+  RESET: 'CashTransaction/reset',
   UPDATE_NAME: 'CashTransaction/updateName',
   TOGGLE_TYPE: 'CashTransaction/toggleType',
   UPDATE_AMOUNT: 'CashTransaction/updateAmount',
@@ -15,6 +17,8 @@ export const CASH_TRANSACTION_ACTION_TYPES = {
 };
 
 export const CashTransactionActions = {
+  initialise: () => ({ type: CASH_TRANSACTION_ACTION_TYPES.INITIALISE }),
+  reset: () => ({ type: CASH_TRANSACTION_ACTION_TYPES.RESET }),
   updateName: name => ({ type: CASH_TRANSACTION_ACTION_TYPES.UPDATE_NAME, payload: { name } }),
   toggleType: () => ({ type: CASH_TRANSACTION_ACTION_TYPES.TOGGLE_TYPE }),
   updateAmount: amount => ({
