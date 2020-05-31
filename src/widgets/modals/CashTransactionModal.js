@@ -127,7 +127,7 @@ const CashTransactionModalComponent = ({
 
   const PressReason = useCallback(
     () =>
-      type === CASH_TRANSACTION_TYPES.CASH_IN ? null : (
+      type === CASH_TRANSACTION_TYPES.CASH_OUT ? (
         <TouchableOpacity style={localStyles.containerStyle} onPress={onPressReason}>
           <View style={localStyles.textContainerStyle}>
             <Text style={localStyles.textStyle}>{reasonText}</Text>
@@ -136,13 +136,13 @@ const CashTransactionModalComponent = ({
             <ChevronDownIcon />
           </View>
         </TouchableOpacity>
-      ),
+      ) : null,
     [type, reason]
   );
 
   const ConfirmButton = useCallback(
     () =>
-      isInputModalOpen || (
+      !isInputModalOpen ? (
         <PageButton
           text={buttonStrings.confirm}
           onPress={onConfirm}
@@ -151,7 +151,7 @@ const CashTransactionModalComponent = ({
           style={localStyles.okButton}
           textStyle={localStyles.pageButtonTextStyle}
         />
-      ),
+      ) : null,
     [isInputModalOpen, isValid]
   );
 
