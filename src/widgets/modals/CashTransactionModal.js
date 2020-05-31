@@ -303,9 +303,8 @@ const mergeProps = (state, dispatch, ownProps) => {
     onConfirm({ name, type, amount: amount.value, paymentType, reason, description });
   const onConfirmInvalidTransaction = () =>
     ToastAndroid.show(dispensingStrings.unable_to_create_withdrawl, ToastAndroid.LONG);
-  const isValidWithdrawal = !(
-    type === CASH_TRANSACTION_TYPES.CASH_OUT && amount.value > balance.value
-  );
+  const isValidWithdrawal =
+    !!amount && !(type === CASH_TRANSACTION_TYPES.CASH_OUT && amount.value > balance.value);
 
   return {
     ...state,
