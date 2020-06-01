@@ -35,13 +35,14 @@ export const FridgeReducer = (state = initialState(), action) => {
       const { payload } = action;
       const { date } = payload;
 
-      return { ...state, toDate: date };
+      return { ...state, fromDate: date };
     }
+
     case FRIDGE_ACTIONS.CHANGE_TO_DATE: {
       const { payload } = action;
       const { date } = payload;
 
-      return { ...state, fromDate: date };
+      return { ...state, toDate: date };
     }
 
     default:
