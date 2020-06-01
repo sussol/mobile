@@ -26,6 +26,10 @@ export class TransactionItem extends Realm.Object {
     return this.batches.every(({ hasValidDoses }) => hasValidDoses);
   }
 
+  get isVaccine() {
+    return !!this?.item?.isVaccine;
+  }
+
   /**
    * Get id of item associated with this transaction item.
    *
