@@ -24,10 +24,11 @@ const TouchableNoFeedback = ({ children, style, ...touchableProps }) => (
 
 TouchableNoFeedback.defaultProps = {
   style: null,
+  children: null,
 };
 
 TouchableNoFeedback.propTypes = {
-  children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
+  children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]),
   style: PropTypes.object,
 };
 
