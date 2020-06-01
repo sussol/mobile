@@ -48,7 +48,9 @@
     "inclusive": "(inclusive)",
     "days": "days",
     "hours": "hours",
-    "minutes": "minutes"
+    "minutes": "minutes",
+    "no_location_types": "You don't have any location types. Contact your administrator.",
+    "from": "from"
   },
   "fr": {
     "must_be_a_number_between": "Doit être un nombre entre",

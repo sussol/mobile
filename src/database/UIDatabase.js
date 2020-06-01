@@ -48,8 +48,6 @@ const translateToCoreDatabaseType = type => {
     case 'PrescriptionCategory':
     case 'SupplierCreditCategory':
       return 'TransactionCategory';
-    case 'Fridge':
-      return 'Location';
     default:
       return type;
   }
@@ -259,8 +257,6 @@ class UIDatabase {
         return results.filtered('type == $0', 'supplier_credit');
       case 'RequisitionReason':
         return results.filtered('type == $0 && isActive == true', 'requisitionLineVariance');
-      case 'Fridge':
-        return results.filtered("locationType.description == 'fridge'");
       default:
         return results;
     }

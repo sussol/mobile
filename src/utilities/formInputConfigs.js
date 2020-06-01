@@ -40,12 +40,14 @@ const FORM_INPUT_KEYS = {
   LAST_NAME: 'lastName',
   CODE: 'code',
   DATE_OF_BIRTH: 'dateOfBirth',
+  DESCRIPTION: 'description',
   EMAIL: 'emailAddress',
   PHONE: 'phoneNumber',
   COUNTRY: 'country',
   ADDRESS_ONE: 'addressOne',
   ADDRESS_TWO: 'addressTwo',
   REGISTRATION_CODE: 'registrationCode',
+  LOCATION_TYPE: 'locationType',
   POLICY_NUMBER_FAMILY: 'policyNumberFamily',
   POLICY_NUMBER_PERSON: 'policyNumberPerson',
   POLICY_PROVIDER: 'insuranceProvider',
@@ -79,6 +81,16 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isRequired: true,
     label: formInputStrings.last_name,
     invalidMessage: formInputStrings.must_not_be_empty,
+    isEditable: true,
+  },
+  [FORM_INPUT_KEYS.DESCRIPTION]: {
+    type: FORM_INPUT_TYPES.TEXT,
+    initialValue: '',
+    key: 'description',
+    validator: input => input.length > 0 && input.length < 50,
+    isRequired: true,
+    label: formInputStrings.description,
+    invalidMessage: `${formInputStrings.must_not_be_empty} ${formInputStrings.and} ${formInputStrings.less_than_50_characters}`,
     isEditable: true,
   },
   [FORM_INPUT_KEYS.CODE]: {
@@ -199,6 +211,15 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     options: UIDatabase.objects('InsuranceProvider'),
     optionKey: 'name',
     isEditable: !seedObject,
+  },
+  [FORM_INPUT_KEYS.LOCATION_TYPE]: {
+    type: FORM_INPUT_TYPES.DROPDOWN,
+    initialValue: UIDatabase.objects('LocationType')[0],
+    key: 'locationType',
+    label: formInputStrings.location_type,
+    options: UIDatabase.objects('LocationType'),
+    optionKey: 'description',
+    isEditable: true,
   },
   [FORM_INPUT_KEYS.IS_ACTIVE]: {
     type: FORM_INPUT_TYPES.TOGGLE,
@@ -327,6 +348,7 @@ const FORM_CONFIGS = {
     FORM_INPUT_KEYS.SEARCH_FIRST_NAME,
     FORM_INPUT_KEYS.SEARCH_REGISTRATION_CODE,
   ],
+  location: [FORM_INPUT_KEYS.CODE, FORM_INPUT_KEYS.DESCRIPTION, FORM_INPUT_KEYS.LOCATION_TYPE],
 };
 
 export const getFormInputConfig = (formName, seedObject) => {

@@ -8,7 +8,7 @@ import { UIDatabase } from '../database';
 import { FRIDGE_ACTIONS } from '../actions/FridgeActions';
 
 const initialState = () => {
-  const fridges = UIDatabase.objects('Fridge');
+  const fridges = UIDatabase.objects('Location');
 
   return {
     fridges,
@@ -30,6 +30,21 @@ export const FridgeReducer = (state = initialState(), action) => {
 
       return { ...state, selectedFridge: fridge };
     }
+
+    case FRIDGE_ACTIONS.CHANGE_FROM_DATE: {
+      const { payload } = action;
+      const { date } = payload;
+
+      return { ...state, fromDate: date };
+    }
+
+    case FRIDGE_ACTIONS.CHANGE_TO_DATE: {
+      const { payload } = action;
+      const { date } = payload;
+
+      return { ...state, toDate: date };
+    }
+
     default:
       return state;
   }

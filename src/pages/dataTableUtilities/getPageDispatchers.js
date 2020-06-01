@@ -63,6 +63,9 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
     onNewCustomerInvoice: () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_CUSTOMER, route)),
     onNewPrescription: () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_PATIENT, route)),
     onCloseModal: () => dispatch(PageActions.closeModal(route)),
+    onEditLocation: rowKey =>
+      dispatch(PageActions.openModal(MODAL_KEYS.EDIT_LOCATION, rowKey, route)),
+    onSaveLocation: locationValues => dispatch(PageActions.saveLocation(locationValues, route)),
 
     // Modal callbacks
     onApplyReason: ({ item }) => dispatch(PageActions.applyReason(item, route)),
