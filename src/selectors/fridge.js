@@ -91,7 +91,7 @@ export const selectBreaches = createSelector(
   [selectTemperatureLogsFromDate, selectTemperatureLogsToDate, selectSelectedFridge],
   (fromDate, toDate, fridge) => {
     const { breaches } = fridge ?? {};
-    const breachesInDateRange = breaches.filtered(
+    const breachesInDateRange = breaches?.filtered(
       'startTimestamp >= $0 && endTimestamp <= $0',
       fromDate
     );
