@@ -118,6 +118,7 @@ ModalContainer.defaultProps = {
   onClose: null,
   backgroundColor: DARKER_GREY,
   numberOfLines: 1,
+  children: null,
 };
 
 ModalContainer.propTypes = {
@@ -125,7 +126,7 @@ ModalContainer.propTypes = {
   isVisible: PropTypes.bool.isRequired,
   onClose: PropTypes.func,
   title: PropTypes.string,
-  children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
+  children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]),
   noCancel: PropTypes.bool,
   backgroundColor: PropTypes.string,
   numberOfLines: PropTypes.number,
