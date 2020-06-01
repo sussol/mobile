@@ -84,8 +84,8 @@ export const FridgeDisplayInfo = ({
           <DateRangeSelector
             initialStartDate={fromDate}
             initialEndDate={toDate}
-            onChangeToDate={onChangeFromDate}
-            onChangeFromDate={onChangeToDate}
+            onChangeToDate={onChangeToDate}
+            onChangeFromDate={onChangeFromDate}
           />
         </FlexRow>
       ) : null}
