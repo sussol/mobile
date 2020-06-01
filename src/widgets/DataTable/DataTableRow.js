@@ -232,12 +232,18 @@ const DataTableRow = React.memo(
               );
 
             case COLUMN_TYPES.ICON: {
+              const { hasBreached, isVaccine } = rowData ?? {};
+
               const icons = {
                 chevron_right: ChevronRightIcon,
                 history: () => <HistoryIcon color={SUSSOL_ORANGE} />,
                 pencil: () => <PencilIcon color={SUSSOL_ORANGE} />,
-                breach: () => <HazardIcon color={SUSSOL_ORANGE} />,
+                breach: () => (hasBreached ? <HazardIcon color={SUSSOL_ORANGE} /> : null),
                 book: () => <BookIcon color={SUSSOL_ORANGE} />,
+              };
+
+              const disabledConditions = {
+                [COLUMN_KEYS.HAS_BREACHED]: !(hasBreached && isVaccine),
               };
 
               const isEditReadOnlyRecord =
@@ -246,7 +252,8 @@ const DataTableRow = React.memo(
                 !rowData.isEditable;
               const iconComponent = isEditReadOnlyRecord ? icons.book : icons[icon];
 
-              const isDisabledIcon = isDisabled && columnKey !== COLUMN_KEYS.BATCH;
+              const isDisabledIcon =
+                (isDisabled || disabledConditions[columnKey]) && columnKey !== COLUMN_KEYS.BATCH;
 
               return (
                 <TouchableCell
@@ -263,11 +270,19 @@ const DataTableRow = React.memo(
               );
             }
 
-            case COLUMN_TYPES.DROP_DOWN:
+            case COLUMN_TYPES.DROP_DOWN: {
+              const { isVaccine = false } = rowData ?? {};
+
+              const disabledConditions = {
+                [COLUMN_KEYS.CURRENT_VVM_STATUS]: !isVaccine,
+              };
+
+              const disabledVVMStatus = disabledConditions[columnKey] || isDisabled;
+
               return (
                 <DropDownCell
                   key={columnKey}
-                  isDisabled={isDisabled}
+                  isDisabled={isDisabled || disabledVVMStatus}
                   onPress={getCallback(columnKey)}
                   rowKey={rowKey}
                   columnKey={columnKey}
@@ -276,6 +291,7 @@ const DataTableRow = React.memo(
                   width={width}
                 />
               );
+            }
 
             default: {
               return (

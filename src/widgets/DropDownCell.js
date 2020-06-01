@@ -5,7 +5,7 @@ import { View, Text } from 'react-native';
 
 import TouchableCell from './DataTable/TouchableCell';
 import { ExpandIcon } from './icons';
-import { dataTableStyles } from '../globalStyles/index';
+import { dataTableStyles, GREY, SUSSOL_ORANGE } from '../globalStyles/index';
 
 const {
   dropDownCellTextContainer,
@@ -37,7 +37,7 @@ const DropDownCell = React.memo(
     const TouchableChild = () => (
       <View style={{ flexDirection: 'row' }}>
         <View style={dropDownCellIconContainer}>
-          <ExpandIcon />
+          <ExpandIcon color={isDisabled ? GREY : SUSSOL_ORANGE} />
         </View>
         <View style={dropDownCellTextContainer}>
           <Text numberOfLines={1} ellipsizeMode="tail" style={internalFontStyle}>
