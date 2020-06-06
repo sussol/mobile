@@ -146,11 +146,12 @@ export class ItemBatch extends Realm.Object {
    * @return {Bool} Indicator whether the new location should be applied to this batch.
    */
   shouldApplyLocation(newLocation = {}) {
-    return newLocation?.id === this.location?.id;
+    return newLocation?.id !== this.location?.id;
   }
 
   applyLocation(database, newLocation) {
     this.location = newLocation;
+    database.write(() => this.location.leaveLocation());
 
     return createRecord(database, 'LocationMovement', this, newLocation);
   }
