@@ -35,14 +35,20 @@ export const FridgeReducer = (state = initialState(), action) => {
       const { payload } = action;
       const { date } = payload;
 
-      return { ...state, fromDate: date };
+      const fromDate = new Date(date);
+      fromDate.setUTCHours(0, 0, 0, 0);
+
+      return { ...state, fromDate };
     }
 
     case FRIDGE_ACTIONS.CHANGE_TO_DATE: {
       const { payload } = action;
       const { date } = payload;
 
-      return { ...state, toDate: date };
+      const toDate = new Date(date);
+      toDate.setUTCHours(23, 59, 59, 999);
+
+      return { ...state, toDate };
     }
 
     default:
