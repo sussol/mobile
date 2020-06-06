@@ -28,7 +28,8 @@ export const useDatePicker = onChangeCallback => {
       const { type, nativeEvent } = event;
       if (type === 'set' && onChangeCallback) {
         const { timestamp } = nativeEvent;
-        onChangeCallback(new Date(timestamp));
+
+        onChangeCallback(timestamp);
       }
     },
     [onChangeCallback]
