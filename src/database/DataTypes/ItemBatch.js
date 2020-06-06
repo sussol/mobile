@@ -138,7 +138,7 @@ export class ItemBatch extends Realm.Object {
    * @return {Bool} Indicator whether the new vvm status should be applied to this batch.
    */
   shouldApplyVvmStatus(newVvmStatus = {}) {
-    return newVvmStatus?.id === this.currentVvmStatus?.id;
+    return newVvmStatus?.id !== this.currentVvmStatus?.id;
   }
 
   /**
