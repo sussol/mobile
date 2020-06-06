@@ -6,7 +6,7 @@ import moment from 'moment';
 
 import { UIDatabase } from '../database';
 import { FRIDGE_ACTIONS } from '../actions/FridgeActions';
-import { ROUTES } from '../navigation/index';
+import { ROUTES } from '../navigation';
 
 const initialState = () => {
   const sensors = UIDatabase.objects('Sensor');
