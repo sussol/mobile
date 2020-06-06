@@ -46,6 +46,10 @@ export class ItemBatch extends Realm.Object {
     return this.supplier?.name || '';
   }
 
+  get currentLocationMovement() {
+    return this.locationMovements.sorted('timestamp', true)[0];
+  }
+
   /**
    * Get the total number of items in this batch.
    *
@@ -151,7 +155,7 @@ export class ItemBatch extends Realm.Object {
 
   applyLocation(database, newLocation) {
     this.location = newLocation;
-    database.write(() => this.location.leaveLocation());
+    database.write(() => this.currentLocationMovement.leaveLocation());
 
     return createRecord(database, 'LocationMovement', this, newLocation);
   }
