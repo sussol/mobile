@@ -15,6 +15,10 @@ export class LocationMovement extends Realm.Object {
       ) ?? []
     );
   }
+
+  leaveLocation() {
+    this.exitTimestamp = new Date();
+  }
 }
 
 LocationMovement.schema = {
