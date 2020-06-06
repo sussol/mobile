@@ -6,6 +6,7 @@ import moment from 'moment';
 
 import { UIDatabase } from '../database';
 import { FRIDGE_ACTIONS } from '../actions/FridgeActions';
+import { ROUTES } from '../navigation/index';
 
 const initialState = () => {
   const sensors = UIDatabase.objects('Sensor');
@@ -47,6 +48,14 @@ export const FridgeReducer = (state = initialState(), action) => {
       const { date } = payload;
 
       return { ...state, toDate: date };
+    }
+
+    case 'Navigation/BACK':
+    case 'Navigation/NAVIGATE': {
+      const { routeName } = action;
+
+      if (routeName === ROUTES.VACCINES) return initialState;
+      return state;
     }
 
     default:
