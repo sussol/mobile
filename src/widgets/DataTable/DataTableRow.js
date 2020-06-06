@@ -277,7 +277,7 @@ const DataTableRow = React.memo(
                 [COLUMN_KEYS.CURRENT_VVM_STATUS]: !isVaccine,
               };
 
-              const disabledVVMStatus = disabledConditions[columnKey] || isDisabled;
+              const disabledVVMStatus = disabledConditions[columnKey];
 
               return (
                 <DropDownCell
