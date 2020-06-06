@@ -661,10 +661,14 @@ const createItemBatch = (database, item, batchString, supplier) => {
       .filtered('itemId == $0 && joinsThisStore == true', itemId)[0];
     const { restrictedLocationType } = itemStoreJoin ?? {};
     const { id: locationTypeId = '' } = restrictedLocationType ?? {};
-    const location = database.objects('Location').filtered('locationType.id == $0', locationTypeId);
+    const location = database
+      .objects('Location')
+      .filtered('locationType.id == $0', locationTypeId)[0];
 
-    itemBatch.applyLocation(database, location);
-    itemBatch.applyVvmStatus(database, vaccineVialMonitorStatus);
+    if (itemBatch.shouldApplyLocation(location)) itemBatch.applyLocation(database, location);
+    if (itemBatch.shouldApplyVvmStatus(vaccineVialMonitorStatus)) {
+      itemBatch.applyVvmStatus(database, vaccineVialMonitorStatus);
+    }
   }
 
   return itemBatch;
