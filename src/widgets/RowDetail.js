@@ -114,7 +114,7 @@ RowDetailComponent.defaultProps = {
   dismissOnKeyboardOpen: true,
   modalStyle: localStyles.modal,
   headerRowStyle: localStyles.headerRow,
-  containerStyle: localStyles.containerStyle,
+  containerStyle: localStyles.container,
 };
 
 RowDetailComponent.propTypes = {

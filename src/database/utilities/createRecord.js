@@ -656,16 +656,19 @@ const createItemBatch = (database, item, batchString, supplier) => {
 
     // An item has a restriction of the location type a location must be related to,
     // in order to be assigned to the item.
-    const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
     const itemStoreJoin = database
       .objects('ItemStoreJoin')
-      .filtered('itemId == $0 && storeId == $1', itemId, thisStoreId)[0];
+      .filtered('itemId == $0 && joinsThisStore == true', itemId)[0];
     const { restrictedLocationType } = itemStoreJoin ?? {};
     const { id: locationTypeId = '' } = restrictedLocationType ?? {};
-    const location = database.objects('Location').filtered('locationType.id == $0', locationTypeId);
+    const location = database
+      .objects('Location')
+      .filtered('locationType.id == $0', locationTypeId)[0];
 
-    itemBatch.applyLocation(database, location);
-    itemBatch.applyVvmStatus(database, vaccineVialMonitorStatus);
+    if (itemBatch.shouldApplyLocation(location)) itemBatch.applyLocation(database, location);
+    if (itemBatch.shouldApplyVvmStatus(vaccineVialMonitorStatus)) {
+      itemBatch.applyVvmStatus(database, vaccineVialMonitorStatus);
+    }
   }
 
   return itemBatch;

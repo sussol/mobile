@@ -76,13 +76,17 @@ const mapDispatchToProps = dispatch => ({
   syncTemperatures: () => dispatch(TemperatureSyncActions.syncTemperatures()),
 });
 
+TemperatureSyncComponent.defaultProps = {
+  currentSensor: null,
+};
+
 TemperatureSyncComponent.propTypes = {
   total: PropTypes.number.isRequired,
   progress: PropTypes.number.isRequired,
   lastTemperatureSync: PropTypes.string.isRequired,
   temperatureSyncMessage: PropTypes.string.isRequired,
   isSyncing: PropTypes.bool.isRequired,
-  currentSensor: PropTypes.string.isRequired,
+  currentSensor: PropTypes.string,
   syncTemperatures: PropTypes.func.isRequired,
   isComplete: PropTypes.bool.isRequired,
 };

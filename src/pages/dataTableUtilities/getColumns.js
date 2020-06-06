@@ -744,7 +744,7 @@ const COLUMNS = () => ({
     title: tableStrings.doses,
     alignText: 'right',
     sortable: true,
-    editable: true,
+    editable: false,
   },
 
   [COLUMN_NAMES.RETURN_AMOUNT]: {

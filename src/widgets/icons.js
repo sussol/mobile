@@ -59,9 +59,16 @@ export const CloseIcon = ({ size, color }) => <IonIcon name="md-close" size={siz
 CloseIcon.defaultProps = { color: WHITE, size: 36 };
 CloseIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
 
-export const ExpandIcon = React.memo(() => (
-  <FAIcon name="external-link" size={16} color={SUSSOL_ORANGE} />
+export const ExpandIcon = React.memo(({ style, color, size }) => (
+  <FAIcon name="external-link" style={style} size={size} color={color} />
 ));
+
+ExpandIcon.defaultProps = { color: SUSSOL_ORANGE, size: 16, style: {} };
+ExpandIcon.propTypes = {
+  color: PropTypes.string,
+  size: PropTypes.number,
+  style: PropTypes.object,
+};
 
 export const ConfirmIcon = React.memo(({ style }) => <FAIcon name="check-circle" style={style} />);
 ConfirmIcon.defaultProps = { style: { color: FINALISE_GREEN, fontSize: 40 } };

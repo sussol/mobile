@@ -27,7 +27,7 @@ export class ItemBatch extends Realm.Object {
   }
 
   get hasBreached() {
-    return this.location?.hasBreached() ?? false;
+    return this.location?.hasBreached ?? false;
   }
 
   get breaches() {
