@@ -47,7 +47,7 @@ export class TransactionBatch extends Realm.Object {
   }
 
   get hasBreached() {
-    return this.itemBatch?.hasBreached ?? false;
+    return !!this.itemBatch?.hasBreached;
   }
 
   /**
