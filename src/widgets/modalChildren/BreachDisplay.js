@@ -34,7 +34,7 @@ const Breach = ({ breach, getInfoColumns }) => {
       }));
 
       setChartData({ lineData: mappedLineData, render: true });
-    }, 1000);
+    }, 500);
   }, []);
 
   const pageInfoColumns = React.useMemo(() => getInfoColumns(breach), [breach]);
