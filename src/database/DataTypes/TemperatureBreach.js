@@ -44,7 +44,7 @@ export class TemperatureBreach extends Realm.Object {
   }
 
   affectedBatches(database) {
-    return this.location.batchesAtTime(database, this.endTimestamp);
+    return this.location.batchesDuringTime(database, this.startTimestamp, this.endTimestamp);
   }
 
   numberOfAffectedBatches(database) {
