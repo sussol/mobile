@@ -256,7 +256,7 @@ export class Item extends Realm.Object {
     if (!this.isVaccine || !fromDate) return 0;
 
     const customerInvoiceTransactionItems = this.transactionItems.filtered(
-      "transaction.confirmDate > $0 && transaction.type == 'customer_invoice'",
+      "transaction.confirmDate >= $0 && transaction.type == 'customer_invoice'",
       fromDate
     );
 
@@ -283,10 +283,11 @@ export class Item extends Realm.Object {
     if (!this.isVaccine || !fromDate) return 0;
 
     const supplierCreditTransactionItems = this.transactionItems.filtered(
-      'transaction.confirmDate > $0 && transaction.type == $1 && transaction.otherParty.name == $2',
+      'transaction.confirmDate >= $0 && transaction.type == $1 &&' +
+        'transaction.otherParty.code == $2',
       fromDate,
       'supplier_credit',
-      'inventory_adjustment'
+      'invad'
     );
 
     const totalDosesPossible = supplierCreditTransactionItems.reduce(
