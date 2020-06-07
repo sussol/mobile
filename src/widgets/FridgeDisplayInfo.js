@@ -76,7 +76,7 @@ export const FridgeDisplayInfo = ({
 };
 
 const localStyles = StyleSheet.create({
-  container: { height: 30, marginTop: 20, marginHorizontal: 10 },
+  container: { height: 30, marginTop: 10, marginHorizontal: 10 },
   datePickerRow: { marginTop: 10, marginHorizontal: 10 },
   largeLabel: {
     fontFamily: APP_FONT_FAMILY,
