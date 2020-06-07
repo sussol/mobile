@@ -2,9 +2,9 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2020
  */
-
+import moment from 'moment';
 import { createSelector } from 'reselect';
-import { UIDatabase } from '../database/index';
+import { UIDatabase } from '../database';
 import { chunk } from '../utilities/chunk';
 
 export const selectSelectedFridgeID = ({ fridge }) => {
@@ -97,6 +97,12 @@ export const selectBreaches = createSelector(
       toDate
     );
 
-    return breachesInDateRange;
+    const adjustedBreaches = breachesInDateRange.map(({ timestamp, id, temperature }) => ({
+      id,
+      temperature,
+      timestamp: moment(timestamp).isBefore(moment(fromDate)) ? fromDate : timestamp,
+    }));
+
+    return adjustedBreaches;
   }
 );
