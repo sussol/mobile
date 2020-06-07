@@ -106,3 +106,21 @@ export const selectBreaches = createSelector(
     return adjustedBreaches;
   }
 );
+
+export const selectTimestampFormatter = createSelector(
+  [selectTemperatureLogsFromDate, selectTemperatureLogsToDate],
+  (fromDate, toDate) => {
+    const durationInDays = moment(toDate).diff(moment(fromDate), 'day');
+
+    const justTime = 'HH:MM';
+    const dateAndTime = 'HH:MM - DD/MM';
+    const justDate = 'DD/MM';
+
+    const getTickFormat = format => tick => moment(tick).format(format);
+
+    if (durationInDays <= 1) return getTickFormat(justTime);
+    if (durationInDays <= 3) return getTickFormat(dateAndTime);
+
+    return getTickFormat(justDate);
+  }
+);
