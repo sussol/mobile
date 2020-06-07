@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { TouchableOpacity, StyleSheet, View } from 'react-native';
+import { Text, TouchableOpacity, StyleSheet, View } from 'react-native';
 import PropTypes from 'prop-types';
 
 import { UIDatabase } from '../database';
@@ -13,9 +13,9 @@ import { formatTemperatureExposure, formatTemperature } from '../utilities/forma
 
 import { FlexRow } from './FlexRow';
 import { ChevronDownIcon, ChevronUpIcon } from './icons';
-import { SimpleLabel } from './SimpleLabel';
+import { Separator } from './Separator';
 
-import { SUSSOL_ORANGE } from '../globalStyles';
+import { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles';
 import { vaccineStrings } from '../localization';
 import { DateRangeSelector } from './DateRangeSelector';
 
@@ -36,58 +36,40 @@ export const FridgeDisplayInfo = ({
 
   return (
     <Container onPress={onSelectFridge}>
-      <FlexRow
-        flex={1}
-        justifyContent="space-between"
-        alignItems="center"
-        style={localStyles.container}
-      >
-        <FlexRow flex={1} justifyContent="space-evenly">
-          {isActive ? (
-            <ChevronUpIcon color={SUSSOL_ORANGE} style={localStyles.icon} />
-          ) : (
-            <ChevronDownIcon color={SUSSOL_ORANGE} style={localStyles.icon} />
-          )}
-          <SimpleLabel
-            label={description}
-            size="large"
-            text={formatTemperature(currentTemperature)}
-          />
-        </FlexRow>
+      <FlexRow alignItems="center" justifyContent="space-between" style={localStyles.container}>
+        {isActive ? (
+          <ChevronUpIcon color={SUSSOL_ORANGE} style={localStyles.icon} />
+        ) : (
+          <ChevronDownIcon color={SUSSOL_ORANGE} style={localStyles.icon} />
+        )}
 
-        <FlexRow flex={4} justifyContent="flex-end">
-          {numberOfBreaches ? (
-            <SimpleLabel
-              label={vaccineStrings.breaches}
-              text={numberOfBreaches}
-              textAlign="right"
-              labelAlign="right"
-            />
-          ) : null}
-          <SimpleLabel
-            label={vaccineStrings.temperature_exposure}
-            text={formatTemperatureExposure(temperatureExposure)}
-            textAlign="right"
-            labelAlign="right"
-          />
-          <SimpleLabel
-            label={vaccineStrings.total_stock}
-            text={fridge.totalStock(UIDatabase)}
-            textAlign="right"
-            labelAlign="right"
-          />
+        <FlexRow flex={1} alignItems="center" justifyContent="space-evenly">
+          <Text style={localStyles.largeLabel}>{description}</Text>
+          <Text style={localStyles.largeText}>{formatTemperature(currentTemperature)}</Text>
+
+          <Text style={localStyles.label}>{vaccineStrings.breaches}</Text>
+          <Text style={localStyles.text}>{numberOfBreaches}</Text>
+
+          <Text style={localStyles.label}>{vaccineStrings.temperature_exposure}</Text>
+          <Text style={localStyles.text}>{formatTemperatureExposure(temperatureExposure)}</Text>
+
+          <Text style={localStyles.label}>{vaccineStrings.total_stock}</Text>
+          <Text style={localStyles.text}>{fridge.totalStock(UIDatabase)}</Text>
         </FlexRow>
       </FlexRow>
 
       {isActive ? (
-        <FlexRow style={localStyles.datePickerRow}>
-          <DateRangeSelector
-            initialStartDate={fromDate}
-            initialEndDate={toDate}
-            onChangeToDate={onChangeToDate}
-            onChangeFromDate={onChangeFromDate}
-          />
-        </FlexRow>
+        <>
+          <Separator marginHorizontal={100} marginTop={10} width={2} marginBottom={0} />
+          <FlexRow style={localStyles.datePickerRow}>
+            <DateRangeSelector
+              initialStartDate={fromDate}
+              initialEndDate={toDate}
+              onChangeToDate={onChangeToDate}
+              onChangeFromDate={onChangeFromDate}
+            />
+          </FlexRow>
+        </>
       ) : null}
     </Container>
   );
@@ -95,8 +77,16 @@ export const FridgeDisplayInfo = ({
 
 const localStyles = StyleSheet.create({
   container: { height: 30, marginTop: 20, marginHorizontal: 10 },
-  datePickerRow: { marginTop: 50, marginHorizontal: 10, height: 15 },
-  icon: { marginRight: 10 },
+  datePickerRow: { marginTop: 10, marginHorizontal: 10 },
+  largeLabel: {
+    fontFamily: APP_FONT_FAMILY,
+    color: SUSSOL_ORANGE,
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  largeText: { fontFamily: APP_FONT_FAMILY, fontSize: 20 },
+  label: { fontFamily: APP_FONT_FAMILY, color: SUSSOL_ORANGE, textAlign: 'left' },
+  text: { fontFamily: APP_FONT_FAMILY, textAlign: 'right' },
 });
 
 FridgeDisplayInfo.propTypes = {

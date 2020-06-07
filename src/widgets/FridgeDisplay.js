@@ -39,7 +39,7 @@ export const FridgeDisplayComponent = ({
   temperatureFormatter,
 }) => {
   const containerStyle = React.useMemo(
-    () => ({ ...localStyles.container, height: isActive ? 300 : 45 }),
+    () => ({ ...localStyles.container, height: isActive ? 400 : 45 }),
     [isActive]
   );
   const [render, setRender] = React.useState(false);
