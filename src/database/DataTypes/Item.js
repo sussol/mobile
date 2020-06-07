@@ -176,7 +176,7 @@ export class Item extends Realm.Object {
       .filtered("requisition.status == 'finalised'")
       .sorted('requisition.entryDate', true)[0];
 
-    return mostRecentRequisitionItem?.requisition?.confirmDate;
+    return mostRecentRequisitionItem?.requisition?.entryDate;
   }
 
   /**
