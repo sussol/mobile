@@ -41,8 +41,8 @@ export class Location extends Realm.Object {
 
   batchesDuringTime(database, startTimestamp, endTimestamp) {
     const locationMovements = this.locationMovements.filtered(
-      'enterTimestamp <= $0 && (exitTimestamp > $0 || exitTimestamp == null) ||' +
-        'enterTimestamp >= $0 && enterTimestamp <= $1',
+      '(enterTimestamp <= $0 && (exitTimestamp > $0 || exitTimestamp == null)) ||' +
+        '(enterTimestamp >= $0 && enterTimestamp <= $1)',
       startTimestamp ?? new Date(),
       endTimestamp ?? new Date()
     );
