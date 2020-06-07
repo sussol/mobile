@@ -91,8 +91,8 @@ export const selectBreaches = createSelector(
   (fromDate, toDate, fridge) => {
     const { breaches } = fridge ?? {};
     const breachesInDateRange = breaches?.filtered(
-      '(startTimestamp <= $0 && (endTimestamp <= $1 || endTimestamp == null)) || ' +
-        '(startTimestamp >= $0 && endTimestamp <= $1)',
+      '(startTimestamp <= $0 && (endTimestamp >= $0 || endTimestamp == null)) || ' +
+        '(startTimestamp >= $0 && startTimestamp <= $1)',
       fromDate,
       toDate
     );
