@@ -42,7 +42,7 @@ export const selectFridgeTemperatureLogsFromDate = createSelector(
   [selectFridgeTemperatureLogs, selectTemperatureLogsFromDate, selectTemperatureLogsToDate],
   (logs, fromDate, toDate) => {
     const temperatureLogs =
-      logs?.filtered?.('timestamp > $0 && timestamp < $1', fromDate, toDate) ?? [];
+      logs?.filtered?.('timestamp >= $0 && timestamp =< $1', fromDate, toDate) ?? [];
 
     return temperatureLogs;
   }
@@ -52,7 +52,6 @@ export const selectChunkedTemperatureLogs = createSelector(
   [selectFridgeTemperatureLogsFromDate],
   logs => {
     const { length: numberOfLogs } = logs;
-
     return numberOfLogs < 30 ? logs : chunk(logs, Math.ceil(numberOfLogs / 30));
   }
 );
@@ -92,8 +91,10 @@ export const selectBreaches = createSelector(
   (fromDate, toDate, fridge) => {
     const { breaches } = fridge ?? {};
     const breachesInDateRange = breaches?.filtered(
-      'startTimestamp >= $0 && endTimestamp <= $0',
-      fromDate
+      '(startTimestamp <= $0 && (endTimestamp <= $1 || endTimestamp == null)) || ' +
+        '(startTimestamp >= $0 && endTimestamp <= $1)',
+      fromDate,
+      toDate
     );
 
     return breachesInDateRange;
