@@ -110,7 +110,7 @@ export const selectBreaches = createSelector(
 export const selectTimestampFormatter = createSelector(
   [selectTemperatureLogsFromDate, selectTemperatureLogsToDate],
   (fromDate, toDate) => {
-    const durationInDays = moment(toDate).diff(moment(fromDate), 'day');
+    const durationInDays = moment(toDate).diff(moment(fromDate), 'days', true);
 
     const justTime = 'HH:MM';
     const dateAndTime = 'HH:MM - DD/MM';
