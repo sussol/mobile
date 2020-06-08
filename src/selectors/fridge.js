@@ -52,7 +52,7 @@ export const selectChunkedTemperatureLogs = createSelector(
   [selectFridgeTemperatureLogsFromDate],
   logs => {
     const { length: numberOfLogs } = logs;
-    const MAX_NUMBER_OF_DATA_POINTS = 30;
+    const MAX_DATA_POINTS = 30;
 
     // If the number of temperature logs is less than the maximum number of data points,
     // then the array does not need to be chunked together - however still need to create
