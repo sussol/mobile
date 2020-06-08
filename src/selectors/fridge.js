@@ -57,7 +57,7 @@ export const selectChunkedTemperatureLogs = createSelector(
     // If the number of temperature logs is less than the maximum number of data points,
     // then the array does not need to be chunked together - however still need to create
     // a 2D array, so chunk with a chunk size of 1.
-    return chunk(logs, numberOfLogs < MAX_NUMBER_OF_DATA_POINTS ? 1 : Math.ceil(numberOfLogs / 30));
+    return chunk(logs, numberOfLogs < MAX_DATA_POINTS ? 1 : Math.ceil(numberOfLogs / MAX_DATA_POINTS));
   }
 );
 
