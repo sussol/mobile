@@ -52,7 +52,15 @@ export const selectChunkedTemperatureLogs = createSelector(
   [selectFridgeTemperatureLogsFromDate],
   logs => {
     const { length: numberOfLogs } = logs;
-    return numberOfLogs < 30 ? logs : chunk(logs, Math.ceil(numberOfLogs / 30));
+    const MAX_DATA_POINTS = 30;
+
+    // If the number of temperature logs is less than the maximum number of data points,
+    // then the array does not need to be chunked together - however still need to create
+    // a 2D array, so chunk with a chunk size of 1.
+    return chunk(
+      logs,
+      numberOfLogs < MAX_DATA_POINTS ? 1 : Math.ceil(numberOfLogs / MAX_DATA_POINTS)
+    );
   }
 );
 
@@ -104,5 +112,23 @@ export const selectBreaches = createSelector(
     }));
 
     return adjustedBreaches;
+  }
+);
+
+export const selectTimestampFormatter = createSelector(
+  [selectTemperatureLogsFromDate, selectTemperatureLogsToDate],
+  (fromDate, toDate) => {
+    const durationInDays = moment(toDate).diff(moment(fromDate), 'days', true);
+
+    const time = 'HH:MM';
+    const date = 'DD/MM';
+    const dateAndTime = `${time} - ${date}`;
+
+    const getTickFormat = format => tick => moment(tick).format(format);
+
+    if (durationInDays <= 1) return getTickFormat(time);
+    if (durationInDays <= 3) return getTickFormat(dateAndTime);
+
+    return getTickFormat(date);
   }
 );
