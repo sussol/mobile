@@ -1032,7 +1032,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         location: database.getOrCreate('Location', record.locationID),
         batteryLevel: parseNumber(record.batteryLevel),
         name: record.name,
-        isActive: record.is_active,
+        isActive: parseBoolean(record.is_active),
       });
       break;
     }
