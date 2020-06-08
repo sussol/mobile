@@ -8,7 +8,7 @@ import moment from 'moment';
 
 export class TemperatureBreach extends Realm.Object {
   get colour() {
-    return this.temperatureBreachConfiguration.colour ?? null;
+    return this.temperatureBreachConfiguration?.colour ?? null;
   }
 
   get maximumTemperature() {
@@ -44,7 +44,7 @@ export class TemperatureBreach extends Realm.Object {
   }
 
   affectedBatches(database) {
-    return this.location.batchesDuringTime(database, this.startTimestamp, this.endTimestamp);
+    return this.location?.batchesDuringTime(database, this.startTimestamp, this.endTimestamp) ?? [];
   }
 
   numberOfAffectedBatches(database) {
