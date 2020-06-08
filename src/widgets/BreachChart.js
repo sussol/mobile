@@ -20,7 +20,10 @@ export const BreachChart = ({ lineData, x, y, xTickFormat, yTickFormat, breach }
 
   const { minimumTemperature, maximumTemperature, colour } = breach;
 
-  const lineStyle = React.useMemo(() => ({ data: { stroke: colour ?? SUSSOL_ORANGE } }), []);
+  const lineStyle = React.useMemo(
+    () => ({ data: { stroke: /^#[0-9A-F]{6}$/i.test(colour) ? colour : SUSSOL_ORANGE } }),
+    []
+  );
   const scatterStyle = React.useMemo(
     () => ({ data: { fill: WHITE, stroke: colour ?? SUSSOL_ORANGE, strokeWidth: 2, size: 3 } }),
     []
