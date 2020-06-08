@@ -26,7 +26,7 @@ const Breach = ({ breach, getInfoColumns }) => {
   React.useEffect(() => {
     const { length: numberOfLogs } = temperatureLogs;
     setTimeout(() => {
-      const chunkSize = Math.ceil(numberOfLogs / Math.min(numberOfLogs, 5));
+      const chunkSize = Math.ceil(numberOfLogs / Math.min(numberOfLogs, 30));
       const chunkedLogs = chunk(temperatureLogs, chunkSize);
       const mappedLineData = chunkedLogs.map(chunkOfLogs => ({
         temperature: Math.max(...chunkOfLogs.map(({ temperature }) => temperature)),
@@ -34,7 +34,7 @@ const Breach = ({ breach, getInfoColumns }) => {
       }));
 
       setChartData({ lineData: mappedLineData, render: true });
-    }, 1000);
+    }, 500);
   }, []);
 
   const pageInfoColumns = React.useMemo(() => getInfoColumns(breach), [breach]);

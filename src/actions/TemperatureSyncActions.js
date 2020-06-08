@@ -196,13 +196,15 @@ const createTemperatureLogs = sensor => async dispatch => {
     groupedSensorLogs.forEach(sensorLogGroup => {
       const { hasBreached, mostRecentTemperatureBreach } = sensor;
       const newLogTemperature = Math.min(...sensorLogGroup.map(({ temperature }) => temperature));
-      const newLogTimestamp = Math.min(...sensorLogGroup.map(({ timestamp }) => timestamp));
+      const newLogTimestamp = new Date(
+        Math.min(...sensorLogGroup.map(({ timestamp }) => timestamp))
+      );
 
       const newLog = createRecord(
         UIDatabase,
         'TemperatureLog',
         newLogTemperature,
-        new Date(newLogTimestamp),
+        newLogTimestamp,
         location
       );
 
