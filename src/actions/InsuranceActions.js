@@ -58,6 +58,7 @@ const update = policyDetails => (dispatch, getState) => {
     policyNumberFamily,
     discountRate: policyDiscountRate,
     insuranceProviderId: policyProviderId,
+    insuranceProvider: policyProvider,
     isActive: policyIsActive,
     expiryDate: policyExpiryDate,
     type: policyType,
@@ -68,9 +69,11 @@ const update = policyDetails => (dispatch, getState) => {
     policyNumberPerson: policyNumberPerson ?? currentNumberPerson,
     policyNumberFamily: policyNumberFamily ?? currentNumberFamily,
     discountRate: policyDiscountRate ?? currentDiscountRate,
-    insuranceProvider: policyProviderId
-      ? UIDatabase.getOrCreate('InsuranceProvider', policyProviderId)
-      : currentProvider,
+    insuranceProvider:
+      policyProvider ??
+      (policyProviderId
+        ? UIDatabase.getOrCreate('InsuranceProvider', policyProviderId)
+        : currentProvider),
     isActive: policyIsActive ?? currentIsActive,
     type: policyType ?? currentType,
     expiryDate: policyExpiryDate ?? currentExpiryDate,
