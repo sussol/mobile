@@ -47,11 +47,12 @@ export const selectTemperatureSyncIsComplete = ({ temperatureSync }) => {
 };
 
 export const selectTemperatureSyncStateMessage = ({ temperatureSync }) => {
-  const { syncState, syncError } = temperatureSync;
+  const { syncState, syncError, lastTemperatureSync } = temperatureSync;
+  const formattedDate = moment(lastTemperatureSync).format('D.M.YYYY');
 
-  return (syncError && syncStrings.sync_error) || syncState
-    ? syncStrings.sync_in_progress
-    : syncStrings.sync_enabled;
+  if (syncError) return `${syncStrings.sync_error}. ${syncStrings.last_sync} ${formattedDate}`;
+
+  return syncState ? `${syncStrings.sync_in_progress}` : `${syncStrings.sync_enabled}`;
 };
 
 export const selectTemperatureModalIsOpen = ({ temperatureSync }) => {
