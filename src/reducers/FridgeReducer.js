@@ -6,6 +6,7 @@ import moment from 'moment';
 
 import { UIDatabase } from '../database';
 import { FRIDGE_ACTIONS } from '../actions/FridgeActions';
+import { ROUTES } from '../navigation';
 
 const initialState = () => {
   const sensors = UIDatabase.objects('Sensor');
@@ -53,6 +54,14 @@ export const FridgeReducer = (state = initialState(), action) => {
       toDate.setUTCHours(23, 59, 59, 999);
 
       return { ...state, toDate };
+    }
+
+    case 'Navigation/BACK':
+    case 'Navigation/NAVIGATE': {
+      const { routeName } = action;
+
+      if (routeName === ROUTES.VACCINES) return initialState;
+      return state;
     }
 
     default:
