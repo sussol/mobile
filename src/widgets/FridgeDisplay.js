@@ -112,7 +112,7 @@ FridgeDisplayComponent.propTypes = {
   isActive: PropTypes.bool.isRequired,
   minLine: PropTypes.array,
   maxLine: PropTypes.array,
-  breaches: PropTypes.object,
+  breaches: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   maxDomain: PropTypes.number,
   minDomain: PropTypes.number,
   onSelectFridge: PropTypes.func,
