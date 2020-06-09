@@ -9,11 +9,16 @@ export class LocationMovement extends Realm.Object {
   get breaches() {
     return (
       this.location?.breaches?.filtered(
-        'startTimestamp <= $0 && (endTimestamp >= $1 || endTimestamp == null)',
+        '(startTimestamp <= $0 && (endTimestamp >= $0 || endTimestamp == null)) ||' +
+          '(startTimestamp >= $0 && startTimestamp <= $1)',
         this.enterTimestamp,
         this.exitTimestamp ?? new Date()
       ) ?? []
     );
+  }
+
+  leaveLocation() {
+    this.exitTimestamp = new Date();
   }
 }
 

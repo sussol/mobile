@@ -39,20 +39,19 @@ export class Location extends Realm.Object {
     return { minimumTemperature, maximumTemperature };
   }
 
-  batchesAtTime(database, timestamp) {
+  batchesDuringTime(database, startTimestamp, endTimestamp) {
     const locationMovements = this.locationMovements.filtered(
-      'enterTimestamp <= $0 && (exitTimestamp > $0 || exitTimestamp == null)',
-      timestamp ?? new Date()
+      '(enterTimestamp <= $0 && (exitTimestamp > $0 || exitTimestamp == null)) ||' +
+        '(enterTimestamp >= $0 && enterTimestamp <= $1)',
+      startTimestamp ?? new Date(),
+      endTimestamp ?? new Date()
     );
-    const queryString = locationMovements.map(({ id }) => `id == "${id}"`).join(' OR ');
-    const itemBatches = database.objects('ItemBatch');
 
-    return queryString ? itemBatches.filtered(queryString) : itemBatches;
+    return locationMovements.map(({ itemBatch }) => itemBatch);
   }
 
-  totalStock(database) {
-    const batches = this.batchesAtTime(database);
-    return batches.sum('numberOfPacks') ?? 0;
+  totalStock() {
+    return this.batches.sum('numberOfPacks') ?? 0;
   }
 }
 
@@ -77,6 +76,11 @@ Location.schema = {
     breaches: {
       type: 'linkingObjects',
       objectType: 'TemperatureBreach',
+      property: 'location',
+    },
+    batches: {
+      type: 'linkingObjects',
+      objectType: 'ItemBatch',
       property: 'location',
     },
   },

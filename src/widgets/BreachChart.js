@@ -28,7 +28,7 @@ export const BreachChart = ({ lineData, x, y, xTickFormat, yTickFormat, breach }
     () => ({ data: { fill: WHITE, stroke: colour ?? SUSSOL_ORANGE, strokeWidth: 2, size: 3 } }),
     []
   );
-  const domain = React.useMemo(() => ({ y: [minimumTemperature - 5, maximumTemperature + 5] }), []);
+  const domain = React.useMemo(() => ({ y: [minimumTemperature - 1, maximumTemperature + 1] }), []);
 
   return (
     <FlexView onLayout={setDimensions}>

@@ -27,7 +27,7 @@ export class ItemBatch extends Realm.Object {
   }
 
   get hasBreached() {
-    return this.location?.hasBreached ?? false;
+    return !!this.breaches.length;
   }
 
   get breaches() {
@@ -44,6 +44,10 @@ export class ItemBatch extends Realm.Object {
 
   get otherPartyName() {
     return this.supplier?.name || '';
+  }
+
+  get currentLocationMovement() {
+    return this.locationMovements.sorted('timestamp', true)[0];
   }
 
   /**
@@ -138,7 +142,7 @@ export class ItemBatch extends Realm.Object {
    * @return {Bool} Indicator whether the new vvm status should be applied to this batch.
    */
   shouldApplyVvmStatus(newVvmStatus = {}) {
-    return newVvmStatus?.id === this.currentVvmStatus?.id;
+    return newVvmStatus?.id !== this.currentVvmStatus?.id;
   }
 
   /**
@@ -146,11 +150,12 @@ export class ItemBatch extends Realm.Object {
    * @return {Bool} Indicator whether the new location should be applied to this batch.
    */
   shouldApplyLocation(newLocation = {}) {
-    return newLocation?.id === this.location?.id;
+    return newLocation?.id !== this.location?.id;
   }
 
   applyLocation(database, newLocation) {
     this.location = newLocation;
+    database.write(() => this.currentLocationMovement?.leaveLocation());
 
     return createRecord(database, 'LocationMovement', this, newLocation);
   }

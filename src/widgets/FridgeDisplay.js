@@ -15,7 +15,11 @@ import { textStyles, WHITE, SUSSOL_ORANGE } from '../globalStyles';
 import { FlexView } from './FlexView';
 
 import { FridgeActions } from '../actions/FridgeActions';
-import { selectTemperatureLogsFromDate, selectTemperatureLogsToDate } from '../selectors/fridge';
+import {
+  selectTemperatureLogsFromDate,
+  selectTemperatureLogsToDate,
+  selectTimestampFormatter,
+} from '../selectors/fridge';
 import { vaccineStrings } from '../localization';
 
 export const FridgeDisplayComponent = ({
@@ -32,9 +36,10 @@ export const FridgeDisplayComponent = ({
   onChangeToDate,
   fromDate,
   toDate,
+  temperatureFormatter,
 }) => {
   const containerStyle = React.useMemo(
-    () => ({ ...localStyles.container, height: isActive ? 300 : 45 }),
+    () => ({ ...localStyles.container, height: isActive ? 400 : 45 }),
     [isActive]
   );
   const [render, setRender] = React.useState(false);
@@ -62,13 +67,23 @@ export const FridgeDisplayComponent = ({
           maxLine={maxLine}
           breaches={breaches}
           onPressBreach={onOpenBreachModal}
+          xTickFormat={temperatureFormatter}
         />
       ) : (
         <FlexView justifyContent="center" flex={1} alignItems="center">
           <ActivityIndicator size="small" color={SUSSOL_ORANGE} />
         </FlexView>
       ),
-    [render, minLine, maxDomain, minDomain, maxLine, breaches, onOpenBreachModal]
+    [
+      render,
+      minLine,
+      maxDomain,
+      minDomain,
+      maxLine,
+      breaches,
+      onOpenBreachModal,
+      temperatureFormatter,
+    ]
   );
 
   return (
@@ -121,12 +136,14 @@ FridgeDisplayComponent.propTypes = {
   onChangeToDate: PropTypes.func.isRequired,
   fromDate: PropTypes.instanceOf(Date).isRequired,
   toDate: PropTypes.instanceOf(Date).isRequired,
+  temperatureFormatter: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
   const fromDate = selectTemperatureLogsFromDate(state);
   const toDate = selectTemperatureLogsToDate(state);
-  return { fromDate, toDate };
+  const temperatureFormatter = selectTimestampFormatter(state);
+  return { fromDate, toDate, temperatureFormatter };
 };
 
 const mapDispatchToProps = dispatch => {
