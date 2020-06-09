@@ -186,7 +186,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     initialValue: '',
     key: 'policyNumberFamily',
     validator: input => input.length > 0 && input.length < 50,
-    isRequired: true,
+    isRequired: false,
     invalidMessage: formInputStrings.unique_policy,
     label: formInputStrings.family_policy_number,
     isEditable: !seedObject,
