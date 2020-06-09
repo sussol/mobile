@@ -155,7 +155,7 @@ export class ItemBatch extends Realm.Object {
 
   applyLocation(database, newLocation) {
     this.location = newLocation;
-    database.write(() => this.currentLocationMovement.leaveLocation());
+    database.write(() => this.currentLocationMovement?.leaveLocation());
 
     return createRecord(database, 'LocationMovement', this, newLocation);
   }
