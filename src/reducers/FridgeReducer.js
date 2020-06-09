@@ -8,11 +8,15 @@ import { UIDatabase } from '../database';
 import { FRIDGE_ACTIONS } from '../actions/FridgeActions';
 
 const initialState = () => {
-  const fridges = UIDatabase.objects('Location');
+  const sensors = UIDatabase.objects('Sensor');
+  const locations = UIDatabase.objects('Location');
+  const locationsWithASensor = sensors.length
+    ? locations.filtered(sensors.map(({ location }) => `id == '${location.id}'`).join(' OR '))
+    : [];
 
   return {
-    fridges,
-    selectedFridge: fridges[0],
+    fridges: locationsWithASensor,
+    selectedFridge: locationsWithASensor[0],
     fromDate: moment(new Date())
       .subtract(30, 'd')
       .toDate(),
