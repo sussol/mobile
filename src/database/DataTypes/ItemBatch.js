@@ -157,14 +157,14 @@ export class ItemBatch extends Realm.Object {
     return newLocation?.id !== this.location?.id;
   }
 
-  leaveLocation() {
-    this.currentLocationMovement?.leaveLocation();
+  leaveLocation(database) {
+    this.currentLocationMovement?.leaveLocation(database);
   }
 
   applyLocation(database, newLocation) {
     this.location = newLocation;
-    this.leaveLocation();
 
+    this.leaveLocation(database);
     return createRecord(database, 'LocationMovement', this, newLocation);
   }
 
