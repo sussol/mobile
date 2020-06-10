@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -35,7 +36,10 @@ export class ItemBatch extends Realm.Object {
   }
 
   get currentVvmStatus() {
-    return this.vaccineVialMonitorStatusLogs.sorted('timestamp', true)[0];
+    const vvmLogs = this.vaccineVialMonitorStatusLogs.sorted('timestamp', true);
+    const mostRecentVvmLog = vvmLogs[0];
+
+    return mostRecentVvmLog?.status;
   }
 
   get vvmStatusName() {
@@ -47,7 +51,7 @@ export class ItemBatch extends Realm.Object {
   }
 
   get currentLocationMovement() {
-    return this.locationMovements.sorted('timestamp', true)[0];
+    return this.locationMovements.sorted('enterTimestamp', true)[0];
   }
 
   /**
@@ -153,9 +157,13 @@ export class ItemBatch extends Realm.Object {
     return newLocation?.id !== this.location?.id;
   }
 
+  leaveLocation() {
+    this.currentLocationMovement?.leaveLocation();
+  }
+
   applyLocation(database, newLocation) {
     this.location = newLocation;
-    database.write(() => this.currentLocationMovement?.leaveLocation());
+    this.leaveLocation();
 
     return createRecord(database, 'LocationMovement', this, newLocation);
   }
