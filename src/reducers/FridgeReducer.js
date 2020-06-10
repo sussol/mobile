@@ -12,7 +12,7 @@ const initialState = () => {
   const sensors = UIDatabase.objects('Sensor');
   const locations = UIDatabase.objects('Location');
   const locationsWithASensor = sensors.length
-    ? locations.filtered(sensors.map(({ location }) => `id == '${location.id}'`).join(' OR '))
+    ? locations.filtered(sensors.map(({ location }) => `id == '${location?.id}'`).join(' OR '))
     : [];
 
   return {
@@ -60,7 +60,7 @@ export const FridgeReducer = (state = initialState(), action) => {
     case 'Navigation/NAVIGATE': {
       const { routeName } = action;
 
-      if (routeName === ROUTES.VACCINES) return initialState;
+      if (routeName === ROUTES.VACCINES) return initialState();
       return state;
     }
 

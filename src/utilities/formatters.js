@@ -42,10 +42,13 @@ export const formatTemperature = temperature => {
   return validTemperature ? `${temperature}${degree}C` : generalStrings.not_available;
 };
 
-export const formatTemperatureExposure = ({ minimumTemperature, maximumTemperature } = {}) => {
-  const undefinedProperties = !(minimumTemperature && maximumTemperature);
+export const formatTemperatureExposure = ({
+  minimumTemperature = Infinity,
+  maximumTemperature = -Infinity,
+} = {}) => {
+  console.log(minimumTemperature, maximumTemperature);
   const infinityTemperatures = minimumTemperature === Infinity || maximumTemperature === -Infinity;
-  if (undefinedProperties || infinityTemperatures) return 'No temperatures recorded';
+  if (infinityTemperatures) return 'No temperatures recorded';
 
   return `${formatTemperature(minimumTemperature)} - ${formatTemperature(maximumTemperature)}`;
 };
