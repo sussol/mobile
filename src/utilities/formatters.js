@@ -5,7 +5,7 @@
  */
 
 import { truncateString } from 'sussol-utilities';
-import { generalStrings, modalStrings } from '../localization';
+import { generalStrings, modalStrings, vaccineStrings } from '../localization';
 
 export const formatErrorItemNames = items => {
   const MAX_ITEMS_IN_ERROR_MESSAGE = 4; // Number of items to display in finalise error modal.
@@ -47,7 +47,7 @@ export const formatTemperatureExposure = ({
   maximumTemperature = -Infinity,
 } = {}) => {
   const infinityTemperatures = minimumTemperature === Infinity || maximumTemperature === -Infinity;
-  if (infinityTemperatures) return 'No temperatures recorded';
+  if (infinityTemperatures) return vaccineStrings.no_temperatures;
 
   return `${formatTemperature(minimumTemperature)} - ${formatTemperature(maximumTemperature)}`;
 };
