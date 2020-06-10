@@ -69,7 +69,7 @@ export const FormReducer = (state = initialState(), action) => {
           ? policyNumberPersonLength > 0 && policyNumberPersonLength < 50
           : true;
         const isPolicyNumberFamilyLengthValid = updatePolicyNumberFamily
-          ? policyNumberFamilyLength > 0 && policyNumberFamilyLength < 50
+          ? policyNumberFamilyLength >= 0 && policyNumberFamilyLength < 50
           : true;
 
         const newPolicyNumberPersonState = {
