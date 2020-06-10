@@ -30,11 +30,11 @@ export class TemperatureBreach extends Realm.Object {
   }
 
   get temperature() {
-    return this.temperatureLogs?.[0]?.temperature ?? 0;
+    return (this.temperatureLogs.sum('temperature') ?? 0) / this.temperatureLogs.length || 1;
   }
 
   get timestamp() {
-    return this.temperatureLogs?.[0]?.timestamp ?? new Date(null);
+    return this.startTimestamp;
   }
 
   get duration() {
