@@ -46,7 +46,6 @@ export const formatTemperatureExposure = ({
   minimumTemperature = Infinity,
   maximumTemperature = -Infinity,
 } = {}) => {
-  console.log(minimumTemperature, maximumTemperature);
   const infinityTemperatures = minimumTemperature === Infinity || maximumTemperature === -Infinity;
   if (infinityTemperatures) return 'No temperatures recorded';
 
