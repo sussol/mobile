@@ -323,8 +323,9 @@ export class StocktakeBatch extends Realm.Object {
       const snapshotDifference = Math.abs(this.difference);
       transactionBatch.setTotalQuantity(database, snapshotDifference);
       transactionBatch.doses = this.doses;
-
       database.save('TransactionBatch', transactionBatch);
+
+      if (!this.itemBatch.totalQuantity) this.itemBatch.leaveLocation(database);
     }
     database.save('ItemBatch', this.itemBatch);
   }
