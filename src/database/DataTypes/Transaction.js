@@ -440,8 +440,12 @@ export class Transaction extends Realm.Object {
         vaccineVialMonitorStatus,
       } = transactionBatch;
 
-      itemBatch.applyVvmStatus(database, vaccineVialMonitorStatus);
-      itemBatch.applyLocation(database, location);
+      if (itemBatch.shouldApplyVvmStatus(vaccineVialMonitorStatus)) {
+        itemBatch.applyVvmStatus(database, vaccineVialMonitorStatus);
+      }
+      if (itemBatch.shouldApplyLocation(location)) {
+        itemBatch.applyLocation(database, location);
+      }
 
       // Pack to one all transactions in mobile, so multiply by |packSize| to get
       // quantity and price.
@@ -559,6 +563,14 @@ export class Transaction extends Realm.Object {
     }
 
     this.status = 'finalised';
+
+    // If an ItemBatch is reduced to zero - leave the location it is currently in.
+    this.getTransactionBatches(database).forEach(transactionBatch => {
+      const { itemBatch } = transactionBatch;
+      const { totalQuantity } = itemBatch;
+      if (!totalQuantity) itemBatch.leaveLocation(database);
+    });
+
     database.save('Transaction', this);
   }
 }
