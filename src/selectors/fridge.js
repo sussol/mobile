@@ -105,13 +105,13 @@ export const selectBreaches = createSelector(
       toDate
     );
 
-    const adjustedBreaches = breachesInDateRange.map(({ timestamp, id, temperature }) => ({
+    const adjustedBreaches = breachesInDateRange?.map(({ timestamp, id, temperature }) => ({
       id,
       temperature,
       timestamp: moment(timestamp).isBefore(moment(fromDate)) ? fromDate : timestamp,
     }));
 
-    return adjustedBreaches;
+    return adjustedBreaches ?? [];
   }
 );
 
