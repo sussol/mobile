@@ -981,7 +981,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       database.update(recordType, {
         id: record.ID,
         location: database.getOrCreate('Location', record.location_ID),
-        itemBatch: database.getOrCreate('Location', record.item_line_ID),
+        itemBatch: database.getOrCreate('ItemBatch', record.item_line_ID),
         enterTimestamp: parseDate(record.enter_date, record.enter_time),
         exitTimestamp: parseDate(record.exit_date, record.exit_time),
       });

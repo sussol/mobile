@@ -67,7 +67,7 @@ export const VaccinePageComponent = ({
         </FlexView>
       )}
 
-      {fridges.length ? <FlatList data={fridges} renderItem={Fridge} /> : <BlankComponent />}
+      {fridges?.length ? <FlatList data={fridges} renderItem={Fridge} /> : <BlankComponent />}
     </DataTablePageView>
   );
 };
