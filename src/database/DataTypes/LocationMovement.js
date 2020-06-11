@@ -17,8 +17,9 @@ export class LocationMovement extends Realm.Object {
     );
   }
 
-  leaveLocation() {
+  leaveLocation(database) {
     this.exitTimestamp = new Date();
+    database.save('LocationMovement', this);
   }
 }
 
