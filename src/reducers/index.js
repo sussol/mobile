@@ -5,6 +5,7 @@
 
 import { combineReducers } from 'redux';
 
+import { CashTransactionReducer } from './CashTransactionReducer';
 import { DashboardReducer } from './DashboardReducer';
 import { DispensaryReducer } from './DispensaryReducer';
 import { FinaliseReducer } from './FinaliseReducer';
@@ -23,6 +24,7 @@ import { WizardReducer } from './WizardReducer';
 import SyncReducer from './SyncReducer';
 
 export default combineReducers({
+  cashTransaction: CashTransactionReducer,
   dashboard: DashboardReducer,
   dispensary: DispensaryReducer,
   finalise: FinaliseReducer,
