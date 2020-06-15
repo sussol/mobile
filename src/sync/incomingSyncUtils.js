@@ -261,12 +261,12 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       canBeBlank: ['description', 'code', 'level', 'is_active'],
     },
     VaccineVialMonitorStatusLog: {
-      cannotBeBlank: ['vaccine_vial_monitor_status_ID', 'item_line_ID', 'time', 'date'],
+      cannotBeBlank: ['status_ID', 'item_line_ID', 'time', 'date'],
       canBeBlank: [],
     },
     Location: { cannotBeBlank: [], canBeBlank: ['Description', 'code', 'type_ID'] },
     LocationType: { cannotBeBlank: [], canBeBlank: ['Description'] },
-    Sensor: { cannotBeBlank: ['macAddress', 'name'], canBeBlank: ['batteryLevel', 'is_active'] },
+    Sensor: { cannotBeBlank: ['macAddress'], canBeBlank: ['batteryLevel', 'is_active', 'name'] },
     TemperatureBreachConfiguration: {
       cannotBeBlank: [
         'minimum_temperature',
