@@ -22,6 +22,16 @@
   "gil": {},
   "tl": {},
   "la": {},
+  "my": {
+    "email_required": "အီးမေးလ်( Email) ထည့်သွင်းပေးပါ",
+    "email_valid": "မှန်ကန်သော အီးမေးလ် (Email) ကို ထည့်သွင်းပေးပါ",
+    "password_contains_spaces": "စကားဝှက်တွင် ကွက်လပ်(space) ပါလို့မရပါ",
+    "password_length_invalid": "စကားဝှက်သည် စာလုံးရေ ၈လုံး မှ ၃၂လုံး အတွင်း သာရှိရပါမည်",
+    "password_match_repeat": "ထပ်မံရိုက်နှိပ်သော စကားဝှက်သည် ရှေ့ကစကားဝှက်နှင့် တူညီမှုရှိရပါမည်",
+    "password_required": "စကားဝှက် ရိုက်ထည့်ပေးပါ",
+    "repeat_password_required": "စကားဝှက်အား ထပ်မံ ရိုက်ထည့်ပေးပါ",
+    "username_required": "အသုံးပြုသည့်အမည်ကို ရိုက်ထည့်ပေးပါ"
+  },
   "pt": {
     "email_required": "Insira e-mail",
     "email_valid": "Insira um e-mail válido",
