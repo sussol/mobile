@@ -103,9 +103,13 @@ export const FormDateInput = React.forwardRef(
 
     const openDatePicker = () => setInputState(state => ({ ...state, datePickerOpen: true }));
 
-    const onSubmitEditing = React.useCallback(event => onSubmit?.(event.nativeEvent.text), [
-      onSubmit,
-    ]);
+    const onSubmitEditing = React.useCallback(
+      event => {
+        onSubmit?.(event.nativeEvent.text);
+        onUpdate?.(event.nativeEvent.text);
+      },
+      [onUpdate, onSubmit]
+    );
 
     return (
       <FlexRow flex={1}>
