@@ -71,6 +71,28 @@
     "their_ref": "ຂໍ້ມູນອ້າງອີງ",
     "by_batch": "By batch"
   },
+  "my": {
+    "last_requisition_date": "နောက်ဆုံးဆေးတောင်းခံသည့်ရက်စွဲ",
+    "temperature_range": "အပူချိန်အပိုင်းအခြား",
+    "number_of_affected_batches": "သက်ရောက်မှုရှိခဲ့သည့် ကုန်ထုတ်အပတ်စဉ် အရေအတွက်",
+    "duration": "အချိန်ကာလ",
+    "location": "တည်နေရာ",
+    "affected_quantity": "သက်ရောက်မှုရှိခဲ့သည့် အရေအတွက်",
+    "address": "လိပ်စာ",
+    "code": "ကုဒ်အမှတ်",
+    "comment": "မှတ်ချက်",
+    "confirm_date": "အတည်ပြုပေးသည့် ရက်စွဲ",
+    "current_balance": "ငွေစာရင်းလက်ကျန်",
+    "customer": "စားသုံးသူ",
+    "entered_by": "စာရင်းထည့်သွင်းသူ",
+    "entry_date": "စာရင်းသွင်းသည့် ရက်စွဲ",
+    "months_stock_required": "ဆေးပစ္စည်းသုံးစွဲနိုင်သည့် လ ",
+    "stocktake_name": "စာရင်းကောက်ယူခြင်းအတွက် သတ်မှတ်ပေးထားသည့် အမည်",
+    "supplier": "ထောက်ပံ့သူ",
+    "their_ref": "ရည်ညွှန်းချက်",
+    "by_batch": "ထုတ်လုပ်သည့်အပတ်စဉ်အားဖြင့်",
+    "category": "အမျိုးအစား"
+  },
   "pt": {
     "address": "Endereço",
     "code": "Código",
