@@ -26,9 +26,8 @@ const bugsnagClient = new BugsnagClient();
 
 const getDateString = date => {
   let returnDate = '0000-00-00';
-  if (date && typeof date === 'object') returnDate = date.toISOString().slice(0, 10);
-
-  return `${returnDate}T00:00:00`;
+  if (date && typeof date === 'object') returnDate = moment(date).toISOString();
+  return returnDate;
 };
 
 function getTimeString(date) {
