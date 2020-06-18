@@ -34,22 +34,24 @@ export const dispensingStrings = new LocalizedStrings(dispensingStringsJSON);
 
 export const LANGUAGE_CODES = {
   ENGLISH: 'gb',
-  KIRIBATI: 'gil',
   FRENCH: 'fr',
+  KIRIBATI: 'gil',
+  LAOS: 'la',
+  MYANMAR: 'my',
   PORTUGUESE: 'pt',
   SPANISH: 'es',
   TETUM: 'tl',
-  LAOS: 'la',
 };
 
 export const LANGUAGE_NAMES = {
   [LANGUAGE_CODES.ENGLISH]: 'English',
-  [LANGUAGE_CODES.KIRIBATI]: 'te taetae ni Kiribati',
   [LANGUAGE_CODES.FRENCH]: 'French',
+  [LANGUAGE_CODES.KIRIBATI]: 'te taetae ni Kiribati',
+  [LANGUAGE_CODES.LAOS]: 'Laos',
+  [LANGUAGE_CODES.MYANMAR]: 'Myanmar',
   [LANGUAGE_CODES.PORTUGUESE]: 'Portuguese',
   [LANGUAGE_CODES.SPANISH]: 'Spanish',
   [LANGUAGE_CODES.TETUM]: 'Tetum',
-  [LANGUAGE_CODES.LAOS]: 'Laos',
 };
 
 export const LANGUAGE_CHOICE = [
@@ -57,6 +59,7 @@ export const LANGUAGE_CHOICE = [
   { code: LANGUAGE_CODES.FRENCH, name: LANGUAGE_NAMES[LANGUAGE_CODES.FRENCH] },
   { code: LANGUAGE_CODES.KIRIBATI, name: LANGUAGE_NAMES[LANGUAGE_CODES.KIRIBATI] },
   { code: LANGUAGE_CODES.LAOS, name: LANGUAGE_NAMES[LANGUAGE_CODES.LAOS] },
+  { code: LANGUAGE_CODES.MYANMAR, name: LANGUAGE_NAMES[LANGUAGE_CODES.MYANMAR] },
   { code: LANGUAGE_CODES.PORTUGUESE, name: LANGUAGE_NAMES[LANGUAGE_CODES.PORTUGUESE] },
   { code: LANGUAGE_CODES.SPANISH, name: LANGUAGE_NAMES[LANGUAGE_CODES.SPANISH] },
   { code: LANGUAGE_CODES.TETUM, name: LANGUAGE_NAMES[LANGUAGE_CODES.TETUM] },
