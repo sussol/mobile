@@ -229,9 +229,12 @@ const DataTablePageModalComponent = ({
         const { currentLocationName } = currentValue;
         const { id } = currentValue.restrictedLocationType(UIDatabase) ?? {};
 
+        const locations = UIDatabase.objects('Location');
+        const selection = id ? locations.filtered('locationType.id == $0', id) : locations;
+
         return (
           <GenericChoiceList
-            data={UIDatabase.objects('Location').filtered('locationType.id == $0', id)}
+            data={selection}
             highlightValue={currentLocationName}
             onPress={onSelect}
             keyToDisplay="description"
