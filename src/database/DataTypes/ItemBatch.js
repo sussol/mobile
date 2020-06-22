@@ -113,6 +113,17 @@ export class ItemBatch extends Realm.Object {
   }
 
   /**
+   * Get this items restricted LocationType - the location type for which Location records must
+   * be related for this ItemBatch to be assigned. This is either on the ItemStoreJoin or on the
+   * underlying Item - preference to the more specific ItemStoreJoin.
+   *
+   * @param {Realm} database
+   */
+  restrictedLocationType(database) {
+    return this.item.restrictedLocationType(database);
+  }
+
+  /**
    * Add a transaction batch to be associated with this batch.
    *
    * @param  {TransactionBatch}  transactionBatch
