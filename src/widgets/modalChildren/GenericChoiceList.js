@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { COMPONENT_HEIGHT } from '../../globalStyles';
+import { textStyles, WHITE, COMPONENT_HEIGHT } from '../../globalStyles';
 
 /**
  * Generic choice list for use within a ModalContainer.
@@ -22,12 +22,21 @@ import { COMPONENT_HEIGHT } from '../../globalStyles';
  * @prop  {int}     highlightIndex      Index in `data` for which object should be 'highlighted'
  * @prop  {string}  highlightValue      Alternate to highlightIndex, using the value over index.
  * @prop  {func}    renderLeftComponent Renders a component to the left of the text in a row.
+ * @prop  {string}  placeholderText     Text used when there are no items to render in the list.
  *
  * NOTE: If there are multiple, equal values used in highlightValue within the data array,
  * multiple values will be highlighted.
  */
 export const GenericChoiceList = React.memo(
-  ({ keyToDisplay, onPress, data, highlightIndex, highlightValue, renderLeftComponent }) => {
+  ({
+    keyToDisplay,
+    onPress,
+    data,
+    highlightIndex,
+    highlightValue,
+    renderLeftComponent,
+    placeholderText,
+  }) => {
     const keyExtractor = React.useCallback(
       (item, index) => {
         const content = keyToDisplay && item ? item[keyToDisplay] : item;
@@ -66,6 +75,7 @@ export const GenericChoiceList = React.memo(
         renderItem={renderRow}
         style={localStyles.list}
         keyExtractor={keyExtractor}
+        ListEmptyComponent={<Text style={localStyles.placeholderText}>{placeholderText}</Text>}
       />
     );
   }
@@ -83,10 +93,18 @@ const localStyles = StyleSheet.create({
   list: {
     marginTop: 10,
     minWidth: '70%',
+    flex: 1,
   },
   text: {
     fontSize: 20,
     marginLeft: 20,
+  },
+  placeholderText: {
+    ...textStyles,
+    color: WHITE,
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
   },
 });
 
@@ -94,6 +112,7 @@ GenericChoiceList.defaultProps = {
   highlightIndex: 0,
   highlightValue: null,
   renderLeftComponent: null,
+  placeholderText: '',
 };
 
 GenericChoiceList.propTypes = {
@@ -103,4 +122,5 @@ GenericChoiceList.propTypes = {
   highlightIndex: PropTypes.number,
   highlightValue: PropTypes.string,
   renderLeftComponent: PropTypes.func,
+  placeholderText: PropTypes.string,
 };

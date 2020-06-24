@@ -27,7 +27,7 @@ import { CashTransactionModal } from './CashTransactionModal';
 import { RegimenDataModal } from './RegimenDataModal';
 import { StocktakeBatchModal } from './StocktakeBatchModal';
 
-import { modalStrings } from '../../localization';
+import { generalStrings, modalStrings } from '../../localization';
 
 /**
  * Wrapper around ModalContainer, containing common modals used in various
@@ -227,12 +227,23 @@ const DataTablePageModalComponent = ({
         );
       case MODAL_KEYS.SELECT_LOCATION: {
         const { currentLocationName } = currentValue;
+        const { id, description } = currentValue.restrictedLocationType(UIDatabase) ?? {};
+
+        const locations = UIDatabase.objects('Location');
+        const selection = id ? locations.filtered('locationType.id == $0', id) : locations;
+
+        const placeholder = generalStrings.formatString(
+          generalStrings.no_locations_for_batch,
+          description
+        );
+
         return (
           <GenericChoiceList
-            data={UIDatabase.objects('Location')}
+            data={selection}
             highlightValue={currentLocationName}
             onPress={onSelect}
             keyToDisplay="description"
+            placeholderText={placeholder}
           />
         );
       }
