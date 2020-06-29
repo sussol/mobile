@@ -100,6 +100,7 @@ const generateSyncData = (settings, recordType, record) => {
         barcode: `*${record.code}*`,
         'charge code': record.code,
         currency_id: defaultCurrency?.id ?? '',
+        female: String(record.female),
       };
     }
     case 'NumberSequence': {
