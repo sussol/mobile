@@ -14,11 +14,15 @@ export const selectPrescriptionSubTotal = ({ payment }) => {
   return total;
 };
 
-export const selectDiscountAmount = ({ payment }) => {
+export const selectDiscountRate = ({ payment }) => {
   const { insurancePolicy } = payment;
-  const subtotal = selectPrescriptionSubTotal({ payment });
+  const discountRate = selectInsurancePolicyDiscountRate({ insurancePolicy });
+  return discountRate;
+};
 
-  const insuranceDiscountRate = selectInsurancePolicyDiscountRate({ insurancePolicy });
+export const selectDiscountAmount = ({ payment }) => {
+  const subtotal = selectPrescriptionSubTotal({ payment });
+  const insuranceDiscountRate = selectDiscountRate({ payment });
   const insuranceDiscountMultiplier = insuranceDiscountRate ? insuranceDiscountRate / 100 : 0;
   const discountAmount = currency(subtotal).multiply(insuranceDiscountMultiplier);
 
