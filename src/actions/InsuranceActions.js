@@ -6,7 +6,6 @@ import { batch } from 'react-redux';
 
 import { UIDatabase } from '../database';
 import { selectCurrentPatient } from '../selectors/patient';
-import { PaymentActions } from './PaymentActions';
 import { selectCurrentUser } from '../selectors/user';
 import { createRecord } from '../database/utilities';
 
@@ -102,10 +101,7 @@ const select = insurancePolicy => (dispatch, getState) => {
     UIDatabase.update('Transaction', { ...transaction, insurancePolicy });
   });
 
-  batch(() => {
-    dispatch(PaymentActions.setPolicy(insurancePolicy));
-    dispatch(selectPolicy(insurancePolicy));
-  });
+  dispatch(selectPolicy(insurancePolicy));
 };
 
 export const InsuranceActions = {

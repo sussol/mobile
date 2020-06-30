@@ -24,13 +24,14 @@ import {
   selectPrescriptionSubTotal,
   selectPrescriptionTotal,
   selectCreditBeingUsed,
+  selectDiscountRate,
   selectDiscountAmount,
   selectChangeRequired,
 } from '../selectors/payment';
 import { selectPatientInsurancePolicies, selectAvailableCredit } from '../selectors/patient';
 
 import { InsuranceActions } from '../actions/InsuranceActions';
-import { selectInsuranceDiscountRate, selectCanEditInsurancePolicy } from '../selectors/insurance';
+import { selectCanEditInsurancePolicy } from '../selectors/insurance';
 import { selectUsingPaymentTypes } from '../selectors/modules';
 
 import { dispensingStrings } from '../localization';
@@ -50,7 +51,7 @@ const paymentState = state => {
   const insurancePolicies = selectPatientInsurancePolicies(state);
   const isPolicyEditable = selectCanEditInsurancePolicy(state);
   const paymentTypes = UIDatabase.objects('PaymentType').sorted('description');
-  const discountRate = selectInsuranceDiscountRate(state);
+  const discountRate = selectDiscountRate(state);
   const discountAmount = selectDiscountAmount(state);
   const changeRequired = selectChangeRequired(state);
   const usingPaymentTypes = selectUsingPaymentTypes(state);

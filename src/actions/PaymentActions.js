@@ -10,18 +10,14 @@ import { selectPrescriptionTotal } from '../selectors/payment';
 import { UIDatabase } from '../database';
 
 export const PAYMENT_ACTIONS = {
-  SET_POLICY: 'Payment/setPolicy',
   CHOOSE_PAYMENT_TYPE: 'Payment/choosePaymentType',
   UPDATE_PAYMENT: 'Payment/updatePayment',
   CREDIT_OVERFLOW: 'Payment/creditOverflow',
 };
 
 const updatePayment = amount => ({ type: PAYMENT_ACTIONS.UPDATE_PAYMENT, payload: { amount } });
+
 const creditOverflow = () => ({ type: PAYMENT_ACTIONS.CREDIT_OVERFLOW });
-const setPolicy = insurancePolicy => ({
-  type: PAYMENT_ACTIONS.SET_POLICY,
-  payload: { insurancePolicy },
-});
 
 const choosePaymentType = paymentType => (dispatch, getState) => {
   const { payment } = getState();
@@ -53,6 +49,5 @@ const validatePayment = amount => (dispatch, getState) => {
 
 export const PaymentActions = {
   validatePayment,
-  setPolicy,
   choosePaymentType,
 };
