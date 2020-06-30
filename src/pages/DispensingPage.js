@@ -17,6 +17,7 @@ import { ModalContainer } from '../widgets/modals/ModalContainer';
 
 import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
 import { createPrescription } from '../navigation/actions';
+import { useNavigationFocus, useSyncListener } from '../hooks';
 
 import { UIDatabase } from '../database';
 import { getFormInputConfig } from '../utilities/formInputConfigs';
@@ -51,6 +52,8 @@ const Dispensing = ({
   filter,
   sort,
   gotoPrescription,
+  navigation,
+  refreshData,
   switchDataset,
 
   // Dispensary lookup API callbacks
@@ -89,10 +92,15 @@ const Dispensing = ({
   selectedInsurancePolicy,
   canEditInsurancePolicy,
   isCreatingInsurancePolicy,
+  
   // Insurance callbacks
   cancelInsuranceEdit,
   saveInsurancePolicy,
 }) => {
+  // Custom hook to refresh data on this page when becoming the head of the stack again.
+  useNavigationFocus(navigation, refreshData);
+  useSyncListener(refreshData, 'Name');
+
   const getCellCallbacks = colKey => {
     switch (colKey) {
       case 'dispense':
@@ -334,6 +342,7 @@ const mapDispatchToProps = dispatch => ({
 
   filter: searchTerm => dispatch(DispensaryActions.filter(searchTerm)),
   sort: sortKey => dispatch(DispensaryActions.sort(sortKey)),
+  refreshData: () => dispatch(DispensaryActions.refresh()),
   switchDataset: () => dispatch(DispensaryActions.switchDataSet()),
 
   lookupRecord: () => dispatch(DispensaryActions.openLookupModal()),
@@ -374,6 +383,8 @@ Dispensing.propTypes = {
   sort: PropTypes.func.isRequired,
   searchTerm: PropTypes.string.isRequired,
   filter: PropTypes.func.isRequired,
+  navigation: PropTypes.object.isRequired,
+  refreshData: PropTypes.func.isRequired,
   switchDataset: PropTypes.func.isRequired,
   lookupRecord: PropTypes.func.isRequired,
   cancelLookupRecord: PropTypes.func.isRequired,

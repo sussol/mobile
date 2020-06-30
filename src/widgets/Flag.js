@@ -6,23 +6,25 @@ import PropTypes from 'prop-types';
 import { LANGUAGE_CODES } from '../localization/index';
 
 import {
-  KiribatiFlag,
   EnglishFlag,
-  LaosFlag,
-  TetumFlag,
   FrenchFlag,
+  KiribatiFlag,
+  LaosFlag,
+  MyanmarFlag,
   PortugueseFlag,
   SpanishFlag,
+  TetumFlag,
 } from './images';
 
 const LANGUAGE_TO_FLAG = {
-  [LANGUAGE_CODES.FRENCH]: FrenchFlag,
-  [LANGUAGE_CODES.TETUM]: TetumFlag,
   [LANGUAGE_CODES.ENGLISH]: EnglishFlag,
+  [LANGUAGE_CODES.FRENCH]: FrenchFlag,
   [LANGUAGE_CODES.KIRIBATI]: KiribatiFlag,
   [LANGUAGE_CODES.LAOS]: LaosFlag,
+  [LANGUAGE_CODES.MYANMAR]: MyanmarFlag,
   [LANGUAGE_CODES.PORTUGUESE]: PortugueseFlag,
   [LANGUAGE_CODES.SPANISH]: SpanishFlag,
+  [LANGUAGE_CODES.TETUM]: TetumFlag,
 };
 
 /**

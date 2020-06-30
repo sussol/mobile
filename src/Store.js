@@ -30,6 +30,7 @@ const persistConfig = {
     'dispensary',
     'modules',
     'supplierCredit',
+    'cashTransaction',
   ],
 };
 

@@ -105,6 +105,7 @@ export const FormDateInput = React.forwardRef(
 
     const onSubmitEditing = React.useCallback(
       event => {
+        /* eslint-disable no-unused-expressions */
         onSubmit?.(event.nativeEvent.text);
         onUpdate?.(event.nativeEvent.text);
       },

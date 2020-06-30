@@ -467,8 +467,6 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       const isPatient = record.type === 'patient';
       const thisStoresPatient = record.supplying_store_id === settings.get(THIS_STORE_ID);
 
-      if (isPatient && !thisStoresPatient) break;
-
       const {
         bill_address1: line1,
         bill_address2: line2,
