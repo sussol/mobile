@@ -47,6 +47,13 @@ export const Slider = React.forwardRef(
   ) => {
     if (!onEndEditing) throw new Error('Must provide onEndEditing prop!');
 
+    React.useEffect(() => {
+      if (value !== currentValue) {
+        setString(value);
+        setSlider(value);
+      }
+    }, [value]);
+
     // Current value of the component which is an always-valid Number.
     const [currentValue, setValue] = React.useState(value);
 
