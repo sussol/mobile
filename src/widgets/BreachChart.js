@@ -13,7 +13,8 @@ import { FlexView } from './FlexView';
 
 import { useLayoutDimensions } from '../hooks/useLayoutDimensions';
 
-import { WHITE, SUSSOL_ORANGE, APP_FONT_FAMILY, GREY } from '../globalStyles';
+import { COLD_BREACH_BLUE, WHITE, SUSSOL_ORANGE, APP_FONT_FAMILY, GREY } from '../globalStyles';
+import { CHART_CONSTANTS } from '../utilities/modules/vaccines';
 
 export const BreachChart = ({ lineData, x, y, xTickFormat, yTickFormat, breach }) => {
   const [width, height, setDimensions] = useLayoutDimensions();
@@ -25,17 +26,47 @@ export const BreachChart = ({ lineData, x, y, xTickFormat, yTickFormat, breach }
     []
   );
   const scatterStyle = React.useMemo(
-    () => ({ data: { fill: WHITE, stroke: colour ?? SUSSOL_ORANGE, strokeWidth: 2, size: 3 } }),
+    () => ({
+      data: {
+        fill: WHITE,
+        stroke: /^#[0-9A-F]{6}$/i.test(colour) ? colour : SUSSOL_ORANGE,
+        strokeWidth: CHART_CONSTANTS.STROKE_WIDTH,
+        size: CHART_CONSTANTS.STROKE_SIZE,
+      },
+    }),
     []
   );
-  const domain = React.useMemo(() => ({ y: [minimumTemperature - 1, maximumTemperature + 1] }), []);
+  const domain = React.useMemo(
+    () => ({
+      y: [
+        minimumTemperature - CHART_CONSTANTS.DOMAIN_OFFSET,
+        maximumTemperature + CHART_CONSTANTS.DOMAIN_OFFSET,
+      ],
+    }),
+    []
+  );
 
   return (
     <FlexView onLayout={setDimensions}>
       <VictoryChart width={width} height={height} domain={domain}>
-        <VictoryAxis offsetX={50} dependentAxis style={chartStyles.axis} tickFormat={yTickFormat} />
-        <VictoryAxis offsetY={50} tickFormat={xTickFormat} style={chartStyles.axis} />
-        <VictoryLine interpolation="natural" data={lineData} y={y} x={x} style={lineStyle} />
+        <VictoryAxis
+          offsetX={CHART_CONSTANTS.AXIS_OFFSET}
+          dependentAxis
+          style={chartStyles.axis}
+          tickFormat={yTickFormat}
+        />
+        <VictoryAxis
+          offsetY={CHART_CONSTANTS.AXIS_OFFSET}
+          tickFormat={xTickFormat}
+          style={chartStyles.axis}
+        />
+        <VictoryLine
+          interpolation={CHART_CONSTANTS.INTERPOLATION}
+          data={lineData}
+          y={y}
+          x={x}
+          style={lineStyle}
+        />
         <VictoryScatter data={lineData} y={y} x={x} style={scatterStyle} />
       </VictoryChart>
     </FlexView>
@@ -60,11 +91,25 @@ BreachChart.propTypes = {
 
 const chartStyles = {
   maxBoundaryLine: { data: { stroke: SUSSOL_ORANGE, opacity: 0.3 } },
-  minBoundaryLine: { data: { stroke: '#70b4f0', opacity: 0.3 } },
+  minBoundaryLine: { data: { stroke: COLD_BREACH_BLUE, opacity: 0.3 } },
 
-  minScatterPlot: { data: { fill: 'white', stroke: '#70b4f0', strokeWidth: 2, size: 3 } },
-  maxScatterPlot: { data: { fill: 'white', stroke: SUSSOL_ORANGE, strokeWidth: 2, size: 3 } },
+  minScatterPlot: {
+    data: {
+      fill: WHITE,
+      stroke: COLD_BREACH_BLUE,
+      strokeWidth: CHART_CONSTANTS.STROKE_WIDTH,
+      size: CHART_CONSTANTS.STROKE_SIZE,
+    },
+  },
+  maxScatterPlot: {
+    data: {
+      fill: WHITE,
+      stroke: SUSSOL_ORANGE,
+      strokeWidth: CHART_CONSTANTS.STROKE_WIDTH,
+      size: CHART_CONSTANTS.STROKE_SIZE,
+    },
+  },
   maxLine: { data: { stroke: SUSSOL_ORANGE } },
-  minLine: { data: { stroke: '#70b4f0' } },
+  minLine: { data: { stroke: WHITE } },
   axis: { fontSize: 15, fontFamily: APP_FONT_FAMILY, fill: GREY },
 };
