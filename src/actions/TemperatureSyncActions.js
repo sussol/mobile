@@ -16,6 +16,7 @@ import { chunk } from '../utilities/chunk';
 import { vaccineStrings } from '../localization';
 import { PageActions } from '../pages/dataTableUtilities/actions';
 import { ROUTES } from '../navigation';
+import { VACCINE_CONSTANTS } from '../utilities/modules/vaccines';
 
 export const TEMPERATURE_SYNC_ACTIONS = {
   OPEN_MODAL: 'TemperatureSync/openModal',
@@ -188,9 +189,13 @@ const createTemperatureLogs = sensor => async dispatch => {
 
   // Only create TemperatureLogs for the greatest multiple of 6 SensorLogs,
   // as each SensorLog is a 5 minute log, and each Temperature log a 30 minute log.
-  const iterateTo = sensorLogs.length - (sensorLogs.length % 6);
+  const iterateTo =
+    sensorLogs.length - (sensorLogs.length % VACCINE_CONSTANTS.SENSOR_LOGS_PER_TEMPERATURE_LOG);
   const sensorLogsToGroup = sensorLogs.sorted('timestamp').slice(0, iterateTo);
-  const groupedSensorLogs = chunk(sensorLogsToGroup, 6);
+  const groupedSensorLogs = chunk(
+    sensorLogsToGroup,
+    VACCINE_CONSTANTS.SENSOR_LOGS_PER_TEMPERATURE_LOG
+  );
 
   UIDatabase.write(() => {
     groupedSensorLogs.forEach(sensorLogGroup => {
