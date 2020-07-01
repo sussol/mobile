@@ -19,7 +19,9 @@ export { debounce } from './underscoreMethods';
 export { getModalTitle, MODAL_KEYS } from './getModalTitle';
 export { checkIsObject } from './checkIsObject';
 export { validateReport } from './validateReport';
-
+export { chunk } from './chunk';
 export { parsePositiveIntegerInterfaceInput } from './parsers';
 export { formatErrorItemNames, roundNumber } from './formatters';
 export { MILLISECONDS } from './constants';
+
+export { CHART_CONSTANTS, VACCINE_CONSTANTS } from './modules/vaccines';

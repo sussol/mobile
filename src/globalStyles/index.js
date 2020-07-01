@@ -21,23 +21,7 @@ import { toggleBarStyles } from './toggleBarStyles';
 import { dataTableStyles, dataTableColors } from './dataTableStyles';
 import { dropDownStyles } from './dropDownStyles';
 
-export {
-  BACKGROUND_COLOR,
-  BLUE_WHITE,
-  DARK_GREY,
-  DARKER_GREY,
-  FINALISE_GREEN,
-  FINALISED_RED,
-  GREY,
-  LIGHT_GREY,
-  ROW_BLUE,
-  SHADOW_BORDER,
-  SOFT_RED,
-  SUSSOL_ORANGE,
-  WARM_GREY,
-  WARMER_GREY,
-  WHITE,
-} from './colors';
+export * from './colors';
 
 export { APP_GENERAL_FONT_SIZE, APP_FONT_FAMILY } from './fonts';
 
