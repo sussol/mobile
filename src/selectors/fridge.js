@@ -5,7 +5,7 @@
 import moment from 'moment';
 import { createSelector } from 'reselect';
 import { UIDatabase } from '../database';
-import { chunk } from '../utilities/chunk';
+import { CHART_CONSTANTS, chunk } from '../utilities';
 
 export const selectSelectedFridgeID = ({ fridge }) => {
   const { selectedFridge = {} } = fridge;
@@ -52,15 +52,11 @@ export const selectChunkedTemperatureLogs = createSelector(
   [selectFridgeTemperatureLogsFromDate],
   logs => {
     const { length: numberOfLogs } = logs;
-    const MAX_DATA_POINTS = 30;
 
     // If the number of temperature logs is less than the maximum number of data points,
     // then the array does not need to be chunked together - however still need to create
     // a 2D array, so chunk with a chunk size of 1.
-    return chunk(
-      logs,
-      numberOfLogs < MAX_DATA_POINTS ? 1 : Math.ceil(numberOfLogs / MAX_DATA_POINTS)
-    );
+    return chunk(logs, Math.ceil(numberOfLogs / CHART_CONSTANTS.MAX_DATA_POINTS));
   }
 );
 
