@@ -5,7 +5,8 @@
 import moment from 'moment';
 import { createSelector } from 'reselect';
 import { UIDatabase } from '../database';
-import { CHART_CONSTANTS, chunk } from '../utilities';
+import chunk from '../utilities';
+import { CHART_CONSTANTS } from '../utilities/modules/vaccines/constants';
 
 export const selectSelectedFridgeID = ({ fridge }) => {
   const { selectedFridge = {} } = fridge;

@@ -23,5 +23,3 @@ export { chunk } from './chunk';
 export { parsePositiveIntegerInterfaceInput } from './parsers';
 export { formatErrorItemNames, roundNumber } from './formatters';
 export { MILLISECONDS } from './constants';
-
-export { CHART_CONSTANTS, VACCINE_CONSTANTS } from './modules/vaccines';
