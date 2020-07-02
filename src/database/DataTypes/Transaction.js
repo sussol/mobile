@@ -543,10 +543,9 @@ export class Transaction extends Realm.Object {
     database.save('Transaction', this);
 
     // Trigger update on linked transaction batches to ensure they are pushed to sync out queue.
-    this.items.forEach(item => {
-      database.save('TransactionItem', item);
-      item.batches.forEach(batch => database.save('TransactionBatch', batch));
-    });
+    this.items.forEach(item =>
+      item.batches.forEach(batch => database.save('TransactionBatch', batch))
+    );
   }
 }
 
