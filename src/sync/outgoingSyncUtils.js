@@ -26,9 +26,8 @@ const bugsnagClient = new BugsnagClient();
 
 const getDateString = date => {
   let returnDate = '0000-00-00';
-  if (date && typeof date === 'object') returnDate = date.toISOString().slice(0, 10);
-
-  return `${returnDate}T00:00:00`;
+  if (date && typeof date === 'object') returnDate = moment(date).toISOString();
+  return returnDate;
 };
 
 function getTimeString(date) {
@@ -103,6 +102,7 @@ const generateSyncData = (settings, recordType, record) => {
         barcode: `*${record.code}*`,
         'charge code': record.code,
         currency_id: defaultCurrency?.id ?? '',
+        female: String(record.female),
       };
     }
     case 'NumberSequence': {
@@ -430,6 +430,7 @@ export const generateSyncJson = (database, settings, syncOutRecord) => {
         content.syncSite = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
         content.record = syncOutRecord;
       });
+      error.canDeleteSyncOut = true;
       throw error;
     }
     if (recordResults.length > 1) {
