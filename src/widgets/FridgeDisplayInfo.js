@@ -9,7 +9,7 @@ import { Text, TouchableOpacity, StyleSheet, View } from 'react-native';
 import PropTypes from 'prop-types';
 
 import { UIDatabase } from '../database';
-import { formatTemperatureExposure, formatTemperature } from '../utilities/formatters';
+import { formatTemperatureExposure } from '../utilities/formatters';
 
 import { FlexRow } from './FlexRow';
 import { ChevronDownIcon, ChevronUpIcon } from './icons';
@@ -18,6 +18,7 @@ import { Separator } from './Separator';
 import { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles';
 import { vaccineStrings } from '../localization';
 import { DateRangeSelector } from './DateRangeSelector';
+import temperature from '../utilities/temperature';
 
 export const FridgeDisplayInfo = ({
   fridge,
@@ -45,7 +46,7 @@ export const FridgeDisplayInfo = ({
 
         <FlexRow flex={1} alignItems="center" justifyContent="space-evenly">
           <Text style={localStyles.largeLabel}>{description}</Text>
-          <Text style={localStyles.largeText}>{formatTemperature(currentTemperature)}</Text>
+          <Text style={localStyles.largeText}>{temperature(currentTemperature).format()}</Text>
 
           <Text style={localStyles.label}>{vaccineStrings.breaches}</Text>
           <Text style={localStyles.text}>{numberOfBreaches}</Text>
