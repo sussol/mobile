@@ -188,9 +188,6 @@ const generateSyncData = (settings, recordType, record) => {
       };
     }
     case 'Transaction': {
-      // Only sync prescriptions which are finalised.
-      if (record.isPrescription && !record.isFinalised) return null;
-
       const defaultCurrency = UIDatabase.objects('Currency').filtered(
         'isDefaultCurrency == $0',
         true
@@ -234,9 +231,6 @@ const generateSyncData = (settings, recordType, record) => {
     }
     case 'TransactionBatch': {
       const { transaction } = record;
-
-      // Only sync prescription lines if prescription is finalised.
-      if (transaction.isPrescription && !transaction.isFinalised) return null;
 
       return {
         ID: record.id,
@@ -288,9 +282,6 @@ const generateSyncData = (settings, recordType, record) => {
       };
     }
     case 'Prescriber': {
-      // Only sync out prescribers from this store.
-      if (!record.fromThisStore) return null;
-
       const initials = `${record.firstName?.[0] ?? ''}${record.lastName?.[0] ?? ''}`;
 
       return {
