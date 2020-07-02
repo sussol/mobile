@@ -56,13 +56,13 @@ export class SyncQueue {
   }
 
   isValidSyncOutRecord(syncOutRecord) {
-    if (!syncOutRecord.recordId) return false;
-    const [record] = this.database
-      .objects(syncOutRecord.recordType)
-      .filtered('id == $0', syncOutRecord.recordId);
+    const { recordType, recordId } = syncOutRecord;
+
+    if (!recordId) return false;
+    const record = this.database.get(recordType, recordId);
     if (!record) return false;
 
-    switch (syncOutRecord.recordType) {
+    switch (recordType) {
       // Only sync prescriptions which are finalised.
       case 'Transaction':
         return !(record.isPrescription && !record.isFinalised);
@@ -103,14 +103,11 @@ export class SyncQueue {
           };
 
           if (this.isValidSyncOutRecord(syncOutRecord)) {
-            const [existingSyncOutRecord] = this.database
-              .objects('SyncOut')
-              .filtered('recordId == $0', syncOutRecord.recordId);
+            const existingSyncOutRecord = this.database.get('SyncOut', recordId);
             if (existingSyncOutRecord) {
               this.database.save('SyncOut', { ...existingSyncOutRecord, ...syncOutRecord });
             } else {
-              const id = generateUUID();
-              this.database.create('SyncOut', { id, ...syncOutRecord });
+              this.database.create('SyncOut', { id: generateUUID(), ...syncOutRecord });
             }
           }
 
