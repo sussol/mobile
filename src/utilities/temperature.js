@@ -54,13 +54,23 @@ class Temperature {
   }
 
   format(asMetric) {
-    const { pattern, metric, symbol, negativePattern, formatWithSymbol } = this.options;
+    const {
+      pattern,
+      metric,
+      symbol,
+      negativePattern,
+      invalidPattern,
+      formatWithSymbol,
+    } = this.options;
 
     const formatMetric = asMetric || metric;
-    const temperatureValue = this.temperature(formatMetric);
-    const patternToReplace = temperatureValue >= 0 ? pattern : negativePattern;
 
-    if (!Number.isFinite(Number(temperatureValue))) return 'N/A';
+    const temperatureValue = this.temperature(formatMetric);
+    const isValid = Number.isFinite(Number(temperatureValue));
+
+    let patternToReplace = pattern;
+    if (!isValid) patternToReplace = invalidPattern;
+    if (temperatureValue < 0) patternToReplace = negativePattern;
 
     return patternToReplace
       .replace('#', String(temperatureValue))
@@ -78,6 +88,7 @@ const DEFAULT_OPTIONS = {
   formatWithSymbol: true,
   pattern: '#*',
   negativePattern: '-#*',
+  invalidPattern: 'N/A',
 };
 
 const getMetricSymbol = (metric, symbol) => `${symbol}${METRIC_SYMBOLS[metric]}`;
