@@ -8,6 +8,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { BluetoothStatus } from 'react-native-bluetooth-status';
 import { AppState, View } from 'react-native';
 import { Scheduler } from 'sussol-utilities';
 
@@ -87,6 +88,9 @@ class MSupplyMobileAppContainer extends React.Component {
   componentDidMount = () => {
     const { dispatch } = this.props;
 
+    BluetoothStatus.addListener(newStatus =>
+      dispatch(PermissionActions.requestBluetooth(newStatus))
+    );
     dispatch(PermissionActions.checkPermissions());
 
     if (!__DEV__) {
@@ -95,6 +99,7 @@ class MSupplyMobileAppContainer extends React.Component {
   };
 
   componentWillUnmount = () => {
+    BluetoothStatus.removeListener();
     if (!__DEV__) {
       AppState.removeEventListener('change', this.onAppStateChange);
     }
