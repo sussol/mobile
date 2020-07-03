@@ -48,8 +48,8 @@ const requestLocation = () => async (dispatch, getState) => {
 
 const checkPermissions = () => async dispatch => {
   const promises = [
-    check(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE),
     check(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION),
+    check(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE),
     BluetoothStatus.state(),
   ];
 
