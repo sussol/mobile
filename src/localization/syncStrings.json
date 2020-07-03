@@ -25,7 +25,9 @@
     "no_sensors": "No sensors to scan for",
     "syncing_temperatures": "Syncing temperatures",
     "bluetooth_disabled": "Sync error. Bluetooth disabled.",
-    "location_permission": "Sync error. Location permission required."
+    "please_enable_bluetooth": "We tried syncing temperatures, but your bluetooth is diabled. Enabled it to sync temperatures!",
+    "location_permission": "Sync error. Location permission required.",
+    "grant_location_permission": "We tried syncing temperatures, but we don't have access to your location. Grant us permission so we can sync temperatures!"
   },
   "fr": {
     "last_sync": "DERNIER SYNC",
