@@ -21,6 +21,8 @@ const STATE_TO_MESSAGE = {
   [TEMPERATURE_SYNC_STATES.SAVING_LOGS]: syncStrings.saving_temperature_logs,
   [TEMPERATURE_SYNC_STATES.NO_SENSORS]: syncStrings.no_sensors,
   [TEMPERATURE_SYNC_STATES.SYNCING]: syncStrings.syncing_temperatures,
+  [TEMPERATURE_SYNC_STATES.BLUETOOTH_DISABLED]: syncStrings.bluetooth_disabled,
+  [TEMPERATURE_SYNC_STATES.LOCATION_DISABLED]: syncStrings.location_permission,
 };
 
 export const selectTemperatureSyncMessage = ({ temperatureSync }) => {
@@ -31,8 +33,9 @@ export const selectTemperatureSyncMessage = ({ temperatureSync }) => {
 
 export const selectTemperatureSyncLastSyncString = ({ temperatureSync }) => {
   const { lastTemperatureSync } = temperatureSync;
+  const asMoment = moment(lastTemperatureSync);
 
-  return `${moment(lastTemperatureSync).format('H:mm MMMM D, YYYY ')}`;
+  return `${asMoment.isValid() ? asMoment.format('H:mm MMMM D, YYYY ') : '--'}`;
 };
 
 export const selectCurrentSensorNameString = ({ temperatureSync }) => {
@@ -47,9 +50,10 @@ export const selectTemperatureSyncIsComplete = ({ temperatureSync }) => {
 };
 
 export const selectTemperatureSyncStateMessage = ({ temperatureSync }) => {
-  const { syncState, syncError, lastTemperatureSync } = temperatureSync;
+  const { disabled, syncState, syncError, lastTemperatureSync } = temperatureSync;
   const formattedDate = moment(lastTemperatureSync).format('D.M.YYYY');
 
+  if (disabled) return `${syncStrings.sync_disabled}. `;
   if (syncError) return `${syncStrings.sync_error}. ${syncStrings.last_sync} ${formattedDate}`;
 
   return syncState ? `${syncStrings.sync_in_progress}` : `${syncStrings.sync_enabled}`;
