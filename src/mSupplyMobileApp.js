@@ -44,6 +44,7 @@ import { selectIsBreachModalOpen, selectBreachModalTitle } from './selectors/bre
 import { BreachActions } from './actions/BreachActions';
 import { TemperatureSync } from './widgets/modalChildren/TemperatureSync';
 import { RowDetail } from './widgets/RowDetail';
+import { PermissionActions } from './actions/PermissionActions';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -84,6 +85,10 @@ class MSupplyMobileAppContainer extends React.Component {
   }
 
   componentDidMount = () => {
+    const { dispatch } = this.props;
+
+    dispatch(PermissionActions.checkPermissions());
+
     if (!__DEV__) {
       AppState.addEventListener('change', this.onAppStateChange);
     }
@@ -102,6 +107,7 @@ class MSupplyMobileAppContainer extends React.Component {
     const { dispatch } = this.props;
     if (nextAppState?.match(/inactive|background/)) dispatch(UserActions.setTime());
     if (appState?.match(/inactive|background/) && nextAppState === 'active') {
+      dispatch(PermissionActions.checkPermissions());
       dispatch(UserActions.active());
     }
 
@@ -268,7 +274,6 @@ const mapStateToProps = state => {
   const currentUser = selectCurrentUser(state);
   const isSyncing = selectIsSyncing(state);
   const breachModalTitle = selectBreachModalTitle(state);
-
   return {
     temperatureSyncModalIsOpen,
     isSyncing,
