@@ -35,6 +35,7 @@ export const deleteRecord = (database, recordType, primaryKey, primaryKeyField =
     case 'NameStoreJoin':
     case 'NumberSequence':
     case 'NumberToReuse':
+    case 'Prescriber':
     case 'Requisition':
     case 'RequisitionItem':
     case 'Stocktake':

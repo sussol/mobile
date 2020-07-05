@@ -1111,6 +1111,11 @@ const RECORD_TYPE_TO_TABLE = {
       field: 'otherStoreName',
     },
   },
+  Prescriber: {
+    Transaction: {
+      field: 'prescriber',
+    },
+  },
 };
 
 const RECORD_TYPE_TO_MASTERLIST = {
@@ -1167,28 +1172,31 @@ export const mergeRecords = (database, settings, internalRecordType, syncRecord)
     }
   );
 
-  const [[tableToUpdate, { field: fieldToUpdate }]] = Object.entries(
-    RECORD_TYPE_TO_MASTERLIST[internalRecordType]
-  );
-  database
-    .objects(tableToUpdate)
-    .filtered(`${fieldToUpdate}.id == $0`, recordToMerge.id)
-    .snapshot()
-    .forEach(joinRecord => {
-      const duplicateJoinRecord = database
-        .objects(tableToUpdate)
-        .filtered(
-          `(${fieldToUpdate}.id == $0) && (masterList.id == $0)`,
-          recordToKeep.id,
-          joinRecord.masterList.id
-        )[0];
-      if (duplicateJoinRecord) {
-        deleteRecord(database, tableToUpdate, joinRecord.id);
-      } else {
-        joinRecord[fieldToUpdate] = recordToKeep;
-        createOrUpdateRecord(database, settings, tableToUpdate, joinRecord);
-      }
-    });
+  if (RECORD_TYPE_TO_MASTERLIST[internalRecordType]) {
+    const [[tableToUpdate, { field: fieldToUpdate }]] = Object.entries(
+      RECORD_TYPE_TO_MASTERLIST[internalRecordType]
+    );
+
+    database
+      .objects(tableToUpdate)
+      .filtered(`${fieldToUpdate}.id == $0`, recordToMerge.id)
+      .snapshot()
+      .forEach(joinRecord => {
+        const duplicateJoinRecord = database
+          .objects(tableToUpdate)
+          .filtered(
+            `(${fieldToUpdate}.id == $0) && (masterList.id == $0)`,
+            recordToKeep.id,
+            joinRecord.masterList.id
+          )[0];
+        if (duplicateJoinRecord) {
+          deleteRecord(database, tableToUpdate, joinRecord.id);
+        } else {
+          joinRecord[fieldToUpdate] = recordToKeep;
+          createOrUpdateRecord(database, settings, tableToUpdate, joinRecord);
+        }
+      });
+  }
 
   switch (internalRecordType) {
     case 'Item':
