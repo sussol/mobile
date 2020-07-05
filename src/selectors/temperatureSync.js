@@ -50,11 +50,10 @@ export const selectTemperatureSyncIsComplete = ({ temperatureSync }) => {
 };
 
 export const selectTemperatureSyncStateMessage = ({ temperatureSync }) => {
-  const { disabled, syncState, syncError, lastTemperatureSync } = temperatureSync;
-  const formattedDate = moment(lastTemperatureSync).format('D.M.YYYY');
+  const { disabled, syncState, syncError } = temperatureSync;
 
   if (disabled) return `${syncStrings.sync_disabled}. `;
-  if (syncError) return `${syncStrings.sync_error}. ${syncStrings.last_sync} ${formattedDate}`;
+  if (syncError) return `${syncStrings.sync_error}.`;
 
   return syncState ? `${syncStrings.sync_in_progress}` : `${syncStrings.sync_enabled}`;
 };
