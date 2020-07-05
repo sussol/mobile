@@ -25,6 +25,10 @@ export class SyncDatabase {
     return this.database.create(...args, 'sync');
   }
 
+  get(type, primaryKey, primaryKeyField = 'id') {
+    return this.database.get(type, primaryKey, primaryKeyField);
+  }
+
   getOrCreate(type, primaryKey, primaryKeyField = 'id') {
     return this.database.getOrCreate(type, primaryKey, primaryKeyField, 'sync');
   }
