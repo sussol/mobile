@@ -55,7 +55,7 @@ export const selectTemperatureSyncStateMessage = ({ temperatureSync }) => {
   if (disabled) return `${syncStrings.sync_disabled}. `;
   if (syncError) return `${syncStrings.sync_error}.`;
 
-  return syncState ? `${syncStrings.sync_in_progress}` : `${syncStrings.sync_enabled}`;
+  return syncState ? `${syncStrings.sync_in_progress}` : `${syncStrings.sync_enabled}.`;
 };
 
 export const selectTemperatureModalIsOpen = ({ temperatureSync }) => {
