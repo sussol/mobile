@@ -13,7 +13,8 @@ import FAIcon from 'react-native-vector-icons/FontAwesome';
 import FA5Icon from 'react-native-vector-icons/FontAwesome5';
 import EvilIcon from 'react-native-vector-icons/EvilIcons';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
-import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import {
   WHITE,
@@ -22,6 +23,7 @@ import {
   FINALISED_RED,
   DARK_GREY,
   dataTableColors,
+  GREY,
 } from '../globalStyles';
 
 export const SortAscIcon = () => <FAIcon name="sort-asc" size={15} style={{ marginRight: 10 }} />;
@@ -39,7 +41,7 @@ export const UncheckedIcon = () => (
 export const DisabledCheckedIcon = () => (
   <IonIcon name="md-radio-button-on" size={15} color={dataTableColors.checkableCellDisabled} />
 );
-export const DisabledUncheckedIcon = () => <MaterialIcon name="cancel" size={15} />;
+export const DisabledUncheckedIcon = () => <MaterialCommunityIcon name="cancel" size={15} />;
 
 export const OpenModalIcon = () => (
   <FAIcon name="angle-double-up" size={20} color={SUSSOL_ORANGE} />
@@ -172,4 +174,30 @@ HazardIcon.propTypes = {
   color: PropTypes.string,
   size: PropTypes.number,
   style: PropTypes.object,
+};
+
+export const SyncArrow = ({ size, style, color }) => (
+  <MaterialIcon name="sync" size={size} style={style} color={color} />
+);
+SyncArrow.defaultProps = { size: 30, style: {}, color: GREY };
+SyncArrow.propTypes = { size: PropTypes.number, style: PropTypes.object, color: PropTypes.string };
+
+export const SyncArrowDisabled = ({ size, style, color }) => (
+  <MaterialIcon name="sync-disabled" size={size} style={style} color={color} />
+);
+SyncArrowDisabled.defaultProps = { size: 30, style: {}, color: GREY };
+SyncArrowDisabled.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
+
+export const SyncArrowProblem = ({ size, style, color }) => (
+  <MaterialIcon name="sync-problem" size={size} style={style} color={color} />
+);
+SyncArrowProblem.defaultProps = { size: 30, style: {}, color: GREY };
+SyncArrowProblem.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
 };
