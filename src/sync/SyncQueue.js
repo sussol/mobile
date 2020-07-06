@@ -55,6 +55,27 @@ export class SyncQueue {
     this.database.removeListener(this.databaseListenerId);
   }
 
+  isValidSyncOutRecord(syncOutRecord) {
+    const { recordType, recordId } = syncOutRecord;
+
+    if (!recordId) return false;
+    const record = this.database.get(recordType, recordId);
+    if (!record) return false;
+
+    switch (recordType) {
+      // Only sync prescriptions which are finalised.
+      case 'Transaction':
+        return !(record.isPrescription && !record.isFinalised);
+      case 'TransactionBatch':
+        return !(record.transaction.isPrescription && !record.transaction.isFinalised);
+      // Only sync out prescribers from this store.
+      case 'Prescriber':
+        return record.fromThisStore;
+      default:
+        return true;
+    }
+  }
+
   /**
    * Respond to a database change event. Must be called from within a database
    * write transaction.
@@ -72,24 +93,24 @@ export class SyncQueue {
         case CREATE:
         case UPDATE:
         case DELETE: {
-          if (!record.id) return;
-          const existingSyncOutRecord = this.database
-            .objects('SyncOut')
-            .filtered('recordId == $0', record.id)[0];
-          if (!existingSyncOutRecord) {
-            this.database.create('SyncOut', {
-              id: generateUUID(),
-              changeTime: new Date().getTime(),
-              changeType,
-              recordType,
-              recordId: record.id,
-            });
-          } else {
-            existingSyncOutRecord.changeTime = new Date().getTime();
-            existingSyncOutRecord.changeType = changeType;
-            existingSyncOutRecord.recordType = recordType;
-            this.database.save('SyncOut', existingSyncOutRecord);
+          const { id: recordId } = record;
+
+          const syncOutRecord = {
+            changeTime: new Date().getTime(),
+            changeType,
+            recordType,
+            recordId,
+          };
+
+          if (this.isValidSyncOutRecord(syncOutRecord)) {
+            const existingSyncOutRecord = this.database.get('SyncOut', recordId);
+            if (existingSyncOutRecord) {
+              this.database.save('SyncOut', { ...existingSyncOutRecord, ...syncOutRecord });
+            } else {
+              this.database.create('SyncOut', { id: generateUUID(), ...syncOutRecord });
+            }
           }
+
           break;
         }
         default:

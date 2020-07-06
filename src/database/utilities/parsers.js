@@ -5,13 +5,11 @@
 
 /**
  * Returns the boolean string as a boolean (false if none passed)
- * @param  {string} numberString The string to convert to a boolean
+ *
+ * @param  {string}  numberString  The string to convert to a boolean
  * @return {boolean}               The boolean representation of the string
  */
-export const parseBoolean = booleanString => {
-  const trueStrings = ['true', 'True', 'TRUE'];
-  return trueStrings.includes(booleanString);
-};
+export const parseBoolean = booleanString => booleanString?.toString()?.toLowerCase() === 'true';
 
 /**
  * Return a Date object representing the given date, time.
