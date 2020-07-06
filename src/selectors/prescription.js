@@ -30,14 +30,16 @@ export const selectPrescriptionPrescriber = ({ prescription }) => {
 
 export const selectPrescriberName = ({ prescription }) => {
   const currentPrescriber = selectPrescriptionPrescriber({ prescription });
+  const { firstName = '', lastName = '' } = currentPrescriber ?? {};
 
-  return `${currentPrescriber?.firstName} ${currentPrescriber?.lastName}`.trim();
+  return `${firstName} ${lastName}`.trim();
 };
 
-export const selectPatientName = state => {
-  const currentPatient = selectPrescriptionPatient(state);
+export const selectPatientName = ({ prescription }) => {
+  const currentPatient = selectPrescriptionPatient({ prescription });
+  const { firstName = '', lastName = '' } = currentPatient ?? {};
 
-  return `${currentPatient?.firstName} ${currentPatient?.lastName}`.trim();
+  return `${firstName} ${lastName}`.trim();
 };
 
 export const selectItemSearchTerm = ({ prescription }) => {
