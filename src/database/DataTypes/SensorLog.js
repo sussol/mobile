@@ -15,7 +15,7 @@ SensorLog.schema = {
     temperature: 'double',
     timestamp: 'date',
     sensor: 'Sensor',
-    location: 'Location',
+    location: { type: 'Location', optional: true },
   },
 };
 

@@ -1003,11 +1003,14 @@ const createVvmStatusLog = (database, itemBatch, status) => {
 };
 
 const createSensorLog = (database, temperature, timestamp, sensor) => {
+  const { location } = sensor;
+
   const sensorLog = database.create('SensorLog', {
     id: generateUUID(),
     temperature,
     timestamp,
     sensor,
+    location,
   });
 
   return sensorLog;
