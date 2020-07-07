@@ -73,7 +73,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  syncTemperatures: () => dispatch(TemperatureSyncActions.syncTemperatures()),
+  syncTemperatures: () => dispatch(TemperatureSyncActions.manualTemperatureSync()),
 });
 
 TemperatureSyncComponent.defaultProps = {
