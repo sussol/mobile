@@ -63,6 +63,7 @@ Sensor.schema = {
     batteryLevel: { type: 'double', default: 0 },
     sensorLogs: { type: 'linkingObjects', objectType: 'SensorLog', property: 'sensor' },
     isActive: { type: 'bool', default: true },
+    logInterval: { type: 'int', default: 300 },
   },
 };
 
