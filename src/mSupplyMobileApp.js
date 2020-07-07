@@ -8,6 +8,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { BluetoothStatus } from 'react-native-bluetooth-status';
 import { AppState, View } from 'react-native';
 import { Scheduler } from 'sussol-utilities';
 
@@ -44,6 +45,7 @@ import { selectIsBreachModalOpen, selectBreachModalTitle } from './selectors/bre
 import { BreachActions } from './actions/BreachActions';
 import { TemperatureSync } from './widgets/modalChildren/TemperatureSync';
 import { RowDetail } from './widgets/RowDetail';
+import { PermissionActions } from './actions/PermissionActions';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -84,12 +86,20 @@ class MSupplyMobileAppContainer extends React.Component {
   }
 
   componentDidMount = () => {
+    const { dispatch } = this.props;
+
+    BluetoothStatus.addListener(newStatus =>
+      dispatch(PermissionActions.requestBluetooth(newStatus))
+    );
+    dispatch(PermissionActions.checkPermissions());
+
     if (!__DEV__) {
       AppState.addEventListener('change', this.onAppStateChange);
     }
   };
 
   componentWillUnmount = () => {
+    BluetoothStatus.removeListener();
     if (!__DEV__) {
       AppState.removeEventListener('change', this.onAppStateChange);
     }
@@ -102,6 +112,7 @@ class MSupplyMobileAppContainer extends React.Component {
     const { dispatch } = this.props;
     if (nextAppState?.match(/inactive|background/)) dispatch(UserActions.setTime());
     if (appState?.match(/inactive|background/) && nextAppState === 'active') {
+      dispatch(PermissionActions.checkPermissions());
       dispatch(UserActions.active());
     }
 
@@ -268,7 +279,6 @@ const mapStateToProps = state => {
   const currentUser = selectCurrentUser(state);
   const isSyncing = selectIsSyncing(state);
   const breachModalTitle = selectBreachModalTitle(state);
-
   return {
     temperatureSyncModalIsOpen,
     isSyncing,

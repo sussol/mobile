@@ -13,15 +13,19 @@ import { createRecord } from '../database/utilities';
 import { MILLISECONDS } from '../utilities';
 import { chunk } from '../utilities/chunk';
 
-import { vaccineStrings } from '../localization';
+import { syncStrings, vaccineStrings } from '../localization';
 import { PageActions } from '../pages/dataTableUtilities/actions';
 import { ROUTES } from '../navigation';
 import { VACCINE_CONSTANTS } from '../utilities/modules/vaccines';
+import { PermissionSelectors } from '../selectors/permission';
+import { PermissionActions } from './PermissionActions';
 
 export const TEMPERATURE_SYNC_ACTIONS = {
   OPEN_MODAL: 'TemperatureSync/openModal',
   CLOSE_MODAL: 'TemperatureSync/closeModal',
   ERROR_NO_SENSORS: 'TemperatureSync/errorNoSensors',
+  ERROR_BLUETOOTH_DISABLED: 'TemperatureSync/errorBluetoothDisabled',
+  ERROR_LOCATION_DISABLED: 'TemperatureSync/errorLocationDisabled',
 
   START_SYNC: 'TemperatureSync/startSync',
   COMPLETE_SYNC: 'TemperatureSync/completeSync',
@@ -75,9 +79,18 @@ const updateSensors = sensorAdvertisements => dispatch => {
   }
 };
 
-const startSensorScan = () => async dispatch => {
+const startSensorScan = () => async (dispatch, getState) => {
+  // Ensure the correct permissions before initiating a new sync process.
+  const bluetoothEnabled = PermissionSelectors.bluetooth(getState());
+  const locationPermission = PermissionSelectors.location(getState());
+
+  if (!bluetoothEnabled) dispatch(errorDisabledBluetooth());
+  if (!locationPermission) dispatch(errorDisabledLocation());
+  if (!(bluetoothEnabled && locationPermission)) return null;
+
   await dispatch(scanForSensors());
-  dispatch(PageActions.refreshData(ROUTES.VACCINE_ADMIN_PAGE));
+
+  return dispatch(PageActions.refreshData(ROUTES.VACCINE_ADMIN_PAGE));
 };
 
 const scanForSensors = () => async dispatch => {
@@ -242,18 +255,47 @@ const updateSensorProgress = sensor => ({
   payload: { sensor },
 });
 
+const manualTemperatureSync = () => async (dispatch, getState) => {
+  const bluetoothEnabled = PermissionSelectors.bluetooth(getState());
+  const locationPermission = PermissionSelectors.location(getState());
+
+  if (!bluetoothEnabled) await dispatch(PermissionActions.requestBluetooth());
+  if (!locationPermission) await dispatch(PermissionActions.requestLocation());
+
+  dispatch(syncTemperatures());
+};
+
+const errorDisabledBluetooth = () => dispatch => {
+  ToastAndroid.show(syncStrings.please_enable_bluetooth, ToastAndroid.LONG);
+  dispatch({ type: TEMPERATURE_SYNC_ACTIONS.ERROR_BLUETOOTH_DISABLED });
+};
+const errorDisabledLocation = () => dispatch => {
+  ToastAndroid.show(syncStrings.grant_location_permission, ToastAndroid.LONG);
+  dispatch({ type: TEMPERATURE_SYNC_ACTIONS.ERROR_LOCATION_DISABLED });
+};
+
 const syncTemperatures = () => async (dispatch, getState) => {
+  // Ensure not sync is currently in progress before initiating a new one.
   const { temperatureSync } = getState();
   const { isSyncing } = temperatureSync;
+  if (isSyncing) return null;
 
+  // Ensure the correct permissions before initiating a new sync process.
+  const bluetoothEnabled = PermissionSelectors.bluetooth(getState());
+  const locationPermission = PermissionSelectors.location(getState());
+
+  if (!bluetoothEnabled) dispatch(errorDisabledBluetooth());
+  if (!locationPermission) dispatch(errorDisabledLocation());
+  if (!(bluetoothEnabled && locationPermission)) return null;
+
+  // Ensure there are some sensors which have been assigned a location before syncing.
   const sensors = UIDatabase.objects('Sensor').filtered('location != null && isActive == true');
   const { length: numberOfSensors } = sensors;
-
-  if (isSyncing) return null;
   if (!numberOfSensors) return dispatch(errorNoSensors());
 
+  // Begin a sync cycle: For each sensor, download the logs. Reset it's log
+  //  frequency and advertisement frequency. Then, save the logs downloaded.
   dispatch(startSync());
-
   for (let i = 0; i < numberOfSensors; i++) {
     const sensor = sensors[i];
 
@@ -283,4 +325,5 @@ export const TemperatureSyncActions = {
   openModal,
   closeModal,
   startSensorScan,
+  manualTemperatureSync,
 };
