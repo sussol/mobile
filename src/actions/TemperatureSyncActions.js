@@ -138,10 +138,6 @@ const saveLogs = (logData, sensor) => async dispatch => {
   const tempLogIsEarlier = mostRecentTempLogTime.isBefore(mostRecentSensorLogTime);
   const mostRecentLogTime = tempLogIsEarlier ? mostRecentSensorLogTime : mostRecentTempLogTime;
 
-  // let lookbackTime = moment(new Date(null));
-  // if (sensorLogs.length) lookbackTime = moment(sensorLogs.max('timestamp'));
-  // else if (tempLogs.length) lookbackTime = moment(tempLogs.max('timestamp'));
-
   // Calculate the number of LogIntervals it has been since the last sync/last log was
   // created and now. Then save that number of data points that were synced from
   // the bluetooth sensor. This ensures we are using the correct logs from the sensor
