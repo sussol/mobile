@@ -227,7 +227,8 @@ const DataTablePageModalComponent = ({
         );
       case MODAL_KEYS.SELECT_LOCATION: {
         const { currentLocationName } = currentValue;
-        const { id, description } = currentValue.restrictedLocationType(UIDatabase) ?? {};
+        const { id = '', description = '' } =
+          currentValue?.restrictedLocationType?.(UIDatabase) ?? {};
 
         const locations = UIDatabase.objects('Location');
         const selection = id ? locations.filtered('locationType.id == $0', id) : locations;

@@ -84,6 +84,7 @@ export const TemperatureSyncReducer = (state = initialState(), action) => {
       return {
         ...state,
         syncState: TEMPERATURE_SYNC_STATES.SCANNING,
+        syncError: '',
         isSyncing: true,
         disabled: false,
       };
@@ -165,6 +166,7 @@ export const TemperatureSyncReducer = (state = initialState(), action) => {
         isSyncing: true,
         total: 5,
         disabled: false,
+        syncError: '',
       };
     }
     case TEMPERATURE_SYNC_ACTIONS.COMPLETE_SYNC: {

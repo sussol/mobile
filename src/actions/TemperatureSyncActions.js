@@ -6,11 +6,12 @@
 
 import { ToastAndroid } from 'react-native';
 import { generateUUID } from 'react-native-database';
+import moment from 'moment';
 
 import { UIDatabase } from '../database';
 import { Sensor } from '../database/DataTypes';
 import { createRecord } from '../database/utilities';
-import { MILLISECONDS } from '../utilities';
+
 import { chunk } from '../utilities/chunk';
 
 import { syncStrings, vaccineStrings } from '../localization';
@@ -119,13 +120,40 @@ const downloadLogsComplete = () => ({
 });
 
 const saveLogs = (logData, sensor) => async dispatch => {
+  const { length: numberOfLogs = 0 } = logData;
+
   dispatch(startSavingTemperatureLogs(logData?.length));
-  const timeNow = new Date().getTime();
+  const timeNow = moment(new Date());
+  const { location, logInterval } = sensor;
+  const { id: locationID } = location;
+
+  // SensorLog are saved directly from a sensor as five-minute logs. A TemperatureLog is 30 minutes
+  // worth of SensorLog records. If there isn't enough SensorLogs to aggregate into a
+  // TemperatureLog, there may be some 'left over'. Start counting from whichever is sooner,
+  // the most recent SensorLog or the most recent TemperatureLog.
+  const sensorLogs = UIDatabase.objects('SensorLog').filtered('location.id == $0', locationID);
+  const tempLogs = UIDatabase.objects('TemperatureLog').filtered('location.id == $0', locationID);
+  const mostRecentSensorLogTime = moment(sensorLogs.max('timestamp') ?? timeNow);
+  const mostRecentTempLogTime = moment(tempLogs.max('timestamp') ?? timeNow);
+  const tempLogIsEarlier = mostRecentTempLogTime.isBefore(mostRecentSensorLogTime);
+  const mostRecentLogTime = tempLogIsEarlier ? mostRecentSensorLogTime : mostRecentTempLogTime;
+
+  // Calculate the number of LogIntervals it has been since the last sync/last log was
+  // created and now. Then save that number of data points that were synced from
+  // the bluetooth sensor. This ensures we are using the correct logs from the sensor
+  // in the case where the logs weren't correctly deleted during a sync process.
+  const numberOfSecondsSinceLastSync = timeNow.diff(mostRecentLogTime, 'seconds', true);
+  const numberOfLogsToLookback =
+    Math.ceil(numberOfSecondsSinceLastSync / logInterval) || numberOfLogs;
+  const sliceIndex = numberOfLogs - numberOfLogsToLookback;
+  const logsToSave = sliceIndex >= 0 ? logData.slice(sliceIndex) : [];
 
   UIDatabase.write(() =>
-    logData.forEach(({ temperature }, i) => {
-      const timestamp = timeNow - (i + 1) * MILLISECONDS.FIVE_MINUTES;
-      createRecord(UIDatabase, 'SensorLog', temperature, new Date(timestamp), sensor);
+    logsToSave.forEach(({ temperature }, i) => {
+      const timestampOffset = (i + 1) * logInterval;
+      const timestamp = moment(mostRecentLogTime);
+      timestamp.add(timestampOffset, 'seconds');
+      createRecord(UIDatabase, 'SensorLog', temperature, timestamp.toDate(), sensor);
     })
   );
 };
@@ -140,6 +168,7 @@ const downloadLogs = sensor => async dispatch => {
     dispatch(downloadLogsComplete());
     return data?.[0]?.logs;
   }
+
   dispatch(downloadLogsError());
   return null;
 };
@@ -303,17 +332,12 @@ const syncTemperatures = () => async (dispatch, getState) => {
     const downloadedLogsResult = await dispatch(downloadLogs(sensor));
 
     if (downloadedLogsResult) {
+      await dispatch(saveLogs(downloadedLogsResult, sensor));
+      await dispatch(createTemperatureLogs(sensor));
       const resetLogFrequencyResult = await dispatch(resetLogFrequency(sensor));
 
       if (resetLogFrequencyResult) {
-        const resetAdvertisementFrequencyResult = await dispatch(
-          resetAdvertisementFrequency(sensor)
-        );
-
-        if (resetAdvertisementFrequencyResult) {
-          await dispatch(saveLogs(downloadedLogsResult, sensor));
-          await dispatch(createTemperatureLogs(sensor));
-        }
+        await dispatch(resetAdvertisementFrequency(sensor));
       }
     }
   }

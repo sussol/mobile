@@ -23,7 +23,8 @@ const setWriteStorage = status => ({
 });
 
 const requestBluetooth = () => async dispatch => {
-  const result = await BluetoothStatus.enable();
+  BluetoothStatus.enable();
+  const result = await BluetoothStatus.state();
 
   dispatch(setBluetooth(result));
 };
