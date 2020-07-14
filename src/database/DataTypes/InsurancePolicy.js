@@ -2,7 +2,8 @@ import Realm from 'realm';
 
 export class InsurancePolicy extends Realm.Object {
   get policyNumber() {
-    return `${this.policyNumberPerson} ${this.policyNumberFamily}`;
+    if (!this.policyNumberPerson) return this.policyNumberFamily;
+    return `${this.policyNumberFamily}-${this.policyNumberPerson}`;
   }
 }
 
