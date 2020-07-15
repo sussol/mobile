@@ -17,9 +17,9 @@ import { TemperatureSyncIcon } from './TemperatureSyncIcon';
 const mapStateToProps = state => {
   const syncMessage = selectTemperatureSyncStateMessage(state);
   const { temperatureSync } = state;
-  const { disabled, syncError } = temperatureSync;
+  const { isDisabled, syncError } = temperatureSync;
 
-  return { syncMessage, disabled, syncError };
+  return { syncMessage, isDisabled, syncError };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -30,12 +30,12 @@ const mapDispatchToProps = dispatch => {
 export const TemperatureSyncStateComponent = ({
   onOpenModal,
   syncMessage,
-  disabled,
+  isDisabled,
   syncError,
 }) => (
   <TouchableOpacity onPress={onOpenModal} style={localStyles.container}>
     <Text style={globalStyles.navBarText}>{syncMessage}</Text>
-    <TemperatureSyncIcon hasError={!!syncError} isDisabled={disabled} />
+    <TemperatureSyncIcon hasError={!!syncError} isDisabled={isDisabled} />
   </TouchableOpacity>
 );
 
@@ -50,7 +50,7 @@ TemperatureSyncStateComponent.propTypes = {
   syncMessage: PropTypes.string.isRequired,
   onOpenModal: PropTypes.func.isRequired,
   syncError: PropTypes.string.isRequired,
-  disabled: PropTypes.bool.isRequired,
+  isDisabled: PropTypes.bool.isRequired,
 };
 
 export const TemperatureSyncState = connect(

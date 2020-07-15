@@ -29,9 +29,9 @@ const initialState = () => ({
   isSyncing: false,
   modalIsOpen: false,
   lastTemperatureSync: null,
-  lastSyncError: null,
+  syncError: '',
   currentSensorName: null,
-  disabled: false,
+  isDisabled: false,
 });
 
 export const TemperatureSyncReducer = (state = initialState(), action) => {
@@ -41,10 +41,10 @@ export const TemperatureSyncReducer = (state = initialState(), action) => {
     case REHYDRATE: {
       const { payload: previousState } = action;
       const { temperatureSync: previousTemperatureSyncState } = previousState ?? {};
-      const { lastTemperatureSync = null, disabled, syncState, syncError } =
+      const { lastTemperatureSync = null, isDisabled = false, syncState = '', syncError = '' } =
         previousTemperatureSyncState ?? {};
 
-      return { ...initialState(), lastTemperatureSync, disabled, syncState, syncError };
+      return { ...initialState(), lastTemperatureSync, isDisabled, syncState, syncError };
     }
 
     case TEMPERATURE_SYNC_ACTIONS.ERROR_BLUETOOTH_DISABLED: {
@@ -52,7 +52,7 @@ export const TemperatureSyncReducer = (state = initialState(), action) => {
         ...state,
         syncState: TEMPERATURE_SYNC_STATES.BLUETOOTH_DISABLED,
         isSyncing: false,
-        disabled: true,
+        isDisabled: true,
       };
     }
 
@@ -61,7 +61,7 @@ export const TemperatureSyncReducer = (state = initialState(), action) => {
         ...state,
         syncState: TEMPERATURE_SYNC_STATES.LOCATION_DISABLED,
         isSyncing: false,
-        disabled: true,
+        isDisabled: true,
       };
     }
 
@@ -86,7 +86,7 @@ export const TemperatureSyncReducer = (state = initialState(), action) => {
         syncState: TEMPERATURE_SYNC_STATES.SCANNING,
         syncError: '',
         isSyncing: true,
-        disabled: false,
+        isDisabled: false,
       };
     }
     case TEMPERATURE_SYNC_ACTIONS.SCAN_COMPLETE: {
@@ -165,7 +165,7 @@ export const TemperatureSyncReducer = (state = initialState(), action) => {
         syncState: TEMPERATURE_SYNC_STATES.SYNCING,
         isSyncing: true,
         total: 5,
-        disabled: false,
+        isDisabled: false,
         syncError: '',
       };
     }
