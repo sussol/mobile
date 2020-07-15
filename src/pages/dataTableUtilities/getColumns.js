@@ -872,7 +872,7 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.EDIT]: {
     type: COLUMN_TYPES.ICON,
     key: COLUMN_KEYS.EDIT,
-    title: 'edit',
+    title: tableStrings.edit,
     sortable: false,
     alignText: 'center',
     editable: false,
