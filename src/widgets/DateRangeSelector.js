@@ -22,6 +22,8 @@ export const DateRangeSelector = ({
   onChangeToDate,
   labelTextStyle,
   dateTextStyle,
+  maximumDate,
+  minimumDate,
 }) => {
   const formattedStartDate = moment(initialStartDate).format('D/M/YYYY');
   const formattedEndDate = moment(initialEndDate).format('D/M/YYYY');
@@ -34,8 +36,11 @@ export const DateRangeSelector = ({
           <Text style={dateTextStyle}>{formattedStartDate}</Text>
         </FlexColumn>
         <DatePickerButton
+          minimumDate={minimumDate}
           maximumDate={initialEndDate}
-          initialValue={initialStartDate}
+          initialValue={moment(initialStartDate)
+            .startOf('day')
+            .toDate()}
           onDateChanged={onChangeFromDate}
         />
       </FlexRow>
@@ -47,8 +52,11 @@ export const DateRangeSelector = ({
           <Text style={dateTextStyle}>{formattedEndDate}</Text>
         </FlexColumn>
         <DatePickerButton
+          maximumDate={maximumDate}
           minimumDate={initialStartDate}
-          initialValue={initialEndDate}
+          initialValue={moment(initialEndDate)
+            .endOf('day')
+            .toDate()}
           onDateChanged={onChangeToDate}
         />
       </FlexRow>
@@ -64,6 +72,8 @@ const localStyles = StyleSheet.create({
 DateRangeSelector.defaultProps = {
   labelTextStyle: localStyles.labelText,
   dateTextStyle: localStyles.dateText,
+  maximumDate: null,
+  minimumDate: null,
 };
 
 DateRangeSelector.propTypes = {
@@ -73,4 +83,6 @@ DateRangeSelector.propTypes = {
   onChangeToDate: PropTypes.func.isRequired,
   labelTextStyle: PropTypes.object,
   dateTextStyle: PropTypes.object,
+  maximumDate: PropTypes.instanceOf(Date),
+  minimumDate: PropTypes.instanceOf(Date),
 };

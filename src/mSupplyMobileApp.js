@@ -27,6 +27,7 @@ import { LoadingIndicatorContext } from './context/LoadingIndicatorContext';
 import { selectTitle } from './selectors/supplierCredit';
 import { selectIsSyncing } from './selectors/sync';
 import { selectCurrentUser } from './selectors/user';
+import { selectUsingVaccines } from './selectors/modules';
 
 import { syncCompleteTransaction, setSyncError, openSyncModal } from './actions/SyncActions';
 import { FinaliseActions } from './actions/FinaliseActions';
@@ -74,10 +75,7 @@ class MSupplyMobileAppContainer extends React.Component {
         this.userAuthenticator.reauthenticate(this.onAuthentication);
       }
     }, AUTHENTICATION_INTERVAL);
-    this.scheduler.schedule(
-      () => props.dispatch(TemperatureSyncActions.syncTemperatures()),
-      SYNC_INTERVAL
-    );
+
     this.state = {
       isInitialised,
       isLoading: false,
@@ -86,12 +84,13 @@ class MSupplyMobileAppContainer extends React.Component {
   }
 
   componentDidMount = () => {
-    const { dispatch } = this.props;
+    const { dispatch, usingVaccines, syncTemperatures, requestBluetooth } = this.props;
 
-    BluetoothStatus.addListener(newStatus =>
-      dispatch(PermissionActions.requestBluetooth(newStatus))
-    );
-    dispatch(PermissionActions.checkPermissions());
+    if (usingVaccines) {
+      this.scheduler.schedule(syncTemperatures, SYNC_INTERVAL);
+      BluetoothStatus.addListener(requestBluetooth);
+      dispatch(PermissionActions.checkPermissions());
+    }
 
     if (!__DEV__) {
       AppState.addEventListener('change', this.onAppStateChange);
@@ -99,7 +98,12 @@ class MSupplyMobileAppContainer extends React.Component {
   };
 
   componentWillUnmount = () => {
-    BluetoothStatus.removeListener();
+    const { usingVaccines } = this.props;
+
+    if (usingVaccines) {
+      BluetoothStatus.removeListener();
+    }
+
     if (!__DEV__) {
       AppState.removeEventListener('change', this.onAppStateChange);
     }
@@ -257,8 +261,12 @@ const mapDispatchToProps = dispatch => {
   const closeTemperatureSyncModal = () => dispatch(TemperatureSyncActions.closeModal());
   const onOpenSyncModal = () => dispatch(openSyncModal());
   const closeBreachModal = () => dispatch(BreachActions.close());
+  const syncTemperatures = () => dispatch(TemperatureSyncActions.syncTemperatures());
+  const requestBluetooth = newStatus => dispatch(PermissionActions.requestBluetooth(newStatus));
 
   return {
+    requestBluetooth,
+    syncTemperatures,
     dispatch,
     onOpenSyncModal,
     openFinaliseModal,
@@ -275,11 +283,13 @@ const mapStateToProps = state => {
   const { modalIsOpen: temperatureSyncModalIsOpen } = temperatureSync;
   const { finaliseModalOpen } = finalise;
 
+  const usingVaccines = selectUsingVaccines(state);
   const isBreachModalOpen = selectIsBreachModalOpen(state);
   const currentUser = selectCurrentUser(state);
   const isSyncing = selectIsSyncing(state);
   const breachModalTitle = selectBreachModalTitle(state);
   return {
+    usingVaccines,
     temperatureSyncModalIsOpen,
     isSyncing,
     currentUser,
@@ -297,6 +307,9 @@ MSupplyMobileAppContainer.defaultProps = {
 };
 
 MSupplyMobileAppContainer.propTypes = {
+  usingVaccines: PropTypes.bool.isRequired,
+  requestBluetooth: PropTypes.func.isRequired,
+  syncTemperatures: PropTypes.func.isRequired,
   isSyncing: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
   currentUser: PropTypes.object,

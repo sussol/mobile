@@ -13,11 +13,11 @@ import { Sensor } from '../database/DataTypes';
 import { createRecord } from '../database/utilities';
 
 import { chunk } from '../utilities/chunk';
+import { MILLISECONDS } from '../utilities';
 
 import { syncStrings, vaccineStrings } from '../localization';
 import { PageActions } from '../pages/dataTableUtilities/actions';
 import { ROUTES } from '../navigation';
-import { VACCINE_CONSTANTS } from '../utilities/modules/vaccines';
 import { PermissionSelectors } from '../selectors/permission';
 import { PermissionActions } from './PermissionActions';
 
@@ -67,13 +67,14 @@ const updateSensors = sensorAdvertisements => dispatch => {
   if (isArray && !sensorAdvertisements.length) dispatch(scanError());
 
   if (isArray && sensorAdvertisements.length) {
-    sensorAdvertisements.forEach(({ macAddress, batteryLevel }) => {
+    sensorAdvertisements.forEach(({ macAddress, batteryLevel, logInterval }) => {
       UIDatabase.write(() => {
         UIDatabase.update('Sensor', {
           id: generateUUID(),
           ...UIDatabase.get('Sensor', macAddress, 'macAddress'),
           macAddress,
           batteryLevel,
+          logInterval,
         });
       });
     });
@@ -148,11 +149,17 @@ const saveLogs = (logData, sensor) => async dispatch => {
   const sliceIndex = numberOfLogs - numberOfLogsToLookback;
   const logsToSave = sliceIndex >= 0 ? logData.slice(sliceIndex) : [];
 
+  // When we have no sensor logs or timestamps to count FROM, we need to count BACK
+  //  from the time now. The number of logs we are saving times the interval they are for.
+  const initialTimestamp = moment(mostRecentLogTime);
+  if (!(sensorLogs.length && tempLogs.length)) {
+    initialTimestamp.subtract(logsToSave.length * logInterval, 'seconds');
+  }
   UIDatabase.write(() =>
     logsToSave.forEach(({ temperature }, i) => {
       const timestampOffset = (i + 1) * logInterval;
-      const timestamp = moment(mostRecentLogTime);
-      timestamp.add(timestampOffset, 'seconds');
+      const timestamp = moment(initialTimestamp).add(timestampOffset, 'seconds');
+
       createRecord(UIDatabase, 'SensorLog', temperature, timestamp.toDate(), sensor);
     })
   );
@@ -227,17 +234,24 @@ const completeSavingTemperatureLogs = () => ({
 });
 
 const createTemperatureLogs = sensor => async dispatch => {
-  const { sensorLogs, location } = sensor;
+  const { sensorLogs, location, logInterval } = sensor;
+
+  // Sensors have a minimum log interval of one minute on a physical device.
+  const MIN_LOG_INTERVAL = 60;
+  // Defensive against zero or less log interval.
+  const intervalInSeconds = Math.max(logInterval, MIN_LOG_INTERVAL);
+  // Each sensorLog is per log interval. A temperature log is a 30 minute aggregation.
+  // Divide the time a sensorLog ranges over by 30 minutes to find the number of sensor
+  // logs per temperature log.
+  const sensorLogsPerTemperatureLog = Math.floor(
+    MILLISECONDS.THIRTY_MINUTES / (intervalInSeconds * MILLISECONDS.ONE)
+  );
 
   // Only create TemperatureLogs for the greatest multiple of 6 SensorLogs,
   // as each SensorLog is a 5 minute log, and each Temperature log a 30 minute log.
-  const iterateTo =
-    sensorLogs.length - (sensorLogs.length % VACCINE_CONSTANTS.SENSOR_LOGS_PER_TEMPERATURE_LOG);
+  const iterateTo = sensorLogs.length - (sensorLogs.length % sensorLogsPerTemperatureLog);
   const sensorLogsToGroup = sensorLogs.sorted('timestamp').slice(0, iterateTo);
-  const groupedSensorLogs = chunk(
-    sensorLogsToGroup,
-    VACCINE_CONSTANTS.SENSOR_LOGS_PER_TEMPERATURE_LOG
-  );
+  const groupedSensorLogs = chunk(sensorLogsToGroup, sensorLogsPerTemperatureLog);
 
   UIDatabase.write(() => {
     groupedSensorLogs.forEach(sensorLogGroup => {

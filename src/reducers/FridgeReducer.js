@@ -20,8 +20,11 @@ const initialState = () => {
     selectedFridge: locationsWithASensor[0],
     fromDate: moment(new Date())
       .subtract(30, 'd')
+      .startOf('day')
       .toDate(),
-    toDate: new Date(),
+    toDate: moment(new Date())
+      .endOf('day')
+      .toDate(),
   };
 };
 
@@ -41,7 +44,6 @@ export const FridgeReducer = (state = initialState(), action) => {
       const { date } = payload;
 
       const fromDate = new Date(date);
-      fromDate.setUTCHours(0, 0, 0, 0);
 
       return { ...state, fromDate };
     }
@@ -51,7 +53,6 @@ export const FridgeReducer = (state = initialState(), action) => {
       const { date } = payload;
 
       const toDate = new Date(date);
-      toDate.setUTCHours(23, 59, 59, 999);
 
       return { ...state, toDate };
     }
