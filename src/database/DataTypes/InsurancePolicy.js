@@ -13,7 +13,7 @@ InsurancePolicy.schema = {
   properties: {
     id: 'string',
     policyNumberFamily: 'string',
-    policyNumberPerson: 'string',
+    policyNumberPerson: { type: 'string', default: '' },
     type: 'string',
     discountRate: 'double',
     isActive: { type: 'bool', default: true },
