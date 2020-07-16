@@ -57,35 +57,6 @@ export const FridgeDisplayComponent = ({
     []
   );
 
-  const Chart = React.useCallback(
-    () =>
-      render ? (
-        <VaccineChart
-          minLine={minLine}
-          maxDomain={maxDomain}
-          minDomain={minDomain}
-          maxLine={maxLine}
-          breaches={breaches}
-          onPressBreach={onOpenBreachModal}
-          xTickFormat={temperatureFormatter}
-        />
-      ) : (
-        <FlexView justifyContent="center" flex={1} alignItems="center">
-          <ActivityIndicator size="small" color={SUSSOL_ORANGE} />
-        </FlexView>
-      ),
-    [
-      render,
-      minLine,
-      maxDomain,
-      minDomain,
-      maxLine,
-      breaches,
-      onOpenBreachModal,
-      temperatureFormatter,
-    ]
-  );
-
   return (
     <View style={containerStyle}>
       <FridgeDisplayInfo
@@ -98,7 +69,23 @@ export const FridgeDisplayComponent = ({
         onChangeToDate={onChangeToDate}
       />
 
-      {isActive ? (minLine.length && <Chart />) || <NoLogsComponent /> : null}
+      {(isActive &&
+        (minLine.length && render ? (
+          <VaccineChart
+            minLine={minLine}
+            maxDomain={maxDomain}
+            minDomain={minDomain}
+            maxLine={maxLine}
+            breaches={breaches}
+            onPressBreach={onOpenBreachModal}
+            xTickFormat={temperatureFormatter}
+          />
+        ) : (
+          <FlexView justifyContent="center" flex={1} alignItems="center">
+            <ActivityIndicator size="small" color={SUSSOL_ORANGE} />
+          </FlexView>
+        ))) || <NoLogsComponent /> ||
+        null}
     </View>
   );
 };

@@ -29,7 +29,17 @@ export const FridgeDisplayInfo = ({
   fromDate,
   toDate,
 }) => {
-  const { description, currentTemperature, temperatureExposure, numberOfBreaches } = fridge;
+  const {
+    description,
+    currentTemperature,
+    temperatureExposure,
+    numberOfBreaches,
+    mostRecentTemperatureLog,
+    leastRecentTemperatureLog,
+  } = fridge;
+
+  const { timestamp: minimumDate } = leastRecentTemperatureLog;
+  const { timestamp: maximumDate } = mostRecentTemperatureLog;
 
   const Container = isActive ? View : TouchableOpacity;
 
@@ -68,6 +78,8 @@ export const FridgeDisplayInfo = ({
               initialEndDate={toDate}
               onChangeToDate={onChangeToDate}
               onChangeFromDate={onChangeFromDate}
+              minimumDate={minimumDate}
+              maximumDate={maximumDate}
             />
           </FlexRow>
         </>

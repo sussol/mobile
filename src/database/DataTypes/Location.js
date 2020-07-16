@@ -14,6 +14,10 @@ export class Location extends Realm.Object {
     return this.breaches.sorted('startTimestamp', true)[0];
   }
 
+  get leastRecentTemperatureLog() {
+    return this.temperatureLogs.sorted('timestamp', false)[0];
+  }
+
   /**
    * This location is currently experiencing a temperature breach
    * if the most recent breach for the location has no end timestamp.
