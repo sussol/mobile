@@ -34,6 +34,7 @@ const persistConfig = {
     'breach',
     'rowDetail',
     'permission',
+    'cashTransaction',
   ],
 };
 

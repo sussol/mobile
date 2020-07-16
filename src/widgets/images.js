@@ -41,6 +41,11 @@ export const LaosFlag = ({ style }) => (
 );
 LaosFlag.propTypes = imagePropTypes;
 
+export const MyanmarFlag = ({ style }) => (
+  <Image style={style} source={require('../images/flags/my.png')} resizeMode="stretch" />
+);
+MyanmarFlag.propTypes = imagePropTypes;
+
 export const PortugueseFlag = ({ style }) => (
   <Image style={style} source={require('../images/flags/pt.png')} resizeMode="stretch" />
 );

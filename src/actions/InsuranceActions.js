@@ -6,7 +6,6 @@ import { batch } from 'react-redux';
 
 import { UIDatabase } from '../database';
 import { selectCurrentPatient } from '../selectors/patient';
-import { PaymentActions } from './PaymentActions';
 import { selectCurrentUser } from '../selectors/user';
 import { createRecord } from '../database/utilities';
 
@@ -57,6 +56,7 @@ const update = policyDetails => (dispatch, getState) => {
     policyNumberPerson,
     policyNumberFamily,
     discountRate: policyDiscountRate,
+    insuranceProviderId: policyProviderId,
     insuranceProvider: policyProvider,
     isActive: policyIsActive,
     expiryDate: policyExpiryDate,
@@ -68,7 +68,11 @@ const update = policyDetails => (dispatch, getState) => {
     policyNumberPerson: policyNumberPerson ?? currentNumberPerson,
     policyNumberFamily: policyNumberFamily ?? currentNumberFamily,
     discountRate: policyDiscountRate ?? currentDiscountRate,
-    insuranceProvider: policyProvider ?? currentProvider,
+    insuranceProvider:
+      policyProvider ??
+      (policyProviderId
+        ? UIDatabase.getOrCreate('InsuranceProvider', policyProviderId)
+        : currentProvider),
     isActive: policyIsActive ?? currentIsActive,
     type: policyType ?? currentType,
     expiryDate: policyExpiryDate ?? currentExpiryDate,
@@ -97,10 +101,7 @@ const select = insurancePolicy => (dispatch, getState) => {
     UIDatabase.update('Transaction', { ...transaction, insurancePolicy });
   });
 
-  batch(() => {
-    dispatch(PaymentActions.setPolicy(insurancePolicy));
-    dispatch(selectPolicy(insurancePolicy));
-  });
+  dispatch(selectPolicy(insurancePolicy));
 };
 
 export const InsuranceActions = {

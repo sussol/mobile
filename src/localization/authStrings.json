@@ -39,6 +39,17 @@
     "password": "ລະຫັດຜ່ານ",
     "user_name": "ຊື່​ຜູ້​ນຳ​ໃຊ້"
   },
+  "my": {
+    "logging_in": "Login ဝင်ရောက်နေသည်",
+    "login": "Login ဝင်ရောက်သည်",
+    "password": "Password",
+    "repeat_password": "Password ပြန်လည်အတည်ပြုပါ",
+    "user_name": "User Name",
+    "email": "E-mail",
+    "invalid_username_or_password": "Username (သို့) Password မှားယွင်းနေပါသည်",
+    "warning_sync_edit": "သတိပေးချက်:\nယခုလုပ်ဆောင်ချက်သည် စတို၏ အချက်အလက်များ ပေးပို့ရယူခြင်းကို သက်ရောက်မှုရှိပါလိမ့်မည်။\nသင့်လုပ်ဆောင်ချက်အပေါ် သေချာမှုရှိပါသလား?",
+    "incompatible_server": "အချက်အလက်များ ပေးပို့ရယူခြင်း လုပ်ဆောင်နေသော mSupply Server သည် သင်လက်ရှိအသုံးပြုနေသော Version နှင့် ကိုက်ညီမှု မရှိပါ။ ကျေးဇူးပြု၍ သက်ဆိုင်ရာတာဝန်ရှိသူထံ ဆက်သွယ်ပေးပါ။"
+  },
   "pt": {
     "logging_in": "Logando...",
     "login": "Logar",

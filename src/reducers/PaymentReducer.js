@@ -15,7 +15,7 @@ const initialState = () => ({
   transaction: null,
   patient: null,
   paymentAmount: currency(0),
-  insurancePolicy: null,
+  discountRate: 0,
   paymentValid: true,
   paymentType: null,
 });
@@ -43,13 +43,6 @@ export const PaymentReducer = (state = initialState(), action) => {
       return { ...state, paymentAmount };
     }
 
-    case PAYMENT_ACTIONS.SET_POLICY: {
-      const { payload } = action;
-      const { insurancePolicy } = payload;
-
-      return { ...state, insurancePolicy };
-    }
-
     case PAYMENT_ACTIONS.CHOOSE_PAYMENT_TYPE: {
       const { payload } = action;
       const { paymentType } = payload;
@@ -72,11 +65,14 @@ export const PaymentReducer = (state = initialState(), action) => {
     case INSURANCE_ACTIONS.SELECT: {
       const { payload } = action;
       const { insurancePolicy } = payload;
+      const { discountRate } = insurancePolicy;
+      const paymentAmount = selectPrescriptionTotal({ payment: { ...state, discountRate } });
 
-      const newState = { payment: { ...state, insurancePolicy } };
-      const paymentAmount = selectPrescriptionTotal(newState);
-
-      return { ...state, insurancePolicy, paymentAmount };
+      return {
+        ...state,
+        discountRate,
+        paymentAmount,
+      };
     }
 
     default:

@@ -120,8 +120,8 @@ const processInsuranceResponse = response =>
     })
   );
 
-export const processPatientResponse = response => {
-  const patientData = response.map(
+export const processPatientResponse = response =>
+  response.map(
     ({
       ID: id,
       name,
@@ -156,11 +156,9 @@ export const processPatientResponse = response => {
       policies: processInsuranceResponse(nameInsuranceJoin),
     })
   );
-  return patientData;
-};
 
-export const processPrescriberResponse = response => {
-  const prescriberData = response.map(
+export const processPrescriberResponse = response =>
+  response.map(
     ({
       ID,
       first_name,
@@ -185,5 +183,3 @@ export const processPrescriberResponse = response => {
       storeId: store_ID,
     })
   );
-  return prescriberData;
-};
