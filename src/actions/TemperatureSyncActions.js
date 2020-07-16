@@ -149,11 +149,17 @@ const saveLogs = (logData, sensor) => async dispatch => {
   const sliceIndex = numberOfLogs - numberOfLogsToLookback;
   const logsToSave = sliceIndex >= 0 ? logData.slice(sliceIndex) : [];
 
+  // When we have no sensor logs or timestamps to count FROM, we need to count BACK
+  //  from the time now. The number of logs we are saving times the interval they are for.
+  const initialTimestamp = moment(mostRecentLogTime);
+  if (!(sensorLogs.length && tempLogs.length)) {
+    initialTimestamp.subtract(logsToSave.length * logInterval, 'seconds');
+  }
   UIDatabase.write(() =>
     logsToSave.forEach(({ temperature }, i) => {
       const timestampOffset = (i + 1) * logInterval;
-      const timestamp = moment(mostRecentLogTime);
-      timestamp.add(timestampOffset, 'seconds');
+      const timestamp = moment(initialTimestamp).add(timestampOffset, 'seconds');
+
       createRecord(UIDatabase, 'SensorLog', temperature, timestamp.toDate(), sensor);
     })
   );
