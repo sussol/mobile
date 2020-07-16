@@ -22,8 +22,8 @@ const mapStateToProps = state => {
 
 const HeaderRightComponent = ({ usingVaccines }) => (
   <FlexRow>
-    <SyncState />
     {usingVaccines && <TemperatureSyncState />}
+    <SyncState />
   </FlexRow>
 );
 

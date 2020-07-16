@@ -33,6 +33,7 @@ const persistConfig = {
     'fridge',
     'breach',
     'rowDetail',
+    'permission',
     'cashTransaction',
   ],
 };

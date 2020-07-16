@@ -17,6 +17,7 @@ export const COLUMN_TYPES = {
 };
 
 export const COLUMN_KEYS = {
+  EDIT: 'edit',
   BATTERY_LEVEL: 'batteryLevelString',
   MAC_ADDRESS: 'macAddress',
   AVAILABLE_QUANTITY: 'availableQuantity',
@@ -99,6 +100,7 @@ export const COLUMN_NAMES = {
   DESCRIPTION: 'description',
   DIFFERENCE: 'difference',
   DISPENSE: 'dispense',
+  EDIT: 'edit',
   EDIT_SUPPLIER: 'editSupplier',
   EDITABLE_BATCH_NAME: 'editableBatchName',
   EDITABLE_CODE: 'editableCode',

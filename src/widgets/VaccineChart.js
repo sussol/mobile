@@ -11,9 +11,10 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 
 import { useLayoutDimensions } from '../hooks/useLayoutDimensions';
-import { SUSSOL_ORANGE, APP_FONT_FAMILY, GREY } from '../globalStyles';
+import { WHITE, COLD_BREACH_BLUE, SUSSOL_ORANGE, APP_FONT_FAMILY, GREY } from '../globalStyles';
 import { HazardPoint } from './HazardPoint';
 import { FlexView } from './FlexView';
+import { CHART_CONSTANTS } from '../utilities/modules/vaccines';
 
 export const VaccineChart = ({
   minLine,
@@ -32,8 +33,12 @@ export const VaccineChart = ({
   const maxBoundary = React.useCallback(() => maxDomain, []);
   const minBoundary = React.useCallback(() => minDomain, []);
 
-  const chartMinDomain = React.useMemo(() => ({ y: minDomain - 1 }), [minDomain]);
-  const chartMaxDomain = React.useMemo(() => ({ y: maxDomain + 1 }), [maxDomain]);
+  const chartMinDomain = React.useMemo(() => ({ y: minDomain - CHART_CONSTANTS.DOMAIN_OFFSET }), [
+    minDomain,
+  ]);
+  const chartMaxDomain = React.useMemo(() => ({ y: maxDomain + CHART_CONSTANTS.DOMAIN_OFFSET }), [
+    maxDomain,
+  ]);
 
   return (
     <FlexView onLayout={setDimensions}>
@@ -45,22 +50,26 @@ export const VaccineChart = ({
           maxDomain={chartMaxDomain}
         >
           <VictoryAxis
-            offsetX={50}
+            offsetX={CHART_CONSTANTS.AXIS_OFFSET}
             dependentAxis
             style={chartStyles.axis}
             tickFormat={yTickFormat}
           />
-          <VictoryAxis offsetY={50} tickFormat={xTickFormat} style={chartStyles.axis} />
+          <VictoryAxis
+            offsetY={CHART_CONSTANTS.AXIS_OFFSET}
+            tickFormat={xTickFormat}
+            style={chartStyles.axis}
+          />
 
           <VictoryLine
-            interpolation="natural"
+            interpolation={CHART_CONSTANTS.INTERPOLATION}
             data={minLine}
             y={y}
             x={x}
             style={chartStyles.minLine}
           />
           <VictoryLine
-            interpolation="natural"
+            interpolation={CHART_CONSTANTS.INTERPOLATION}
             data={maxLine}
             y={y}
             x={x}
@@ -107,10 +116,24 @@ VaccineChart.propTypes = {
 
 const chartStyles = {
   maxBoundaryLine: { data: { stroke: SUSSOL_ORANGE, opacity: 0.3 } },
-  minBoundaryLine: { data: { stroke: '#70b4f0', opacity: 0.3 } },
-  minScatterPlot: { data: { fill: 'white', stroke: '#70b4f0', strokeWidth: 2, size: 3 } },
-  maxScatterPlot: { data: { fill: 'white', stroke: SUSSOL_ORANGE, strokeWidth: 2, size: 3 } },
+  minBoundaryLine: { data: { stroke: COLD_BREACH_BLUE, opacity: 0.3 } },
+  minScatterPlot: {
+    data: {
+      fill: WHITE,
+      stroke: COLD_BREACH_BLUE,
+      strokeWidth: CHART_CONSTANTS.STROKE_WIDTH,
+      size: CHART_CONSTANTS.STROKE_SIZE,
+    },
+  },
+  maxScatterPlot: {
+    data: {
+      fill: WHITE,
+      stroke: SUSSOL_ORANGE,
+      strokeWidth: CHART_CONSTANTS.STROKE_WIDTH,
+      size: CHART_CONSTANTS.STROKE_SIZE,
+    },
+  },
   maxLine: { data: { stroke: SUSSOL_ORANGE } },
-  minLine: { data: { stroke: '#70b4f0' } },
+  minLine: { data: { stroke: COLD_BREACH_BLUE } },
   axis: { fontSize: 15, fontFamily: APP_FONT_FAMILY, fill: GREY },
 };

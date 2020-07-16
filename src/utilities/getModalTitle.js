@@ -35,6 +35,7 @@ export const MODAL_KEYS = {
   SELECT_MASTER_LISTS: 'selectMasterList',
   SELECT_LOCATION: 'selectLocation',
   SELECT_VVM_STATUS: 'selectVvmStatus',
+  EDIT_LOCATION: 'editLocation',
 };
 
 export const getModalTitle = modalKey => {

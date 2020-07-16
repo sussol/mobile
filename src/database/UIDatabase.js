@@ -9,7 +9,7 @@ import RNFS from 'react-native-fs';
 
 import { SETTINGS_KEYS } from '../settings';
 import { PREFERENCE_TYPE_KEYS } from './utilities/constants';
-import { formatDate, requestPermission, backupValidation } from '../utilities';
+import { formatDate, backupValidation } from '../utilities';
 
 const { THIS_STORE_NAME_ID } = SETTINGS_KEYS;
 
@@ -48,8 +48,6 @@ const translateToCoreDatabaseType = type => {
     case 'PrescriptionCategory':
     case 'SupplierCreditCategory':
       return 'TransactionCategory';
-    case 'Fridge':
-      return 'Location';
     default:
       return type;
   }
@@ -90,12 +88,6 @@ class UIDatabase {
     this.DEFAULT_EXPORT_FILE = 'msupply-mobile-data';
   }
 
-  ERRORS = {
-    ERROR_IN_TRANSACTION: { code: 'ERROR_IN_TRANSACTION', message: 'Database is in a transaction' },
-    ERROR_NO_PERMISSION: { code: 'ERROR_NO_PERMISSION', message: 'Storage permission not granted' },
-    ERROR_UNKNOWN: { code: 'ERROR_UNKNOWN', message: 'Unkown error occurred' },
-  };
-
   /**
    * Exports the realm file to '/Download/mSupplyMobile\ data' on device file system.
    * Ensures there is enough space, the realm exists and requests storage permission,
@@ -112,32 +104,23 @@ class UIDatabase {
       ''
     );
 
-    const permissionParameters = {
-      permissionType: 'WRITE_EXTERNAL_STORAGE',
-      message: 'Export database',
-    };
-
     // Before requesting permissions, ensure there is enough space and the realm
     // file exists.
     const exportValidation = await backupValidation(realmPath);
     const { success } = exportValidation;
     if (!success) return exportValidation;
-    // Request permissions for external storage before trying to backup the realm file.
-    const { success: permissionSuccess } = await requestPermission(permissionParameters);
-    // If permission was granted, ensure the realm is not in a transaction and backup
-    // the realm file.
-    if (!permissionSuccess) return { success: false, ...this.ERRORS.ERROR_NO_PERMISSION };
-    if (realm.isInTransaction) return { success: false, ...this.ERRORS.ERROR_IN_TRANSACTION };
+
+    if (realm.isInTransaction) return false;
 
     // Finally try to create the backup/exported realm
     try {
       await RNFS.mkdir(exportFolder);
       await RNFS.copyFile(realmPath, `${exportFolder}/${copyFileName}.realm`);
     } catch (error) {
-      return { success: false, ...this.ERRORS.ERROR_UNKNOWN, error };
+      return false;
     }
 
-    return { success: true };
+    return true;
   }
 
   objects(type) {
@@ -259,8 +242,6 @@ class UIDatabase {
         return results.filtered('type == $0', 'supplier_credit');
       case 'RequisitionReason':
         return results.filtered('type == $0 && isActive == true', 'requisitionLineVariance');
-      case 'Fridge':
-        return results.filtered("locationType.description == 'fridge'");
       default:
         return results;
     }

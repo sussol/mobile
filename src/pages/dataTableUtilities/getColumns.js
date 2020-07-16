@@ -45,7 +45,7 @@ const PAGE_COLUMN_WIDTHS = {
   [ROUTES.PRESCRIPTION]: [2, 4, 2, 2, 1],
   [ROUTES.PRESCRIPTIONS]: [1.5, 2.5, 2, 1.5, 3, 1],
   fridges: [1, 3, 1],
-  sensors: [3, 3, 1, 1, 1],
+  sensors: [3, 3, 1, 1],
   [TABS.ITEM]: [1, 3, 1],
   [TABS.PRESCRIBER]: [3, 3, 1],
 };
@@ -56,9 +56,8 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.LOCATION,
     COLUMN_NAMES.BATTERY_LEVEL,
     COLUMN_NAMES.MAC_ADDRESS,
-    COLUMN_NAMES.REMOVE,
   ],
-  fridges: [COLUMN_NAMES.EDITABLE_CODE, COLUMN_NAMES.DESCRIPTION, COLUMN_NAMES.REMOVE],
+  fridges: [COLUMN_NAMES.CODE, COLUMN_NAMES.DESCRIPTION, COLUMN_NAMES.EDIT],
 
   [ROUTES.SUPPLIER_INVOICE_WITH_VACCINES]: [
     COLUMN_NAMES.ITEM_CODE,
@@ -570,7 +569,7 @@ const COLUMNS = () => ({
   },
 
   [COLUMN_NAMES.DESCRIPTION]: {
-    type: COLUMN_TYPES.EDITABLE_STRING,
+    type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.DESCRIPTION,
     title: tableStrings.description,
     alignText: 'left',
@@ -744,7 +743,7 @@ const COLUMNS = () => ({
     title: tableStrings.doses,
     alignText: 'right',
     sortable: true,
-    editable: true,
+    editable: false,
   },
 
   [COLUMN_NAMES.RETURN_AMOUNT]: {
@@ -868,6 +867,16 @@ const COLUMNS = () => ({
   },
 
   // ICON COLUMNS
+
+  [COLUMN_NAMES.EDIT]: {
+    type: COLUMN_TYPES.ICON,
+    key: COLUMN_KEYS.EDIT,
+    title: tableStrings.edit,
+    sortable: false,
+    alignText: 'center',
+    editable: false,
+    icon: 'pencil',
+  },
 
   [COLUMN_NAMES.BREACH]: {
     type: COLUMN_TYPES.ICON,

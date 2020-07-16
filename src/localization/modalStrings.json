@@ -50,7 +50,8 @@
     "items_remove_some": "items! Remove some before you can finalise",
     "some_item_have_invalid_doses": "This invoice has items with an invalid amount of doses!",
     "select_a_location": "Select a location",
-    "select_vvm_status": "Select vaccine vial monitor status"
+    "select_vvm_status": "Select vaccine vial monitor status",
+    "location_details": "Location Details"
   },
   "fr": {
     "add_at_least_one_item_before_finalising": "Vous devez ajouter au moins un article avant de finaliser",

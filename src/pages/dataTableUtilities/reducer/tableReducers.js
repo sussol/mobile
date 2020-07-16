@@ -267,7 +267,7 @@ export const addRecord = state => {
 };
 
 export const toggleFridges = state => {
-  const backingData = UIDatabase.objects('Fridge');
+  const backingData = UIDatabase.objects('Location');
   const data = backingData.slice();
 
   return {
@@ -284,7 +284,7 @@ export const toggleFridges = state => {
 };
 
 export const toggleSensors = state => {
-  const backingData = UIDatabase.objects('Sensor');
+  const backingData = UIDatabase.objects('Sensor').filtered('isActive == true');
   const data = backingData.slice();
 
   return {

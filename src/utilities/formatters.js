@@ -5,7 +5,8 @@
  */
 
 import { truncateString } from 'sussol-utilities';
-import { generalStrings, modalStrings } from '../localization';
+import temperature from './temperature';
+import { generalStrings, modalStrings, vaccineStrings } from '../localization';
 
 export const formatErrorItemNames = items => {
   const MAX_ITEMS_IN_ERROR_MESSAGE = 4; // Number of items to display in finalise error modal.
@@ -24,7 +25,6 @@ export const formatErrorItemNames = items => {
   }
   return itemsString;
 };
-
 /**
  * Rounds a number to the provided number of digits. I.e.
  * roundNumber(17.123, 2) = 17.12
@@ -35,19 +35,16 @@ export const formatErrorItemNames = items => {
 export const roundNumber = (number, fractionalDigits) =>
   Number(parseFloat(number).toFixed(fractionalDigits));
 
-export const formatTemperature = temperature => {
-  const validTemperature = temperature != null;
-  const degree = String.fromCharCode(176);
-
-  return validTemperature ? `${temperature}${degree}C` : generalStrings.not_available;
-};
-
-export const formatTemperatureExposure = ({ minimumTemperature, maximumTemperature } = {}) => {
-  const undefinedProperties = !(minimumTemperature && maximumTemperature);
+export const formatTemperatureExposure = ({
+  minimumTemperature = Infinity,
+  maximumTemperature = -Infinity,
+} = {}) => {
   const infinityTemperatures = minimumTemperature === Infinity || maximumTemperature === -Infinity;
-  if (undefinedProperties || infinityTemperatures) return 'No temperatures recorded';
+  if (infinityTemperatures) return vaccineStrings.no_temperatures;
 
-  return `${formatTemperature(minimumTemperature)} - ${formatTemperature(maximumTemperature)}`;
+  return `${temperature(minimumTemperature).format()} - ${temperature(
+    maximumTemperature
+  ).format()}`;
 };
 
 export const formatTimeDifference = duration => {

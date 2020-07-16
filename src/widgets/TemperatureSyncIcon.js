@@ -7,24 +7,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { GREY, DARK_GREY } from '../globalStyles';
-import { CloudIcon, ArrowIcon, TemperatureIcon } from './icons';
+import { SyncArrow, SyncArrowDisabled, SyncArrowProblem } from './icons';
 
-export const TemperatureSyncIcon = React.memo(({ isActive }) => {
-  const iconColor = isActive ? DARK_GREY : GREY;
+export const TemperatureSyncIcon = React.memo(({ hasError, isDisabled }) => {
+  const iconColor = isDisabled ? DARK_GREY : GREY;
 
-  return (
-    <>
-      <CloudIcon color={iconColor} />
-      <ArrowIcon color={iconColor} />
-      <TemperatureIcon color={iconColor} />
-    </>
-  );
+  let Icon = <SyncArrow color={iconColor} />;
+  if (isDisabled) Icon = <SyncArrowDisabled color={iconColor} />;
+  if (hasError) Icon = <SyncArrowProblem color={iconColor} />;
+
+  return Icon;
 });
 
-TemperatureSyncIcon.defaultProps = {
-  isActive: true,
-};
-
 TemperatureSyncIcon.propTypes = {
-  isActive: PropTypes.bool,
+  isDisabled: PropTypes.bool.isRequired,
+  hasError: PropTypes.bool.isRequired,
 };

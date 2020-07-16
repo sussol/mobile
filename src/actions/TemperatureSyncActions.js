@@ -6,21 +6,27 @@
 
 import { ToastAndroid } from 'react-native';
 import { generateUUID } from 'react-native-database';
+import moment from 'moment';
 
 import { UIDatabase } from '../database';
 import { Sensor } from '../database/DataTypes';
 import { createRecord } from '../database/utilities';
-import { MILLISECONDS } from '../utilities';
-import { chunk } from '../utilities/chunk';
 
-import { vaccineStrings } from '../localization';
+import { chunk } from '../utilities/chunk';
+import { MILLISECONDS } from '../utilities';
+
+import { syncStrings, vaccineStrings } from '../localization';
 import { PageActions } from '../pages/dataTableUtilities/actions';
 import { ROUTES } from '../navigation';
+import { PermissionSelectors } from '../selectors/permission';
+import { PermissionActions } from './PermissionActions';
 
 export const TEMPERATURE_SYNC_ACTIONS = {
   OPEN_MODAL: 'TemperatureSync/openModal',
   CLOSE_MODAL: 'TemperatureSync/closeModal',
   ERROR_NO_SENSORS: 'TemperatureSync/errorNoSensors',
+  ERROR_BLUETOOTH_DISABLED: 'TemperatureSync/errorBluetoothDisabled',
+  ERROR_LOCATION_DISABLED: 'TemperatureSync/errorLocationDisabled',
 
   START_SYNC: 'TemperatureSync/startSync',
   COMPLETE_SYNC: 'TemperatureSync/completeSync',
@@ -61,22 +67,32 @@ const updateSensors = sensorAdvertisements => dispatch => {
   if (isArray && !sensorAdvertisements.length) dispatch(scanError());
 
   if (isArray && sensorAdvertisements.length) {
-    sensorAdvertisements.forEach(({ macAddress, batteryLevel }) => {
+    sensorAdvertisements.forEach(({ macAddress, batteryLevel, logInterval }) => {
       UIDatabase.write(() => {
         UIDatabase.update('Sensor', {
           id: generateUUID(),
           ...UIDatabase.get('Sensor', macAddress, 'macAddress'),
           macAddress,
           batteryLevel,
+          logInterval,
         });
       });
     });
   }
 };
 
-const startSensorScan = () => async dispatch => {
+const startSensorScan = () => async (dispatch, getState) => {
+  const bluetoothEnabled = PermissionSelectors.bluetooth(getState());
+  const locationPermission = PermissionSelectors.location(getState());
+  // Ensure the correct permissions before initiating a new sync process.
+  if (!bluetoothEnabled) await dispatch(PermissionActions.requestBluetooth());
+  if (!locationPermission) await dispatch(PermissionActions.requestLocation());
+
+  if (!(bluetoothEnabled && locationPermission)) return null;
+
   await dispatch(scanForSensors());
-  dispatch(PageActions.refreshData(ROUTES.VACCINE_ADMIN_PAGE));
+
+  return dispatch(PageActions.refreshData(ROUTES.VACCINES_ADMIN));
 };
 
 const scanForSensors = () => async dispatch => {
@@ -104,6 +120,51 @@ const downloadLogsComplete = () => ({
   type: TEMPERATURE_SYNC_ACTIONS.DOWNLOAD_LOGS_COMPLETE,
 });
 
+const saveLogs = (logData, sensor) => async dispatch => {
+  const { length: numberOfLogs = 0 } = logData;
+
+  dispatch(startSavingTemperatureLogs(logData?.length));
+  const timeNow = moment(new Date());
+  const { location, logInterval } = sensor;
+  const { id: locationID } = location;
+
+  // SensorLog are saved directly from a sensor as five-minute logs. A TemperatureLog is 30 minutes
+  // worth of SensorLog records. If there isn't enough SensorLogs to aggregate into a
+  // TemperatureLog, there may be some 'left over'. Start counting from whichever is sooner,
+  // the most recent SensorLog or the most recent TemperatureLog.
+  const sensorLogs = UIDatabase.objects('SensorLog').filtered('location.id == $0', locationID);
+  const tempLogs = UIDatabase.objects('TemperatureLog').filtered('location.id == $0', locationID);
+  const mostRecentSensorLogTime = moment(sensorLogs.max('timestamp') ?? timeNow);
+  const mostRecentTempLogTime = moment(tempLogs.max('timestamp') ?? timeNow);
+  const tempLogIsEarlier = mostRecentTempLogTime.isBefore(mostRecentSensorLogTime);
+  const mostRecentLogTime = tempLogIsEarlier ? mostRecentSensorLogTime : mostRecentTempLogTime;
+
+  // Calculate the number of LogIntervals it has been since the last sync/last log was
+  // created and now. Then save that number of data points that were synced from
+  // the bluetooth sensor. This ensures we are using the correct logs from the sensor
+  // in the case where the logs weren't correctly deleted during a sync process.
+  const numberOfSecondsSinceLastSync = timeNow.diff(mostRecentLogTime, 'seconds', true);
+  const numberOfLogsToLookback =
+    Math.ceil(numberOfSecondsSinceLastSync / logInterval) || numberOfLogs;
+  const sliceIndex = numberOfLogs - numberOfLogsToLookback;
+  const logsToSave = sliceIndex >= 0 ? logData.slice(sliceIndex) : [];
+
+  // When we have no sensor logs or timestamps to count FROM, we need to count BACK
+  //  from the time now. The number of logs we are saving times the interval they are for.
+  const initialTimestamp = moment(mostRecentLogTime);
+  if (!(sensorLogs.length && tempLogs.length)) {
+    initialTimestamp.subtract(logsToSave.length * logInterval, 'seconds');
+  }
+  UIDatabase.write(() =>
+    logsToSave.forEach(({ temperature }, i) => {
+      const timestampOffset = (i + 1) * logInterval;
+      const timestamp = moment(initialTimestamp).add(timestampOffset, 'seconds');
+
+      createRecord(UIDatabase, 'SensorLog', temperature, timestamp.toDate(), sensor);
+    })
+  );
+};
+
 const downloadLogs = sensor => async dispatch => {
   dispatch(downloadLogsStart());
 
@@ -111,24 +172,12 @@ const downloadLogs = sensor => async dispatch => {
   const { success = false, data = [] } = downloadedLogsResult;
 
   if (success && data?.[0]?.logs) {
-    const sensorLogs = data[0]?.logs;
-    const timeNow = new Date().getTime();
-
-    if (Array.isArray(sensorLogs)) {
-      UIDatabase.write(() =>
-        sensorLogs.forEach(({ temperature }, i) => {
-          const timestamp = timeNow - (i + 1) * MILLISECONDS.FIVE_MINUTES;
-          createRecord(UIDatabase, 'SensorLog', temperature, new Date(timestamp), sensor);
-        })
-      );
-    }
-
     dispatch(downloadLogsComplete());
-  } else {
-    dispatch(downloadLogsError());
+    return data?.[0]?.logs;
   }
 
-  return new Promise(resolver => resolver(success));
+  dispatch(downloadLogsError());
+  return null;
 };
 
 const startResettingAdvertisementFrequency = () => ({
@@ -151,7 +200,7 @@ const resetAdvertisementFrequency = sensor => async dispatch => {
   if (success) dispatch(completeResettingAdvertisementFrequency());
   else dispatch(errorResettingAdvertisementFrequency());
 
-  return new Promise(resolver => resolver(success));
+  return success;
 };
 
 const startResettingLogFrequency = () => ({
@@ -174,7 +223,7 @@ const resetLogFrequency = sensor => async dispatch => {
   if (success) dispatch(completeResettingLogFrequency());
   else dispatch(errorResettingLogFrequency());
 
-  return new Promise(resolver => resolver(success));
+  return success;
 };
 
 const startSavingTemperatureLogs = () => ({
@@ -184,28 +233,39 @@ const completeSavingTemperatureLogs = () => ({
   type: TEMPERATURE_SYNC_ACTIONS.COMPLETE_SAVING_TEMPERATURE_LOGS,
 });
 
-const createTemperatureLogs = sensor => dispatch => {
-  const { sensorLogs, location } = sensor;
+const createTemperatureLogs = sensor => async dispatch => {
+  const { sensorLogs, location, logInterval } = sensor;
+
+  // Sensors have a minimum log interval of one minute on a physical device.
+  const MIN_LOG_INTERVAL = 60;
+  // Defensive against zero or less log interval.
+  const intervalInSeconds = Math.max(logInterval, MIN_LOG_INTERVAL);
+  // Each sensorLog is per log interval. A temperature log is a 30 minute aggregation.
+  // Divide the time a sensorLog ranges over by 30 minutes to find the number of sensor
+  // logs per temperature log.
+  const sensorLogsPerTemperatureLog = Math.floor(
+    MILLISECONDS.THIRTY_MINUTES / (intervalInSeconds * MILLISECONDS.ONE)
+  );
 
   // Only create TemperatureLogs for the greatest multiple of 6 SensorLogs,
   // as each SensorLog is a 5 minute log, and each Temperature log a 30 minute log.
-  const iterateTo = sensorLogs.length - (sensorLogs.length % 6);
+  const iterateTo = sensorLogs.length - (sensorLogs.length % sensorLogsPerTemperatureLog);
   const sensorLogsToGroup = sensorLogs.sorted('timestamp').slice(0, iterateTo);
-  const groupedSensorLogs = chunk(sensorLogsToGroup, 6);
-
-  dispatch(startSavingTemperatureLogs(groupedSensorLogs.length));
+  const groupedSensorLogs = chunk(sensorLogsToGroup, sensorLogsPerTemperatureLog);
 
   UIDatabase.write(() => {
     groupedSensorLogs.forEach(sensorLogGroup => {
       const { hasBreached, mostRecentTemperatureBreach } = sensor;
       const newLogTemperature = Math.min(...sensorLogGroup.map(({ temperature }) => temperature));
-      const newLogTimestamp = Math.min(...sensorLogGroup.map(({ timestamp }) => timestamp));
+      const newLogTimestamp = new Date(
+        Math.min(...sensorLogGroup.map(({ timestamp }) => timestamp))
+      );
 
       const newLog = createRecord(
         UIDatabase,
         'TemperatureLog',
         newLogTemperature,
-        new Date(newLogTimestamp),
+        newLogTimestamp,
         location
       );
 
@@ -228,8 +288,6 @@ const createTemperatureLogs = sensor => dispatch => {
   });
 
   dispatch(completeSavingTemperatureLogs());
-
-  return Promise.resolve();
 };
 
 const errorNoSensors = () => ({ type: TEMPERATURE_SYNC_ACTIONS.ERROR_NO_SENSORS });
@@ -240,37 +298,63 @@ const updateSensorProgress = sensor => ({
   payload: { sensor },
 });
 
+const manualTemperatureSync = () => async (dispatch, getState) => {
+  const bluetoothEnabled = PermissionSelectors.bluetooth(getState());
+  const locationPermission = PermissionSelectors.location(getState());
+
+  if (!bluetoothEnabled) await dispatch(PermissionActions.requestBluetooth());
+  if (!locationPermission) await dispatch(PermissionActions.requestLocation());
+
+  dispatch(syncTemperatures());
+};
+
+const errorDisabledBluetooth = () => dispatch => {
+  ToastAndroid.show(syncStrings.please_enable_bluetooth, ToastAndroid.LONG);
+  dispatch({ type: TEMPERATURE_SYNC_ACTIONS.ERROR_BLUETOOTH_DISABLED });
+};
+const errorDisabledLocation = () => dispatch => {
+  ToastAndroid.show(syncStrings.grant_location_permission, ToastAndroid.LONG);
+  dispatch({ type: TEMPERATURE_SYNC_ACTIONS.ERROR_LOCATION_DISABLED });
+};
+
 const syncTemperatures = () => async (dispatch, getState) => {
+  // Ensure not sync is currently in progress before initiating a new one.
   const { temperatureSync } = getState();
   const { isSyncing } = temperatureSync;
-
-  const sensors = UIDatabase.objects('Sensor').filtered('location != null');
-  const { length: numberOfSensors } = sensors;
-
   if (isSyncing) return null;
+
+  // Ensure the correct permissions before initiating a new sync process.
+  const bluetoothEnabled = PermissionSelectors.bluetooth(getState());
+  const locationPermission = PermissionSelectors.location(getState());
+
+  if (!bluetoothEnabled) dispatch(errorDisabledBluetooth());
+  if (!locationPermission) dispatch(errorDisabledLocation());
+  if (!(bluetoothEnabled && locationPermission)) return null;
+
+  // Ensure there are some sensors which have been assigned a location before syncing.
+  const sensors = UIDatabase.objects('Sensor').filtered('location != null && isActive == true');
+  const { length: numberOfSensors } = sensors;
   if (!numberOfSensors) return dispatch(errorNoSensors());
 
+  // Begin a sync cycle: For each sensor, download the logs. Reset it's log
+  //  frequency and advertisement frequency. Then, save the logs downloaded.
   dispatch(startSync());
-
   for (let i = 0; i < numberOfSensors; i++) {
     const sensor = sensors[i];
 
     dispatch(updateSensorProgress(sensor));
-
     const downloadedLogsResult = await dispatch(downloadLogs(sensor));
+
     if (downloadedLogsResult) {
+      await dispatch(saveLogs(downloadedLogsResult, sensor));
+      await dispatch(createTemperatureLogs(sensor));
       const resetLogFrequencyResult = await dispatch(resetLogFrequency(sensor));
+
       if (resetLogFrequencyResult) {
-        const resetAdvertisementFrequencyResult = await dispatch(
-          resetAdvertisementFrequency(sensor)
-        );
-        if (resetAdvertisementFrequencyResult) {
-          dispatch(createTemperatureLogs(sensor));
-        }
+        await dispatch(resetAdvertisementFrequency(sensor));
       }
     }
   }
-
   return dispatch(completeSync());
 };
 
@@ -279,4 +363,5 @@ export const TemperatureSyncActions = {
   openModal,
   closeModal,
   startSensorScan,
+  manualTemperatureSync,
 };

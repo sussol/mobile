@@ -102,22 +102,45 @@ const DataTableRow = React.memo(
           switch (type) {
             case COLUMN_TYPES.EDITABLE_STRING:
             case COLUMN_TYPES.EDITABLE_NUMERIC: {
-              // Special condition for stocktake counted total quantity cells.
-              // Use the placeholder 'Not counted' when a stocktake item or batch
-              // has not been counted yet.
-              let placeholder = '';
-              if (columnKey === COLUMN_KEYS.COUNTED_TOTAL_QUANTITY) {
-                placeholder = rowData.hasBeenCounted ? '' : tableStrings.not_counted;
-              }
+              const { isVaccine, hasBeenCounted } = rowData;
+
+              // Placeholder values which are determined on a per row basis. For example, display
+              // "Not counted" as a placeholder on a stocktake row. Placeholders are used under
+              // the condition [placeholder && !value] which can be a source of bugs with JS
+              // falsey values. I.e. if a value is 0, the placeholder will display rather than
+              // the value.
+              const extraPlaceholders = {
+                [COLUMN_KEYS.COUNTED_TOTAL_QUANTITY]: hasBeenCounted
+                  ? ''
+                  : tableStrings.not_counted,
+              };
+
+              // Extra disabled conditions for columns which can be determined per row. For example,
+              // only allow the doses column for vaccine items.
+              const disabledCondition = {
+                [COLUMN_KEYS.DOSES]: !isVaccine,
+              };
+
+              // Extra text which can be displayed for a column on a per row basis when the
+              // cell is disabled. For example display N/A on a row for the doses column rather
+              // than the underlying value "0".
+              const disabledText = {
+                [COLUMN_KEYS.DOSES]: isVaccine ? '' : generalStrings.not_available,
+              };
+
+              const value = disabledText[columnKey] ? disabledText[columnKey] : rowData[columnKey];
+              const placeholder = extraPlaceholders[columnKey] ?? '';
+
+              const inputIsDisabled = isDisabled || !!disabledCondition[columnKey];
 
               return (
                 <TextInputCell
                   key={columnKey}
-                  value={rowData[columnKey]}
+                  value={value}
                   rowKey={rowKey}
                   columnKey={columnKey}
                   onChangeText={getCallback(columnKey)}
-                  isDisabled={isDisabled}
+                  isDisabled={inputIsDisabled}
                   width={width}
                   viewStyle={cellContainer[cellAlignment]}
                   textViewStyle={editableCellTextView}
@@ -232,12 +255,18 @@ const DataTableRow = React.memo(
               );
 
             case COLUMN_TYPES.ICON: {
+              const { hasBreached, isVaccine } = rowData ?? {};
+
               const icons = {
                 chevron_right: ChevronRightIcon,
                 history: () => <HistoryIcon color={SUSSOL_ORANGE} />,
                 pencil: () => <PencilIcon color={SUSSOL_ORANGE} />,
-                breach: () => <HazardIcon color={SUSSOL_ORANGE} />,
+                breach: () => (hasBreached ? <HazardIcon color={SUSSOL_ORANGE} /> : null),
                 book: () => <BookIcon color={SUSSOL_ORANGE} />,
+              };
+
+              const disabledConditions = {
+                [COLUMN_KEYS.HAS_BREACHED]: !(hasBreached && isVaccine),
               };
 
               const isEditReadOnlyRecord =
@@ -246,7 +275,8 @@ const DataTableRow = React.memo(
                 !rowData.isEditable;
               const iconComponent = isEditReadOnlyRecord ? icons.book : icons[icon];
 
-              const isDisabledIcon = isDisabled && columnKey !== COLUMN_KEYS.BATCH;
+              const isDisabledIcon =
+                (isDisabled || disabledConditions[columnKey]) && columnKey !== COLUMN_KEYS.BATCH;
 
               return (
                 <TouchableCell
@@ -263,11 +293,19 @@ const DataTableRow = React.memo(
               );
             }
 
-            case COLUMN_TYPES.DROP_DOWN:
+            case COLUMN_TYPES.DROP_DOWN: {
+              const { isVaccine = false } = rowData ?? {};
+
+              const disabledConditions = {
+                [COLUMN_KEYS.CURRENT_VVM_STATUS]: !isVaccine,
+              };
+
+              const disabledVVMStatus = disabledConditions[columnKey];
+
               return (
                 <DropDownCell
                   key={columnKey}
-                  isDisabled={isDisabled}
+                  isDisabled={isDisabled || disabledVVMStatus}
                   onPress={getCallback(columnKey)}
                   rowKey={rowKey}
                   columnKey={columnKey}
@@ -276,6 +314,7 @@ const DataTableRow = React.memo(
                   width={width}
                 />
               );
+            }
 
             default: {
               return (

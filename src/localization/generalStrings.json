@@ -48,7 +48,10 @@
     "inclusive": "(inclusive)",
     "days": "days",
     "hours": "hours",
-    "minutes": "minutes"
+    "minutes": "minutes",
+    "no_location_types": "You don't have any location types. Contact your administrator.",
+    "from": "from",
+    "no_locations_for_batch": "This item is restricted to locations of type {0} and none are available. Contact your administrator."
   },
   "fr": {
     "must_be_a_number_between": "Doit être un nombre entre",

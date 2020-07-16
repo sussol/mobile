@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -27,7 +28,7 @@ export class ItemBatch extends Realm.Object {
   }
 
   get hasBreached() {
-    return this.location?.hasBreached() ?? false;
+    return !!this.breaches.length;
   }
 
   get breaches() {
@@ -35,7 +36,10 @@ export class ItemBatch extends Realm.Object {
   }
 
   get currentVvmStatus() {
-    return this.vaccineVialMonitorStatusLogs.sorted('timestamp', true)[0];
+    const vvmLogs = this.vaccineVialMonitorStatusLogs.sorted('timestamp', true);
+    const mostRecentVvmLog = vvmLogs[0];
+
+    return mostRecentVvmLog?.status;
   }
 
   get vvmStatusName() {
@@ -44,6 +48,10 @@ export class ItemBatch extends Realm.Object {
 
   get otherPartyName() {
     return this.supplier?.name || '';
+  }
+
+  get currentLocationMovement() {
+    return this.locationMovements.sorted('enterTimestamp', true)[0];
   }
 
   /**
@@ -105,6 +113,17 @@ export class ItemBatch extends Realm.Object {
   }
 
   /**
+   * Get this items restricted LocationType - the location type for which Location records must
+   * be related for this ItemBatch to be assigned. This is either on the ItemStoreJoin or on the
+   * underlying Item - preference to the more specific ItemStoreJoin.
+   *
+   * @param {Realm} database
+   */
+  restrictedLocationType(database) {
+    return this.item.restrictedLocationType(database);
+  }
+
+  /**
    * Add a transaction batch to be associated with this batch.
    *
    * @param  {TransactionBatch}  transactionBatch
@@ -138,7 +157,7 @@ export class ItemBatch extends Realm.Object {
    * @return {Bool} Indicator whether the new vvm status should be applied to this batch.
    */
   shouldApplyVvmStatus(newVvmStatus = {}) {
-    return newVvmStatus?.id === this.currentVvmStatus?.id;
+    return newVvmStatus?.id !== this.currentVvmStatus?.id;
   }
 
   /**
@@ -146,12 +165,17 @@ export class ItemBatch extends Realm.Object {
    * @return {Bool} Indicator whether the new location should be applied to this batch.
    */
   shouldApplyLocation(newLocation = {}) {
-    return newLocation?.id === this.location?.id;
+    return newLocation?.id !== this.location?.id;
+  }
+
+  leaveLocation(database) {
+    this.currentLocationMovement?.leaveLocation(database);
   }
 
   applyLocation(database, newLocation) {
     this.location = newLocation;
 
+    this.leaveLocation(database);
     return createRecord(database, 'LocationMovement', this, newLocation);
   }
 

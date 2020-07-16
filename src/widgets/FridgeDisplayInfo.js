@@ -5,72 +5,109 @@
  */
 
 import React from 'react';
-import { TouchableOpacity, StyleSheet, View } from 'react-native';
+import { Text, TouchableOpacity, StyleSheet, View } from 'react-native';
 import PropTypes from 'prop-types';
 
 import { UIDatabase } from '../database';
-import { formatTemperatureExposure, formatTemperature } from '../utilities/formatters';
+import { formatTemperatureExposure } from '../utilities/formatters';
 
 import { FlexRow } from './FlexRow';
-import { ChevronDownIcon } from './icons';
-import { SimpleLabel } from './SimpleLabel';
+import { ChevronDownIcon, ChevronUpIcon } from './icons';
+import { Separator } from './Separator';
 
-import { WHITE, SUSSOL_ORANGE } from '../globalStyles';
+import { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles';
 import { vaccineStrings } from '../localization';
+import { DateRangeSelector } from './DateRangeSelector';
+import temperature from '../utilities/temperature';
 
-export const FridgeDisplayInfo = ({ fridge, isActive, onPress }) => {
-  const { description, currentTemperature, temperatureExposure, numberOfBreaches } = fridge;
+export const FridgeDisplayInfo = ({
+  fridge,
+  isActive,
+  onPress,
+  onChangeFromDate,
+  onChangeToDate,
+  fromDate,
+  toDate,
+}) => {
+  const {
+    description,
+    currentTemperature,
+    temperatureExposure,
+    numberOfBreaches,
+    mostRecentTemperatureLog,
+    leastRecentTemperatureLog,
+  } = fridge;
+
+  const { timestamp: minimumDate } = leastRecentTemperatureLog;
+  const { timestamp: maximumDate } = mostRecentTemperatureLog;
 
   const Container = isActive ? View : TouchableOpacity;
 
   const onSelectFridge = React.useCallback(() => onPress(fridge), []);
 
   return (
-    <Container onPress={onSelectFridge} style={localStyles.container}>
-      <FlexRow flex={1} justifyContent="space-between" alignItems="center">
-        <FlexRow flex={1} justifyContent="space-evenly">
-          <ChevronDownIcon color={isActive ? WHITE : SUSSOL_ORANGE} style={localStyles.icon} />
-          <SimpleLabel
-            label={description}
-            size="large"
-            text={formatTemperature(currentTemperature)}
-          />
-        </FlexRow>
+    <Container onPress={onSelectFridge}>
+      <FlexRow alignItems="center" justifyContent="space-between" style={localStyles.container}>
+        {isActive ? (
+          <ChevronUpIcon color={SUSSOL_ORANGE} style={localStyles.icon} />
+        ) : (
+          <ChevronDownIcon color={SUSSOL_ORANGE} style={localStyles.icon} />
+        )}
 
-        <FlexRow flex={4} justifyContent="flex-end">
-          {numberOfBreaches ? (
-            <SimpleLabel
-              label={vaccineStrings.breaches}
-              text={numberOfBreaches}
-              textAlign="right"
-              labelAlign="right"
-            />
-          ) : null}
-          <SimpleLabel
-            label={vaccineStrings.temperature_exposure}
-            text={formatTemperatureExposure(temperatureExposure)}
-            textAlign="right"
-            labelAlign="right"
-          />
-          <SimpleLabel
-            label={vaccineStrings.total_stock}
-            text={fridge.totalStock(UIDatabase)}
-            textAlign="right"
-            labelAlign="right"
-          />
+        <FlexRow flex={1} alignItems="center" justifyContent="space-evenly">
+          <Text style={localStyles.largeLabel}>{description}</Text>
+          <Text style={localStyles.largeText}>{temperature(currentTemperature).format()}</Text>
+
+          <Text style={localStyles.label}>{vaccineStrings.breaches}</Text>
+          <Text style={localStyles.text}>{numberOfBreaches}</Text>
+
+          <Text style={localStyles.label}>{vaccineStrings.temperature_exposure}</Text>
+          <Text style={localStyles.text}>{formatTemperatureExposure(temperatureExposure)}</Text>
+
+          <Text style={localStyles.label}>{vaccineStrings.total_stock}</Text>
+          <Text style={localStyles.text}>{fridge.totalStock(UIDatabase)}</Text>
         </FlexRow>
       </FlexRow>
+
+      {isActive ? (
+        <>
+          <Separator marginHorizontal={100} marginTop={10} width={2} marginBottom={0} />
+          <FlexRow style={localStyles.datePickerRow}>
+            <DateRangeSelector
+              initialStartDate={fromDate}
+              initialEndDate={toDate}
+              onChangeToDate={onChangeToDate}
+              onChangeFromDate={onChangeFromDate}
+              minimumDate={minimumDate}
+              maximumDate={maximumDate}
+            />
+          </FlexRow>
+        </>
+      ) : null}
     </Container>
   );
 };
 
 const localStyles = StyleSheet.create({
-  container: { height: 25, marginTop: 10, marginHorizontal: 10 },
-  icon: { marginRight: 10 },
+  container: { height: 30, marginTop: 10, marginHorizontal: 10 },
+  datePickerRow: { marginTop: 10, marginHorizontal: 10 },
+  largeLabel: {
+    fontFamily: APP_FONT_FAMILY,
+    color: SUSSOL_ORANGE,
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  largeText: { fontFamily: APP_FONT_FAMILY, fontSize: 20 },
+  label: { fontFamily: APP_FONT_FAMILY, color: SUSSOL_ORANGE, textAlign: 'left' },
+  text: { fontFamily: APP_FONT_FAMILY, textAlign: 'right' },
 });
 
 FridgeDisplayInfo.propTypes = {
   fridge: PropTypes.object.isRequired,
   isActive: PropTypes.bool.isRequired,
   onPress: PropTypes.func.isRequired,
+  onChangeFromDate: PropTypes.func.isRequired,
+  onChangeToDate: PropTypes.func.isRequired,
+  fromDate: PropTypes.instanceOf(Date).isRequired,
+  toDate: PropTypes.instanceOf(Date).isRequired,
 };

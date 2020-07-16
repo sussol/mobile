@@ -24,6 +24,7 @@ import { TemperatureSyncReducer } from './TemperatureSyncReducer';
 import { FridgeReducer } from './FridgeReducer';
 import { BreachReducer } from './BreachReducer';
 import { RowDetailReducer } from './RowDetailReducer';
+import { PermissionReducer } from './PermissionReducer';
 
 import SyncReducer from './SyncReducer';
 
@@ -48,4 +49,5 @@ export default combineReducers({
   fridge: FridgeReducer,
   breach: BreachReducer,
   rowDetail: RowDetailReducer,
+  permission: PermissionReducer,
 });

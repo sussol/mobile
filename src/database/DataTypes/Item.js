@@ -176,7 +176,7 @@ export class Item extends Realm.Object {
       .filtered("requisition.status == 'finalised'")
       .sorted('requisition.entryDate', true)[0];
 
-    return mostRecentRequisitionItem?.requisition?.confirmDate;
+    return mostRecentRequisitionItem?.requisition?.entryDate;
   }
 
   /**
@@ -241,6 +241,22 @@ export class Item extends Realm.Object {
   }
 
   /**
+   * Get this items restricted LocationType - the location type for which Location records must
+   * be related for this ItemBatch to be assigned. This is either on the ItemStoreJoin or on the
+   * underlying Item - preference to the more specific ItemStoreJoin.
+   *
+   * @param {Realm} database
+   */
+  restrictedLocationType(database) {
+    const itemStoreJoins = database
+      .objects('ItemStoreJoin')
+      .filtered('itemId == $0 && joinsThisStore == true', this.id)[0];
+    const { restrictedLocationType } = itemStoreJoins ?? {};
+
+    return restrictedLocationType || this.restrictedLocationType;
+  }
+
+  /**
    * A vaccine item can have multiple doses per 'unit' or 'pack'. For example, you can have
    * a single vaccine which has two doses. Once a vaccine has been opened, the doses must be
    * given quickly. When recording outgoing stock, the doses and quantity (or number of packs)
@@ -256,7 +272,7 @@ export class Item extends Realm.Object {
     if (!this.isVaccine || !fromDate) return 0;
 
     const customerInvoiceTransactionItems = this.transactionItems.filtered(
-      "transaction.confirmDate > $0 && transaction.type == 'customer_invoice'",
+      "transaction.confirmDate >= $0 && transaction.type == 'customer_invoice'",
       fromDate
     );
 
@@ -283,10 +299,11 @@ export class Item extends Realm.Object {
     if (!this.isVaccine || !fromDate) return 0;
 
     const supplierCreditTransactionItems = this.transactionItems.filtered(
-      'transaction.confirmDate > $0 && transaction.type == $1 && transaction.otherParty.name == $2',
+      'transaction.confirmDate >= $0 && transaction.type == $1 &&' +
+        'transaction.otherParty.code == $2',
       fromDate,
       'supplier_credit',
-      'inventory_adjustment'
+      'invad'
     );
 
     const totalDosesPossible = supplierCreditTransactionItems.reduce(

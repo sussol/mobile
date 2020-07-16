@@ -261,12 +261,12 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       canBeBlank: ['description', 'code', 'level', 'is_active'],
     },
     VaccineVialMonitorStatusLog: {
-      cannotBeBlank: ['vaccine_vial_monitor_status_ID', 'item_line_ID', 'time', 'date'],
+      cannotBeBlank: ['status_ID', 'item_line_ID', 'time', 'date'],
       canBeBlank: [],
     },
     Location: { cannotBeBlank: [], canBeBlank: ['Description', 'code', 'type_ID'] },
     LocationType: { cannotBeBlank: [], canBeBlank: ['Description'] },
-    Sensor: { cannotBeBlank: ['macAddress', 'name'], canBeBlank: ['batteryLevel'] },
+    Sensor: { cannotBeBlank: ['macAddress'], canBeBlank: ['batteryLevel', 'is_active', 'name'] },
     TemperatureBreachConfiguration: {
       cannotBeBlank: [
         'minimum_temperature',
@@ -979,7 +979,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       database.update(recordType, {
         id: record.ID,
         location: database.getOrCreate('Location', record.location_ID),
-        itemBatch: database.getOrCreate('Location', record.item_line_ID),
+        itemBatch: database.getOrCreate('ItemBatch', record.item_line_ID),
         enterTimestamp: parseDate(record.enter_date, record.enter_time),
         exitTimestamp: parseDate(record.exit_date, record.exit_time),
       });
@@ -1030,6 +1030,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         location: database.getOrCreate('Location', record.locationID),
         batteryLevel: parseNumber(record.batteryLevel),
         name: record.name,
+        isActive: parseBoolean(record.is_active),
       });
       break;
     }

@@ -337,6 +337,7 @@ const generateSyncData = (settings, recordType, record) => {
         end_date: getDateString(record.endTimestamp),
         location_ID: record.location?.id,
         store_ID: settings.get(THIS_STORE_ID),
+        temperature_breach_config_ID: String(record.temperatureBreachConfiguration?.id),
       };
     }
     case 'LocationMovement': {
@@ -369,6 +370,7 @@ const generateSyncData = (settings, recordType, record) => {
         batteryLevel: String(record.batteryLevel),
         storeID: settings.get(THIS_STORE_ID),
         locationID: record.location?.id,
+        is_active: String(record.isActive ?? true),
       };
     }
     case 'Location': {

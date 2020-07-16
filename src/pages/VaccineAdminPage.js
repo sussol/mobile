@@ -5,25 +5,28 @@
  */
 
 import React from 'react';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { ToastAndroid, View, StyleSheet, ActivityIndicator } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { ToggleBar, DataTablePageView, SearchBar, PageButton } from '../widgets';
 import { DataTable, DataTableRow, DataTableHeaderRow } from '../widgets/DataTable';
-import { DataTablePageModal } from '../widgets/modals';
-import { BottomConfirmModal } from '../widgets/bottomModals';
+import { DataTablePageModal, ModalContainer } from '../widgets/modals';
 
 import { recordKeyExtractor, getItemLayout, getPageDispatchers } from './dataTableUtilities';
 
 import { TemperatureSyncActions } from '../actions/TemperatureSyncActions';
+import { PageActions } from './dataTableUtilities/actions';
 import { selectIsSyncingTemperatures } from '../selectors/temperatureSync';
 
+import { UIDatabase } from '../database';
 import { ROUTES } from '../navigation';
 import { MODAL_KEYS } from '../utilities';
 
 import { modalStrings, buttonStrings, generalStrings, vaccineStrings } from '../localization';
 import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
+import { FormControl } from '../widgets/FormControl';
+import { getFormInputConfig } from '../utilities/formInputConfigs';
 
 const VaccineAdminPageComponent = ({
   data,
@@ -46,16 +49,16 @@ const VaccineAdminPageComponent = ({
   onCloseModal,
   modalValue,
   dispatch,
-  onAddFridge,
-  hasSelection,
-  onDeselectAll,
-  onDeleteRecords,
   onCheck,
   scanForSensors,
   isScanning,
+  onEditLocation,
+  onSaveLocation,
 }) => {
   const getCallback = colKey => {
     switch (colKey) {
+      case 'edit':
+        return onEditLocation;
       case 'description':
         return onEditLocationDescription;
       case 'code':
@@ -112,7 +115,7 @@ const VaccineAdminPageComponent = ({
     }
   };
 
-  const onPress = dataSet === 'fridges' ? onAddFridge : scanForSensors;
+  const onPress = dataSet === 'fridges' ? onEditLocation : scanForSensors;
   const buttonText = dataSet === 'fridges' ? buttonStrings.add_fridge : buttonStrings.start_scan;
   const placeholderString =
     dataSet === 'fridges'
@@ -159,7 +162,7 @@ const VaccineAdminPageComponent = ({
 
       <DataTablePageModal
         fullScreen={false}
-        isOpen={!!modalKey}
+        isOpen={!!modalKey && modalKey !== MODAL_KEYS.EDIT_LOCATION}
         modalKey={modalKey}
         onClose={onCloseModal}
         onSelect={getModalOnSelect()}
@@ -167,13 +170,19 @@ const VaccineAdminPageComponent = ({
         currentValue={modalValue}
       />
 
-      <BottomConfirmModal
-        isOpen={hasSelection}
-        questionText={modalStrings.remove_these_items}
-        onCancel={onDeselectAll}
-        onConfirm={onDeleteRecords}
-        confirmText={modalStrings.remove}
-      />
+      <ModalContainer
+        title={modalStrings.location_details}
+        noCancel
+        fullScreen
+        isVisible={modalKey === MODAL_KEYS.EDIT_LOCATION}
+      >
+        <FormControl
+          isDisabled={false}
+          onSave={onSaveLocation}
+          onCancel={onCloseModal}
+          inputConfig={getFormInputConfig('location', modalValue)}
+        />
+      </ModalContainer>
     </DataTablePageView>
   );
 };
@@ -203,8 +212,19 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   const scanForSensors = () => dispatch(TemperatureSyncActions.startSensorScan());
+  const editLocation = rowKey =>
+    dispatch(PageActions.openModal(MODAL_KEYS.EDIT_LOCATION, rowKey, ROUTES.VACCINES_ADMIN));
 
-  return { ...getPageDispatchers(dispatch, 'Location', ROUTES.VACCINES_ADMIN), scanForSensors };
+  const hasLocationTypes = !!UIDatabase.objects('LocationType').length;
+  const noLocationTypesToast = () =>
+    ToastAndroid.show(generalStrings.no_location_types, ToastAndroid.LONG);
+  const onEditLocation = hasLocationTypes ? editLocation : noLocationTypesToast;
+
+  return {
+    ...getPageDispatchers(dispatch, 'Location', ROUTES.VACCINES_ADMIN),
+    scanForSensors,
+    onEditLocation,
+  };
 };
 
 VaccineAdminPageComponent.defaultProps = { modalValue: null };
@@ -230,13 +250,11 @@ VaccineAdminPageComponent.propTypes = {
   onCloseModal: PropTypes.func.isRequired,
   modalValue: PropTypes.any,
   dispatch: PropTypes.func.isRequired,
-  onAddFridge: PropTypes.func.isRequired,
-  hasSelection: PropTypes.bool.isRequired,
-  onDeselectAll: PropTypes.func.isRequired,
-  onDeleteRecords: PropTypes.func.isRequired,
   onCheck: PropTypes.func.isRequired,
   scanForSensors: PropTypes.func.isRequired,
   isScanning: PropTypes.bool.isRequired,
+  onEditLocation: PropTypes.func.isRequired,
+  onSaveLocation: PropTypes.func.isRequired,
 };
 
 export const VaccineAdminPage = connect(

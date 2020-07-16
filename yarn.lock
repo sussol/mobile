@@ -843,6 +843,11 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
+"@cs125/wait-until@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@cs125/wait-until/-/wait-until-0.0.3.tgz#957fc279121704845300dac47ee37a3b34c203d2"
+  integrity sha512-Z3+GXZbAjiiI0cJi1si+WfBBPfmLwZ9Tk4wqyFJGeZHJilyveBCpSktHdJlmqjHBBvrMi8ymXefYi2S833LhRA==
+
 "@egjs/hammerjs@^2.0.17":
   version "2.0.17"
   resolved "https://registry.yarnpkg.com/@egjs/hammerjs/-/hammerjs-2.0.17.tgz#5dc02af75a6a06e4c2db0202cae38c9263895124"
@@ -6665,6 +6670,13 @@ react-localization@^1.0.14:
   dependencies:
     localized-strings "^0.2.0"
 
+react-native-bluetooth-status@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/react-native-bluetooth-status/-/react-native-bluetooth-status-1.5.1.tgz#3cb7d528b146fe15a0fc6127963f259901cbf3ab"
+  integrity sha512-d+7NvFhLh3FRJOWWrJQjDwg/X9KILViEwLW2BBocIBsWGdFoZR51oXUKkR/FpMZ03AQiedKMDOTbP9nKBIVIEg==
+  dependencies:
+    "@cs125/wait-until" "^0.0.3"
+
 react-native-database@^0.3.3:
   version "0.3.3"
   resolved "https://registry.yarnpkg.com/react-native-database/-/react-native-database-0.3.3.tgz#fa3f0589fc17c4723ba85274587e856b84646b3c"
@@ -6713,6 +6725,11 @@ react-native-modalbox@^2.0.0:
   integrity sha512-j0gJTgSGaP+VbOIWPzrHPVNEEaB/TpuY6+KlEZNtdTDEFGp8BNbsZMTr4NPMkioRgZXUvT8bClqaeD63N/BF0g==
   dependencies:
     prop-types "^15.5.10"
+
+react-native-permissions@^2.1.5:
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-2.1.5.tgz#6cfc4f1ab1590f4952299b7cdc9698525ad540e0"
+  integrity sha512-b9KO/4UEV9qddl+kcSybmdk8nlAifclSDBR2rSvc5KZM06vIaJWJNIzK2ZwPXqDQ5yD3CJLuKTRj7Fz+jM9qyQ==
 
 react-native-popover-view@^2.0.7:
   version "2.0.7"

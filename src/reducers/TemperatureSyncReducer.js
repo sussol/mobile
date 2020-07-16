@@ -18,6 +18,8 @@ export const TEMPERATURE_SYNC_STATES = {
   SAVING_LOGS: 'SAVING_LOGS',
   NO_SENSORS: 'NO_SENSORS',
   SYNCING: 'SYNCING',
+  BLUETOOTH_DISABLED: 'BLUETOOTH_DISABLED',
+  LOCATION_DISABLED: 'LOCATION_DISABLED',
 };
 
 const initialState = () => ({
@@ -27,8 +29,9 @@ const initialState = () => ({
   isSyncing: false,
   modalIsOpen: false,
   lastTemperatureSync: null,
-  lastSyncError: null,
+  syncError: '',
   currentSensorName: null,
+  isDisabled: false,
 });
 
 export const TemperatureSyncReducer = (state = initialState(), action) => {
@@ -38,9 +41,28 @@ export const TemperatureSyncReducer = (state = initialState(), action) => {
     case REHYDRATE: {
       const { payload: previousState } = action;
       const { temperatureSync: previousTemperatureSyncState } = previousState ?? {};
-      const { lastTemperatureSync = null } = previousTemperatureSyncState ?? {};
+      const { lastTemperatureSync = null, isDisabled = false, syncState = '', syncError = '' } =
+        previousTemperatureSyncState ?? {};
 
-      return { ...initialState(), lastTemperatureSync };
+      return { ...initialState(), lastTemperatureSync, isDisabled, syncState, syncError };
+    }
+
+    case TEMPERATURE_SYNC_ACTIONS.ERROR_BLUETOOTH_DISABLED: {
+      return {
+        ...state,
+        syncState: TEMPERATURE_SYNC_STATES.BLUETOOTH_DISABLED,
+        isSyncing: false,
+        isDisabled: true,
+      };
+    }
+
+    case TEMPERATURE_SYNC_ACTIONS.ERROR_LOCATION_DISABLED: {
+      return {
+        ...state,
+        syncState: TEMPERATURE_SYNC_STATES.LOCATION_DISABLED,
+        isSyncing: false,
+        isDisabled: true,
+      };
     }
 
     case TEMPERATURE_SYNC_ACTIONS.UPDATE_SENSOR_PROGRESS: {
@@ -59,7 +81,13 @@ export const TemperatureSyncReducer = (state = initialState(), action) => {
     }
 
     case TEMPERATURE_SYNC_ACTIONS.SCAN_START: {
-      return { ...state, syncState: TEMPERATURE_SYNC_STATES.SCANNING, isSyncing: true };
+      return {
+        ...state,
+        syncState: TEMPERATURE_SYNC_STATES.SCANNING,
+        syncError: '',
+        isSyncing: true,
+        isDisabled: false,
+      };
     }
     case TEMPERATURE_SYNC_ACTIONS.SCAN_COMPLETE: {
       return { ...state, syncState: null, isSyncing: false };
@@ -132,7 +160,14 @@ export const TemperatureSyncReducer = (state = initialState(), action) => {
     }
 
     case TEMPERATURE_SYNC_ACTIONS.START_SYNC: {
-      return { ...state, syncState: TEMPERATURE_SYNC_STATES.SYNCING, isSyncing: true, total: 5 };
+      return {
+        ...state,
+        syncState: TEMPERATURE_SYNC_STATES.SYNCING,
+        isSyncing: true,
+        total: 5,
+        isDisabled: false,
+        syncError: '',
+      };
     }
     case TEMPERATURE_SYNC_ACTIONS.COMPLETE_SYNC: {
       const { syncError, lastTemperatureSync } = state;

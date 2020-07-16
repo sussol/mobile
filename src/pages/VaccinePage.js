@@ -67,7 +67,7 @@ export const VaccinePageComponent = ({
         </FlexView>
       )}
 
-      {fridges.length ? <FlatList data={fridges} renderItem={Fridge} /> : <BlankComponent />}
+      {fridges?.length ? <FlatList data={fridges} renderItem={Fridge} /> : <BlankComponent />}
     </DataTablePageView>
   );
 };
@@ -101,13 +101,14 @@ const mapDispatchToProps = dispatch => ({
 
 VaccinePageComponent.defaultProps = {
   breaches: [],
+  selectedFridge: null,
 };
 
 VaccinePageComponent.propTypes = {
-  selectedFridge: PropTypes.object.isRequired,
+  selectedFridge: PropTypes.object,
   minLine: PropTypes.array.isRequired,
   maxLine: PropTypes.array.isRequired,
-  breaches: PropTypes.object,
+  breaches: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   maxDomain: PropTypes.number.isRequired,
   minDomain: PropTypes.number.isRequired,
   fridges: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
