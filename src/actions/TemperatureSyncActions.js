@@ -81,17 +81,17 @@ const updateSensors = sensorAdvertisements => dispatch => {
 };
 
 const startSensorScan = () => async (dispatch, getState) => {
-  // Ensure the correct permissions before initiating a new sync process.
   const bluetoothEnabled = PermissionSelectors.bluetooth(getState());
   const locationPermission = PermissionSelectors.location(getState());
+  // Ensure the correct permissions before initiating a new sync process.
+  if (!bluetoothEnabled) await dispatch(PermissionActions.requestBluetooth());
+  if (!locationPermission) await dispatch(PermissionActions.requestLocation());
 
-  if (!bluetoothEnabled) dispatch(errorDisabledBluetooth());
-  if (!locationPermission) dispatch(errorDisabledLocation());
   if (!(bluetoothEnabled && locationPermission)) return null;
 
   await dispatch(scanForSensors());
 
-  return dispatch(PageActions.refreshData(ROUTES.VACCINE_ADMIN_PAGE));
+  return dispatch(PageActions.refreshData(ROUTES.VACCINES_ADMIN));
 };
 
 const scanForSensors = () => async dispatch => {
