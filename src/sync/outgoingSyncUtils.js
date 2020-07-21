@@ -267,7 +267,7 @@ const generateSyncData = (settings, recordType, record) => {
         type: record.type,
         discountRate: String(record.discountRate),
         expiryDate: getDateString(record.expiryDate),
-        policyNumberFull: `${record.policyNumberFamily}-${record.policyNumberPerson}`,
+        policyNumberFull: record.policyNumber,
         enteredByID: record.enteredBy?.id,
       };
     }
