@@ -409,7 +409,7 @@ export class Synchroniser {
           bugsnagClient.notify(error);
 
           // Rethrow with user friendly message
-          error.message = `There was an error syncing. Contact mSupply mobile support. ${originalMessage}`;
+          error.message = `There was an error syncing. Contact mSupply mobile support.\n${originalMessage}\n`;
           throw error;
         }
       });
