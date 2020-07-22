@@ -20,6 +20,7 @@ import {
   selectTemperatureSyncIsComplete,
   selectTemperatureSyncProgress,
   selectIsSyncingTemperatures,
+  selectErrorMessage,
 } from '../../selectors/temperatureSync';
 
 const TemperatureSyncComponent = ({
@@ -31,6 +32,7 @@ const TemperatureSyncComponent = ({
   currentSensor,
   syncTemperatures,
   isComplete,
+  errorMessage,
 }) => (
   <FlexColumn justifyContent="center" alignItems="center" flex={1}>
     <View style={localStyles.row}>
@@ -39,6 +41,7 @@ const TemperatureSyncComponent = ({
 
     {currentSensor && <Text style={localStyles.progressDescription}>{currentSensor}</Text>}
     <Text style={localStyles.progressDescription}> {temperatureSyncMessage} </Text>
+    <Text style={localStyles.lastSyncText}>{errorMessage}</Text>
     <Text style={localStyles.lastSyncText}>{syncStrings.last_successful_sync}</Text>
     <Text style={localStyles.lastSyncText}>{lastTemperatureSync}</Text>
 
@@ -60,6 +63,7 @@ const mapStateToProps = state => {
   const isComplete = selectTemperatureSyncIsComplete(state);
   const { progress, total } = selectTemperatureSyncProgress(state);
   const isSyncing = selectIsSyncingTemperatures(state);
+  const errorMessage = selectErrorMessage(state);
 
   return {
     isSyncing,
@@ -69,6 +73,7 @@ const mapStateToProps = state => {
     isComplete,
     progress,
     total,
+    errorMessage,
   };
 };
 
@@ -78,6 +83,7 @@ const mapDispatchToProps = dispatch => ({
 
 TemperatureSyncComponent.defaultProps = {
   currentSensor: null,
+  errorMessage: '',
 };
 
 TemperatureSyncComponent.propTypes = {
@@ -89,6 +95,7 @@ TemperatureSyncComponent.propTypes = {
   currentSensor: PropTypes.string,
   syncTemperatures: PropTypes.func.isRequired,
   isComplete: PropTypes.bool.isRequired,
+  errorMessage: PropTypes.string,
 };
 
 export const TemperatureSync = connect(
