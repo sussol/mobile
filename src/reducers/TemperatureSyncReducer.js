@@ -32,7 +32,7 @@ const initialState = () => ({
   syncError: '',
   currentSensorName: null,
   isDisabled: false,
-  errorMessage: '',
+  errorCode: '',
 });
 
 export const TemperatureSyncReducer = (state = initialState(), action) => {
@@ -86,7 +86,7 @@ export const TemperatureSyncReducer = (state = initialState(), action) => {
         ...state,
         syncState: TEMPERATURE_SYNC_STATES.SCANNING,
         syncError: '',
-        errorMessage: '',
+        errorCode: '',
         isSyncing: true,
         isDisabled: false,
       };
@@ -172,7 +172,7 @@ export const TemperatureSyncReducer = (state = initialState(), action) => {
         total: 5,
         isDisabled: false,
         syncError: '',
-        errorMessage: '',
+        errorCode: '',
       };
     }
     case TEMPERATURE_SYNC_ACTIONS.COMPLETE_SYNC: {
