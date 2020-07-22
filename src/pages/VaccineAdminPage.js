@@ -43,7 +43,7 @@ const VaccineAdminPageComponent = ({
   onSortColumn,
   onToggleFridges,
   onToggleSensors,
-  onSelectLocation,
+  onSelectSensorLocation,
   onEditSensorName,
   onApplySensorLocation,
   onCloseModal,
@@ -66,7 +66,7 @@ const VaccineAdminPageComponent = ({
       case 'name':
         return onEditSensorName;
       case 'currentLocationName':
-        return onSelectLocation;
+        return onSelectSensorLocation;
       case 'remove':
         return onCheck;
       default:
@@ -107,7 +107,7 @@ const VaccineAdminPageComponent = ({
 
   const getModalOnSelect = () => {
     switch (modalKey) {
-      case MODAL_KEYS.SELECT_LOCATION:
+      case MODAL_KEYS.SELECT_SENSOR_LOCATION:
         return onApplySensorLocation;
 
       default:
@@ -244,7 +244,7 @@ VaccineAdminPageComponent.propTypes = {
   onSortColumn: PropTypes.func.isRequired,
   onToggleFridges: PropTypes.func.isRequired,
   onToggleSensors: PropTypes.func.isRequired,
-  onSelectLocation: PropTypes.func.isRequired,
+  onSelectSensorLocation: PropTypes.func.isRequired,
   onEditSensorName: PropTypes.func.isRequired,
   onApplySensorLocation: PropTypes.func.isRequired,
   onCloseModal: PropTypes.func.isRequired,

@@ -34,6 +34,7 @@ export const MODAL_KEYS = {
   ENFORCE_REQUISITION_REASON: 'enforceRequisitionReason',
   SELECT_MASTER_LISTS: 'selectMasterList',
   SELECT_LOCATION: 'selectLocation',
+  SELECT_SENSOR_LOCATION: 'selectSensorLocation',
   SELECT_VVM_STATUS: 'selectVvmStatus',
   EDIT_LOCATION: 'editLocation',
 };
@@ -83,6 +84,7 @@ export const getModalTitle = modalKey => {
       return modalStrings.confirm_password;
     case MODAL_KEYS.SELECT_MASTER_LISTS:
       return modalStrings.select_master_lists;
+    case MODAL_KEYS.SELECT_SENSOR_LOCATION:
     case MODAL_KEYS.SELECT_LOCATION:
       return modalStrings.select_a_location;
     case MODAL_KEYS.SELECT_VVM_STATUS:
