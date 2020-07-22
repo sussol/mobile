@@ -220,6 +220,8 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     options: UIDatabase.objects('LocationType'),
     optionKey: 'description',
     isEditable: true,
+    validator: input => !!input,
+    isRequired: true,
   },
   [FORM_INPUT_KEYS.IS_ACTIVE]: {
     type: FORM_INPUT_TYPES.TOGGLE,

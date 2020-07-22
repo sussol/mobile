@@ -5,12 +5,13 @@
  */
 
 import React from 'react';
-
+import { View, Text } from 'react-native';
 import PropTypes from 'prop-types';
 
 import { DropDown } from '../DropDown';
 import { FormLabel } from './FormLabel';
 import { FlexColumn } from '../FlexColumn';
+import { generalStrings } from '../../localization';
 
 /**
  * Form input rendering a native drop down with a selection of choices
@@ -44,13 +45,19 @@ export const FormDropdown = ({
   return (
     <FlexColumn flex={1}>
       <FormLabel value={label} isRequired={isRequired} />
-      <DropDown
-        style={{ width: null, flex: 1 }}
-        values={valueStrings}
-        selectedValue={value[optionKey]}
-        onValueChange={onValueChangeCallback}
-        isDisabled={isDisabled}
-      />
+      {options.length ? (
+        <DropDown
+          style={{ width: null, flex: 1 }}
+          values={valueStrings}
+          selectedValue={value[optionKey]}
+          onValueChange={onValueChangeCallback}
+          isDisabled={isDisabled}
+        />
+      ) : (
+        <View>
+          <Text>{generalStrings.no_options}</Text>
+        </View>
+      )}
     </FlexColumn>
   );
 };
