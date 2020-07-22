@@ -218,7 +218,7 @@ public class BleDeviceScanner {
 
         @Override
         public void onBatchScanResults(List<ScanResult> results) {
-            notifyListeners(new MsupplyException(ErrorCode.E_UNKOWN_SCAN_RESULT));
+            notifyListeners(new MsupplyException(ErrorCode.E_UNKNOWN_SCAN_RESULT));
         }
 
         @Override
