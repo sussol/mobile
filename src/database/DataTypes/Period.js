@@ -4,6 +4,7 @@
  */
 
 import Realm from 'realm';
+import moment from 'moment';
 import { getIndicatorValuesByPeriod, getIndicatorsByValues } from '../utilities/getIndicatorData';
 
 /**
@@ -48,7 +49,9 @@ export class Period extends Realm.Object {
   }
 
   toString() {
-    return `${this.startDate.toLocaleDateString()} - ${this.endDate.toLocaleDateString()}`;
+    const startDate = moment(this.startDate).format('DD/MM/YY');
+    const endDate = moment(this.endDate).format('DD/MM/YY');
+    return `${startDate} - ${endDate}`;
   }
 }
 
