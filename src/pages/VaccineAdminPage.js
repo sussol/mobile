@@ -43,7 +43,7 @@ const VaccineAdminPageComponent = ({
   onSortColumn,
   onToggleFridges,
   onToggleSensors,
-  onSelectLocation,
+  onSelectSensorLocation,
   onEditSensorName,
   onApplySensorLocation,
   onCloseModal,
@@ -54,6 +54,7 @@ const VaccineAdminPageComponent = ({
   isScanning,
   onEditLocation,
   onSaveLocation,
+  onNewLocation,
 }) => {
   const getCallback = colKey => {
     switch (colKey) {
@@ -66,7 +67,7 @@ const VaccineAdminPageComponent = ({
       case 'name':
         return onEditSensorName;
       case 'currentLocationName':
-        return onSelectLocation;
+        return onSelectSensorLocation;
       case 'remove':
         return onCheck;
       default:
@@ -107,7 +108,7 @@ const VaccineAdminPageComponent = ({
 
   const getModalOnSelect = () => {
     switch (modalKey) {
-      case MODAL_KEYS.SELECT_LOCATION:
+      case MODAL_KEYS.SELECT_SENSOR_LOCATION:
         return onApplySensorLocation;
 
       default:
@@ -115,7 +116,7 @@ const VaccineAdminPageComponent = ({
     }
   };
 
-  const onPress = dataSet === 'fridges' ? onEditLocation : scanForSensors;
+  const onPress = dataSet === 'fridges' ? onNewLocation : scanForSensors;
   const buttonText = dataSet === 'fridges' ? buttonStrings.add_fridge : buttonStrings.start_scan;
   const placeholderString =
     dataSet === 'fridges'
@@ -212,18 +213,20 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   const scanForSensors = () => dispatch(TemperatureSyncActions.startSensorScan());
-  const editLocation = rowKey =>
+  const onEditLocation = rowKey =>
     dispatch(PageActions.openModal(MODAL_KEYS.EDIT_LOCATION, rowKey, ROUTES.VACCINES_ADMIN));
 
   const hasLocationTypes = !!UIDatabase.objects('LocationType').length;
   const noLocationTypesToast = () =>
     ToastAndroid.show(generalStrings.no_location_types, ToastAndroid.LONG);
-  const onEditLocation = hasLocationTypes ? editLocation : noLocationTypesToast;
+
+  const onNewLocation = hasLocationTypes ? onEditLocation : noLocationTypesToast;
 
   return {
     ...getPageDispatchers(dispatch, 'Location', ROUTES.VACCINES_ADMIN),
     scanForSensors,
     onEditLocation,
+    onNewLocation,
   };
 };
 
@@ -244,7 +247,7 @@ VaccineAdminPageComponent.propTypes = {
   onSortColumn: PropTypes.func.isRequired,
   onToggleFridges: PropTypes.func.isRequired,
   onToggleSensors: PropTypes.func.isRequired,
-  onSelectLocation: PropTypes.func.isRequired,
+  onSelectSensorLocation: PropTypes.func.isRequired,
   onEditSensorName: PropTypes.func.isRequired,
   onApplySensorLocation: PropTypes.func.isRequired,
   onCloseModal: PropTypes.func.isRequired,
@@ -255,6 +258,7 @@ VaccineAdminPageComponent.propTypes = {
   isScanning: PropTypes.bool.isRequired,
   onEditLocation: PropTypes.func.isRequired,
   onSaveLocation: PropTypes.func.isRequired,
+  onNewLocation: PropTypes.func.isRequired,
 };
 
 export const VaccineAdminPage = connect(

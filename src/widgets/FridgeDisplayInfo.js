@@ -38,8 +38,8 @@ export const FridgeDisplayInfo = ({
     leastRecentTemperatureLog,
   } = fridge;
 
-  const { timestamp: minimumDate } = leastRecentTemperatureLog;
-  const { timestamp: maximumDate } = mostRecentTemperatureLog;
+  const { timestamp: minimumDate = fromDate } = leastRecentTemperatureLog ?? {};
+  const { timestamp: maximumDate = toDate } = mostRecentTemperatureLog ?? {};
 
   const Container = isActive ? View : TouchableOpacity;
 

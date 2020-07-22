@@ -46,6 +46,8 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
     onSortColumn: columnKey => dispatch(PageActions.sortData(columnKey, route)),
 
     // Modals
+    onSelectSensorLocation: rowKey =>
+      dispatch(PageActions.openModal(MODAL_KEYS.SELECT_SENSOR_LOCATION, rowKey, route)),
     onSelectLocation: rowKey =>
       dispatch(PageActions.openModal(MODAL_KEYS.SELECT_LOCATION, rowKey, route)),
     onSelectVvmStatus: rowKey =>
