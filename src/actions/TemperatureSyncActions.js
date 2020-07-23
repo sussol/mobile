@@ -114,7 +114,10 @@ const scanForSensors = () => async dispatch => {
   }
 };
 
-const downloadLogsError = () => ({ type: TEMPERATURE_SYNC_ACTIONS.DOWNLOAD_LOGS_ERROR });
+const downloadLogsError = code => ({
+  type: TEMPERATURE_SYNC_ACTIONS.DOWNLOAD_LOGS_ERROR,
+  payload: { code },
+});
 const downloadLogsStart = () => ({ type: TEMPERATURE_SYNC_ACTIONS.DOWNLOAD_LOGS_START });
 const downloadLogsComplete = () => ({
   type: TEMPERATURE_SYNC_ACTIONS.DOWNLOAD_LOGS_COMPLETE,
@@ -169,14 +172,15 @@ const downloadLogs = sensor => async dispatch => {
   dispatch(downloadLogsStart());
 
   const downloadedLogsResult = (await sensor?.downloadLogs()) ?? {};
-  const { success = false, data = [] } = downloadedLogsResult;
+  const { success = false, data = [], error = {} } = downloadedLogsResult;
 
   if (success && data?.[0]?.logs) {
     dispatch(downloadLogsComplete());
     return data?.[0]?.logs;
   }
 
-  dispatch(downloadLogsError());
+  const { code = '' } = error;
+  dispatch(downloadLogsError(code));
   return null;
 };
 

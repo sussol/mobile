@@ -32,6 +32,7 @@ const initialState = () => ({
   syncError: '',
   currentSensorName: null,
   isDisabled: false,
+  errorCode: '',
 });
 
 export const TemperatureSyncReducer = (state = initialState(), action) => {
@@ -85,6 +86,7 @@ export const TemperatureSyncReducer = (state = initialState(), action) => {
         ...state,
         syncState: TEMPERATURE_SYNC_STATES.SCANNING,
         syncError: '',
+        errorCode: '',
         isSyncing: true,
         isDisabled: false,
       };
@@ -104,11 +106,14 @@ export const TemperatureSyncReducer = (state = initialState(), action) => {
       return { ...state, syncState: TEMPERATURE_SYNC_STATES.DOWNLOADING_LOGS, progress: 1 };
     }
     case TEMPERATURE_SYNC_ACTIONS.DOWNLOAD_LOGS_ERROR: {
+      const { payload } = action;
+      const { code } = payload;
       return {
         ...state,
         syncState: '',
         isSyncing: false,
         syncError: TEMPERATURE_SYNC_STATES.DOWNLOADING_LOGS_ERROR,
+        errorCode: code,
       };
     }
     case TEMPERATURE_SYNC_ACTIONS.DOWNLOAD_LOGS_COMPLETE: {
@@ -167,6 +172,7 @@ export const TemperatureSyncReducer = (state = initialState(), action) => {
         total: 5,
         isDisabled: false,
         syncError: '',
+        errorCode: '',
       };
     }
     case TEMPERATURE_SYNC_ACTIONS.COMPLETE_SYNC: {

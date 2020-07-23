@@ -6,7 +6,7 @@
 import moment from 'moment';
 
 import { TEMPERATURE_SYNC_STATES } from '../reducers/TemperatureSyncReducer';
-import { syncStrings } from '../localization';
+import { vaccineStrings, syncStrings } from '../localization';
 
 const STATE_TO_MESSAGE = {
   [TEMPERATURE_SYNC_STATES.SCANNING]: syncStrings.scanning_for_sensors,
@@ -74,4 +74,10 @@ export const selectIsSyncingTemperatures = ({ temperatureSync }) => {
   const { isSyncing } = temperatureSync;
 
   return isSyncing;
+};
+
+export const selectErrorMessage = ({ temperatureSync }) => {
+  const { errorCode } = temperatureSync;
+
+  return vaccineStrings[errorCode] ?? '';
 };

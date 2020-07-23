@@ -11,8 +11,8 @@ public enum ErrorCode{
     E_INVALID_ADDRESS("Problem setting the address filter"),
     E_SCAN_FAILED("Problem occurred while scanning"),
     E_NULL_SCAN_RESULT("A scan resulted in a null value"),
-    E_UNKOWN_SCAN_RESULT("An unkown scan result was retrieved"),
-    E_CANT_SCAN("Problem when iniating a BLE scan"),
+    E_UNKNOWN_SCAN_RESULT("An unknown scan result was retrieved"),
+    E_CANT_SCAN("Problem when initiating a BLE scan"),
     E_BLUETOOTH_DISABLED("Problem enabling the bluetooth adapter"),
     E_BLUETOOTH_ADAPTER("Problem accessing the bluetooth adapter"),
     E_BLUETOOTH_DENIED("Denied access to the bluetooth adapter");
