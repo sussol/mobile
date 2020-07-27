@@ -10,7 +10,7 @@ Cross-platform, offline-first mobile application designed and developed by [Sust
 - Forecast required stock based on usage.
 - Sync data with a local or remote mSupply server when internet is available.
 
-See [http://msupply.org.nz/mobile](http://msupply.org.nz/mobile) for more details of these and many other features.
+See [https://docs.msupply.foundation/en:mobile](https://docs.msupply.foundation/en:mobile) for more details of these and many other features.
 
 ## Getting started
 
