@@ -10,8 +10,11 @@ import android.bluetooth.le.ScanResult;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
+import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -39,13 +42,14 @@ public class BlueMaestroDevice extends BleDevice{
     
     private byte[] commandResult;
     
-    public BlueMaestroDevice(ScanResult scanResult){
+    public BlueMaestroDevice(ScanResult scanResult, ReactContext reactContext){
         super(scanResult);
         command = "";
         retryCount = 0;
         connected = false;
         commandResult = new byte[0];
         parser = new BlueMaestroParser();
+        this.reactContext = reactContext;
     }
 
     /**
@@ -76,6 +80,23 @@ public class BlueMaestroDevice extends BleDevice{
      */
     @Override
     public WritableMap toObject(){
+        
+        if (Debug.LOG){
+            try{
+                Uri uri = Uri.parse("file://" + Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/ble");
+                OutputStream stream;
+                stream = reactContext.getContentResolver().openOutputStream(uri,  "wa");
+                byte[] bytes = this.getAdvertisementBytes();
+                stream.write(bytes);
+                if (this.commandResult != null){
+                    stream.write(this.commandResult);
+                }
+                stream.close();
+            }catch(Throwable log){
+                if (Debug.LOG) Log.i(Debug.TAG, "Error writing:" + log.toString());
+            }
+        }
+
         WritableMap asObject = this.parseAdvertisement();
         asObject.putString("name", getName());
         asObject.putString("macAddress", getAddress());
@@ -91,10 +112,9 @@ public class BlueMaestroDevice extends BleDevice{
      * notifying listeners when complete.
      */
     @Override
-    public void sendCommand(ReactContext reactContext, String command){
+    public void sendCommand(String command){
         if (Debug.LOG) Log.i(Debug.TAG, "BleDevice: Sending command");
         this.command = command;
-        this.reactContext = reactContext;
         connectGattWithTimeout();
     }
 

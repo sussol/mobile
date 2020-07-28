@@ -22,7 +22,7 @@ public abstract class BleDevice{
     protected BleDeviceListener bleDeviceListener;
     protected ScanResult scanResult;
 
-    public BleDevice(ScanResult scanResult){
+    public BleDevice(ScanResult scanResult, ReactContext reactContext){
         this.scanResult = scanResult;
     }
 
@@ -71,7 +71,7 @@ public abstract class BleDevice{
      * Sending a command to the physical device.
      * Converting the object to a JS object.
     */
-    abstract void sendCommand(ReactContext reactContext, String command);
+    abstract void sendCommand(String command);
     abstract WritableMap toObject();
 
 }

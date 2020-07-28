@@ -210,7 +210,7 @@ public class BleDeviceScanner {
             if (scanResult == null){
                 notifyListeners(new MsupplyException(ErrorCode.E_NULL_SCAN_RESULT));
             } else{
-                BleDevice bleDevice = BleDeviceFactory.getDevice(manufacturerID, scanResult);
+                BleDevice bleDevice = BleDeviceFactory.getDevice(manufacturerID, scanResult, reactContext);
                 if (!hasBeenScanned(bleDevice)) addScannedDevice(bleDevice);
                 if (bleDevice.getAddress().equals(deviceAddress)) notifyListeners();
             }
