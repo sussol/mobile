@@ -43,13 +43,12 @@ public class BlueMaestroDevice extends BleDevice{
     private byte[] commandResult;
     
     public BlueMaestroDevice(ScanResult scanResult, ReactContext reactContext){
-        super(scanResult);
+        super(scanResult, reactContext);
         command = "";
         retryCount = 0;
         connected = false;
         commandResult = new byte[0];
         parser = new BlueMaestroParser();
-        this.reactContext = reactContext;
     }
 
     /**
