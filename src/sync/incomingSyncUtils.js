@@ -717,6 +717,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         enteredBy,
         otherParty,
         linkedRequisition,
+        subtotal: parseFloat(record.subtotal),
+        outstanding: parseFloat(record.total),
         insurancePolicy,
         option: database.getOrCreate('Options', record.optionID),
         linkedTransaction,
