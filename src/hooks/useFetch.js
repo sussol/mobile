@@ -20,14 +20,19 @@ export const useFetch = url => {
   const _isMounted = React.useRef(false);
   const _isBlocked = React.useRef(false);
 
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [response, setResponse] = React.useState(null);
-  const [error, setError] = React.useState(null);
+  const [isLoading, _setIsLoading] = React.useState(false);
+  const [response, _setResponse] = React.useState(null);
+  const [error, _setError] = React.useState(null);
+
+  const isMounted = () => _isMounted.current;
+  const isUnblocked = () => !_isBlocked.current;
+
+  const setIsLoading = _isLoading => doIf(isMounted, _setIsLoading, _isLoading);
+  const setResponse = _response => doIf(isMounted, _setResponse, _response);
+  const setError = _error => doIf(isMounted, _setError, _error);
 
   const reset = () => {
-    _isBlocked.current = true;
-    clearTimeout(_timer.current);
-    if (_controller.current) _controller.current.abort();
+    setIsLoading(false);
     setResponse(null);
     setError(null);
   };
@@ -36,25 +41,21 @@ export const useFetch = url => {
     _isMounted.current = true;
     return () => {
       _isMounted.current = false;
-      reset();
+      if (_controller.current) _controller.current.abort();
     };
   }, []);
 
   const _fetch = async (path, init, opts) => {
     const { responseHandler = res => res, errorHandler = err => err, timeout = 10000 } = opts;
 
-    const isMounted = () => _isMounted.current;
-    const isUnblocked = () => !_isBlocked.current;
-    const isMountedAndUnblocked = () => isMounted() && isUnblocked();
-
     const onResponse = async res => {
-      const processedResponse = await responseHandler(res);
-      doIf(isMounted, setResponse, processedResponse);
+      const _res = await responseHandler(res);
+      doIf(isMounted, setResponse, _res);
     };
 
     const onError = async err => {
-      const processedError = await errorHandler(err);
-      doIf(isMounted, setError, processedError);
+      const _err = await errorHandler(err);
+      doIf(isMounted, setError, _err);
     };
 
     const beforeFetch = () => {
@@ -77,17 +78,17 @@ export const useFetch = url => {
 
     const doFetch = async () => {
       try {
-        doIf(isMountedAndUnblocked, beforeFetch);
-        const res = await doIf(isMounted, tryFetch);
-        await doIf(isMounted, onResponse, res);
+        beforeFetch();
+        const res = await tryFetch();
+        await onResponse(res);
       } catch (err) {
-        await doIf(isMounted, onError(err));
+        await onError(err);
       } finally {
-        doIf(isMounted, afterFetch);
+        afterFetch();
       }
     };
 
-    doIf(isMountedAndUnblocked, doFetch);
+    doIf(isUnblocked, doFetch);
   };
 
   return { fetch: _fetch, reset, isLoading, response, error };
