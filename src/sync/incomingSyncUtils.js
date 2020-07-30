@@ -702,20 +702,21 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         ? database.getOrCreate('Transaction', record.linked_transaction_id)
         : null;
       const category = database.getOrCreate('TransactionCategory', record.category_ID);
+
       internalRecord = {
         id: record.ID,
         serialNumber: record.invoice_num,
+        otherParty,
         comment: record.comment,
         entryDate: parseDate(record.entry_date),
         type: TRANSACTION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
         status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
         confirmDate: parseDate(record.confirm_date),
+        enteredBy,
         theirRef: record.their_ref,
+        category,
         mode: record.mode,
         prescriber: database.getOrCreate('Prescriber', record.prescriber_ID),
-        category,
-        enteredBy,
-        otherParty,
         linkedRequisition,
         subtotal: parseFloat(record.subtotal),
         outstanding: parseFloat(record.total),
