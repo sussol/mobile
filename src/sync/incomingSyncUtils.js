@@ -695,6 +695,9 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       const linkedRequisition = record.requisition_ID
         ? database.getOrCreate('Requisition', record.requisition_ID)
         : null;
+      const linkedTransaction = record.linked_transaction_id
+        ? database.getOrCreate('Transaction', record.linked_transaction_id)
+        : null;
       const category = database.getOrCreate('TransactionCategory', record.category_ID);
       internalRecord = {
         id: record.ID,
@@ -712,7 +715,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         otherParty,
         linkedRequisition,
         option: database.getOrCreate('Options', record.optionID),
-        subtotal: parseFloat(record.subtotal),
+        linkedTransaction,
         user1: record.user1,
         paymentType: database.getOrCreate('PaymentType', record.paymentTypeID),
         isCancellation: parseBoolean(record.is_cancellation),
