@@ -721,6 +721,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         option: database.getOrCreate('Options', record.optionID),
         linkedTransaction,
         user1: record.user1,
+        insuranceDiscountAmount: parseFloat(record.insuranceDiscountAmount),
+        insuranceDiscountRate: parseFloat(record.insuranceDiscountRate),
         paymentType: database.getOrCreate('PaymentType', record.paymentTypeID),
         isCancellation: parseBoolean(record.is_cancellation),
       };
