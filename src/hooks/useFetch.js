@@ -48,15 +48,8 @@ export const useFetch = url => {
   const _fetch = async (path, init, opts) => {
     const { responseHandler = res => res, errorHandler = err => err, timeout = 10000 } = opts;
 
-    const onResponse = async res => {
-      const _res = await responseHandler(res);
-      doIf(isMounted, setResponse, _res);
-    };
-
-    const onError = async err => {
-      const _err = await errorHandler(err);
-      doIf(isMounted, setError, _err);
-    };
+    const onResponse = async res => setResponse(await responseHandler(res));
+    const onError = async err => setError(await errorHandler(err));
 
     const beforeFetch = () => {
       _isBlocked.current = true;
