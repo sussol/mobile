@@ -65,6 +65,7 @@ export const useFetch = url => {
 
     const afterFetch = () => {
       _isBlocked.current = false;
+      _controller.current = null;
       clearTimeout(_timer.current);
       setIsLoading(false);
     };
