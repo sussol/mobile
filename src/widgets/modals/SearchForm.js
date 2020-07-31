@@ -80,7 +80,7 @@ export const SearchFormComponent = ({
 }) => {
   const syncUrl = UIDatabase.getSetting(SYNC_URL);
 
-  const { fetch, reset, isLoading, response, error } = useFetch(syncUrl);
+  const { fetch, refresh, isLoading, response, error } = useFetch(syncUrl);
 
   const getAuthorizationHeader = () => {
     const username = UIDatabase.getSetting(SYNC_SITE_NAME);
@@ -152,7 +152,7 @@ export const SearchFormComponent = ({
           <ConfirmForm
             isOpen={!!error}
             questionText={error?.message}
-            onConfirm={reset}
+            onConfirm={refresh}
             confirmText={modalStrings.confirm}
           />
         </ModalContainer>
