@@ -5,7 +5,7 @@
 
 import React from 'react';
 
-const doIf = (ifThis, doThis, ...withThese) => (ifThis() ? doThis(...withThese) : null);
+import { useProtectedState } from './useProtectedState';
 
 /**
  * Custom hook to fetch data inside mounted component.
@@ -20,16 +20,12 @@ export const useFetch = url => {
   const _isMounted = React.useRef(false);
   const _isBlocked = React.useRef(false);
 
-  const [isLoading, _setIsLoading] = React.useState(false);
-  const [response, _setResponse] = React.useState(null);
-  const [error, _setError] = React.useState(null);
-
   const isMounted = () => _isMounted.current;
   const isUnblocked = () => !_isBlocked.current;
 
-  const setIsLoading = _isLoading => doIf(isMounted, _setIsLoading, _isLoading);
-  const setResponse = _response => doIf(isMounted, _setResponse, _response);
-  const setError = _error => doIf(isMounted, _setError, _error);
+  const [isLoading, setIsLoading] = useProtectedState(false, isMounted);
+  const [response, setResponse] = useProtectedState(null, isMounted);
+  const [error, setError] = useProtectedState(null, isMounted);
 
   const reset = () => {
     setIsLoading(false);
@@ -82,7 +78,7 @@ export const useFetch = url => {
       }
     };
 
-    doIf(isUnblocked, doFetch);
+    if (isUnblocked()) doFetch();
   };
 
   return { fetch: _fetch, reset, isLoading, response, error };
