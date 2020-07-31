@@ -8,7 +8,7 @@
  * @param  {string}  numberString  The string to convert to a boolean
  * @return {boolean}               The boolean representation of the string
  */
-export const parseBoolean = booleanString => booleanString?.toString().toLowerCase() === 'true';
+export const parseBoolean = booleanString => booleanString?.toString()?.toLowerCase() === 'true';
 
 /**
  * Return a Date object representing the given date, time.
