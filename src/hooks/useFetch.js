@@ -4,8 +4,9 @@
  */
 
 import React from 'react';
-
 import { useProtectedState } from './useProtectedState';
+
+const _fetch = fetch;
 
 const defaultOpts = {
   responseHandler: res => res,
@@ -33,12 +34,6 @@ export const useFetch = (baseUrl, baseInit = {}, baseOpts = {}) => {
   const [response, setResponse] = useProtectedState(null, isMounted);
   const [error, setError] = useProtectedState(null, isMounted);
 
-  const reset = () => {
-    setIsLoading(false);
-    setResponse(null);
-    setError(null);
-  };
-
   React.useEffect(() => {
     _isMounted.current = true;
     return () => {
@@ -47,11 +42,11 @@ export const useFetch = (baseUrl, baseInit = {}, baseOpts = {}) => {
     };
   }, []);
 
-  const _fetch = async (path, init, opts) => {
+  const fetch = async (path, init, opts) => {
     const { responseHandler, errorHandler, timeout } = { ...defaultOpts, ...baseOpts, ...opts };
 
-    const onResponse = async res => setResponse(await responseHandler(res));
-    const onError = async err => setError(await errorHandler(err));
+    const onResponse = res => setResponse(responseHandler(res));
+    const onError = err => setError(errorHandler(err));
 
     const beforeFetch = () => {
       _isBlocked.current = true;
@@ -63,8 +58,15 @@ export const useFetch = (baseUrl, baseInit = {}, baseOpts = {}) => {
       setIsLoading(true);
     };
 
-    const tryFetch = async () =>
-      fetch(baseUrl + path, { ...baseInit, ...init, signal: _controller.current.signal });
+    const tryFetch = async () => {
+      const res = await _fetch(baseUrl + path, {
+        ...baseInit,
+        ...init,
+        signal: _controller.current.signal,
+      });
+      const json = await res.json();
+      return { ...res, json };
+    };
 
     const afterFetch = () => {
       _isBlocked.current = false;
@@ -77,9 +79,9 @@ export const useFetch = (baseUrl, baseInit = {}, baseOpts = {}) => {
       try {
         beforeFetch();
         const res = await tryFetch();
-        await onResponse(res);
+        onResponse(res);
       } catch (err) {
-        await onError(err);
+        onError(err);
       } finally {
         afterFetch();
       }
@@ -88,5 +90,10 @@ export const useFetch = (baseUrl, baseInit = {}, baseOpts = {}) => {
     if (isUnblocked()) doFetch();
   };
 
-  return { fetch: _fetch, reset, isLoading, response, error };
+  const refresh = () => {
+    setResponse(null);
+    setError(null);
+  };
+
+  return { fetch, refresh, isLoading, response, error };
 };

@@ -135,14 +135,13 @@ const processInsuranceResponse = response =>
     })
   );
 
-const processResponse = async response => {
-  const { ok, status, url, headers } = response;
+const processResponse = response => {
+  const { ok, status, url, headers, json } = response;
   if (ok) {
-    const responseData = await response.json();
-    const { error: responseError } = responseData;
+    const { error: responseError } = json;
     if (responseError) throw new BugsnagError(responseError, { url, headers });
-    if (!responseData.length) throw new Error(ERROR_CODES.EMPTY_RESPONSE);
-    return responseData;
+    if (!json.length) throw new Error(ERROR_CODES.EMPTY_RESPONSE);
+    return json;
   }
   switch (status) {
     case 400:
@@ -153,8 +152,8 @@ const processResponse = async response => {
   }
 };
 
-export const processPatientResponse = async response => {
-  const result = await processResponse(response);
+export const processPatientResponse = response => {
+  const result = processResponse(response);
   return result.map(
     ({
       ID: id,
