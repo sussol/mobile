@@ -14,7 +14,6 @@ export const useDoIf = (doThis, ifThis) =>
   React.useCallback(
     (...rest) => {
       doIf(() => doThis(...rest), ifThis);
-      return null;
     },
     [ifThis, doThis]
   );
