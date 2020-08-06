@@ -767,25 +767,37 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       const linkedRequisition = record.requisition_ID
         ? database.getOrCreate('Requisition', record.requisition_ID)
         : null;
+      const insurancePolicy = record.nameInsuranceJoin?.id
+        ? database.getOrCreate('InsurancePolicy', record.nameInsuranceJoin.id)
+        : null;
+      const linkedTransaction = record.linked_transaction_id
+        ? database.getOrCreate('Transaction', record.linked_transaction_id)
+        : null;
       const category = database.getOrCreate('TransactionCategory', record.category_ID);
+
       internalRecord = {
         id: record.ID,
         serialNumber: record.invoice_num,
+        otherParty,
         comment: record.comment,
         entryDate: parseDate(record.entry_date),
         type: TRANSACTION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
         status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
         confirmDate: parseDate(record.confirm_date),
+        enteredBy,
         theirRef: record.their_ref,
+        category,
         mode: record.mode,
         prescriber: database.getOrCreate('Prescriber', record.prescriber_ID),
-        category,
-        enteredBy,
-        otherParty,
         linkedRequisition,
-        option: database.getOrCreate('Options', record.optionID),
         subtotal: parseFloat(record.subtotal),
+        outstanding: parseFloat(record.total),
+        insurancePolicy,
+        option: database.getOrCreate('Options', record.optionID),
+        linkedTransaction,
         user1: record.user1,
+        insuranceDiscountAmount: parseFloat(record.insuranceDiscountAmount),
+        insuranceDiscountRate: parseFloat(record.insuranceDiscountRate),
         paymentType: database.getOrCreate('PaymentType', record.paymentTypeID),
         isCancellation: parseBoolean(record.is_cancellation),
       };
