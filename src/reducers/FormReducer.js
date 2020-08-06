@@ -43,14 +43,16 @@ export const FormReducer = (state = initialState(), action) => {
 
       const updatePolicyNumberPerson = key === INSURANCE_POLICY_FIELDS.POLICY_NUMBER_PERSON;
       const updatePolicyNumberFamily = key === INSURANCE_POLICY_FIELDS.POLICY_NUMBER_FAMILY;
+      const updatePolicyNumber = updatePolicyNumberPerson || updatePolicyNumberFamily;
 
-      if (updatePolicyNumberPerson || updatePolicyNumberFamily) {
+      if (updatePolicyNumber) {
         const { policyNumberPerson: policyNumberPersonState } = formConfig;
+        const { policyNumberFamily: policyNumberFamilyState } = formConfig;
+
         const { value: policyNumberPersonValue } = updatePolicyNumberPerson
           ? { value }
           : policyNumberPersonState;
 
-        const { policyNumberFamily: policyNumberFamilyState } = formConfig;
         const { value: policyNumberFamilyValue } = updatePolicyNumberFamily
           ? { value }
           : policyNumberFamilyState;
