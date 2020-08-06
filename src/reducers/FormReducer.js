@@ -55,8 +55,13 @@ export const FormReducer = (state = initialState(), action) => {
           ? { value }
           : policyNumberFamilyState;
 
-        const policyNumberPersonLength = policyNumberPersonValue.length;
-        const policyNumberFamilyLength = policyNumberFamilyValue.length;
+        const isPolicyNumberPersonValid = policyNumberPersonState.validator(
+          policyNumberPersonValue
+        );
+
+        const isPolicyNumberFamilyValid = policyNumberFamilyState.validator(
+          policyNumberFamilyValue
+        );
 
         const isPolicyNumberUnique =
           UIDatabase.objects('InsurancePolicy').filtered(
@@ -65,23 +70,16 @@ export const FormReducer = (state = initialState(), action) => {
             policyNumberFamilyValue
           ).length === 0;
 
-        const isPolicyNumberPersonLengthValid = updatePolicyNumberPerson
-          ? policyNumberPersonLength > 0 && policyNumberPersonLength < 50
-          : true;
-        const isPolicyNumberFamilyLengthValid = updatePolicyNumberFamily
-          ? policyNumberFamilyLength >= 0 && policyNumberFamilyLength < 50
-          : true;
-
         const newPolicyNumberPersonState = {
           ...policyNumberPersonState,
           value: policyNumberPersonValue,
-          isValid: isPolicyNumberUnique && isPolicyNumberPersonLengthValid,
+          isValid: isPolicyNumberUnique && isPolicyNumberPersonValid,
         };
 
         const newPolicyNumberFamilyState = {
           ...policyNumberFamilyState,
           value: policyNumberFamilyValue,
-          isValid: isPolicyNumberUnique && isPolicyNumberFamilyLengthValid,
+          isValid: isPolicyNumberUnique && isPolicyNumberFamilyValid,
         };
 
         return {
