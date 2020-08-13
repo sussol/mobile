@@ -8,11 +8,16 @@
 
 import moment from 'moment';
 import querystring from 'querystring';
-import { SETTINGS_KEYS } from '../settings';
+import { Client as BugsnagClient } from 'bugsnag-react-native';
+import { AUTH_ERROR_CODES } from 'sussol-utilities';
+
 import { UIDatabase } from '../database';
 import { createRecord, parseBoolean, parseDate, parseNumber } from '../database/utilities';
 
-const { SYNC_URL } = SETTINGS_KEYS;
+const ERROR_CODES = {
+  ...AUTH_ERROR_CODES,
+  EMPTY_RESPONSE: 'No records found',
+};
 
 const RESOURCES = {
   PATIENT: '/api/v4/patient',
@@ -31,6 +36,18 @@ const PARAMETERS = {
   policyNumber: { key: 'policy_number', type: TYPES.STRING },
   registrationCode: { key: 'code', type: TYPES.STRING },
 };
+
+const bugsnagClient = new BugsnagClient();
+
+class BugsnagError extends Error {
+  constructor(message, data, ...args) {
+    super(message, ...args);
+    bugsnagClient.notify(this, report => {
+      report.errorMessage = message;
+      report.metadata = data;
+    });
+  }
+}
 
 export const createPatientRecord = patient => {
   patient?.policies?.forEach(createPolicyRecord);
@@ -80,17 +97,15 @@ const getPatientQueryString = ({
 };
 
 export const getPatientRequestUrl = params => {
-  const baseUrl = UIDatabase.getSetting(SYNC_URL);
   const endpoint = RESOURCES.PATIENT;
   const queryString = getPatientQueryString(params);
-  return baseUrl + endpoint + queryString;
+  return endpoint + queryString;
 };
 
 export const getPrescriberRequestUrl = params => {
-  const baseUrl = UIDatabase.getSetting(SYNC_URL);
   const endpoint = RESOURCES.PRESCRIBER;
   const queryString = getPrescriberQueryString(params);
-  return baseUrl + endpoint + queryString;
+  return endpoint + queryString;
 };
 
 const processInsuranceResponse = response =>
@@ -120,8 +135,26 @@ const processInsuranceResponse = response =>
     })
   );
 
-export const processPatientResponse = response =>
-  response.map(
+const processResponse = response => {
+  const { ok, status, url, headers, json } = response;
+  if (ok) {
+    const { error: responseError } = json;
+    if (responseError) throw new BugsnagError(responseError, { url, headers });
+    if (!json.length) throw new Error(ERROR_CODES.EMPTY_RESPONSE);
+    return json;
+  }
+  switch (status) {
+    case 400:
+    default:
+      throw new Error(ERROR_CODES.CONNECTION_FAILURE);
+    case 401:
+      throw new BugsnagError(ERROR_CODES.INVALID_PASSWORD, { url, headers });
+  }
+};
+
+export const processPatientResponse = response => {
+  const result = processResponse(response);
+  return result.map(
     ({
       ID: id,
       name,
@@ -156,9 +189,10 @@ export const processPatientResponse = response =>
       policies: processInsuranceResponse(nameInsuranceJoin),
     })
   );
+};
 
-export const processPrescriberResponse = response =>
-  response.map(
+export const processPrescriberResponse = response => {
+  processResponse(response).map(
     ({
       ID,
       first_name,
@@ -183,3 +217,4 @@ export const processPrescriberResponse = response =>
       storeId: store_ID,
     })
   );
+};
