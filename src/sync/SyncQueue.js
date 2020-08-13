@@ -137,8 +137,15 @@ export class SyncQueue {
    */
   next(numberOfRecords) {
     const numberToReturn = numberOfRecords || 1;
-    const allRecords = this.database.objects('SyncOut').sorted('changeTime');
-    return allRecords.slice(0, numberToReturn);
+    // If a race condition occurs, child and parent records may have the same timestamp.
+    // By convention, child table names should be prefixed by the parent table name, e.g.
+    // Transaction prefixes TransactionBatch. This convention is used here to simplify
+    // secondary sorting and ensure that parent records are not synced before child records.
+    const allRecords = this.database
+      .objects('SyncOut')
+      .sorted(['changeTime', ['recordType', false]]);
+    const nextRecords = allRecords.slice(0, numberToReturn);
+    return nextRecords;
   }
 
   /**
