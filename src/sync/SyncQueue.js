@@ -103,9 +103,9 @@ export class SyncQueue {
           };
 
           if (this.isValidSyncOutRecord(syncOutRecord)) {
-            const existingSyncOutRecord = this.database.get('SyncOut', recordId);
+            const existingSyncOutRecord = this.database.get('SyncOut', recordId, 'recordId');
             if (existingSyncOutRecord) {
-              this.database.save('SyncOut', { ...existingSyncOutRecord, ...syncOutRecord });
+              this.database.save('SyncOut', { id: existingSyncOutRecord.id, ...syncOutRecord });
             } else {
               this.database.create('SyncOut', { id: generateUUID(), ...syncOutRecord });
             }
@@ -137,14 +137,25 @@ export class SyncQueue {
    */
   next(numberOfRecords) {
     const numberToReturn = numberOfRecords || 1;
-    // If a race condition occurs, child and parent records may have the same timestamp.
-    // By convention, child table names should be prefixed by the parent table name, e.g.
-    // Transaction prefixes TransactionBatch. This convention is used here to simplify
-    // secondary sorting and ensure that parent records are not synced before child records.
-    const allRecords = this.database
-      .objects('SyncOut')
-      .sorted(['changeTime', ['recordType', false]]);
-    const nextRecords = allRecords.slice(0, numberToReturn);
+    const allRecords = this.database.objects('SyncOut').slice();
+    const sortedRecords = allRecords.sort((recordA, recordB) => {
+      const isParentOf = (parent, child) => {
+        if (parent.recordType === 'Transaction') {
+          return child.recordType === 'TransactionBatch' || child.recordType === 'TransactionItem';
+        }
+        if (parent.recordType === 'Requisition') {
+          return child.recordType === 'RequisitionItem';
+        }
+        return false;
+      };
+
+      // Ensure parent records are synced before children.
+      if (isParentOf(recordA, recordB)) return 1;
+      if (isParentOf(recordB, recordA)) return -1;
+
+      return recordA.changeTime - recordB.changeTime;
+    });
+    const nextRecords = sortedRecords.slice(0, numberToReturn);
     return nextRecords;
   }
 
