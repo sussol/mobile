@@ -56,7 +56,6 @@ export const goBack = () => dispatch => {
 
       const cleanUp = () => {
         dispatch(PrescriptionActions.deletePrescription());
-        dispatch(FinaliseActions.resetFinaliseItem());
       };
 
       batch(() => {
