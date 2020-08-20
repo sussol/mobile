@@ -247,7 +247,7 @@ const dataMigrations = [
     version: '5.1.2',
     migrate: database => {
       database.write(() => {
-        const syncRecords = database.objects('SyncOut');
+        const syncRecords = database.objects('SyncOut').slice();
         const invalidSyncRecords = syncRecords.filter(syncRecord => {
           const { recordType, recordId } = syncRecord;
           if (!recordType || !recordId) return true;
