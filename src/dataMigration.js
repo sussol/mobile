@@ -252,7 +252,7 @@ const dataMigrations = [
           const { recordType, recordId } = syncRecord;
           const record = database.get(recordType, recordId);
           return !record;
-        }, []);
+        });
         database.delete('SyncOut', invalidSyncRecords);
       });
     },
