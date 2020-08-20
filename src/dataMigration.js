@@ -250,6 +250,7 @@ const dataMigrations = [
         const syncRecords = database.objects('SyncOut');
         const invalidSyncRecords = syncRecords.filter(syncRecord => {
           const { recordType, recordId } = syncRecord;
+          if (!recordType || !recordId) return true;
           const record = database.get(recordType, recordId);
           return !record;
         });
