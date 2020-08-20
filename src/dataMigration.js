@@ -239,6 +239,24 @@ const dataMigrations = [
       });
     },
   },
+
+  // 5.1.2 fixes a sync out queue bug which was preventing invalid sync out records being
+  // overwritten. On upgrade, the following migration code filters the sync queue for invalid
+  // sync out records and deletes any which are found.
+  {
+    version: '5.1.2',
+    migrate: database => {
+      database.write(() => {
+        const syncRecords = database.objects('SyncOut');
+        const invalidSyncRecords = syncRecords.filter(syncRecord => {
+          const { recordType, recordId } = syncRecord;
+          const record = database.get(recordType, recordId);
+          return !record;
+        }, []);
+        database.delete('SyncOut', invalidSyncRecords);
+      });
+    },
+  },
 ];
 
 export default dataMigrations;
