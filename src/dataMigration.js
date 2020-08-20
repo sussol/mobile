@@ -244,7 +244,7 @@ const dataMigrations = [
   // overwritten. On upgrade, the following migration code filters the sync queue for invalid
   // sync out records and deletes any which are found.
   {
-    version: '5.1.2',
+    version: '5.1.2-rc3',
     migrate: database => {
       database.write(() => {
         const syncRecords = database.objects('SyncOut').slice();
