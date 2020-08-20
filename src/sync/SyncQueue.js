@@ -137,26 +137,8 @@ export class SyncQueue {
    */
   next(numberOfRecords) {
     const numberToReturn = numberOfRecords || 1;
-    const allRecords = this.database.objects('SyncOut').slice();
-    const sortedRecords = allRecords.sort((recordA, recordB) => {
-      const isParentOf = (parent, child) => {
-        if (parent.recordType === 'Transaction') {
-          return child.recordType === 'TransactionBatch' || child.recordType === 'TransactionItem';
-        }
-        if (parent.recordType === 'Requisition') {
-          return child.recordType === 'RequisitionItem';
-        }
-        return false;
-      };
-
-      // Ensure parent records are synced before children.
-      if (isParentOf(recordA, recordB)) return 1;
-      if (isParentOf(recordB, recordA)) return -1;
-
-      return recordA.changeTime - recordB.changeTime;
-    });
-    const nextRecords = sortedRecords.slice(0, numberToReturn);
-    return nextRecords;
+    const allRecords = this.database.objects('SyncOut').sorted('changeTime');
+    return allRecords.slice(0, numberToReturn);
   }
 
   /**
