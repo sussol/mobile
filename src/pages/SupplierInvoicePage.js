@@ -164,7 +164,7 @@ export const SupplierInvoice = ({
         columns={columns}
       />
       <BottomConfirmModal
-        isOpen={hasSelection}
+        isOpen={hasSelection && !isFinalised}
         questionText={modalStrings.remove_these_items}
         onCancel={onDeselectAll}
         onConfirm={onDeleteBatches}
