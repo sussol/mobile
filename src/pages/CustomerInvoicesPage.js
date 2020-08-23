@@ -54,7 +54,10 @@ export const CustomerInvoices = ({
   useNavigationFocus(navigation, refreshData);
   useSyncListener(refreshData, ['Transaction']);
 
-  const onNavigateToInvoice = useCallback(invoice => dispatch(gotoCustomerInvoice(invoice)), []);
+  const onNavigateToInvoice = useCallback(invoice => {
+    dispatch(gotoCustomerInvoice(invoice));
+    onDeselectAll();
+  }, []);
 
   const onCreateInvoice = otherParty => {
     dispatch(createCustomerInvoice(otherParty, currentUser));
