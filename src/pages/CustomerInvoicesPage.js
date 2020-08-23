@@ -61,6 +61,7 @@ export const CustomerInvoices = ({
 
   const onCreateInvoice = otherParty => {
     dispatch(createCustomerInvoice(otherParty, currentUser));
+    onDeselectAll();
     onCloseModal();
   };
 
