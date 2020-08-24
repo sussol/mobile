@@ -190,7 +190,7 @@ export const schema = {
     User,
     Currency,
   ],
-  schemaVersion: 16,
+  schemaVersion: 17,
 };
 
 export default schema;
