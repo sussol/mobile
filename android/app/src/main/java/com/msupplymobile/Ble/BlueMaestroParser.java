@@ -14,6 +14,7 @@ import java.util.Arrays;
 public class BlueMaestroParser extends BleParser{
 
     private static final int DELIMITER_VALUE = 11308;
+    private static final int ALTERNATE_DELIMITER_VALUE = 11776;
     private static final int ADVERTISEMENT_OFFSET = 7;
     private static final int LOGS_HEADER_OFFSET = 15;
     private static final String ERROR_COMMAND_RESULT = "error";
@@ -85,7 +86,7 @@ public class BlueMaestroParser extends BleParser{
                                             .asReadOnlyBuffer();
         WritableArray result = Arguments.createArray();
         short shortValue = shortBuffer.get();
-        while (shortValue != DELIMITER_VALUE){
+        while (shortValue != DELIMITER_VALUE & shortValue != ALTERNATE_DELIMITER_VALUE){
             WritableMap sensorLog = Arguments.createMap();
             sensorLog.putDouble("temperature", shortValue / 10.0 );
             result.pushMap(sensorLog);
