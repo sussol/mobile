@@ -12,7 +12,7 @@ NameTag.schema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
-    description: { type: 'string', optional: true },
+    description: { type: 'string', default: 'Placeholder description' },
     nameTagJoins: { type: 'linkingObjects', objectType: 'NameTagJoin', property: 'nameTag' },
   },
 };

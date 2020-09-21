@@ -584,7 +584,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       internalRecord = {
         id: record.ID,
         name: database.getOrCreate('Name', record.name_ID),
-        nameTag: database.getOrCreate('NameTag', record.name_ID),
+        nameTag: database.getOrCreate('NameTag', record.name_tag_ID),
       };
 
       database.update(recordType, internalRecord);
