@@ -61,3 +61,5 @@ export { TransactionItem } from './TransactionItem';
 export { Unit } from './Unit';
 export { VaccineVialMonitorStatus } from './VaccineVialMonitorStatus';
 export { VaccineVialMonitorStatusLog } from './VaccineVialMonitorStatusLog';
+export { NameTag } from './NameTag';
+export { NameTagJoin } from './NameTagJoin';
