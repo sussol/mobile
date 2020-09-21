@@ -23,7 +23,14 @@ import { SETTINGS_KEYS } from '../settings';
  */
 const getAllPrograms = (settings, database) => {
   const thisStoresNameID = settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID);
-  const thisStoresTags = settings.get(SETTINGS_KEYS.THIS_STORE_TAGS);
+  const thisStoresTags = database
+    .objects('NameTag')
+    .filtered(
+      'subquery(nameTagJoins, $joins, $joins.name.id == $0).@count > 0',
+      settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID)
+    )
+    .map(({ description }) => description.toLowerCase());
+
   return database
     .objects('MasterListNameJoin')
     .filtered('name.id = $0 && masterList.isProgram = $1', thisStoresNameID, true)
