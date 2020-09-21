@@ -50,6 +50,8 @@ export const RECORD_TYPES = new SyncTranslator({
   Message: 'message',
   Name: 'name',
   NameStoreJoin: 'name_store_join',
+  NameTag: 'name_tag',
+  NameTagJoin: 'name_tag_join',
   NumberSequence: 'number',
   NumberToReuse: 'number_reuse',
   Options: 'options',
