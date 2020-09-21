@@ -27,8 +27,9 @@ import {
   byProgramReducer,
   initialState,
 } from '../../reducers/ByProgramReducer';
+import { FlexColumn } from '../FlexColumn';
 
-const { THIS_STORE_TAGS } = SETTINGS_KEYS;
+const { THIS_STORE_TAGS, THIS_STORE_NAME_ID } = SETTINGS_KEYS;
 
 const modalProps = ({ dispatch, program, orderType }) => ({
   program: {
@@ -88,8 +89,10 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
   const [state, dispatch] = useReducer(byProgramReducer, {}, () =>
     initialState({ transactionType })
   );
-  const { steps, modalData, program, orderType, period, supplier, storeTags, name } = state;
+
+  const { steps, modalData, program, orderType, period, supplier, name } = state;
   const strings = useMemo(() => getLocalizedStrings({ transactionType }), [transactionType]);
+
   const mounting = () => {
     dispatch(setStoreTags(settings.get(THIS_STORE_TAGS)));
     dispatch(setSteps(transactionType));
@@ -118,13 +121,21 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
     state.isProgramBased,
   ]);
 
+  const tags = database
+    .objects('NameTag')
+    .filtered(
+      'subquery(nameTagJoins, $joins, $joins.name.id == $0).@count > 0',
+      settings.get(THIS_STORE_NAME_ID)
+    )
+    .map(({ description }) => description.toLowerCase());
+
   // Helper methods for fetching modal data for user selection
   const getPrograms = () => getAllPrograms(settings, database);
   const getSuppliers = () => database.objects('InternalSupplier');
-  const getOrderTypes = () => program && program.getStoreTagObject(storeTags).orderTypes;
+  const getOrderTypes = () => program && program.getStoreTagObject(tags).orderTypes;
   const getPeriods = () => {
     if (!(program && orderType)) return null;
-    const { periodScheduleName } = program.getStoreTagObject(storeTags);
+    const { periodScheduleName } = program.getStoreTagObject(tags);
     return getAllPeriodsForProgram(database, program, periodScheduleName, orderType);
   };
 
@@ -132,12 +143,18 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
 
   // Dispatcher on clicking a step. Opens the modal and sets the passed data as modalData
   const onOpenModal = ({ key, selection }) => dispatch(setModalOpen({ key, selection }));
-  // Closed the currently ooen modal
+  // Closed the currently open modal
   const onCloseModal = () => dispatch(setModalClosed());
   // Switches from program <-> general, resetting the state.
   const onToggle = () => dispatch(setToggle());
   const onCreate = () =>
-    onConfirm({ otherStoreName: supplier, program, period, orderType, stocktakeName: name });
+    onConfirm({
+      otherStoreName: supplier,
+      program,
+      period,
+      orderType,
+      stocktakeName: name,
+    });
   /** Inner components */
 
   // Togglebar for switching between general <-> program. Resets state on toggle.
@@ -191,7 +208,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
         type: 'select',
         field: 'name',
       }),
-      [program, state.isProgramBased]
+      [program, state.isProgramBased, supplier]
     ),
     supplier: useMemo(
       () => ({
@@ -215,7 +232,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
         type: 'select',
         field: 'name',
       }),
-      [supplier, orderType]
+      [supplier, orderType, program]
     ),
     period: useMemo(
       () => ({
@@ -227,7 +244,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
         type: 'select',
         field: 'name',
       }),
-      [orderType, period]
+      [orderType, period, supplier, program]
     ),
     name: useMemo(
       () => ({
@@ -248,7 +265,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
   const isDisabled = !(steps[steps.length - 1] === currentKey);
 
   return (
-    <>
+    <FlexColumn flex={1} alignItems="center">
       <ProgramToggleBar />
       {steps.map(stepKey => (
         <Step key={stepKey} {...stepProps[stepKey]} />
@@ -262,7 +279,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
         textStyle={pageButtonTextStyle}
       />
       {isModalOpen && <ByProgramSelector />}
-    </>
+    </FlexColumn>
   );
 };
 
@@ -279,8 +296,7 @@ const localStyles = StyleSheet.create({
   okButton: {
     ...globalStyles.button,
     backgroundColor: SUSSOL_ORANGE,
-    alignSelf: 'center',
-    marginTop: 60,
+    marginTop: 'auto',
   },
   pageButtonTextStyle: {
     ...globalStyles.buttonText,
