@@ -21,8 +21,10 @@ const getLocalisation = ({ stepKey }) => {
     supplier: programStrings.no_suppliers,
     orderType: programStrings.no_order_types,
     period: programStrings.no_periods,
+    customer: programStrings.no_customers,
   };
   const placeholders = {
+    customer: programStrings.select_a_customer,
     program: programStrings.select_a_program,
     supplier: programStrings.select_a_supplier,
     orderType: programStrings.select_an_order_type,
@@ -59,6 +61,7 @@ export const Step = memo(props => {
   const { data, field, type, stepKey, status, getModalData, onPress } = props;
   // Each stepKey used with this component has a placeholder/error string in getLocalisation.
   const { placeholder, errorString } = getLocalisation({ stepKey });
+
   // Calculate the errorState in this component after fetching modalData. If there is no
   // modalData and the status is CURRENT, the step is in an error state - display the
   // error string and a new icon.
@@ -152,7 +155,6 @@ const localStyles = StyleSheet.create({
   containerStyle: {
     flexDirection: 'row',
     width: '100%',
-    justifyContent: 'center',
     alignItems: 'center',
     minHeight: '10%',
   },
