@@ -78,6 +78,12 @@ export const CustomerRequisition = ({
   route,
   onToggleColumnSet,
   columnSet,
+  onEditOpeningStock,
+  onEditNegativeAdjustments,
+  onEditPositiveAdjustments,
+  onEditOutgoingStock,
+  onEditIncomingStock,
+  onEditDaysOutOfStock,
 }) => {
   const { isFinalised, comment, program } = pageObject;
 
@@ -97,6 +103,18 @@ export const CustomerRequisition = ({
     switch (colKey) {
       case 'suppliedQuantity':
         return onEditSuppliedQuantity;
+      case 'openingStock':
+        return onEditOpeningStock;
+      case 'incomingStock':
+        return onEditIncomingStock;
+      case 'outgoingStock':
+        return onEditOutgoingStock;
+      case 'daysOutOfStock':
+        return onEditDaysOutOfStock;
+      case 'negativeAdjustments':
+        return onEditNegativeAdjustments;
+      case 'positiveAdjustments':
+        return onEditPositiveAdjustments;
       default:
         return null;
     }
@@ -309,8 +327,22 @@ export const CustomerRequisition = ({
   );
 };
 
-const mapDispatchToProps = dispatch =>
-  getPageDispatchers(dispatch, 'Requisition', ROUTES.CUSTOMER_REQUISITION);
+const mapDispatchToProps = dispatch => ({
+  ...getPageDispatchers(dispatch, 'Requisition', ROUTES.CUSTOMER_REQUISITION),
+
+  onEditOpeningStock: (value, rowKey) =>
+    dispatch(PageActions.editOpeningStock(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
+  onEditNegativeAdjustments: (value, rowKey) =>
+    dispatch(PageActions.editNegativeAdjustments(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
+  onEditPositiveAdjustments: (value, rowKey) =>
+    dispatch(PageActions.editPositiveAdjustments(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
+  onEditOutgoingStock: (value, rowKey) =>
+    dispatch(PageActions.editOutgoingStock(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
+  onEditIncomingStock: (value, rowKey) =>
+    dispatch(PageActions.editIncomingStock(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
+  onEditDaysOutOfStock: (value, rowKey) =>
+    dispatch(PageActions.editDaysOutOfStock(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
+});
 
 const mapStateToProps = state => {
   const { pages = {} } = state;
@@ -382,4 +414,10 @@ CustomerRequisition.propTypes = {
   route: PropTypes.string.isRequired,
   onToggleColumnSet: PropTypes.func.isRequired,
   columnSet: PropTypes.string.isRequired,
+  onEditOpeningStock: PropTypes.func.isRequired,
+  onEditNegativeAdjustments: PropTypes.func.isRequired,
+  onEditPositiveAdjustments: PropTypes.func.isRequired,
+  onEditOutgoingStock: PropTypes.func.isRequired,
+  onEditIncomingStock: PropTypes.func.isRequired,
+  onEditDaysOutOfStock: PropTypes.func.isRequired,
 };
