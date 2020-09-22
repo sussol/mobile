@@ -175,6 +175,7 @@ const customerRequisitionsInitialiser = () => {
     data: sortedData,
     keyExtractor: recordKeyExtractor,
     searchTerm: '',
+    modalKey: '',
     filterDataKeys: ['serialNumber', 'otherStoreName.name'],
     sortKey: 'serialNumber',
     isAscending: false,

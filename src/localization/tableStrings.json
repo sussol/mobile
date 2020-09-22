@@ -81,7 +81,20 @@
     "type": "TYPE",
     "unit": "UNIT",
     "value": "VALUE",
-    "vvm_status": "VVM STATUS"
+    "vvm_status": "VVM STATUS",
+    "opening_stock": "OPENING",
+    "days_out_of_stock": "DAYS OUT\nOF STOCK",
+    "incoming_stock": "INCOMING",
+    "outgoing_stock": "OUTGOING",
+    "positive_adjustments": "POSITIVE\nADJUSTMENTS",
+    "negative_adjustments": "NEGATIVE\nADJUSTMENTS",
+    "closing_stock": "CLOSING\nSTOCK",
+    "opening_stock_validation": "Cannot set opening stock to a quantity which sets closing stock to less than zero.",
+    "days_out_of_stock_validation": "Days out of stock can't be greater than the number of days within the requisition period",
+    "incoming_stock_validation": "Cannot set incoming stock to a quantity that sets the closing stock to less than zero.",
+    "outgoing_stock_validation": "Cannot set outgoing stock to a quantity that sets the closing stock to less than zero.",
+    "positive_adjustments_validation": "Cannot set positive adjustments to a quantity which sets the closing stock to less than zero.",
+    "negative_adjustments_validation": "Cannot set negative adjustments to a quantity that sets the closing stock to less than zero."
   },
   "fr": {
     "supplier_credit": "Crédit fournisseur",
