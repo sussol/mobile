@@ -33,7 +33,7 @@ export class Period extends Realm.Object {
 
   requisitionsForOrderType(program, orderType) {
     return this.requisitions.filtered(
-      'program.id = $0 && orderType = $1',
+      'program.id = $0 && orderType = $1 && type == "request"',
       program.id,
       orderType.name
     ).length;
