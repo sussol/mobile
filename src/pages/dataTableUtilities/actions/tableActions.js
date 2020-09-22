@@ -111,6 +111,11 @@ export const toggleTransactionType = route => ({
   payload: { route },
 });
 
+export const toggleColumnSet = route => ({
+  type: ACTIONS.TOGGLE_COLUMN_SET,
+  payload: { route },
+});
+
 /**
  * Adds all items from master lists, according to the type of pageObject.
  * i.e. a CustomerInvoice adds items from all of the custoemrs masterlists.
@@ -345,4 +350,5 @@ export const TableActionsLookup = {
   toggleSensors,
   toggleFridges,
   addFridge,
+  toggleColumnSet,
 };
