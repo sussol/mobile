@@ -763,6 +763,8 @@ const createRequisitionItem = (database, requisition, item, dailyUsage, stockOnH
   // Handle cross reference items.
   const { realItem } = item;
 
+  const { program, otherStoreName, period } = requisition;
+
   const requisitionItem = database.create('RequisitionItem', {
     id: generateUUID(),
     item: realItem,
@@ -773,6 +775,38 @@ const createRequisitionItem = (database, requisition, item, dailyUsage, stockOnH
     comment: '',
     sortIndex: requisition.items.length + 1,
   });
+
+  if (program) {
+    const { startDate, endDate } = period;
+    const requisitions = database
+      .objects('Requisition')
+      .filtered('otherStoreName == $0 && program != null', otherStoreName)
+      .sorted('period.startDate');
+
+    if (requisitions.length) {
+      const { id: realItemId } = realItem;
+      const matchedItem = requisitions[0].items.find(({ item: { id } }) => id === realItemId);
+      if (matchedItem) {
+        requisitionItem.openingStock = matchedItem.closingStock;
+      }
+    }
+
+    const customerInvoices = database.objects('TransactionBatch').filtered(
+      // eslint-disable-next-line max-len
+      "transaction.type == 'customer_invoice' && transaction.status == 'finalised' && transaction.otherParty.id == $0",
+      otherStoreName.id
+    );
+
+    const withinDateRange = customerInvoices.filtered(
+      'transaction.confirmDate >= $0 && transaction.confirmDate <= $1',
+      startDate,
+      endDate
+    );
+
+    const sum = withinDateRange.reduce((acc, { totalQuantity }) => acc + totalQuantity, 0);
+
+    requisitionItem.incoming = sum;
+  }
 
   requisition.addItem(requisitionItem);
   database.save('Requisition', requisition);

@@ -13,7 +13,7 @@ import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets'
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { useNavigationFocus, useSyncListener } from '../hooks';
-import { createSupplierRequisition, gotoCustomerRequisition } from '../navigation/actions';
+import { createCustomerRequisition, gotoCustomerRequisition } from '../navigation/actions';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
 import globalStyles from '../globalStyles';
@@ -65,7 +65,7 @@ export const CustomerRequisitions = ({
       case MODAL_KEYS.PROGRAM_CUSTOMER_REQUISITION:
         return params => {
           onCloseModal();
-          dispatch(createSupplierRequisition({ ...params, currentUser }));
+          dispatch(createCustomerRequisition({ ...params, currentUser }));
         };
 
       default:
