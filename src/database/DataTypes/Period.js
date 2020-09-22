@@ -39,6 +39,15 @@ export class Period extends Realm.Object {
     ).length;
   }
 
+  customerRequisitionsForOrderTypeAndName(program, orderType, name) {
+    return this.requisitions.filtered(
+      'program.id = $0 && orderType = $1 && otherStoreName = $2',
+      program.id,
+      orderType.name,
+      name
+    ).length;
+  }
+
   addRequisitionIfUnique(requisition) {
     if (this.requisitions.filtered('id == $0', requisition.id).length > 0) return;
     this.requisitions.push(requisition);
