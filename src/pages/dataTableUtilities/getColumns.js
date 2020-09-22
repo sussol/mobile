@@ -48,9 +48,11 @@ const PAGE_COLUMN_WIDTHS = {
   sensors: [3, 3, 1, 1],
   [TABS.ITEM]: [1, 3, 1],
   [TABS.PRESCRIBER]: [3, 3, 1],
+  customerRequisitionFormEntry: [1, 1],
 };
 
 const PAGE_COLUMNS = {
+  customerRequisitionFormEntry: [COLUMN_NAMES.ITEM_NAME, COLUMN_NAMES.ITEM_CODE],
   sensors: [
     COLUMN_NAMES.EDITABLE_NAME,
     COLUMN_NAMES.LOCATION,
