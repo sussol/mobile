@@ -3,7 +3,7 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
-
+import moment from 'moment';
 import Realm from 'realm';
 
 import { parsePositiveInteger } from '../../utilities';
@@ -230,6 +230,135 @@ export class RequisitionItem extends Realm.Object {
   get lastRequisitionDate() {
     return this.item?.lastRequisitionDate;
   }
+
+  resetClosingVariables() {
+    this.openingStock = 0;
+    this.outgoingStock = 0;
+    this.incomingStock = 0;
+    this.positiveAdjustments = 0;
+    this.negativeAdjustments = 0;
+  }
+
+  setIncomingStock(value) {
+    const newClosing =
+      this.openingStock +
+      value -
+      this.outgoingStock +
+      this.positiveAdjustments -
+      this.negativeAdjustments;
+
+    const canUpdate = newClosing >= 0;
+
+    if (canUpdate) {
+      this.incomingStock = value;
+    } else {
+      this.resetClosingVariables();
+    }
+
+    return canUpdate;
+  }
+
+  setOutgoingStock(value) {
+    const newClosing =
+      this.openingStock +
+      this.incomingStock -
+      value +
+      this.positiveAdjustments -
+      this.negativeAdjustments;
+
+    const canUpdate = newClosing >= 0;
+
+    if (canUpdate) {
+      this.outgoingStock = value;
+    } else {
+      this.resetClosingVariables();
+    }
+
+    return canUpdate;
+  }
+
+  setPositiveAdjustments(value) {
+    const newClosing =
+      this.openingStock +
+      this.incomingStock -
+      this.outgoingStock +
+      value -
+      this.negativeAdjustments;
+
+    const canUpdate = newClosing >= 0;
+
+    if (canUpdate) {
+      this.positiveAdjustments = value;
+    } else {
+      this.resetClosingVariables();
+    }
+
+    return canUpdate;
+  }
+
+  setNegativeAdjustments(value) {
+    const newClosing =
+      this.openingStock +
+      this.incomingStock -
+      this.outgoingStock +
+      this.positiveAdjustments -
+      value;
+
+    const canUpdate = newClosing >= 0;
+
+    if (canUpdate) {
+      this.negativeAdjustments = value;
+    } else {
+      this.resetClosingVariables();
+    }
+
+    return canUpdate;
+  }
+
+  get closingStock() {
+    return (
+      this.openingStock +
+      this.incomingStock -
+      this.outgoingStock +
+      this.positiveAdjustments -
+      this.negativeAdjustments
+    );
+  }
+
+  setDaysOutOfStock(value) {
+    const daysWithinPeriod = moment(this.requisition?.period.endDate).diff(
+      moment(this.requisition?.period.startDate),
+      'days'
+    );
+
+    const canUpdate = value <= daysWithinPeriod;
+
+    if (canUpdate) {
+      this.daysOutOfStock = value;
+    } else {
+      this.daysOutOfStock = 0;
+    }
+
+    return canUpdate;
+  }
+
+  setOpeningStock(value) {
+    const newClosing =
+      value +
+      this.incomingStock -
+      this.outgoingStock +
+      this.positiveAdjustments -
+      this.negativeAdjustments;
+
+    const canUpdate = newClosing >= 0;
+
+    if (canUpdate) {
+      this.openingStock = value;
+    } else {
+      this.resetClosingVariables();
+    }
+    return canUpdate;
+  }
 }
 
 RequisitionItem.schema = {
@@ -244,6 +373,12 @@ RequisitionItem.schema = {
     imprestQuantity: { type: 'double', optional: true },
     requiredQuantity: { type: 'double', optional: true },
     suppliedQuantity: { type: 'double', default: 0 },
+    openingStock: { type: 'double', default: 0 },
+    daysOutOfStock: { type: 'double', default: 0 },
+    incomingStock: { type: 'double', default: 0 },
+    outgoingStock: { type: 'double', default: 0 },
+    positiveAdjustments: { type: 'double', default: 0 },
+    negativeAdjustments: { type: 'double', default: 0 },
     comment: { type: 'string', optional: true },
     sortIndex: { type: 'int', optional: true },
     option: { type: 'Options', optional: true },
