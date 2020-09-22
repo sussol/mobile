@@ -20,12 +20,21 @@ export class PeriodSchedule extends Realm.Object {
    * If the ordertype is an emergency order type, return all periods.
    * @param {MasterList}  program    The related program
    * @param {object}      orderType  The maxOrdersPerPeriod of the orderType
+   * @param {Name}        customer   Optional customer param to filter by.
    */
-  getPeriodsForOrderType(program, orderType) {
+  getPeriodsForOrderType(program, orderType, customer) {
     const { isEmergency } = orderType || {};
 
-    const filterValidPeriods = period =>
-      period.requisitionsForOrderType(program, orderType) < orderType.maxOrdersPerPeriod;
+    const filterValidPeriods = period => {
+      if (customer) {
+        return (
+          period.customerRequisitionsForOrderTypeAndName(program, orderType, customer) <
+          orderType.maxOrdersPerPeriod
+        );
+      }
+
+      return period.requisitionsForOrderType(program, orderType) < orderType.maxOrdersPerPeriod;
+    };
 
     return isEmergency ? this.periods.slice() : this.periods.filter(filterValidPeriods);
   }
