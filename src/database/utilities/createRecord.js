@@ -763,7 +763,7 @@ const createRequisitionItem = (database, requisition, item, dailyUsage, stockOnH
   // Handle cross reference items.
   const { realItem } = item;
 
-  const { program, otherStoreName, period } = requisition;
+  const { program, otherStoreName, period, type } = requisition;
 
   const requisitionItem = database.create('RequisitionItem', {
     id: generateUUID(),
@@ -776,7 +776,7 @@ const createRequisitionItem = (database, requisition, item, dailyUsage, stockOnH
     sortIndex: requisition.items.length + 1,
   });
 
-  if (program) {
+  if (program && type === 'response') {
     const { startDate, endDate } = period;
     const requisitions = database
       .objects('Requisition')
