@@ -48,6 +48,7 @@ const ADDITIONAL_MODAL_PROPS = {
   [MODAL_KEYS.ENFORCE_REQUISITION_REASON]: { noCancel: true, fullScreen: true },
   [MODAL_KEYS.PROGRAM_REQUISITION]: { fullScreen: true },
   [MODAL_KEYS.PROGRAM_STOCKTAKE]: { fullScreen: true },
+  [MODAL_KEYS.PROGRAM_CUSTOMER_REQUISITION]: { fullScreen: true },
 };
 
 const DataTablePageModalComponent = ({
@@ -147,18 +148,24 @@ const DataTablePageModalComponent = ({
         );
       }
 
+      case MODAL_KEYS.PROGRAM_CUSTOMER_REQUISITION:
       case MODAL_KEYS.PROGRAM_STOCKTAKE:
-      case MODAL_KEYS.PROGRAM_REQUISITION:
+      case MODAL_KEYS.PROGRAM_REQUISITION: {
+        const lookup = {
+          [MODAL_KEYS.PROGRAM_CUSTOMER_REQUISITION]: 'customerRequisition',
+          [MODAL_KEYS.PROGRAM_STOCKTAKE]: 'stocktake',
+          [MODAL_KEYS.PROGRAM_REQUISITION]: 'requisition',
+        };
+
         return (
           <ByProgramModal
             onConfirm={onSelect}
             database={UIDatabase}
-            transactionType={
-              modalKey === MODAL_KEYS.PROGRAM_STOCKTAKE ? 'stocktake' : 'requisition'
-            }
+            transactionType={lookup[modalKey]}
             settings={Settings}
           />
         );
+      }
 
       case MODAL_KEYS.SELECT_MONTH:
         return (

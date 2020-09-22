@@ -167,7 +167,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
   const onToggle = () => dispatch(setToggle());
   const onCreate = () =>
     onConfirm({
-      otherStoreName: supplier,
+      otherStoreName: supplier || customer,
       program,
       period,
       orderType,
