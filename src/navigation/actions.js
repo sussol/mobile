@@ -34,6 +34,29 @@ import { PREFERENCE_KEYS } from '../database/utilities/constants';
  *
  */
 
+export const createCustomerRequisition = ({
+  currentUser,
+  ...requisitionParameters
+}) => dispatch => {
+  // Months lead time has an effect on daysToSupply for a requisition.
+
+  // Create the requisition. If a program was supplied, add items from that
+  // program, otherwise just navigate to it.
+  let requisition;
+  UIDatabase.write(() => {
+    requisition = createRecord(
+      UIDatabase,
+      'CustomerRequisition',
+      currentUser,
+      requisitionParameters
+    );
+
+    if (requisition.program) requisition.addItemsFromProgram(UIDatabase);
+  });
+
+  dispatch(gotoCustomerRequisition(requisition));
+};
+
 /**
  * Action creator for handling back navigation.
  *
