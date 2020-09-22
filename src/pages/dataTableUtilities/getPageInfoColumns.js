@@ -62,6 +62,10 @@ const PER_PAGE_INFO_COLUMNS = {
     ['monthsToSupply', 'entryDate'],
     ['customer', 'requisitionComment'],
   ],
+  [ROUTES.CUSTOMER_REQUISITIONS_WITH_PROGRAMS]: [
+    ['program', 'orderType', 'monthsToSupply', 'entryDate'],
+    ['customer', 'requisitionComment', 'period'],
+  ],
   [ROUTES.PRESCRIPTION]: [
     ['entryDate', 'enteredBy'],
     ['customer', 'transactionComment', 'prescriber'],

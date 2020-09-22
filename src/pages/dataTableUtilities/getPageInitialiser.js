@@ -124,7 +124,7 @@ export const customerInvoicesInitialiser = () => {
  * @returns  {object}
  */
 const customerRequisitionInitialiser = requisition => {
-  const { indicators, items: backingData } = requisition;
+  const { indicators, items: backingData, program } = requisition;
   const sortedData = backingData.sorted('item.name').slice();
 
   const usingIndicators = !!indicators?.length;
@@ -153,7 +153,9 @@ const customerRequisitionInitialiser = requisition => {
     indicators,
     route: ROUTES.CUSTOMER_REQUISITION,
     columns: getColumns(ROUTES.CUSTOMER_REQUISITION),
-    getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_REQUISITION),
+    getPageInfoColumns: getPageInfoColumns(
+      program ? ROUTES.CUSTOMER_REQUISITIONS_WITH_PROGRAMS : ROUTES.CUSTOMER_REQUISITION
+    ),
   };
 };
 
