@@ -12,7 +12,7 @@ export { formatStatus } from './formatStatus';
 export { sortDataBy } from './sortDataBy';
 export { compareVersions, versionToInteger } from './compareVersions';
 export { createReducer, REHYDRATE } from './createReducer';
-export { getAllPeriodsForProgram, getAllPrograms } from './byProgram';
+export { getAllPeriodsForProgram, getAllPrograms, getAllProgramsForCustomer } from './byProgram';
 export { requestPermission } from './requestPermission';
 export { backupValidation } from './fileSystem';
 export { debounce } from './underscoreMethods';
