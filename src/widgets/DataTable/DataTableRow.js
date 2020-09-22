@@ -330,7 +330,7 @@ const DataTableRow = React.memo(
             }
           }
         }),
-      [isFinalised, rowState, rowData, rowIndex]
+      [isFinalised, rowState, rowData, rowIndex, columns]
     );
 
     return (
