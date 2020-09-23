@@ -6,7 +6,7 @@
 import Realm from 'realm';
 import { complement } from 'set-manipulator';
 
-import { createRecord, getTotal } from '../utilities';
+import { NUMBER_OF_DAYS_IN_A_MONTH, createRecord, getTotal } from '../utilities';
 import { UIDatabase } from '..';
 import { programDailyUsage } from '../../utilities/dailyUsage';
 import { generalStrings, modalStrings } from '../../localization';
@@ -193,7 +193,7 @@ export class Requisition extends Realm.Object {
    * @param  {number}  months
    */
   set monthsToSupply(months) {
-    this.daysToSupply = months * 30;
+    this.daysToSupply = months * NUMBER_OF_DAYS_IN_A_MONTH;
   }
 
   // Saves a new customData string. Call inside a write/transaction

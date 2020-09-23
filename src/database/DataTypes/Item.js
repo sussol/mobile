@@ -8,7 +8,7 @@ import Realm from 'realm';
 import { UIDatabase } from '..';
 
 import { generalStrings } from '../../localization';
-import { getTotal } from '../utilities';
+import { NUMBER_OF_DAYS_IN_A_MONTH, getTotal } from '../utilities';
 import { dailyUsage } from '../../utilities/dailyUsage';
 
 /**
@@ -148,7 +148,7 @@ export class Item extends Realm.Object {
    * @return {Number} this items monthly usage based on a 30 day month.
    */
   get monthlyUsage() {
-    return this.dailyUsage * 30;
+    return this.dailyUsage * NUMBER_OF_DAYS_IN_A_MONTH;
   }
 
   /**

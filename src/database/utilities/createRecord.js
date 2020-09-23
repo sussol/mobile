@@ -8,7 +8,7 @@ import { generateUUID } from 'react-native-database';
 
 import { UIDatabase } from '..';
 import { versionToInteger, formatDateAndTime } from '../../utilities';
-import { NUMBER_SEQUENCE_KEYS } from './constants';
+import { NUMBER_OF_DAYS_IN_A_MONTH, NUMBER_SEQUENCE_KEYS } from './constants';
 import { generalStrings } from '../../localization';
 import { SETTINGS_KEYS } from '../../settings';
 
@@ -691,7 +691,7 @@ const createRequisition = (
   const { name: orderTypeName, maxMOS, thresholdMOS } = orderType || {};
   const regimenData =
     program && program.parsedProgramSettings ? program.parsedProgramSettings.regimenData : null;
-  const daysToSupply = ((monthsLeadTime || 0) + (maxMOS || 1)) * 30;
+  const daysToSupply = ((monthsLeadTime || 0) + (maxMOS || 1)) * NUMBER_OF_DAYS_IN_A_MONTH;
 
   const requisition = database.create('Requisition', {
     id: generateUUID(),
