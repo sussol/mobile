@@ -28,12 +28,15 @@ export class PeriodSchedule extends Realm.Object {
     const filterValidPeriods = period => {
       if (customer) {
         return (
-          period.customerRequisitionsForOrderTypeAndName(program, orderType, customer) <
+          period.numberOfCustomerRequisitionsForOrderType(program, orderType, customer) <
           orderType.maxOrdersPerPeriod
         );
       }
 
-      return period.requisitionsForOrderType(program, orderType) < orderType.maxOrdersPerPeriod;
+      return (
+        period.numberOfSupplierRequisitionsForOrderType(program, orderType) <
+        orderType.maxOrdersPerPeriod
+      );
     };
 
     return isEmergency ? this.periods.slice() : this.periods.filter(filterValidPeriods);

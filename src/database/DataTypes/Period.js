@@ -31,7 +31,7 @@ export class Period extends Realm.Object {
     return this.requisitions.length;
   }
 
-  requisitionsForOrderType(program, orderType) {
+  numberOfSupplierRequisitionsForOrderType(program, orderType) {
     return this.requisitions.filtered(
       'program.id = $0 && orderType = $1 && type == "request"',
       program.id,
@@ -39,7 +39,7 @@ export class Period extends Realm.Object {
     ).length;
   }
 
-  customerRequisitionsForOrderTypeAndName(program, orderType, name) {
+  numberOfCustomerRequisitionsForOrderType(program, orderType, name) {
     return this.requisitions.filtered(
       'program.id = $0 && orderType = $1 && otherStoreName = $2',
       program.id,
