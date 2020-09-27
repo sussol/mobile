@@ -44,6 +44,59 @@ export const dataTableStyles = {
       textAlign: 'center',
     },
   },
+  warningCellContainer: {
+    left: {
+      borderRightWidth: 2,
+      borderColor: '#ecf3fc',
+      flex: 1,
+      justifyContent: 'center',
+      textAlign: 'left',
+      backgroundColor: 'rgba(233,92,48, 0.5)',
+    },
+    right: {
+      borderRightWidth: 2,
+      borderColor: '#ecf3fc',
+      flex: 1,
+      justifyContent: 'center',
+      textAlign: 'right',
+      backgroundColor: 'rgba(233,92,48, 0.5)',
+    },
+    center: {
+      borderRightWidth: 2,
+      borderColor: '#ecf3fc',
+      flex: 1,
+      justifyContent: 'center',
+      textAlign: 'center',
+      backgroundColor: 'rgba(233,92,48, 0.5)',
+    },
+  },
+  errorCellContainer: {
+    left: {
+      borderRightWidth: 2,
+      borderColor: '#ecf3fc',
+      flex: 1,
+      justifyContent: 'center',
+      textAlign: 'left',
+      backgroundColor: 'rgba(233,92,48, 0.75)',
+    },
+    right: {
+      borderRightWidth: 2,
+      borderColor: '#ecf3fc',
+      flex: 1,
+      justifyContent: 'center',
+      textAlign: 'right',
+      backgroundColor: 'rgba(233,92,48, 0.75)',
+    },
+    center: {
+      borderRightWidth: 2,
+      borderColor: '#ecf3fc',
+      flex: 1,
+      justifyContent: 'center',
+      textAlign: 'center',
+      backgroundColor: 'rgba(233,92,48, 0.75)',
+    },
+  },
+
   cellText: {
     left: {
       marginLeft: 20,
@@ -130,6 +183,7 @@ export const dataTableStyles = {
     flexDirection: 'row',
     height: 45,
   },
+
   headerRow: {
     backgroundColor: 'white',
     flexDirection: 'row',
