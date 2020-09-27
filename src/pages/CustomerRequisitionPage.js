@@ -7,7 +7,8 @@
 
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet } from 'react-native';
+import moment from 'moment';
+import { View, StyleSheet, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
@@ -36,7 +37,7 @@ import { getColumns, getItemLayout, getPageDispatchers, PageActions } from './da
 import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
 import globalStyles from '../globalStyles';
-import { buttonStrings, generalStrings, programStrings } from '../localization';
+import { tableStrings, buttonStrings, generalStrings, programStrings } from '../localization';
 
 /**
  * Renders a mSupply mobile page with a customer requisition loaded for editing
@@ -120,6 +121,35 @@ export const CustomerRequisition = ({
     }
   }, []);
 
+  const getCellError = useCallback((rowData, colKey) => {
+    const { stockOnHand, daysOutOfStock, numberOfDaysInPeriod } = rowData;
+    const closingStockIsValid = stockOnHand >= 0;
+
+    switch (colKey) {
+      case 'openingStock':
+        return !closingStockIsValid ? 'warning' : null;
+      case 'incomingStock':
+        return !closingStockIsValid ? 'warning' : null;
+      case 'outgoingStock':
+        return !closingStockIsValid ? 'warning' : null;
+      case 'daysOutOfStock':
+        if (daysOutOfStock > numberOfDaysInPeriod) {
+          ToastAndroid.show(tableStrings.days_out_of_stock_validation, ToastAndroid.LONG);
+          return 'error';
+        }
+        return null;
+
+      case 'negativeAdjustments':
+        return !closingStockIsValid ? 'warning' : null;
+      case 'positiveAdjustments':
+        return !closingStockIsValid ? 'warning' : null;
+      case 'stockOnHand':
+        return !closingStockIsValid ? 'error' : null;
+      default:
+        return null;
+    }
+  }, []);
+
   const getModalOnSelect = () => {
     switch (modalKey) {
       case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
@@ -134,6 +164,8 @@ export const CustomerRequisition = ({
       const { item, index } = listItem;
       const rowKey = keyExtractor(item);
 
+      const { fieldsAreValid } = item;
+
       return (
         <DataTableRow
           rowData={data[index]}
@@ -142,6 +174,8 @@ export const CustomerRequisition = ({
           isFinalised={isFinalised}
           getCallback={getCallback}
           rowIndex={index}
+          getCellError={getCellError}
+          isValidated={fieldsAreValid}
         />
       );
     },
