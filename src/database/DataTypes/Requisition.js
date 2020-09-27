@@ -6,7 +6,7 @@
 import Realm from 'realm';
 import { complement } from 'set-manipulator';
 
-import { createRecord, getTotal } from '../utilities';
+import { NUMBER_OF_DAYS_IN_A_MONTH, createRecord, getTotal } from '../utilities';
 import { UIDatabase } from '..';
 import { programDailyUsage } from '../../utilities/dailyUsage';
 import { generalStrings, modalStrings } from '../../localization';
@@ -130,11 +130,11 @@ export class Requisition extends Realm.Object {
    * @return  {number}
    */
   get monthsToSupply() {
-    return this.daysToSupply / 30;
+    return this.daysToSupply / NUMBER_OF_DAYS_IN_A_MONTH;
   }
 
   /**
-   * Get the sum of required quantites for all items associated with requisition.
+   * Get the sum of required quantities for all items associated with requisition.
    *
    * @return  {number}
    */
@@ -193,7 +193,7 @@ export class Requisition extends Realm.Object {
    * @param  {number}  months
    */
   set monthsToSupply(months) {
-    this.daysToSupply = months * 30;
+    this.daysToSupply = months * NUMBER_OF_DAYS_IN_A_MONTH;
   }
 
   // Saves a new customData string. Call inside a write/transaction
@@ -444,7 +444,7 @@ Requisition.schema = {
     thresholdMOS: { type: 'double', optional: true },
     type: { type: 'string', default: 'request' },
     entryDate: { type: 'date', default: new Date() },
-    daysToSupply: { type: 'double', default: 30 },
+    daysToSupply: { type: 'double', default: NUMBER_OF_DAYS_IN_A_MONTH },
     serialNumber: { type: 'string', default: '0' },
     requesterReference: { type: 'string', default: '' },
     comment: { type: 'string', optional: true },
