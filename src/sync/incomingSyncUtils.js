@@ -277,6 +277,14 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       ],
       canBeBlank: [],
     },
+    NameTag: {
+      cannotBeBlank: ['ID'],
+      canBeBlank: ['description'],
+    },
+    NameTagJoin: {
+      cannotBeBlank: ['ID', 'name_ID', 'name_tag_ID'],
+      canBeBlank: [],
+    },
   };
 
   if (!requiredFields[recordType]) return false; // Unsupported record type
@@ -563,6 +571,21 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       };
 
       if (isPatient) internalRecord.isVisible = true;
+
+      database.update(recordType, internalRecord);
+      break;
+    }
+    case 'NameTag': {
+      internalRecord = { id: record.ID, description: record.description };
+      database.update(recordType, internalRecord);
+      break;
+    }
+    case 'NameTagJoin': {
+      internalRecord = {
+        id: record.ID,
+        name: database.getOrCreate('Name', record.name_ID),
+        nameTag: database.getOrCreate('NameTag', record.name_tag_ID),
+      };
 
       database.update(recordType, internalRecord);
       break;
