@@ -144,9 +144,6 @@ export class Item extends Realm.Object {
     return this.batches.filtered('numberOfPacks > 0');
   }
 
-  /**
-   * @return {Number} this items monthly usage based on a 30 day month.
-   */
   get monthlyUsage() {
     return this.dailyUsage * NUMBER_OF_DAYS_IN_A_MONTH;
   }
