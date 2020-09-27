@@ -6,7 +6,7 @@
 import moment from 'moment';
 
 import { UIDatabase } from '../database';
-import { PREFERENCE_KEYS } from '../database/utilities/constants';
+import { NUMBER_OF_DAYS_IN_A_MONTH, PREFERENCE_KEYS } from '../database/utilities/constants';
 
 const DEFAULT_LOOKBACK_PERIOD = 3;
 
@@ -44,7 +44,7 @@ export const dailyUsage = item => {
 
   const itemAddedDate = moment(addedDate);
   const dateNow = moment();
-  const lookbackDate = moment(dateNow).subtract(amcLookback * 30, 'days');
+  const lookbackDate = moment(dateNow).subtract(amcLookback * NUMBER_OF_DAYS_IN_A_MONTH, 'days');
   const useLookbackDate = amcEnforceLookback || itemAddedDate.isBefore(lookbackDate);
   const startDate = useLookbackDate ? lookbackDate : itemAddedDate;
 
@@ -85,7 +85,7 @@ export const programDailyUsage = (item, period) => {
     .add(1, 'days')
     .subtract(amcLookback, 'months');
 
-  const numberOfUsageDays = 30 * amcLookback;
+  const numberOfUsageDays = NUMBER_OF_DAYS_IN_A_MONTH * amcLookback;
 
   const usage = UIDatabase.objects('TransactionBatch')
     .filtered('transaction.type == $0', 'customer_invoice')
