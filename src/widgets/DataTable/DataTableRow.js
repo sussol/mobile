@@ -57,10 +57,23 @@ import { formatType } from '../../utilities/formatStatus';
  *                             (colKey, propName) => callback
  */
 const DataTableRow = React.memo(
-  ({ rowData, rowState, rowKey, columns, isFinalised, getCallback, onPress, rowIndex }) => {
+  ({
+    rowData,
+    rowState,
+    rowKey,
+    columns,
+    isFinalised,
+    getCallback,
+    onPress,
+    rowIndex,
+    getCellError,
+    isValidated,
+  }) => {
     const {
       cellText,
       cellContainer,
+      warningCellContainer,
+      errorCellContainer,
       touchableCellContainer,
       editableCellText,
       editableCellTextView,
@@ -73,9 +86,12 @@ const DataTableRow = React.memo(
 
     const { isSelected = false } = rowState || {};
     // If the row is selected, use selectedRow style, otherwise alternate row style on index.
-    const rowStyle = isSelected
-      ? selectedRowStyle
-      : (rowIndex % 2 === 0 && alternateRowStyle) || basicRowStyle;
+
+    const rowStyle = {
+      ...(rowIndex % 2 === 0 ? alternateRowStyle : basicRowStyle),
+      ...(isSelected && selectedRowStyle),
+      ...(!isValidated && { borderColor: SUSSOL_ORANGE, borderWidth: 1, borderRadius: 5 }),
+    };
 
     // Callback for rendering a row of cells.
     const renderCells = useCallback(
@@ -133,6 +149,13 @@ const DataTableRow = React.memo(
 
               const inputIsDisabled = isDisabled || !!disabledCondition[columnKey];
 
+              const cellErrors = getCellError?.(rowData, columnKey);
+              const alternateCellStyleLookup = {
+                warning: warningCellContainer,
+                error: errorCellContainer,
+              };
+              const cellContainerStyle = alternateCellStyleLookup[cellErrors] ?? cellContainer;
+
               return (
                 <TextInputCell
                   key={columnKey}
@@ -142,7 +165,7 @@ const DataTableRow = React.memo(
                   onChangeText={getCallback(columnKey)}
                   isDisabled={inputIsDisabled}
                   width={width}
-                  viewStyle={cellContainer[cellAlignment]}
+                  viewStyle={cellContainerStyle[cellAlignment]}
                   textViewStyle={editableCellTextView}
                   isLastCell={isLastCell}
                   keyboardType={type === COLUMN_TYPES.EDITABLE_NUMERIC ? 'numeric' : 'default'}
@@ -230,12 +253,19 @@ const DataTableRow = React.memo(
                   ? generalStrings.not_available
                   : Math.round(rowData[columnKey]);
 
+              const cellErrors = getCellError?.(rowData, columnKey);
+              const alternateCellStyleLookup = {
+                warning: warningCellContainer,
+                error: errorCellContainer,
+              };
+              const cellContainerStyle = alternateCellStyleLookup[cellErrors] ?? cellContainer;
+
               return (
                 <Cell
                   key={columnKey}
                   value={value}
                   width={width}
-                  viewStyle={cellContainer[cellAlignment]}
+                  viewStyle={cellContainerStyle[cellAlignment]}
                   textStyle={cellText[cellAlignment]}
                   isLastCell={isLastCell}
                 />
@@ -352,6 +382,8 @@ DataTableRow.defaultProps = {
   getCallback: null,
   onPress: null,
   rowState: null,
+  getCellError: () => null,
+  isValidated: true,
 };
 
 DataTableRow.propTypes = {
@@ -363,6 +395,8 @@ DataTableRow.propTypes = {
   isFinalised: PropTypes.bool,
   getCallback: PropTypes.func,
   rowIndex: PropTypes.number.isRequired,
+  getCellError: PropTypes.func,
+  isValidated: PropTypes.bool,
 };
 
 export default DataTableRow;
