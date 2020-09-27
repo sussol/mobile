@@ -137,11 +137,14 @@ export const editOpeningStock = (value, rowKey, route) => (dispatch, getState) =
   const requisitionItem = data.find(row => keyExtractor(row) === rowKey);
   if (requisitionItem) {
     UIDatabase.write(() => {
-      const didUpdate = requisitionItem.setOpeningStock(parsePositiveInteger(value));
+      requisitionItem.setOpeningStock(parsePositiveInteger(value));
       UIDatabase.save('RequisitionItem', requisitionItem);
-
-      if (!didUpdate) ToastAndroid.show(tableStrings.opening_stock_validation, ToastAndroid.LONG);
     });
+
+    if (!requisitionItem.closingStockIsValid) {
+      ToastAndroid.show(tableStrings.opening_stock_validation, ToastAndroid.LONG);
+    }
+
     dispatch(refreshRow(rowKey, route));
   }
 };
@@ -152,12 +155,8 @@ export const editDaysOutOfStock = (value, rowKey, route) => (dispatch, getState)
   const requisitionItem = data.find(row => keyExtractor(row) === rowKey);
   if (requisitionItem) {
     UIDatabase.write(() => {
-      const didUpdate = requisitionItem.setDaysOutOfStock(parsePositiveInteger(value));
+      requisitionItem.setDaysOutOfStock(parsePositiveInteger(value));
       UIDatabase.save('RequisitionItem', requisitionItem);
-
-      if (!didUpdate) {
-        ToastAndroid.show(tableStrings.days_out_of_stock_validation, ToastAndroid.LONG);
-      }
     });
     dispatch(refreshRow(rowKey, route));
   }
@@ -169,11 +168,14 @@ export const editIncomingStock = (value, rowKey, route) => (dispatch, getState) 
   const requisitionItem = data.find(row => keyExtractor(row) === rowKey);
   if (requisitionItem) {
     UIDatabase.write(() => {
-      const didUpdate = requisitionItem.setIncomingStock(parsePositiveInteger(value));
+      requisitionItem.setIncomingStock(parsePositiveInteger(value));
       UIDatabase.save('RequisitionItem', requisitionItem);
-
-      if (!didUpdate) ToastAndroid.show(tableStrings.incoming_stock_validation, ToastAndroid.LONG);
     });
+
+    if (!requisitionItem.closingStockIsValid) {
+      ToastAndroid.show(tableStrings.incoming_stock_validation, ToastAndroid.LONG);
+    }
+
     dispatch(refreshRow(rowKey, route));
   }
 };
@@ -184,11 +186,14 @@ export const editOutgoingStock = (value, rowKey, route) => (dispatch, getState) 
   const requisitionItem = data.find(row => keyExtractor(row) === rowKey);
   if (requisitionItem) {
     UIDatabase.write(() => {
-      const didUpdate = requisitionItem.setOutgoingStock(parsePositiveInteger(value));
+      requisitionItem.setOutgoingStock(parsePositiveInteger(value));
       UIDatabase.save('RequisitionItem', requisitionItem);
-
-      if (!didUpdate) ToastAndroid.show(tableStrings.outgoing_stock_validation, ToastAndroid.LONG);
     });
+
+    if (!requisitionItem.closingStockIsValid) {
+      ToastAndroid.show(tableStrings.outgoing_stock_validation, ToastAndroid.LONG);
+    }
+
     dispatch(refreshRow(rowKey, route));
   }
 };
@@ -199,13 +204,14 @@ export const editPositiveAdjustments = (value, rowKey, route) => (dispatch, getS
   const requisitionItem = data.find(row => keyExtractor(row) === rowKey);
   if (requisitionItem) {
     UIDatabase.write(() => {
-      const didUpdate = requisitionItem.setPositiveAdjustments(parsePositiveInteger(value));
+      requisitionItem.setPositiveAdjustments(parsePositiveInteger(value));
       UIDatabase.save('RequisitionItem', requisitionItem);
-
-      if (!didUpdate) {
-        ToastAndroid.show(tableStrings.positive_adjustments_validation, ToastAndroid.LONG);
-      }
     });
+
+    if (!requisitionItem.closingStockIsValid) {
+      ToastAndroid.show(tableStrings.positive_adjustments_validation, ToastAndroid.LONG);
+    }
+
     dispatch(refreshRow(rowKey, route));
   }
 };
@@ -216,13 +222,14 @@ export const editNegativeAdjustments = (value, rowKey, route) => (dispatch, getS
   const requisitionItem = data.find(row => keyExtractor(row) === rowKey);
   if (requisitionItem) {
     UIDatabase.write(() => {
-      const didUpdate = requisitionItem.setNegativeAdjustments(parsePositiveInteger(value));
+      requisitionItem.setNegativeAdjustments(parsePositiveInteger(value));
       UIDatabase.save('RequisitionItem', requisitionItem);
-
-      if (!didUpdate) {
-        ToastAndroid.show(tableStrings.negative_adjustments_validation, ToastAndroid.LONG);
-      }
     });
+
+    if (!requisitionItem.closingStockIsValid) {
+      ToastAndroid.show(tableStrings.negative_adjustments_validation, ToastAndroid.LONG);
+    }
+
     dispatch(refreshRow(rowKey, route));
   }
 };
