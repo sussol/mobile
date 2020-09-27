@@ -48,7 +48,7 @@ const PAGE_COLUMN_WIDTHS = {
   sensors: [3, 3, 1, 1],
   [TABS.ITEM]: [1, 3, 1],
   [TABS.PRESCRIBER]: [3, 3, 1],
-  customerRequisitionFormEntry: [1, 1, 1, 1, 1, 1, 1, 1, 1],
+  customerRequisitionFormEntry: [2, 2, 1, 1, 1, 1, 2, 2, 2, 2],
 };
 
 const PAGE_COLUMNS = {
@@ -61,6 +61,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.OUTGOING_STOCK,
     COLUMN_NAMES.POSITIVE_ADJUSTMENTS,
     COLUMN_NAMES.NEGATIVE_ADJUSTMENTS,
+    COLUMN_NAMES.EDITABLE_REQUIRED_QUANTITY,
     COLUMN_NAMES.CLOSING_STOCK,
   ],
   sensors: [

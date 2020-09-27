@@ -85,6 +85,7 @@ export const CustomerRequisition = ({
   onEditOutgoingStock,
   onEditIncomingStock,
   onEditDaysOutOfStock,
+  onEditRequiredQuantity,
 }) => {
   const { isFinalised, comment, program } = pageObject;
 
@@ -116,6 +117,9 @@ export const CustomerRequisition = ({
         return onEditNegativeAdjustments;
       case 'positiveAdjustments':
         return onEditPositiveAdjustments;
+      case 'requiredQuantity':
+        return onEditRequiredQuantity;
+
       default:
         return null;
     }
@@ -454,4 +458,5 @@ CustomerRequisition.propTypes = {
   onEditOutgoingStock: PropTypes.func.isRequired,
   onEditIncomingStock: PropTypes.func.isRequired,
   onEditDaysOutOfStock: PropTypes.func.isRequired,
+  onEditRequiredQuantity: PropTypes.func.isRequired,
 };
