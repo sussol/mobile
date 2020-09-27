@@ -3,7 +3,6 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
-import moment from 'moment';
 import Realm from 'realm';
 
 import { parsePositiveInteger } from '../../utilities';
@@ -231,133 +230,58 @@ export class RequisitionItem extends Realm.Object {
     return this.item?.lastRequisitionDate;
   }
 
-  resetClosingVariables() {
-    this.openingStock = 0;
-    this.outgoingStock = 0;
-    this.incomingStock = 0;
-    this.positiveAdjustments = 0;
-    this.negativeAdjustments = 0;
-  }
-
   setIncomingStock(value) {
-    const newClosing =
-      this.openingStock +
-      value -
-      this.outgoingStock +
-      this.positiveAdjustments -
-      this.negativeAdjustments;
-
-    const canUpdate = newClosing >= 0;
-
-    if (canUpdate) {
-      this.incomingStock = value;
-    } else {
-      this.resetClosingVariables();
-    }
-
-    return canUpdate;
+    this.incomingStock = value;
+    this.recalculateStockOnHand();
   }
 
   setOutgoingStock(value) {
-    const newClosing =
-      this.openingStock +
-      this.incomingStock -
-      value +
-      this.positiveAdjustments -
-      this.negativeAdjustments;
-
-    const canUpdate = newClosing >= 0;
-
-    if (canUpdate) {
-      this.outgoingStock = value;
-    } else {
-      this.resetClosingVariables();
-    }
-
-    return canUpdate;
+    this.outgoingStock = value;
+    this.recalculateStockOnHand();
   }
 
   setPositiveAdjustments(value) {
-    const newClosing =
-      this.openingStock +
-      this.incomingStock -
-      this.outgoingStock +
-      value -
-      this.negativeAdjustments;
-
-    const canUpdate = newClosing >= 0;
-
-    if (canUpdate) {
-      this.positiveAdjustments = value;
-    } else {
-      this.resetClosingVariables();
-    }
-
-    return canUpdate;
+    this.positiveAdjustments = value;
+    this.recalculateStockOnHand();
   }
 
   setNegativeAdjustments(value) {
-    const newClosing =
-      this.openingStock +
-      this.incomingStock -
-      this.outgoingStock +
-      this.positiveAdjustments -
-      value;
-
-    const canUpdate = newClosing >= 0;
-
-    if (canUpdate) {
-      this.negativeAdjustments = value;
-    } else {
-      this.resetClosingVariables();
-    }
-
-    return canUpdate;
-  }
-
-  get closingStock() {
-    return (
-      this.openingStock +
-      this.incomingStock -
-      this.outgoingStock +
-      this.positiveAdjustments -
-      this.negativeAdjustments
-    );
+    this.negativeAdjustments = value;
+    this.recalculateStockOnHand();
   }
 
   setDaysOutOfStock(value) {
-    const daysWithinPeriod = moment(this.requisition?.period.endDate).diff(
-      moment(this.requisition?.period.startDate),
-      'days'
-    );
-
-    const canUpdate = value <= daysWithinPeriod;
-
-    if (canUpdate) {
-      this.daysOutOfStock = value;
-    } else {
-      this.daysOutOfStock = 0;
-    }
-
-    return canUpdate;
+    this.daysOutOfStock = value;
   }
 
   setOpeningStock(value) {
-    const newClosing =
-      value +
+    this.openingStock = value;
+    this.recalculateStockOnHand();
+  }
+
+  recalculateStockOnHand() {
+    this.stockOnHand =
+      this.openingStock +
       this.incomingStock -
       this.outgoingStock +
       this.positiveAdjustments -
       this.negativeAdjustments;
+  }
 
-    const canUpdate = newClosing >= 0;
+  get numberOfDaysInPeriod() {
+    return this.requisition?.numberOfDaysInPeriod ?? 0;
+  }
 
-    if (canUpdate) {
-      this.openingStock = value;
-    } else {
-      this.resetClosingVariables();
-    }
-    return canUpdate;
+  get closingStockIsValid() {
+    return this.stockOnHand >= 0;
+  }
+
+  get daysOutOfStockIsValid() {
+    return this.daysOutOfStock <= this.numberOfDaysInPeriod;
+  }
+
+  get fieldsAreValid() {
+    return this.closingStockIsValid && this.daysOutOfStockIsValid;
   }
 }
 
