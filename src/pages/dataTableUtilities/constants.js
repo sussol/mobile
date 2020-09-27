@@ -83,7 +83,7 @@ export const COLUMN_KEYS = {
   OUTGOING_STOCK: 'outgoingStock',
   POSITIVE_ADJUSTMENTS: 'positiveAdjustments',
   NEGATIVE_ADJUSTMENTS: 'negativeAdjustments',
-  CLOSING_STOCK: 'closingStock',
+  CLOSING_STOCK: 'stockOnHand',
 };
 
 export const COLUMN_NAMES = {
