@@ -8,7 +8,6 @@
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import moment from 'moment';
 import { View, StyleSheet, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 
