@@ -83,8 +83,8 @@ export class MasterList extends Realm.Object {
   /**
    * Find the current stores matching store tag object in this master lists program settings.
    * Program settings is a JSON object held as a string - example below.
-   * @param  {string}  tags   Current stores tags field
-   * @return {object} The matching storeTag programsettings field for the current store
+   * @param  {Array}  tags   Array of tag strings
+   * @return {object} The matching storeTag programSettings field for the current store
    */
   getStoreTagObject(tags) {
     const storeTags = this.parsedProgramSettings && this.parsedProgramSettings.storeTags;

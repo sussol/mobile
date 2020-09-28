@@ -83,8 +83,8 @@ const modalProps = ({ dispatch, program, orderType, customer }) => ({
       const { maxOrdersPerPeriod, isEmergency } = orderType;
 
       const requisitionsInPeriod = !customer
-        ? item.requisitionsForOrderType(program, orderType)
-        : item.customerRequisitionsForOrderTypeAndName(program, orderType, customer);
+        ? item.numberOfSupplierRequisitionsForOrderType(program, orderType)
+        : item.numberOfCustomerRequisitionsForOrderType(program, orderType, customer);
       const requisitionsCount = `${requisitionsInPeriod}/${maxOrdersPerPeriod} ${requisitions}`;
 
       const periodText = isEmergency
