@@ -110,7 +110,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
     info: `${pageInfoStrings.amc_formula}`,
   },
   createdDate: {
-    title: `${pageInfoStrings.date_created}:`,
+    title: `${pageInfoStrings.created_date}:`,
     info: `${formatDate(pageObject?.createdDate)}`,
     onPress: () => dispatch(PageActions.openDatePicker(route)),
     editableType: 'date',
