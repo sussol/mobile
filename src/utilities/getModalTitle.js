@@ -3,7 +3,13 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { authStrings, modalStrings, buttonStrings } from '../localization';
+import {
+  navStrings,
+  programStrings,
+  authStrings,
+  modalStrings,
+  buttonStrings,
+} from '../localization';
 
 export const MODAL_KEYS = {
   CONFIRM_USER_PASSWORD: 'confirmUserPassword',
@@ -43,6 +49,10 @@ export const getModalTitle = modalKey => {
   switch (modalKey) {
     default:
       return '';
+    case MODAL_KEYS.PROGRAM_REQUISITION:
+      return `${navStrings.requisition} ${programStrings.details}`;
+    case MODAL_KEYS.PROGRAM_STOCKTAKE:
+      return `${navStrings.stocktake} ${programStrings.details}`;
     case MODAL_KEYS.CREATE_CASH_TRANSACTION:
       return modalStrings.create_cash_transaction;
     case MODAL_KEYS.SELECT_PRESCRIBER:

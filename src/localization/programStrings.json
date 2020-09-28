@@ -2,10 +2,12 @@
   "gb": {
     "select_a_program": "Select a program",
     "select_a_supplier": "Select a supplier",
+    "select_a_customer": "Select a customer",
     "select_an_order_type": "Select an order type",
     "select_a_period": "Select a period",
     "no_programs": "No programs available",
     "no_suppliers": "No suppliers available",
+    "no_customers": "No customers available",
     "no_order_types": "No order types available",
     "no_periods": "No periods available",
     "program": "Program",
@@ -29,7 +31,8 @@
     "program_stocktake": "Program stocktake",
     "general_order": "General order",
     "emergency_order": "Emergency order",
-    "max_items": "Max. Items"
+    "max_items": "Max. Items",
+    "customer_is_store": "Warning: This customer is also a store"
   },
   "fr": {
     "select_a_program": "Sélectionnez un programme",

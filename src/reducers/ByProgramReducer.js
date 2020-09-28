@@ -23,6 +23,7 @@ export const initialState = ({ transactionType }) => ({
 const actions = {
   SELECT_PROGRAM: 'selectProgram',
   SELECT_SUPPLIER: 'selectSupplier',
+  SELECT_CUSTOMER: 'selectCustomer',
   SELECT_ORDER_TYPE: 'selectOrderType',
   SELECT_PERIOD: 'selectPeriod',
   SET_TOGGLE: 'setToggle',
@@ -37,6 +38,10 @@ const STEPS = {
   requisition: {
     program: ['supplier', 'program', 'orderType', 'period'],
     general: ['supplier'],
+  },
+  customerRequisition: {
+    program: ['customer', 'program', 'orderType', 'period'],
+    general: ['customer'],
   },
   stocktake: {
     program: ['program', 'name'],
@@ -67,6 +72,11 @@ export const selectProgram = value => ({
 
 export const selectSupplier = value => ({
   type: actions.SELECT_SUPPLIER,
+  value,
+});
+
+export const selectCustomer = value => ({
+  type: actions.SELECT_CUSTOMER,
   value,
 });
 
@@ -121,6 +131,17 @@ export const byProgramReducer = (state, action) => {
         isModalOpen: false,
         complete: false,
       };
+    case actions.SELECT_CUSTOMER:
+      return {
+        ...state,
+        customer: value,
+        program: null,
+        orderType: null,
+        period: null,
+        name: '',
+        isModalOpen: false,
+        complete: false,
+      };
     case actions.SELECT_SUPPLIER:
       return {
         ...state,
@@ -132,6 +153,7 @@ export const byProgramReducer = (state, action) => {
         isModalOpen: false,
         complete: false,
       };
+
     case actions.SELECT_ORDER_TYPE:
       return {
         ...state,

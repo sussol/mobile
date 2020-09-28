@@ -31,11 +31,20 @@ export class Period extends Realm.Object {
     return this.requisitions.length;
   }
 
-  requisitionsForOrderType(program, orderType) {
+  numberOfSupplierRequisitionsForOrderType(program, orderType) {
     return this.requisitions.filtered(
-      'program.id = $0 && orderType = $1',
+      'program.id = $0 && orderType = $1 && type == "request"',
       program.id,
       orderType.name
+    ).length;
+  }
+
+  numberOfCustomerRequisitionsForOrderType(program, orderType, name) {
+    return this.requisitions.filtered(
+      'program.id = $0 && orderType = $1 && otherStoreName = $2',
+      program.id,
+      orderType.name,
+      name
     ).length;
   }
 

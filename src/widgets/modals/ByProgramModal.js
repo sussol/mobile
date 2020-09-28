@@ -10,13 +10,18 @@ import { ModalContainer } from './ModalContainer';
 import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
 
 import { SETTINGS_KEYS } from '../../settings';
-import { getAllPrograms, getAllPeriodsForProgram } from '../../utilities';
+import {
+  getAllPrograms,
+  getAllPeriodsForProgram,
+  getAllProgramsForCustomer,
+} from '../../utilities';
 import { programStrings, navStrings } from '../../localization';
 import { UIDatabase } from '../../database';
 import {
   selectProgram,
   selectSupplier,
   selectOrderType,
+  selectCustomer,
   selectPeriod,
   setStoreTags,
   setSteps,
@@ -31,10 +36,14 @@ import { FlexColumn } from '../FlexColumn';
 
 const { THIS_STORE_TAGS, THIS_STORE_NAME_ID } = SETTINGS_KEYS;
 
-const modalProps = ({ dispatch, program, orderType }) => ({
+const modalProps = ({ dispatch, program, orderType, customer }) => ({
   program: {
     queryStringSecondary: 'name CONTAINS[c] $0',
     onSelect: value => dispatch(selectProgram(value)),
+  },
+  customer: {
+    secondaryFilterProperty: 'code',
+    onSelect: value => dispatch(selectCustomer(value)),
   },
   supplier: {
     secondaryFilterProperty: 'code',
@@ -73,7 +82,9 @@ const modalProps = ({ dispatch, program, orderType }) => ({
       const { requisitions } = getLocalizedStrings();
       const { maxOrdersPerPeriod, isEmergency } = orderType;
 
-      const requisitionsInPeriod = item.requisitionsForOrderType(program, orderType);
+      const requisitionsInPeriod = !customer
+        ? item.numberOfSupplierRequisitionsForOrderType(program, orderType)
+        : item.numberOfCustomerRequisitionsForOrderType(program, orderType, customer);
       const requisitionsCount = `${requisitionsInPeriod}/${maxOrdersPerPeriod} ${requisitions}`;
 
       const periodText = isEmergency
@@ -90,7 +101,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
     initialState({ transactionType })
   );
 
-  const { steps, modalData, program, orderType, period, supplier, name } = state;
+  const { steps, modalData, program, orderType, period, supplier, name, customer } = state;
   const strings = useMemo(() => getLocalizedStrings({ transactionType }), [transactionType]);
 
   const mounting = () => {
@@ -118,6 +129,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
     name,
     period,
     steps,
+    customer,
     state.isProgramBased,
   ]);
 
@@ -130,13 +142,19 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
     .map(({ description }) => description.toLowerCase());
 
   // Helper methods for fetching modal data for user selection
-  const getPrograms = () => getAllPrograms(settings, database);
+  const getPrograms = () => {
+    if (transactionType === 'customerRequisition') {
+      return getAllProgramsForCustomer(customer, database);
+    }
+    return getAllPrograms(settings, database);
+  };
   const getSuppliers = () => database.objects('InternalSupplier');
+  const getCustomers = () => database.objects('Customer');
   const getOrderTypes = () => program && program.getStoreTagObject(tags).orderTypes;
   const getPeriods = () => {
     if (!(program && orderType)) return null;
     const { periodScheduleName } = program.getStoreTagObject(tags);
-    return getAllPeriodsForProgram(database, program, periodScheduleName, orderType);
+    return getAllPeriodsForProgram(database, program, periodScheduleName, orderType, customer);
   };
 
   /** Call backs */
@@ -184,7 +202,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
         primaryFilterProperty="name"
         renderLeftText={item => `${item.name}`}
         options={modalData}
-        {...modalProps({ dispatch, program, orderType })[currentKey]}
+        {...modalProps({ dispatch, program, orderType, customer })[currentKey]}
       />
     );
     const Editor = () => (
@@ -208,7 +226,19 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
         type: 'select',
         field: 'name',
       }),
-      [program, state.isProgramBased, supplier]
+      [program, state.isProgramBased, supplier, customer]
+    ),
+    customer: useMemo(
+      () => ({
+        data: customer,
+        getModalData: getCustomers,
+        onPress: onOpenModal,
+        status: getStatus('customer'),
+        stepKey: 'customer',
+        type: 'select',
+        field: 'name',
+      }),
+      [program, supplier, state.isProgramBased, customer]
     ),
     supplier: useMemo(
       () => ({
@@ -266,7 +296,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
 
   return (
     <FlexColumn flex={1} alignItems="center">
-      <ProgramToggleBar />
+      {transactionType !== 'customerRequisition' ? <ProgramToggleBar /> : null}
       {steps.map(stepKey => (
         <Step key={stepKey} {...stepProps[stepKey]} />
       ))}
