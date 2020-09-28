@@ -8,7 +8,7 @@ import Realm from 'realm';
 import { parsePositiveInteger } from '../../utilities';
 import { UIDatabase } from '..';
 import { SETTINGS_KEYS } from '../../settings';
-import { createRecord } from '../utilities';
+import { NUMBER_OF_DAYS_IN_A_MONTH, createRecord } from '../utilities';
 
 /**
  * A requisition item (i.e. a requisition line).
@@ -31,7 +31,7 @@ export class RequisitionItem extends Realm.Object {
    * @return {bool} true if this item has total quantity of stock less than the threshold
    */
   get isLessThanThresholdMOS() {
-    return this.stockOnHand < this.dailyUsage * 30 * this.requisition.thresholdMOS;
+    return this.stockOnHand < this.monthlyUsage * this.requisition.thresholdMOS;
   }
 
   /**
@@ -76,7 +76,7 @@ export class RequisitionItem extends Realm.Object {
    * @return  {number}
    */
   get monthlyUsage() {
-    return this.dailyUsage * 30;
+    return this.dailyUsage * NUMBER_OF_DAYS_IN_A_MONTH;
   }
 
   /**
