@@ -103,13 +103,13 @@ export const closeDatePicker = route => ({
   payload: { route },
 });
 
-export const editDateCreated = (value, route) => (dispatch, getState) => {
+export const editCreatedDate = (value, route) => (dispatch, getState) => {
   const pageObject = selectPageObject(getState());
 
   UIDatabase.write(() => {
     UIDatabase.update('Requisition', {
       ...pageObject,
-      dateCreated: value,
+      createdDate: value,
     });
   });
 
@@ -265,5 +265,5 @@ export const PageActionsLookup = {
   saveLocation,
   openDatePicker,
   closeDatePicker,
-  editDateCreated,
+  editCreatedDate,
 };

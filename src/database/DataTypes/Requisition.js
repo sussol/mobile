@@ -479,7 +479,7 @@ Requisition.schema = {
     period: { type: 'Period', optional: true },
     otherStoreName: { type: 'Name', optional: true },
     customData: { type: 'string', optional: true },
-    dateCreated: { type: 'date', default: new Date() },
+    createdDate: { type: 'date', default: new Date() },
   },
 };
 

@@ -88,21 +88,21 @@ export const CustomerRequisition = ({
   onEditDaysOutOfStock,
   onEditRequiredQuantity,
   onRowPress,
-  onEditDateCreated,
+  onEditCreatedDate,
   datePickerIsOpen,
   onDatePickerClosed,
 }) => {
-  const { isFinalised, comment, program, isResponse, dateCreated, entryDate } = pageObject;
+  const { isFinalised, comment, program, isResponse, createdDate, entryDate } = pageObject;
 
   const datePickerCallback = ({ type, nativeEvent: { timestamp } }) => {
     onDatePickerClosed();
-    if (type === 'set') onEditDateCreated(new Date(timestamp));
+    if (type === 'set') onEditCreatedDate(new Date(timestamp));
   };
 
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, route), [
     comment,
     isFinalised,
-    dateCreated,
+    createdDate,
   ]);
 
   const runWithLoadingIndicator = useLoadingIndicator();
@@ -378,7 +378,7 @@ export const CustomerRequisition = ({
           onChange={datePickerCallback}
           mode="date"
           display="spinner"
-          value={dateCreated}
+          value={createdDate}
           maximumDate={entryDate}
         />
       )}
@@ -402,8 +402,8 @@ const mapDispatchToProps = dispatch => ({
     dispatch(PageActions.editIncomingStock(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
   onEditDaysOutOfStock: (value, rowKey) =>
     dispatch(PageActions.editDaysOutOfStock(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
-  onEditDateCreated: value =>
-    dispatch(PageActions.editDateCreated(value, ROUTES.CUSTOMER_REQUISITION)),
+  onEditCreatedDate: value =>
+    dispatch(PageActions.editCreatedDate(value, ROUTES.CUSTOMER_REQUISITION)),
   onDatePickerClosed: () => dispatch(PageActions.closeDatePicker(ROUTES.CUSTOMER_REQUISITION)),
 });
 
@@ -485,7 +485,7 @@ CustomerRequisition.propTypes = {
   onEditDaysOutOfStock: PropTypes.func.isRequired,
   onEditRequiredQuantity: PropTypes.func.isRequired,
   onRowPress: PropTypes.func.isRequired,
-  onEditDateCreated: PropTypes.func.isRequired,
+  onEditCreatedDate: PropTypes.func.isRequired,
   datePickerIsOpen: PropTypes.bool.isRequired,
   onDatePickerClosed: PropTypes.func.isRequired,
 };

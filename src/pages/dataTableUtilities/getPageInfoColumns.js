@@ -65,7 +65,7 @@ const PER_PAGE_INFO_COLUMNS = {
   ],
   [ROUTES.CUSTOMER_REQUISITIONS_WITH_PROGRAMS]: [
     ['program', 'orderType', 'monthsToSupply', 'entryDate'],
-    ['customer', 'requisitionComment', 'period', 'dateCreated'],
+    ['customer', 'requisitionComment', 'period', 'createdDate'],
   ],
   [ROUTES.PRESCRIPTION]: [
     ['entryDate', 'enteredBy'],
@@ -109,9 +109,9 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
     title: `${pageInfoStrings.amc_equals}`,
     info: `${pageInfoStrings.amc_formula}`,
   },
-  dateCreated: {
+  createdDate: {
     title: `${pageInfoStrings.date_created}:`,
-    info: `${formatDate(pageObject?.dateCreated)}`,
+    info: `${formatDate(pageObject?.createdDate)}`,
     onPress: () => dispatch(PageActions.openDatePicker(route)),
     editableType: 'date',
   },
