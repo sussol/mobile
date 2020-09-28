@@ -10,7 +10,7 @@ export const initialState = ({ transactionType }) => ({
   period: null,
   orderType: null,
   name: '',
-  currentKey: 'program',
+  currentKey: '',
   isProgramBased: true,
   isModalOpen: false,
   steps: STEPS[transactionType][getType({ isProgramBased: true })],
@@ -23,6 +23,7 @@ export const initialState = ({ transactionType }) => ({
 const actions = {
   SELECT_PROGRAM: 'selectProgram',
   SELECT_SUPPLIER: 'selectSupplier',
+  SELECT_CUSTOMER: 'selectCustomer',
   SELECT_ORDER_TYPE: 'selectOrderType',
   SELECT_PERIOD: 'selectPeriod',
   SET_TOGGLE: 'setToggle',
@@ -35,8 +36,12 @@ const actions = {
 
 const STEPS = {
   requisition: {
-    program: ['program', 'supplier', 'orderType', 'period'],
+    program: ['supplier', 'program', 'orderType', 'period'],
     general: ['supplier'],
+  },
+  customerRequisition: {
+    program: ['customer', 'program', 'orderType', 'period'],
+    general: ['customer'],
   },
   stocktake: {
     program: ['program', 'name'],
@@ -54,6 +59,7 @@ const getType = ({ isProgramBased }) => (isProgramBased ? TYPES.PROGRAM : TYPES.
 /**
  * Action Creators for ByProgramReducer
  */
+
 export const setSteps = value => ({
   type: actions.SET_STEPS,
   value,
@@ -66,6 +72,11 @@ export const selectProgram = value => ({
 
 export const selectSupplier = value => ({
   type: actions.SELECT_SUPPLIER,
+  value,
+});
+
+export const selectCustomer = value => ({
+  type: actions.SELECT_CUSTOMER,
   value,
 });
 
@@ -114,7 +125,17 @@ export const byProgramReducer = (state, action) => {
       return {
         ...state,
         program: value,
-        supplier: null,
+        orderType: null,
+        period: null,
+        name: '',
+        isModalOpen: false,
+        complete: false,
+      };
+    case actions.SELECT_CUSTOMER:
+      return {
+        ...state,
+        customer: value,
+        program: null,
         orderType: null,
         period: null,
         name: '',
@@ -125,12 +146,14 @@ export const byProgramReducer = (state, action) => {
       return {
         ...state,
         supplier: value,
+        program: null,
         orderType: null,
         period: null,
         name: '',
         isModalOpen: false,
         complete: false,
       };
+
     case actions.SELECT_ORDER_TYPE:
       return {
         ...state,
@@ -162,8 +185,8 @@ export const byProgramReducer = (state, action) => {
       };
     case actions.SET_TOGGLE: {
       const { isProgramBased, transactionType } = state;
-      const newIsProgramBasaed = !isProgramBased;
-      const steps = STEPS[transactionType][getType({ isProgramBased: newIsProgramBasaed })];
+      const newIsProgramBased = !isProgramBased;
+      const steps = STEPS[transactionType][getType({ isProgramBased: newIsProgramBased })];
       return {
         ...state,
         program: null,
@@ -171,7 +194,7 @@ export const byProgramReducer = (state, action) => {
         orderType: null,
         period: null,
         name: '',
-        isProgramBased: newIsProgramBasaed,
+        isProgramBased: newIsProgramBased,
         steps,
         complete: false,
         currentKey: null,

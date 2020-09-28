@@ -46,6 +46,8 @@ import { generalStrings, modalStrings } from '../../localization';
 const ADDITIONAL_MODAL_PROPS = {
   [MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM]: { noCancel: true, fullScreen: true },
   [MODAL_KEYS.ENFORCE_REQUISITION_REASON]: { noCancel: true, fullScreen: true },
+  [MODAL_KEYS.PROGRAM_REQUISITION]: { fullScreen: true },
+  [MODAL_KEYS.PROGRAM_STOCKTAKE]: { fullScreen: true },
 };
 
 const DataTablePageModalComponent = ({

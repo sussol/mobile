@@ -55,12 +55,12 @@ export const ModalContainer = ({
 
   const internalChildrenContainer = React.useMemo(
     () => wrapStyle(fullScreen ? fullScreenChildrenContainer : childrenContainer),
-    [backgroundColor]
+    [backgroundColor, fullScreen]
   );
 
   const internalContentContainer = React.useMemo(
     () => wrapStyle(fullScreen ? fullScreenContentContainer : contentContainer),
-    [backgroundColor]
+    [backgroundColor, fullScreen]
   );
 
   const CloseButton = React.useCallback(
