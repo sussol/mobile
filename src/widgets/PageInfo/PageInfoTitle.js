@@ -6,9 +6,9 @@ import { SUSSOL_ORANGE, APP_FONT_FAMILY } from '../../globalStyles';
 import { FlexRow } from '../FlexRow';
 
 export const PageInfoTitle = ({ isDisabled, colour, onPress, title }) => {
-  const style = { ...localStyles.text, ...localStyles.titleText, colour };
-  const disabled = onPress && !isDisabled;
-  const Container = disabled ? FlexRow : TouchableOpacity;
+  const style = { ...localStyles.text, ...localStyles.titleText, color: colour };
+  const editable = onPress && !isDisabled;
+  const Container = editable ? FlexRow : TouchableOpacity;
 
   return (
     <Container onPress={onPress} style={{ flex: 2 }}>
@@ -27,9 +27,14 @@ const localStyles = {
   },
 };
 
+PageInfoTitle.defaultProps = {
+  onPress: null,
+  isDisabled: false,
+};
+
 PageInfoTitle.propTypes = {
-  isDisabled: PropTypes.bool.isRequired,
+  isDisabled: PropTypes.bool,
+  onPress: PropTypes.func,
   colour: PropTypes.string.isRequired,
-  onPress: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
 };

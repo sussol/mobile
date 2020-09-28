@@ -6,12 +6,16 @@ import { PageInfoRow } from './PageInfoRow';
 
 export const PageInfoColumn = ({ columnData, isEditingDisabled, titleColour, infoColour }) => (
   <FlexColumn flex={1}>
-    {columnData.map(row => (
+    {columnData.map(({ onPress, editableType, title, info }) => (
       <PageInfoRow
+        key={title}
         isEditingDisabled={isEditingDisabled}
         titleColour={titleColour}
         infoColour={infoColour}
-        row={row}
+        onPress={onPress}
+        editableType={editableType}
+        info={info}
+        title={title}
       />
     ))}
   </FlexColumn>

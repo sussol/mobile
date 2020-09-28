@@ -7,17 +7,17 @@ import { FlexRow } from '../FlexRow';
 
 import { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../../globalStyles';
 
-export const PageInfoDetail = ({ isDisabled, onPress, info, type, color }) => {
+export const PageInfoDetail = ({ isDisabled, onPress, info, type, colour }) => {
   const editable = onPress && !isDisabled;
   const border = editable && type === 'text' ? localStyles.bottomBorder : {};
-  const iconLookups = { selectable: 'angle-down', text: 'pencil' };
+  const iconLookups = { selectable: 'angle-down', text: 'pencil', date: 'calendar' };
   const iconName = iconLookups[type ?? 'text'];
   const Container = editable ? TouchableOpacity : View;
 
   return (
     <Container onPress={onPress} style={{ flex: 3 }}>
       <FlexRow justifyContent="space-between" style={border}>
-        <Text style={{ ...localStyles.text, color }} numberOfLines={1}>
+        <Text style={{ ...localStyles.text, color: colour }} numberOfLines={1}>
           {info}
         </Text>
 
@@ -44,12 +44,15 @@ export const localStyles = {
 
 PageInfoDetail.defaultProps = {
   isDisabled: false,
+  info: '',
+  type: '',
+  onPress: null,
 };
 
 PageInfoDetail.propTypes = {
   isDisabled: PropTypes.bool,
-  onPress: PropTypes.func.isRequired,
-  info: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
-  color: PropTypes.string.isRequired,
+  onPress: PropTypes.func,
+  info: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  type: PropTypes.string,
+  colour: PropTypes.string.isRequired,
 };
