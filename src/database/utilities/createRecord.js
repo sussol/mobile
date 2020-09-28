@@ -805,11 +805,13 @@ const createRequisitionItem = (database, requisition, item, dailyUsage, stockOnH
 
     const sum = withinDateRange.reduce((acc, { totalQuantity }) => acc + totalQuantity, 0);
 
-    requisitionItem.incoming = sum;
+    requisitionItem.incomingStock = sum;
+    requisitionItem.stockOnHand = requisitionItem.incomingStock + requisitionItem.openingStock;
   }
 
   requisition.addItem(requisitionItem);
   database.save('Requisition', requisition);
+  database.save('RequisitionItem', requisitionItem);
 
   return requisitionItem;
 };
