@@ -11,7 +11,7 @@ import { ScrollView } from 'react-native';
 
 import { formatExpiryDate } from '../../utilities';
 
-import { PageInfo } from '../PageInfo';
+import { PageInfo } from '../PageInfo/PageInfo';
 
 import { tableStrings, generalStrings } from '../../localization';
 import { DARKER_GREY, SUSSOL_ORANGE } from '../../globalStyles';
@@ -69,8 +69,8 @@ export const ItemDetailsComponent = ({ item }) => {
 
   return (
     <ScrollView indicatorStyle="white" style={localStyles.container}>
-      <PageInfo titleColor={SUSSOL_ORANGE} infoColor="white" columns={getItemInfo()} />
-      <PageInfo titleColor={SUSSOL_ORANGE} infoColor="white" columns={getBatchInfo()} />
+      <PageInfo titleColour={SUSSOL_ORANGE} infoColor="white" columns={getItemInfo()} />
+      <PageInfo titleColour={SUSSOL_ORANGE} infoColor="white" columns={getBatchInfo()} />
     </ScrollView>
   );
 };

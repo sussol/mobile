@@ -8,7 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
 
-import { PageInfo } from './PageInfo';
+import { PageInfo } from './PageInfo/PageInfo';
 
 import { getPageInfoColumns } from '../pages/dataTableUtilities';
 
@@ -17,8 +17,8 @@ import { DARKER_GREY, WHITE, SUSSOL_ORANGE } from '../globalStyles';
 const CustomerRequisitionItemDetailsComponent = ({ item }) => (
   <View style={localStyles.container}>
     <PageInfo
-      titleColor={SUSSOL_ORANGE}
-      infoColor={WHITE}
+      titleColour={SUSSOL_ORANGE}
+      infoColour={WHITE}
       columns={getPageInfoColumns('supplierRequisitionItemDetail')(item)}
     />
   </View>

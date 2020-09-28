@@ -23,7 +23,7 @@ export { LineChart } from './LineChart';
 export { OnePressButton } from './OnePressButton';
 export { PageButton } from './PageButton';
 export { PageButtonWithOnePress } from './PageButtonWithOnePress';
-export { PageInfo } from './PageInfo';
+export { PageInfo } from './PageInfo/PageInfo';
 export { PieChart } from './PieChart';
 export { ReportTable } from './ReportTable';
 export { ResultRow } from './ResultRow';
