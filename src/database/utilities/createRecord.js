@@ -691,7 +691,9 @@ const createRequisition = (
   const { name: orderTypeName, maxMOS, thresholdMOS } = orderType || {};
   const regimenData =
     program && program.parsedProgramSettings ? program.parsedProgramSettings.regimenData : null;
-  const daysToSupply = ((monthsLeadTime || 0) + (maxMOS || 1)) * NUMBER_OF_DAYS_IN_A_MONTH;
+  const daysToSupply = Math.ceil(
+    ((monthsLeadTime || 0) + (maxMOS || 1)) * NUMBER_OF_DAYS_IN_A_MONTH
+  );
 
   const requisition = database.create('Requisition', {
     id: generateUUID(),
@@ -725,7 +727,7 @@ const createCustomerRequisition = (
 ) => {
   const { REQUISITION_SERIAL_NUMBER } = NUMBER_SEQUENCE_KEYS;
   const { name: orderTypeName, maxMOS, thresholdMOS } = orderType || {};
-  const daysToSupply = (maxMOS || 1) * 30;
+  const daysToSupply = (maxMOS || 1) * NUMBER_OF_DAYS_IN_A_MONTH;
 
   const requisition = database.create('Requisition', {
     id: generateUUID(),
@@ -787,7 +789,7 @@ const createRequisitionItem = (database, requisition, item, dailyUsage, stockOnH
       const { id: realItemId } = realItem;
       const matchedItem = requisitions[0].items.find(({ item: { id } }) => id === realItemId);
       if (matchedItem) {
-        requisitionItem.openingStock = matchedItem.closingStock;
+        requisitionItem.openingStock = matchedItem.closingStock ?? 0;
       }
     }
 
