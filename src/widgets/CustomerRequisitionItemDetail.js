@@ -19,7 +19,7 @@ const CustomerRequisitionItemDetailsComponent = ({ item }) => (
     <PageInfo
       titleColor={SUSSOL_ORANGE}
       infoColor={WHITE}
-      columns={getPageInfoColumns('customerRequisitionItemDetail')(item)}
+      columns={getPageInfoColumns('supplierRequisitionItemDetail')(item)}
     />
   </View>
 );

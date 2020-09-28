@@ -10,8 +10,8 @@ import { ROUTES } from '../../navigation/constants';
 import { MODALS } from '../../widgets/constants';
 import { PageActions } from './actions';
 import { formatTemperatureExposure, formatTimeDifference } from '../../utilities/formatters';
-import { UIDatabase } from '../../database/index';
-import { NUMBER_OF_DAYS_IN_A_MONTH } from '../../database/utilities/index';
+import { UIDatabase } from '../../database';
+import { NUMBER_OF_DAYS_IN_A_MONTH } from '../../database/utilities';
 
 /**
  * PageInfo rows/columns for use with the PageInfo component.
