@@ -85,6 +85,12 @@ export class RequisitionItem extends Realm.Object {
    * @return  {number}
    */
   get suggestedQuantity() {
+    if (this.requisition.isResponse && this.requisition.program) {
+      const daysInPeriod = this.numberOfDaysInPeriod ?? 1;
+      const dailyConsumption = this.outgoingStock / (daysInPeriod - this.daysOutOfStock);
+      return dailyConsumption * this.requisition.daysToSupply - this.stockOnHand;
+    }
+
     const daysToSupply = this.requisition ? this.requisition.daysToSupply : 0;
     return Math.ceil(Math.max(this.dailyUsage * daysToSupply - this.stockOnHand, 0));
   }

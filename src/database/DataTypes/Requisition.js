@@ -297,8 +297,8 @@ export class Requisition extends Realm.Object {
     }
 
     this.program.items.forEach(({ item }) => {
-      const usage = programDailyUsage(item, this.period);
-      const stockOnHand = item.geTotalQuantityOnDate(this.period.endDate);
+      const usage = this.isRequest ? programDailyUsage(item, this.period) : 0;
+      const stockOnHand = this.isRequest ? item.geTotalQuantityOnDate(this.period.endDate) : 0;
       createRecord(database, 'RequisitionItem', this, item, usage, stockOnHand);
     });
   }

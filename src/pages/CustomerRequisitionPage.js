@@ -38,6 +38,7 @@ import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
 import globalStyles from '../globalStyles';
 import { tableStrings, buttonStrings, generalStrings, programStrings } from '../localization';
+import { RowDetailActions } from '../actions/RowDetailActions';
 
 /**
  * Renders a mSupply mobile page with a customer requisition loaded for editing
@@ -86,8 +87,9 @@ export const CustomerRequisition = ({
   onEditIncomingStock,
   onEditDaysOutOfStock,
   onEditRequiredQuantity,
+  onRowPress,
 }) => {
-  const { isFinalised, comment, program } = pageObject;
+  const { isFinalised, comment, program, isResponse } = pageObject;
 
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, route), [
     comment,
@@ -180,10 +182,11 @@ export const CustomerRequisition = ({
           rowIndex={index}
           getCellError={getCellError}
           isValidated={fieldsAreValid}
+          onPress={isResponse && !!program ? onRowPress : null}
         />
       );
     },
-    [columns, data, dataState, columnSet]
+    [columns, data, dataState, columnSet, isResponse, program]
   );
 
   const renderHeader = useCallback(
@@ -367,7 +370,8 @@ export const CustomerRequisition = ({
 
 const mapDispatchToProps = dispatch => ({
   ...getPageDispatchers(dispatch, 'Requisition', ROUTES.CUSTOMER_REQUISITION),
-
+  onRowPress: requisitionItem =>
+    dispatch(RowDetailActions.openCustomerRequisitionItemDetail(requisitionItem)),
   onEditOpeningStock: (value, rowKey) =>
     dispatch(PageActions.editOpeningStock(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
   onEditNegativeAdjustments: (value, rowKey) =>
@@ -459,4 +463,5 @@ CustomerRequisition.propTypes = {
   onEditIncomingStock: PropTypes.func.isRequired,
   onEditDaysOutOfStock: PropTypes.func.isRequired,
   onEditRequiredQuantity: PropTypes.func.isRequired,
+  onRowPress: PropTypes.func.isRequired,
 };

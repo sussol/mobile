@@ -11,6 +11,7 @@ import { MODALS } from '../../widgets/constants';
 import { PageActions } from './actions';
 import { formatTemperatureExposure, formatTimeDifference } from '../../utilities/formatters';
 import { UIDatabase } from '../../database/index';
+import { NUMBER_OF_DAYS_IN_A_MONTH } from '../../database/utilities/index';
 
 /**
  * PageInfo rows/columns for use with the PageInfo component.
@@ -85,9 +86,39 @@ const PER_PAGE_INFO_COLUMNS = {
     ['breachDuration', 'location'],
     ['numberOfAffectedBatches', 'affectedQuantity'],
   ],
+  customerRequisitionItemDetail: [
+    [
+      'customerRequisitionProgramSuggestedFormulaString',
+      'customerRequisitionProgramSuggestedFormula',
+      'customerRequisitionProgramAMCFormulaString',
+      'customerRequisitionProgramAMCFormula',
+    ],
+  ],
 };
 
 const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
+  customerRequisitionProgramSuggestedFormulaString: {
+    title: ` ${pageInfoStrings.suggested_equals}`,
+    info: `${pageInfoStrings.suggested_formula}`,
+  },
+  customerRequisitionProgramSuggestedFormula: {
+    title: `${pageObject.suggestedQuantity?.toFixed(2)} =`,
+    info: `${pageObject.outgoingStock} / (${pageObject.numberOfDaysInPeriod} - ${pageObject.daysOutOfStock})`,
+  },
+  customerRequisitionProgramAMCFormulaString: {
+    title: `${pageInfoStrings.amc_equals}`,
+    info: `${pageInfoStrings.amc_formula}`,
+  },
+  customerRequisitionProgramAMCFormula: {
+    title: `${(
+      (pageObject.outgoingStock * NUMBER_OF_DAYS_IN_A_MONTH) /
+      (pageObject.numberOfDaysInPeriod - pageObject.daysOutOfStock)
+    )?.toFixed(2)} = `,
+    info: `${pageObject.outgoingStock?.toFixed(2)} x ${NUMBER_OF_DAYS_IN_A_MONTH?.toFixed(2)} / ${
+      pageObject.numberOfDaysInPeriod
+    } - ${pageObject.daysOutOfStock}`,
+  },
+
   lastRequisitionDate: {
     title: `${pageInfoStrings.last_requisition_date}:`,
     info: formatDate(pageObject?.lastRequisitionDate, 'll') || generalStrings.not_available,
