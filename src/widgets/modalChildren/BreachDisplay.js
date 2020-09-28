@@ -13,7 +13,7 @@ import { getPageInfoColumns } from '../../pages/dataTableUtilities';
 import { chunk } from '../../utilities/chunk';
 
 import { BreachChart } from '../BreachChart';
-import { PageInfo } from '../PageInfo';
+import { PageInfo } from '../PageInfo/PageInfo';
 
 import { WHITE, SUSSOL_ORANGE } from '../../globalStyles';
 
