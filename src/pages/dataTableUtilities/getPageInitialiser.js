@@ -135,7 +135,7 @@ const customerRequisitionInitialiser = requisition => {
   return {
     pageObject: requisition,
     backingData: requisition.items,
-    columnSet: 'a',
+    columnSet: program ? 'b' : 'a',
     data: sortedData,
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
