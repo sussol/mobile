@@ -246,8 +246,16 @@ export const CustomerRequisition = ({
         {program && (
           <ToggleBar
             toggles={[
-              { text: 'Columns', onPress: onToggleColumnSet, isOn: columnSet === 'a' },
-              { text: 'Data Entry', onPress: onToggleColumnSet, isOn: columnSet === 'b' },
+              {
+                text: buttonStrings.customer_data,
+                onPress: onToggleColumnSet,
+                isOn: columnSet === 'b',
+              },
+              {
+                text: buttonStrings.supply_data,
+                onPress: onToggleColumnSet,
+                isOn: columnSet === 'a',
+              },
             ]}
           />
         )}
