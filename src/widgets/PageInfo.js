@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
@@ -120,26 +121,20 @@ const PageInfoComponent = props => {
         const isRightMostColumn = columnIndex === props.columns.length - 1;
         return (
           <View
-            // TODO: use key which is not index.
-            // eslint-disable-next-line react/no-array-index-key
             key={`Column ${columnIndex}`}
             style={
               isRightMostColumn ? localStyles.rightmostColumnContainer : localStyles.columnContainer
             }
           >
             <View>
-              {columnData
-                .filter(data => !data.shouldHide)
-                .map((...args) =>
-                  renderTitleComponent(isEditingDisabled, columnIndex, titleColor, ...args)
-                )}
+              {columnData.map((...args) =>
+                renderTitleComponent(isEditingDisabled, columnIndex, titleColor, ...args)
+              )}
             </View>
             <View style={localStyles.infoContainer}>
-              {columnData
-                .filter(data => !data.shouldHide)
-                .map((...args) =>
-                  renderInfoComponent(isEditingDisabled, columnIndex, infoColor, ...args)
-                )}
+              {columnData.map((...args) =>
+                renderInfoComponent(isEditingDisabled, columnIndex, infoColor, ...args)
+              )}
             </View>
           </View>
         );
