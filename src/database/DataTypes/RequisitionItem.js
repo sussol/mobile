@@ -243,7 +243,7 @@ RequisitionItem.schema = {
     dailyUsage: { type: 'double', optional: true },
     imprestQuantity: { type: 'double', optional: true },
     requiredQuantity: { type: 'double', optional: true },
-    suppliedQuantity: { type: 'double', optional: true },
+    suppliedQuantity: { type: 'double', default: 0 },
     comment: { type: 'string', optional: true },
     sortIndex: { type: 'int', optional: true },
     option: { type: 'Options', optional: true },

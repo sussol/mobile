@@ -31,7 +31,7 @@ import {
   selectIndicatorTableColumns,
   selectIndicatorTableRows,
 } from '../selectors/indicators';
-import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
+import { getColumns, getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
 import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
@@ -76,8 +76,10 @@ export const CustomerRequisition = ({
   onSelectIndicator,
   onEditSuppliedQuantity,
   route,
+  onToggleColumnSet,
+  columnSet,
 }) => {
-  const { isFinalised, comment } = pageObject;
+  const { isFinalised, comment, program } = pageObject;
 
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, route), [
     comment,
@@ -113,6 +115,7 @@ export const CustomerRequisition = ({
     listItem => {
       const { item, index } = listItem;
       const rowKey = keyExtractor(item);
+
       return (
         <DataTableRow
           rowData={data[index]}
@@ -124,7 +127,7 @@ export const CustomerRequisition = ({
         />
       );
     },
-    [columns, data, dataState]
+    [columns, data, dataState, columnSet]
   );
 
   const renderHeader = useCallback(
@@ -240,9 +243,25 @@ export const CustomerRequisition = ({
     return (
       <View style={verticalContainer}>
         <Buttons />
+        {program && (
+          <ToggleBar
+            toggles={[
+              {
+                text: buttonStrings.customer_data,
+                onPress: onToggleColumnSet,
+                isOn: columnSet === 'b',
+              },
+              {
+                text: buttonStrings.supply_data,
+                onPress: onToggleColumnSet,
+                isOn: columnSet === 'a',
+              },
+            ]}
+          />
+        )}
       </View>
     );
-  }, [usingIndicators, showIndicators, indicatorCodes, currentIndicatorCode]);
+  }, [usingIndicators, showIndicators, indicatorCodes, currentIndicatorCode, columnSet, program]);
 
   const placeholderStrings = useMemo(
     () => ({
@@ -306,6 +325,11 @@ const mapStateToProps = state => {
   const { customerRequisition = {} } = pages;
   const { usingIndicators = false, showIndicators = false } = customerRequisition;
 
+  const columns =
+    customerRequisition.columnSet === 'a'
+      ? getColumns(ROUTES.CUSTOMER_REQUISITION)
+      : getColumns('customerRequisitionFormEntry');
+
   if (usingIndicators && showIndicators) {
     return {
       ...customerRequisition,
@@ -316,7 +340,7 @@ const mapStateToProps = state => {
     };
   }
 
-  return customerRequisition;
+  return { ...customerRequisition, columns };
 };
 
 export const CustomerRequisitionPage = connect(
@@ -364,4 +388,6 @@ CustomerRequisition.propTypes = {
   onToggleIndicators: PropTypes.func.isRequired,
   onSelectIndicator: PropTypes.func.isRequired,
   route: PropTypes.string.isRequired,
+  onToggleColumnSet: PropTypes.func.isRequired,
+  columnSet: PropTypes.string.isRequired,
 };

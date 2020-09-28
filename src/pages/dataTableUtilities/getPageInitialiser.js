@@ -124,7 +124,7 @@ export const customerInvoicesInitialiser = () => {
  * @returns  {object}
  */
 const customerRequisitionInitialiser = requisition => {
-  const { indicators, items: backingData } = requisition;
+  const { indicators, items: backingData, program } = requisition;
   const sortedData = backingData.sorted('item.name').slice();
 
   const usingIndicators = !!indicators?.length;
@@ -135,6 +135,7 @@ const customerRequisitionInitialiser = requisition => {
   return {
     pageObject: requisition,
     backingData: requisition.items,
+    columnSet: program ? 'b' : 'a',
     data: sortedData,
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),

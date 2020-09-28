@@ -32,6 +32,7 @@ export const MODAL_KEYS = {
   SELECT_LANGUAGE: 'selectLanguage',
   PROGRAM_REQUISITION: 'programRequisition',
   PROGRAM_STOCKTAKE: 'programStocktake',
+  PROGRAM_CUSTOMER_REQUISITION: 'programCustomerRequisition',
   VIEW_REGIMEN_DATA: 'viewRegimenData',
   EDIT_STOCKTAKE_BATCH: 'editStocktakeBatch',
   STOCKTAKE_OUTDATED_ITEM: 'stocktakeOutdatedItems',
@@ -49,6 +50,7 @@ export const getModalTitle = modalKey => {
   switch (modalKey) {
     default:
       return '';
+    case MODAL_KEYS.PROGRAM_CUSTOMER_REQUISITION:
     case MODAL_KEYS.PROGRAM_REQUISITION:
       return `${navStrings.requisition} ${programStrings.details}`;
     case MODAL_KEYS.PROGRAM_STOCKTAKE:

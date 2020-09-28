@@ -139,6 +139,7 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
     onEditSellPrice: (newValue, rowKey) =>
       dispatch(PageActions.editSellPrice(newValue, rowKey, route)),
     dispatch,
+    onToggleColumnSet: () => dispatch(PageActions.toggleColumnSet(route)),
   };
 
   return dispatches;

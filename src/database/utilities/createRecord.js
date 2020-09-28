@@ -719,6 +719,44 @@ const createRequisition = (
 };
 
 /**
+ * Creates a customer requisition.
+ * @param {Database} database App-wide database accessor
+ * @param {User} user currently logged in user
+ * @param {Object} Program params Additional program-based parameters.
+ */
+const createCustomerRequisition = (
+  database,
+  user,
+  { otherStoreName, program, period, orderType = {} }
+) => {
+  const { REQUISITION_SERIAL_NUMBER } = NUMBER_SEQUENCE_KEYS;
+  const { name: orderTypeName, maxMOS, thresholdMOS } = orderType || {};
+  const daysToSupply = (maxMOS || 1) * NUMBER_OF_DAYS_IN_A_MONTH;
+
+  const requisition = database.create('Requisition', {
+    id: generateUUID(),
+    serialNumber: getNextNumber(database, REQUISITION_SERIAL_NUMBER),
+    status: 'suggested',
+    type: 'response',
+    entryDate: new Date(),
+    daysToSupply,
+    enteredBy: user,
+    otherStoreName,
+    program,
+    orderType: orderTypeName,
+    thresholdMOS,
+    period,
+  });
+
+  if (period) {
+    period.addRequisitionIfUnique(requisition);
+    database.save('Period', period);
+  }
+
+  return requisition;
+};
+
+/**
  * Create a new requisition item.
  *
  * @param   {Database}        database
@@ -1086,6 +1124,8 @@ const createUpgradeMessage = (database, fromVersion, toVersion) => {
  */
 export const createRecord = (database, type, ...args) => {
   switch (type) {
+    case 'CustomerRequisition':
+      return createCustomerRequisition(database, ...args);
     case 'CustomerInvoice':
       return createCustomerInvoice(database, ...args);
     case 'NumberSequence':

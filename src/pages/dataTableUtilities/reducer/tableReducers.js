@@ -300,6 +300,11 @@ export const toggleSensors = state => {
   };
 };
 
+export const toggleColumnSet = state => ({
+  ...state,
+  columnSet: state.columnSet === 'a' ? 'b' : 'a',
+});
+
 export const TableReducerLookup = {
   toggleStockOut,
   toggleShowFinalised,
@@ -317,4 +322,5 @@ export const TableReducerLookup = {
   filterDataWithOverStockToggle,
   toggleFridges,
   toggleSensors,
+  toggleColumnSet,
 };
