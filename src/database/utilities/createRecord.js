@@ -731,7 +731,7 @@ const createCustomerRequisition = (
 ) => {
   const { REQUISITION_SERIAL_NUMBER } = NUMBER_SEQUENCE_KEYS;
   const { name: orderTypeName, maxMOS, thresholdMOS } = orderType || {};
-  const daysToSupply = (maxMOS || 1) * 30;
+  const daysToSupply = (maxMOS || 1) * NUMBER_OF_DAYS_IN_A_MONTH;
 
   const requisition = database.create('Requisition', {
     id: generateUUID(),
