@@ -718,6 +718,12 @@ const createRequisition = (
   return requisition;
 };
 
+/**
+ * Creates a customer requisition.
+ * @param {Database} database App-wide database accessor
+ * @param {User} user currently logged in user
+ * @param {Object} Program params Additional program-based parameters.
+ */
 const createCustomerRequisition = (
   database,
   user,
