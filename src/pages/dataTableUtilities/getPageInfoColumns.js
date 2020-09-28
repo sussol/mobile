@@ -79,7 +79,7 @@ const PER_PAGE_INFO_COLUMNS = {
     ['entryDate', 'confirmDate', 'transactionCategory'],
     ['enteredBy', 'otherParty'],
   ],
-  requisitionItemDetail: [['lastRequisitionDate', 'openVialWastage', 'closedVialWastage']],
+  supplierRequisitionItemDetail: [['lastRequisitionDate', 'openVialWastage', 'closedVialWastage']],
   breach: [
     ['breachTemperatureRange'],
     ['breachDuration', 'location'],

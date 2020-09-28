@@ -14,12 +14,12 @@ import { getPageInfoColumns } from '../pages/dataTableUtilities';
 
 import { DARKER_GREY, WHITE, SUSSOL_ORANGE } from '../globalStyles';
 
-const RequisitionItemDetailsComponent = ({ item }) => (
+const SupplierRequisitionItemDetailsComponent = ({ item }) => (
   <View style={localStyles.container}>
     <PageInfo
       titleColor={SUSSOL_ORANGE}
       infoColor={WHITE}
-      columns={getPageInfoColumns('requisitionItemDetail')(item)}
+      columns={getPageInfoColumns('supplierRequisitionItemDetail')(item)}
     />
   </View>
 );
@@ -34,6 +34,6 @@ const localStyles = StyleSheet.create({
   },
 });
 
-RequisitionItemDetailsComponent.propTypes = { item: PropTypes.object.isRequired };
+SupplierRequisitionItemDetailsComponent.propTypes = { item: PropTypes.object.isRequired };
 
-export const RequisitionItemDetails = React.memo(RequisitionItemDetailsComponent);
+export const SupplierRequisitionItemDetails = React.memo(SupplierRequisitionItemDetailsComponent);

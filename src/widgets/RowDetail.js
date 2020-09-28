@@ -13,7 +13,7 @@ import Modal from 'react-native-modalbox';
 import { ItemDetails } from './bottomModals';
 import { CloseIcon } from './icons';
 import { RowDetailActions, ROW_DETAIL_KEYS } from '../actions/RowDetailActions';
-import { RequisitionItemDetails } from './RequisitionItemDetail';
+import { SupplierRequisitionItemDetails } from './SupplierRequisitionItemDetail';
 
 import { DARKER_GREY } from '../globalStyles';
 import { selectRowDetailIsOpen } from '../selectors/rowDetail';
@@ -58,7 +58,7 @@ export const RowDetailComponent = ({
       case ROW_DETAIL_KEYS.ITEM_DETAIL:
         return <ItemDetails item={rowData} />;
       case ROW_DETAIL_KEYS.REQUISITION_ITEM_DETAIL:
-        return <RequisitionItemDetails item={rowData} />;
+        return <SupplierRequisitionItemDetails item={rowData} />;
       default:
         return null;
     }
