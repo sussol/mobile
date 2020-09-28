@@ -28,6 +28,8 @@ export const ACTIONS = {
   OPEN_MODAL: 'openModal',
   CLOSE_MODAL: 'closeModal',
   EDIT_NAME: 'editName',
+  OPEN_DATE_PICKER: 'openDatePicker',
+  CLOSE_DATE_PICKER: 'closeDatePicker',
 
   // rowAction constants
   REFRESH_ROW: 'refreshRow',

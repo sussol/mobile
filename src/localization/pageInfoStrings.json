@@ -25,7 +25,8 @@
     "suggested_equals": "SUGGESTED =",
     "suggested_formula": "DAILY CONSUMPTION x DAYS TO SUPPLY - STOCK ON HAND",
     "amc_equals": "AMC = ",
-    "amc_formula": "OUTGOING STOCK x NUMBER OF DAYS IN A MONTH / (DAYS IN PERIOD - DAYS OUT OF STOCK)"
+    "amc_formula": "OUTGOING STOCK x NUMBER OF DAYS IN A MONTH / (DAYS IN PERIOD - DAYS OUT OF STOCK)",
+    "date_created": "Date created,"
   },
   "fr": {
     "category": "Catégorie",

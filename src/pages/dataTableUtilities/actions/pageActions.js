@@ -93,6 +93,29 @@ export const openModal = (modalKey, value, route) => {
   }
 };
 
+export const openDatePicker = route => ({
+  type: ACTIONS.OPEN_DATE_PICKER,
+  payload: { route },
+});
+
+export const closeDatePicker = route => ({
+  type: ACTIONS.CLOSE_DATE_PICKER,
+  payload: { route },
+});
+
+export const editDateCreated = (value, route) => (dispatch, getState) => {
+  const pageObject = selectPageObject(getState());
+
+  UIDatabase.write(() => {
+    UIDatabase.update('Requisition', {
+      ...pageObject,
+      dateCreated: value,
+    });
+  });
+
+  dispatch(closeDatePicker(route));
+};
+
 export const editPrescriber = (value, route) => (dispatch, getState) => {
   const pageObject = selectPageObject(getState());
 
@@ -240,4 +263,7 @@ export const PageActionsLookup = {
   editPrescriber,
   updatePaymentType,
   saveLocation,
+  openDatePicker,
+  closeDatePicker,
+  editDateCreated,
 };

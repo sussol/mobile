@@ -8,7 +8,7 @@ import { FlexRow } from '../FlexRow';
 export const PageInfoTitle = ({ isDisabled, colour, onPress, title }) => {
   const style = { ...localStyles.text, ...localStyles.titleText, color: colour };
   const editable = onPress && !isDisabled;
-  const Container = editable ? FlexRow : TouchableOpacity;
+  const Container = editable ? TouchableOpacity : FlexRow;
 
   return (
     <Container onPress={onPress} style={{ flex: 2 }}>

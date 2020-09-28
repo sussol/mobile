@@ -7,6 +7,7 @@
 
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import { View, StyleSheet, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
@@ -88,12 +89,21 @@ export const CustomerRequisition = ({
   onEditDaysOutOfStock,
   onEditRequiredQuantity,
   onRowPress,
+  onEditDateCreated,
+  datePickerIsOpen,
+  onDatePickerClosed,
 }) => {
-  const { isFinalised, comment, program, isResponse } = pageObject;
+  const { isFinalised, comment, program, isResponse, dateCreated, entryDate } = pageObject;
+
+  const datePickerCallback = ({ type, nativeEvent: { timestamp } }) => {
+    onDatePickerClosed();
+    if (type === 'set') onEditDateCreated(new Date(timestamp));
+  };
 
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, route), [
     comment,
     isFinalised,
+    dateCreated,
   ]);
 
   const runWithLoadingIndicator = useLoadingIndicator();
@@ -364,6 +374,15 @@ export const CustomerRequisition = ({
         dispatch={dispatch}
         currentValue={modalValue}
       />
+      {datePickerIsOpen && (
+        <DateTimePicker
+          onChange={datePickerCallback}
+          mode="date"
+          display="spinner"
+          value={dateCreated}
+          maximumDate={entryDate}
+        />
+      )}
     </DataTablePageView>
   );
 };
@@ -384,6 +403,9 @@ const mapDispatchToProps = dispatch => ({
     dispatch(PageActions.editIncomingStock(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
   onEditDaysOutOfStock: (value, rowKey) =>
     dispatch(PageActions.editDaysOutOfStock(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
+  onEditDateCreated: value =>
+    dispatch(PageActions.editDateCreated(value, ROUTES.CUSTOMER_REQUISITION)),
+  onDatePickerClosed: () => dispatch(PageActions.closeDatePicker(ROUTES.CUSTOMER_REQUISITION)),
 });
 
 const mapStateToProps = state => {
@@ -464,4 +486,7 @@ CustomerRequisition.propTypes = {
   onEditDaysOutOfStock: PropTypes.func.isRequired,
   onEditRequiredQuantity: PropTypes.func.isRequired,
   onRowPress: PropTypes.func.isRequired,
+  onEditDateCreated: PropTypes.func.isRequired,
+  datePickerIsOpen: PropTypes.bool.isRequired,
+  onDatePickerClosed: PropTypes.func.isRequired,
 };

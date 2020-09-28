@@ -151,6 +151,7 @@ const customerRequisitionInitialiser = requisition => {
     indicatorColumns,
     indicatorRows,
     indicators,
+    datePickerIsOpen: false,
     route: ROUTES.CUSTOMER_REQUISITION,
     columns: getColumns(ROUTES.CUSTOMER_REQUISITION),
     getPageInfoColumns: getPageInfoColumns(

@@ -15,6 +15,10 @@ export const updatePaymentType = (state, action) => {
   return { ...state, currentPaymentType: paymentType };
 };
 
+export const openDatePicker = state => ({ ...state, datePickerIsOpen: true });
+
+export const closeDatePicker = state => ({ ...state, datePickerIsOpen: false });
+
 /**
  * Edits the name field in the current stores state.
  */
@@ -135,4 +139,11 @@ export const openModal = (state, action) => {
  */
 export const closeModal = state => ({ ...state, modalKey: '', modalValue: null });
 
-export const PageReducerLookup = { editName, openModal, closeModal, updatePaymentType };
+export const PageReducerLookup = {
+  editName,
+  openModal,
+  closeModal,
+  updatePaymentType,
+  openDatePicker,
+  closeDatePicker,
+};
