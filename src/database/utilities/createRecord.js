@@ -784,14 +784,23 @@ const createRequisitionItem = (database, requisition, item, dailyUsage, stockOnH
 
   if (program && type === 'response') {
     const { startDate, endDate } = period;
+    const { id: realItemId } = realItem;
+
     const requisitions = database
       .objects('Requisition')
-      .filtered('otherStoreName == $0 && program != null && status == "finalised"', otherStoreName)
-      .sorted('period.startDate');
+      .filtered(
+        'otherStoreName == $0 && program == $1 && status == "finalised" && type == "response"',
+        otherStoreName,
+        program
+      )
+      .sorted([
+        ['period.startDate', true],
+        ['entryDate', true],
+      ]);
 
     if (requisitions.length) {
       const { id: requisitionId } = requisitions[0];
-      const { id: realItemId } = realItem;
+
       const lastRequisitionItem = database
         .objects('RequisitionItem')
         .filtered('requisition.id == $0 && item.id == $1', requisitionId, realItemId);
@@ -799,11 +808,13 @@ const createRequisitionItem = (database, requisition, item, dailyUsage, stockOnH
       if (lastRequisitionItem[0]) requisitionItem.openingStock = lastRequisitionItem[0].stockOnHand;
     }
 
-    const customerInvoices = database.objects('TransactionBatch').filtered(
-      // eslint-disable-next-line max-len
-      "transaction.type == 'customer_invoice' && transaction.status == 'finalised' && transaction.otherParty.id == $0",
-      otherStoreName.id
-    );
+    const customerInvoices = database
+      .objects('TransactionBatch')
+      .filtered(
+        "type == 'stock_out' && transaction.otherParty.id == $0 && itemId == $1",
+        otherStoreName.id,
+        realItemId
+      );
 
     const withinDateRange = customerInvoices.filtered(
       'transaction.confirmDate >= $0 && transaction.confirmDate <= $1',
