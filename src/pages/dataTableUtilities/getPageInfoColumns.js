@@ -88,35 +88,44 @@ const PER_PAGE_INFO_COLUMNS = {
   ],
   customerRequisitionItemDetail: [
     [
-      'customerRequisitionProgramSuggestedFormulaString',
-      'customerRequisitionProgramSuggestedFormula',
       'customerRequisitionProgramAMCFormulaString',
       'customerRequisitionProgramAMCFormula',
+      'customerRequisitionProgramSuggestedFormulaString',
+      'customerRequisitionProgramSuggestedFormula',
     ],
   ],
 };
 
 const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
   customerRequisitionProgramSuggestedFormulaString: {
-    title: ` ${pageInfoStrings.suggested_equals}`,
-    info: `${pageInfoStrings.suggested_formula}`,
+    title: `${pageInfoStrings.suggested_equals}`,
+    info: `= ${pageInfoStrings.suggested_formula}`,
   },
   customerRequisitionProgramSuggestedFormula: {
-    title: `${pageObject.suggestedQuantity?.toFixed(2)} =`,
-    info: `${pageObject.outgoingStock} / (${pageObject.numberOfDaysInPeriod} - ${pageObject.daysOutOfStock})`,
+    title: `${Math.ceil(pageObject.dailyUsage * pageObject.daysToSupply - pageObject.stockOnHand)}`,
+    info: `= ${pageObject.dailyUsage?.toFixed(2)} x ${pageObject.daysToSupply} - ${
+      pageObject.stockOnHand
+    } ${
+      Math.ceil(
+        pageObject.dailyUsage?.toFixed(2) * pageObject.daysToSupply - pageObject.stockOnHand
+      ) < 0
+        ? '[None suggested]'
+        : ''
+    }`,
   },
   customerRequisitionProgramAMCFormulaString: {
     title: `${pageInfoStrings.amc_equals}`,
-    info: `${pageInfoStrings.amc_formula}`,
+    info: `= ${pageInfoStrings.amc_formula}`,
   },
   customerRequisitionProgramAMCFormula: {
-    title: `${(
-      (pageObject.outgoingStock * NUMBER_OF_DAYS_IN_A_MONTH) /
-      (pageObject.numberOfDaysInPeriod - pageObject.daysOutOfStock)
-    )?.toFixed(2)} = `,
-    info: `${pageObject.outgoingStock?.toFixed(2)} x ${NUMBER_OF_DAYS_IN_A_MONTH?.toFixed(2)} / ${
-      pageObject.numberOfDaysInPeriod
-    } - ${pageObject.daysOutOfStock}`,
+    // title: `${(
+    //   (pageObject.outgoingStock * NUMBER_OF_DAYS_IN_A_MONTH) /
+    //   (pageObject.numberOfDaysInPeriod - pageObject.daysOutOfStock)
+    // )?.toFixed(2)}`,
+    title: `${Math.ceil(pageObject.monthlyUsage)}`,
+    info: `= ${pageObject.outgoingStock?.toFixed(2)} x ${NUMBER_OF_DAYS_IN_A_MONTH?.toFixed(
+      2
+    )} / (${pageObject.numberOfDaysInPeriod} - ${pageObject.daysOutOfStock})`,
   },
 
   lastRequisitionDate: {
