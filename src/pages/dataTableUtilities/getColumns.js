@@ -48,10 +48,23 @@ const PAGE_COLUMN_WIDTHS = {
   sensors: [3, 3, 1, 1],
   [TABS.ITEM]: [1, 3, 1],
   [TABS.PRESCRIBER]: [3, 3, 1],
+  editableCustomerRequisitionFormEntry: [2, 2, 1, 1, 1, 1, 2, 2, 2, 2],
   customerRequisitionFormEntry: [2, 2, 1, 1, 1, 1, 2, 2, 2, 2],
 };
 
 const PAGE_COLUMNS = {
+  editableCustomerRequisitionFormEntry: [
+    COLUMN_NAMES.ITEM_NAME,
+    COLUMN_NAMES.ITEM_CODE,
+    COLUMN_NAMES.EDITABLE_OPENING_STOCK,
+    COLUMN_NAMES.EDITABLE_DAYS_OUT_OF_STOCK,
+    COLUMN_NAMES.EDITABLE_INCOMING_STOCK,
+    COLUMN_NAMES.EDITABLE_OUTGOING_STOCK,
+    COLUMN_NAMES.EDITABLE_POSITIVE_ADJUSTMENTS,
+    COLUMN_NAMES.EDITABLE_NEGATIVE_ADJUSTMENTS,
+    COLUMN_NAMES.EDITABLE_REQUIRED_QUANTITY,
+    COLUMN_NAMES.CLOSING_STOCK,
+  ],
   customerRequisitionFormEntry: [
     COLUMN_NAMES.ITEM_NAME,
     COLUMN_NAMES.ITEM_CODE,
@@ -61,7 +74,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.OUTGOING_STOCK,
     COLUMN_NAMES.POSITIVE_ADJUSTMENTS,
     COLUMN_NAMES.NEGATIVE_ADJUSTMENTS,
-    COLUMN_NAMES.EDITABLE_REQUIRED_QUANTITY,
+    COLUMN_NAMES.REQUIRED_QUANTITY,
     COLUMN_NAMES.CLOSING_STOCK,
   ],
   sensors: [
@@ -757,9 +770,54 @@ const COLUMNS = () => ({
     editable: false,
   },
 
-  // EDITABLE NUMERIC COLUMNS
+  [COLUMN_NAMES.DAYS_OUT_OF_STOCK]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.DAYS_OUT_OF_STOCK,
+    title: tableStrings.days_out_of_stock,
+    alignText: 'right',
+    sortable: true,
+    editable: false,
+  },
+
+  [COLUMN_NAMES.INCOMING_STOCK]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.INCOMING_STOCK,
+    title: tableStrings.incoming_stock,
+    alignText: 'right',
+    sortable: true,
+    editable: true,
+  },
 
   [COLUMN_NAMES.OPENING_STOCK]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.OPENING_STOCK,
+    title: tableStrings.opening_stock,
+    alignText: 'right',
+    sortable: true,
+    editable: false,
+  },
+
+  [COLUMN_NAMES.POSITIVE_ADJUSTMENTS]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.POSITIVE_ADJUSTMENTS,
+    title: tableStrings.positive_adjustments,
+    alignText: 'right',
+    sortable: true,
+    editable: false,
+  },
+
+  [COLUMN_NAMES.NEGATIVE_ADJUSTMENTS]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.NEGATIVE_ADJUSTMENTS,
+    title: tableStrings.negative_adjustments,
+    alignText: 'right',
+    sortable: true,
+    editable: false,
+  },
+
+  // EDITABLE NUMERIC COLUMNS
+
+  [COLUMN_NAMES.EDITABLE_OPENING_STOCK]: {
     type: COLUMN_TYPES.EDITABLE_NUMERIC,
     key: COLUMN_KEYS.OPENING_STOCK,
     title: tableStrings.opening_stock,
@@ -768,7 +826,7 @@ const COLUMNS = () => ({
     editable: true,
   },
 
-  [COLUMN_NAMES.DAYS_OUT_OF_STOCK]: {
+  [COLUMN_NAMES.EDITABLE_DAYS_OUT_OF_STOCK]: {
     type: COLUMN_TYPES.EDITABLE_NUMERIC,
     key: COLUMN_KEYS.DAYS_OUT_OF_STOCK,
     title: tableStrings.days_out_of_stock,
@@ -777,7 +835,7 @@ const COLUMNS = () => ({
     editable: true,
   },
 
-  [COLUMN_NAMES.INCOMING_STOCK]: {
+  [COLUMN_NAMES.EDITABLE_INCOMING_STOCK]: {
     type: COLUMN_TYPES.EDITABLE_NUMERIC,
     key: COLUMN_KEYS.INCOMING_STOCK,
     title: tableStrings.incoming_stock,
@@ -786,7 +844,7 @@ const COLUMNS = () => ({
     editable: true,
   },
 
-  [COLUMN_NAMES.OUTGOING_STOCK]: {
+  [COLUMN_NAMES.EDITABLE_OUTGOING_STOCK]: {
     type: COLUMN_TYPES.EDITABLE_NUMERIC,
     key: COLUMN_KEYS.OUTGOING_STOCK,
     title: tableStrings.outgoing_stock,
@@ -795,7 +853,7 @@ const COLUMNS = () => ({
     editable: true,
   },
 
-  [COLUMN_NAMES.POSITIVE_ADJUSTMENTS]: {
+  [COLUMN_NAMES.EDITABLE_POSITIVE_ADJUSTMENTS]: {
     type: COLUMN_TYPES.EDITABLE_NUMERIC,
     key: COLUMN_KEYS.POSITIVE_ADJUSTMENTS,
     title: tableStrings.positive_adjustments,
@@ -804,7 +862,7 @@ const COLUMNS = () => ({
     editable: true,
   },
 
-  [COLUMN_NAMES.NEGATIVE_ADJUSTMENTS]: {
+  [COLUMN_NAMES.EDITABLE_NEGATIVE_ADJUSTMENTS]: {
     type: COLUMN_TYPES.EDITABLE_NUMERIC,
     key: COLUMN_KEYS.NEGATIVE_ADJUSTMENTS,
     title: tableStrings.negative_adjustments,
