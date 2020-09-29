@@ -159,6 +159,8 @@ const generateSyncData = (settings, recordType, record) => {
         Cust_stock_received: String(record.incomingStock),
         Cust_stock_issued: String(record.outgoingStock),
         DOSforAMCadjustment: String(record.daysOutOfStock),
+        stockLosses: String(record.negativeAdjustments),
+        stockAdditions: String(record.positiveAdjustments),
       };
     }
     case 'Stocktake': {

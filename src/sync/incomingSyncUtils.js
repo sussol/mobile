@@ -721,10 +721,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         comment: record.comment,
         sortIndex: parseNumber(record.line_number),
         openingStock: parseNumber(record.Cust_prev_stock_balance),
-        negativeAdjustments:
-          parseNumber(record.Cust_loss_adjust) < 0 ? parseNumber(record.Cust_loss_adjust) : 0,
-        positiveAdjustments:
-          parseNumber(record.Cust_loss_adjust) > 0 ? parseNumber(record.Cust_loss_adjust) : 0,
+        negativeAdjustments: parseNumber(record.stockLosses),
+        positiveAdjustments: parseNumber(record.stockAdditions),
         incomingStock: parseNumber(record.Cust_stock_received),
         outgoingStock: parseNumber(record.Cust_stock_issued),
         daysOutOfStock: parseNumber(record.DOSforAMCadjustment),
