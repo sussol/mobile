@@ -701,6 +701,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         period,
         orderType: record.orderType,
         customData: parseJsonString(record.custom_data),
+        isRemoteOrder: parseBoolean(record.isRemoteOrder),
+        createdDate: parseDate(record.date_order_received),
       };
       const requisition = database.update(recordType, internalRecord);
       if (period) period.addRequisitionIfUnique(requisition);
@@ -718,6 +720,14 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         suppliedQuantity: parseNumber(record.actualQuan),
         comment: record.comment,
         sortIndex: parseNumber(record.line_number),
+        openingStock: parseNumber(record.Cust_prev_stock_balance),
+        negativeAdjustments:
+          parseNumber(record.Cust_loss_adjust) < 0 ? parseNumber(record.Cust_loss_adjust) : 0,
+        positiveAdjustments:
+          parseNumber(record.Cust_loss_adjust) > 0 ? parseNumber(record.Cust_loss_adjust) : 0,
+        incomingStock: parseNumber(record.Cust_stock_received),
+        outgoingStock: parseNumber(record.Cust_stock_issued),
+        daysOutOfStock: parseNumber(record.DOSforAMCadjustment),
       };
       const requisitionItem = database.update(recordType, internalRecord);
       // requisitionItem will be an orphan record if it's not unique?
