@@ -786,15 +786,17 @@ const createRequisitionItem = (database, requisition, item, dailyUsage, stockOnH
     const { startDate, endDate } = period;
     const requisitions = database
       .objects('Requisition')
-      .filtered('otherStoreName == $0 && program != null', otherStoreName)
+      .filtered('otherStoreName == $0 && program != null && status == "finalised"', otherStoreName)
       .sorted('period.startDate');
 
     if (requisitions.length) {
+      const { id: requisitionId } = requisitions[0];
       const { id: realItemId } = realItem;
-      const matchedItem = requisitions[0].items.find(({ item: { id } }) => id === realItemId);
-      if (matchedItem) {
-        requisitionItem.openingStock = matchedItem.closingStock;
-      }
+      const lastRequisitionItem = database
+        .objects('RequisitionItem')
+        .filtered('requisition.id == $0 && item.id == $1', requisitionId, realItemId);
+
+      if (lastRequisitionItem[0]) requisitionItem.openingStock = lastRequisitionItem[0].stockOnHand;
     }
 
     const customerInvoices = database.objects('TransactionBatch').filtered(
