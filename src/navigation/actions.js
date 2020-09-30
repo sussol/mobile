@@ -10,7 +10,7 @@ import { NavigationActions, StackActions } from '@react-navigation/core';
 import { UIDatabase } from '../database';
 import { createRecord } from '../database/utilities';
 import { navStrings } from '../localization';
-import { ROUTES, FINALISABLE_PAGES } from './constants';
+import { ROUTES } from './constants';
 import { RootNavigator } from './RootNavigator';
 import { PrescriptionActions } from '../actions/PrescriptionActions';
 import { FinaliseActions } from '../actions/FinaliseActions';
@@ -68,7 +68,6 @@ export const goBack = () => dispatch => {
       UIDatabase.delete('Transaction', prescriptions);
 
       const prevRouteName = RootNavigator.getPrevRouteName();
-      const currRouteName = RootNavigator.getCurrentRouteName();
 
       const navigateBack = () =>
         dispatch({
@@ -78,9 +77,6 @@ export const goBack = () => dispatch => {
 
       const cleanUp = () => {
         dispatch(PrescriptionActions.deletePrescription());
-        if (FINALISABLE_PAGES.includes(currRouteName)) {
-          dispatch(FinaliseActions.resetFinaliseItem());
-        }
       };
 
       batch(() => {

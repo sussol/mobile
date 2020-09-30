@@ -10,7 +10,7 @@ Cross-platform, offline-first mobile application designed and developed by [Sust
 - Forecast required stock based on usage.
 - Sync data with a local or remote mSupply server when internet is available.
 
-See [http://msupply.org.nz/mobile](http://msupply.org.nz/mobile) for more details of these and many other features.
+See [https://docs.msupply.foundation/en:mobile](https://docs.msupply.foundation/en:mobile) for more details of these and many other features.
 
 ## Getting started
 
@@ -25,7 +25,7 @@ See [http://msupply.org.nz/mobile](http://msupply.org.nz/mobile) for more detail
 
 - Install nvm for managing Node versions: https://github.com/nvm-sh/nvm.
 - Install yarn for managing Node packages: https://yarnpkg.com/lang/en/.
-- Install React Native: https://facebook.github.io/react-native/docs/getting-started. Follow the steps listed under "Building Projects with Native Code" and set Target OS as "Android".
+- Install React Native: https://reactnative.dev/docs/environment-setup. Follow the steps listed under "Building Projects with Native Code" and set Target OS as "Android".
 
 ### Installing
 

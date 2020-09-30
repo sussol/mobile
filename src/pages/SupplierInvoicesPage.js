@@ -57,10 +57,14 @@ export const SupplierInvoices = ({
   const onNewInvoice = () =>
     dispatch(PageActions.openModal(MODAL_KEYS.SELECT_EXTERNAL_SUPPLIER, route));
 
-  const onNavigateToInvoice = useCallback(invoice => dispatch(gotoSupplierInvoice(invoice)), []);
+  const onNavigateToInvoice = useCallback(invoice => {
+    dispatch(gotoSupplierInvoice(invoice));
+    onDeselectAll();
+  }, []);
 
   const onCreateInvoice = otherParty => {
     dispatch(createSupplierInvoice(otherParty, currentUser));
+    onDeselectAll();
     onCloseModal();
   };
 

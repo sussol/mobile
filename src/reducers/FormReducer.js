@@ -43,20 +43,27 @@ export const FormReducer = (state = initialState(), action) => {
 
       const updatePolicyNumberPerson = key === INSURANCE_POLICY_FIELDS.POLICY_NUMBER_PERSON;
       const updatePolicyNumberFamily = key === INSURANCE_POLICY_FIELDS.POLICY_NUMBER_FAMILY;
+      const updatePolicyNumber = updatePolicyNumberPerson || updatePolicyNumberFamily;
 
-      if (updatePolicyNumberPerson || updatePolicyNumberFamily) {
+      if (updatePolicyNumber) {
         const { policyNumberPerson: policyNumberPersonState } = formConfig;
+        const { policyNumberFamily: policyNumberFamilyState } = formConfig;
+
         const { value: policyNumberPersonValue } = updatePolicyNumberPerson
           ? { value }
           : policyNumberPersonState;
 
-        const { policyNumberFamily: policyNumberFamilyState } = formConfig;
         const { value: policyNumberFamilyValue } = updatePolicyNumberFamily
           ? { value }
           : policyNumberFamilyState;
 
-        const policyNumberPersonLength = policyNumberPersonValue.length;
-        const policyNumberFamilyLength = policyNumberFamilyValue.length;
+        const isPolicyNumberPersonValid = policyNumberPersonState.validator(
+          policyNumberPersonValue
+        );
+
+        const isPolicyNumberFamilyValid = policyNumberFamilyState.validator(
+          policyNumberFamilyValue
+        );
 
         const isPolicyNumberUnique =
           UIDatabase.objects('InsurancePolicy').filtered(
@@ -65,23 +72,16 @@ export const FormReducer = (state = initialState(), action) => {
             policyNumberFamilyValue
           ).length === 0;
 
-        const isPolicyNumberPersonLengthValid = updatePolicyNumberPerson
-          ? policyNumberPersonLength > 0 && policyNumberPersonLength < 50
-          : true;
-        const isPolicyNumberFamilyLengthValid = updatePolicyNumberFamily
-          ? policyNumberFamilyLength >= 0 && policyNumberFamilyLength < 50
-          : true;
-
         const newPolicyNumberPersonState = {
           ...policyNumberPersonState,
           value: policyNumberPersonValue,
-          isValid: isPolicyNumberUnique && isPolicyNumberPersonLengthValid,
+          isValid: isPolicyNumberUnique && isPolicyNumberPersonValid,
         };
 
         const newPolicyNumberFamilyState = {
           ...policyNumberFamilyState,
           value: policyNumberFamilyValue,
-          isValid: isPolicyNumberUnique && isPolicyNumberFamilyLengthValid,
+          isValid: isPolicyNumberUnique && isPolicyNumberFamilyValid,
         };
 
         return {
