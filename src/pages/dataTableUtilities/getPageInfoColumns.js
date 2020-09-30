@@ -109,7 +109,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
       Math.ceil(
         pageObject.dailyUsage?.toFixed(2) * pageObject.daysToSupply - pageObject.stockOnHand
       ) < 0
-        ? '[None suggested]'
+        ? pageInfoStrings.none_suggested
         : ''
     }`,
   },
@@ -118,10 +118,6 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
     info: `= ${pageInfoStrings.amc_formula}`,
   },
   customerRequisitionProgramAMCFormula: {
-    // title: `${(
-    //   (pageObject.outgoingStock * NUMBER_OF_DAYS_IN_A_MONTH) /
-    //   (pageObject.numberOfDaysInPeriod - pageObject.daysOutOfStock)
-    // )?.toFixed(2)}`,
     title: `${Math.ceil(pageObject.monthlyUsage)}`,
     info: `= ${pageObject.outgoingStock?.toFixed(2)} x ${NUMBER_OF_DAYS_IN_A_MONTH?.toFixed(
       2
