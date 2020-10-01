@@ -39,7 +39,7 @@ export const refreshIndicatorRow = route => ({
 export const editSensorLocation = (location, route) => (dispatch, getState) => {
   const { modalValue, keyExtractor } = selectPageState(getState());
 
-  UIDatabase.write(() => UIDatabase.update('Sensor', { ...modalValue, location }));
+  UIDatabase.write(() => UIDatabase.update('Sensor', { id: modalValue.id, location }));
 
   reduxBatch(() => {
     dispatch(refreshRow(keyExtractor(modalValue), route));

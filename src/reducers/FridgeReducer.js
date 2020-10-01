@@ -59,9 +59,11 @@ export const FridgeReducer = (state = initialState(), action) => {
 
     case 'Navigation/BACK':
     case 'Navigation/NAVIGATE': {
-      const { routeName } = action;
+      const { routeName, payload } = action;
+      const { prevRouteName } = payload ?? {};
 
-      if (routeName === ROUTES.VACCINES) return initialState();
+      if (routeName === ROUTES.VACCINES || prevRouteName === ROUTES.VACCINES) return initialState();
+
       return state;
     }
 
