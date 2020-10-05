@@ -17,8 +17,14 @@ import {
 
 import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 
-import { PageInfo, DropDown, DataTablePageView, PageButton, SearchBar } from '../widgets';
-import { ToggleBar } from '../widgets/ToggleBar';
+import {
+  ToggleBar,
+  PageInfo,
+  DropDown,
+  DataTablePageView,
+  PageButton,
+  SearchBar,
+} from '../widgets';
 
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import { DataTablePageModal } from '../widgets/modals';
