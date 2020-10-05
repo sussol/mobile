@@ -9,6 +9,7 @@ import { parsePositiveInteger } from '../../utilities';
 import { UIDatabase } from '..';
 import { SETTINGS_KEYS } from '../../settings';
 import { NUMBER_OF_DAYS_IN_A_MONTH, createRecord } from '../utilities';
+import { customerRequisitionProgramDailyUsage } from '../../utilities/dailyUsage';
 
 /**
  * A requisition item (i.e. a requisition line).
@@ -85,8 +86,12 @@ export class RequisitionItem extends Realm.Object {
    * @return  {number}
    */
   get suggestedQuantity() {
-    const daysToSupply = this.requisition ? this.requisition.daysToSupply : 0;
-    return Math.ceil(Math.max(this.dailyUsage * daysToSupply - this.stockOnHand, 0));
+    return Math.ceil(Math.max(this.dailyUsage * this.daysToSupply - this.stockOnHand, 0));
+  }
+
+  get daysToSupply() {
+    const { daysToSupply } = this.requisition;
+    return this.requisition ? daysToSupply : 0;
   }
 
   /**
@@ -237,6 +242,7 @@ export class RequisitionItem extends Realm.Object {
 
   setOutgoingStock(value) {
     this.outgoingStock = value;
+    this.dailyUsage = customerRequisitionProgramDailyUsage(this);
     this.recalculateStockOnHand();
   }
 
@@ -252,6 +258,7 @@ export class RequisitionItem extends Realm.Object {
 
   setDaysOutOfStock(value) {
     this.daysOutOfStock = value;
+    this.dailyUsage = customerRequisitionProgramDailyUsage(this);
   }
 
   setOpeningStock(value) {

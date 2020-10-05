@@ -297,8 +297,11 @@ export class Requisition extends Realm.Object {
     }
 
     this.program.items.forEach(({ item }) => {
-      const usage = programDailyUsage(item, this.period);
-      const stockOnHand = item.geTotalQuantityOnDate(this.period.endDate);
+      // Cannot determine the usage of a response requisition until consumption is manually entered.
+      const usage = this.isRequest ? programDailyUsage(item, this.period) : 0;
+
+      // Defer calculating stock on hand for response requisitions to the `createRecord` call.
+      const stockOnHand = this.isRequest ? item.geTotalQuantityOnDate(this.period.endDate) : 0;
       createRecord(database, 'RequisitionItem', this, item, usage, stockOnHand);
     });
   }
@@ -455,6 +458,10 @@ export class Requisition extends Realm.Object {
 
   get numberOfDaysInPeriod() {
     return this.period?.numberOfDays ?? 0;
+  }
+
+  get isManuallyCreatedProgramRequisition() {
+    return this.program && this.type === 'response';
   }
 }
 

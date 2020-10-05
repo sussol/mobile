@@ -99,3 +99,14 @@ export const programDailyUsage = (item, period) => {
 
   return usage / (numberOfUsageDays || 1);
 };
+
+/**
+ * Calculates the daily usage for a requisition item, which accounts for a user-enterable
+ * consumption as well as accounting for a user-enterable days out of stock.
+ *
+ * @param {RequisitionItem} requisitionItem
+ */
+export const customerRequisitionProgramDailyUsage = requisitionItem => {
+  const { outgoingStock, daysOutOfStock, numberOfDaysInPeriod } = requisitionItem;
+  return Math.max(outgoingStock / (numberOfDaysInPeriod ?? 0 - daysOutOfStock), 0);
+};

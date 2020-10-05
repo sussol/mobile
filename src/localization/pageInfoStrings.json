@@ -21,7 +21,12 @@
     "supplier": "Supplier",
     "their_ref": "Their Ref",
     "by_batch": "By batch",
-    "category": "Category"
+    "category": "Category",
+    "suggested_equals": "Our suggested quantity",
+    "suggested_formula": "DAILY CONSUMPTION x DAYS TO SUPPLY - STOCK ON HAND",
+    "amc_equals": "Average monthly consumption",
+    "amc_formula": "OUTGOING STOCK x NUMBER OF DAYS IN A MONTH / (DAYS IN PERIOD - DAYS OUT OF STOCK)",
+    "none_suggested": "None suggested"
   },
   "fr": {
     "category": "Catégorie",

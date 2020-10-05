@@ -380,7 +380,7 @@ const mapDispatchToProps = dispatch => {
   const thisStore = UIDatabase.get('Name', thisStoreID);
   const hasMasterLists = thisStore?.masterLists?.length > 0;
   const onSelectVaccineRow = requisitionItem =>
-    dispatch(RowDetailActions.openRequisitionItemDetail(requisitionItem));
+    dispatch(RowDetailActions.openSupplierRequisitionItemDetail(requisitionItem));
   const noMasterLists = () =>
     ToastAndroid.show(modalStrings.supplier_no_masterlist_available, ToastAndroid.LONG);
 

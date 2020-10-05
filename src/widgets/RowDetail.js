@@ -13,10 +13,11 @@ import Modal from 'react-native-modalbox';
 import { ItemDetails } from './bottomModals';
 import { CloseIcon } from './icons';
 import { RowDetailActions, ROW_DETAIL_KEYS } from '../actions/RowDetailActions';
-import { RequisitionItemDetails } from './RequisitionItemDetail';
+import { SupplierRequisitionItemDetails } from './SupplierRequisitionItemDetail';
 
 import { DARKER_GREY } from '../globalStyles';
 import { selectRowDetailIsOpen } from '../selectors/rowDetail';
+import { CustomerRequisitionItemDetails } from './CustomerRequisitionItemDetail';
 
 /**
  * Container component for a presentation component that will display
@@ -57,8 +58,10 @@ export const RowDetailComponent = ({
     switch (detailKey) {
       case ROW_DETAIL_KEYS.ITEM_DETAIL:
         return <ItemDetails item={rowData} />;
-      case ROW_DETAIL_KEYS.REQUISITION_ITEM_DETAIL:
-        return <RequisitionItemDetails item={rowData} />;
+      case ROW_DETAIL_KEYS.SUPPLIER_REQUISITION_ITEM_DETAIL:
+        return <SupplierRequisitionItemDetails item={rowData} />;
+      case ROW_DETAIL_KEYS.CUSTOMER_REQUISITION_ITEM_DETAIL:
+        return <CustomerRequisitionItemDetails item={rowData} />;
       default:
         return null;
     }

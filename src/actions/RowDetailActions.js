@@ -5,12 +5,14 @@
 
 export const ROW_DETAIL_KEYS = {
   ITEM_DETAIL: 'itemDetail',
-  REQUISITION_ITEM_DETAIL: 'requisitionItemDetail',
+  SUPPLIER_REQUISITION_ITEM_DETAIL: 'supplierRequisitionItemDetail',
+  CUSTOMER_REQUISITION_ITEM_DETAIL: 'customerRequisitionItemDetail',
 };
 
 export const ROW_DETAIL_ACTIONS = {
   OPEN_ITEM_DETAIL: 'rowDetail/openItemDetail',
-  OPEN_REQUISITION_ITEM_DETAIL: 'rowDetail/openRequisitionItemDetail',
+  OPEN_SUPPLIER_REQUISITION_ITEM_DETAIL: 'rowDetail/openSupplierRequisitionItemDetail',
+  OPEN_CUSTOMER_REQUISITION_ITEM_DETAIL: 'rowDetail/openCustomerRequisitionItemDetail',
   CLOSE: 'rowDetail/close',
 };
 
@@ -19,11 +21,21 @@ const openItemDetail = item => ({
   payload: { rowData: item },
 });
 
-const openRequisitionItemDetail = requisitionItem => ({
-  type: ROW_DETAIL_ACTIONS.OPEN_REQUISITION_ITEM_DETAIL,
+const openSupplierRequisitionItemDetail = requisitionItem => ({
+  type: ROW_DETAIL_ACTIONS.OPEN_SUPPLIER_REQUISITION_ITEM_DETAIL,
+  payload: { rowData: requisitionItem },
+});
+
+const openCustomerRequisitionItemDetail = requisitionItem => ({
+  type: ROW_DETAIL_ACTIONS.OPEN_CUSTOMER_REQUISITION_ITEM_DETAIL,
   payload: { rowData: requisitionItem },
 });
 
 const close = () => ({ type: ROW_DETAIL_ACTIONS.CLOSE });
 
-export const RowDetailActions = { openItemDetail, close, openRequisitionItemDetail };
+export const RowDetailActions = {
+  openItemDetail,
+  close,
+  openSupplierRequisitionItemDetail,
+  openCustomerRequisitionItemDetail,
+};

@@ -10,7 +10,8 @@ import { ROUTES } from '../../navigation/constants';
 import { MODALS } from '../../widgets/constants';
 import { PageActions } from './actions';
 import { formatTemperatureExposure, formatTimeDifference } from '../../utilities/formatters';
-import { UIDatabase } from '../../database/index';
+import { UIDatabase } from '../../database';
+import { NUMBER_OF_DAYS_IN_A_MONTH } from '../../database/utilities';
 
 /**
  * PageInfo rows/columns for use with the PageInfo component.
@@ -79,15 +80,50 @@ const PER_PAGE_INFO_COLUMNS = {
     ['entryDate', 'confirmDate', 'transactionCategory'],
     ['enteredBy', 'otherParty'],
   ],
-  requisitionItemDetail: [['lastRequisitionDate', 'openVialWastage', 'closedVialWastage']],
+  supplierRequisitionItemDetail: [['lastRequisitionDate', 'openVialWastage', 'closedVialWastage']],
   breach: [
     ['breachTemperatureRange'],
     ['breachDuration', 'location'],
     ['numberOfAffectedBatches', 'affectedQuantity'],
   ],
+  customerRequisitionItemDetail: [
+    [
+      'customerRequisitionProgramAMCFormulaString',
+      'customerRequisitionProgramAMCFormula',
+      'customerRequisitionProgramSuggestedFormulaString',
+      'customerRequisitionProgramSuggestedFormula',
+    ],
+  ],
 };
 
 const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
+  customerRequisitionProgramSuggestedFormulaString: {
+    title: `${pageInfoStrings.suggested_equals}`,
+    info: `= ${pageInfoStrings.suggested_formula}`,
+  },
+  customerRequisitionProgramSuggestedFormula: {
+    title: `${Math.ceil(pageObject.dailyUsage * pageObject.daysToSupply - pageObject.stockOnHand)}`,
+    info: `= ${pageObject.dailyUsage?.toFixed(2)} x ${pageObject.daysToSupply} - ${
+      pageObject.stockOnHand
+    } ${
+      Math.ceil(
+        pageObject.dailyUsage?.toFixed(2) * pageObject.daysToSupply - pageObject.stockOnHand
+      ) < 0
+        ? pageInfoStrings.none_suggested
+        : ''
+    }`,
+  },
+  customerRequisitionProgramAMCFormulaString: {
+    title: `${pageInfoStrings.amc_equals}`,
+    info: `= ${pageInfoStrings.amc_formula}`,
+  },
+  customerRequisitionProgramAMCFormula: {
+    title: `${Math.ceil(pageObject.monthlyUsage)}`,
+    info: `= ${pageObject.outgoingStock?.toFixed(2)} x ${NUMBER_OF_DAYS_IN_A_MONTH?.toFixed(
+      2
+    )} / (${pageObject.numberOfDaysInPeriod} - ${pageObject.daysOutOfStock})`,
+  },
+
   lastRequisitionDate: {
     title: `${pageInfoStrings.last_requisition_date}:`,
     info: formatDate(pageObject?.lastRequisitionDate, 'll') || generalStrings.not_available,
