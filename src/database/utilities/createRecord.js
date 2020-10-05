@@ -782,6 +782,8 @@ const createRequisitionItem = (database, requisition, item, dailyUsage, stockOnH
     sortIndex: requisition.items.length + 1,
   });
 
+  // For a response requisition, calculate the stock on hand and incoming stock from the requisition
+  // items sent from this store to the customer. These are simple defaults.
   if (program && type === 'response') {
     const { startDate, endDate } = period;
     const { id: realItemId } = realItem;
