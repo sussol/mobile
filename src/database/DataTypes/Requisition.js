@@ -414,10 +414,30 @@ export class Requisition extends Realm.Object {
     return finaliseStatus;
   }
 
+  get canFinaliseResponse() {
+    const finaliseStatus = { success: true, message: modalStrings.finalise_customer_requisition };
+
+    const closingStocksAreValid = this.items.every(
+      ({ closingStockIsValid }) => closingStockIsValid
+    );
+
+    if (!closingStocksAreValid) {
+      return { success: false, message: modalStrings.requisition_invalid_closing_stock };
+    }
+
+    const daysOutOfStockAreValid = this.items.every(
+      ({ daysOutOfStockIsValid }) => daysOutOfStockIsValid
+    );
+
+    if (!daysOutOfStockAreValid) {
+      return { success: false, message: modalStrings.requisition_days_out_of_stock };
+    }
+
+    return finaliseStatus;
+  }
+
   get canFinalise() {
-    return this.isRequest
-      ? this.canFinaliseRequest
-      : { success: true, message: modalStrings.finalise_customer_requisition };
+    return this.isRequest ? this.canFinaliseRequest : this.canFinaliseResponse;
   }
 
   /**
@@ -431,6 +451,10 @@ export class Requisition extends Realm.Object {
     database.save('Requisition', this);
 
     if (this.linkedTransaction) this.linkedTransaction.finalise(database);
+  }
+
+  get numberOfDaysInPeriod() {
+    return this.period?.numberOfDays ?? 0;
   }
 }
 

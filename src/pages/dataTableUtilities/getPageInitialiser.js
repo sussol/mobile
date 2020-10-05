@@ -153,7 +153,9 @@ const customerRequisitionInitialiser = requisition => {
     indicators,
     route: ROUTES.CUSTOMER_REQUISITION,
     columns: getColumns(ROUTES.CUSTOMER_REQUISITION),
-    getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_REQUISITION),
+    getPageInfoColumns: getPageInfoColumns(
+      program ? ROUTES.CUSTOMER_REQUISITIONS_WITH_PROGRAMS : ROUTES.CUSTOMER_REQUISITION
+    ),
   };
 };
 
@@ -175,6 +177,7 @@ const customerRequisitionsInitialiser = () => {
     data: sortedData,
     keyExtractor: recordKeyExtractor,
     searchTerm: '',
+    modalKey: '',
     filterDataKeys: ['serialNumber', 'otherStoreName.name'],
     sortKey: 'serialNumber',
     isAscending: false,

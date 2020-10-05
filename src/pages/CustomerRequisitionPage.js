@@ -7,7 +7,7 @@
 
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
@@ -36,7 +36,7 @@ import { getColumns, getItemLayout, getPageDispatchers, PageActions } from './da
 import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
 import globalStyles from '../globalStyles';
-import { buttonStrings, generalStrings, programStrings } from '../localization';
+import { tableStrings, buttonStrings, generalStrings, programStrings } from '../localization';
 
 /**
  * Renders a mSupply mobile page with a customer requisition loaded for editing
@@ -78,6 +78,13 @@ export const CustomerRequisition = ({
   route,
   onToggleColumnSet,
   columnSet,
+  onEditOpeningStock,
+  onEditNegativeAdjustments,
+  onEditPositiveAdjustments,
+  onEditOutgoingStock,
+  onEditIncomingStock,
+  onEditDaysOutOfStock,
+  onEditRequiredQuantity,
 }) => {
   const { isFinalised, comment, program } = pageObject;
 
@@ -97,6 +104,50 @@ export const CustomerRequisition = ({
     switch (colKey) {
       case 'suppliedQuantity':
         return onEditSuppliedQuantity;
+      case 'openingStock':
+        return onEditOpeningStock;
+      case 'incomingStock':
+        return onEditIncomingStock;
+      case 'outgoingStock':
+        return onEditOutgoingStock;
+      case 'daysOutOfStock':
+        return onEditDaysOutOfStock;
+      case 'negativeAdjustments':
+        return onEditNegativeAdjustments;
+      case 'positiveAdjustments':
+        return onEditPositiveAdjustments;
+      case 'requiredQuantity':
+        return onEditRequiredQuantity;
+
+      default:
+        return null;
+    }
+  }, []);
+
+  const getCellError = useCallback((rowData, colKey) => {
+    const { stockOnHand, daysOutOfStock, numberOfDaysInPeriod } = rowData;
+    const closingStockIsValid = stockOnHand >= 0;
+
+    switch (colKey) {
+      case 'openingStock':
+        return !closingStockIsValid ? 'warning' : null;
+      case 'incomingStock':
+        return !closingStockIsValid ? 'warning' : null;
+      case 'outgoingStock':
+        return !closingStockIsValid ? 'warning' : null;
+      case 'daysOutOfStock':
+        if (daysOutOfStock > numberOfDaysInPeriod) {
+          ToastAndroid.show(tableStrings.days_out_of_stock_validation, ToastAndroid.LONG);
+          return 'error';
+        }
+        return null;
+
+      case 'negativeAdjustments':
+        return !closingStockIsValid ? 'warning' : null;
+      case 'positiveAdjustments':
+        return !closingStockIsValid ? 'warning' : null;
+      case 'stockOnHand':
+        return !closingStockIsValid ? 'error' : null;
       default:
         return null;
     }
@@ -116,6 +167,8 @@ export const CustomerRequisition = ({
       const { item, index } = listItem;
       const rowKey = keyExtractor(item);
 
+      const { fieldsAreValid } = item;
+
       return (
         <DataTableRow
           rowData={data[index]}
@@ -124,6 +177,8 @@ export const CustomerRequisition = ({
           isFinalised={isFinalised}
           getCallback={getCallback}
           rowIndex={index}
+          getCellError={getCellError}
+          isValidated={fieldsAreValid}
         />
       );
     },
@@ -317,8 +372,22 @@ export const CustomerRequisition = ({
   );
 };
 
-const mapDispatchToProps = dispatch =>
-  getPageDispatchers(dispatch, 'Requisition', ROUTES.CUSTOMER_REQUISITION);
+const mapDispatchToProps = dispatch => ({
+  ...getPageDispatchers(dispatch, 'Requisition', ROUTES.CUSTOMER_REQUISITION),
+
+  onEditOpeningStock: (value, rowKey) =>
+    dispatch(PageActions.editOpeningStock(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
+  onEditNegativeAdjustments: (value, rowKey) =>
+    dispatch(PageActions.editNegativeAdjustments(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
+  onEditPositiveAdjustments: (value, rowKey) =>
+    dispatch(PageActions.editPositiveAdjustments(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
+  onEditOutgoingStock: (value, rowKey) =>
+    dispatch(PageActions.editOutgoingStock(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
+  onEditIncomingStock: (value, rowKey) =>
+    dispatch(PageActions.editIncomingStock(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
+  onEditDaysOutOfStock: (value, rowKey) =>
+    dispatch(PageActions.editDaysOutOfStock(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
+});
 
 const mapStateToProps = state => {
   const { pages = {} } = state;
@@ -390,4 +459,11 @@ CustomerRequisition.propTypes = {
   route: PropTypes.string.isRequired,
   onToggleColumnSet: PropTypes.func.isRequired,
   columnSet: PropTypes.string.isRequired,
+  onEditOpeningStock: PropTypes.func.isRequired,
+  onEditNegativeAdjustments: PropTypes.func.isRequired,
+  onEditPositiveAdjustments: PropTypes.func.isRequired,
+  onEditOutgoingStock: PropTypes.func.isRequired,
+  onEditIncomingStock: PropTypes.func.isRequired,
+  onEditDaysOutOfStock: PropTypes.func.isRequired,
+  onEditRequiredQuantity: PropTypes.func.isRequired,
 };

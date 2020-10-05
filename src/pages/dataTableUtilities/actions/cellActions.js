@@ -2,6 +2,7 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
+import { ToastAndroid } from 'react-native';
 import { batch as reduxBatch } from 'react-redux';
 import currency from '../../../localization/currency';
 import { UIDatabase } from '../../../database';
@@ -18,6 +19,7 @@ import {
 import { ACTIONS } from './constants';
 import { openModal, closeModal } from './pageActions';
 import { selectPageState } from '../../../selectors/pages';
+import { tableStrings } from '../../../localization/index';
 
 /**
  * Refreshes a row in the DataTable component.
@@ -128,6 +130,109 @@ export const editTransactionBatchLocation = (location, route) =>
 
 export const editStocktakeBatchLocation = (location, route) =>
   editBatchLocation(location, 'StocktakeBatch', route);
+
+export const editOpeningStock = (value, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+
+  const requisitionItem = data.find(row => keyExtractor(row) === rowKey);
+  if (requisitionItem) {
+    UIDatabase.write(() => {
+      requisitionItem.setOpeningStock(parsePositiveInteger(value));
+      UIDatabase.save('RequisitionItem', requisitionItem);
+    });
+
+    if (!requisitionItem.closingStockIsValid) {
+      ToastAndroid.show(tableStrings.opening_stock_validation, ToastAndroid.LONG);
+    }
+
+    dispatch(refreshRow(rowKey, route));
+  }
+};
+
+export const editDaysOutOfStock = (value, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+
+  const requisitionItem = data.find(row => keyExtractor(row) === rowKey);
+  if (requisitionItem) {
+    UIDatabase.write(() => {
+      requisitionItem.setDaysOutOfStock(parsePositiveInteger(value));
+      UIDatabase.save('RequisitionItem', requisitionItem);
+    });
+    dispatch(refreshRow(rowKey, route));
+  }
+};
+
+export const editIncomingStock = (value, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+
+  const requisitionItem = data.find(row => keyExtractor(row) === rowKey);
+  if (requisitionItem) {
+    UIDatabase.write(() => {
+      requisitionItem.setIncomingStock(parsePositiveInteger(value));
+      UIDatabase.save('RequisitionItem', requisitionItem);
+    });
+
+    if (!requisitionItem.closingStockIsValid) {
+      ToastAndroid.show(tableStrings.incoming_stock_validation, ToastAndroid.LONG);
+    }
+
+    dispatch(refreshRow(rowKey, route));
+  }
+};
+
+export const editOutgoingStock = (value, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+
+  const requisitionItem = data.find(row => keyExtractor(row) === rowKey);
+  if (requisitionItem) {
+    UIDatabase.write(() => {
+      requisitionItem.setOutgoingStock(parsePositiveInteger(value));
+      UIDatabase.save('RequisitionItem', requisitionItem);
+    });
+
+    if (!requisitionItem.closingStockIsValid) {
+      ToastAndroid.show(tableStrings.outgoing_stock_validation, ToastAndroid.LONG);
+    }
+
+    dispatch(refreshRow(rowKey, route));
+  }
+};
+
+export const editPositiveAdjustments = (value, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+
+  const requisitionItem = data.find(row => keyExtractor(row) === rowKey);
+  if (requisitionItem) {
+    UIDatabase.write(() => {
+      requisitionItem.setPositiveAdjustments(parsePositiveInteger(value));
+      UIDatabase.save('RequisitionItem', requisitionItem);
+    });
+
+    if (!requisitionItem.closingStockIsValid) {
+      ToastAndroid.show(tableStrings.positive_adjustments_validation, ToastAndroid.LONG);
+    }
+
+    dispatch(refreshRow(rowKey, route));
+  }
+};
+
+export const editNegativeAdjustments = (value, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+
+  const requisitionItem = data.find(row => keyExtractor(row) === rowKey);
+  if (requisitionItem) {
+    UIDatabase.write(() => {
+      requisitionItem.setNegativeAdjustments(parsePositiveInteger(value));
+      UIDatabase.save('RequisitionItem', requisitionItem);
+    });
+
+    if (!requisitionItem.closingStockIsValid) {
+      ToastAndroid.show(tableStrings.negative_adjustments_validation, ToastAndroid.LONG);
+    }
+
+    dispatch(refreshRow(rowKey, route));
+  }
+};
 
 /**
  * Edits a rows underlying `batch` field.
@@ -439,4 +544,10 @@ export const CellActionsLookup = {
   editLocationDescription,
   editSensorLocation,
   editSensorName,
+  editOpeningStock,
+  editNegativeAdjustments,
+  editPositiveAdjustments,
+  editOutgoingStock,
+  editIncomingStock,
+  editDaysOutOfStock,
 };

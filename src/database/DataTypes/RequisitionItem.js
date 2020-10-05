@@ -3,7 +3,6 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
-
 import Realm from 'realm';
 
 import { parsePositiveInteger } from '../../utilities';
@@ -230,6 +229,60 @@ export class RequisitionItem extends Realm.Object {
   get lastRequisitionDate() {
     return this.item?.lastRequisitionDate;
   }
+
+  setIncomingStock(value) {
+    this.incomingStock = value;
+    this.recalculateStockOnHand();
+  }
+
+  setOutgoingStock(value) {
+    this.outgoingStock = value;
+    this.recalculateStockOnHand();
+  }
+
+  setPositiveAdjustments(value) {
+    this.positiveAdjustments = value;
+    this.recalculateStockOnHand();
+  }
+
+  setNegativeAdjustments(value) {
+    this.negativeAdjustments = value;
+    this.recalculateStockOnHand();
+  }
+
+  setDaysOutOfStock(value) {
+    this.daysOutOfStock = value;
+  }
+
+  setOpeningStock(value) {
+    this.openingStock = value;
+    this.recalculateStockOnHand();
+  }
+
+  recalculateStockOnHand() {
+    this.stockOnHand =
+      this.openingStock +
+      this.incomingStock -
+      this.outgoingStock +
+      this.positiveAdjustments -
+      this.negativeAdjustments;
+  }
+
+  get numberOfDaysInPeriod() {
+    return this.requisition?.numberOfDaysInPeriod ?? 0;
+  }
+
+  get closingStockIsValid() {
+    return this.stockOnHand >= 0;
+  }
+
+  get daysOutOfStockIsValid() {
+    return this.daysOutOfStock <= this.numberOfDaysInPeriod;
+  }
+
+  get fieldsAreValid() {
+    return this.closingStockIsValid && this.daysOutOfStockIsValid;
+  }
 }
 
 RequisitionItem.schema = {
@@ -244,6 +297,12 @@ RequisitionItem.schema = {
     imprestQuantity: { type: 'double', optional: true },
     requiredQuantity: { type: 'double', optional: true },
     suppliedQuantity: { type: 'double', default: 0 },
+    openingStock: { type: 'double', default: 0 },
+    daysOutOfStock: { type: 'double', default: 0 },
+    incomingStock: { type: 'double', default: 0 },
+    outgoingStock: { type: 'double', default: 0 },
+    positiveAdjustments: { type: 'double', default: 0 },
+    negativeAdjustments: { type: 'double', default: 0 },
     comment: { type: 'string', optional: true },
     sortIndex: { type: 'int', optional: true },
     option: { type: 'Options', optional: true },

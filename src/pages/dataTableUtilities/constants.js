@@ -77,9 +77,23 @@ export const COLUMN_KEYS = {
   TYPE: 'type',
   UNIT: 'unitString',
   VALUE: 'value',
+  OPENING_STOCK: 'openingStock',
+  DAYS_OUT_OF_STOCK: 'daysOutOfStock',
+  INCOMING_STOCK: 'incomingStock',
+  OUTGOING_STOCK: 'outgoingStock',
+  POSITIVE_ADJUSTMENTS: 'positiveAdjustments',
+  NEGATIVE_ADJUSTMENTS: 'negativeAdjustments',
+  CLOSING_STOCK: 'stockOnHand',
 };
 
 export const COLUMN_NAMES = {
+  CLOSING_STOCK: 'closingStock',
+  NEGATIVE_ADJUSTMENTS: 'negativeAdjustments',
+  POSITIVE_ADJUSTMENTS: 'positiveAdjustments',
+  OUTGOING_STOCK: 'outgoingStock',
+  INCOMING_STOCK: 'incomingStock',
+  OPENING_STOCK: 'openingStock',
+  DAYS_OUT_OF_STOCK: 'daysOutOfStock',
   TOTAL_STOCK: 'totalStock',
   BATTERY_LEVEL: 'batteryLevel',
   MAC_ADDRESS: 'macAddress',

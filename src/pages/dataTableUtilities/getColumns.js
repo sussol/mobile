@@ -48,11 +48,22 @@ const PAGE_COLUMN_WIDTHS = {
   sensors: [3, 3, 1, 1],
   [TABS.ITEM]: [1, 3, 1],
   [TABS.PRESCRIBER]: [3, 3, 1],
-  customerRequisitionFormEntry: [1, 1],
+  customerRequisitionFormEntry: [2, 2, 1, 1, 1, 1, 2, 2, 2, 2],
 };
 
 const PAGE_COLUMNS = {
-  customerRequisitionFormEntry: [COLUMN_NAMES.ITEM_NAME, COLUMN_NAMES.ITEM_CODE],
+  customerRequisitionFormEntry: [
+    COLUMN_NAMES.ITEM_NAME,
+    COLUMN_NAMES.ITEM_CODE,
+    COLUMN_NAMES.OPENING_STOCK,
+    COLUMN_NAMES.DAYS_OUT_OF_STOCK,
+    COLUMN_NAMES.INCOMING_STOCK,
+    COLUMN_NAMES.OUTGOING_STOCK,
+    COLUMN_NAMES.POSITIVE_ADJUSTMENTS,
+    COLUMN_NAMES.NEGATIVE_ADJUSTMENTS,
+    COLUMN_NAMES.EDITABLE_REQUIRED_QUANTITY,
+    COLUMN_NAMES.CLOSING_STOCK,
+  ],
   sensors: [
     COLUMN_NAMES.EDITABLE_NAME,
     COLUMN_NAMES.LOCATION,
@@ -614,6 +625,24 @@ const COLUMNS = () => ({
 
   // NUMERIC COLUMNS
 
+  [COLUMN_NAMES.CLOSING_STOCK]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.CLOSING_STOCK,
+    title: tableStrings.closing_stock,
+    alignText: 'right',
+    sortable: true,
+    editable: true,
+  },
+
+  [COLUMN_NAMES.COST_PRICE]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.COST_PRICE,
+    title: tableStrings.cost_price,
+    alignText: 'right',
+    sortable: false,
+    editable: false,
+  },
+
   [COLUMN_NAMES.COST_PRICE]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.COST_PRICE,
@@ -729,6 +758,60 @@ const COLUMNS = () => ({
   },
 
   // EDITABLE NUMERIC COLUMNS
+
+  [COLUMN_NAMES.OPENING_STOCK]: {
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
+    key: COLUMN_KEYS.OPENING_STOCK,
+    title: tableStrings.opening_stock,
+    alignText: 'right',
+    sortable: true,
+    editable: true,
+  },
+
+  [COLUMN_NAMES.DAYS_OUT_OF_STOCK]: {
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
+    key: COLUMN_KEYS.DAYS_OUT_OF_STOCK,
+    title: tableStrings.days_out_of_stock,
+    alignText: 'right',
+    sortable: true,
+    editable: true,
+  },
+
+  [COLUMN_NAMES.INCOMING_STOCK]: {
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
+    key: COLUMN_KEYS.INCOMING_STOCK,
+    title: tableStrings.incoming_stock,
+    alignText: 'right',
+    sortable: true,
+    editable: true,
+  },
+
+  [COLUMN_NAMES.OUTGOING_STOCK]: {
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
+    key: COLUMN_KEYS.OUTGOING_STOCK,
+    title: tableStrings.outgoing_stock,
+    alignText: 'right',
+    sortable: true,
+    editable: true,
+  },
+
+  [COLUMN_NAMES.POSITIVE_ADJUSTMENTS]: {
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
+    key: COLUMN_KEYS.POSITIVE_ADJUSTMENTS,
+    title: tableStrings.positive_adjustments,
+    alignText: 'right',
+    sortable: true,
+    editable: true,
+  },
+
+  [COLUMN_NAMES.NEGATIVE_ADJUSTMENTS]: {
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
+    key: COLUMN_KEYS.NEGATIVE_ADJUSTMENTS,
+    title: tableStrings.negative_adjustments,
+    alignText: 'right',
+    sortable: true,
+    editable: true,
+  },
 
   [COLUMN_NAMES.SELL_PRICE]: {
     type: COLUMN_TYPES.EDITABLE_NUMERIC,

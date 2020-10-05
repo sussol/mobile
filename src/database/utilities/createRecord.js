@@ -769,6 +769,8 @@ const createRequisitionItem = (database, requisition, item, dailyUsage, stockOnH
   // Handle cross reference items.
   const { realItem } = item;
 
+  const { program, otherStoreName, period, type } = requisition;
+
   const requisitionItem = database.create('RequisitionItem', {
     id: generateUUID(),
     item: realItem,
@@ -780,8 +782,57 @@ const createRequisitionItem = (database, requisition, item, dailyUsage, stockOnH
     sortIndex: requisition.items.length + 1,
   });
 
+  // For a response requisition, calculate the stock on hand and incoming stock from the requisition
+  // items sent from this store to the customer. These are simple defaults.
+  if (program && type === 'response') {
+    const { startDate, endDate } = period;
+    const { id: realItemId } = realItem;
+
+    const requisitions = database
+      .objects('Requisition')
+      .filtered(
+        'otherStoreName == $0 && program == $1 && status == "finalised" && type == "response"',
+        otherStoreName,
+        program
+      )
+      .sorted([
+        ['period.startDate', true],
+        ['entryDate', true],
+      ]);
+
+    if (requisitions.length) {
+      const { id: requisitionId } = requisitions[0];
+
+      const lastRequisitionItem = database
+        .objects('RequisitionItem')
+        .filtered('requisition.id == $0 && item.id == $1', requisitionId, realItemId);
+
+      if (lastRequisitionItem[0]) requisitionItem.openingStock = lastRequisitionItem[0].stockOnHand;
+    }
+
+    const customerInvoices = database
+      .objects('TransactionBatch')
+      .filtered(
+        "type == 'stock_out' && transaction.otherParty.id == $0 && itemId == $1",
+        otherStoreName.id,
+        realItemId
+      );
+
+    const withinDateRange = customerInvoices.filtered(
+      'transaction.confirmDate >= $0 && transaction.confirmDate <= $1',
+      startDate,
+      endDate
+    );
+
+    const sum = withinDateRange.reduce((acc, { totalQuantity }) => acc + totalQuantity, 0);
+
+    requisitionItem.incomingStock = sum;
+    requisitionItem.stockOnHand = requisitionItem.incomingStock + requisitionItem.openingStock;
+  }
+
   requisition.addItem(requisitionItem);
   database.save('Requisition', requisition);
+  database.save('RequisitionItem', requisitionItem);
 
   return requisitionItem;
 };

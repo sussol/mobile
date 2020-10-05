@@ -49,7 +49,10 @@ export const createCustomerRequisition = ({
       requisitionParameters
     );
 
-    if (requisition.program) requisition.addItemsFromProgram(UIDatabase);
+    if (requisition.program) {
+      requisition.addItemsFromProgram(UIDatabase);
+      requisition.createCustomerInvoice(UIDatabase, currentUser);
+    }
   });
 
   dispatch(gotoCustomerRequisition(requisition));
