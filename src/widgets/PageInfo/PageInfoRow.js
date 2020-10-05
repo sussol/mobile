@@ -7,18 +7,18 @@ import { PageInfoDetail } from './PageInfoDetail';
 
 export const PageInfoRow = ({
   isDisabled,
-  titleColour,
-  infoColour,
+  titleColor,
+  infoColor,
   onPress,
   editableType,
   title,
   info,
 }) => (
   <FlexRow style={{ marginTop: 5 }}>
-    <PageInfoTitle isDisabled={isDisabled} colour={titleColour} onPress={onPress} title={title} />
+    <PageInfoTitle isDisabled={isDisabled} color={titleColor} onPress={onPress} title={title} />
     <PageInfoDetail
       isDisabled={isDisabled}
-      colour={infoColour}
+      color={infoColor}
       onPress={onPress}
       info={info}
       type={editableType}
@@ -35,8 +35,8 @@ PageInfoRow.defaultProps = {
 
 PageInfoRow.propTypes = {
   isDisabled: PropTypes.bool,
-  titleColour: PropTypes.string.isRequired,
-  infoColour: PropTypes.string.isRequired,
+  titleColor: PropTypes.string.isRequired,
+  infoColor: PropTypes.string.isRequired,
   onPress: PropTypes.func,
   editableType: PropTypes.string,
   title: PropTypes.string.isRequired,

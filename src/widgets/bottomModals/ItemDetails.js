@@ -69,8 +69,8 @@ export const ItemDetailsComponent = ({ item }) => {
 
   return (
     <ScrollView indicatorStyle="white" style={localStyles.container}>
-      <PageInfo titleColour={SUSSOL_ORANGE} infoColor="white" columns={getItemInfo()} />
-      <PageInfo titleColour={SUSSOL_ORANGE} infoColor="white" columns={getBatchInfo()} />
+      <PageInfo titleColor={SUSSOL_ORANGE} infoColor="white" columns={getItemInfo()} />
+      <PageInfo titleColor={SUSSOL_ORANGE} infoColor="white" columns={getBatchInfo()} />
     </ScrollView>
   );
 };

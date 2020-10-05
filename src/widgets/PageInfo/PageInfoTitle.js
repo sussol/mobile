@@ -5,8 +5,8 @@ import PropTypes from 'prop-types';
 import { SUSSOL_ORANGE, APP_FONT_FAMILY } from '../../globalStyles';
 import { FlexRow } from '../FlexRow';
 
-export const PageInfoTitle = ({ isDisabled, colour, onPress, title }) => {
-  const style = { ...localStyles.text, ...localStyles.titleText, color: colour };
+export const PageInfoTitle = ({ isDisabled, color, onPress, title }) => {
+  const style = { ...localStyles.text, ...localStyles.titleText, color };
   const editable = onPress && !isDisabled;
   const Container = editable ? TouchableOpacity : FlexRow;
 
@@ -35,6 +35,6 @@ PageInfoTitle.defaultProps = {
 PageInfoTitle.propTypes = {
   isDisabled: PropTypes.bool,
   onPress: PropTypes.func,
-  colour: PropTypes.string.isRequired,
+  color: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
 };

@@ -17,8 +17,8 @@ import { DARKER_GREY, WHITE, SUSSOL_ORANGE } from '../globalStyles';
 const CustomerRequisitionItemDetailsComponent = ({ item }) => (
   <View style={localStyles.container}>
     <PageInfo
-      titleColour={SUSSOL_ORANGE}
-      infoColour={WHITE}
+      titleColor={SUSSOL_ORANGE}
+      infoColor={WHITE}
       columns={getPageInfoColumns('supplierRequisitionItemDetail')(item)}
     />
   </View>
