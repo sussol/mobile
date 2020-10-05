@@ -59,6 +59,7 @@ const getLocalisation = ({ stepKey }) => {
 export const Step = memo(props => {
   const [modalData, setModalData] = useState([]);
   const { data, field, type, stepKey, status, getModalData, onPress } = props;
+
   // Each stepKey used with this component has a placeholder/error string in getLocalisation.
   const { placeholder, errorString } = getLocalisation({ stepKey });
 
@@ -73,7 +74,7 @@ export const Step = memo(props => {
   useEffect(() => {
     if (status !== 'CURRENT' || !getModalData) return;
     setModalData(getModalData());
-  }, [status, internalStatus]);
+  }, [status, internalStatus, data]);
 
   const onSelection = () => {
     onPress({ selection: modalData, key: stepKey });
