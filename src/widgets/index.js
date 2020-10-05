@@ -14,7 +14,7 @@ export { Flag } from './Flag';
 export { FlexColumn } from './FlexColumn';
 export { FlexRow } from './FlexRow';
 export { FlexView } from './FlexView';
-export { FormTextInput } from './FormInputs/FromTextInput';
+export { FormTextInput } from './FormInputs/FormTextInput';
 export { HeaderRight } from './HeaderRight';
 export { HazardPoint } from './HazardPoint';
 export { IconCell } from './IconCell';
