@@ -109,9 +109,9 @@ export class SyncQueue {
           };
 
           if (this.isValidSyncOutRecord(syncOutRecord)) {
-            const existingSyncOutRecord = this.database.get('SyncOut', recordId);
+            const existingSyncOutRecord = this.database.get('SyncOut', recordId, 'recordId');
             if (existingSyncOutRecord) {
-              this.database.save('SyncOut', { ...existingSyncOutRecord, ...syncOutRecord });
+              this.database.update('SyncOut', { id: existingSyncOutRecord.id, ...syncOutRecord });
             } else {
               this.database.create('SyncOut', { id: generateUUID(), ...syncOutRecord });
             }

@@ -52,7 +52,10 @@ export const selectFilteredAndSortedItems = createSelector(
   [selectItemSearchTerm, selectItems],
   (itemSearchTerm, items) => {
     // Filter the items by the entered search term.
-    const filteredItems = items.filtered('name CONTAINS[c] $0', itemSearchTerm);
+    const filteredItems = items.filtered(
+      'name CONTAINS[c] $0 || code CONTAINS[c] $0',
+      itemSearchTerm
+    );
 
     // Keep the items sorted alphabetically.
     const sortedItems = filteredItems.sorted('name');

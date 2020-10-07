@@ -64,7 +64,11 @@ export class Period extends Realm.Object {
   }
 
   get numberOfDays() {
-    return moment(this.endDate).diff(moment(this.startDate), 'days');
+    return (
+      moment(this.endDate)
+        .startOf('day')
+        .diff(moment(this.startDate).startOf('day'), 'days') + 1
+    );
   }
 }
 

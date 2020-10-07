@@ -243,7 +243,7 @@ export const toggleStockOut = state => {
 
   const newToggleState = !showAll;
 
-  const newData = newToggleState ? backingData : backingData.filter(item => item.hasStock);
+  const newData = newToggleState ? backingData.slice() : backingData.filter(item => item.hasStock);
 
   return { ...state, data: newData, showAll: newToggleState, searchTerm: '' };
 };

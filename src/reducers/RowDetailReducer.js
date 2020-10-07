@@ -25,7 +25,7 @@ export const RowDetailReducer = (state = initialState(), action) => {
       const { payload } = action;
       const { rowData } = payload;
 
-      return { ...state, rowData, detailKey: ROW_DETAIL_KEYS.SUPPLIER_REQUISITION_ITEM_DETAIL };
+      return { ...state, rowData, detailKey: ROW_DETAIL_KEYS.CUSTOMER_REQUISITION_ITEM_DETAIL };
     }
     case ROW_DETAIL_ACTIONS.OPEN_SUPPLIER_REQUISITION_ITEM_DETAIL: {
       const { payload } = action;
