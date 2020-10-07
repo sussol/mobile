@@ -419,11 +419,13 @@ const mapStateToProps = state => {
   const { pages = {} } = state;
   const { customerRequisition = {} } = pages;
   const { usingIndicators = false, showIndicators = false } = customerRequisition;
+  const { columnSet, isRemoteOrder } = customerRequisition;
+  const formEntryColumnSet = isRemoteOrder
+    ? 'editableCustomerRequisitionFormEntry'
+    : 'customerRequisitionFormEntry';
 
   const columns =
-    customerRequisition.columnSet === 'a'
-      ? getColumns(ROUTES.CUSTOMER_REQUISITION)
-      : getColumns('customerRequisitionFormEntry');
+    columnSet === 'a' ? getColumns(ROUTES.CUSTOMER_REQUISITION) : getColumns(formEntryColumnSet);
 
   if (usingIndicators && showIndicators) {
     return {

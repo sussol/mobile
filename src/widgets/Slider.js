@@ -18,9 +18,9 @@ import { generalStrings } from '../localization';
  * a valid number is entered into the TextInput.
  *
  * @prop {Bool}   isDisabled             Indicator whether this component is disabled.
- * @prop {String} minimumTrackTintColour The colour of the track lower than the slider.
- * @prop {String} maximumTrackTintColour The colour of the track greater than the slider.
- * @prop {String} thumbTintColour        The colour of the slider thumb
+ * @prop {String} minimumTrackTintColor The color of the track lower than the slider.
+ * @prop {String} maximumTrackTintColor The color of the track greater than the slider.
+ * @prop {String} thumbTintColor        The color of the slider thumb
  * @prop {Number} fractionDigits         How many decimal places.
  * @prop {Number} step                   The steps of the slider. i.e. 0.25 for [.0, .25,.5,.75]
  * @prop {Number} value                  The current value of the input.
@@ -34,9 +34,9 @@ export const Slider = React.forwardRef(
     {
       minimumValue,
       maximumValue,
-      minimumTrackTintColour,
-      maximumTrackTintColour,
-      thumbTintColour,
+      minimumTrackTintColor,
+      maximumTrackTintColor,
+      thumbTintColor,
       fractionDigits,
       step,
       value,
@@ -111,9 +111,9 @@ export const Slider = React.forwardRef(
             step={step}
             minimumValue={minimumValue}
             maximumValue={maximumValue}
-            minimumTrackTintColor={minimumTrackTintColour}
-            maximumTrackTintColor={maximumTrackTintColour}
-            thumbTintColor={thumbTintColour}
+            minimumTrackTintColor={minimumTrackTintColor}
+            maximumTrackTintColor={maximumTrackTintColor}
+            thumbTintColor={thumbTintColor}
             onValueChange={setSlider}
             onSlidingComplete={onEndEditing}
           />
@@ -156,9 +156,9 @@ const localStyles = StyleSheet.create({
 Slider.defaultProps = {
   minimumValue: 0,
   maximumValue: 100,
-  minimumTrackTintColour: SUSSOL_ORANGE,
-  maximumTrackTintColour: WARMER_GREY,
-  thumbTintColour: SUSSOL_ORANGE,
+  minimumTrackTintColor: SUSSOL_ORANGE,
+  maximumTrackTintColor: WARMER_GREY,
+  thumbTintColor: SUSSOL_ORANGE,
   fractionDigits: 2,
   step: 0.25,
   value: 20,
@@ -168,9 +168,9 @@ Slider.defaultProps = {
 Slider.propTypes = {
   minimumValue: PropTypes.number,
   maximumValue: PropTypes.number,
-  minimumTrackTintColour: PropTypes.string,
-  maximumTrackTintColour: PropTypes.string,
-  thumbTintColour: PropTypes.string,
+  minimumTrackTintColor: PropTypes.string,
+  maximumTrackTintColor: PropTypes.string,
+  thumbTintColor: PropTypes.string,
   fractionDigits: PropTypes.number,
   step: PropTypes.number,
   value: PropTypes.number,

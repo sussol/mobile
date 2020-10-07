@@ -112,7 +112,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
   createdDate: {
     title: `${pageInfoStrings.created_date}:`,
     info: `${formatDate(pageObject?.createdDate)}`,
-    onPress: () => dispatch(PageActions.openDatePicker(route)),
+    onPress: pageObject.isRemoteOrder ? () => dispatch(PageActions.openDatePicker(route)) : null,
     editableType: 'date',
   },
   customerRequisitionProgramAMCFormula: {

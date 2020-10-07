@@ -48,7 +48,7 @@ export const LineChart = ({ width, height, data }) => {
     right: width * padRight,
   };
 
-  const COLOURS = {
+  const COLORS = {
     0: SUSSOL_ORANGE,
     1: FINALISE_GREEN,
     2: GREY,
@@ -59,16 +59,16 @@ export const LineChart = ({ width, height, data }) => {
   return (
     <VictoryChart width={width} height={height} padding={padding}>
       {data.map(({ values }, index) => (
-        <VictoryScatter size={dotSize} style={{ data: { fill: COLOURS[index] } }} data={values} />
+        <VictoryScatter size={dotSize} style={{ data: { fill: COLORS[index] } }} data={values} />
       ))}
       {data.map(({ values }, index) => (
-        <VictoryLine style={{ data: { stroke: COLOURS[index] } }} data={values} />
+        <VictoryLine style={{ data: { stroke: COLORS[index] } }} data={values} />
       ))}
       {data.map(({ values, label }, index) => (
         <VictoryLabel
           datum={{ x: values.length - 1, y: values[values.length - 1].y }}
           text={label}
-          style={{ fontFamily: APP_FONT_FAMILY, fontSize: 18, fill: COLOURS[index] }}
+          style={{ fontFamily: APP_FONT_FAMILY, fontSize: 18, fill: COLORS[index] }}
           textAnchor="middle"
         />
       ))}
