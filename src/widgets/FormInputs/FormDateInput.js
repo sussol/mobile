@@ -31,8 +31,8 @@ import { FormInvalidMessage } from './FormInvalidMessage';
  * @prop {Func}   onSubmit                 Callback after submitting a date from text.
  * @prop {String} label                    Label for the input
  * @prop {String} placeholder              Placeholder text for the text input.
- * @prop {String} placeholderTextColor     Colour of the placeholder text.
- * @prop {String} underlineColorAndroid    Underline colour of the text input.
+ * @prop {String} placeholderTextColor     Color of the placeholder text.
+ * @prop {String} underlineColorAndroid    Underline color of the text input.
  * @prop {String} invalidMessage           Message to the user when the current input is invalid.
  * @prop {Object} textInputStyle           Style object to override the underlying text input.
  */

@@ -7,6 +7,7 @@
 
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { View, StyleSheet, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 
@@ -87,12 +88,21 @@ export const CustomerRequisition = ({
   onEditDaysOutOfStock,
   onEditRequiredQuantity,
   onRowPress,
+  onEditCreatedDate,
+  datePickerIsOpen,
+  onDatePickerClosed,
 }) => {
-  const { isFinalised, comment, program, isResponse } = pageObject;
+  const { isFinalised, comment, program, isResponse, createdDate, entryDate } = pageObject;
+
+  const datePickerCallback = ({ type, nativeEvent: { timestamp } }) => {
+    onDatePickerClosed();
+    if (type === 'set') onEditCreatedDate(new Date(timestamp));
+  };
 
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, route), [
     comment,
     isFinalised,
+    createdDate,
   ]);
 
   const runWithLoadingIndicator = useLoadingIndicator();
@@ -371,6 +381,15 @@ export const CustomerRequisition = ({
         dispatch={dispatch}
         currentValue={modalValue}
       />
+      {datePickerIsOpen && (
+        <DateTimePicker
+          onChange={datePickerCallback}
+          mode="date"
+          display="spinner"
+          value={createdDate}
+          maximumDate={entryDate}
+        />
+      )}
     </DataTablePageView>
   );
 };
@@ -391,17 +410,22 @@ const mapDispatchToProps = dispatch => ({
     dispatch(PageActions.editIncomingStock(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
   onEditDaysOutOfStock: (value, rowKey) =>
     dispatch(PageActions.editDaysOutOfStock(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
+  onEditCreatedDate: value =>
+    dispatch(PageActions.editCreatedDate(value, ROUTES.CUSTOMER_REQUISITION)),
+  onDatePickerClosed: () => dispatch(PageActions.closeDatePicker(ROUTES.CUSTOMER_REQUISITION)),
 });
 
 const mapStateToProps = state => {
   const { pages = {} } = state;
   const { customerRequisition = {} } = pages;
   const { usingIndicators = false, showIndicators = false } = customerRequisition;
+  const { columnSet, isRemoteOrder } = customerRequisition;
+  const formEntryColumnSet = isRemoteOrder
+    ? 'editableCustomerRequisitionFormEntry'
+    : 'customerRequisitionFormEntry';
 
   const columns =
-    customerRequisition.columnSet === 'a'
-      ? getColumns(ROUTES.CUSTOMER_REQUISITION)
-      : getColumns('customerRequisitionFormEntry');
+    columnSet === 'a' ? getColumns(ROUTES.CUSTOMER_REQUISITION) : getColumns(formEntryColumnSet);
 
   if (usingIndicators && showIndicators) {
     return {
@@ -471,4 +495,7 @@ CustomerRequisition.propTypes = {
   onEditDaysOutOfStock: PropTypes.func.isRequired,
   onEditRequiredQuantity: PropTypes.func.isRequired,
   onRowPress: PropTypes.func.isRequired,
+  onEditCreatedDate: PropTypes.func.isRequired,
+  datePickerIsOpen: PropTypes.bool.isRequired,
+  onDatePickerClosed: PropTypes.func.isRequired,
 };

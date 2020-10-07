@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { DropDown } from './DropDown';
-import { PageInfo } from './PageInfo';
+import { PageInfo } from './PageInfo/PageInfo';
 import { TextEditor } from './modalChildren';
 import { ModalContainer } from './modals/ModalContainer';
 

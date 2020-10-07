@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { PageButton } from './PageButton';
 
 import { FORM_INPUT_TYPES } from '../utilities/formInputConfigs';
-import { FormTextInput } from './FormInputs/FromTextInput';
+import { FormTextInput } from './FormInputs/FormTextInput';
 import { FormDateInput } from './FormInputs/FormDateInput';
 import { FormToggle } from './FormInputs/FormToggle';
 import { FormDropdown } from './FormInputs/FormDropdown';

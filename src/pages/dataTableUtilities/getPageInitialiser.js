@@ -124,7 +124,7 @@ export const customerInvoicesInitialiser = () => {
  * @returns  {object}
  */
 const customerRequisitionInitialiser = requisition => {
-  const { indicators, items: backingData, program } = requisition;
+  const { indicators, items: backingData, program, isRemoteOrder } = requisition;
   const sortedData = backingData.sorted('item.name').slice();
 
   const usingIndicators = !!indicators?.length;
@@ -135,7 +135,7 @@ const customerRequisitionInitialiser = requisition => {
   return {
     pageObject: requisition,
     backingData: requisition.items,
-    columnSet: program ? 'b' : 'a',
+    columnSet: program && isRemoteOrder ? 'b' : 'a',
     data: sortedData,
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
@@ -151,6 +151,8 @@ const customerRequisitionInitialiser = requisition => {
     indicatorColumns,
     indicatorRows,
     indicators,
+    isRemoteOrder,
+    datePickerIsOpen: false,
     route: ROUTES.CUSTOMER_REQUISITION,
     columns: getColumns(ROUTES.CUSTOMER_REQUISITION),
     getPageInfoColumns: getPageInfoColumns(

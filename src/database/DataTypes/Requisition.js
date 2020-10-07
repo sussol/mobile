@@ -451,6 +451,7 @@ export class Requisition extends Realm.Object {
   finalise(database) {
     this.pruneRedundantItems(database);
     this.status = 'finalised';
+
     database.save('Requisition', this);
 
     if (this.linkedTransaction) this.linkedTransaction.finalise(database);
@@ -486,6 +487,8 @@ Requisition.schema = {
     period: { type: 'Period', optional: true },
     otherStoreName: { type: 'Name', optional: true },
     customData: { type: 'string', optional: true },
+    createdDate: { type: 'date', default: new Date() },
+    isRemoteOrder: { type: 'bool', default: true },
   },
 };
 

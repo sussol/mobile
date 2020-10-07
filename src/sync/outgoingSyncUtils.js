@@ -138,6 +138,8 @@ const generateSyncData = (settings, recordType, record) => {
         periodID: record.period && record.period.id,
         orderType: record.orderType,
         custom_data: record.customData,
+        date_order_received: getDateString(record.createdDate),
+        isRemoteOrder: String(record.isRemoteOrder),
       };
     }
     case 'RequisitionItem': {
@@ -150,8 +152,15 @@ const generateSyncData = (settings, recordType, record) => {
         suggested_quantity: String(record.suggestedQuantity),
         actualQuan: String(record.suppliedQuantity),
         line_number: String(record.sortIndex),
-        Cust_stock_order: String(record.requiredQuantity),
         comment: record.comment,
+        Cust_stock_order: String(record.requiredQuantity),
+        Cust_prev_stock_balance: String(record.openingStock),
+        Cust_loss_adjust: String(record.positiveAdjustments - record.negativeAdjustments),
+        Cust_stock_received: String(record.incomingStock),
+        Cust_stock_issued: String(record.outgoingStock),
+        DOSforAMCadjustment: String(record.daysOutOfStock),
+        stockLosses: String(record.negativeAdjustments),
+        stockAdditions: String(record.positiveAdjustments),
       };
     }
     case 'Stocktake': {

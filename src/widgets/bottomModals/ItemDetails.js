@@ -11,7 +11,7 @@ import { ScrollView } from 'react-native';
 
 import { formatExpiryDate } from '../../utilities';
 
-import { PageInfo } from '../PageInfo';
+import { PageInfo } from '../PageInfo/PageInfo';
 
 import { tableStrings, generalStrings } from '../../localization';
 import { DARKER_GREY, SUSSOL_ORANGE } from '../../globalStyles';

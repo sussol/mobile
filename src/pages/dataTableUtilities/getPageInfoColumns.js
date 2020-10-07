@@ -65,7 +65,7 @@ const PER_PAGE_INFO_COLUMNS = {
   ],
   [ROUTES.CUSTOMER_REQUISITIONS_WITH_PROGRAMS]: [
     ['program', 'orderType', 'monthsToSupply', 'entryDate'],
-    ['customer', 'requisitionComment', 'period'],
+    ['customer', 'requisitionComment', 'period', 'createdDate'],
   ],
   [ROUTES.PRESCRIPTION]: [
     ['entryDate', 'enteredBy'],
@@ -116,6 +116,12 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
   customerRequisitionProgramAMCFormulaString: {
     title: `${pageInfoStrings.amc_equals}`,
     info: `= ${pageInfoStrings.amc_formula}`,
+  },
+  createdDate: {
+    title: `${pageInfoStrings.created_date}:`,
+    info: `${formatDate(pageObject?.createdDate)}`,
+    onPress: pageObject.isRemoteOrder ? () => dispatch(PageActions.openDatePicker(route)) : null,
+    editableType: 'date',
   },
   customerRequisitionProgramAMCFormula: {
     title: `${Math.ceil(pageObject.monthlyUsage)}`,

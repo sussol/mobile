@@ -8,7 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
 
-import { PageInfo } from './PageInfo';
+import { PageInfo } from './PageInfo/PageInfo';
 
 import { getPageInfoColumns } from '../pages/dataTableUtilities';
 
