@@ -12,14 +12,14 @@ import { SUSSOL_ORANGE, APP_FONT_FAMILY, DARK_GREY, SOFT_RED } from '../globalSt
 
 /**
  * Simple stateless component which renders either:
- * some text, left aligned and ellipsis overflow and a rightaligned icon
- * or, a centered icon with optional colours.
+ * some text, left aligned and ellipsis overflow and a right aligned icon
+ * or, a centered icon with optional colors.
  * Default styles are dark grey text, soft red when disabled with an
  * orange up-caret icon.
  */
 export class IconCell extends React.PureComponent {
   getComponent = () => {
-    const { text, icon, disabled, iconSize, iconColour } = this.props;
+    const { text, icon, disabled, iconSize, iconColor } = this.props;
     const styleParameters = { disabled, text };
     const { mainContainer, textContainer, iconContainer, font } = getLocalStyles(styleParameters);
     return (
@@ -31,7 +31,7 @@ export class IconCell extends React.PureComponent {
         </View>
 
         <View style={iconContainer}>
-          <Icon name={icon} size={iconSize} color={iconColour} />
+          <Icon name={icon} size={iconSize} color={iconColor} />
         </View>
       </View>
     );
@@ -70,7 +70,7 @@ IconCell.defaultProps = {
   icon: 'caret-up',
   disabled: false,
   onPress: null,
-  iconColour: SUSSOL_ORANGE,
+  iconColor: SUSSOL_ORANGE,
   iconSize: 20,
 };
 
@@ -79,7 +79,7 @@ IconCell.propTypes = {
   onPress: PropTypes.func,
   icon: PropTypes.string,
   disabled: PropTypes.bool,
-  iconColour: PropTypes.string,
+  iconColor: PropTypes.string,
   iconSize: PropTypes.number,
 };
 

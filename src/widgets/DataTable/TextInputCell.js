@@ -16,7 +16,7 @@ import { getAdjustedStyle } from './utilities';
  * @param {string|number} rowKey     Unique key associated to row cell is in
  * @param {string|number} columnKey  Unique key associated to column cell is in
  * @param {bool} isDisabled          If `true` will render a plain Cell element with no interaction
- * @param {String} placeholderColour Placholder text colour
+ * @param {String} placeholderColor  Placeholder text color
  * @param {Object}  viewStyle        Style object for the wrapping View component
  * @param {Object}  textStyle        Style object for the inner Text component
  * @param {Object}  textInputStyle   Style object for TextInput component.
@@ -28,7 +28,7 @@ import { getAdjustedStyle } from './utilities';
  * @param {Bool}  isLastCell         Indicator if this cell is last in a row,
  *                                   removing the borderRight,
  * @param {Func}  onChangeText       Callback for the onChangeText event.
- * @param {String} underlineColor    Underline colour of TextInput on Android.
+ * @param {String} underlineColor    Underline color of TextInput on Android.
  */
 const TextInputCell = React.memo(
   ({
@@ -36,7 +36,7 @@ const TextInputCell = React.memo(
     rowKey,
     columnKey,
     isDisabled,
-    placeholderColour,
+    placeholderColor,
     onChangeText,
     isLastCell,
     width,
@@ -84,7 +84,7 @@ const TextInputCell = React.memo(
           placeholder={placeholder}
           style={internalTextStyle}
           value={usingPlaceholder ? '' : String(value)}
-          placeholderTextColor={placeholderColour}
+          placeholderTextColor={placeholderColor}
           onChangeText={onEdit}
           onSubmitEditing={focusNext}
           underlineColorAndroid={underlineColor}
@@ -102,7 +102,7 @@ TextInputCell.propTypes = {
   rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   columnKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   isDisabled: PropTypes.bool,
-  placeholderColour: PropTypes.string,
+  placeholderColor: PropTypes.string,
   onChangeText: PropTypes.func.isRequired,
   cellTextStyle: PropTypes.object,
   viewStyle: PropTypes.object,
@@ -134,7 +134,7 @@ TextInputCell.defaultProps = {
   debug: false,
   keyboardType: 'numeric',
   placeholder: '',
-  placeholderColour: '#CDCDCD',
+  placeholderColor: '#CDCDCD',
   underlineColor: '#CDCDCD',
 };
 
