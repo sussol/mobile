@@ -48,7 +48,7 @@ const PAGE_COLUMN_WIDTHS = {
   sensors: [3, 3, 1, 1],
   [TABS.ITEM]: [1, 3, 1],
   [TABS.PRESCRIBER]: [3, 3, 1],
-  editableCustomerRequisitionFormEntry: [2, 2, 1, 1, 1, 1, 2, 2, 2, 2],
+  editableCustomerRequisitionFormEntry: [2, 1.5, 1, 1, 1, 1.5, 1, 1, 1, 1.5],
   customerRequisitionFormEntry: [2, 2, 1, 1, 1, 1, 2, 2, 2, 2],
 };
 
@@ -57,13 +57,13 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.ITEM_NAME,
     COLUMN_NAMES.ITEM_CODE,
     COLUMN_NAMES.EDITABLE_OPENING_STOCK,
-    COLUMN_NAMES.EDITABLE_DAYS_OUT_OF_STOCK,
     COLUMN_NAMES.EDITABLE_INCOMING_STOCK,
     COLUMN_NAMES.EDITABLE_OUTGOING_STOCK,
     COLUMN_NAMES.EDITABLE_POSITIVE_ADJUSTMENTS,
     COLUMN_NAMES.EDITABLE_NEGATIVE_ADJUSTMENTS,
-    COLUMN_NAMES.EDITABLE_REQUIRED_QUANTITY,
     COLUMN_NAMES.CLOSING_STOCK,
+    COLUMN_NAMES.EDITABLE_DAYS_OUT_OF_STOCK,
+    COLUMN_NAMES.EDITABLE_REQUIRED_QUANTITY,
   ],
   customerRequisitionFormEntry: [
     COLUMN_NAMES.ITEM_NAME,
@@ -641,10 +641,10 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.CLOSING_STOCK]: {
     type: COLUMN_TYPES.NUMERIC,
     key: COLUMN_KEYS.CLOSING_STOCK,
-    title: tableStrings.closing_stock,
+    title: tableStrings.their_stock,
     alignText: 'right',
     sortable: true,
-    editable: true,
+    editable: false,
   },
 
   [COLUMN_NAMES.COST_PRICE]: {
@@ -886,7 +886,7 @@ const COLUMNS = () => ({
     title: tableStrings.doses,
     alignText: 'right',
     sortable: true,
-    editable: false,
+    editable: true,
   },
 
   [COLUMN_NAMES.RETURN_AMOUNT]: {
