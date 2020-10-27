@@ -265,8 +265,8 @@ export const CustomerRequisition = ({
 
   const ButtonsSetSupplied = useCallback(() => (
     <>
-      <ButtonSetSuppliedToRequested />
       <ButtonSetSuppliedToSuggested />
+      <ButtonSetSuppliedToRequested />
     </>
   ));
 
