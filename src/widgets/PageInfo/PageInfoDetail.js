@@ -7,7 +7,7 @@ import { FlexRow } from '../FlexRow';
 
 import { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../../globalStyles';
 
-export const PageInfoDetail = ({ isDisabled, onPress, info, type, color }) => {
+export const PageInfoDetail = ({ isDisabled, onPress, info, type, color, numberOfLines }) => {
   const editable = onPress && !isDisabled;
   const border = editable && type === 'text' ? localStyles.bottomBorder : {};
   const iconLookups = { selectable: 'angle-down', text: 'pencil', date: 'calendar' };
@@ -17,7 +17,7 @@ export const PageInfoDetail = ({ isDisabled, onPress, info, type, color }) => {
   return (
     <Container onPress={onPress} style={{ flex: 3 }}>
       <FlexRow justifyContent="space-between" style={border}>
-        <Text style={{ ...localStyles.text, color }} numberOfLines={1}>
+        <Text style={{ ...localStyles.text, color }} numberOfLines={numberOfLines}>
           {info}
         </Text>
 
@@ -47,6 +47,7 @@ PageInfoDetail.defaultProps = {
   info: '',
   type: '',
   onPress: null,
+  numberOfLines: 1,
 };
 
 PageInfoDetail.propTypes = {
@@ -55,4 +56,5 @@ PageInfoDetail.propTypes = {
   info: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   type: PropTypes.string,
   color: PropTypes.string.isRequired,
+  numberOfLines: PropTypes.number,
 };

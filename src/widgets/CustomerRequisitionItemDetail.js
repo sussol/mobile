@@ -17,9 +17,11 @@ import { DARKER_GREY, WHITE, SUSSOL_ORANGE } from '../globalStyles';
 const CustomerRequisitionItemDetailsComponent = ({ item }) => (
   <View style={localStyles.container}>
     <PageInfo
+      titleTextAlign="right"
       titleColor={SUSSOL_ORANGE}
       infoColor={WHITE}
       columns={getPageInfoColumns('customerRequisitionItemDetail')(item)}
+      numberOfLines={2}
     />
   </View>
 );

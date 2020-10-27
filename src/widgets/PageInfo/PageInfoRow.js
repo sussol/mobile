@@ -13,10 +13,20 @@ export const PageInfoRow = ({
   editableType,
   title,
   info,
+  numberOfLines,
+  titleTextAlign,
 }) => (
   <FlexRow style={{ marginTop: 5 }}>
-    <PageInfoTitle isDisabled={isDisabled} color={titleColor} onPress={onPress} title={title} />
+    <PageInfoTitle
+      numberOfLines={numberOfLines}
+      isDisabled={isDisabled}
+      color={titleColor}
+      onPress={onPress}
+      title={title}
+      textAlign={titleTextAlign}
+    />
     <PageInfoDetail
+      numberOfLines={numberOfLines}
       isDisabled={isDisabled}
       color={infoColor}
       onPress={onPress}
@@ -31,6 +41,8 @@ PageInfoRow.defaultProps = {
   editableType: '',
   onPress: null,
   isDisabled: false,
+  numberOfLines: 1,
+  titleTextAlign: 'left',
 };
 
 PageInfoRow.propTypes = {
@@ -41,4 +53,6 @@ PageInfoRow.propTypes = {
   editableType: PropTypes.string,
   title: PropTypes.string.isRequired,
   info: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  numberOfLines: PropTypes.number,
+  titleTextAlign: PropTypes.string,
 };
