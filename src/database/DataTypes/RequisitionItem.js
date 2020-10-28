@@ -94,6 +94,11 @@ export class RequisitionItem extends Realm.Object {
     return this.requisition ? daysToSupply : 0;
   }
 
+  get monthsToSupply() {
+    const { monthsToSupply } = this.requisition;
+    return monthsToSupply;
+  }
+
   /**
    * Get transaction item linked to this requisition item.
    *

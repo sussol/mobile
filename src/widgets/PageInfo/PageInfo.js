@@ -8,6 +8,8 @@ import { SUSSOL_ORANGE, DARK_GREY } from '../../globalStyles';
 
 /**
  * A component to display info in a generic way at the top of a page.
+ * @prop  {string} titleTextAlign     The text align of the title component.
+ * @prop  {number} numberOfLines      Max number of text lines per row.
  * @prop  {bool}   isEditingDisabled  Indicator whether all editing is disabled
  * @prop  {string} infoColor         Colour of all info components
  * @prop  {string} titleColor        Colour of all title components
@@ -30,25 +32,31 @@ import { SUSSOL_ORANGE, DARK_GREY } from '../../globalStyles';
  *                            col1: row1 col2: row1
  *                            col1: row2 col2: row2
  */
-export const PageInfo = React.memo(({ columns, isEditingDisabled, titleColor, infoColor }) => (
-  <FlexRow>
-    {columns.map((column, index) => (
-      <PageInfoColumn
-        // eslint-disable-next-line react/no-array-index-key
-        key={index}
-        isEditingDisabled={isEditingDisabled}
-        titleColor={titleColor}
-        infoColor={infoColor}
-        columnData={column}
-      />
-    ))}
-  </FlexRow>
-));
+export const PageInfo = React.memo(
+  ({ columns, isEditingDisabled, titleColor, infoColor, numberOfLines, titleTextAlign }) => (
+    <FlexRow>
+      {columns.map((column, index) => (
+        <PageInfoColumn
+          // eslint-disable-next-line react/no-array-index-key
+          key={index}
+          titleTextAlign={titleTextAlign}
+          isEditingDisabled={isEditingDisabled}
+          titleColor={titleColor}
+          infoColor={infoColor}
+          columnData={column}
+          numberOfLines={numberOfLines}
+        />
+      ))}
+    </FlexRow>
+  )
+);
 
 PageInfo.defaultProps = {
   isEditingDisabled: false,
   titleColor: DARK_GREY,
   infoColor: SUSSOL_ORANGE,
+  numberOfLines: 1,
+  titleTextAlign: 'left',
 };
 
 PageInfo.propTypes = {
@@ -57,4 +65,6 @@ PageInfo.propTypes = {
   isEditingDisabled: PropTypes.bool,
   titleColor: PropTypes.string,
   infoColor: PropTypes.string,
+  numberOfLines: PropTypes.number,
+  titleTextAlign: PropTypes.string,
 };

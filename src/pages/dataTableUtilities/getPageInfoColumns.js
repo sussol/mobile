@@ -65,7 +65,7 @@ const PER_PAGE_INFO_COLUMNS = {
   ],
   [ROUTES.CUSTOMER_REQUISITIONS_WITH_PROGRAMS]: [
     ['program', 'orderType', 'monthsToSupply', 'entryDate'],
-    ['customer', 'requisitionComment', 'period', 'createdDate'],
+    ['period', 'customer', 'createdDate', 'requisitionComment'],
   ],
   [ROUTES.PRESCRIPTION]: [
     ['entryDate', 'enteredBy'],
@@ -86,8 +86,11 @@ const PER_PAGE_INFO_COLUMNS = {
     ['breachDuration', 'location'],
     ['numberOfAffectedBatches', 'affectedQuantity'],
   ],
+
   customerRequisitionItemDetail: [
     [
+      'numberOfDaysInAMonthString',
+      'numberOfDaysInAMonthFormula',
       'customerRequisitionProgramAMCFormulaString',
       'customerRequisitionProgramAMCFormula',
       'customerRequisitionProgramSuggestedFormulaString',
@@ -102,16 +105,26 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
     info: `= ${pageInfoStrings.suggested_formula}`,
   },
   customerRequisitionProgramSuggestedFormula: {
-    title: `${Math.ceil(pageObject.dailyUsage * pageObject.daysToSupply - pageObject.stockOnHand)}`,
-    info: `= ${pageObject.dailyUsage?.toFixed(2)} x ${pageObject.daysToSupply} - ${
+    title: `${Math.ceil(
+      pageObject.monthlyUsage * pageObject.monthsToSupply - pageObject.stockOnHand
+    )}`,
+    info: `= (${pageObject.monthlyUsage?.toFixed(2)} x ${pageObject.monthsToSupply}) - ${
       pageObject.stockOnHand
     } ${
       Math.ceil(
-        pageObject.dailyUsage?.toFixed(2) * pageObject.daysToSupply - pageObject.stockOnHand
+        pageObject.monthlyUsage?.toFixed(2) * pageObject.monthsToSupply - pageObject.stockOnHand
       ) < 0
         ? pageInfoStrings.none_suggested
         : ''
     }`,
+  },
+  numberOfDaysInAMonthString: {
+    title: `${pageInfoStrings.number_of_days_in_a_month}`,
+    info: `${pageInfoStrings.number_of_days_in_a_month_formula}`,
+  },
+  numberOfDaysInAMonthFormula: {
+    title: '30.42',
+    info: '= 365 / 12',
   },
   customerRequisitionProgramAMCFormulaString: {
     title: `${pageInfoStrings.amc_equals}`,
@@ -125,9 +138,9 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
   },
   customerRequisitionProgramAMCFormula: {
     title: `${Math.ceil(pageObject.monthlyUsage)}`,
-    info: `= ${pageObject.outgoingStock?.toFixed(2)} x ${NUMBER_OF_DAYS_IN_A_MONTH?.toFixed(
+    info: `= (${pageObject.outgoingStock?.toFixed(2)} x ${NUMBER_OF_DAYS_IN_A_MONTH?.toFixed(
       2
-    )} / (${pageObject.numberOfDaysInPeriod} - ${pageObject.daysOutOfStock})`,
+    )}) / (${pageObject.numberOfDaysInPeriod} - ${pageObject.daysOutOfStock})`,
   },
 
   lastRequisitionDate: {
