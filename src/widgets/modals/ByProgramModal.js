@@ -137,7 +137,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
     .objects('NameTag')
     .filtered(
       'subquery(nameTagJoins, $joins, $joins.name.id == $0).@count > 0',
-      settings.get(THIS_STORE_NAME_ID)
+      customer?.id ?? settings.get(THIS_STORE_NAME_ID)
     )
     .map(({ description }) => description.toLowerCase());
 
