@@ -173,7 +173,7 @@ const generateSyncData = (settings, recordType, record) => {
     case 'StocktakeBatch': {
       return {
         ID: record.id,
-        stock_take_ID: record.stocktake && record.stocktake.id,
+        stock_take_ID: record.stocktake?.id ?? '',
         item_line_ID: record.itemBatchId,
         snapshot_qty: String(record.snapshotNumberOfPacks),
         snapshot_packsize: String(record.packSize),
