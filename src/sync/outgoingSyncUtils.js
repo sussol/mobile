@@ -196,7 +196,7 @@ const generateSyncData = (settings, recordType, record) => {
 
       return {
         ID: record.id,
-        name_ID: record.otherParty && record.otherParty.id,
+        name_ID: record.otherParty?.id ?? '',
         invoice_num: record.serialNumber,
         comment: record.comment,
         entry_date: getDateString(record.entryDate),
