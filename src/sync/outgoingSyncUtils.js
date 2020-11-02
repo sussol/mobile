@@ -167,7 +167,7 @@ const generateSyncData = (settings, recordType, record) => {
         comment: record.comment,
         stock_take_created_date: getDateString(record.createdDate),
         serial_number: record.serialNumber,
-        programID: record.program && record.program.id,
+        programID: record.program?.id ?? '',
       };
     }
     case 'StocktakeBatch': {
