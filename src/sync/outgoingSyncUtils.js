@@ -133,7 +133,7 @@ const generateSyncData = (settings, recordType, record) => {
         comment: record.comment,
         type: REQUISITION_TYPES.translate(record.type, INTERNAL_TO_EXTERNAL),
         programID: record.program?.id ?? '',
-        periodID: record.period && record.period.id,
+        periodID: record.period?.id ?? '',
         orderType: record.orderType,
         custom_data: record.customData,
       };
