@@ -184,7 +184,7 @@ const generateSyncData = (settings, recordType, record) => {
         sell_price: String(record.sellPrice),
         Batch: record.batch,
         item_ID: record.itemId,
-        optionID: record.option && record.option.id,
+        optionID: record.option?.id ?? '',
         is_edited: record.hasBeenCounted,
       };
     }
