@@ -251,7 +251,7 @@ const generateSyncData = (settings, recordType, record) => {
         line_number: String(record.sortIndex),
         item_name: record.itemName,
         is_from_inventory_adjustment: transaction.isInventoryAdjustment,
-        donor_id: record.donor && record.donor.id,
+        donor_id: record.donor?.id ?? '',
         type: record.type,
         linked_transact_id: record.linkedTransaction?.id,
       };
