@@ -203,7 +203,7 @@ const generateSyncData = (settings, recordType, record) => {
         type: TRANSACTION_TYPES.translate(record.type, INTERNAL_TO_EXTERNAL),
         status: STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
         mode: record.mode,
-        prescriber_ID: record.prescriber && record.prescriber.id,
+        prescriber_ID: record.prescriber?.id ?? '',
         total: String(record.total),
         amount_outstanding: String(record.outstanding),
         foreign_currency_total: String(record.total),
