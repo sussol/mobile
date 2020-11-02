@@ -70,8 +70,8 @@ const generateSyncData = (settings, recordType, record) => {
         cost_price: String(record.costPrice),
         sell_price: String(record.sellPrice),
         total_cost: String(record.costPrice * record.numberOfPacks),
-        donor_id: record.donor && record.donor.id,
         name_ID: record.supplier?.id ?? '',
+        donor_id: record.donor?.id ?? '',
       };
     }
     case 'Name': {
