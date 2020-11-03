@@ -6,7 +6,7 @@ import { PageInfoTitle } from './PageInfoTitle';
 import { PageInfoDetail } from './PageInfoDetail';
 
 export const PageInfoRow = ({
-  isDisabled,
+  isEditingDisabled,
   titleColor,
   infoColor,
   onPress,
@@ -19,7 +19,7 @@ export const PageInfoRow = ({
   <FlexRow style={{ marginTop: 5 }}>
     <PageInfoTitle
       numberOfLines={numberOfLines}
-      isDisabled={isDisabled}
+      isEditingDisabled={isEditingDisabled}
       color={titleColor}
       onPress={onPress}
       title={title}
@@ -27,7 +27,7 @@ export const PageInfoRow = ({
     />
     <PageInfoDetail
       numberOfLines={numberOfLines}
-      isDisabled={isDisabled}
+      isEditingDisabled={isEditingDisabled}
       color={infoColor}
       onPress={onPress}
       info={info}
@@ -40,13 +40,13 @@ PageInfoRow.defaultProps = {
   info: '',
   editableType: '',
   onPress: null,
-  isDisabled: false,
+  isEditingDisabled: false,
   numberOfLines: 1,
   titleTextAlign: 'left',
 };
 
 PageInfoRow.propTypes = {
-  isDisabled: PropTypes.bool,
+  isEditingDisabled: PropTypes.bool,
   titleColor: PropTypes.string.isRequired,
   infoColor: PropTypes.string.isRequired,
   onPress: PropTypes.func,
