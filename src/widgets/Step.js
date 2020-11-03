@@ -74,7 +74,7 @@ export const Step = memo(props => {
   useEffect(() => {
     if (status !== 'CURRENT' || !getModalData) return;
     setModalData(getModalData());
-  }, [status, internalStatus, data]);
+  }, [status, internalStatus, data, getModalData]);
 
   const onSelection = () => {
     onPress({ selection: modalData, key: stepKey });

@@ -1,5 +1,5 @@
 /* eslint-disable react/forbid-prop-types */
-import React, { useReducer, useEffect, useCallback, useMemo } from 'react';
+import React, { useReducer, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
 
@@ -102,7 +102,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
   );
 
   const { steps, modalData, program, orderType, period, supplier, name, customer } = state;
-  const strings = useMemo(() => getLocalizedStrings({ transactionType }), [transactionType]);
+  const strings = getLocalizedStrings({ transactionType });
 
   const mounting = () => {
     dispatch(setStoreTags(settings.get(THIS_STORE_TAGS)));
@@ -114,7 +114,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
   // Calculates the current state of a step, according to what data is currently
   // stored in state, where the current step the user should perform is CURRENT,
   // data which is stored is COMPLETE and steps which can't be done yet are INCOMPLETE.
-  const getStatusCallback = key =>
+  const getStatus = key =>
     steps.reduceRight((status, value, i) => {
       if (state[key]) return 'COMPLETE';
       const previousStepIsCurrent = state[value] && steps[i + 1] === key;
@@ -122,16 +122,6 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
       if (previousStepIsCurrent || firstStepIsCurrent) return 'CURRENT';
       return status;
     }, 'INCOMPLETE');
-  const getStatus = useCallback(getStatusCallback, [
-    program,
-    orderType,
-    supplier,
-    name,
-    period,
-    steps,
-    customer,
-    state.isProgramBased,
-  ]);
 
   const tags = database
     .objects('NameTag')
@@ -216,76 +206,62 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
   };
 
   const stepProps = {
-    program: useMemo(
-      () => ({
-        data: program,
-        getModalData: getPrograms,
-        onPress: onOpenModal,
-        status: getStatus('program'),
-        stepKey: 'program',
-        type: 'select',
-        field: 'name',
-      }),
-      [program, state.isProgramBased, supplier, customer]
-    ),
-    customer: useMemo(
-      () => ({
-        data: customer,
-        getModalData: getCustomers,
-        onPress: onOpenModal,
-        status: getStatus('customer'),
-        stepKey: 'customer',
-        type: 'select',
-        field: 'name',
-      }),
-      [program, supplier, state.isProgramBased, customer]
-    ),
-    supplier: useMemo(
-      () => ({
-        data: supplier,
-        getModalData: getSuppliers,
-        onPress: onOpenModal,
-        status: getStatus('supplier'),
-        stepKey: 'supplier',
-        type: 'select',
-        field: 'name',
-      }),
-      [program, supplier, state.isProgramBased]
-    ),
-    orderType: useMemo(
-      () => ({
-        data: orderType,
-        getModalData: getOrderTypes,
-        onPress: onOpenModal,
-        status: getStatus('orderType'),
-        stepKey: 'orderType',
-        type: 'select',
-        field: 'name',
-      }),
-      [supplier, orderType, program]
-    ),
-    period: useMemo(
-      () => ({
-        data: period,
-        getModalData: getPeriods,
-        onPress: onOpenModal,
-        status: getStatus('period'),
-        stepKey: 'period',
-        type: 'select',
-        field: 'name',
-      }),
-      [orderType, period, supplier, program]
-    ),
-    name: useMemo(
-      () => ({
-        data: name,
-        status: getStatus('name'),
-        onPress: onOpenModal,
-        stepKey: 'name',
-        type: 'input',
-      }),
-      [program, state.isProgramBased, name]
-    ),
+    program: {
+      data: program,
+      getModalData: getPrograms,
+      onPress: onOpenModal,
+      status: getStatus('program'),
+      stepKey: 'program',
+      type: 'select',
+      field: 'name',
+    },
+    customer: {
+      data: customer,
+      getModalData: getCustomers,
+      onPress: onOpenModal,
+      status: getStatus('customer'),
+      stepKey: 'customer',
+      type: 'select',
+      field: 'name',
+    },
+
+    supplier: {
+      data: supplier,
+      getModalData: getSuppliers,
+      onPress: onOpenModal,
+      status: getStatus('supplier'),
+      stepKey: 'supplier',
+      type: 'select',
+      field: 'name',
+    },
+
+    orderType: {
+      data: orderType,
+      getModalData: getOrderTypes,
+      onPress: onOpenModal,
+      status: getStatus('orderType'),
+      stepKey: 'orderType',
+      type: 'select',
+      field: 'name',
+    },
+
+    period: {
+      data: period,
+      getModalData: getPeriods,
+      onPress: onOpenModal,
+      status: getStatus('period'),
+      stepKey: 'period',
+      type: 'select',
+      field: 'name',
+    },
+
+    name: {
+      data: name,
+      status: getStatus('name'),
+      onPress: onOpenModal,
+      stepKey: 'name',
+      type: 'input',
+    },
   };
 
   /** Render */
