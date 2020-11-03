@@ -43,6 +43,12 @@ const sortKeyToType = {
   type: 'string',
   programName: 'string',
   prescriber: 'string',
+  openingStock: 'number',
+  daysOutOfStock: 'number',
+  incomingStock: 'number',
+  outgoingStock: 'number',
+  positiveAdjustments: 'number',
+  negativeAdjustments: 'number',
 };
 
 /**
