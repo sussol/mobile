@@ -7,8 +7,15 @@ import { FlexRow } from '../FlexRow';
 
 import { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../../globalStyles';
 
-export const PageInfoDetail = ({ isDisabled, onPress, info, type, color, numberOfLines }) => {
-  const editable = onPress && !isDisabled;
+export const PageInfoDetail = ({
+  isEditingDisabled,
+  onPress,
+  info,
+  type,
+  color,
+  numberOfLines,
+}) => {
+  const editable = onPress && !isEditingDisabled;
   const border = editable && type === 'text' ? localStyles.bottomBorder : {};
   const iconLookups = { selectable: 'angle-down', text: 'pencil', date: 'calendar' };
   const iconName = iconLookups[type ?? 'text'];
@@ -43,7 +50,7 @@ export const localStyles = {
 };
 
 PageInfoDetail.defaultProps = {
-  isDisabled: false,
+  isEditingDisabled: false,
   info: '',
   type: '',
   onPress: null,
@@ -51,7 +58,7 @@ PageInfoDetail.defaultProps = {
 };
 
 PageInfoDetail.propTypes = {
-  isDisabled: PropTypes.bool,
+  isEditingDisabled: PropTypes.bool,
   onPress: PropTypes.func,
   info: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   type: PropTypes.string,
