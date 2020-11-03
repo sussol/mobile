@@ -77,7 +77,7 @@ export const Step = memo(props => {
   }, [status, internalStatus, data, getModalData]);
 
   const onSelection = () => {
-    onPress({ selection: getModalData(), key: stepKey });
+    onPress({ selection: modalData, key: stepKey });
   };
 
   /** Inner components */
