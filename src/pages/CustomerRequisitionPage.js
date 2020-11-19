@@ -463,6 +463,7 @@ CustomerRequisition.defaultProps = {
   usingIndicators: false,
   showIndicators: false,
   indicatorCodes: [],
+  indicatorColumns: [],
   currentIndicatorCode: '',
 };
 
@@ -504,5 +505,5 @@ CustomerRequisition.propTypes = {
   datePickerIsOpen: PropTypes.bool.isRequired,
   onDatePickerClosed: PropTypes.func.isRequired,
   isRemoteOrder: PropTypes.bool.isRequired,
-  indicatorColumns: PropTypes.object.isRequired,
+  indicatorColumns: PropTypes.array,
 };
