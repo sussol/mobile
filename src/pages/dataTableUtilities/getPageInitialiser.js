@@ -177,6 +177,8 @@ const customerRequisitionsInitialiser = () => {
   return {
     backingData,
     data: sortedData,
+    dataState: new Map(),
+    hasSelection: false,
     keyExtractor: recordKeyExtractor,
     searchTerm: '',
     modalKey: '',

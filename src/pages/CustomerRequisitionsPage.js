@@ -17,12 +17,13 @@ import { createCustomerRequisition, gotoCustomerRequisition } from '../navigatio
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
 import globalStyles from '../globalStyles';
-import { buttonStrings, generalStrings } from '../localization';
+import { buttonStrings, generalStrings, modalStrings } from '../localization';
 
 import { ROUTES } from '../navigation/constants';
 import { MODAL_KEYS } from '../utilities';
 import { DataTablePageModal } from '../widgets/modals';
 import { selectCurrentUser } from '../selectors/user';
+import { BottomConfirmModal } from '../widgets/bottomModals/index';
 
 /**
  * Renders a mSupply mobile page with a list of Customer requisitions.
@@ -55,10 +56,26 @@ export const CustomerRequisitions = ({
   modalKey,
   onCloseModal,
   currentUser,
+  onCheck,
+  onUncheck,
+  hasSelection,
+  onDeselectAll,
+  onDeleteRecords,
+  dataState,
 }) => {
   // Custom hook to refresh data on this page when becoming the head of the stack again.
   useNavigationFocus(navigation, refreshData);
   useSyncListener(refreshData, 'Requisition');
+
+  const getCallback = useCallback((colKey, propName) => {
+    switch (colKey) {
+      case 'remove':
+        if (propName === 'onCheck') return onCheck;
+        return onUncheck;
+      default:
+        return null;
+    }
+  }, []);
 
   const getModalOnSelect = () => {
     switch (modalKey) {
@@ -81,15 +98,17 @@ export const CustomerRequisitions = ({
       const rowKey = keyExtractor(item);
       return (
         <DataTableRow
+          rowState={dataState.get(rowKey)}
           rowData={data[index]}
           rowKey={rowKey}
           columns={columns}
           onPress={onPressRow}
           rowIndex={index}
+          getCallback={getCallback}
         />
       );
     },
-    [data]
+    [data, dataState]
   );
 
   const renderHeader = useCallback(
@@ -142,6 +161,14 @@ export const CustomerRequisitions = ({
         renderHeader={renderHeader}
         keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}
+      />
+
+      <BottomConfirmModal
+        isOpen={hasSelection}
+        questionText={modalStrings.delete_these_requisitions}
+        onCancel={onDeselectAll}
+        onConfirm={onDeleteRecords}
+        confirmText={modalStrings.remove}
       />
       <DataTablePageModal
         isOpen={!!modalKey}
@@ -200,4 +227,10 @@ CustomerRequisitions.propTypes = {
   modalKey: PropTypes.string.isRequired,
   onCloseModal: PropTypes.func.isRequired,
   currentUser: PropTypes.object.isRequired,
+  onCheck: PropTypes.func.isRequired,
+  onUncheck: PropTypes.func.isRequired,
+  hasSelection: PropTypes.bool.isRequired,
+  onDeselectAll: PropTypes.func.isRequired,
+  onDeleteRecords: PropTypes.func.isRequired,
+  dataState: PropTypes.object.isRequired,
 };
