@@ -4,7 +4,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import currency from '../../localization/currency';
@@ -87,11 +87,14 @@ const DataTableRow = React.memo(
     const { isSelected = false } = rowState || {};
     // If the row is selected, use selectedRow style, otherwise alternate row style on index.
 
-    const rowStyle = {
-      ...(rowIndex % 2 === 0 ? alternateRowStyle : basicRowStyle),
-      ...(isSelected && selectedRowStyle),
-      ...(!isValidated && { borderColor: SUSSOL_ORANGE, borderWidth: 1, borderRadius: 5 }),
-    };
+    const rowStyle = useMemo(
+      () => ({
+        ...(rowIndex % 2 === 0 ? alternateRowStyle : basicRowStyle),
+        ...(isSelected && selectedRowStyle),
+        ...(!isValidated && { borderColor: SUSSOL_ORANGE, borderWidth: 1, borderRadius: 5 }),
+      }),
+      [rowIndex, isSelected, isValidated]
+    );
 
     // Callback for rendering a row of cells.
     const renderCells = useCallback(
@@ -372,6 +375,7 @@ const DataTableRow = React.memo(
         rowData={rowData}
         rowState={rowState}
         rowIndex={rowIndex}
+        debug
       />
     );
   }
