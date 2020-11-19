@@ -11,3 +11,4 @@ export { useNavigationFocus } from './useNavigationFocus';
 export { usePageReducer } from './usePageReducer';
 export { useProtectedState } from './useProtectedState';
 export { usePopover } from './usePopover';
+export { useKeyboardHeight } from './useKeyboardHeight';
