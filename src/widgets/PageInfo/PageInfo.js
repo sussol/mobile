@@ -38,7 +38,7 @@ export const PageInfo = React.memo(
       {columns.map((column, index) => (
         <PageInfoColumn
           // eslint-disable-next-line react/no-array-index-key
-          key={index}
+          key={`${index}${JSON.stringify(column)}`}
           titleTextAlign={titleTextAlign}
           isEditingDisabled={isEditingDisabled}
           titleColor={titleColor}
