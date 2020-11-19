@@ -227,7 +227,6 @@ class MSupplyMobileAppContainer extends React.Component {
             isVisible={supplierCreditModalOpen}
             onClose={closeSupplierCreditModal}
             title={creditTitle}
-            fullScreen
           >
             <SupplierCredit />
           </ModalContainer>
@@ -236,14 +235,12 @@ class MSupplyMobileAppContainer extends React.Component {
             isVisible={isBreachModalOpen}
             onClose={closeBreachModal}
             title={breachModalTitle}
-            fullScreen
           >
             <BreachDisplay />
           </ModalContainer>
           <ModalContainer
             isVisible={temperatureSyncModalIsOpen}
             onClose={closeTemperatureSyncModal}
-            fullScreen
           >
             <TemperatureSync />
           </ModalContainer>

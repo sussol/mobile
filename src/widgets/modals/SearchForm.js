@@ -148,7 +148,7 @@ export const SearchFormComponent = ({
   const ErrorView = useCallback(
     () => (
       <>
-        <ModalContainer fullScreen={true} isVisible={!!error}>
+        <ModalContainer isVisible={!!error}>
           <ConfirmForm
             isOpen={!!error}
             questionText={error?.message}

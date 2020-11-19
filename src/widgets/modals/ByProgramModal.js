@@ -199,7 +199,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
       <TextEditor text={name} onEndEditing={value => dispatch(setName(value))} />
     );
     return (
-      <ModalContainer isVisible={isModalOpen} onClose={onCloseModal} fullScreen>
+      <ModalContainer isVisible={isModalOpen} onClose={onCloseModal}>
         {currentKey !== 'name' ? <Selector /> : <Editor />}
       </ModalContainer>
     );

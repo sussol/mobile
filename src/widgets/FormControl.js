@@ -234,7 +234,7 @@ const FormControlComponent = ({
         </View>
       </ScrollView>
       <Buttons />
-      <ModalContainer fullScreen isVisible={isConfirmFormOpen} noCancel>
+      <ModalContainer isVisible={isConfirmFormOpen} noCancel>
         <ConfirmForm
           isOpen={isConfirmFormOpen}
           questionText={confirmText}

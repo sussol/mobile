@@ -136,7 +136,6 @@ export class LoginModal extends React.Component {
         backdropPressToClose={false}
         swipeToClose={false}
         backgroundColor={WHITE}
-        fullScreen
       >
         <View style={[globalStyles.verticalContainer, { flex: 1 }]}>
           <View style={[globalStyles.authFormContainer]}>
