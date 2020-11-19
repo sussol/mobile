@@ -53,11 +53,17 @@ const TextInputCell = React.memo(
 
     const usingPlaceholder = placeholder && !value;
 
-    const { focusNextCell, getRefIndex, getCellRef } = React.useContext(RefContext);
+    const { focusNextCell, getRefIndex, getCellRef, adjustToTop } = React.useContext(RefContext);
     const refIndex = getRefIndex(rowIndex, columnKey);
 
     const onEdit = newValue => onChangeText(newValue, rowKey, columnKey);
     const focusNext = () => focusNextCell(refIndex);
+
+    // Scrolls the parent scroll view such that this row is near the top of the data table,
+    // which should ensure it is above the keyboard - without it, if the row is in a position
+    // which will be behind the keyboard once it appears, the keyboard will show then disappear
+    // jankily.
+    const showAboveKeyboard = () => adjustToTop(rowIndex);
 
     // Render a plain Cell if disabled.
     if (isDisabled) {
@@ -91,6 +97,7 @@ const TextInputCell = React.memo(
           keyboardType={keyboardType}
           blurOnSubmit={false}
           selectTextOnFocus
+          onFocus={showAboveKeyboard}
         />
       </View>
     );
