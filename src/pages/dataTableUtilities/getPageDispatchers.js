@@ -124,8 +124,6 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
       dispatch(PageActions.editTransactionBatchName(newValue, rowKey, route)),
     onEditBatchDoses: (newValue, rowKey) =>
       dispatch(PageActions.editBatchDoses(newValue, rowKey, route)),
-    onEditRequiredQuantityWithReason: (newValue, rowKey) =>
-      dispatch(PageActions.editRequisitionItemRequiredQuantityWithReason(newValue, rowKey, route)),
     onEditRequiredQuantity: (newValue, rowKey) =>
       dispatch(PageActions.editRequisitionItemRequiredQuantity(newValue, rowKey, route)),
     onEditTotalQuantity: (newValue, rowKey) =>

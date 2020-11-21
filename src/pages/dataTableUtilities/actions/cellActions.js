@@ -6,10 +6,7 @@ import { ToastAndroid } from 'react-native';
 import { batch as reduxBatch } from 'react-redux';
 import currency from '../../../localization/currency';
 import { UIDatabase } from '../../../database';
-import {
-  parsePositiveIntegerInterfaceInput as parsePositiveInteger,
-  MODAL_KEYS,
-} from '../../../utilities';
+import { parsePositiveIntegerInterfaceInput as parsePositiveInteger } from '../../../utilities';
 import {
   getIndicatorRow,
   getIndicatorColumn,
@@ -17,7 +14,7 @@ import {
   getIndicatorRowColumnValue,
 } from '../../../database/utilities/getIndicatorData';
 import { ACTIONS } from './constants';
-import { openModal, closeModal } from './pageActions';
+import { closeModal } from './pageActions';
 import { selectPageState } from '../../../selectors/pages';
 import { tableStrings } from '../../../localization/index';
 
@@ -380,6 +377,9 @@ export const editRequiredQuantity = (value, rowKey, objectType, route) => (dispa
       objectToEdit.requiredQuantity = parsePositiveInteger(value);
       UIDatabase.save(objectType, objectToEdit);
     });
+
+    if (!objectToEdit?.hasVariance) dispatch(removeReason(rowKey, route));
+
     dispatch(refreshRow(rowKey, route));
   }
 };
@@ -493,25 +493,6 @@ export const applyReason = (value, route) => (dispatch, getState) => {
   dispatch(refreshRow(rowKey, route));
 };
 
-export const enforceRequisitionReasonChoice = (rowKey, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = selectPageState(getState());
-  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
-  if (!objectToEdit) return null;
-  const { hasVariance } = objectToEdit;
-  // If there's no difference, just remove the reason
-  if (!hasVariance) return dispatch(removeReason(rowKey, route));
-  const { hasValidReason } = objectToEdit;
-  if (!hasValidReason) {
-    return dispatch(openModal(MODAL_KEYS.ENFORCE_REQUISITION_REASON, rowKey, route));
-  }
-  return null;
-};
-
-export const editRequisitionItemRequiredQuantityWithReason = (value, rowKey, route) => dispatch => {
-  dispatch(editRequiredQuantity(value, rowKey, 'RequisitionItem', route));
-  dispatch(enforceRequisitionReasonChoice(rowKey, route));
-};
-
 export const CellActionsLookup = {
   refreshRow,
   refreshIndicatorRow,
@@ -533,7 +514,7 @@ export const CellActionsLookup = {
   editStocktakeBatchName,
   editSellPrice,
   editBatchSupplier,
-  editRequisitionItemRequiredQuantityWithReason,
+  // editRequisitionItemRequiredQuantityWithReason,
   editTransactionBatchName,
   editTransactionBatchLocation,
   editStocktakeBatchLocation,
