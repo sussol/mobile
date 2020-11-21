@@ -81,7 +81,6 @@ export const ModalContainer = ({
         visible={isVisible}
         presentationStyle="fullScreen"
         animationType="slide"
-        transparent
         hardwareAccelerated={true}
       >
         <View style={internalContentContainer}>
