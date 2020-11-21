@@ -217,7 +217,7 @@ export class DemoUserModal extends React.Component {
               />
             </View>
           </View>
-          <ModalContainer fullScreen={true} isVisible={status === STATUS.SUBMITTED}>
+          <ModalContainer isVisible={status === STATUS.SUBMITTED}>
             <ConfirmForm
               isOpen={status === STATUS.SUBMITTED}
               questionText={demoUserModalStrings.confirm_modal_body}

@@ -139,7 +139,6 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
       </View>
 
       <DataTablePageModal
-        fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
         currentValue={modalKey === MODAL_KEYS.SYNC_URL_EDIT ? syncURL : ''}

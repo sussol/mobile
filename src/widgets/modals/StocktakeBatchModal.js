@@ -274,12 +274,7 @@ export const StocktakeBatchModalComponent = ({
         windowSize={1}
         initialNumToRender={0}
       />
-      <ModalContainer
-        fullScreen={false}
-        isVisible={!!modalKey}
-        onClose={onCloseModal}
-        title={getModalTitle(modalKey)}
-      >
+      <ModalContainer isVisible={!!modalKey} onClose={onCloseModal} title={getModalTitle(modalKey)}>
         {renderModal()}
       </ModalContainer>
     </DataTablePageView>

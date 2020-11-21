@@ -363,7 +363,6 @@ const SupplierRequisition = ({
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
-        fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
         onClose={onCloseModal}

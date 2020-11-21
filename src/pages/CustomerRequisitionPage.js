@@ -373,7 +373,6 @@ export const CustomerRequisition = ({
         }
       />
       <DataTablePageModal
-        fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
         onClose={onCloseModal}

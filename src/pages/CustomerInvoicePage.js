@@ -188,7 +188,6 @@ export const CustomerInvoice = ({
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
-        fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
         onClose={onCloseModal}

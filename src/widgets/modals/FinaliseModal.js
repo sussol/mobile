@@ -41,7 +41,7 @@ export const FinaliseModalComponent = ({
   );
 
   return (
-    <ModalContainer fullScreen={true} isVisible={finaliseModalOpen}>
+    <ModalContainer isVisible={finaliseModalOpen}>
       <ConfirmForm
         isOpen={finaliseModalOpen}
         questionText={finaliseMessage}
