@@ -16,7 +16,7 @@ import {
 import { ACTIONS } from './constants';
 import { closeModal } from './pageActions';
 import { selectPageState } from '../../../selectors/pages';
-import { tableStrings } from '../../../localization/index';
+import { tableStrings } from '../../../localization';
 
 /**
  * Refreshes a row in the DataTable component.
@@ -385,44 +385,10 @@ export const editRequiredQuantity = (value, rowKey, objectType, route) => (dispa
 };
 
 /**
- * Handles reason logic for a particular object (stocktakeBatch or
- * StocktakeItem) - if there is a difference (between snapshot and
- * countedTotalQuantity) - then a reason should be related to this
- * object. For negative adjustments, a negativeInventoryAdjustment
- * reason should be applied. If positive, a positiveInventoryAdjustment.
- * A correct reason
- * If there is already a reason, do nothing. If there is no
- * difference, but a reason has been previously applied, remove it.
- *
- * @param {String} rowKey Key of the row to enforce a reason on
- */
-export const enforceReasonChoice = (rowKey, route) => (dispatch, getState) => {
-  const { data, keyExtractor } = selectPageState(getState());
-  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
-  if (!objectToEdit) return null;
-  // If no difference, remove the reason.
-  // If positive difference, remove reason if negative.
-  // If negative difference, remove reason if positive.
-  return dispatch(removeReason(rowKey, route));
-};
-
-/**
  * Wrapper around editRequiredQuantity.
  */
 export const editRequisitionItemRequiredQuantity = (value, rowKey, route) =>
   editRequiredQuantity(value, rowKey, 'RequisitionItem', route);
-
-/**
- * Wrapper around `editCountedTotalQuantity`, splitting the action to enforce a
- * reason also.
- *
- * @param {String|Number}   value  New value for the underlying `countedTotalQuantity` field
- * @param {String}          rowKey Key of the row to edit.
- */
-export const editCountedQuantityWithReason = (value, rowKey, route) => dispatch => {
-  dispatch(editCountedQuantity(value, rowKey, route));
-  dispatch(enforceReasonChoice(rowKey, route));
-};
 
 /**
  * Edits a rows underlying countedTotalQuantity field.
@@ -434,19 +400,8 @@ export const editCountedQuantity = (value, rowKey, route) => (dispatch, getState
   const { data, keyExtractor } = selectPageState(getState());
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
   if (objectToEdit) objectToEdit.setCountedTotalQuantity(UIDatabase, parsePositiveInteger(value));
+  if (!objectToEdit?.hasVariance) dispatch(removeReason(rowKey, route));
   dispatch(refreshRow(rowKey, route));
-};
-
-/**
- * Wrapper around `editStocktakeBatchCountedQuantity`, splitting the action to enforce a
- * reason also.
- *
- * @param {String|Number}   value  New value for the underlying `countedTotalQuantity` field
- * @param {String}          rowKey Key of the row to edit.
- */
-export const editStocktakeBatchCountedQuantityWithReason = (value, rowKey, route) => dispatch => {
-  dispatch(editStocktakeBatchCountedQuantity(value, rowKey, route));
-  dispatch(enforceReasonChoice(rowKey, route));
 };
 
 /**
@@ -464,6 +419,9 @@ export const editStocktakeBatchCountedQuantity = (value, rowKey, route) => (disp
       UIDatabase.save('StocktakeBatch', objectToEdit);
     });
   }
+
+  if (!objectToEdit?.hasVariance) dispatch(removeReason(rowKey, route));
+
   dispatch(refreshRow(rowKey, route));
 };
 
@@ -504,9 +462,7 @@ export const CellActionsLookup = {
   editRequiredQuantity,
   editRequisitionItemRequiredQuantity,
   editCountedQuantity,
-  editCountedQuantityWithReason,
   editStocktakeBatchCountedQuantity,
-  editStocktakeBatchCountedQuantityWithReason,
   removeReason,
   applyReason,
   editBatchName,

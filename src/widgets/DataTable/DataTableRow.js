@@ -104,13 +104,8 @@ const DataTableRow = React.memo(
           // This cell is disabled if:
           // - the page is finalised.
           // - the row has been explicitly set as disabled.
-          // - the data is disabled (i.e. data is an invoice).
-          // - the cell is a reason dropdown for a row with a difference of zero.
           const rowIsDisabled = rowState?.isDisabled ?? false;
-          const dataIsDisabled = rowData?.isFinalised ?? false;
-          const reasonIsDisabled =
-            columnKey === COLUMN_KEYS.REASON_TITLE && rowData?.difference === 0;
-          const isDisabled = isFinalised || rowIsDisabled || dataIsDisabled || reasonIsDisabled;
+          const isDisabled = isFinalised || rowIsDisabled;
 
           // Alignment of this particular column. Default to left hand ide.
           const cellAlignment = alignText || 'left';
@@ -331,12 +326,12 @@ const DataTableRow = React.memo(
                 [COLUMN_KEYS.REASON_TITLE]: !hasVariance,
               };
 
-              const disabledVVMStatus = disabledConditions[columnKey];
+              const extraDisabledCondition = disabledConditions[columnKey];
 
               return (
                 <DropDownCell
                   key={columnKey}
-                  isDisabled={isDisabled || disabledVVMStatus}
+                  isDisabled={isDisabled || extraDisabledCondition}
                   onPress={getCallback(columnKey)}
                   rowKey={rowKey}
                   columnKey={columnKey}

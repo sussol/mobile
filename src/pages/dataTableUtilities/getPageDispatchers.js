@@ -114,6 +114,8 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
     onDeleteBatches: () => dispatch(PageActions.deleteSelectedBatches(dataType, route)),
 
     // Editable cell callbacks
+    onEditCountedQuantity: (newValue, rowKey) =>
+      dispatch(PageActions.editCountedQuantity(newValue, rowKey, route)),
     onEditSensorName: (newValue, rowKey) =>
       dispatch(PageActions.editSensorName(newValue, rowKey, route)),
     onEditLocationCode: (newValue, rowKey) =>
