@@ -38,7 +38,6 @@ export const MODAL_KEYS = {
   STOCKTAKE_OUTDATED_ITEM: 'stocktakeOutdatedItems',
   REQUISITION_REASON: 'requisitionReason',
   STOCKTAKE_REASON: 'stocktakeReason',
-  ENFORCE_REQUISITION_REASON: 'enforceRequisitionReason',
   SELECT_MASTER_LISTS: 'selectMasterList',
   SELECT_LOCATION: 'selectLocation',
   SELECT_SENSOR_LOCATION: 'selectSensorLocation',
@@ -86,7 +85,6 @@ export const getModalTitle = modalKey => {
     case MODAL_KEYS.VIEW_REGIMEN_DATA:
       return buttonStrings.view_regimen_data;
     case MODAL_KEYS.REQUISITION_REASON:
-    case MODAL_KEYS.ENFORCE_REQUISITION_REASON:
     case MODAL_KEYS.STOCKTAKE_REASON:
       return modalStrings.select_a_reason;
     case MODAL_KEYS.SYNC_URL_EDIT:
