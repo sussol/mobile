@@ -52,9 +52,7 @@ export const StocktakeEdit = ({
   onEditBatch,
   onFilterData,
   onEditComment,
-  onEditReason,
   onCloseModal,
-  onApplyReason,
   onConfirmBatchEdit,
   onManageStocktake,
   onCheck,
@@ -92,8 +90,6 @@ export const StocktakeEdit = ({
       case 'remove':
         if (propName === 'onCheck') return onCheck;
         return onUncheck;
-      case 'reasonTitle':
-        return onEditReason;
       default:
         return null;
     }
@@ -109,8 +105,6 @@ export const StocktakeEdit = ({
         return onConfirmBatchEdit;
       case MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM:
         return onResetStocktake;
-      case MODAL_KEYS.STOCKTAKE_REASON:
-        return onApplyReason;
       default:
         return null;
     }
@@ -226,9 +220,7 @@ StocktakeEdit.propTypes = {
   onEditBatch: PropTypes.func.isRequired,
   onFilterData: PropTypes.func.isRequired,
   onEditComment: PropTypes.func.isRequired,
-  onEditReason: PropTypes.func.isRequired,
   onCloseModal: PropTypes.func.isRequired,
-  onApplyReason: PropTypes.func.isRequired,
   onConfirmBatchEdit: PropTypes.func.isRequired,
   onManageStocktake: PropTypes.func.isRequired,
   onCheck: PropTypes.func.isRequired,

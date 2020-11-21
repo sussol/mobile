@@ -280,11 +280,6 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
     info: pageObject.type,
     onPress: null,
   },
-  reason: {
-    title: 'Defined Reason',
-    info: pageObject.reasonTitle,
-    onPress: null,
-  },
   comment: {
     title: 'Comment',
     info: pageObject.comment,
