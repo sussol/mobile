@@ -143,7 +143,8 @@ class MSupplyMobileAppContainer extends React.Component {
     await new Promise(resolve => {
       this.setState({ isLoading: true }, () => setTimeout(resolve, 1));
     });
-    functionToRun();
+
+    await functionToRun();
     this.setState({ isLoading: false });
   };
 
@@ -181,6 +182,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
   renderLoadingIndicator = () => {
     const { isLoading } = this.state;
+
     return (
       <View style={globalStyles.loadingIndicatorContainer}>
         <Spinner isSpinning={isLoading} color={SUSSOL_ORANGE} />
