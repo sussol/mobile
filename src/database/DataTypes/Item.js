@@ -8,7 +8,7 @@ import Realm from 'realm';
 import { UIDatabase } from '..';
 
 import { generalStrings } from '../../localization';
-import { getTotal } from '../utilities';
+import { NUMBER_OF_DAYS_IN_A_MONTH, getTotal } from '../utilities';
 import { dailyUsage } from '../../utilities/dailyUsage';
 
 /**
@@ -144,11 +144,8 @@ export class Item extends Realm.Object {
     return this.batches.filtered('numberOfPacks > 0');
   }
 
-  /**
-   * @return {Number} this items monthly usage based on a 30 day month.
-   */
   get monthlyUsage() {
-    return this.dailyUsage * 30;
+    return this.dailyUsage * NUMBER_OF_DAYS_IN_A_MONTH;
   }
 
   /**
@@ -166,6 +163,17 @@ export class Item extends Realm.Object {
    */
   get unitString() {
     return this.unit?.units ?? generalStrings.not_available;
+  }
+
+  /**
+   * @return {Date} The date of the most recent finalised requisition for this item.
+   */
+  get lastRequisitionDate() {
+    const mostRecentRequisitionItem = this.requisitionItems
+      .filtered("requisition.status == 'finalised'")
+      .sorted('requisition.entryDate', true)[0];
+
+    return mostRecentRequisitionItem?.requisition?.entryDate;
   }
 
   /**
@@ -228,6 +236,80 @@ export class Item extends Realm.Object {
 
     return this.totalQuantity + reductions - additions;
   }
+
+  /**
+   * Get this items restricted LocationType - the location type for which Location records must
+   * be related for this ItemBatch to be assigned. This is either on the ItemStoreJoin or on the
+   * underlying Item - preference to the more specific ItemStoreJoin.
+   *
+   * @param {Realm} database
+   */
+  restrictedLocationType(database) {
+    const itemStoreJoins = database
+      .objects('ItemStoreJoin')
+      .filtered('itemId == $0 && joinsThisStore == true', this.id)[0];
+    const { restrictedLocationType } = itemStoreJoins ?? {};
+
+    return restrictedLocationType || this.restrictedLocationType;
+  }
+
+  /**
+   * A vaccine item can have multiple doses per 'unit' or 'pack'. For example, you can have
+   * a single vaccine which has two doses. Once a vaccine has been opened, the doses must be
+   * given quickly. When recording outgoing stock, the doses and quantity (or number of packs)
+   * are recorded seperately. The amount of open vial wastage (that is, the amount of doses
+   * which are left in a vial and wasted) is the difference between the total number of 'packs'
+   * that are outgoing, multiplied by the amount of doses in each pack and the total number of
+   * doses actually given.
+   *
+   * @param  {Date} fromDate The date to calculate the open vial wastage from.
+   * @return {Number} the number of DOSES wasted.
+   */
+  openVialWastage(fromDate) {
+    if (!this.isVaccine || !fromDate) return 0;
+
+    const customerInvoiceTransactionItems = this.transactionItems.filtered(
+      "transaction.confirmDate >= $0 && transaction.type == 'customer_invoice'",
+      fromDate
+    );
+
+    const totalDosesPossible = customerInvoiceTransactionItems.reduce(
+      (dosesPossible, { batches }) => dosesPossible + batches.sum('numberOfPacks') * this.doses,
+      0
+    );
+
+    const totalDosesGiven = customerInvoiceTransactionItems.reduce(
+      (dosesGiven, { batches }) => dosesGiven + batches.sum('doses'),
+      0
+    );
+
+    return totalDosesPossible - totalDosesGiven;
+  }
+
+  /**
+   * Closed vial wastage differs from open vial wastage in that closed vial wastage
+   * is 'standard wastage'.
+   * @param {Date} fromDate
+   * @param {Number} the number of DOSES wasted.
+   */
+  closedVialWastage(fromDate) {
+    if (!this.isVaccine || !fromDate) return 0;
+
+    const supplierCreditTransactionItems = this.transactionItems.filtered(
+      'transaction.confirmDate >= $0 && transaction.type == $1 &&' +
+        'transaction.otherParty.code == $2',
+      fromDate,
+      'supplier_credit',
+      'invad'
+    );
+
+    const totalDosesPossible = supplierCreditTransactionItems.reduce(
+      (dosesPossible, { batches }) => dosesPossible + batches.sum('numberOfPacks') * this.doses,
+      0
+    );
+
+    return totalDosesPossible;
+  }
 }
 
 Item.schema = {
@@ -246,7 +328,12 @@ Item.schema = {
     isVisible: { type: 'bool', default: false },
     crossReferenceItem: { type: 'Item', optional: true },
     unit: { type: 'Unit', optional: true },
+    defaultRestrictedLocationType: { type: 'LocationType', optional: true },
+    doses: { type: 'double', default: 0 },
+    isVaccine: { type: 'bool', default: false },
     directions: { type: 'linkingObjects', objectType: 'ItemDirection', property: 'item' },
+    requisitionItems: { type: 'linkingObjects', objectType: 'RequisitionItem', property: 'item' },
+    transactionItems: { type: 'linkingObjects', objectType: 'TransactionItem', property: 'item' },
   },
 };
 

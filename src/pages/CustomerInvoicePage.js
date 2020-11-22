@@ -20,6 +20,7 @@ import { BottomConfirmModal } from '../widgets/bottomModals';
 
 import { buttonStrings, modalStrings, generalStrings } from '../localization';
 import globalStyles from '../globalStyles';
+import { BreachActions } from '../actions/BreachActions';
 
 /**
  * Renders a mSupply mobile page with customer invoice loaded for editing
@@ -63,6 +64,8 @@ export const CustomerInvoice = ({
   onAddMasterList,
   onApplyMasterLists,
   route,
+  onEditBatchDoses,
+  onViewBreaches,
 }) => {
   const { isFinalised, comment, theirRef } = pageObject;
 
@@ -79,6 +82,10 @@ export const CustomerInvoice = ({
       case 'remove':
         if (propName === 'onCheck') return onCheck;
         return onUncheck;
+      case 'doses':
+        return onEditBatchDoses;
+      case 'hasBreached':
+        return onViewBreaches;
       default:
         return null;
     }
@@ -181,7 +188,6 @@ export const CustomerInvoice = ({
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
-        fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
         onClose={onCloseModal}
@@ -198,22 +204,28 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   const { otherParty } = transaction || {};
   const hasMasterLists = otherParty?.masterLists?.length > 0;
 
+  const onViewBreaches = rowKey => dispatch(BreachActions.viewTransactionItemBreaches(rowKey));
+
   const noMasterLists = () =>
     ToastAndroid.show(modalStrings.customer_no_masterlist_available, ToastAndroid.LONG);
   return {
     ...getPageDispatchers(dispatch, 'Transaction', ROUTES.CUSTOMER_INVOICE),
     [hasMasterLists ? null : 'onAddMasterList']: noMasterLists,
+    onViewBreaches,
   };
 };
 
 const mapStateToProps = state => {
-  const { pages } = state;
+  const { pages, modules } = state;
   const { customerInvoice } = pages;
+  const { usingVaccines } = modules;
   const { pageObject } = customerInvoice ?? {};
   const { isCredit = false } = pageObject ?? {};
-  const columnsKey = isCredit ? 'customerCredit' : 'customerInvoice';
-  const columns = getColumns(columnsKey);
-  return { ...customerInvoice, columns };
+  if (isCredit) return { ...customerInvoice, columns: getColumns(ROUTES.CUSTOMER_CREDIT) };
+  if (usingVaccines) {
+    return { ...customerInvoice, columns: getColumns(ROUTES.CUSTOMER_INVOICE_WITH_VACCINES) };
+  }
+  return { ...customerInvoice, columns: getColumns(ROUTES.CUSTOMER_INVOICE) };
 };
 
 export const CustomerInvoicePage = connect(mapStateToProps, mapDispatchToProps)(CustomerInvoice);
@@ -251,4 +263,6 @@ CustomerInvoice.propTypes = {
   onAddTransactionItem: PropTypes.func.isRequired,
   onApplyMasterLists: PropTypes.func.isRequired,
   route: PropTypes.string.isRequired,
+  onEditBatchDoses: PropTypes.func.isRequired,
+  onViewBreaches: PropTypes.func.isRequired,
 };

@@ -3,11 +3,15 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
  */
-import { pageInfoStrings, programStrings, tableStrings } from '../../localization';
+
+import { generalStrings, pageInfoStrings, programStrings, tableStrings } from '../../localization';
 import { MODAL_KEYS, formatDate } from '../../utilities';
 import { ROUTES } from '../../navigation/constants';
 import { MODALS } from '../../widgets/constants';
 import { PageActions } from './actions';
+import { formatTemperatureExposure, formatTimeDifference } from '../../utilities/formatters';
+import { UIDatabase } from '../../database';
+import { NUMBER_OF_DAYS_IN_A_MONTH } from '../../database/utilities';
 
 /**
  * PageInfo rows/columns for use with the PageInfo component.
@@ -30,7 +34,19 @@ const PER_PAGE_INFO_COLUMNS = {
     ['entryDate', 'confirmDate', 'enteredBy'],
     ['customer', 'theirRef', 'transactionComment'],
   ],
+  [ROUTES.CUSTOMER_INVOICE_WITH_VACCINES]: [
+    ['entryDate', 'confirmDate', 'enteredBy'],
+    ['customer', 'theirRef', 'transactionComment'],
+  ],
   [ROUTES.SUPPLIER_INVOICE]: [
+    ['entryDate', 'confirmDate'],
+    ['otherParty', 'theirRef', 'transactionComment'],
+  ],
+  [ROUTES.SUPPLIER_INVOICE_WITH_VACCINES]: [
+    ['entryDate', 'confirmDate'],
+    ['otherParty', 'theirRef', 'transactionComment'],
+  ],
+  [ROUTES.SUPPLIER_INVOICE_WITH_PRICES]: [
     ['entryDate', 'confirmDate'],
     ['otherParty', 'theirRef', 'transactionComment'],
   ],
@@ -47,6 +63,10 @@ const PER_PAGE_INFO_COLUMNS = {
     ['monthsToSupply', 'entryDate'],
     ['customer', 'requisitionComment'],
   ],
+  [ROUTES.CUSTOMER_REQUISITIONS_WITH_PROGRAMS]: [
+    ['program', 'orderType', 'monthsToSupply', 'entryDate'],
+    ['period', 'customer', 'createdDate', 'requisitionComment'],
+  ],
   [ROUTES.PRESCRIPTION]: [
     ['entryDate', 'enteredBy'],
     ['customer', 'transactionComment', 'prescriber'],
@@ -55,13 +75,110 @@ const PER_PAGE_INFO_COLUMNS = {
   [MODALS.STOCKTAKE_BATCH_EDIT_WITH_REASONS]: [['itemName']],
   [MODALS.STOCKTAKE_BATCH_EDIT_WITH_PRICES]: [['itemName']],
   [MODALS.STOCKTAKE_BATCH_EDIT_WITH_REASONS_AND_PRICES]: [['itemName']],
+  [MODALS.STOCKTAKE_BATCH_EDIT_WITH_VACCINES]: [['itemName']],
   [ROUTES.SUPPLIER_CREDIT]: [
     ['entryDate', 'confirmDate', 'transactionCategory'],
     ['enteredBy', 'otherParty'],
   ],
+  supplierRequisitionItemDetail: [['lastRequisitionDate', 'openVialWastage', 'closedVialWastage']],
+  breach: [
+    ['breachTemperatureRange'],
+    ['breachDuration', 'location'],
+    ['numberOfAffectedBatches', 'affectedQuantity'],
+  ],
+
+  customerRequisitionItemDetail: [
+    [
+      'numberOfDaysInAMonthString',
+      'numberOfDaysInAMonthFormula',
+      'customerRequisitionProgramAMCFormulaString',
+      'customerRequisitionProgramAMCFormula',
+      'customerRequisitionProgramSuggestedFormulaString',
+      'customerRequisitionProgramSuggestedFormula',
+    ],
+  ],
 };
 
 const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
+  customerRequisitionProgramSuggestedFormulaString: {
+    title: `${pageInfoStrings.suggested_equals}`,
+    info: `= ${pageInfoStrings.suggested_formula}`,
+  },
+  customerRequisitionProgramSuggestedFormula: {
+    title: `${Math.ceil(
+      pageObject.monthlyUsage * pageObject.monthsToSupply - pageObject.stockOnHand
+    )}`,
+    info: `= (${pageObject.monthlyUsage?.toFixed(2)} x ${pageObject.monthsToSupply}) - ${
+      pageObject.stockOnHand
+    } ${
+      Math.ceil(
+        pageObject.monthlyUsage?.toFixed(2) * pageObject.monthsToSupply - pageObject.stockOnHand
+      ) < 0
+        ? pageInfoStrings.none_suggested
+        : ''
+    }`,
+  },
+  numberOfDaysInAMonthString: {
+    title: `${pageInfoStrings.number_of_days_in_a_month}`,
+    info: `${pageInfoStrings.number_of_days_in_a_month_formula}`,
+  },
+  numberOfDaysInAMonthFormula: {
+    title: '30.42',
+    info: '= 365 / 12',
+  },
+  customerRequisitionProgramAMCFormulaString: {
+    title: `${pageInfoStrings.amc_equals}`,
+    info: `= ${pageInfoStrings.amc_formula}`,
+  },
+  createdDate: {
+    title: `${pageInfoStrings.created_date}:`,
+    info: `${formatDate(pageObject?.createdDate)}`,
+    onPress: pageObject.isRemoteOrder ? () => dispatch(PageActions.openDatePicker(route)) : null,
+    editableType: 'date',
+  },
+  customerRequisitionProgramAMCFormula: {
+    title: `${Math.ceil(pageObject.monthlyUsage)}`,
+    info: `= (${pageObject.outgoingStock?.toFixed(2)} x ${NUMBER_OF_DAYS_IN_A_MONTH?.toFixed(
+      2
+    )}) / (${pageObject.numberOfDaysInPeriod} - ${pageObject.daysOutOfStock})`,
+  },
+
+  lastRequisitionDate: {
+    title: `${pageInfoStrings.last_requisition_date}:`,
+    info: formatDate(pageObject?.lastRequisitionDate, 'll') || generalStrings.not_available,
+  },
+  openVialWastage: {
+    title: `${pageInfoStrings.open_vial_wastage}:`,
+    info: pageObject?.isVaccine
+      ? pageObject?.openVialWastage?.(pageObject.lastRequisitionDate)
+      : generalStrings.not_available,
+  },
+  closedVialWastage: {
+    title: `${pageInfoStrings.closed_vial_wastage}:`,
+    info: pageObject?.isVaccine
+      ? pageObject?.closedVialWastage?.(pageObject.lastRequisitionDate)
+      : generalStrings.not_available,
+  },
+  breachTemperatureRange: {
+    title: `${pageInfoStrings.temperature_range}:`,
+    info: formatTemperatureExposure(pageObject.temperatureExposure),
+  },
+  numberOfAffectedBatches: {
+    title: `${pageInfoStrings.number_of_affected_batches}:`,
+    info: pageObject?.numberOfAffectedBatches?.(UIDatabase),
+  },
+  breachDuration: {
+    title: `${pageInfoStrings.duration}:`,
+    info: pageObject.duration ? formatTimeDifference(pageObject.duration) : '',
+  },
+  location: {
+    title: `${pageInfoStrings.location}:`,
+    info: pageObject.locationString,
+  },
+  affectedQuantity: {
+    title: `${pageInfoStrings.affected_quantity}:`,
+    info: pageObject?.affectedQuantity?.(UIDatabase),
+  },
   entryDate: {
     title: `${pageInfoStrings.entry_date}:`,
     info: formatDate(pageObject.entryDate) || 'N/A',

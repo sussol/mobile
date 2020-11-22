@@ -12,13 +12,14 @@ export { formatStatus } from './formatStatus';
 export { sortDataBy } from './sortDataBy';
 export { compareVersions, versionToInteger } from './compareVersions';
 export { createReducer, REHYDRATE } from './createReducer';
-export { getAllPeriodsForProgram, getAllPrograms } from './byProgram';
+export { getAllPeriodsForProgram, getAllPrograms, getAllProgramsForCustomer } from './byProgram';
 export { requestPermission } from './requestPermission';
 export { backupValidation } from './fileSystem';
 export { debounce } from './underscoreMethods';
 export { getModalTitle, MODAL_KEYS } from './getModalTitle';
 export { checkIsObject } from './checkIsObject';
 export { validateReport } from './validateReport';
-
+export { chunk } from './chunk';
 export { parsePositiveIntegerInterfaceInput } from './parsers';
 export { formatErrorItemNames, roundNumber } from './formatters';
+export { MILLISECONDS } from './constants';

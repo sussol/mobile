@@ -5,7 +5,8 @@
  */
 
 import { truncateString } from 'sussol-utilities';
-import { modalStrings } from '../localization';
+import temperature from './temperature';
+import { generalStrings, modalStrings, vaccineStrings } from '../localization';
 
 export const formatErrorItemNames = items => {
   const MAX_ITEMS_IN_ERROR_MESSAGE = 4; // Number of items to display in finalise error modal.
@@ -24,7 +25,6 @@ export const formatErrorItemNames = items => {
   }
   return itemsString;
 };
-
 /**
  * Rounds a number to the provided number of digits. I.e.
  * roundNumber(17.123, 2) = 17.12
@@ -34,3 +34,29 @@ export const formatErrorItemNames = items => {
  */
 export const roundNumber = (number, fractionalDigits) =>
   Number(parseFloat(number).toFixed(fractionalDigits));
+
+export const formatTemperatureExposure = ({
+  minimumTemperature = Infinity,
+  maximumTemperature = -Infinity,
+} = {}) => {
+  const infinityTemperatures = minimumTemperature === Infinity || maximumTemperature === -Infinity;
+  if (infinityTemperatures) return vaccineStrings.no_temperatures;
+
+  return `${temperature(minimumTemperature).format()} - ${temperature(
+    maximumTemperature
+  ).format()}`;
+};
+
+export const formatTimeDifference = duration => {
+  const suffixes = [generalStrings.days, generalStrings.hours, generalStrings.minutes];
+  const durations = [duration.days(), duration.hours(), duration.minutes()];
+
+  // merges the above arrays to give a string for example: 3 days, 4 hours, 3 minutes
+  return durations.reduce(
+    (acc, value, index) =>
+      value
+        ? `${acc} ${value} ${suffixes[index]}${durations.length - 1 === index ? '' : ','}`
+        : acc,
+    ''
+  );
+};

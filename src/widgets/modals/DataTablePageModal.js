@@ -27,7 +27,7 @@ import { CashTransactionModal } from './CashTransactionModal';
 import { RegimenDataModal } from './RegimenDataModal';
 import { StocktakeBatchModal } from './StocktakeBatchModal';
 
-import { modalStrings } from '../../localization';
+import { generalStrings, modalStrings } from '../../localization';
 
 /**
  * Wrapper around ModalContainer, containing common modals used in various
@@ -35,7 +35,6 @@ import { modalStrings } from '../../localization';
  *
  * NOTE: Exported component is MEMOIZED - see below for propsAreEqual implementation.
  *
- * @prop {Bool}   fullScreen   Force the modal to cover the entire screen.
  * @prop {Bool}   isOpen       Whether the modal is open
  * @prop {Func}   onClose      A function to call if the close x is pressed
  * @prop {Func}   onSelect     The components to render within the modal
@@ -44,18 +43,11 @@ import { modalStrings } from '../../localization';
  */
 
 const ADDITIONAL_MODAL_PROPS = {
-  [MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM]: { noCancel: true, fullScreen: true },
-  [MODAL_KEYS.ENFORCE_REQUISITION_REASON]: { noCancel: true, fullScreen: true },
+  [MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM]: { noCancel: true },
+  [MODAL_KEYS.ENFORCE_REQUISITION_REASON]: { noCancel: true },
 };
 
-const DataTablePageModalComponent = ({
-  fullScreen,
-  isOpen,
-  onClose,
-  modalKey,
-  onSelect,
-  currentValue,
-}) => {
+const DataTablePageModalComponent = ({ isOpen, onClose, modalKey, onSelect, currentValue }) => {
   const ModalContent = () => {
     switch (modalKey) {
       case MODAL_KEYS.CREATE_CASH_TRANSACTION:
@@ -145,18 +137,24 @@ const DataTablePageModalComponent = ({
         );
       }
 
+      case MODAL_KEYS.PROGRAM_CUSTOMER_REQUISITION:
       case MODAL_KEYS.PROGRAM_STOCKTAKE:
-      case MODAL_KEYS.PROGRAM_REQUISITION:
+      case MODAL_KEYS.PROGRAM_REQUISITION: {
+        const lookup = {
+          [MODAL_KEYS.PROGRAM_CUSTOMER_REQUISITION]: 'customerRequisition',
+          [MODAL_KEYS.PROGRAM_STOCKTAKE]: 'stocktake',
+          [MODAL_KEYS.PROGRAM_REQUISITION]: 'requisition',
+        };
+
         return (
           <ByProgramModal
             onConfirm={onSelect}
             database={UIDatabase}
-            transactionType={
-              modalKey === MODAL_KEYS.PROGRAM_STOCKTAKE ? 'stocktake' : 'requisition'
-            }
+            transactionType={lookup[modalKey]}
             settings={Settings}
           />
         );
+      }
 
       case MODAL_KEYS.SELECT_MONTH:
         return (
@@ -225,6 +223,46 @@ const DataTablePageModalComponent = ({
             emptyMessage={modalStrings.no_masterlist_available}
           />
         );
+      case MODAL_KEYS.SELECT_SENSOR_LOCATION:
+      case MODAL_KEYS.SELECT_LOCATION: {
+        const { currentLocationName } = currentValue;
+        const { id = '', description = '' } =
+          currentValue?.restrictedLocationType?.(UIDatabase) ?? {};
+
+        const placeholderLookup = {
+          [MODAL_KEYS.SELECT_LOCATION]: generalStrings.no_locations_for_batch,
+          [MODAL_KEYS.SELECT_SENSOR_LOCATION]: generalStrings.no_locations,
+        };
+
+        const locations = UIDatabase.objects('Location');
+        const selection = id ? locations.filtered('locationType.id == $0', id) : locations;
+
+        const placeholder = generalStrings.formatString(
+          placeholderLookup[modalKey] ?? generalStrings.no_locations,
+          description
+        );
+
+        return (
+          <GenericChoiceList
+            data={selection}
+            highlightValue={currentLocationName}
+            onPress={onSelect}
+            keyToDisplay="description"
+            placeholderText={placeholder}
+          />
+        );
+      }
+      case MODAL_KEYS.SELECT_VVM_STATUS: {
+        const { currentVvmStatusName } = currentValue;
+        return (
+          <GenericChoiceList
+            data={UIDatabase.objects('VaccineVialMonitorStatus')}
+            highlightValue={currentVvmStatusName}
+            onPress={onSelect}
+            keyToDisplay="description"
+          />
+        );
+      }
       default:
         return null;
     }
@@ -235,7 +273,6 @@ const DataTablePageModalComponent = ({
 
   return (
     <ModalContainer
-      fullScreen={fullScreen}
       isVisible={isOpen}
       onClose={onClose}
       title={modalTitle}
@@ -255,7 +292,6 @@ const propsAreEqual = ({ isOpen: prevIsOpen }, { isOpen: nextIsOpen }) => prevIs
 export const DataTablePageModal = React.memo(DataTablePageModalComponent, propsAreEqual);
 
 DataTablePageModalComponent.defaultProps = {
-  fullScreen: false,
   modalKey: '',
   onSelect: null,
   currentValue: '',
@@ -264,7 +300,6 @@ DataTablePageModalComponent.defaultProps = {
 
 DataTablePageModalComponent.propTypes = {
   modalObject: PropTypes.object,
-  fullScreen: PropTypes.bool,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   modalKey: PropTypes.string,

@@ -40,6 +40,7 @@ import { buttonStrings, modalStrings, programStrings, generalStrings } from '../
 import { UIDatabase } from '../database';
 import { SETTINGS_KEYS } from '../settings';
 import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
+import { RowDetailActions } from '../actions/RowDetailActions';
 
 /**
  * Renders a mSupply mobile page with a supplier requisition loaded for editing
@@ -97,6 +98,7 @@ const SupplierRequisition = ({
   onEditRequisitionReason,
   onApplyReason,
   route,
+  onSelectVaccineRow,
 }) => {
   const runWithLoadingIndicator = useLoadingIndicator();
 
@@ -155,16 +157,18 @@ const SupplierRequisition = ({
     listItem => {
       const { item, index } = listItem;
       const rowKey = keyExtractor(item);
-
+      const rowData = data[index];
+      const onPress = rowData?.isVaccine ? onSelectVaccineRow : null;
       return (
         <DataTableRow
-          rowData={data[index]}
+          rowData={rowData}
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
           columns={columns}
           isFinalised={isFinalised}
           getCallback={getCallback}
           rowIndex={index}
+          onPress={onPress}
         />
       );
     },
@@ -359,7 +363,6 @@ const SupplierRequisition = ({
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
-        fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
         onClose={onCloseModal}
@@ -375,13 +378,15 @@ const mapDispatchToProps = dispatch => {
   const thisStoreID = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_NAME_ID);
   const thisStore = UIDatabase.get('Name', thisStoreID);
   const hasMasterLists = thisStore?.masterLists?.length > 0;
-
+  const onSelectVaccineRow = requisitionItem =>
+    dispatch(RowDetailActions.openSupplierRequisitionItemDetail(requisitionItem));
   const noMasterLists = () =>
     ToastAndroid.show(modalStrings.supplier_no_masterlist_available, ToastAndroid.LONG);
 
   return {
     ...getPageDispatchers(dispatch, 'Requisition', ROUTES.SUPPLIER_REQUISITION),
     [hasMasterLists ? null : 'onAddMasterList']: noMasterLists,
+    onSelectVaccineRow,
   };
 };
 
@@ -459,4 +464,5 @@ SupplierRequisition.propTypes = {
   onEditRequiredQuantityWithReason: PropTypes.func.isRequired,
   onEditRequisitionReason: PropTypes.func.isRequired,
   onApplyReason: PropTypes.func.isRequired,
+  onSelectVaccineRow: PropTypes.func.isRequired,
 };

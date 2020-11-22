@@ -2,8 +2,9 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
+import { batch } from 'react-redux';
 
-import { UIDatabase } from '../../../database/index';
+import { UIDatabase, generateUUID } from '../../../database';
 import { MODAL_KEYS } from '../../../utilities';
 import { ACTIONS } from './constants';
 import { selectPageObject, selectPageState } from '../../../selectors/pages';
@@ -66,6 +67,10 @@ export const openModal = (modalKey, value, route) => {
     case MODAL_KEYS.STOCKTAKE_REASON:
     case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
     case MODAL_KEYS.SELECT_ITEM_BATCH_SUPPLIER:
+    case MODAL_KEYS.SELECT_SENSOR_LOCATION:
+    case MODAL_KEYS.SELECT_LOCATION:
+    case MODAL_KEYS.SELECT_VVM_STATUS:
+    case MODAL_KEYS.EDIT_LOCATION:
       return { type: ACTIONS.OPEN_MODAL, payload: { modalKey, rowKey: value, route } };
     case MODAL_KEYS.CREATE_CASH_TRANSACTION:
     case MODAL_KEYS.MONTHS_SELECT:
@@ -86,6 +91,29 @@ export const openModal = (modalKey, value, route) => {
     default:
       return { type: ACTIONS.OPEN_MODAL, payload: { modalKey, route: route || value } };
   }
+};
+
+export const openDatePicker = route => ({
+  type: ACTIONS.OPEN_DATE_PICKER,
+  payload: { route },
+});
+
+export const closeDatePicker = route => ({
+  type: ACTIONS.CLOSE_DATE_PICKER,
+  payload: { route },
+});
+
+export const editCreatedDate = (value, route) => (dispatch, getState) => {
+  const pageObject = selectPageObject(getState());
+
+  UIDatabase.write(() => {
+    UIDatabase.update('Requisition', {
+      ...pageObject,
+      createdDate: value,
+    });
+  });
+
+  dispatch(closeDatePicker(route));
 };
 
 export const editPrescriber = (value, route) => (dispatch, getState) => {
@@ -203,6 +231,25 @@ export const resetStocktake = route => (dispatch, getState) => {
   dispatch(closeModal(route));
 };
 
+export const saveLocation = (locationValues, route) => (dispatch, getState) => {
+  const { modalValue } = selectPageState(getState());
+
+  UIDatabase.write(() => {
+    const { id = '' } = modalValue ?? {};
+    const location = UIDatabase.getOrCreate('Location', id);
+    UIDatabase.update('Location', {
+      id: generateUUID(),
+      ...location,
+      ...locationValues,
+    });
+  });
+
+  batch(() => {
+    dispatch(refreshData(route));
+    dispatch(closeModal(route));
+  });
+};
+
 export const PageActionsLookup = {
   editName,
   closeModal,
@@ -215,4 +262,8 @@ export const PageActionsLookup = {
   editPageObjectName,
   editPrescriber,
   updatePaymentType,
+  saveLocation,
+  openDatePicker,
+  closeDatePicker,
+  editCreatedDate,
 };

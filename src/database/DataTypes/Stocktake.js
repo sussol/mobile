@@ -244,8 +244,13 @@ export class Stocktake extends Realm.Object {
     return this.additions;
   }
 
+  get hasValidDoses() {
+    return this.items.every(({ hasValidDoses }) => hasValidDoses);
+  }
+
   get canFinalise() {
     const finaliseStatus = { success: true, message: modalStrings.finalise_stocktake };
+
     if (!this.hasSomeCountedItems) {
       finaliseStatus.success = false;
       finaliseStatus.errorMessage = modalStrings.stocktake_no_counted_items;

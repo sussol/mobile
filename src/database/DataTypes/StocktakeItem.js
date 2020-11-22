@@ -23,6 +23,14 @@ export class StocktakeItem extends Realm.Object {
     database.delete('StocktakeBatch', this.batches);
   }
 
+  get hasValidDoses() {
+    return this.batches.every(({ hasValidDoses }) => hasValidDoses);
+  }
+
+  get isVaccine() {
+    return this.item?.isVaccine ?? false;
+  }
+
   /**
    * Get snapshot of total quantity of item.
    *

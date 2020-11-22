@@ -25,17 +25,18 @@ import { DataTablePageModal } from '../widgets/modals';
 import globalStyles from '../globalStyles';
 import { generalStrings, buttonStrings } from '../localization';
 import { selectCurrentUserPasswordHash } from '../selectors/user';
+import { PermissionActions } from '../actions/PermissionActions';
 
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
-  const { success, message } = await UIDatabase.exportData(syncSiteName);
-  const toastMessage = success
-    ? generalStrings.exported_data
-    : `${generalStrings.couldnt_export_data}: ${message}`;
+
+  const success = await UIDatabase.exportData(syncSiteName);
+  const toastMessage = success ? generalStrings.exported_data : generalStrings.couldnt_export_data;
+
   ToastAndroid.show(toastMessage, ToastAndroid.SHORT);
 };
 
-const Settings = ({ toRealmExplorer, currentUserPasswordHash }) => {
+const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWritePermission }) => {
   const [state, setState] = useState({
     syncURL: UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL),
     modalKey: '',
@@ -133,12 +134,11 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash }) => {
         </View>
         <View>
           <MenuButton text={buttonStrings.realm_explorer} onPress={toRealmExplorer} />
-          <MenuButton text={buttonStrings.export_data} onPress={exportData} />
+          <MenuButton text={buttonStrings.export_data} onPress={requestStorageWritePermission} />
         </View>
       </View>
 
       <DataTablePageModal
-        fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
         currentValue={modalKey === MODAL_KEYS.SYNC_URL_EDIT ? syncURL : ''}
@@ -151,6 +151,8 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash }) => {
 
 const mapStateToDispatch = dispatch => ({
   toRealmExplorer: () => dispatch(gotoRealmExplorer()),
+  requestStorageWritePermission: () =>
+    dispatch(PermissionActions.requestWriteStorage()).then(exportData),
 });
 
 const mapStateToProps = state => ({
@@ -169,4 +171,5 @@ export const SettingsPage = connect(mapStateToProps, mapStateToDispatch)(Setting
 Settings.propTypes = {
   toRealmExplorer: PropTypes.func.isRequired,
   currentUserPasswordHash: PropTypes.string.isRequired,
+  requestStorageWritePermission: PropTypes.func.isRequired,
 };

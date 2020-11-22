@@ -6,7 +6,7 @@
 import Realm from 'realm';
 import { complement } from 'set-manipulator';
 
-import { createRecord, getTotal } from '../utilities';
+import { NUMBER_OF_DAYS_IN_A_MONTH, createRecord, getTotal } from '../utilities';
 import { UIDatabase } from '..';
 import { programDailyUsage } from '../../utilities/dailyUsage';
 import { generalStrings, modalStrings } from '../../localization';
@@ -130,11 +130,11 @@ export class Requisition extends Realm.Object {
    * @return  {number}
    */
   get monthsToSupply() {
-    return this.daysToSupply / 30;
+    return Math.ceil(this.daysToSupply / NUMBER_OF_DAYS_IN_A_MONTH);
   }
 
   /**
-   * Get the sum of required quantites for all items associated with requisition.
+   * Get the sum of required quantities for all items associated with requisition.
    *
    * @return  {number}
    */
@@ -193,7 +193,7 @@ export class Requisition extends Realm.Object {
    * @param  {number}  months
    */
   set monthsToSupply(months) {
-    this.daysToSupply = months * 30;
+    this.daysToSupply = months * NUMBER_OF_DAYS_IN_A_MONTH;
   }
 
   // Saves a new customData string. Call inside a write/transaction
@@ -297,8 +297,11 @@ export class Requisition extends Realm.Object {
     }
 
     this.program.items.forEach(({ item }) => {
-      const usage = programDailyUsage(item, this.period);
-      const stockOnHand = item.geTotalQuantityOnDate(this.period.endDate);
+      // Cannot determine the usage of a response requisition until consumption is manually entered.
+      const usage = this.isRequest ? programDailyUsage(item, this.period) : 0;
+
+      // Defer calculating stock on hand for response requisitions to the `createRecord` call.
+      const stockOnHand = this.isRequest ? item.geTotalQuantityOnDate(this.period.endDate) : 0;
       createRecord(database, 'RequisitionItem', this, item, usage, stockOnHand);
     });
   }
@@ -414,10 +417,30 @@ export class Requisition extends Realm.Object {
     return finaliseStatus;
   }
 
+  get canFinaliseResponse() {
+    const finaliseStatus = { success: true, message: modalStrings.finalise_customer_requisition };
+
+    const closingStocksAreValid = this.items.every(
+      ({ closingStockIsValid }) => closingStockIsValid
+    );
+
+    if (!closingStocksAreValid) {
+      return { success: false, message: modalStrings.requisition_invalid_closing_stock };
+    }
+
+    const daysOutOfStockAreValid = this.items.every(
+      ({ daysOutOfStockIsValid }) => daysOutOfStockIsValid
+    );
+
+    if (!daysOutOfStockAreValid) {
+      return { success: false, message: modalStrings.requisition_days_out_of_stock };
+    }
+
+    return finaliseStatus;
+  }
+
   get canFinalise() {
-    return this.isRequest
-      ? this.canFinaliseRequest
-      : { success: true, message: modalStrings.finalise_customer_requisition };
+    return this.isRequest ? this.canFinaliseRequest : this.canFinaliseResponse;
   }
 
   /**
@@ -428,9 +451,18 @@ export class Requisition extends Realm.Object {
   finalise(database) {
     this.pruneRedundantItems(database);
     this.status = 'finalised';
+
     database.save('Requisition', this);
 
     if (this.linkedTransaction) this.linkedTransaction.finalise(database);
+  }
+
+  get numberOfDaysInPeriod() {
+    return this.period?.numberOfDays ?? 0;
+  }
+
+  get isManuallyCreatedProgramRequisition() {
+    return this.program && this.type === 'response';
   }
 }
 
@@ -444,7 +476,7 @@ Requisition.schema = {
     thresholdMOS: { type: 'double', optional: true },
     type: { type: 'string', default: 'request' },
     entryDate: { type: 'date', default: new Date() },
-    daysToSupply: { type: 'double', default: 30 },
+    daysToSupply: { type: 'double', default: NUMBER_OF_DAYS_IN_A_MONTH },
     serialNumber: { type: 'string', default: '0' },
     requesterReference: { type: 'string', default: '' },
     comment: { type: 'string', optional: true },
@@ -455,6 +487,8 @@ Requisition.schema = {
     period: { type: 'Period', optional: true },
     otherStoreName: { type: 'Name', optional: true },
     customData: { type: 'string', optional: true },
+    createdDate: { type: 'date', default: new Date() },
+    isRemoteOrder: { type: 'bool', default: true },
   },
 };
 

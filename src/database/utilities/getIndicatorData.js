@@ -84,7 +84,7 @@ const getIndicatorColumn = (indicatorColumns, columnCode) => {
 const getIndicatorsByValues = indicatorValues => {
   const indicatorIds = indicatorValues.reduce(
     (acc, { indicator }) =>
-      acc.some(indicatorId => indicatorId === indicator.id) ? acc : [...acc, indicator.id],
+      acc.some(indicatorId => indicatorId === indicator?.id) ? acc : [...acc, indicator?.id],
     []
   );
   const query = indicatorIds.map(indicatorId => `id == "${indicatorId}"`).join(' OR ');

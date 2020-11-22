@@ -4,10 +4,14 @@
  */
 
 const sortKeyToType = {
+  macAddress: 'string',
+  batteryLevelString: 'string',
   itemCode: 'string',
   itemName: 'string',
   batch: 'string',
   dateOfBirth: 'date',
+  description: 'string',
+  doses: 'number',
   availableQuantity: 'number',
   totalQuantity: 'number',
   expiryDate: 'date',
@@ -39,6 +43,12 @@ const sortKeyToType = {
   type: 'string',
   programName: 'string',
   prescriber: 'string',
+  openingStock: 'number',
+  daysOutOfStock: 'number',
+  incomingStock: 'number',
+  outgoingStock: 'number',
+  positiveAdjustments: 'number',
+  negativeAdjustments: 'number',
 };
 
 /**

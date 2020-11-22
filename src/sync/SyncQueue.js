@@ -23,6 +23,12 @@ const recordTypesSynced = [
   'TransactionBatch',
   'InsurancePolicy',
   'IndicatorValue',
+  'Location',
+  'Sensor',
+  'TemperatureLog',
+  'TemperatureBreach',
+  'VaccineVialMonitorStatusLog',
+  'LocationMovement',
 ];
 
 /**

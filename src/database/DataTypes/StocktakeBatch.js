@@ -30,8 +30,37 @@ export class StocktakeBatch extends Realm.Object {
     }
   }
 
+  get currentLocationName() {
+    return this.location?.description ?? '';
+  }
+
+  get currentVvmStatusName() {
+    return this.vaccineVialMonitorStatus?.description ?? '';
+  }
+
+  get hasBreached() {
+    return !!this.itemBatch?.hasBreached;
+  }
+
   get otherPartyName() {
     return this.supplier?.name ?? '';
+  }
+
+  /**
+   * @return {Bool} Indicator if this batch has a valid number of doses.
+   */
+  get hasValidDoses() {
+    const { item } = this.itemBatch;
+    const { doses: dosesPerVial } = item;
+
+    const maximumDosesPossible = this.snapshotTotalQuantity * dosesPerVial;
+    const minimumDosesPossible = this.snapshotTotalQuantity;
+
+    const tooManyDoses = this.doses > maximumDosesPossible;
+    const tooLittleDoses = this.doses < minimumDosesPossible;
+    const justRightDoses = !tooManyDoses && !tooLittleDoses;
+
+    return justRightDoses;
   }
 
   /**
@@ -182,7 +211,36 @@ export class StocktakeBatch extends Realm.Object {
    */
   set countedTotalQuantity(quantity) {
     // Handle packsize of 0.
-    this.countedNumberOfPacks = this.packSize ? quantity / this.packSize : 0;
+    const countedNumberOfPacks = this.packSize ? quantity / this.packSize : 0;
+
+    this.countedNumberOfPacks = countedNumberOfPacks;
+    this.doses = countedNumberOfPacks * this.dosesPerVial;
+  }
+
+  get isVaccine() {
+    return this.itemBatch?.isVaccine ?? false;
+  }
+
+  get dosesPerVial() {
+    return this.isVaccine ? this.itemBatch?.item?.doses ?? 0 : 0;
+  }
+
+  /**
+   * Get this items restricted LocationType - the location type for which Location records must
+   * be related for this ItemBatch to be assigned. This is either on the ItemStoreJoin or on the
+   * underlying Item - preference to the more specific ItemStoreJoin.
+   *
+   * @param {Realm} database
+   */
+  restrictedLocationType(database) {
+    return this.itemBatch?.restrictedLocationType(database);
+  }
+
+  setDoses(database, newValue) {
+    const maximumDosesPossible = this.dosesPerVial * this.countedTotalQuantity;
+    this.doses = Math.min(newValue, maximumDosesPossible);
+
+    database.save('StocktakeBatch', this);
   }
 
   /**
@@ -239,6 +297,14 @@ export class StocktakeBatch extends Realm.Object {
     this.itemBatch.sellPrice = this.sellPrice;
     this.itemBatch.supplier = this.supplier;
 
+    if (this.itemBatch.shouldApplyVvmStatus(this.vaccineVialMonitorStatus)) {
+      this.itemBatch.applyVvmStatus(database, this.vaccineVialMonitorStatus);
+    }
+
+    if (this.itemBatch.shouldApplyLocation(this.location)) {
+      this.itemBatch.applyLocation(database, this.location);
+    }
+
     // Make inventory adjustments if there is a difference to apply.
     if (this.difference !== 0) {
       const isAddition = this.countedTotalQuantity > this.snapshotTotalQuantity;
@@ -267,7 +333,10 @@ export class StocktakeBatch extends Realm.Object {
       // (i.e. always treat as positive).
       const snapshotDifference = Math.abs(this.difference);
       transactionBatch.setTotalQuantity(database, snapshotDifference);
+      transactionBatch.doses = this.doses;
       database.save('TransactionBatch', transactionBatch);
+
+      if (!this.itemBatch.totalQuantity) this.itemBatch.leaveLocation(database);
     }
     database.save('ItemBatch', this.itemBatch);
   }
@@ -279,6 +348,14 @@ export class StocktakeBatch extends Realm.Object {
    */
   toString() {
     return `Stocktake batch representing ${this.itemBatch}`;
+  }
+
+  get breaches() {
+    return this.itemBatch?.breaches;
+  }
+
+  get itemName() {
+    return this?.itemBatch?.itemName;
   }
 
   get costPriceString() {
@@ -307,6 +384,9 @@ StocktakeBatch.schema = {
     sortIndex: { type: 'int', optional: true },
     option: { type: 'Options', optional: true },
     supplier: { type: 'Name', optional: true },
+    location: { type: 'Location', optional: true },
+    doses: { type: 'double', default: 0 },
+    vaccineVialMonitorStatus: { type: 'VaccineVialMonitorStatus', optional: true },
   },
 };
 

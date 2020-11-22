@@ -20,10 +20,18 @@ import { APP_FONT_FAMILY, GREY, LIGHT_GREY, DARK_GREY, SUSSOL_ORANGE } from '../
  */
 
 export const BarChart = ({ data, width, height }) => {
-  const renderYAxis = () => <VictoryAxis dependentAxis style={victoryStyles.axisY} />;
+  const renderYAxis = () => (
+    <VictoryAxis label={data[0].axis_label.y} dependentAxis style={victoryStyles.axisY} />
+  );
   const renderXAxis = () => {
     const tickTruncate = label => (label.length > 11 ? `${label.slice(0, 11)}...` : label);
-    return <VictoryAxis tickFormat={tickTruncate} style={victoryStyles.axisX} />;
+    return (
+      <VictoryAxis
+        label={data[0].axis_label.x}
+        tickFormat={tickTruncate}
+        style={victoryStyles.axisX}
+      />
+    );
   };
 
   const { padTop, padBottom, padLeft, padRight, padDomain, style } = victoryStyles.barChart;
@@ -40,6 +48,7 @@ export const BarChart = ({ data, width, height }) => {
 
   return (
     <VictoryChart width={width} height={height} padding={padding} domainPadding={domainPadding}>
+      <VictoryLabel text={data[0].label} x={width / 2} y={30} textAnchor="middle" />
       {data.map(({ values }) => (
         <VictoryBar
           style={style}

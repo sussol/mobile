@@ -3,7 +3,13 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { authStrings, modalStrings, buttonStrings } from '../localization';
+import {
+  navStrings,
+  programStrings,
+  authStrings,
+  modalStrings,
+  buttonStrings,
+} from '../localization';
 
 export const MODAL_KEYS = {
   CONFIRM_USER_PASSWORD: 'confirmUserPassword',
@@ -26,6 +32,7 @@ export const MODAL_KEYS = {
   SELECT_LANGUAGE: 'selectLanguage',
   PROGRAM_REQUISITION: 'programRequisition',
   PROGRAM_STOCKTAKE: 'programStocktake',
+  PROGRAM_CUSTOMER_REQUISITION: 'programCustomerRequisition',
   VIEW_REGIMEN_DATA: 'viewRegimenData',
   EDIT_STOCKTAKE_BATCH: 'editStocktakeBatch',
   STOCKTAKE_OUTDATED_ITEM: 'stocktakeOutdatedItems',
@@ -33,12 +40,21 @@ export const MODAL_KEYS = {
   STOCKTAKE_REASON: 'stocktakeReason',
   ENFORCE_REQUISITION_REASON: 'enforceRequisitionReason',
   SELECT_MASTER_LISTS: 'selectMasterList',
+  SELECT_LOCATION: 'selectLocation',
+  SELECT_SENSOR_LOCATION: 'selectSensorLocation',
+  SELECT_VVM_STATUS: 'selectVvmStatus',
+  EDIT_LOCATION: 'editLocation',
 };
 
 export const getModalTitle = modalKey => {
   switch (modalKey) {
     default:
       return '';
+    case MODAL_KEYS.PROGRAM_CUSTOMER_REQUISITION:
+    case MODAL_KEYS.PROGRAM_REQUISITION:
+      return `${navStrings.requisition} ${programStrings.details}`;
+    case MODAL_KEYS.PROGRAM_STOCKTAKE:
+      return `${navStrings.stocktake} ${programStrings.details}`;
     case MODAL_KEYS.CREATE_CASH_TRANSACTION:
       return modalStrings.create_cash_transaction;
     case MODAL_KEYS.SELECT_PRESCRIBER:
@@ -80,5 +96,10 @@ export const getModalTitle = modalKey => {
       return modalStrings.confirm_password;
     case MODAL_KEYS.SELECT_MASTER_LISTS:
       return modalStrings.select_master_lists;
+    case MODAL_KEYS.SELECT_SENSOR_LOCATION:
+    case MODAL_KEYS.SELECT_LOCATION:
+      return modalStrings.select_a_location;
+    case MODAL_KEYS.SELECT_VVM_STATUS:
+      return modalStrings.select_vvm_status;
   }
 };

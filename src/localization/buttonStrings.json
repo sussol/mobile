@@ -1,5 +1,7 @@
 {
   "gb": {
+    "add_fridge": "Add Fridge",
+    "start_scan": "Start scan",
     "next": "Next",
     "cancel": "Cancel",
     "add_batch": "Add Batch",
@@ -26,7 +28,9 @@
     "settings": "SETTINGS",
     "use_requested_quantities": "Use Requested Quantities",
     "use_suggested_quantities": "Use Suggested Quantities",
-    "view_regimen_data": "View Regimen Data"
+    "view_regimen_data": "View Regimen Data",
+    "supply_data": "Supply Data",
+    "customer_data": "Customer Data"
   },
   "fr": {
     "cancel": "Annuler",

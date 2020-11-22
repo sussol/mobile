@@ -33,6 +33,7 @@ export const SCREEN_TITLES = {
   [ROUTES.STOCKTAKE_EDITOR]: ({ serialNumber } = {}) => `${navStrings.stocktake} ${serialNumber}`,
   [ROUTES.STOCKTAKE_MANAGER]: () => navStrings.manage_stocktake,
   [ROUTES.PRESCRIPTION]: ({ serialNumber } = {}) => `${navStrings.prescription} ${serialNumber}`,
+  [ROUTES.VACCINES]: () => navStrings.vaccines,
 };
 
 export const getRouteTitle = (pageObject, routeName) => {

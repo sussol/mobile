@@ -17,22 +17,25 @@ const PAGE_COLUMN_WIDTHS = {
   [MODALS.STOCKTAKE_BATCH_EDIT]: [1, 2, 1, 1, 1, 1],
   [MODALS.STOCKTAKE_BATCH_EDIT_WITH_REASONS]: [1, 2, 1, 1, 1, 1, 1],
   [MODALS.STOCKTAKE_BATCH_EDIT_WITH_REASONS_AND_PRICES]: [1, 2, 1, 1, 1, 1.5, 1.5, 1.5, 1],
+  [MODALS.STOCKTAKE_BATCH_EDIT_WITH_VACCINES]: [1, 1, 1, 1, 1, 1, 1, 1, 1],
   [MODALS.STOCKTAKE_BATCH_EDIT_WITH_PRICES]: [1, 2, 1, 1, 1, 1, 1, 1],
   [MODALS.SUPPLIER_CREDIT_FROM_INVOICE]: [1, 1, 1, 1, 1, 1],
   [MODALS.SUPPLIER_CREDIT_FROM_ITEM]: [1, 1, 1, 1, 1],
   [ROUTES.CASH_REGISTER]: [1, 2, 1, 1, 1, 2, 2],
   [ROUTES.CUSTOMER_CREDIT]: [2, 4, 2, 2, 1],
   [ROUTES.CUSTOMER_INVOICE]: [2, 4, 2, 2, 1],
+  [ROUTES.CUSTOMER_INVOICE_WITH_VACCINES]: [2, 4, 2, 2, 1, 1, 1],
   [ROUTES.CUSTOMER_INVOICES]: [1.5, 2.5, 2, 1.5, 3, 1],
   [ROUTES.CUSTOMER_REQUISITION]: [2, 4, 1.5, 1.5, 2, 2, 2, 2],
-  [ROUTES.CUSTOMER_REQUISITIONS]: [1.5, 2, 1, 1, 1],
-  [ROUTES.CUSTOMER_REQUISITIONS_WITH_PROGRAMS]: [2, 3.5, 3.5, 1.5, 2, 1.5],
+  [ROUTES.CUSTOMER_REQUISITIONS]: [1.5, 2, 1, 1, 1, 1],
+  [ROUTES.CUSTOMER_REQUISITIONS_WITH_PROGRAMS]: [2, 3.5, 3.5, 1.5, 2, 1.5, 1],
   [ROUTES.STOCK]: [1, 4, 1, 1],
   [ROUTES.STOCKTAKE_EDITOR]: [1, 2.4, 0.6, 1, 1.2, 1, 0.8],
   [ROUTES.STOCKTAKE_MANAGER]: [2, 6, 1],
   [ROUTES.STOCKTAKES]: [6, 2, 2, 1],
   [ROUTES.STOCKTAKES_WITH_PROGRAMS]: [4.5, 3.5, 2, 2, 1],
   [ROUTES.SUPPLIER_INVOICE]: [2, 3.5, 2, 1.5, 1.5, 1],
+  [ROUTES.SUPPLIER_INVOICE_WITH_VACCINES]: [1.25, 3.5, 2, 1.5, 1.5, 1.5, 1.5, 1],
   [ROUTES.SUPPLIER_INVOICE_WITH_PRICES]: [2, 3.5, 2, 1.5, 1.5, 1.5, 1.5, 1],
   [ROUTES.SUPPLIER_INVOICES]: [1.5, 2.5, 2, 1.5, 3, 1],
   [ROUTES.SUPPLIER_REQUISITION]: [1.4, 3.5, 2, 1.5, 2, 2, 1],
@@ -41,11 +44,57 @@ const PAGE_COLUMN_WIDTHS = {
   [ROUTES.SUPPLIER_REQUISITIONS_WITH_PROGRAMS]: [2, 3.5, 3.5, 1.5, 2, 1.5, 2],
   [ROUTES.PRESCRIPTION]: [2, 4, 2, 2, 1],
   [ROUTES.PRESCRIPTIONS]: [1.5, 2.5, 2, 1.5, 3, 1],
+  fridges: [1, 3, 1],
+  sensors: [3, 3, 1, 1],
   [TABS.ITEM]: [1, 3, 1],
   [TABS.PRESCRIBER]: [3, 3, 1],
+  editableCustomerRequisitionFormEntry: [2, 1.5, 1, 1, 1, 1.5, 1, 1, 1, 1.5],
+  customerRequisitionFormEntry: [2, 2, 1, 1, 1, 1, 2, 2, 2, 2],
 };
 
 const PAGE_COLUMNS = {
+  editableCustomerRequisitionFormEntry: [
+    COLUMN_NAMES.ITEM_NAME,
+    COLUMN_NAMES.ITEM_CODE,
+    COLUMN_NAMES.EDITABLE_OPENING_STOCK,
+    COLUMN_NAMES.EDITABLE_INCOMING_STOCK,
+    COLUMN_NAMES.EDITABLE_OUTGOING_STOCK,
+    COLUMN_NAMES.EDITABLE_POSITIVE_ADJUSTMENTS,
+    COLUMN_NAMES.EDITABLE_NEGATIVE_ADJUSTMENTS,
+    COLUMN_NAMES.CLOSING_STOCK,
+    COLUMN_NAMES.EDITABLE_DAYS_OUT_OF_STOCK,
+    COLUMN_NAMES.EDITABLE_REQUIRED_QUANTITY,
+  ],
+  customerRequisitionFormEntry: [
+    COLUMN_NAMES.ITEM_NAME,
+    COLUMN_NAMES.ITEM_CODE,
+    COLUMN_NAMES.OPENING_STOCK,
+    COLUMN_NAMES.DAYS_OUT_OF_STOCK,
+    COLUMN_NAMES.INCOMING_STOCK,
+    COLUMN_NAMES.OUTGOING_STOCK,
+    COLUMN_NAMES.POSITIVE_ADJUSTMENTS,
+    COLUMN_NAMES.NEGATIVE_ADJUSTMENTS,
+    COLUMN_NAMES.REQUIRED_QUANTITY,
+    COLUMN_NAMES.CLOSING_STOCK,
+  ],
+  sensors: [
+    COLUMN_NAMES.EDITABLE_NAME,
+    COLUMN_NAMES.LOCATION,
+    COLUMN_NAMES.BATTERY_LEVEL,
+    COLUMN_NAMES.MAC_ADDRESS,
+  ],
+  fridges: [COLUMN_NAMES.CODE, COLUMN_NAMES.DESCRIPTION, COLUMN_NAMES.EDIT],
+
+  [ROUTES.SUPPLIER_INVOICE_WITH_VACCINES]: [
+    COLUMN_NAMES.ITEM_CODE,
+    COLUMN_NAMES.ITEM_NAME,
+    COLUMN_NAMES.EDITABLE_BATCH_NAME,
+    COLUMN_NAMES.LOCATION,
+    COLUMN_NAMES.VVM_STATUS,
+    COLUMN_NAMES.EDITABLE_TOTAL_QUANTITY,
+    COLUMN_NAMES.EDITABLE_EXPIRY_DATE,
+    COLUMN_NAMES.REMOVE,
+  ],
   [FORMS.PATIENT]: [
     COLUMN_NAMES.CODE,
     COLUMN_NAMES.LAST_NAME,
@@ -79,6 +128,17 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.EDITABLE_EXPIRY_DATE,
     COLUMN_NAMES.SNAPSHOT_TOTAL_QUANTITY,
     COLUMN_NAMES.COUNTED_TOTAL_QUANTITY,
+    COLUMN_NAMES.DIFFERENCE,
+  ],
+  [MODALS.STOCKTAKE_BATCH_EDIT_WITH_VACCINES]: [
+    COLUMN_NAMES.EDITABLE_BATCH_NAME,
+    COLUMN_NAMES.LOCATION,
+    COLUMN_NAMES.VVM_STATUS,
+    COLUMN_NAMES.EDITABLE_EXPIRY_DATE,
+    COLUMN_NAMES.SNAPSHOT_TOTAL_QUANTITY,
+    COLUMN_NAMES.COUNTED_TOTAL_QUANTITY,
+    COLUMN_NAMES.DOSES,
+    COLUMN_NAMES.BREACH,
     COLUMN_NAMES.DIFFERENCE,
   ],
   [MODALS.STOCKTAKE_BATCH_EDIT_WITH_REASONS]: [
@@ -140,6 +200,8 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.ITEM_NAME,
     COLUMN_NAMES.AVAILABLE_QUANTITY,
     COLUMN_NAMES.EDITABLE_TOTAL_QUANTITY,
+    COLUMN_NAMES.DOSES,
+    COLUMN_NAMES.BREACH,
     COLUMN_NAMES.REMOVE,
   ],
   [ROUTES.CUSTOMER_INVOICE]: [
@@ -147,6 +209,15 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.ITEM_NAME,
     COLUMN_NAMES.AVAILABLE_QUANTITY,
     COLUMN_NAMES.EDITABLE_TOTAL_QUANTITY,
+    COLUMN_NAMES.REMOVE,
+  ],
+  [ROUTES.CUSTOMER_INVOICE_WITH_VACCINES]: [
+    COLUMN_NAMES.ITEM_CODE,
+    COLUMN_NAMES.ITEM_NAME,
+    COLUMN_NAMES.AVAILABLE_QUANTITY,
+    COLUMN_NAMES.EDITABLE_TOTAL_QUANTITY,
+    COLUMN_NAMES.DOSES,
+    COLUMN_NAMES.BREACH,
     COLUMN_NAMES.REMOVE,
   ],
   [ROUTES.CUSTOMER_INVOICES]: [
@@ -173,6 +244,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.NUMBER_OF_ITEMS,
     COLUMN_NAMES.ENTRY_DATE,
     COLUMN_NAMES.STATUS,
+    COLUMN_NAMES.REMOVE,
   ],
   [ROUTES.CUSTOMER_REQUISITIONS_WITH_PROGRAMS]: [
     COLUMN_NAMES.REQUISITION_NUMBER,
@@ -181,6 +253,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.NUMBER_OF_ITEMS,
     COLUMN_NAMES.ENTRY_DATE,
     COLUMN_NAMES.STATUS,
+    COLUMN_NAMES.REMOVE,
   ],
   [ROUTES.PRESCRIPTION]: [
     COLUMN_NAMES.ITEM_CODE,
@@ -344,6 +417,24 @@ const COLUMNS = () => ({
 
   // STRING COLUMNS
 
+  [COLUMN_NAMES.MAC_ADDRESS]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.MAC_ADDRESS,
+    title: tableStrings.mac_address,
+    alignText: 'left',
+    sortable: true,
+    editable: false,
+  },
+
+  [COLUMN_NAMES.BATTERY_LEVEL]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.BATTERY_LEVEL,
+    title: tableStrings.battery_level,
+    alignText: 'center',
+    sortable: true,
+    editable: false,
+  },
+
   [COLUMN_NAMES.TRANSACTION_TYPE]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.TYPE,
@@ -496,6 +587,24 @@ const COLUMNS = () => ({
 
   // EDITABLE STRING COLUMNS
 
+  [COLUMN_NAMES.EDITABLE_CODE]: {
+    type: COLUMN_TYPES.EDITABLE_STRING,
+    key: COLUMN_KEYS.CODE,
+    title: tableStrings.code,
+    alignText: 'left',
+    sortable: true,
+    editable: true,
+  },
+
+  [COLUMN_NAMES.DESCRIPTION]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.DESCRIPTION,
+    title: tableStrings.description,
+    alignText: 'left',
+    sortable: true,
+    editable: false,
+  },
+
   [COLUMN_NAMES.EDITABLE_BATCH_NAME]: {
     type: COLUMN_TYPES.EDITABLE_STRING,
     key: COLUMN_KEYS.BATCH,
@@ -512,6 +621,14 @@ const COLUMNS = () => ({
     sortable: false,
     editable: true,
   },
+  [COLUMN_NAMES.EDITABLE_NAME]: {
+    type: COLUMN_TYPES.EDITABLE_STRING,
+    key: COLUMN_KEYS.NAME,
+    title: tableStrings.name,
+    textAlign: 'left',
+    sortable: true,
+    editable: true,
+  },
   [COLUMN_NAMES.EDITABLE_VALUE]: {
     type: COLUMN_TYPES.EDITABLE_STRING,
     key: COLUMN_KEYS.VALUE,
@@ -522,6 +639,24 @@ const COLUMNS = () => ({
   },
 
   // NUMERIC COLUMNS
+
+  [COLUMN_NAMES.CLOSING_STOCK]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.CLOSING_STOCK,
+    title: tableStrings.their_stock,
+    alignText: 'right',
+    sortable: true,
+    editable: false,
+  },
+
+  [COLUMN_NAMES.COST_PRICE]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.COST_PRICE,
+    title: tableStrings.cost_price,
+    alignText: 'right',
+    sortable: false,
+    editable: false,
+  },
 
   [COLUMN_NAMES.COST_PRICE]: {
     type: COLUMN_TYPES.STRING,
@@ -637,7 +772,106 @@ const COLUMNS = () => ({
     editable: false,
   },
 
+  [COLUMN_NAMES.DAYS_OUT_OF_STOCK]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.DAYS_OUT_OF_STOCK,
+    title: tableStrings.days_out_of_stock,
+    alignText: 'right',
+    sortable: true,
+    editable: false,
+  },
+
+  [COLUMN_NAMES.INCOMING_STOCK]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.INCOMING_STOCK,
+    title: tableStrings.incoming_stock,
+    alignText: 'right',
+    sortable: true,
+    editable: true,
+  },
+
+  [COLUMN_NAMES.OPENING_STOCK]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.OPENING_STOCK,
+    title: tableStrings.opening_stock,
+    alignText: 'right',
+    sortable: true,
+    editable: false,
+  },
+
+  [COLUMN_NAMES.POSITIVE_ADJUSTMENTS]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.POSITIVE_ADJUSTMENTS,
+    title: tableStrings.positive_adjustments,
+    alignText: 'right',
+    sortable: true,
+    editable: false,
+  },
+
+  [COLUMN_NAMES.NEGATIVE_ADJUSTMENTS]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.NEGATIVE_ADJUSTMENTS,
+    title: tableStrings.negative_adjustments,
+    alignText: 'right',
+    sortable: true,
+    editable: false,
+  },
+
   // EDITABLE NUMERIC COLUMNS
+
+  [COLUMN_NAMES.EDITABLE_OPENING_STOCK]: {
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
+    key: COLUMN_KEYS.OPENING_STOCK,
+    title: tableStrings.opening_stock,
+    alignText: 'right',
+    sortable: true,
+    editable: true,
+  },
+
+  [COLUMN_NAMES.EDITABLE_DAYS_OUT_OF_STOCK]: {
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
+    key: COLUMN_KEYS.DAYS_OUT_OF_STOCK,
+    title: tableStrings.days_out_of_stock,
+    alignText: 'right',
+    sortable: true,
+    editable: true,
+  },
+
+  [COLUMN_NAMES.EDITABLE_INCOMING_STOCK]: {
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
+    key: COLUMN_KEYS.INCOMING_STOCK,
+    title: tableStrings.incoming_stock,
+    alignText: 'right',
+    sortable: true,
+    editable: true,
+  },
+
+  [COLUMN_NAMES.EDITABLE_OUTGOING_STOCK]: {
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
+    key: COLUMN_KEYS.OUTGOING_STOCK,
+    title: tableStrings.outgoing_stock,
+    alignText: 'right',
+    sortable: true,
+    editable: true,
+  },
+
+  [COLUMN_NAMES.EDITABLE_POSITIVE_ADJUSTMENTS]: {
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
+    key: COLUMN_KEYS.POSITIVE_ADJUSTMENTS,
+    title: tableStrings.positive_adjustments,
+    alignText: 'right',
+    sortable: true,
+    editable: true,
+  },
+
+  [COLUMN_NAMES.EDITABLE_NEGATIVE_ADJUSTMENTS]: {
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
+    key: COLUMN_KEYS.NEGATIVE_ADJUSTMENTS,
+    title: tableStrings.negative_adjustments,
+    alignText: 'right',
+    sortable: true,
+    editable: true,
+  },
 
   [COLUMN_NAMES.SELL_PRICE]: {
     type: COLUMN_TYPES.EDITABLE_NUMERIC,
@@ -645,6 +879,15 @@ const COLUMNS = () => ({
     title: tableStrings.sell_price,
     alignText: 'right',
     sortable: false,
+    editable: true,
+  },
+
+  [COLUMN_NAMES.DOSES]: {
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
+    key: COLUMN_KEYS.DOSES,
+    title: tableStrings.doses,
+    alignText: 'right',
+    sortable: true,
     editable: true,
   },
 
@@ -770,6 +1013,26 @@ const COLUMNS = () => ({
 
   // ICON COLUMNS
 
+  [COLUMN_NAMES.EDIT]: {
+    type: COLUMN_TYPES.ICON,
+    key: COLUMN_KEYS.EDIT,
+    title: tableStrings.edit,
+    sortable: false,
+    alignText: 'center',
+    editable: false,
+    icon: 'pencil',
+  },
+
+  [COLUMN_NAMES.BREACH]: {
+    type: COLUMN_TYPES.ICON,
+    key: COLUMN_KEYS.HAS_BREACHED,
+    title: tableStrings.breach,
+    sortable: false,
+    alignText: 'center',
+    editable: false,
+    icon: 'breach',
+  },
+
   [COLUMN_NAMES.RETURN]: {
     type: COLUMN_TYPES.ICON,
     key: COLUMN_KEYS.RETURN,
@@ -849,6 +1112,22 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.DROP_DOWN,
     key: COLUMN_KEYS.REASON_TITLE,
     title: tableStrings.reason,
+    alignText: 'left',
+    sortable: false,
+    editable: false,
+  },
+  [COLUMN_NAMES.LOCATION]: {
+    type: COLUMN_TYPES.DROP_DOWN,
+    key: 'currentLocationName',
+    title: tableStrings.location,
+    alignText: 'left',
+    sortable: false,
+    editable: false,
+  },
+  [COLUMN_NAMES.VVM_STATUS]: {
+    type: COLUMN_TYPES.DROP_DOWN,
+    key: COLUMN_KEYS.CURRENT_VVM_STATUS,
+    title: tableStrings.vvm_status,
     alignText: 'left',
     sortable: false,
     editable: false,

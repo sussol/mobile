@@ -3,13 +3,13 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
-
 import Realm from 'realm';
 
 import { parsePositiveInteger } from '../../utilities';
 import { UIDatabase } from '..';
 import { SETTINGS_KEYS } from '../../settings';
-import { createRecord } from '../utilities';
+import { NUMBER_OF_DAYS_IN_A_MONTH, createRecord } from '../utilities';
+import { customerRequisitionProgramDailyUsage } from '../../utilities/dailyUsage';
 
 /**
  * A requisition item (i.e. a requisition line).
@@ -32,7 +32,7 @@ export class RequisitionItem extends Realm.Object {
    * @return {bool} true if this item has total quantity of stock less than the threshold
    */
   get isLessThanThresholdMOS() {
-    return this.stockOnHand < this.dailyUsage * 30 * this.requisition.thresholdMOS;
+    return this.stockOnHand < this.monthlyUsage * this.requisition.thresholdMOS;
   }
 
   /**
@@ -77,7 +77,7 @@ export class RequisitionItem extends Realm.Object {
    * @return  {number}
    */
   get monthlyUsage() {
-    return this.dailyUsage * 30;
+    return this.dailyUsage * NUMBER_OF_DAYS_IN_A_MONTH;
   }
 
   /**
@@ -86,8 +86,17 @@ export class RequisitionItem extends Realm.Object {
    * @return  {number}
    */
   get suggestedQuantity() {
-    const daysToSupply = this.requisition ? this.requisition.daysToSupply : 0;
-    return Math.ceil(Math.max(this.dailyUsage * daysToSupply - this.stockOnHand, 0));
+    return Math.ceil(Math.max(this.dailyUsage * this.daysToSupply - this.stockOnHand, 0));
+  }
+
+  get daysToSupply() {
+    const { daysToSupply } = this.requisition;
+    return this.requisition ? daysToSupply : 0;
+  }
+
+  get monthsToSupply() {
+    const { monthsToSupply } = this.requisition;
+    return monthsToSupply;
   }
 
   /**
@@ -211,8 +220,80 @@ export class RequisitionItem extends Realm.Object {
     }
   }
 
+  get isVaccine() {
+    return this.item?.isVaccine ?? false;
+  }
+
   get reasonTitle() {
     return this.option?.title ?? '';
+  }
+
+  openVialWastage(fromDate) {
+    return this.item?.openVialWastage(fromDate);
+  }
+
+  closedVialWastage(fromDate) {
+    return this.item?.closedVialWastage(fromDate);
+  }
+
+  get lastRequisitionDate() {
+    return this.item?.lastRequisitionDate;
+  }
+
+  setIncomingStock(value) {
+    this.incomingStock = value;
+    this.recalculateStockOnHand();
+  }
+
+  setOutgoingStock(value) {
+    this.outgoingStock = value;
+    this.dailyUsage = customerRequisitionProgramDailyUsage(this);
+    this.recalculateStockOnHand();
+  }
+
+  setPositiveAdjustments(value) {
+    this.positiveAdjustments = value;
+    this.recalculateStockOnHand();
+  }
+
+  setNegativeAdjustments(value) {
+    this.negativeAdjustments = value;
+    this.recalculateStockOnHand();
+  }
+
+  setDaysOutOfStock(value) {
+    this.daysOutOfStock = value;
+    this.dailyUsage = customerRequisitionProgramDailyUsage(this);
+  }
+
+  setOpeningStock(value) {
+    this.openingStock = value;
+    this.recalculateStockOnHand();
+  }
+
+  recalculateStockOnHand() {
+    this.stockOnHand =
+      this.openingStock +
+      this.incomingStock -
+      this.outgoingStock +
+      this.positiveAdjustments -
+      this.negativeAdjustments;
+  }
+
+  get numberOfDaysInPeriod() {
+    return this.requisition?.numberOfDaysInPeriod ?? 0;
+  }
+
+  get closingStockIsValid() {
+    return this.stockOnHand >= 0;
+  }
+
+  get daysOutOfStockIsValid() {
+    return this.daysOutOfStock <= this.numberOfDaysInPeriod;
+  }
+
+  get fieldsAreValid() {
+    return this.closingStockIsValid && this.daysOutOfStockIsValid;
   }
 }
 
@@ -227,7 +308,13 @@ RequisitionItem.schema = {
     dailyUsage: { type: 'double', optional: true },
     imprestQuantity: { type: 'double', optional: true },
     requiredQuantity: { type: 'double', optional: true },
-    suppliedQuantity: { type: 'double', optional: true },
+    suppliedQuantity: { type: 'double', default: 0 },
+    openingStock: { type: 'double', default: 0 },
+    daysOutOfStock: { type: 'double', default: 0 },
+    incomingStock: { type: 'double', default: 0 },
+    outgoingStock: { type: 'double', default: 0 },
+    positiveAdjustments: { type: 'double', default: 0 },
+    negativeAdjustments: { type: 'double', default: 0 },
     comment: { type: 'string', optional: true },
     sortIndex: { type: 'int', optional: true },
     option: { type: 'Options', optional: true },

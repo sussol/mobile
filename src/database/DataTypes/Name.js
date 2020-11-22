@@ -149,6 +149,7 @@ Name.schema = {
     policies: { type: 'linkingObjects', objectType: 'InsurancePolicy', property: 'patient' },
     female: { type: 'bool', default: false },
     thisStoresPatient: { type: 'bool', default: false },
+    nameTagJoins: { type: 'linkingObjects', objectType: 'NameTagJoin', property: 'name' },
   },
 };
 

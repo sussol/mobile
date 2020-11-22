@@ -37,7 +37,7 @@ import RefContext from './DataTable/RefContext';
  * @param {Bool}  isLastCell Indicator if this cell is the last in a row.
  * @param {Func} onEndEditing Callback for onEndEditing event.
  * @param {String}  placeholder String to display when the cell is empty.
- * @param {String} underlineColor    Underline colour of TextInput on Android.
+ * @param {String} underlineColor    Underline color of TextInput on Android.
  */
 
 const { expiryBatchView, expiryBatchText, expiryBatchPlaceholderText } = dataTableStyles;
@@ -48,7 +48,7 @@ export const ExpiryDateInput = React.memo(
     rowKey,
     columnKey,
     isDisabled,
-    placeholderColour,
+    placeholderColor,
     onEndEditing,
     isLastCell,
     width,
@@ -109,7 +109,7 @@ export const ExpiryDateInput = React.memo(
           placeholder={placeholder}
           style={textStyle}
           value={expiryDate}
-          placeholderTextColor={placeholderColour}
+          placeholderTextColor={placeholderColor}
           onChangeText={setExpiryDate}
           onSubmitEditing={onSubmit}
           onEndEditing={finishEditingExpiryDate}
@@ -133,7 +133,7 @@ ExpiryDateInput.propTypes = {
   debug: PropTypes.bool,
   placeholder: PropTypes.string,
   rowIndex: PropTypes.number.isRequired,
-  placeholderColour: PropTypes.string,
+  placeholderColor: PropTypes.string,
   underlineColor: PropTypes.string,
 };
 
@@ -144,7 +144,7 @@ ExpiryDateInput.defaultProps = {
   width: 0,
   debug: false,
   placeholder: 'mm/yyyy',
-  placeholderColour: '#CDCDCD',
+  placeholderColor: '#CDCDCD',
   underlineColor: '#CDCDCD',
 };
 

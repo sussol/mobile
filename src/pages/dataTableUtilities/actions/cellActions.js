@@ -2,6 +2,7 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
+import { ToastAndroid } from 'react-native';
 import { batch as reduxBatch } from 'react-redux';
 import currency from '../../../localization/currency';
 import { UIDatabase } from '../../../database';
@@ -18,6 +19,7 @@ import {
 import { ACTIONS } from './constants';
 import { openModal, closeModal } from './pageActions';
 import { selectPageState } from '../../../selectors/pages';
+import { tableStrings } from '../../../localization/index';
 
 /**
  * Refreshes a row in the DataTable component.
@@ -35,6 +37,202 @@ export const refreshIndicatorRow = route => ({
   type: 'refreshIndicatorRow',
   payload: { route },
 });
+
+export const editSensorLocation = (location, route) => (dispatch, getState) => {
+  const { modalValue, keyExtractor } = selectPageState(getState());
+
+  UIDatabase.write(() => UIDatabase.update('Sensor', { id: modalValue.id, location }));
+
+  reduxBatch(() => {
+    dispatch(refreshRow(keyExtractor(modalValue), route));
+    dispatch(closeModal(route));
+  });
+};
+
+export const editSensorName = (newValue, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  if (objectToEdit) {
+    UIDatabase.write(() => UIDatabase.update('Sensor', { ...objectToEdit, name: newValue }));
+    dispatch(refreshRow(rowKey, route));
+  }
+};
+
+export const editLocationDescription = (newValue, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  if (objectToEdit) {
+    UIDatabase.write(() =>
+      UIDatabase.update('Location', { ...objectToEdit, description: newValue })
+    );
+    dispatch(refreshRow(rowKey, route));
+  }
+};
+
+export const editLocationCode = (newValue, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  if (objectToEdit) {
+    UIDatabase.write(() => UIDatabase.update('Location', { ...objectToEdit, code: newValue }));
+    dispatch(refreshRow(rowKey, route));
+  }
+};
+
+export const editBatchDoses = (newValue, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  if (objectToEdit) {
+    UIDatabase.write(() => objectToEdit.setDoses(UIDatabase, parsePositiveInteger(newValue)));
+    dispatch(refreshRow(rowKey, route));
+  }
+};
+
+export const editBatchVvmStatus = (vvmStatus, objectType, route) => (dispatch, getState) => {
+  const { modalValue, keyExtractor } = selectPageState(getState());
+
+  UIDatabase.write(() =>
+    UIDatabase.update(objectType, { ...modalValue, vaccineVialMonitorStatus: vvmStatus })
+  );
+
+  reduxBatch(() => {
+    dispatch(refreshRow(keyExtractor(modalValue), route));
+    dispatch(closeModal(route));
+  });
+};
+
+export const editTransactionBatchVvmStatus = (vvmStatus, route) =>
+  editBatchVvmStatus(vvmStatus, 'TransactionBatch', route);
+
+export const editStocktakeBatchVvmStatus = (vvmStatus, route) =>
+  editBatchVvmStatus(vvmStatus, 'StocktakeBatch', route);
+
+export const editBatchLocation = (location, objectType, route) => (dispatch, getState) => {
+  const { modalValue, keyExtractor } = selectPageState(getState());
+
+  UIDatabase.write(() => UIDatabase.update(objectType, { ...modalValue, location }));
+
+  reduxBatch(() => {
+    dispatch(refreshRow(keyExtractor(modalValue), route));
+    dispatch(closeModal(route));
+  });
+};
+
+export const editTransactionBatchLocation = (location, route) =>
+  editBatchLocation(location, 'TransactionBatch', route);
+
+export const editStocktakeBatchLocation = (location, route) =>
+  editBatchLocation(location, 'StocktakeBatch', route);
+
+export const editOpeningStock = (value, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+
+  const requisitionItem = data.find(row => keyExtractor(row) === rowKey);
+  if (requisitionItem) {
+    UIDatabase.write(() => {
+      requisitionItem.setOpeningStock(parsePositiveInteger(value));
+      UIDatabase.save('RequisitionItem', requisitionItem);
+    });
+
+    if (!requisitionItem.closingStockIsValid) {
+      ToastAndroid.show(tableStrings.opening_stock_validation, ToastAndroid.LONG);
+    }
+
+    dispatch(refreshRow(rowKey, route));
+  }
+};
+
+export const editDaysOutOfStock = (value, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+
+  const requisitionItem = data.find(row => keyExtractor(row) === rowKey);
+  if (requisitionItem) {
+    UIDatabase.write(() => {
+      requisitionItem.setDaysOutOfStock(parsePositiveInteger(value));
+      UIDatabase.save('RequisitionItem', requisitionItem);
+    });
+    dispatch(refreshRow(rowKey, route));
+  }
+};
+
+export const editIncomingStock = (value, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+
+  const requisitionItem = data.find(row => keyExtractor(row) === rowKey);
+  if (requisitionItem) {
+    UIDatabase.write(() => {
+      requisitionItem.setIncomingStock(parsePositiveInteger(value));
+      UIDatabase.save('RequisitionItem', requisitionItem);
+    });
+
+    if (!requisitionItem.closingStockIsValid) {
+      ToastAndroid.show(tableStrings.incoming_stock_validation, ToastAndroid.LONG);
+    }
+
+    dispatch(refreshRow(rowKey, route));
+  }
+};
+
+export const editOutgoingStock = (value, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+
+  const requisitionItem = data.find(row => keyExtractor(row) === rowKey);
+  if (requisitionItem) {
+    UIDatabase.write(() => {
+      requisitionItem.setOutgoingStock(parsePositiveInteger(value));
+      UIDatabase.save('RequisitionItem', requisitionItem);
+    });
+
+    if (!requisitionItem.closingStockIsValid) {
+      ToastAndroid.show(tableStrings.outgoing_stock_validation, ToastAndroid.LONG);
+    }
+
+    dispatch(refreshRow(rowKey, route));
+  }
+};
+
+export const editPositiveAdjustments = (value, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+
+  const requisitionItem = data.find(row => keyExtractor(row) === rowKey);
+  if (requisitionItem) {
+    UIDatabase.write(() => {
+      requisitionItem.setPositiveAdjustments(parsePositiveInteger(value));
+      UIDatabase.save('RequisitionItem', requisitionItem);
+    });
+
+    if (!requisitionItem.closingStockIsValid) {
+      ToastAndroid.show(tableStrings.positive_adjustments_validation, ToastAndroid.LONG);
+    }
+
+    dispatch(refreshRow(rowKey, route));
+  }
+};
+
+export const editNegativeAdjustments = (value, rowKey, route) => (dispatch, getState) => {
+  const { data, keyExtractor } = selectPageState(getState());
+
+  const requisitionItem = data.find(row => keyExtractor(row) === rowKey);
+  if (requisitionItem) {
+    UIDatabase.write(() => {
+      requisitionItem.setNegativeAdjustments(parsePositiveInteger(value));
+      UIDatabase.save('RequisitionItem', requisitionItem);
+    });
+
+    if (!requisitionItem.closingStockIsValid) {
+      ToastAndroid.show(tableStrings.negative_adjustments_validation, ToastAndroid.LONG);
+    }
+
+    dispatch(refreshRow(rowKey, route));
+  }
+};
 
 /**
  * Edits a rows underlying `batch` field.
@@ -337,4 +535,19 @@ export const CellActionsLookup = {
   editBatchSupplier,
   editRequisitionItemRequiredQuantityWithReason,
   editTransactionBatchName,
+  editTransactionBatchLocation,
+  editStocktakeBatchLocation,
+  editTransactionBatchVvmStatus,
+  editStocktakeBatchVvmStatus,
+  editBatchDoses,
+  editLocationCode,
+  editLocationDescription,
+  editSensorLocation,
+  editSensorName,
+  editOpeningStock,
+  editNegativeAdjustments,
+  editPositiveAdjustments,
+  editOutgoingStock,
+  editIncomingStock,
+  editDaysOutOfStock,
 };

@@ -55,6 +55,11 @@ export const SupplierInvoice = ({
   onEditSellPrice,
   onEditTransactionBatchName,
   isSupplierInvoice,
+  onSelectLocation,
+  onApplyTransactionBatchLocation,
+  onSelectVvmStatus,
+  onApplyTransactionBatchVvmStatus,
+  onEditBatchDoses,
 }) => {
   const { isFinalised, comment, theirRef } = pageObject;
 
@@ -77,6 +82,12 @@ export const SupplierInvoice = ({
         return onEditSellPrice;
       case 'batch':
         return onEditTransactionBatchName;
+      case 'currentLocationName':
+        return onSelectLocation;
+      case 'currentVvmStatusName':
+        return onSelectVvmStatus;
+      case 'doses':
+        return onEditBatchDoses;
       default:
         return null;
     }
@@ -90,6 +101,10 @@ export const SupplierInvoice = ({
         return onEditComment;
       case MODAL_KEYS.THEIR_REF_EDIT:
         return onEditTheirRef;
+      case MODAL_KEYS.SELECT_LOCATION:
+        return onApplyTransactionBatchLocation;
+      case MODAL_KEYS.SELECT_VVM_STATUS:
+        return onApplyTransactionBatchVvmStatus;
       default:
         return null;
     }
@@ -171,7 +186,6 @@ export const SupplierInvoice = ({
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
-        fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
         onClose={onCloseModal}
@@ -197,12 +211,18 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 const mapStateToProps = state => {
   const { pages, modules } = state;
   const { supplierInvoice } = pages;
-  const { usingPayments } = modules;
+  const { usingPayments, usingVaccines } = modules;
 
   const { pageObject } = supplierInvoice ?? {};
 
   const { isSupplierInvoice } = pageObject ?? {};
-  const columnsKey = usingPayments ? 'supplierInvoiceWithPrices' : 'supplierInvoice';
+
+  const columnsKey =
+    usingPayments || usingVaccines
+      ? (usingPayments && ROUTES.SUPPLIER_INVOICE_WITH_PRICES) ||
+        ROUTES.SUPPLIER_INVOICE_WITH_VACCINES
+      : ROUTES.SUPPLIER_INVOICE;
+
   const columns = getColumns(columnsKey);
 
   return { ...supplierInvoice, isSupplierInvoice, columns };
@@ -246,4 +266,9 @@ SupplierInvoice.propTypes = {
   refund: PropTypes.func.isRequired,
   onEditTransactionBatchName: PropTypes.func.isRequired,
   isSupplierInvoice: PropTypes.bool.isRequired,
+  onSelectLocation: PropTypes.func.isRequired,
+  onApplyTransactionBatchLocation: PropTypes.func.isRequired,
+  onSelectVvmStatus: PropTypes.func.isRequired,
+  onApplyTransactionBatchVvmStatus: PropTypes.func.isRequired,
+  onEditBatchDoses: PropTypes.func.isRequired,
 };

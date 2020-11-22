@@ -2,7 +2,6 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2020
  */
-
 /**
  * Returns the boolean string as a boolean (false if none passed)
  *

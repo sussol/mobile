@@ -32,3 +32,9 @@ export const selectUsingHideSnapshotColumn = ({ modules }) => {
   const { usingHideSnapshotColumn } = modules;
   return usingHideSnapshotColumn;
 };
+
+export const selectUsingVaccines = ({ modules }) => {
+  const { usingVaccines } = modules;
+
+  return usingVaccines;
+};

@@ -11,6 +11,8 @@ export const ACTIONS = {
   REFRESH_CASH_REGISTER: 'refreshCashRegister',
   ADD_ITEM: 'addItem',
   ADD_RECORD: 'addRecord',
+  TOGGLE_FRIDGES: 'toggleFridges',
+  TOGGLE_SENSORS: 'toggleSensors',
   TOGGLE_INDICATORS: 'toggleIndicators',
   SELECT_INDICATOR: 'selectIndicator',
   HIDE_OVER_STOCKED: 'hideOverStocked',
@@ -20,11 +22,14 @@ export const ACTIONS = {
   REFRESH_DATA_WITH_FINALISED_TOGGLE: 'refreshDataWithFinalisedToggle',
   FILTER_DATA_WITH_FINALISED_TOGGLE: 'filterDataWithFinalisedToggle',
   FILTER_DATA_WITH_OVER_STOCK_TOGGLE: 'filterDataWithOverStockToggle',
+  TOGGLE_COLUMN_SET: 'toggleColumnSet',
 
   // pageAction constants
   OPEN_MODAL: 'openModal',
   CLOSE_MODAL: 'closeModal',
   EDIT_NAME: 'editName',
+  OPEN_DATE_PICKER: 'openDatePicker',
+  CLOSE_DATE_PICKER: 'closeDatePicker',
 
   // rowAction constants
   REFRESH_ROW: 'refreshRow',

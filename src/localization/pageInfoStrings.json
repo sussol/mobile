@@ -1,5 +1,13 @@
 {
   "gb": {
+    "open_vial_wastage": "Open vial wastage",
+    "closed_vial_wastage": "Closed vial wastage",
+    "last_requisition_date": "Last requisition date",
+    "temperature_range": "Temperature range",
+    "number_of_affected_batches": "Number of affected batches",
+    "duration": "Duration",
+    "location": "Location",
+    "affected_quantity": "Affected quantity",
     "address": "Address",
     "code": "Code",
     "comment": "Comment",
@@ -8,12 +16,20 @@
     "customer": "Customer",
     "entered_by": "Entered By",
     "entry_date": "Entry Date",
-    "months_stock_required": "Months Stock",
+    "months_stock_required": "Max MOS",
     "stocktake_name": "Stocktake Name",
     "supplier": "Supplier",
     "their_ref": "Their Ref",
     "by_batch": "By batch",
-    "category": "Category"
+    "category": "Category",
+    "suggested_equals": "Suggested quantity",
+    "suggested_formula": "(Monthly use x Max MOS) - Their stock",
+    "amc_equals": "Monthly use",
+    "number_of_days_in_a_month": "Number of days in a month",
+    "number_of_days_in_a_month_formula": "= Number of days in a year / Number of months in a year",
+    "amc_formula": "(OUT x Number of days in a month) / (Days within period - DOS)",
+    "none_suggested": "(None suggested)",
+    "created_date": "Created date"
   },
   "fr": {
     "category": "Catégorie",

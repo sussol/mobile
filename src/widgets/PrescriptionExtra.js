@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { DropDown } from './DropDown';
-import { PageInfo } from './PageInfo';
+import { PageInfo } from './PageInfo/PageInfo';
 import { TextEditor } from './modalChildren';
 import { ModalContainer } from './modals/ModalContainer';
 
@@ -83,7 +83,6 @@ const PrescriptionExtraComponent = ({
       )}
       <PageInfo columns={pageInfoColumns} />
       <ModalContainer
-        fullScreen
         onClose={onCloseCommentModal}
         isVisible={commentModalOpen}
         title={modalStrings.edit_the_prescription_comment}
