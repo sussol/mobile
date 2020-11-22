@@ -212,11 +212,6 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   const { otherParty } = transaction || {};
   const hasMasterLists = otherParty?.masterLists?.length > 0;
 
-  // console.log('-------------------------------------------');
-  // console.log('transaction', transaction);
-  // console.log('ownProps', ownProps);
-  // console.log('-------------------------------------------');
-
   const onViewBreaches = rowKey => dispatch(BreachActions.viewTransactionItemBreaches(rowKey));
 
   const noMasterLists = () =>
