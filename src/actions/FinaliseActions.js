@@ -2,7 +2,6 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
-import { batch } from 'react-redux';
 import { Client as BugsnagClient } from 'bugsnag-react-native';
 
 import { UIDatabase } from '../database';
@@ -40,10 +39,7 @@ const finalise = () => (dispatch, getState) => {
     bugsnagClient.notify(error);
   }
 
-  batch(() => {
-    dispatch(closeModal());
-    dispatch(refreshData(currentRoute));
-  });
+  dispatch(refreshData(currentRoute));
 };
 
 export const FinaliseActions = {
