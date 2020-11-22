@@ -212,7 +212,7 @@ const generateSyncData = (settings, recordType, record) => {
         confirm_date: getDateString(record.confirmDate),
         subtotal: String(record.subtotal),
         user_ID: record.enteredBy && record.enteredBy.id,
-        category_ID: record.category && record.category.id,
+        category_ID: record.category?.id ?? '',
         confirm_time: getTimeString(record.confirmDate),
         store_ID: settings.get(THIS_STORE_ID),
         linked_transaction_id: record.linkedTransaction?.id ?? '',
