@@ -24,6 +24,7 @@ import { MODAL_KEYS } from '../utilities';
 import { DataTablePageModal } from '../widgets/modals';
 import { selectCurrentUser } from '../selectors/user';
 import { BottomConfirmModal } from '../widgets/bottomModals/index';
+import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
 /**
  * Renders a mSupply mobile page with a list of Customer requisitions.
@@ -66,6 +67,7 @@ export const CustomerRequisitions = ({
   // Custom hook to refresh data on this page when becoming the head of the stack again.
   useNavigationFocus(navigation, refreshData);
   useSyncListener(refreshData, 'Requisition');
+  const runWithLoadingIndicator = useLoadingIndicator();
 
   const getCallback = useCallback((colKey, propName) => {
     switch (colKey) {
@@ -82,7 +84,9 @@ export const CustomerRequisitions = ({
       case MODAL_KEYS.PROGRAM_CUSTOMER_REQUISITION:
         return params => {
           onCloseModal();
-          dispatch(createCustomerRequisition({ ...params, currentUser }));
+          runWithLoadingIndicator(() =>
+            dispatch(createCustomerRequisition({ ...params, currentUser }))
+          );
         };
 
       default:
