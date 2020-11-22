@@ -116,6 +116,7 @@ const FormControlComponent = ({
                 label={label}
                 invalidMessage={invalidMessage}
                 isDisabled={!isEditable || isDisabled}
+                autoFocus={index === 0}
               />
             );
           }
@@ -132,6 +133,7 @@ const FormControlComponent = ({
                 invalidMessage={invalidMessage}
                 onSubmit={nextFocus(index, key)}
                 isDisabled={isDisabled}
+                autoFocus={index === 0}
               />
             );
           }
