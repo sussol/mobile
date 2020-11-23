@@ -319,7 +319,7 @@ const DataTableRow = React.memo(
             }
 
             case COLUMN_TYPES.DROP_DOWN: {
-              const { isVaccine = false, hasVariance } = rowData ?? {};
+              const { isVaccine = false, hasVariance = false } = rowData ?? {};
 
               const disabledConditions = {
                 [COLUMN_KEYS.CURRENT_VVM_STATUS]: !isVaccine,
