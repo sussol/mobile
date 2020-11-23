@@ -378,7 +378,7 @@ export const editRequiredQuantity = (value, rowKey, objectType, route) => (dispa
       UIDatabase.save(objectType, objectToEdit);
     });
 
-    if (!objectToEdit?.hasVariance) dispatch(removeReason(rowKey, route));
+    if (!objectToEdit?.hasVariance && !!objectToEdit.option) dispatch(removeReason(rowKey, route));
 
     dispatch(refreshRow(rowKey, route));
   }
@@ -400,7 +400,9 @@ export const editCountedQuantity = (value, rowKey, route) => (dispatch, getState
   const { data, keyExtractor } = selectPageState(getState());
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
   if (objectToEdit) objectToEdit.setCountedTotalQuantity(UIDatabase, parsePositiveInteger(value));
-  if (!objectToEdit?.hasVariance) dispatch(removeReason(rowKey, route));
+
+  if (!objectToEdit?.hasValidReason) dispatch(removeReason(rowKey, route));
+
   dispatch(refreshRow(rowKey, route));
 };
 
@@ -420,7 +422,7 @@ export const editStocktakeBatchCountedQuantity = (value, rowKey, route) => (disp
     });
   }
 
-  if (!objectToEdit?.hasVariance) dispatch(removeReason(rowKey, route));
+  if (!objectToEdit?.hasValidReason) dispatch(removeReason(rowKey, route));
 
   dispatch(refreshRow(rowKey, route));
 };
@@ -433,7 +435,8 @@ export const editStocktakeBatchCountedQuantity = (value, rowKey, route) => (disp
 export const removeReason = (rowKey, route) => (dispatch, getState) => {
   const { data, keyExtractor } = selectPageState(getState());
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
-  if (objectToEdit) objectToEdit.removeReason(UIDatabase);
+
+  objectToEdit.removeReason(UIDatabase);
   dispatch(refreshRow(rowKey, route));
 };
 
