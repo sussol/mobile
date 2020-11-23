@@ -101,9 +101,15 @@ const SupplierRequisition = ({
 }) => {
   const runWithLoadingIndicator = useLoadingIndicator();
 
-  const onAddMasterLists = React.useCallback(selected => onApplyMasterLists(selected, pageObject), [
-    pageObject,
-  ]);
+  const onAddMasterLists = React.useCallback(
+    selected => {
+      onCloseModal();
+      runWithLoadingIndicator(() => {
+        onApplyMasterLists(selected, pageObject);
+      });
+    },
+    [pageObject]
+  );
 
   const { isFinalised, comment, theirRef, program, daysToSupply } = pageObject;
 

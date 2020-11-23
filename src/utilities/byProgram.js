@@ -16,11 +16,14 @@ import { SETTINGS_KEYS } from '../settings';
  * -- Is visible to the customer.
  * -- masterList.isProgram = true,
  * -- has a store tag in programSettings, with a key which matches a name_tag for this customer.
+ * -- Is visible to the mobile store.
  * @param  {Object} Customer
  * @param  {Realm}  database
- * @return {array}  MasterLists which are programs usable by this customer.
+ * @return {array}  MasterLists which are programs usable by this customer & is visible.
  */
 const getAllProgramsForCustomer = (customer, database) => {
+  const thisStoresNameID = database.getSetting(SETTINGS_KEYS.THIS_STORE_NAME_ID);
+
   const { id } = customer;
   const customersTags = database
     .objects('NameTag')
@@ -30,6 +33,13 @@ const getAllProgramsForCustomer = (customer, database) => {
   return database
     .objects('MasterListNameJoin')
     .filtered('name.id = $0 && masterList.isProgram = $1', id, true)
+    .filter(
+      ({ masterList }) =>
+        database
+          .objects('MasterListNameJoin')
+          .filtered('masterList.id == $0 && name.id == $1', masterList.id, thisStoresNameID)
+          .length > 0
+    )
     .filter(({ masterList }) => masterList.getStoreTagObject(customersTags))
     .map(({ masterList }) => masterList);
 };

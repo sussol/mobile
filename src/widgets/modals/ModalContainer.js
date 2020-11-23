@@ -82,6 +82,7 @@ export const ModalContainer = ({
         presentationStyle="fullScreen"
         animationType="slide"
         hardwareAccelerated={true}
+        onRequestClose={onClose}
       >
         <View style={internalContentContainer}>
           <TitleBar />

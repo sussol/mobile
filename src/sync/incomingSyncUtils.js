@@ -147,7 +147,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
         'optionID',
         'doses',
         'vaccine_vial_monitor_status_ID',
-        'location_ID',
+        'location_id',
       ],
     },
     Store: {
@@ -772,7 +772,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         sortIndex: parseNumber(record.line_number),
         option: database.getOrCreate('Options', record.optionID),
         doses: packSize ? parseNumber(record.doses) / packSize : 0,
-        location: database.getOrCreate('Location', record.location_ID),
+        location: database.getOrCreate('Location', record.location_id),
         vaccineVialMonitorStatus: database.getOrCreate(
           'VaccineVialMonitorStatus',
           record.vaccine_vial_monitor_status_ID
