@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import { useNavigationFocus, useSyncListener } from '../hooks';
+import { useNavigationFocus, useSyncListener, useDebounce } from '../hooks';
 import { createCustomerRequisition, gotoCustomerRequisition } from '../navigation/actions';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
@@ -66,6 +66,7 @@ export const CustomerRequisitions = ({
   // Custom hook to refresh data on this page when becoming the head of the stack again.
   useNavigationFocus(navigation, refreshData);
   useSyncListener(refreshData, 'Requisition');
+  const toggleCurrentAndPast = useDebounce(toggleFinalised, 250, true);
 
   const getCallback = useCallback((colKey, propName) => {
     switch (colKey) {
@@ -127,8 +128,8 @@ export const CustomerRequisitions = ({
     () => (
       <ToggleBar
         toggles={[
-          { text: buttonStrings.current, onPress: toggleFinalised, isOn: !showFinalised },
-          { text: buttonStrings.past, onPress: toggleFinalised, isOn: showFinalised },
+          { text: buttonStrings.current, onPress: toggleCurrentAndPast, isOn: !showFinalised },
+          { text: buttonStrings.past, onPress: toggleCurrentAndPast, isOn: showFinalised },
         ]}
       />
     ),

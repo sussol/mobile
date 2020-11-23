@@ -17,7 +17,7 @@ import { ModalContainer } from '../widgets/modals/ModalContainer';
 
 import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
 import { createPrescription } from '../navigation/actions';
-import { useNavigationFocus, useSyncListener } from '../hooks';
+import { useNavigationFocus, useSyncListener, useDebounce } from '../hooks';
 
 import { UIDatabase } from '../database';
 import { getFormInputConfig } from '../utilities/formInputConfigs';
@@ -100,6 +100,7 @@ const Dispensing = ({
   // Custom hook to refresh data on this page when becoming the head of the stack again.
   useNavigationFocus(navigation, refreshData);
   useSyncListener(refreshData, 'Name');
+  const togglePatientAndPrescriber = useDebounce(switchDataset, 250, true);
 
   const getCellCallbacks = colKey => {
     switch (colKey) {
@@ -149,16 +150,16 @@ const Dispensing = ({
     () => [
       {
         text: dispensingStrings.patients,
-        onPress: switchDataset,
+        onPress: togglePatientAndPrescriber,
         isOn: usingPatientsDataSet,
       },
       {
         text: dispensingStrings.prescribers,
-        onPress: switchDataset,
+        onPress: togglePatientAndPrescriber,
         isOn: usingPrescribersDataSet,
       },
     ],
-    [usingPatientsDataSet, usingPrescribersDataSet, switchDataset]
+    [usingPatientsDataSet, usingPrescribersDataSet, togglePatientAndPrescriber]
   );
 
   const newRecordText = useMemo(
