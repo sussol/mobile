@@ -470,7 +470,6 @@ export const CellActionsLookup = {
   editStocktakeBatchName,
   editSellPrice,
   editBatchSupplier,
-  // editRequisitionItemRequiredQuantityWithReason,
   editTransactionBatchName,
   editTransactionBatchLocation,
   editStocktakeBatchLocation,
