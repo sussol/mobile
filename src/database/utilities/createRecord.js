@@ -1007,6 +1007,7 @@ const createTransactionBatch = (database, transactionItem, itemBatch, isAddition
     location,
     type: isAddition ? 'stock_in' : 'stock_out',
     sortIndex: (transactionItem?.transaction?.numberOfBatches || 0) + 1 || 1,
+    sentPackSize: packSize,
 
     // If the underlying item is a vaccine, auto apply the current itembatches VVM status.
     vaccineVialMonitorStatus: isVaccine ? currentVvmStatus : null,
