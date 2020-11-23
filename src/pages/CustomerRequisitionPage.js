@@ -68,7 +68,6 @@ export const CustomerRequisition = ({
   keyExtractor,
   modalValue,
   searchTerm,
-  columns,
   getPageInfoColumns,
   onEditComment,
   onFilterData,
@@ -79,7 +78,6 @@ export const CustomerRequisition = ({
   onEditSuppliedQuantity,
   route,
   onToggleColumnSet,
-  columnSet,
   onEditOpeningStock,
   onEditNegativeAdjustments,
   onEditPositiveAdjustments,
@@ -91,8 +89,23 @@ export const CustomerRequisition = ({
   onEditCreatedDate,
   datePickerIsOpen,
   onDatePickerClosed,
+  isRemoteOrder,
+  columnSet,
+  indicatorColumns,
 }) => {
   const { isFinalised, comment, program, isResponse, createdDate, entryDate } = pageObject;
+
+  const currentColumns = useMemo(() => {
+    const formEntryColumnSet = isRemoteOrder
+      ? 'editableCustomerRequisitionFormEntry'
+      : 'customerRequisitionFormEntry';
+    if (usingIndicators && showIndicators) {
+      return indicatorColumns;
+    }
+    return columnSet === 'a'
+      ? getColumns(ROUTES.CUSTOMER_REQUISITION)
+      : getColumns(formEntryColumnSet);
+  }, [columnSet, usingIndicators, showIndicators, isRemoteOrder]);
 
   const datePickerCallback = ({ type, nativeEvent: { timestamp } }) => {
     onDatePickerClosed();
@@ -185,7 +198,7 @@ export const CustomerRequisition = ({
         <DataTableRow
           rowData={data[index]}
           rowKey={rowKey}
-          columns={columns}
+          columns={currentColumns}
           isFinalised={isFinalised}
           getCallback={getCallback}
           rowIndex={index}
@@ -195,19 +208,19 @@ export const CustomerRequisition = ({
         />
       );
     },
-    [columns, data, dataState, columnSet, isResponse, program]
+    [currentColumns, data, dataState, columnSet, isResponse, program]
   );
 
   const renderHeader = useCallback(
     () => (
       <DataTableHeaderRow
-        columns={columns}
+        columns={currentColumns}
         onPress={onSortColumn}
         isAscending={isAscending}
         sortKey={sortKey}
       />
     ),
-    [columns, sortKey, isAscending]
+    [currentColumns, sortKey, isAscending]
   );
 
   const ItemIndicatorToggles = useMemo(
@@ -365,7 +378,7 @@ export const CustomerRequisition = ({
         renderHeader={renderHeader}
         keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}
-        columns={columns}
+        columns={currentColumns}
         windowSize={
           showIndicators
             ? DATA_TABLE_DEFAULTS.WINDOW_SIZE_SMALL
@@ -418,13 +431,6 @@ const mapStateToProps = state => {
   const { pages = {} } = state;
   const { customerRequisition = {} } = pages;
   const { usingIndicators = false, showIndicators = false } = customerRequisition;
-  const { columnSet, isRemoteOrder } = customerRequisition;
-  const formEntryColumnSet = isRemoteOrder
-    ? 'editableCustomerRequisitionFormEntry'
-    : 'customerRequisitionFormEntry';
-
-  const columns =
-    columnSet === 'a' ? getColumns(ROUTES.CUSTOMER_REQUISITION) : getColumns(formEntryColumnSet);
 
   if (usingIndicators && showIndicators) {
     return {
@@ -432,11 +438,11 @@ const mapStateToProps = state => {
       indicatorCodes: selectIndicatorCodes(customerRequisition),
       currentIndicatorCode: selectCurrentIndicatorCode(customerRequisition),
       data: selectIndicatorTableRows(customerRequisition),
-      columns: selectIndicatorTableColumns(customerRequisition),
+      indicatorColumns: selectIndicatorTableColumns(customerRequisition),
     };
   }
 
-  return { ...customerRequisition, columns };
+  return customerRequisition;
 };
 
 export const CustomerRequisitionPage = connect(
@@ -456,6 +462,7 @@ CustomerRequisition.defaultProps = {
   usingIndicators: false,
   showIndicators: false,
   indicatorCodes: [],
+  indicatorColumns: [],
   currentIndicatorCode: '',
 };
 
@@ -465,7 +472,6 @@ CustomerRequisition.propTypes = {
   sortKey: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   searchTerm: PropTypes.string.isRequired,
-  columns: PropTypes.array.isRequired,
   keyExtractor: PropTypes.func.isRequired,
   dataState: PropTypes.object.isRequired,
   modalKey: PropTypes.string.isRequired,
@@ -497,4 +503,6 @@ CustomerRequisition.propTypes = {
   onEditCreatedDate: PropTypes.func.isRequired,
   datePickerIsOpen: PropTypes.bool.isRequired,
   onDatePickerClosed: PropTypes.func.isRequired,
+  isRemoteOrder: PropTypes.bool.isRequired,
+  indicatorColumns: PropTypes.array,
 };

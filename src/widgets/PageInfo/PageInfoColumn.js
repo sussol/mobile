@@ -17,7 +17,7 @@ export const PageInfoColumn = ({
       <PageInfoRow
         titleTextAlign={titleTextAlign}
         numberOfLines={numberOfLines}
-        key={title}
+        key={`${title}${info}`}
         isEditingDisabled={isEditingDisabled}
         titleColor={titleColor}
         infoColor={infoColor}
