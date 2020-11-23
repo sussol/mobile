@@ -51,6 +51,7 @@ export const FormDateInput = React.forwardRef(
       underlineColorAndroid,
       onSubmit,
       isDisabled,
+      autoFocus,
     },
     ref
   ) => {
@@ -131,6 +132,7 @@ export const FormDateInput = React.forwardRef(
               onChangeText={onChangeTextCallback}
               onSubmitEditing={onSubmitEditing}
               editable={!isDisabled}
+              autoFocus={autoFocus}
             />
             <CircleButton
               IconComponent={CalendarIcon}
@@ -171,6 +173,7 @@ FormDateInput.defaultProps = {
   invalidMessage: '',
   onSubmit: null,
   isDisabled: false,
+  autoFocus: false,
 };
 
 FormDateInput.propTypes = {
@@ -186,4 +189,5 @@ FormDateInput.propTypes = {
   underlineColorAndroid: PropTypes.string,
   onSubmit: PropTypes.func,
   isDisabled: PropTypes.bool,
+  autoFocus: PropTypes.bool,
 };
