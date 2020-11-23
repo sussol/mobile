@@ -31,6 +31,7 @@ import {
   gotoStocktakeEditPage,
 } from '../navigation/actions';
 import { selectCurrentUser } from '../selectors/user';
+import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
 export const Stocktakes = ({
   currentUser,
@@ -61,6 +62,8 @@ export const Stocktakes = ({
   useSyncListener(refreshData, ['Stocktake']);
   useNavigationFocus(navigation, refreshData);
 
+  const runWithLoadingIndicator = useLoadingIndicator();
+
   const onRowPress = useCallback(stocktake => dispatch(gotoStocktakeEditPage(stocktake)), []);
 
   const getCallback = (colKey, propName) => {
@@ -77,8 +80,10 @@ export const Stocktakes = ({
     switch (modalKey) {
       case MODAL_KEYS.PROGRAM_STOCKTAKE:
         return ({ stocktakeName, program }) => {
-          dispatch(createStocktake({ program, stocktakeName, currentUser }));
           onCloseModal();
+          runWithLoadingIndicator(() =>
+            dispatch(createStocktake({ program, stocktakeName, currentUser }))
+          );
         };
       default:
         return null;

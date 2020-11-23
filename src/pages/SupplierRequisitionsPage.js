@@ -25,6 +25,7 @@ import { selectCurrentUser } from '../selectors/user';
 
 import globalStyles from '../globalStyles';
 import { buttonStrings, modalStrings, generalStrings } from '../localization';
+import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
 /**
  * Renders a mSupply mobile page with a list of supplier requisitions.
@@ -70,14 +71,22 @@ export const SupplierRequisitions = ({
 
   const onPressRow = useCallback(rowData => dispatch(gotoSupplierRequisition(rowData)), []);
 
-  const onCreateRequisition = otherStoreName => {
+  const runWithLoadingIndicator = useLoadingIndicator();
+
+  const onCreateRequisition = async otherStoreName => {
     onCloseModal();
-    dispatch(createSupplierRequisition({ otherStoreName, currentUser }));
+    await runWithLoadingIndicator(
+      async () => dispatch(createSupplierRequisition({ otherStoreName, currentUser })),
+      true
+    );
   };
 
-  const onCreateProgramRequisition = requisitionParameters => {
+  const onCreateProgramRequisition = async requisitionParameters => {
     onCloseModal();
-    dispatch(createSupplierRequisition({ ...requisitionParameters, currentUser }));
+    await runWithLoadingIndicator(
+      async () => dispatch(createSupplierRequisition({ ...requisitionParameters, currentUser })),
+      true
+    );
   };
 
   const getCallback = useCallback((colKey, propName) => {

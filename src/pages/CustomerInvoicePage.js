@@ -21,6 +21,7 @@ import { BottomConfirmModal } from '../widgets/bottomModals';
 import { buttonStrings, modalStrings, generalStrings } from '../localization';
 import globalStyles from '../globalStyles';
 import { BreachActions } from '../actions/BreachActions';
+import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
 /**
  * Renders a mSupply mobile page with customer invoice loaded for editing
@@ -75,6 +76,13 @@ export const CustomerInvoice = ({
     isFinalised,
   ]);
 
+  const runWithLoadingIndicator = useLoadingIndicator();
+
+  const onAddFromMasterLists = selected => {
+    onCloseModal();
+    runWithLoadingIndicator(() => onApplyMasterLists(selected, pageObject));
+  };
+
   const getCallback = (colKey, propName) => {
     switch (colKey) {
       case 'totalQuantity':
@@ -100,7 +108,7 @@ export const CustomerInvoice = ({
       case MODAL_KEYS.THEIR_REF_EDIT:
         return onEditTheirRef;
       case MODAL_KEYS.SELECT_MASTER_LISTS:
-        return onApplyMasterLists;
+        return onAddFromMasterLists;
       default:
         return null;
     }
@@ -200,7 +208,7 @@ export const CustomerInvoice = ({
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
-  const { transaction } = ownProps?.navigation?.route?.param || {};
+  const { transaction } = ownProps?.route?.params || {};
   const { otherParty } = transaction || {};
   const hasMasterLists = otherParty?.masterLists?.length > 0;
 
