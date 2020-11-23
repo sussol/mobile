@@ -267,6 +267,7 @@ TransactionBatch.schema = {
     location: { type: 'Location', optional: true },
     doses: { type: 'double', default: 0 },
     vaccineVialMonitorStatus: { type: 'VaccineVialMonitorStatus', optional: true },
+    sentPackSize: { type: 'double', default: 0 },
   },
 };
 

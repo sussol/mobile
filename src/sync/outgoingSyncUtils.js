@@ -270,6 +270,7 @@ const generateSyncData = (settings, recordType, record) => {
         doses: String(record.doses),
         location_ID: record.location?.id,
         vaccine_vial_monitor_status_ID: record.vaccineVialMonitorStatus?.id,
+        sent_pack_size: String(record.sentPackSize),
       };
     }
     case 'InsurancePolicy': {
