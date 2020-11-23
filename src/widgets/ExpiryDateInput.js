@@ -59,7 +59,7 @@ export const ExpiryDateInput = React.memo(
   }) => {
     if (debug) console.log(`- ExpiryTextInputCell: ${value}`);
 
-    const { focusNextCell, getRefIndex, getCellRef } = React.useContext(RefContext);
+    const { focusNextCell, getRefIndex, getCellRef, adjustToTop } = React.useContext(RefContext);
 
     const refIndex = getRefIndex(rowIndex, columnKey);
 
@@ -67,6 +67,12 @@ export const ExpiryDateInput = React.memo(
     const [expiryDate, setExpiryDate, finaliseExpiryDate] = useExpiryDateMask(
       formatExpiryDate(value)
     );
+
+    // Scrolls the parent scroll view such that this row is near the top of the data table,
+    // which should ensure it is above the keyboard - without it, if the row is in a position
+    // which will be behind the keyboard once it appears, the keyboard will show then disappear
+    // jankily.
+    const showAboveKeyboard = () => adjustToTop(rowIndex);
 
     // Helpers controlling the submitting of the expiry date. Losing focus/submitting
     // Handed similarly, but losing focus will not auto focus the next cell. Changes
@@ -116,6 +122,7 @@ export const ExpiryDateInput = React.memo(
           underlineColorAndroid={underlineColor}
           keyboardType="numeric"
           blurOnSubmit={false}
+          onFocus={showAboveKeyboard}
         />
       </View>
     );

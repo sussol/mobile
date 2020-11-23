@@ -1,7 +1,7 @@
 /* eslint-disable react/forbid-prop-types */
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { View, TextInput } from 'react-native';
+import { View, TextInput, Keyboard } from 'react-native';
 
 import Cell from './Cell';
 import RefContext from './RefContext';
@@ -50,14 +50,25 @@ const TextInputCell = React.memo(
     underlineColor,
   }) => {
     if (debug) console.log(`- TextInputCell: ${value}`);
-
     const usingPlaceholder = placeholder && !value;
 
-    const { focusNextCell, getRefIndex, getCellRef } = React.useContext(RefContext);
+    const { focusNextCell, getRefIndex, getCellRef, adjustToTop } = React.useContext(RefContext);
     const refIndex = getRefIndex(rowIndex, columnKey);
+    const ref = getCellRef(refIndex);
 
     const onEdit = newValue => onChangeText(newValue, rowKey, columnKey);
     const focusNext = () => focusNextCell(refIndex);
+
+    // Scrolls the parent scroll view such that this row is near the top of the data table,
+    // which should ensure it is above the keyboard - without it, if the row is in a position
+    // which will be behind the keyboard once it appears, the keyboard will show then disappear
+    // jankily.
+    const showAboveKeyboard = () => adjustToTop(rowIndex);
+
+    useEffect(() => {
+      Keyboard.addListener('keyboardDidHide', () => ref?.current?.blur());
+      return () => Keyboard.removeListener('keyboardDidHide', () => ref?.current?.blur());
+    }, []);
 
     // Render a plain Cell if disabled.
     if (isDisabled) {
@@ -80,7 +91,7 @@ const TextInputCell = React.memo(
     return (
       <View style={internalViewStyle}>
         <TextInput
-          ref={getCellRef(refIndex)}
+          ref={ref}
           placeholder={placeholder}
           style={internalTextStyle}
           value={usingPlaceholder ? '' : String(value)}
@@ -91,6 +102,7 @@ const TextInputCell = React.memo(
           keyboardType={keyboardType}
           blurOnSubmit={false}
           selectTextOnFocus
+          onFocus={showAboveKeyboard}
         />
       </View>
     );
