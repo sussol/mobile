@@ -63,7 +63,6 @@ export const closeAndRefresh = route => (dispatch, getState) => {
 export const openModal = (modalKey, value, route) => {
   switch (modalKey) {
     case MODAL_KEYS.REQUISITION_REASON:
-    case MODAL_KEYS.ENFORCE_REQUISITION_REASON:
     case MODAL_KEYS.STOCKTAKE_REASON:
     case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
     case MODAL_KEYS.SELECT_ITEM_BATCH_SUPPLIER:

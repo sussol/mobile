@@ -187,7 +187,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     type: FORM_INPUT_TYPES.TEXT,
     initialValue: '',
     key: 'policyNumberPerson',
-    validator: input => input.length > 0 && input.length < 50,
+    validator: input => input.length < 50,
     isRequired: false,
     invalidMessage: formInputStrings.unique_policy,
     label: formInputStrings.personal_policy_number,

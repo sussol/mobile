@@ -138,7 +138,6 @@ export const addMasterListItems = (selected, objectType, route) => (dispatch, ge
   });
 
   dispatch(refreshData(route));
-  dispatch(closeModal(route));
 };
 
 /**

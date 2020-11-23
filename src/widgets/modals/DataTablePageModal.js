@@ -44,7 +44,6 @@ import { generalStrings, modalStrings } from '../../localization';
 
 const ADDITIONAL_MODAL_PROPS = {
   [MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM]: { noCancel: true },
-  [MODAL_KEYS.ENFORCE_REQUISITION_REASON]: { noCancel: true },
 };
 
 const DataTablePageModalComponent = ({ isOpen, onClose, modalKey, onSelect, currentValue }) => {
@@ -181,7 +180,6 @@ const DataTablePageModalComponent = ({ isOpen, onClose, modalKey, onSelect, curr
             onConfirm={onSelect}
           />
         );
-      case MODAL_KEYS.ENFORCE_REQUISITION_REASON:
       case MODAL_KEYS.REQUISITION_REASON: {
         const { reasonTitle } = currentValue;
         const reasonsSelection = UIDatabase.objects('RequisitionReason');
