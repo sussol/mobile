@@ -10,7 +10,7 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { MODAL_KEYS, getAllPrograms } from '../utilities';
-import { useSyncListener, useNavigationFocus } from '../hooks';
+import { useSyncListener, useNavigationFocus, useDebounce } from '../hooks';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
 import { PageButton, DataTablePageView, SearchBar, ToggleBar } from '../widgets';
@@ -61,6 +61,7 @@ export const Stocktakes = ({
   // Listen to sync & navigation changing stocktake data - refresh if there are any.
   useSyncListener(refreshData, ['Stocktake']);
   useNavigationFocus(navigation, refreshData);
+  const toggleCurrentAndPast = useDebounce(toggleFinalised, 250, true);
 
   const runWithLoadingIndicator = useLoadingIndicator();
 
@@ -123,8 +124,8 @@ export const Stocktakes = ({
 
   const toggles = useMemo(
     () => [
-      { text: buttonStrings.current, onPress: toggleFinalised, isOn: !showFinalised },
-      { text: buttonStrings.past, onPress: toggleFinalised, isOn: showFinalised },
+      { text: buttonStrings.current, onPress: toggleCurrentAndPast, isOn: !showFinalised },
+      { text: buttonStrings.past, onPress: toggleCurrentAndPast, isOn: showFinalised },
     ],
     [showFinalised]
   );
