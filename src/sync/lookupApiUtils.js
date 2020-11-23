@@ -191,7 +191,7 @@ export const processPatientResponse = response => {
   );
 };
 
-export const processPrescriberResponse = response => {
+export const processPrescriberResponse = response =>
   processResponse(response).map(
     ({
       ID,
@@ -217,4 +217,3 @@ export const processPrescriberResponse = response => {
       storeId: store_ID,
     })
   );
-};
