@@ -143,7 +143,8 @@ class MSupplyMobileAppContainer extends React.Component {
     await new Promise(resolve => {
       this.setState({ isLoading: true }, () => setTimeout(resolve, 1));
     });
-    functionToRun();
+
+    await functionToRun();
     this.setState({ isLoading: false });
   };
 
@@ -181,6 +182,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
   renderLoadingIndicator = () => {
     const { isLoading } = this.state;
+
     return (
       <View style={globalStyles.loadingIndicatorContainer}>
         <Spinner isSpinning={isLoading} color={SUSSOL_ORANGE} />
@@ -227,7 +229,6 @@ class MSupplyMobileAppContainer extends React.Component {
             isVisible={supplierCreditModalOpen}
             onClose={closeSupplierCreditModal}
             title={creditTitle}
-            fullScreen
           >
             <SupplierCredit />
           </ModalContainer>
@@ -236,14 +237,12 @@ class MSupplyMobileAppContainer extends React.Component {
             isVisible={isBreachModalOpen}
             onClose={closeBreachModal}
             title={breachModalTitle}
-            fullScreen
           >
             <BreachDisplay />
           </ModalContainer>
           <ModalContainer
             isVisible={temperatureSyncModalIsOpen}
             onClose={closeTemperatureSyncModal}
-            fullScreen
           >
             <TemperatureSync />
           </ModalContainer>

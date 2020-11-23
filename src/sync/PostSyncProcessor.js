@@ -212,6 +212,17 @@ export class PostSyncProcessor {
       });
     }
 
+    // Auto-finalise all incoming prescriptions
+    if (
+      record.type === 'customer_invoice' &&
+      record.otherParty?.type === 'patient' &&
+      !record.isFinalised
+    ) {
+      funcs.push(() => {
+        record.finalise(this.database);
+      });
+    }
+
     // If any changes, add database update for record.
     if (funcs.length > 0) {
       funcs.push(() => {

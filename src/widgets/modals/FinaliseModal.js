@@ -35,13 +35,13 @@ export const FinaliseModalComponent = ({
 }) => {
   const runWithLoadingIndicator = useLoadingIndicator();
 
-  const finaliseWithLoadingIndicator = React.useCallback(
-    () => runWithLoadingIndicator(onFinalise),
-    []
-  );
+  const finaliseWithLoadingIndicator = React.useCallback(() => {
+    closeFinaliseModal();
+    runWithLoadingIndicator(onFinalise);
+  }, []);
 
   return (
-    <ModalContainer fullScreen={true} isVisible={finaliseModalOpen}>
+    <ModalContainer isVisible={finaliseModalOpen}>
       <ConfirmForm
         isOpen={finaliseModalOpen}
         questionText={finaliseMessage}
@@ -67,7 +67,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   const closeFinaliseModal = () => dispatch(FinaliseActions.closeModal());
-  const onFinalise = () => dispatch(FinaliseActions.finalise());
+  const onFinalise = async () => dispatch(FinaliseActions.finalise());
 
   return { onFinalise, closeFinaliseModal };
 };

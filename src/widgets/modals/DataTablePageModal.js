@@ -35,7 +35,6 @@ import { generalStrings, modalStrings } from '../../localization';
  *
  * NOTE: Exported component is MEMOIZED - see below for propsAreEqual implementation.
  *
- * @prop {Bool}   fullScreen   Force the modal to cover the entire screen.
  * @prop {Bool}   isOpen       Whether the modal is open
  * @prop {Func}   onClose      A function to call if the close x is pressed
  * @prop {Func}   onSelect     The components to render within the modal
@@ -44,21 +43,10 @@ import { generalStrings, modalStrings } from '../../localization';
  */
 
 const ADDITIONAL_MODAL_PROPS = {
-  [MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM]: { noCancel: true, fullScreen: true },
-  [MODAL_KEYS.ENFORCE_REQUISITION_REASON]: { noCancel: true, fullScreen: true },
-  [MODAL_KEYS.PROGRAM_REQUISITION]: { fullScreen: true },
-  [MODAL_KEYS.PROGRAM_STOCKTAKE]: { fullScreen: true },
-  [MODAL_KEYS.PROGRAM_CUSTOMER_REQUISITION]: { fullScreen: true },
+  [MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM]: { noCancel: true },
 };
 
-const DataTablePageModalComponent = ({
-  fullScreen,
-  isOpen,
-  onClose,
-  modalKey,
-  onSelect,
-  currentValue,
-}) => {
+const DataTablePageModalComponent = ({ isOpen, onClose, modalKey, onSelect, currentValue }) => {
   const ModalContent = () => {
     switch (modalKey) {
       case MODAL_KEYS.CREATE_CASH_TRANSACTION:
@@ -192,7 +180,6 @@ const DataTablePageModalComponent = ({
             onConfirm={onSelect}
           />
         );
-      case MODAL_KEYS.ENFORCE_REQUISITION_REASON:
       case MODAL_KEYS.REQUISITION_REASON: {
         const { reasonTitle } = currentValue;
         const reasonsSelection = UIDatabase.objects('RequisitionReason');
@@ -284,7 +271,6 @@ const DataTablePageModalComponent = ({
 
   return (
     <ModalContainer
-      fullScreen={fullScreen}
       isVisible={isOpen}
       onClose={onClose}
       title={modalTitle}
@@ -304,7 +290,6 @@ const propsAreEqual = ({ isOpen: prevIsOpen }, { isOpen: nextIsOpen }) => prevIs
 export const DataTablePageModal = React.memo(DataTablePageModalComponent, propsAreEqual);
 
 DataTablePageModalComponent.defaultProps = {
-  fullScreen: false,
   modalKey: '',
   onSelect: null,
   currentValue: '',
@@ -313,7 +298,6 @@ DataTablePageModalComponent.defaultProps = {
 
 DataTablePageModalComponent.propTypes = {
   modalObject: PropTypes.object,
-  fullScreen: PropTypes.bool,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   modalKey: PropTypes.string,

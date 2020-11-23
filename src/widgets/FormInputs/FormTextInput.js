@@ -42,6 +42,7 @@ export const FormTextInput = React.forwardRef(
       textInputStyle,
       onSubmit,
       isDisabled,
+      autoFocus,
     },
     ref
   ) => {
@@ -101,6 +102,7 @@ export const FormTextInput = React.forwardRef(
               onChangeText={onChangeTextCallback}
               onSubmitEditing={onSubmitEditing}
               editable={!isDisabled}
+              autoFocus={autoFocus}
             />
             <FormInvalidMessage message={invalidMessage} isValid={isValid ?? true} />
           </View>
@@ -129,6 +131,7 @@ FormTextInput.defaultProps = {
   onValidate: null,
   onSubmit: null,
   isDisabled: false,
+  autoFocus: false,
 };
 
 FormTextInput.propTypes = {
@@ -146,4 +149,5 @@ FormTextInput.propTypes = {
   textInputStyle: PropTypes.object,
   onSubmit: PropTypes.func,
   isDisabled: PropTypes.bool,
+  autoFocus: PropTypes.bool,
 };

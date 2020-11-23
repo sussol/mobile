@@ -162,7 +162,6 @@ const VaccineAdminPageComponent = ({
       />
 
       <DataTablePageModal
-        fullScreen={false}
         isOpen={!!modalKey && modalKey !== MODAL_KEYS.EDIT_LOCATION}
         modalKey={modalKey}
         onClose={onCloseModal}
@@ -174,7 +173,6 @@ const VaccineAdminPageComponent = ({
       <ModalContainer
         title={modalStrings.location_details}
         noCancel
-        fullScreen
         isVisible={modalKey === MODAL_KEYS.EDIT_LOCATION}
       >
         <FormControl

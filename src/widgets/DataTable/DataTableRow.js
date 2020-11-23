@@ -4,7 +4,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import currency from '../../localization/currency';
@@ -87,11 +87,14 @@ const DataTableRow = React.memo(
     const { isSelected = false } = rowState || {};
     // If the row is selected, use selectedRow style, otherwise alternate row style on index.
 
-    const rowStyle = {
-      ...(rowIndex % 2 === 0 ? alternateRowStyle : basicRowStyle),
-      ...(isSelected && selectedRowStyle),
-      ...(!isValidated && { borderColor: SUSSOL_ORANGE, borderWidth: 1, borderRadius: 5 }),
-    };
+    const rowStyle = useMemo(
+      () => ({
+        ...(rowIndex % 2 === 0 ? alternateRowStyle : basicRowStyle),
+        ...(isSelected && selectedRowStyle),
+        ...(!isValidated && { borderColor: SUSSOL_ORANGE, borderWidth: 1, borderRadius: 5 }),
+      }),
+      [rowIndex, isSelected, isValidated]
+    );
 
     // Callback for rendering a row of cells.
     const renderCells = useCallback(
@@ -104,13 +107,8 @@ const DataTableRow = React.memo(
           // This cell is disabled if:
           // - the page is finalised.
           // - the row has been explicitly set as disabled.
-          // - the data is disabled (i.e. data is an invoice).
-          // - the cell is a reason dropdown for a row with a difference of zero.
           const rowIsDisabled = rowState?.isDisabled ?? false;
-          const dataIsDisabled = rowData?.isFinalised ?? false;
-          const reasonIsDisabled =
-            columnKey === COLUMN_KEYS.REASON_TITLE && rowData?.difference === 0;
-          const isDisabled = isFinalised || rowIsDisabled || dataIsDisabled || reasonIsDisabled;
+          const isDisabled = isFinalised || rowIsDisabled;
 
           // Alignment of this particular column. Default to left hand ide.
           const cellAlignment = alignText || 'left';
@@ -324,18 +322,19 @@ const DataTableRow = React.memo(
             }
 
             case COLUMN_TYPES.DROP_DOWN: {
-              const { isVaccine = false } = rowData ?? {};
+              const { isVaccine = false, hasVariance = false } = rowData ?? {};
 
               const disabledConditions = {
                 [COLUMN_KEYS.CURRENT_VVM_STATUS]: !isVaccine,
+                [COLUMN_KEYS.REASON_TITLE]: !hasVariance,
               };
 
-              const disabledVVMStatus = disabledConditions[columnKey];
+              const extraDisabledCondition = disabledConditions[columnKey];
 
               return (
                 <DropDownCell
                   key={columnKey}
-                  isDisabled={isDisabled || disabledVVMStatus}
+                  isDisabled={isDisabled || extraDisabledCondition}
                   onPress={getCallback(columnKey)}
                   rowKey={rowKey}
                   columnKey={columnKey}

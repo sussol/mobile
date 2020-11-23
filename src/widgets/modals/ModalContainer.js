@@ -9,18 +9,12 @@ import { StyleSheet, Text, TouchableOpacity, View, Modal } from 'react-native';
 
 import { CloseIcon } from '../icons';
 
-import {
-  APP_FONT_FAMILY,
-  FULL_SCREEN_MODAL_MARGIN,
-  PAGE_CONTENT_PADDING_HORIZONTAL,
-  DARKER_GREY,
-} from '../../globalStyles';
+import { APP_FONT_FAMILY, PAGE_CONTENT_PADDING_HORIZONTAL, DARKER_GREY } from '../../globalStyles';
 import { FlexView } from '../FlexView';
 
 /**
  * A modal that can be displayed over the page content container, rendering any children
  * about two thirds of the way up, and a cross in the top right to close.
- * @prop {Bool}             fullScreen      Force the modal to cover the entire screen.
  * @prop {Bool}             isVisible       Whether the modal is open.
  * @prop {Func}             onClose         A function to call if the close x is pressed.
  * @prop {String}           title           The title to show in within the modal.
@@ -29,7 +23,6 @@ import { FlexView } from '../FlexView';
  * @prop {String}           backgroundColor BackgroundColor of the modal container.
  */
 export const ModalContainer = ({
-  fullScreen,
   isVisible,
   onClose,
   title,
@@ -45,23 +38,14 @@ export const ModalContainer = ({
     titleBar,
     closeButtonContainer,
     childrenContainer,
-    fullScreenChildrenContainer,
     flexSpacer,
     closeButton,
-    fullScreenContentContainer,
   } = localStyles;
 
   const wrapStyle = style => ({ ...style, backgroundColor });
 
-  const internalChildrenContainer = React.useMemo(
-    () => wrapStyle(fullScreen ? fullScreenChildrenContainer : childrenContainer),
-    [backgroundColor, fullScreen]
-  );
-
-  const internalContentContainer = React.useMemo(
-    () => wrapStyle(fullScreen ? fullScreenContentContainer : contentContainer),
-    [backgroundColor, fullScreen]
-  );
+  const internalChildrenContainer = wrapStyle(childrenContainer);
+  const internalContentContainer = wrapStyle(contentContainer);
 
   const CloseButton = React.useCallback(
     () => (
@@ -95,10 +79,10 @@ export const ModalContainer = ({
     <View style={modalContainer}>
       <Modal
         visible={isVisible}
+        presentationStyle="fullScreen"
         animationType="slide"
-        fullScreen={fullScreen}
-        transparent
         hardwareAccelerated={true}
+        onRequestClose={onClose}
       >
         <View style={internalContentContainer}>
           <TitleBar />
@@ -112,7 +96,6 @@ export const ModalContainer = ({
 export default ModalContainer;
 
 ModalContainer.defaultProps = {
-  fullScreen: false,
   title: '',
   noCancel: false,
   onClose: null,
@@ -122,7 +105,6 @@ ModalContainer.defaultProps = {
 };
 
 ModalContainer.propTypes = {
-  fullScreen: PropTypes.bool,
   isVisible: PropTypes.bool.isRequired,
   onClose: PropTypes.func,
   title: PropTypes.string,
@@ -135,26 +117,10 @@ ModalContainer.propTypes = {
 const localStyles = StyleSheet.create({
   contentContainer: {
     flex: 1,
-    marginLeft: PAGE_CONTENT_PADDING_HORIZONTAL,
-    marginRight: PAGE_CONTENT_PADDING_HORIZONTAL,
-    marginBottom: PAGE_CONTENT_PADDING_HORIZONTAL,
-    marginTop: 36,
-    opacity: 0.94,
+    marginLeft: PAGE_CONTENT_PADDING_HORIZONTAL / 2,
+    marginRight: PAGE_CONTENT_PADDING_HORIZONTAL / 2,
+    marginBottom: PAGE_CONTENT_PADDING_HORIZONTAL / 2,
     paddingBottom: 10,
-  },
-  fullScreenContentContainer: {
-    flex: 1,
-    marginLeft: FULL_SCREEN_MODAL_MARGIN,
-    marginRight: FULL_SCREEN_MODAL_MARGIN,
-    marginBottom: FULL_SCREEN_MODAL_MARGIN,
-    marginTop: FULL_SCREEN_MODAL_MARGIN,
-
-    paddingBottom: 10,
-  },
-  fullScreenChildrenContainer: {
-    flex: 1,
-    paddingLeft: PAGE_CONTENT_PADDING_HORIZONTAL,
-    paddingRight: PAGE_CONTENT_PADDING_HORIZONTAL,
   },
   childrenContainer: {
     flex: 1,

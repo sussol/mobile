@@ -83,7 +83,6 @@ const PrescriptionExtraComponent = ({
       )}
       <PageInfo columns={pageInfoColumns} />
       <ModalContainer
-        fullScreen
         onClose={onCloseCommentModal}
         isVisible={commentModalOpen}
         title={modalStrings.edit_the_prescription_comment}
