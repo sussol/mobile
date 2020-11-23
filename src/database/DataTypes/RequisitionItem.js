@@ -204,11 +204,6 @@ export class RequisitionItem extends Realm.Object {
     });
   }
 
-  get hasValidReason() {
-    if (!this.option && this.hasVariance) return false;
-    return true;
-  }
-
   applyReason(database, newOption) {
     if (this.hasVariance) {
       database.write(() => {

@@ -94,7 +94,6 @@ const SupplierRequisition = ({
   onSetRequestedToSuggested,
   onAddMasterList,
   onApplyMasterLists,
-  onEditRequiredQuantityWithReason,
   onEditRequisitionReason,
   onApplyReason,
   route,
@@ -102,7 +101,6 @@ const SupplierRequisition = ({
 }) => {
   const runWithLoadingIndicator = useLoadingIndicator();
 
-  const usingReasons = !!UIDatabase.objects('RequisitionReason').length;
   const onAddMasterLists = React.useCallback(
     selected => {
       onCloseModal();
@@ -128,7 +126,7 @@ const SupplierRequisition = ({
   const getCallback = (colKey, propName) => {
     switch (colKey) {
       case 'requiredQuantity':
-        return usingReasons ? onEditRequiredQuantityWithReason : onEditRequiredQuantity;
+        return onEditRequiredQuantity;
       case 'remove':
         if (propName === 'onCheck') return onCheck;
         return onUncheck;
@@ -151,7 +149,6 @@ const SupplierRequisition = ({
         return onEditComment;
       case MODAL_KEYS.SELECT_MASTER_LISTS:
         return onAddMasterLists;
-      case MODAL_KEYS.ENFORCE_REQUISITION_REASON:
       case MODAL_KEYS.REQUISITION_REASON:
         return onApplyReason;
       default:
@@ -467,7 +464,6 @@ SupplierRequisition.propTypes = {
   onAddMasterList: PropTypes.func.isRequired,
   onApplyMasterLists: PropTypes.func.isRequired,
   route: PropTypes.string.isRequired,
-  onEditRequiredQuantityWithReason: PropTypes.func.isRequired,
   onEditRequisitionReason: PropTypes.func.isRequired,
   onApplyReason: PropTypes.func.isRequired,
   onSelectVaccineRow: PropTypes.func.isRequired,

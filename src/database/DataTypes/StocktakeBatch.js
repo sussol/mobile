@@ -365,6 +365,10 @@ export class StocktakeBatch extends Realm.Object {
   get sellPriceString() {
     return currency(this.sellPrice ?? 0, { formatWithSymbol: true }).format();
   }
+
+  get hasVariance() {
+    return this.countedNumberOfPacks !== this.snapshotNumberOfPacks && this.hasBeenCounted;
+  }
 }
 
 StocktakeBatch.schema = {

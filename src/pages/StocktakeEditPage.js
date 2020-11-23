@@ -9,12 +9,11 @@ import { View } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { UIDatabase } from '../database';
 import { ROUTES } from '../navigation/constants';
 import { MODAL_KEYS } from '../utilities';
 
 import { selectStocktakeEditor, selectStocktakeEditorColumns } from '../selectors/pages';
-import { PageActions, getItemLayout, getPageDispatchers } from './dataTableUtilities';
+import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 
 import { PageButton, PageInfo, DataTablePageView, SearchBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
@@ -53,9 +52,7 @@ export const StocktakeEdit = ({
   onEditBatch,
   onFilterData,
   onEditComment,
-  onEditReason,
   onCloseModal,
-  onApplyReason,
   onConfirmBatchEdit,
   onManageStocktake,
   onCheck,
@@ -93,8 +90,6 @@ export const StocktakeEdit = ({
       case 'remove':
         if (propName === 'onCheck') return onCheck;
         return onUncheck;
-      case 'reasonTitle':
-        return onEditReason;
       default:
         return null;
     }
@@ -110,8 +105,6 @@ export const StocktakeEdit = ({
         return onConfirmBatchEdit;
       case MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM:
         return onResetStocktake;
-      case MODAL_KEYS.STOCKTAKE_REASON:
-        return onApplyReason;
       default:
         return null;
     }
@@ -195,19 +188,8 @@ export const StocktakeEdit = ({
   );
 };
 
-const mapDispatchToProps = dispatch => {
-  const hasNegativeAdjustmentReasons = UIDatabase.objects('NegativeAdjustmentReason').length > 0;
-  const hasPositiveAdjustmentReasons = UIDatabase.objects('PositiveAdjustmentReason').length > 0;
-  const usesReasons = hasNegativeAdjustmentReasons && hasPositiveAdjustmentReasons;
-  const onEditCountedQuantity = usesReasons
-    ? PageActions.editCountedQuantityWithReason
-    : PageActions.editCountedQuantity;
-  return {
-    ...getPageDispatchers(dispatch, 'Stocktake', ROUTES.STOCKTAKE_EDITOR),
-    onEditCountedQuantity: (newValue, rowKey) =>
-      dispatch(onEditCountedQuantity(newValue, rowKey, ROUTES.STOCKTAKE_EDITOR)),
-  };
-};
+const mapDispatchToProps = dispatch =>
+  getPageDispatchers(dispatch, 'Stocktake', ROUTES.STOCKTAKE_EDITOR);
 
 const mapStateToProps = state => {
   const stocktakeEditor = selectStocktakeEditor(state);
@@ -238,9 +220,7 @@ StocktakeEdit.propTypes = {
   onEditBatch: PropTypes.func.isRequired,
   onFilterData: PropTypes.func.isRequired,
   onEditComment: PropTypes.func.isRequired,
-  onEditReason: PropTypes.func.isRequired,
   onCloseModal: PropTypes.func.isRequired,
-  onApplyReason: PropTypes.func.isRequired,
   onConfirmBatchEdit: PropTypes.func.isRequired,
   onManageStocktake: PropTypes.func.isRequired,
   onCheck: PropTypes.func.isRequired,

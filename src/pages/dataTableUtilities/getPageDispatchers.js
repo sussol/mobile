@@ -114,6 +114,8 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
     onDeleteBatches: () => dispatch(PageActions.deleteSelectedBatches(dataType, route)),
 
     // Editable cell callbacks
+    onEditCountedQuantity: (newValue, rowKey) =>
+      dispatch(PageActions.editCountedQuantity(newValue, rowKey, route)),
     onEditSensorName: (newValue, rowKey) =>
       dispatch(PageActions.editSensorName(newValue, rowKey, route)),
     onEditLocationCode: (newValue, rowKey) =>
@@ -124,8 +126,6 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
       dispatch(PageActions.editTransactionBatchName(newValue, rowKey, route)),
     onEditBatchDoses: (newValue, rowKey) =>
       dispatch(PageActions.editBatchDoses(newValue, rowKey, route)),
-    onEditRequiredQuantityWithReason: (newValue, rowKey) =>
-      dispatch(PageActions.editRequisitionItemRequiredQuantityWithReason(newValue, rowKey, route)),
     onEditRequiredQuantity: (newValue, rowKey) =>
       dispatch(PageActions.editRequisitionItemRequiredQuantity(newValue, rowKey, route)),
     onEditTotalQuantity: (newValue, rowKey) =>

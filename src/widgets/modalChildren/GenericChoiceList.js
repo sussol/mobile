@@ -91,7 +91,6 @@ const localStyles = StyleSheet.create({
     height: COMPONENT_HEIGHT,
   },
   list: {
-    marginTop: 10,
     minWidth: '70%',
     flex: 1,
   },
