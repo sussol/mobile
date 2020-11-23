@@ -387,7 +387,7 @@ export class Requisition extends Realm.Object {
   pruneRedundantItems(database) {
     const itemsToPrune = [];
     this.items.forEach(requisitionItem => {
-      if (requisitionItem.requiredQuantity === 0) {
+      if (!requisitionItem.requisition?.isRemoteOrder && requisitionItem.requiredQuantity === 0) {
         itemsToPrune.push(requisitionItem);
       }
     });
