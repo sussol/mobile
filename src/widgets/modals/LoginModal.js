@@ -152,7 +152,7 @@ export class LoginModal extends React.Component {
             </View>
             <View style={[globalStyles.verticalContainer, { flex: 1 }]}>
               <Text style={[globalStyles.authFormTextInputStyle]}>
-                {authStrings.store}:{' '}
+                {authStrings.store}:
                 {
                   UIDatabase.objects('Name').filtered(
                     'id == $0',
