@@ -143,13 +143,7 @@ export const deleteSelectedRecords = (recordType, route) => (dispatch, getState)
   dispatch({ type: ACTIONS.DELETE_RECORDS, payload: { route } });
 };
 
-export const focusRow = (rowKey, route) => ({
-  type: ACTIONS.FOCUS_ROW,
-  payload: { rowKey, route },
-});
-
 export const RowActionsLookup = {
-  focusRow,
   selectRow,
   deselectRow,
   deselectOneRow,
