@@ -32,6 +32,7 @@ export const ACTIONS = {
   CLOSE_DATE_PICKER: 'closeDatePicker',
 
   // rowAction constants
+  FOCUS_ROW: 'focusRow',
   REFRESH_ROW: 'refreshRow',
   EDIT_TOTAL_QUANTITY: 'editTotalQuantity',
   EDIT_COUNTED_QUANTITY: 'editCountedQuantity',

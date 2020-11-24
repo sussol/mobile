@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-expressions */
 /* eslint-disable react/forbid-prop-types */
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View, TextInput, Keyboard } from 'react-native';
 
@@ -48,6 +49,7 @@ const TextInputCell = React.memo(
     textInputStyle,
     cellTextStyle,
     underlineColor,
+    onFocus,
   }) => {
     if (debug) console.log(`- TextInputCell: ${value}`);
     const usingPlaceholder = placeholder && !value;
@@ -63,7 +65,12 @@ const TextInputCell = React.memo(
     // which should ensure it is above the keyboard - without it, if the row is in a position
     // which will be behind the keyboard once it appears, the keyboard will show then disappear
     // jankily.
-    const showAboveKeyboard = () => adjustToTop(rowIndex);
+    const showAboveKeyboard = rowIdx => adjustToTop(rowIdx);
+
+    const onFocusCell = useCallback(() => {
+      onFocus?.(rowKey);
+      showAboveKeyboard(rowIndex);
+    }, [rowKey, rowIndex]);
 
     useEffect(() => {
       Keyboard.addListener('keyboardDidHide', () => ref?.current?.blur());
@@ -102,7 +109,7 @@ const TextInputCell = React.memo(
           keyboardType={keyboardType}
           blurOnSubmit={false}
           selectTextOnFocus
-          onFocus={showAboveKeyboard}
+          onFocus={onFocusCell}
         />
       </View>
     );
@@ -110,6 +117,7 @@ const TextInputCell = React.memo(
 );
 
 TextInputCell.propTypes = {
+  onFocus: PropTypes.func,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   columnKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
@@ -148,6 +156,7 @@ TextInputCell.defaultProps = {
   placeholder: '',
   placeholderColor: '#CDCDCD',
   underlineColor: '#CDCDCD',
+  onFocus: null,
 };
 
 export default TextInputCell;

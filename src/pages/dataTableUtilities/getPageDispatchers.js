@@ -112,6 +112,7 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
     onDeleteRecords: () => dispatch(PageActions.deleteSelectedRecords(dataType, route)),
     onDeleteItems: () => dispatch(PageActions.deleteSelectedItems(dataType, route)),
     onDeleteBatches: () => dispatch(PageActions.deleteSelectedBatches(dataType, route)),
+    onRowFocus: rowKey => dispatch(PageActions.focusRow(rowKey, route)),
 
     // Editable cell callbacks
     onEditCountedQuantity: (newValue, rowKey) =>

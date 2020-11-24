@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 
 import currency from '../../localization/currency';
 
-import { dataTableStyles, SUSSOL_ORANGE } from '../../globalStyles';
+import { ROW_BLUE, dataTableStyles, SUSSOL_ORANGE } from '../../globalStyles';
 
 import Row from './Row';
 import Cell from './Cell';
@@ -68,6 +68,7 @@ const DataTableRow = React.memo(
     rowIndex,
     getCellError,
     isValidated,
+    onFocus,
   }) => {
     const {
       cellText,
@@ -84,16 +85,16 @@ const DataTableRow = React.memo(
       iconCell,
     } = dataTableStyles;
 
-    const { isSelected = false } = rowState || {};
-    // If the row is selected, use selectedRow style, otherwise alternate row style on index.
+    const { isFocused = false, isSelected = false } = rowState || {};
 
     const rowStyle = useMemo(
       () => ({
         ...(rowIndex % 2 === 0 ? alternateRowStyle : basicRowStyle),
         ...(isSelected && selectedRowStyle),
         ...(!isValidated && { borderColor: SUSSOL_ORANGE, borderWidth: 1, borderRadius: 5 }),
+        ...(isFocused && { backgroundColor: ROW_BLUE }),
       }),
-      [rowIndex, isSelected, isValidated]
+      [rowIndex, isSelected, isValidated, isFocused]
     );
 
     // Callback for rendering a row of cells.
@@ -156,6 +157,7 @@ const DataTableRow = React.memo(
 
               return (
                 <TextInputCell
+                  onFocus={onFocus}
                   key={columnKey}
                   value={value}
                   rowKey={rowKey}
@@ -383,6 +385,7 @@ DataTableRow.defaultProps = {
   rowState: null,
   getCellError: () => null,
   isValidated: true,
+  onFocus: null,
 };
 
 DataTableRow.propTypes = {
@@ -396,6 +399,7 @@ DataTableRow.propTypes = {
   rowIndex: PropTypes.number.isRequired,
   getCellError: PropTypes.func,
   isValidated: PropTypes.bool,
+  onFocus: PropTypes.func,
 };
 
 export default DataTableRow;

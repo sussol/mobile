@@ -20,6 +20,24 @@ export const selectRow = (state, action) => {
   return { ...state, dataState: newDataState, hasSelection: true };
 };
 
+export const focusRow = (state, action) => {
+  const { dataState } = state;
+  const { payload } = action;
+  const { rowKey } = payload;
+
+  const newDataState = new Map(dataState);
+
+  for (const key of newDataState.keys()) {
+    const rowState = newDataState.get(key);
+    newDataState.set(key, { ...rowState, isFocused: false });
+  }
+
+  const rowState = newDataState.get(rowKey);
+  newDataState.set(rowKey, { ...rowState, isFocused: true });
+
+  return { ...state, dataState: newDataState };
+};
+
 /**
  * Removes the provided row in action from being
  * selected.
@@ -187,4 +205,5 @@ export const RowReducerLookup = {
   toggleSelectAll,
   selectRows,
   deleteRecords,
+  focusRow,
 };
