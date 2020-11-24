@@ -56,6 +56,8 @@ export const ExpiryDateInput = React.memo(
     placeholder,
     rowIndex,
     underlineColor,
+    onFocus,
+    onBlur,
   }) => {
     if (debug) console.log(`- ExpiryTextInputCell: ${value}`);
 
@@ -71,8 +73,11 @@ export const ExpiryDateInput = React.memo(
     // Scrolls the parent scroll view such that this row is near the top of the data table,
     // which should ensure it is above the keyboard - without it, if the row is in a position
     // which will be behind the keyboard once it appears, the keyboard will show then disappear
-    // jankily.
-    const showAboveKeyboard = () => adjustToTop(rowIndex);
+    // jankily. Also calls the isFocus callback with { rowKey, columnKey, value }
+    const internalOnFocus = () => {
+      if (onFocus) onFocus({ rowKey, columnKey, value });
+      adjustToTop(rowIndex);
+    };
 
     // Helpers controlling the submitting of the expiry date. Losing focus/submitting
     // Handed similarly, but losing focus will not auto focus the next cell. Changes
@@ -122,7 +127,8 @@ export const ExpiryDateInput = React.memo(
           underlineColorAndroid={underlineColor}
           keyboardType="numeric"
           blurOnSubmit={false}
-          onFocus={showAboveKeyboard}
+          onFocus={internalOnFocus}
+          onBlur={onBlur}
         />
       </View>
     );
@@ -142,6 +148,8 @@ ExpiryDateInput.propTypes = {
   rowIndex: PropTypes.number.isRequired,
   placeholderColor: PropTypes.string,
   underlineColor: PropTypes.string,
+  onFocus: PropTypes.func,
+  onBlur: PropTypes.func,
 };
 
 ExpiryDateInput.defaultProps = {
@@ -153,6 +161,8 @@ ExpiryDateInput.defaultProps = {
   placeholder: 'mm/yyyy',
   placeholderColor: '#CDCDCD',
   underlineColor: '#CDCDCD',
+  onFocus: null,
+  onBlur: null,
 };
 
 export default ExpiryDateInput;

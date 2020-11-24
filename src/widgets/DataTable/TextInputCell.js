@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable react/forbid-prop-types */
-import React, { useEffect, useCallback } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { View, TextInput, Keyboard } from 'react-native';
+import { View, TextInput } from 'react-native';
 
 import Cell from './Cell';
 import RefContext from './RefContext';
@@ -50,6 +50,7 @@ const TextInputCell = React.memo(
     cellTextStyle,
     underlineColor,
     onFocus,
+    onBlur,
   }) => {
     if (debug) console.log(`- TextInputCell: ${value}`);
     const usingPlaceholder = placeholder && !value;
@@ -64,18 +65,11 @@ const TextInputCell = React.memo(
     // Scrolls the parent scroll view such that this row is near the top of the data table,
     // which should ensure it is above the keyboard - without it, if the row is in a position
     // which will be behind the keyboard once it appears, the keyboard will show then disappear
-    // jankily.
-    const showAboveKeyboard = rowIdx => adjustToTop(rowIdx);
-
-    const onFocusCell = useCallback(() => {
-      onFocus?.(rowKey);
-      showAboveKeyboard(rowIndex);
-    }, [rowKey, rowIndex]);
-
-    useEffect(() => {
-      Keyboard.addListener('keyboardDidHide', () => ref?.current?.blur());
-      return () => Keyboard.removeListener('keyboardDidHide', () => ref?.current?.blur());
-    }, []);
+    // jankily. Also calls the isFocus callback with { rowKey, columnKey, value }
+    const internalOnFocus = () => {
+      if (onFocus) onFocus({ rowKey, columnKey, value });
+      adjustToTop(rowIndex);
+    };
 
     // Render a plain Cell if disabled.
     if (isDisabled) {
@@ -109,7 +103,8 @@ const TextInputCell = React.memo(
           keyboardType={keyboardType}
           blurOnSubmit={false}
           selectTextOnFocus
-          onFocus={onFocusCell}
+          onFocus={internalOnFocus}
+          onBlur={onBlur}
         />
       </View>
     );
@@ -117,6 +112,7 @@ const TextInputCell = React.memo(
 );
 
 TextInputCell.propTypes = {
+  onBlur: PropTypes.func,
   onFocus: PropTypes.func,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
@@ -157,6 +153,7 @@ TextInputCell.defaultProps = {
   placeholderColor: '#CDCDCD',
   underlineColor: '#CDCDCD',
   onFocus: null,
+  onBlur: null,
 };
 
 export default TextInputCell;
