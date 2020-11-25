@@ -77,7 +77,7 @@ const modalProps = ({ dispatch, program, orderType, customer }) => ({
       const emergencyText = `[${programStrings.emergency_order}]  ${maxItemsText}`;
       const maxOrdersText = isEmergency ? emergencyText : `${maxOPP}: ${maxOrders}`;
 
-      return `${maxOrdersText} - ${mosText} - ${thresholdText}`;
+      return `${maxOrdersText}\n${mosText}\n${customer ? '' : thresholdText}`;
     },
   },
   period: {
