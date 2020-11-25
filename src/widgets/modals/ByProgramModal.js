@@ -59,10 +59,13 @@ const modalProps = ({ dispatch, program, orderType, customer }) => ({
         maxMOS: itemMOS,
         thresholdMOS: itemThreshMOS,
         isEmergency,
+        name,
       } = item;
 
-      const thisStoresTags = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_TAGS);
-      const maxLinesForOrder = program.getMaxLines?.(item.name, thisStoresTags);
+      const tags = customer
+        ? customer?.nameTags.join(',')
+        : UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_TAGS);
+      const maxLinesForOrder = program?.getMaxLines?.(name, tags);
 
       const mosText = `${maxMOS}: ${itemMOS}`;
       const thresholdText = `${threshMOS}: ${itemThreshMOS}`;
@@ -70,6 +73,7 @@ const modalProps = ({ dispatch, program, orderType, customer }) => ({
         maxLinesForOrder && maxLinesForOrder !== Infinity
           ? `${programStrings.max_items}: ${maxLinesForOrder}`
           : '';
+
       const emergencyText = `[${programStrings.emergency_order}]  ${maxItemsText}`;
       const maxOrdersText = isEmergency ? emergencyText : `${maxOPP}: ${maxOrders}`;
 
@@ -129,7 +133,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
       'subquery(nameTagJoins, $joins, $joins.name.id == $0).@count > 0',
       customer?.id ?? settings.get(THIS_STORE_NAME_ID)
     )
-    .map(({ description }) => description.toLowerCase());
+    .map(({ description }) => description);
 
   // Helper methods for fetching modal data for user selection
   const getPrograms = () => {
