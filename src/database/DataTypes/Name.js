@@ -104,6 +104,10 @@ export class Name extends Realm.Object {
     return this.thisStoresPatient;
   }
 
+  get nameTags() {
+    return this.nameTagJoins.map(({ nameTag }) => nameTag.description);
+  }
+
   /**
    * Add master list to name, if it has not already been added.
    *

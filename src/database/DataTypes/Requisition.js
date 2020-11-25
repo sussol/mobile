@@ -147,6 +147,11 @@ export class Requisition extends Realm.Object {
     return this.items.reduce((acc, item) => acc + hasBeenCounted(item), 0);
   }
 
+  get numberOfSuppliedItems() {
+    const hasBeenCounted = requisitionItem => (requisitionItem.suppliedQuantity !== 0 ? 1 : 0);
+    return this.items.reduce((acc, item) => acc + hasBeenCounted(item), 0);
+  }
+
   /**
    * Get number of items associated with requisition.
    *
@@ -434,6 +439,14 @@ export class Requisition extends Realm.Object {
 
     if (!daysOutOfStockAreValid) {
       return { success: false, message: modalStrings.requisition_days_out_of_stock };
+    }
+
+    const customersTags = this.otherStoreName.nameTags.join(',');
+    const maxLinesForOrder = this.program?.getMaxLines?.(this.orderType, customersTags);
+
+    if (this.numberOfSuppliedItems > maxLinesForOrder) {
+      finaliseStatus.success = false;
+      finaliseStatus.message = `${modalStrings.emergency_orders_can_only_have} ${maxLinesForOrder} ${modalStrings.items_remove_some}`;
     }
 
     return finaliseStatus;
