@@ -833,8 +833,9 @@ const createRequisitionItem = (database, requisition, item, dailyUsage, stockOnH
   }
 
   requisition.addItem(requisitionItem);
-  database.save('Requisition', requisition);
+
   database.save('RequisitionItem', requisitionItem);
+  database.save('Requisition', requisition);
 
   return requisitionItem;
 };
