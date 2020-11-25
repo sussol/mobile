@@ -376,7 +376,6 @@ const DataTableRow = React.memo(
         rowData={rowData}
         rowState={rowState}
         rowIndex={rowIndex}
-        debug
       />
     );
   }
