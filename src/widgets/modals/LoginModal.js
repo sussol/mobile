@@ -145,22 +145,18 @@ export class LoginModal extends React.Component {
               style={globalStyles.authFormLogo}
               source={require('../../images/logo_large.png')}
             />
-            <View style={[globalStyles.verticalContainer, { flex: 1 }]}>
-              <Text style={[globalStyles.authFormTextInputStyle]}>
-                {authStrings.site}: {settings.get(SETTINGS_KEYS.SYNC_SITE_NAME)}
-              </Text>
-            </View>
-            <View style={[globalStyles.verticalContainer, { flex: 1 }]}>
-              <Text style={[globalStyles.authFormTextInputStyle]}>
-                {authStrings.store}:
-                {
-                  UIDatabase.objects('Name').filtered(
-                    'id == $0',
-                    settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID)
-                  )[0]?.name
-                }
-              </Text>
-            </View>
+            <Text style={[globalStyles.authFormTextInputStyle, { flex: 0 }]}>
+              {authStrings.site}: {settings.get(SETTINGS_KEYS.SYNC_SITE_NAME)}
+            </Text>
+            <Text style={[globalStyles.authFormTextInputStyle, { flex: 0, marginVertical: 10 }]}>
+              {authStrings.store}:
+              {
+                UIDatabase.objects('Name').filtered(
+                  'id == $0',
+                  settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID)
+                )[0]?.name
+              }
+            </Text>
             <View style={globalStyles.horizontalContainer}>
               <TextInput
                 style={globalStyles.authFormTextInputStyle}
