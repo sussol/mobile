@@ -77,8 +77,6 @@ const generateSyncData = (settings, recordType, record) => {
       };
     }
     case 'Name': {
-      if (!record.isPatient) return false;
-
       const defaultCurrency = UIDatabase.objects('Currency').filtered(
         'isDefaultCurrency == $0',
         true
