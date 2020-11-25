@@ -108,5 +108,6 @@ export const programDailyUsage = (item, period) => {
  */
 export const customerRequisitionProgramDailyUsage = requisitionItem => {
   const { outgoingStock, daysOutOfStock, numberOfDaysInPeriod } = requisitionItem;
-  return Math.max(outgoingStock / (numberOfDaysInPeriod ?? 0 - daysOutOfStock), 0);
+  const numberOfDays = Math.max((numberOfDaysInPeriod ?? 0) - (daysOutOfStock ?? 0), 1);
+  return Math.max(outgoingStock / numberOfDays, 0);
 };
