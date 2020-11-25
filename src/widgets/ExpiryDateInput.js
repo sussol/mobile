@@ -18,6 +18,7 @@ import { parseExpiryDate, formatExpiryDate } from '../utilities';
 
 import { getAdjustedStyle } from './DataTable/utilities';
 import RefContext from './DataTable/RefContext';
+import { useDebounce } from '../hooks';
 
 /**
  * Renders an expiry date cell, managing its own state and not submitting
@@ -56,6 +57,8 @@ export const ExpiryDateInput = React.memo(
     placeholder,
     rowIndex,
     underlineColor,
+    onFocus,
+    onBlur,
   }) => {
     if (debug) console.log(`- ExpiryTextInputCell: ${value}`);
 
@@ -71,15 +74,28 @@ export const ExpiryDateInput = React.memo(
     // Scrolls the parent scroll view such that this row is near the top of the data table,
     // which should ensure it is above the keyboard - without it, if the row is in a position
     // which will be behind the keyboard once it appears, the keyboard will show then disappear
-    // jankily.
-    const showAboveKeyboard = () => adjustToTop(rowIndex);
+    // jankily. Also calls the isFocus callback with { rowKey, columnKey, value }
+    const internalOnFocus = () => {
+      if (onFocus) onFocus({ rowKey, columnKey, value });
+      adjustToTop(rowIndex);
+    };
+
+    // Debounce onEndEditing so that when it is called on the two events: EndEditing/Blur
+    // and onSubmit the callback is not triggered twice, causing two renders.
+    const internalOnEndEditing = useDebounce(
+      newExpiryDate => {
+        onEndEditing(newExpiryDate, rowKey, columnKey);
+      },
+      200,
+      false
+    );
 
     // Helpers controlling the submitting of the expiry date. Losing focus/submitting
     // Handed similarly, but losing focus will not auto focus the next cell. Changes
     // to the underlying model are not committed until a valid date is entered.
     const finishEditingExpiryDate = () => {
       finaliseExpiryDate();
-      onEndEditing(parseExpiryDate(expiryDate), rowKey, columnKey);
+      internalOnEndEditing(parseExpiryDate(expiryDate));
     };
 
     const onSubmit = () => {
@@ -122,7 +138,8 @@ export const ExpiryDateInput = React.memo(
           underlineColorAndroid={underlineColor}
           keyboardType="numeric"
           blurOnSubmit={false}
-          onFocus={showAboveKeyboard}
+          onFocus={internalOnFocus}
+          onBlur={onBlur}
         />
       </View>
     );
@@ -142,6 +159,8 @@ ExpiryDateInput.propTypes = {
   rowIndex: PropTypes.number.isRequired,
   placeholderColor: PropTypes.string,
   underlineColor: PropTypes.string,
+  onFocus: PropTypes.func,
+  onBlur: PropTypes.func,
 };
 
 ExpiryDateInput.defaultProps = {
@@ -153,6 +172,8 @@ ExpiryDateInput.defaultProps = {
   placeholder: 'mm/yyyy',
   placeholderColor: '#CDCDCD',
   underlineColor: '#CDCDCD',
+  onFocus: null,
+  onBlur: null,
 };
 
 export default ExpiryDateInput;

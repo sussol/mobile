@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 
 import currency from '../../localization/currency';
 
-import { dataTableStyles, SUSSOL_ORANGE } from '../../globalStyles';
+import { ROW_BLUE, dataTableStyles, SUSSOL_ORANGE } from '../../globalStyles';
 
 import Row from './Row';
 import Cell from './Cell';
@@ -17,9 +17,8 @@ import Cell from './Cell';
 import CheckableCell from './CheckableCell';
 import TouchableCell from './TouchableCell';
 import DropDownCell from '../DropDownCell';
-
+import TextInputCell from './TextInputCell';
 import { ExpiryDateInput } from '../ExpiryDateInput';
-
 import {
   CheckedIcon,
   UncheckedIcon,
@@ -31,13 +30,12 @@ import {
   HazardIcon,
   BookIcon,
 } from '../icons';
-import TextInputCell from './TextInputCell';
 
 import { COLUMN_TYPES, COLUMN_KEYS } from '../../pages/dataTableUtilities';
-import { generalStrings, tableStrings } from '../../localization/index';
-
+import { generalStrings, tableStrings } from '../../localization';
 import { formatStatus, formatDate } from '../../utilities';
 import { formatType } from '../../utilities/formatStatus';
+import { useDebounce } from '../../hooks';
 
 /**
  * Wrapper component for a mSupply DataTable page row.
@@ -85,15 +83,18 @@ const DataTableRow = React.memo(
     } = dataTableStyles;
 
     const { isSelected = false } = rowState || {};
-    // If the row is selected, use selectedRow style, otherwise alternate row style on index.
+
+    const [hasFocus, setFocused] = React.useState(false);
+    const focus = useDebounce(shouldFocus => setFocused(shouldFocus), 50, false);
 
     const rowStyle = useMemo(
       () => ({
         ...(rowIndex % 2 === 0 ? alternateRowStyle : basicRowStyle),
         ...(isSelected && selectedRowStyle),
         ...(!isValidated && { borderColor: SUSSOL_ORANGE, borderWidth: 1, borderRadius: 5 }),
+        ...(hasFocus && { backgroundColor: ROW_BLUE }),
       }),
-      [rowIndex, isSelected, isValidated]
+      [rowIndex, isSelected, isValidated, hasFocus]
     );
 
     // Callback for rendering a row of cells.
@@ -156,6 +157,8 @@ const DataTableRow = React.memo(
 
               return (
                 <TextInputCell
+                  onFocus={() => focus(true)}
+                  onBlur={() => focus(false)}
                   key={columnKey}
                   value={value}
                   rowKey={rowKey}
@@ -178,6 +181,8 @@ const DataTableRow = React.memo(
             case COLUMN_TYPES.EDITABLE_EXPIRY_DATE:
               return (
                 <ExpiryDateInput
+                  onFocus={() => focus(true)}
+                  onBlur={() => focus(false)}
                   key={columnKey}
                   value={rowData[columnKey]}
                   rowKey={rowKey}
