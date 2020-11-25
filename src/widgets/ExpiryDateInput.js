@@ -18,6 +18,7 @@ import { parseExpiryDate, formatExpiryDate } from '../utilities';
 
 import { getAdjustedStyle } from './DataTable/utilities';
 import RefContext from './DataTable/RefContext';
+import { useDebounce } from '../hooks';
 
 /**
  * Renders an expiry date cell, managing its own state and not submitting
@@ -79,12 +80,22 @@ export const ExpiryDateInput = React.memo(
       adjustToTop(rowIndex);
     };
 
+    // Debounce onEndEditing so that when it is called on the two events: EndEditing/Blur
+    // and onSubmit the callback is not triggered twice, causing two renders.
+    const internalOnEndEditing = useDebounce(
+      newExpiryDate => {
+        onEndEditing(newExpiryDate, rowKey, columnKey);
+      },
+      200,
+      false
+    );
+
     // Helpers controlling the submitting of the expiry date. Losing focus/submitting
     // Handed similarly, but losing focus will not auto focus the next cell. Changes
     // to the underlying model are not committed until a valid date is entered.
     const finishEditingExpiryDate = () => {
       finaliseExpiryDate();
-      onEndEditing(parseExpiryDate(expiryDate), rowKey, columnKey);
+      internalOnEndEditing(parseExpiryDate(expiryDate));
     };
 
     const onSubmit = () => {
