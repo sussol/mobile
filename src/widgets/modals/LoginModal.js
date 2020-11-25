@@ -157,7 +157,7 @@ export class LoginModal extends React.Component {
                   UIDatabase.objects('Name').filtered(
                     'id == $0',
                     settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID)
-                  )[0].name
+                  )[0]?.name
                 }
               </Text>
             </View>
