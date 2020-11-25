@@ -133,7 +133,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
       'subquery(nameTagJoins, $joins, $joins.name.id == $0).@count > 0',
       customer?.id ?? settings.get(THIS_STORE_NAME_ID)
     )
-    .map(({ description }) => description.toLowerCase());
+    .map(({ description }) => description);
 
   // Helper methods for fetching modal data for user selection
   const getPrograms = () => {

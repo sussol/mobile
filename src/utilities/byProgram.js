@@ -28,7 +28,7 @@ const getAllProgramsForCustomer = (customer, database) => {
   const customersTags = database
     .objects('NameTag')
     .filtered('subquery(nameTagJoins, $joins, $joins.name.id == $0).@count > 0', id)
-    .map(({ description }) => description.toLowerCase());
+    .map(({ description }) => description);
 
   return database
     .objects('MasterListNameJoin')
@@ -63,7 +63,7 @@ const getAllPrograms = (settings, database) => {
       'subquery(nameTagJoins, $joins, $joins.name.id == $0).@count > 0',
       settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID)
     )
-    .map(({ description }) => description.toLowerCase());
+    .map(({ description }) => description);
 
   return database
     .objects('MasterListNameJoin')

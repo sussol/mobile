@@ -91,9 +91,7 @@ export class MasterList extends Realm.Object {
 
     if (!(tags && tags.length && storeTags)) return null;
 
-    const foundStoreTag = Object.keys(storeTags).find(
-      storeTag => tags.indexOf(storeTag.toLowerCase()) >= 0
-    );
+    const foundStoreTag = Object.keys(storeTags).find(storeTag => tags.indexOf(storeTag) >= 0);
 
     return foundStoreTag && storeTags[foundStoreTag];
   }
@@ -119,6 +117,7 @@ export class MasterList extends Realm.Object {
    */
   getOrderType(orderTypeName, tags) {
     const orderTypes = this.getOrderTypes(tags);
+
     if (!orderTypes) return null;
 
     return orderTypes.find(orderType => orderType.name === orderTypeName);
