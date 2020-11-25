@@ -293,7 +293,10 @@ export const gotoStocktakeManagePage = (stocktakeName, stocktake) => dispatch =>
     },
   };
 
-  dispatch(navigationActionCreator(navigationParameters));
+  batch(() => {
+    dispatch(navigationActionCreator(navigationParameters));
+    dispatch(FinaliseActions.setFinaliseItem(null));
+  });
 };
 
 /**
