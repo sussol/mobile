@@ -129,6 +129,10 @@ export class LoginModal extends React.Component {
   render() {
     const { isAuthenticated, settings } = this.props;
     const { authStatus, username, password, appVersion, isLanguageModalOpen } = this.state;
+    const storeName = UIDatabase.objects('Name').filtered(
+      'id == $0',
+      settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID)
+    )[0]?.name;
 
     return (
       <ModalContainer
@@ -149,13 +153,7 @@ export class LoginModal extends React.Component {
               {authStrings.site}: {settings.get(SETTINGS_KEYS.SYNC_SITE_NAME)}
             </Text>
             <Text style={[globalStyles.authFormTextInputStyle, { flex: 0, marginVertical: 10 }]}>
-              {authStrings.store}:
-              {
-                UIDatabase.objects('Name').filtered(
-                  'id == $0',
-                  settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID)
-                )[0]?.name
-              }
+              {authStrings.store}: {storeName}
             </Text>
             <View style={globalStyles.horizontalContainer}>
               <TextInput
