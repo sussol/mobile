@@ -137,7 +137,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
     editableType: 'date',
   },
   customerRequisitionProgramAMCFormula: {
-    title: `${Math.ceil(pageObject.monthlyUsage)}`,
+    title: `${Math.round(pageObject.monthlyUsage)}`,
     info: `= (${pageObject.outgoingStock?.toFixed(2)} x ${NUMBER_OF_DAYS_IN_A_MONTH?.toFixed(
       2
     )}) / (${pageObject.numberOfDaysInPeriod} - ${pageObject.daysOutOfStock})`,
