@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { PageButton } from './PageButton';
 
 import { FORM_INPUT_TYPES } from '../utilities/formInputConfigs';
-import { FormTextInput } from './FormInputs/FromTextInput';
+import { FormTextInput } from './FormInputs/FormTextInput';
 import { FormDateInput } from './FormInputs/FormDateInput';
 import { FormToggle } from './FormInputs/FormToggle';
 import { FormDropdown } from './FormInputs/FormDropdown';
@@ -116,6 +116,7 @@ const FormControlComponent = ({
                 label={label}
                 invalidMessage={invalidMessage}
                 isDisabled={!isEditable || isDisabled}
+                autoFocus={index === 0}
               />
             );
           }
@@ -132,6 +133,7 @@ const FormControlComponent = ({
                 invalidMessage={invalidMessage}
                 onSubmit={nextFocus(index, key)}
                 isDisabled={isDisabled}
+                autoFocus={index === 0}
               />
             );
           }
@@ -234,7 +236,7 @@ const FormControlComponent = ({
         </View>
       </ScrollView>
       <Buttons />
-      <ModalContainer fullScreen isVisible={isConfirmFormOpen} noCancel>
+      <ModalContainer isVisible={isConfirmFormOpen} noCancel>
         <ConfirmForm
           isOpen={isConfirmFormOpen}
           questionText={confirmText}

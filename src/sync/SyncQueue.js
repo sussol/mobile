@@ -23,6 +23,12 @@ const recordTypesSynced = [
   'TransactionBatch',
   'InsurancePolicy',
   'IndicatorValue',
+  'Location',
+  'Sensor',
+  'TemperatureLog',
+  'TemperatureBreach',
+  'VaccineVialMonitorStatusLog',
+  'LocationMovement',
 ];
 
 /**
@@ -71,6 +77,8 @@ export class SyncQueue {
       // Only sync out prescribers from this store.
       case 'Prescriber':
         return record.fromThisStore;
+      case 'Name':
+        return record.isPatient;
       default:
         return true;
     }

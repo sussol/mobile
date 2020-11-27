@@ -5,7 +5,7 @@
 import React from 'react';
 
 import { createStackNavigator } from '@react-navigation/stack';
-import { FinaliseButton, SyncState, BackButton, MsupplyMan } from '../widgets';
+import { HeaderRight, FinaliseButton, BackButton, MsupplyMan } from '../widgets';
 import { navigationStyles } from '../globalStyles/navigationStyles';
 import { ROUTES, FINALISABLE_PAGES } from './constants';
 import {
@@ -28,13 +28,15 @@ import {
   SettingsPage,
   DashboardPage,
   StockPage,
+  VaccinePage,
+  VaccineAdminPage,
 } from '../pages';
 
 export const DEFAULT_SCREEN_OPTIONS = {
   headerLeft: () => <BackButton />,
+  headerRight: () => <HeaderRight />,
   headerTitleAlign: 'center',
   headerTitle: MsupplyMan,
-  headerRight: () => <SyncState />,
   headerStyle: navigationStyles.headerStyle,
   headerLeftContainerStyle: navigationStyles.headerLeftContainerStyle,
   headerRightContainerStyle: navigationStyles.headerRightContainerStyle,
@@ -67,6 +69,8 @@ const ROUTE_NAME_TO_PAGE = {
   [ROUTES.CASH_REGISTER]: CashRegisterPage,
   [ROUTES.SETTINGS]: SettingsPage,
   [ROUTES.DASHBOARD]: DashboardPage,
+  [ROUTES.VACCINES]: VaccinePage,
+  [ROUTES.VACCINES_ADMIN]: VaccineAdminPage,
 };
 
 export const Pages = Object.values(ROUTES).reduce((acc, route) => {

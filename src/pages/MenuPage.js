@@ -30,6 +30,7 @@ import {
   gotoDispensingPage,
   gotoSettings,
   gotoDashboard,
+  goToVaccines,
 } from '../navigation/actions';
 
 import globalStyles, { SHADOW_BORDER, GREY } from '../globalStyles';
@@ -46,6 +47,7 @@ const exportData = async () => {
 const Menu = ({
   isInAdminMode, // isInAdminMode kept for backwards compatibility with Desktop < v4.07
   logout,
+  toVaccines,
   toCustomerInvoices,
   toCustomerRequisitions,
   toStock,
@@ -61,6 +63,7 @@ const Menu = ({
   usingDispensary,
   usingCashRegister,
   usingModules,
+  usingVaccines,
   isAdmin,
 }) => {
   const { menuButton, menuButtonText: buttonText, appBackground } = globalStyles;
@@ -129,6 +132,7 @@ const Menu = ({
       <View style={containerStyle}>
         <ModulesImage style={image} />
         <View>
+          {usingVaccines && <MenuButton text={navStrings.vaccines} onPress={toVaccines} />}
           {usingDispensary && <MenuButton text={navStrings.dispensary} onPress={toDispensary} />}
           {usingDashboard && <MenuButton text={navStrings.dashboard} onPress={toDashboard} />}
           {usingCashRegister && (
@@ -241,6 +245,7 @@ const styles = {
 };
 
 const mapDispatchToProps = dispatch => ({
+  toVaccines: () => dispatch(goToVaccines()),
   toCustomerInvoices: () => dispatch(gotoCustomerInvoices()),
   toCustomerRequisitions: () => dispatch(gotoCustomerRequisitions()),
   toStock: () => dispatch(gotoStock()),
@@ -288,6 +293,7 @@ Menu.defaultProps = {
 Menu.propTypes = {
   isInAdminMode: PropTypes.bool,
   logout: PropTypes.func.isRequired,
+  toVaccines: PropTypes.func.isRequired,
   toCustomerInvoices: PropTypes.func.isRequired,
   toCustomerRequisitions: PropTypes.func.isRequired,
   toStock: PropTypes.func.isRequired,
@@ -304,4 +310,5 @@ Menu.propTypes = {
   usingDashboard: PropTypes.bool.isRequired,
   usingCashRegister: PropTypes.bool.isRequired,
   usingModules: PropTypes.bool.isRequired,
+  usingVaccines: PropTypes.bool.isRequired,
 };

@@ -4,6 +4,7 @@
  */
 
 import Realm from 'realm';
+import moment from 'moment';
 import { getIndicatorValuesByPeriod, getIndicatorsByValues } from '../utilities/getIndicatorData';
 
 /**
@@ -30,11 +31,20 @@ export class Period extends Realm.Object {
     return this.requisitions.length;
   }
 
-  requisitionsForOrderType(program, orderType) {
+  numberOfSupplierRequisitionsForOrderType(program, orderType) {
     return this.requisitions.filtered(
-      'program.id = $0 && orderType = $1',
+      'program.id = $0 && orderType = $1 && type == "request"',
       program.id,
       orderType.name
+    ).length;
+  }
+
+  numberOfCustomerRequisitionsForOrderType(program, orderType, name) {
+    return this.requisitions.filtered(
+      'program.id = $0 && orderType = $1 && otherStoreName = $2',
+      program.id,
+      orderType.name,
+      name
     ).length;
   }
 
@@ -48,7 +58,17 @@ export class Period extends Realm.Object {
   }
 
   toString() {
-    return `${this.startDate.toLocaleDateString()} - ${this.endDate.toLocaleDateString()}`;
+    const startDate = moment(this.startDate).format('DD/MM/YY');
+    const endDate = moment(this.endDate).format('DD/MM/YY');
+    return `${startDate} - ${endDate}`;
+  }
+
+  get numberOfDays() {
+    return (
+      moment(this.endDate)
+        .startOf('day')
+        .diff(moment(this.startDate).startOf('day'), 'days') + 1
+    );
   }
 }
 

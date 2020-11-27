@@ -8,6 +8,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { BluetoothStatus } from 'react-native-bluetooth-status';
 import { AppState, View } from 'react-native';
 import { Scheduler } from 'sussol-utilities';
 
@@ -26,6 +27,7 @@ import { LoadingIndicatorContext } from './context/LoadingIndicatorContext';
 import { selectTitle } from './selectors/supplierCredit';
 import { selectIsSyncing } from './selectors/sync';
 import { selectCurrentUser } from './selectors/user';
+import { selectUsingVaccines } from './selectors/modules';
 
 import { syncCompleteTransaction, setSyncError, openSyncModal } from './actions/SyncActions';
 import { FinaliseActions } from './actions/FinaliseActions';
@@ -38,6 +40,13 @@ import { FirstUsePage } from './pages';
 import { SupplierCredit } from './widgets/modalChildren/SupplierCredit';
 
 import globalStyles, { SUSSOL_ORANGE } from './globalStyles';
+import { TemperatureSyncActions } from './actions/TemperatureSyncActions';
+import { BreachDisplay } from './widgets/modalChildren/BreachDisplay';
+import { selectIsBreachModalOpen, selectBreachModalTitle } from './selectors/breach';
+import { BreachActions } from './actions/BreachActions';
+import { TemperatureSync } from './widgets/modalChildren/TemperatureSync';
+import { RowDetail } from './widgets/RowDetail';
+import { PermissionActions } from './actions/PermissionActions';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -66,6 +75,7 @@ class MSupplyMobileAppContainer extends React.Component {
         this.userAuthenticator.reauthenticate(this.onAuthentication);
       }
     }, AUTHENTICATION_INTERVAL);
+
     this.state = {
       isInitialised,
       isLoading: false,
@@ -74,12 +84,26 @@ class MSupplyMobileAppContainer extends React.Component {
   }
 
   componentDidMount = () => {
+    const { dispatch, usingVaccines, syncTemperatures, requestBluetooth } = this.props;
+
+    if (usingVaccines) {
+      this.scheduler.schedule(syncTemperatures, SYNC_INTERVAL);
+      BluetoothStatus.addListener(requestBluetooth);
+      dispatch(PermissionActions.checkPermissions());
+    }
+
     if (!__DEV__) {
       AppState.addEventListener('change', this.onAppStateChange);
     }
   };
 
   componentWillUnmount = () => {
+    const { usingVaccines } = this.props;
+
+    if (usingVaccines) {
+      BluetoothStatus.removeListener();
+    }
+
     if (!__DEV__) {
       AppState.removeEventListener('change', this.onAppStateChange);
     }
@@ -92,6 +116,7 @@ class MSupplyMobileAppContainer extends React.Component {
     const { dispatch } = this.props;
     if (nextAppState?.match(/inactive|background/)) dispatch(UserActions.setTime());
     if (appState?.match(/inactive|background/) && nextAppState === 'active') {
+      dispatch(PermissionActions.checkPermissions());
       dispatch(UserActions.active());
     }
 
@@ -118,7 +143,8 @@ class MSupplyMobileAppContainer extends React.Component {
     await new Promise(resolve => {
       this.setState({ isLoading: true }, () => setTimeout(resolve, 1));
     });
-    functionToRun();
+
+    await functionToRun();
     this.setState({ isLoading: false });
   };
 
@@ -156,6 +182,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
   renderLoadingIndicator = () => {
     const { isLoading } = this.state;
+
     return (
       <View style={globalStyles.loadingIndicatorContainer}>
         <Spinner isSpinning={isLoading} color={SUSSOL_ORANGE} />
@@ -169,6 +196,11 @@ class MSupplyMobileAppContainer extends React.Component {
       closeSupplierCreditModal,
       supplierCreditModalOpen,
       creditTitle,
+      isBreachModalOpen,
+      closeBreachModal,
+      breachModalTitle,
+      temperatureSyncModalIsOpen,
+      closeTemperatureSyncModal,
     } = this.props;
     const { isInitialised, isLoading } = this.state;
 
@@ -192,14 +224,29 @@ class MSupplyMobileAppContainer extends React.Component {
             onAuthentication={this.onAuthentication}
           />
           {isLoading && this.renderLoadingIndicator()}
+
           <ModalContainer
             isVisible={supplierCreditModalOpen}
             onClose={closeSupplierCreditModal}
             title={creditTitle}
-            fullScreen
           >
             <SupplierCredit />
           </ModalContainer>
+
+          <ModalContainer
+            isVisible={isBreachModalOpen}
+            onClose={closeBreachModal}
+            title={breachModalTitle}
+          >
+            <BreachDisplay />
+          </ModalContainer>
+          <ModalContainer
+            isVisible={temperatureSyncModalIsOpen}
+            onClose={closeTemperatureSyncModal}
+          >
+            <TemperatureSync />
+          </ModalContainer>
+          <RowDetail />
         </View>
       </LoadingIndicatorContext.Provider>
     );
@@ -210,29 +257,45 @@ const mapDispatchToProps = dispatch => {
   const openFinaliseModal = () => dispatch(FinaliseActions.openModal());
   const closeFinaliseModal = () => dispatch(FinaliseActions.closeModal());
   const closeSupplierCreditModal = () => dispatch(SupplierCreditActions.close());
+  const closeTemperatureSyncModal = () => dispatch(TemperatureSyncActions.closeModal());
   const onOpenSyncModal = () => dispatch(openSyncModal());
+  const closeBreachModal = () => dispatch(BreachActions.close());
+  const syncTemperatures = () => dispatch(TemperatureSyncActions.syncTemperatures());
+  const requestBluetooth = newStatus => dispatch(PermissionActions.requestBluetooth(newStatus));
 
   return {
+    requestBluetooth,
+    syncTemperatures,
     dispatch,
     onOpenSyncModal,
     openFinaliseModal,
     closeFinaliseModal,
     closeSupplierCreditModal,
+    closeBreachModal,
+    closeTemperatureSyncModal,
   };
 };
 
 const mapStateToProps = state => {
-  const { finalise, supplierCredit } = state;
+  const { temperatureSync, finalise, supplierCredit } = state;
   const { open: supplierCreditModalOpen } = supplierCredit;
+  const { modalIsOpen: temperatureSyncModalIsOpen } = temperatureSync;
   const { finaliseModalOpen } = finalise;
+
+  const usingVaccines = selectUsingVaccines(state);
+  const isBreachModalOpen = selectIsBreachModalOpen(state);
   const currentUser = selectCurrentUser(state);
   const isSyncing = selectIsSyncing(state);
-
+  const breachModalTitle = selectBreachModalTitle(state);
   return {
+    usingVaccines,
+    temperatureSyncModalIsOpen,
     isSyncing,
     currentUser,
     finaliseModalOpen,
     supplierCreditModalOpen,
+    isBreachModalOpen,
+    breachModalTitle,
     creditTitle: selectTitle(state),
   };
 };
@@ -243,12 +306,20 @@ MSupplyMobileAppContainer.defaultProps = {
 };
 
 MSupplyMobileAppContainer.propTypes = {
+  usingVaccines: PropTypes.bool.isRequired,
+  requestBluetooth: PropTypes.func.isRequired,
+  syncTemperatures: PropTypes.func.isRequired,
   isSyncing: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
   currentUser: PropTypes.object,
   closeSupplierCreditModal: PropTypes.func.isRequired,
   supplierCreditModalOpen: PropTypes.bool.isRequired,
   creditTitle: PropTypes.string,
+  isBreachModalOpen: PropTypes.bool.isRequired,
+  closeBreachModal: PropTypes.func.isRequired,
+  breachModalTitle: PropTypes.string.isRequired,
+  temperatureSyncModalIsOpen: PropTypes.bool.isRequired,
+  closeTemperatureSyncModal: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MSupplyMobileAppContainer);

@@ -9,17 +9,22 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { SearchBar, DataTablePageView, ToggleBar } from '../widgets';
+import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import { useNavigationFocus, useSyncListener } from '../hooks';
-import { gotoCustomerRequisition } from '../navigation/actions';
+import { useNavigationFocus, useSyncListener, useDebounce } from '../hooks';
+import { createCustomerRequisition, gotoCustomerRequisition } from '../navigation/actions';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
 import globalStyles from '../globalStyles';
-import { buttonStrings, generalStrings } from '../localization';
+import { buttonStrings, generalStrings, modalStrings } from '../localization';
 
 import { ROUTES } from '../navigation/constants';
+import { MODAL_KEYS } from '../utilities';
+import { DataTablePageModal } from '../widgets/modals';
+import { selectCurrentUser } from '../selectors/user';
+import { BottomConfirmModal } from '../widgets/bottomModals/index';
+import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
 /**
  * Renders a mSupply mobile page with a list of Customer requisitions.
@@ -48,10 +53,47 @@ export const CustomerRequisitions = ({
   onFilterData,
   toggleFinalised,
   onSortColumn,
+  onNewRequisition,
+  modalKey,
+  onCloseModal,
+  currentUser,
+  onCheck,
+  onUncheck,
+  hasSelection,
+  onDeselectAll,
+  onDeleteRecords,
+  dataState,
 }) => {
   // Custom hook to refresh data on this page when becoming the head of the stack again.
   useNavigationFocus(navigation, refreshData);
   useSyncListener(refreshData, 'Requisition');
+  const toggleCurrentAndPast = useDebounce(toggleFinalised, 250, true);
+  const runWithLoadingIndicator = useLoadingIndicator();
+
+  const getCallback = useCallback((colKey, propName) => {
+    switch (colKey) {
+      case 'remove':
+        if (propName === 'onCheck') return onCheck;
+        return onUncheck;
+      default:
+        return null;
+    }
+  }, []);
+
+  const getModalOnSelect = () => {
+    switch (modalKey) {
+      case MODAL_KEYS.PROGRAM_CUSTOMER_REQUISITION:
+        return params => {
+          onCloseModal();
+          runWithLoadingIndicator(() =>
+            dispatch(createCustomerRequisition({ ...params, currentUser }))
+          );
+        };
+
+      default:
+        return null;
+    }
+  };
 
   const onPressRow = useCallback(rowData => dispatch(gotoCustomerRequisition(rowData)), []);
 
@@ -61,15 +103,17 @@ export const CustomerRequisitions = ({
       const rowKey = keyExtractor(item);
       return (
         <DataTableRow
+          rowState={dataState.get(rowKey)}
           rowData={data[index]}
           rowKey={rowKey}
           columns={columns}
           onPress={onPressRow}
           rowIndex={index}
+          getCallback={getCallback}
         />
       );
     },
-    [data]
+    [data, dataState]
   );
 
   const renderHeader = useCallback(
@@ -88,15 +132,19 @@ export const CustomerRequisitions = ({
     () => (
       <ToggleBar
         toggles={[
-          { text: buttonStrings.current, onPress: toggleFinalised, isOn: !showFinalised },
-          { text: buttonStrings.past, onPress: toggleFinalised, isOn: showFinalised },
+          { text: buttonStrings.current, onPress: toggleCurrentAndPast, isOn: !showFinalised },
+          { text: buttonStrings.past, onPress: toggleCurrentAndPast, isOn: showFinalised },
         ]}
       />
     ),
     [showFinalised]
   );
 
-  const { pageTopSectionContainer, pageTopLeftSectionContainer } = globalStyles;
+  const {
+    pageTopSectionContainer,
+    pageTopLeftSectionContainer,
+    pageTopRightSectionContainer,
+  } = globalStyles;
   return (
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
@@ -108,6 +156,9 @@ export const CustomerRequisitions = ({
             placeholder={`${generalStrings.search_by} ${generalStrings.requisition_number} ${generalStrings.or} ${generalStrings.customer}`}
           />
         </View>
+        <View style={pageTopRightSectionContainer}>
+          <PageButton text={buttonStrings.new_requisition} onPress={onNewRequisition} />
+        </View>
       </View>
       <DataTable
         data={data}
@@ -115,6 +166,21 @@ export const CustomerRequisitions = ({
         renderHeader={renderHeader}
         keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}
+      />
+
+      <BottomConfirmModal
+        isOpen={hasSelection}
+        questionText={modalStrings.delete_these_requisitions}
+        onCancel={onDeselectAll}
+        onConfirm={onDeleteRecords}
+        confirmText={modalStrings.remove}
+      />
+      <DataTablePageModal
+        isOpen={!!modalKey}
+        modalKey={modalKey}
+        onClose={onCloseModal}
+        onSelect={getModalOnSelect()}
+        dispatch={dispatch}
       />
     </DataTablePageView>
   );
@@ -126,12 +192,17 @@ const mapDispatchToProps = dispatch => ({
     dispatch(PageActions.filterDataWithFinalisedToggle(value, ROUTES.CUSTOMER_REQUISITIONS)),
   refreshData: () =>
     dispatch(PageActions.refreshDataWithFinalisedToggle(ROUTES.CUSTOMER_REQUISITIONS)),
+  onNewRequisition: () =>
+    dispatch(
+      PageActions.openModal(MODAL_KEYS.PROGRAM_CUSTOMER_REQUISITION, ROUTES.CUSTOMER_REQUISITIONS)
+    ),
 });
 
 const mapStateToProps = state => {
   const { pages } = state;
   const { customerRequisitions } = pages;
-  return customerRequisitions;
+  const currentUser = selectCurrentUser(state);
+  return { ...customerRequisitions, currentUser };
 };
 
 export const CustomerRequisitionsPage = connect(
@@ -157,4 +228,14 @@ CustomerRequisitions.propTypes = {
   onFilterData: PropTypes.func.isRequired,
   toggleFinalised: PropTypes.func.isRequired,
   onSortColumn: PropTypes.func.isRequired,
+  onNewRequisition: PropTypes.func.isRequired,
+  modalKey: PropTypes.string.isRequired,
+  onCloseModal: PropTypes.func.isRequired,
+  currentUser: PropTypes.object.isRequired,
+  onCheck: PropTypes.func.isRequired,
+  onUncheck: PropTypes.func.isRequired,
+  hasSelection: PropTypes.bool.isRequired,
+  onDeselectAll: PropTypes.func.isRequired,
+  onDeleteRecords: PropTypes.func.isRequired,
+  dataState: PropTypes.object.isRequired,
 };

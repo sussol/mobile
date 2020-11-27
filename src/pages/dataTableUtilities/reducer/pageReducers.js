@@ -15,6 +15,10 @@ export const updatePaymentType = (state, action) => {
   return { ...state, currentPaymentType: paymentType };
 };
 
+export const openDatePicker = state => ({ ...state, datePickerIsOpen: true });
+
+export const closeDatePicker = state => ({ ...state, datePickerIsOpen: false });
+
 /**
  * Edits the name field in the current stores state.
  */
@@ -46,11 +50,13 @@ export const openModal = (state, action) => {
 
       return { ...state, modalKey, modalValue: name };
     }
-
-    case MODAL_KEYS.ENFORCE_REQUISITION_REASON:
     case MODAL_KEYS.REQUISITION_REASON:
     case MODAL_KEYS.SELECT_ITEM_BATCH_SUPPLIER:
     case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
+    case MODAL_KEYS.SELECT_SENSOR_LOCATION:
+    case MODAL_KEYS.SELECT_LOCATION:
+    case MODAL_KEYS.SELECT_VVM_STATUS:
+    case MODAL_KEYS.EDIT_LOCATION:
     case MODAL_KEYS.STOCKTAKE_REASON: {
       const { data, keyExtractor } = state;
       const { rowKey } = payload;
@@ -131,4 +137,11 @@ export const openModal = (state, action) => {
  */
 export const closeModal = state => ({ ...state, modalKey: '', modalValue: null });
 
-export const PageReducerLookup = { editName, openModal, closeModal, updatePaymentType };
+export const PageReducerLookup = {
+  editName,
+  openModal,
+  closeModal,
+  updatePaymentType,
+  openDatePicker,
+  closeDatePicker,
+};

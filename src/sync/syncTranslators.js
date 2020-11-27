@@ -50,6 +50,8 @@ export const RECORD_TYPES = new SyncTranslator({
   Message: 'message',
   Name: 'name',
   NameStoreJoin: 'name_store_join',
+  NameTag: 'name_tag',
+  NameTagJoin: 'name_tag_join',
   NumberSequence: 'number',
   NumberToReuse: 'number_reuse',
   Options: 'options',
@@ -75,6 +77,15 @@ export const RECORD_TYPES = new SyncTranslator({
   InsuranceProvider: 'insuranceProvider',
   InsurancePolicy: 'nameInsuranceJoin',
   Currency: 'currency',
+  VaccineVialMonitorStatus: 'vaccine_vial_monitor_status',
+  VaccineVialMonitorStatusLog: 'vaccine_vial_monitor_status_log',
+  Sensor: 'sensor',
+  Location: 'Location',
+  LocationType: 'Location_type',
+  LocationMovement: 'location_movement',
+  TemperatureLog: 'temperature_log',
+  TemperatureBreach: 'temperature_breach',
+  TemperatureBreachConfiguration: 'temperature_breach_config',
 });
 
 export const REQUISITION_TYPES = new SyncTranslator({

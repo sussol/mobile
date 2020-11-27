@@ -52,7 +52,7 @@ const EditableCell = React.memo(
     debug,
     keyboardType,
     placeholder,
-    placeholderColour,
+    placeholderColor,
     cellTextStyle,
   }) => {
     if (debug) console.log(`- EditableCell: ${value}`);
@@ -85,7 +85,7 @@ const EditableCell = React.memo(
       const text = usingPlaceholder ? placeholder : value;
       const internalTextStyle = getAdjustedStyle(textStyle, width);
       const unfocusedTextStyle = usingPlaceholder
-        ? { ...internalTextStyle, color: placeholderColour }
+        ? { ...internalTextStyle, color: placeholderColor }
         : internalTextStyle;
       return (
         <TouchableWithoutFeedback style={touchableStyle} onPress={focusCell}>
@@ -102,7 +102,7 @@ const EditableCell = React.memo(
 
     const internalTextStyle = getAdjustedStyle(textInputStyle, width);
     const focusedTextStyle = usingPlaceholder
-      ? { ...internalTextStyle, color: placeholderColour }
+      ? { ...internalTextStyle, color: placeholderColor }
       : { ...internalTextStyle };
 
     // Render a Cell with a textInput.
@@ -144,7 +144,7 @@ EditableCell.propTypes = {
   isLastCell: PropTypes.bool,
   debug: PropTypes.bool,
   placeholder: PropTypes.string,
-  placeholderColour: PropTypes.string,
+  placeholderColor: PropTypes.string,
   keyboardType: PropTypes.oneOf([
     'default',
     'number-pad',
@@ -170,7 +170,7 @@ EditableCell.defaultProps = {
   debug: false,
   keyboardType: 'numeric',
   placeholder: '',
-  placeholderColour: '#CDCDCD',
+  placeholderColor: '#CDCDCD',
 };
 
 export default EditableCell;

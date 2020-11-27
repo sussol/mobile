@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -16,7 +17,7 @@ import { getAdjustedStyle } from './utilities';
  * @param {string|number} rowKey     Unique key associated to row cell is in
  * @param {string|number} columnKey  Unique key associated to column cell is in
  * @param {bool} isDisabled          If `true` will render a plain Cell element with no interaction
- * @param {String} placeholderColour Placholder text colour
+ * @param {String} placeholderColor  Placeholder text color
  * @param {Object}  viewStyle        Style object for the wrapping View component
  * @param {Object}  textStyle        Style object for the inner Text component
  * @param {Object}  textInputStyle   Style object for TextInput component.
@@ -28,7 +29,7 @@ import { getAdjustedStyle } from './utilities';
  * @param {Bool}  isLastCell         Indicator if this cell is last in a row,
  *                                   removing the borderRight,
  * @param {Func}  onChangeText       Callback for the onChangeText event.
- * @param {String} underlineColor    Underline colour of TextInput on Android.
+ * @param {String} underlineColor    Underline color of TextInput on Android.
  */
 const TextInputCell = React.memo(
   ({
@@ -36,7 +37,7 @@ const TextInputCell = React.memo(
     rowKey,
     columnKey,
     isDisabled,
-    placeholderColour,
+    placeholderColor,
     onChangeText,
     isLastCell,
     width,
@@ -48,16 +49,27 @@ const TextInputCell = React.memo(
     textInputStyle,
     cellTextStyle,
     underlineColor,
+    onFocus,
+    onBlur,
   }) => {
     if (debug) console.log(`- TextInputCell: ${value}`);
-
     const usingPlaceholder = placeholder && !value;
 
-    const { focusNextCell, getRefIndex, getCellRef } = React.useContext(RefContext);
+    const { focusNextCell, getRefIndex, getCellRef, adjustToTop } = React.useContext(RefContext);
     const refIndex = getRefIndex(rowIndex, columnKey);
+    const ref = getCellRef(refIndex);
 
     const onEdit = newValue => onChangeText(newValue, rowKey, columnKey);
     const focusNext = () => focusNextCell(refIndex);
+
+    // Scrolls the parent scroll view such that this row is near the top of the data table,
+    // which should ensure it is above the keyboard - without it, if the row is in a position
+    // which will be behind the keyboard once it appears, the keyboard will show then disappear
+    // jankily. Also calls the isFocus callback with { rowKey, columnKey, value }
+    const internalOnFocus = () => {
+      if (onFocus) onFocus({ rowKey, columnKey, value });
+      adjustToTop(rowIndex);
+    };
 
     // Render a plain Cell if disabled.
     if (isDisabled) {
@@ -80,17 +92,19 @@ const TextInputCell = React.memo(
     return (
       <View style={internalViewStyle}>
         <TextInput
-          ref={getCellRef(refIndex)}
+          ref={ref}
           placeholder={placeholder}
           style={internalTextStyle}
           value={usingPlaceholder ? '' : String(value)}
-          placeholderTextColor={placeholderColour}
+          placeholderTextColor={placeholderColor}
           onChangeText={onEdit}
           onSubmitEditing={focusNext}
           underlineColorAndroid={underlineColor}
           keyboardType={keyboardType}
           blurOnSubmit={false}
           selectTextOnFocus
+          onFocus={internalOnFocus}
+          onBlur={onBlur}
         />
       </View>
     );
@@ -98,11 +112,13 @@ const TextInputCell = React.memo(
 );
 
 TextInputCell.propTypes = {
+  onBlur: PropTypes.func,
+  onFocus: PropTypes.func,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   columnKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   isDisabled: PropTypes.bool,
-  placeholderColour: PropTypes.string,
+  placeholderColor: PropTypes.string,
   onChangeText: PropTypes.func.isRequired,
   cellTextStyle: PropTypes.object,
   viewStyle: PropTypes.object,
@@ -134,8 +150,10 @@ TextInputCell.defaultProps = {
   debug: false,
   keyboardType: 'numeric',
   placeholder: '',
-  placeholderColour: '#CDCDCD',
+  placeholderColor: '#CDCDCD',
   underlineColor: '#CDCDCD',
+  onFocus: null,
+  onBlur: null,
 };
 
 export default TextInputCell;

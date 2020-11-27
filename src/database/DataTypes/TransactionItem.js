@@ -1,5 +1,5 @@
 import Realm from 'realm';
-import { complement } from 'set-manipulator';
+import { complement, union } from 'set-manipulator';
 
 import { createRecord, getTotal } from '../utilities';
 
@@ -20,6 +20,14 @@ export class TransactionItem extends Realm.Object {
       throw new Error('Cannot delete an item from a finalised transaction');
     }
     database.delete('TransactionBatch', this.batches);
+  }
+
+  get hasValidDoses() {
+    return this.batches.every(({ hasValidDoses }) => hasValidDoses);
+  }
+
+  get isVaccine() {
+    return !!this?.item?.isVaccine;
   }
 
   /**
@@ -269,6 +277,53 @@ export class TransactionItem extends Realm.Object {
       });
     });
   };
+
+  /**
+   * Sets the doses for all underlying transaction batches. Rather than applying
+   * all doses in FEFO, apply an even distribution of doses over the transaction
+   * batches.
+   * @param {Number} value The number of doses to set for this item
+   */
+  setDoses(database, value) {
+    const dosesToSet = Math.min(value, this.totalQuantity * this.dosesPerVial);
+    const dosesToAssignToEachBatch = dosesToSet / this.totalQuantity;
+
+    this.resetAllDoses(database);
+    this.batches.sorted('expiryDate', false).forEach(batch => {
+      const { totalQuantity: thisBatchesQuantity } = batch;
+      batch.setDoses(database, Math.floor(dosesToAssignToEachBatch * thisBatchesQuantity));
+    });
+  }
+
+  get dosesPerVial() {
+    return this.isVaccine ? this.item?.doses ?? 0 : 0;
+  }
+
+  get doses() {
+    return this.batches.sum('doses');
+  }
+
+  get hasBreached() {
+    return this.batches.some(({ hasBreached }) => hasBreached);
+  }
+
+  get breaches() {
+    return (
+      this.batches?.reduce((acc, { breaches }) => union(acc, breaches, ({ id }) => id), []) ?? []
+    );
+  }
+
+  /**
+   * Sets the doses for this TransactionItem to 0.
+   */
+  resetAllDoses(database) {
+    const { batches } = this;
+    batches.forEach(batch => {
+      batch.doses = 0;
+
+      database.save('TransactionBatch', batch);
+    });
+  }
 }
 
 TransactionItem.schema = {

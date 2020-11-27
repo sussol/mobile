@@ -5,6 +5,7 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "create": "Create",
+    "delete_these_fridges": "Are you sure you want to delete these fridges?",
     "create_cash_transaction": "Create new cash transaction",
     "delete_these_invoices": "Are you sure you want to delete these invoices?",
     "delete_these_requisitions": "Are you sure you want to delete these requisitions?",
@@ -46,7 +47,13 @@
     "customer_no_masterlist_available": "This customer has no master lists!",
     "supplier_no_masterlist_available": "Your store has no master lists!",
     "emergency_orders_can_only_have": "Emergency orders can only have",
-    "items_remove_some": "items! Remove some before you can finalise"
+    "items_remove_some": "items! Remove some before you can finalise",
+    "some_item_have_invalid_doses": "This invoice has items with an invalid amount of doses!",
+    "select_a_location": "Select a location",
+    "select_vvm_status": "Select vaccine vial monitor status",
+    "location_details": "Location Details",
+    "requisition_invalid_closing_stock": "Can't finalise a requisition which has items with a negative closing quantity. Please adjust these quantities before trying to finalise!",
+    "requisition_days_out_of_stock": "Can't finalise a requisition with items that have a higher days out of stock value than the length of the requisition's period"
   },
   "fr": {
     "add_at_least_one_item_before_finalising": "Vous devez ajouter au moins un article avant de finaliser",

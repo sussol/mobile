@@ -24,6 +24,8 @@ export const deleteRecord = (database, recordType, primaryKey, primaryKeyField =
   };
 
   switch (recordType) {
+    case 'NameTag':
+    case 'NameTagJoin':
     case 'Item':
     case 'ItemBatch':
     case 'ItemCategory':
@@ -35,6 +37,7 @@ export const deleteRecord = (database, recordType, primaryKey, primaryKeyField =
     case 'NameStoreJoin':
     case 'NumberSequence':
     case 'NumberToReuse':
+    case 'Prescriber':
     case 'Requisition':
     case 'RequisitionItem':
     case 'Stocktake':

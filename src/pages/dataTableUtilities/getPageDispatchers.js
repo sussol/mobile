@@ -34,17 +34,24 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
       dispatch(PageActions.refreshData(route));
     },
     onToggleTransactionType: () => dispatch(PageActions.toggleTransactionType(route)),
+    onToggleFridges: () => dispatch(PageActions.toggleFridges(route)),
+    onToggleSensors: () => dispatch(PageActions.toggleSensors(route)),
     onSelectIndicator: indicatorCode => dispatch(PageActions.selectIndicator(indicatorCode, route)),
+    onEditIndicatorValue: (value, rowKey, columnKey) =>
+      dispatch(PageActions.editIndicatorValue(value, rowKey, columnKey, route)),
     onShowOverStocked: () => dispatch(PageActions.showOverStocked(route)),
     onHideOverStocked: () => dispatch(PageActions.hideOverStocked(route)),
     onDeselectAll: () => dispatch(PageActions.deselectAll(route)),
     onSetRequestedToSuggested: () => dispatch(PageActions.setRequestedToSuggested(route)),
     onSortColumn: columnKey => dispatch(PageActions.sortData(columnKey, route)),
 
-    onEditIndicatorValue: (value, rowKey, columnKey) =>
-      dispatch(PageActions.editIndicatorValue(value, rowKey, columnKey, route)),
-
     // Modals
+    onSelectSensorLocation: rowKey =>
+      dispatch(PageActions.openModal(MODAL_KEYS.SELECT_SENSOR_LOCATION, rowKey, route)),
+    onSelectLocation: rowKey =>
+      dispatch(PageActions.openModal(MODAL_KEYS.SELECT_LOCATION, rowKey, route)),
+    onSelectVvmStatus: rowKey =>
+      dispatch(PageActions.openModal(MODAL_KEYS.SELECT_VVM_STATUS, rowKey, route)),
     onOpenRegimenDataModal: () =>
       dispatch(PageActions.openModal(MODAL_KEYS.VIEW_REGIMEN_DATA, route)),
     onOpenOutdatedItemModal: () =>
@@ -58,11 +65,25 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
     onNewCustomerInvoice: () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_CUSTOMER, route)),
     onNewPrescription: () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_PATIENT, route)),
     onCloseModal: () => dispatch(PageActions.closeModal(route)),
+    onEditLocation: rowKey =>
+      dispatch(PageActions.openModal(MODAL_KEYS.EDIT_LOCATION, rowKey, route)),
+    onSaveLocation: locationValues => dispatch(PageActions.saveLocation(locationValues, route)),
 
     // Modal callbacks
     onApplyReason: ({ item }) => dispatch(PageActions.applyReason(item, route)),
     onConfirmBatchEdit: () => dispatch(PageActions.closeAndRefresh(route)),
+    onApplySensorLocation: ({ item }) => dispatch(PageActions.editSensorLocation(item, route)),
+    onApplyTransactionBatchLocation: ({ item }) =>
+      dispatch(PageActions.editTransactionBatchLocation(item, route)),
+    onApplyStocktakeBatchLocation: ({ item }) =>
+      dispatch(PageActions.editStocktakeBatchLocation(item, route)),
+    onApplyTransactionBatchVvmStatus: ({ item }) =>
+      dispatch(PageActions.editTransactionBatchVvmStatus(item, route)),
+    onApplyStocktakeBatchVvmStatus: ({ item }) =>
+      dispatch(PageActions.editStocktakeBatchVvmStatus(item, route)),
+
     // Adding items/batch rows.
+    onAddFridge: () => dispatch(PageActions.addFridge(route)),
     onAddTransactionBatch: item => dispatch(PageActions.addTransactionBatch(item, route)),
     onAddStocktakeBatch: () => dispatch(PageActions.addStocktakeBatch(route)),
     onAddTransactionItem: item => dispatch(PageActions.addItem(item, 'TransactionItem', route)),
@@ -93,10 +114,18 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
     onDeleteBatches: () => dispatch(PageActions.deleteSelectedBatches(dataType, route)),
 
     // Editable cell callbacks
+    onEditCountedQuantity: (newValue, rowKey) =>
+      dispatch(PageActions.editCountedQuantity(newValue, rowKey, route)),
+    onEditSensorName: (newValue, rowKey) =>
+      dispatch(PageActions.editSensorName(newValue, rowKey, route)),
+    onEditLocationCode: (newValue, rowKey) =>
+      dispatch(PageActions.editLocationCode(newValue, rowKey, route)),
+    onEditLocationDescription: (newValue, rowKey) =>
+      dispatch(PageActions.editLocationDescription(newValue, rowKey, route)),
     onEditTransactionBatchName: (newValue, rowKey) =>
       dispatch(PageActions.editTransactionBatchName(newValue, rowKey, route)),
-    onEditRequiredQuantityWithReason: (newValue, rowKey) =>
-      dispatch(PageActions.editRequisitionItemRequiredQuantityWithReason(newValue, rowKey, route)),
+    onEditBatchDoses: (newValue, rowKey) =>
+      dispatch(PageActions.editBatchDoses(newValue, rowKey, route)),
     onEditRequiredQuantity: (newValue, rowKey) =>
       dispatch(PageActions.editRequisitionItemRequiredQuantity(newValue, rowKey, route)),
     onEditTotalQuantity: (newValue, rowKey) =>
@@ -110,6 +139,7 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
     onEditSellPrice: (newValue, rowKey) =>
       dispatch(PageActions.editSellPrice(newValue, rowKey, route)),
     dispatch,
+    onToggleColumnSet: () => dispatch(PageActions.toggleColumnSet(route)),
   };
 
   return dispatches;

@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
-import { ItemDetails } from '../widgets/bottomModals/ItemDetails';
 import { DataTablePageView, SearchBar } from '../widgets';
 
 import globalStyles from '../globalStyles';
@@ -20,6 +19,7 @@ import { useSyncListener } from '../hooks';
 
 import { generalStrings } from '../localization';
 import { SupplierCreditActions } from '../actions/SupplierCreditActions';
+import { RowDetailActions } from '../actions/RowDetailActions';
 
 /**
  * Renders a mSupply mobile page with Items and their stock levels.
@@ -104,14 +104,13 @@ export const Stock = ({
         getItemLayout={getItemLayout}
         columns={columns}
       />
-
-      <ItemDetails isOpen={!!selectedRow} item={selectedRow} onClose={onDeselectRow} />
     </DataTablePageView>
   );
 };
 
 const mapDispatchToProps = dispatch => ({
   ...getPageDispatchers(dispatch, '', 'stock'),
+  onSelectRow: rowKey => dispatch(RowDetailActions.openItemDetail(rowKey)),
   refund: rowKey => dispatch(SupplierCreditActions.createFromItem(rowKey)),
 });
 

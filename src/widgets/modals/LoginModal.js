@@ -22,6 +22,7 @@ import { LANGUAGE_NAMES, LANGUAGE_CHOICE, authStrings, navStrings } from '../../
 import { getModalTitle, MODAL_KEYS } from '../../utilities';
 import { setCurrencyLocalisation } from '../../localization/currency';
 import { setDateLocale } from '../../localization/utilities';
+import { UIDatabase } from '../../database';
 
 export class LoginModal extends React.Component {
   constructor(props) {
@@ -128,6 +129,10 @@ export class LoginModal extends React.Component {
   render() {
     const { isAuthenticated, settings } = this.props;
     const { authStatus, username, password, appVersion, isLanguageModalOpen } = this.state;
+    const storeName = UIDatabase.objects('Name').filtered(
+      'id == $0',
+      settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID)
+    )[0]?.name;
 
     return (
       <ModalContainer
@@ -136,7 +141,6 @@ export class LoginModal extends React.Component {
         backdropPressToClose={false}
         swipeToClose={false}
         backgroundColor={WHITE}
-        fullScreen
       >
         <View style={[globalStyles.verticalContainer, { flex: 1 }]}>
           <View style={[globalStyles.authFormContainer]}>
@@ -145,11 +149,12 @@ export class LoginModal extends React.Component {
               style={globalStyles.authFormLogo}
               source={require('../../images/logo_large.png')}
             />
-            <View style={globalStyles.horizontalContainer}>
-              <Text style={[globalStyles.authFormTextInputStyle, localStyles.syncSiteName]}>
-                {settings.get(SETTINGS_KEYS.SYNC_SITE_NAME)}
-              </Text>
-            </View>
+            <Text style={[globalStyles.authFormTextInputStyle, { flex: 0 }]}>
+              {authStrings.site}: {settings.get(SETTINGS_KEYS.SYNC_SITE_NAME)}
+            </Text>
+            <Text style={[globalStyles.authFormTextInputStyle, { flex: 0, marginVertical: 10 }]}>
+              {authStrings.store}: {storeName}
+            </Text>
             <View style={globalStyles.horizontalContainer}>
               <TextInput
                 style={globalStyles.authFormTextInputStyle}
@@ -252,8 +257,5 @@ LoginModal.propTypes = {
 const localStyles = StyleSheet.create({
   bottomIcon: {
     color: GREY,
-  },
-  syncSiteName: {
-    textAlign: 'center',
   },
 });

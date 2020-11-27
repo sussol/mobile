@@ -14,6 +14,29 @@ import { COLUMN_KEYS } from './constants';
 import { ROUTES } from '../../navigation/constants';
 import { SETTINGS_KEYS } from '../../settings';
 
+export const vaccinesAdminInitialiser = () => {
+  const backingData = UIDatabase.objects('Location');
+  const data = backingData.slice();
+  const sortedData = sortDataBy(data, COLUMN_KEYS.CODE, false);
+
+  return {
+    backingData,
+    data: sortedData,
+    dataState: new Map(),
+    hasSelection: false,
+    sortKey: COLUMN_KEYS.CODE,
+    isAscending: true,
+    keyExtractor: recordKeyExtractor,
+    searchTerm: '',
+    modalKey: '',
+    columns: getColumns('fridges'),
+    route: ROUTES.VACCINES_ADMIN,
+    dataSet: 'fridges',
+    filterDataKeys: ['description', 'code'],
+    modalValue: null,
+  };
+};
+
 export const cashRegisterInitialiser = () => {
   const backingData = UIDatabase.objects('CashTransaction');
   const filteredData = backingData.slice();
@@ -101,7 +124,7 @@ export const customerInvoicesInitialiser = () => {
  * @returns  {object}
  */
 const customerRequisitionInitialiser = requisition => {
-  const { indicators, items: backingData } = requisition;
+  const { indicators, items: backingData, program, isRemoteOrder } = requisition;
   const sortedData = backingData.sorted('item.name').slice();
 
   const usingIndicators = !!indicators?.length;
@@ -112,6 +135,7 @@ const customerRequisitionInitialiser = requisition => {
   return {
     pageObject: requisition,
     backingData: requisition.items,
+    columnSet: program && isRemoteOrder ? 'b' : 'a',
     data: sortedData,
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
@@ -127,9 +151,13 @@ const customerRequisitionInitialiser = requisition => {
     indicatorColumns,
     indicatorRows,
     indicators,
+    isRemoteOrder,
+    datePickerIsOpen: false,
     route: ROUTES.CUSTOMER_REQUISITION,
     columns: getColumns(ROUTES.CUSTOMER_REQUISITION),
-    getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_REQUISITION),
+    getPageInfoColumns: getPageInfoColumns(
+      program ? ROUTES.CUSTOMER_REQUISITIONS_WITH_PROGRAMS : ROUTES.CUSTOMER_REQUISITION
+    ),
   };
 };
 
@@ -149,8 +177,11 @@ const customerRequisitionsInitialiser = () => {
   return {
     backingData,
     data: sortedData,
+    dataState: new Map(),
+    hasSelection: false,
     keyExtractor: recordKeyExtractor,
     searchTerm: '',
+    modalKey: '',
     filterDataKeys: ['serialNumber', 'otherStoreName.name'],
     sortKey: 'serialNumber',
     isAscending: false,
@@ -448,6 +479,7 @@ const pageInitialisers = {
   stock: stockInitialiser,
   stocktakeBatchEditModal: stocktakeBatchInitialiser,
   stocktakeBatchEditModalWithReasons: stocktakeBatchInitialiser,
+  stocktakeBatchEditModalWithVaccines: stocktakeBatchInitialiser,
   stocktakeBatchEditModalWithPrices: stocktakeBatchInitialiser,
   stocktakeBatchEditModalWithReasonsAndPrices: stocktakeBatchInitialiser,
   stocktakeEditor: stocktakeEditorInitialiser,
@@ -458,6 +490,7 @@ const pageInitialisers = {
   supplierRequisition: supplierRequisitionInitialiser,
   supplierRequisitions: supplierRequisitionsInitialiser,
   cashRegister: cashRegisterInitialiser,
+  vaccinesAdmin: vaccinesAdminInitialiser,
 };
 
 /**

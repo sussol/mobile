@@ -394,7 +394,24 @@ export class Synchroniser {
   integrateRecords(syncJson) {
     this.database.write(() => {
       syncJson.forEach(syncRecord => {
-        integrateRecord(this.database, this.settings, syncRecord);
+        try {
+          integrateRecord(this.database, this.settings, syncRecord);
+        } catch (error) {
+          // There was an error with data (e.g. caused by null object).
+          const siteName = this.settings.get(SYNC_SITE_NAME);
+          const syncUrl = this.settings.get(SYNC_URL);
+          const originalMessage = error.message;
+
+          // Decorate the error with additional detail and notify
+          error.message =
+            `SYNC ERROR. siteName: ${siteName}, serverUrl: ${syncUrl}, ` +
+            `syncRecord.id: ${syncRecord.id}, message: ${originalMessage}`;
+          bugsnagClient.notify(error);
+
+          // Rethrow with user friendly message
+          error.message = `There was an error syncing. Contact mSupply mobile support.\n${originalMessage}\n`;
+          throw error;
+        }
       });
     });
   }

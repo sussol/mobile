@@ -6,15 +6,10 @@
 
 import PropTypes from 'prop-types';
 import React, { useMemo, useRef, useCallback } from 'react';
-import {
-  StyleSheet,
-  VirtualizedList,
-  VirtualizedListPropTypes,
-  Keyboard,
-  View,
-} from 'react-native';
+import { StyleSheet, VirtualizedList, VirtualizedListPropTypes, Keyboard } from 'react-native';
 import RefContext from './RefContext';
 import { DATA_TABLE_DEFAULTS } from './constants';
+import { KeyboardSpacing } from '../KeyboardSpacing';
 
 /**
  * Base DataTable component. Wrapper around VirtualizedList, providing
@@ -109,8 +104,6 @@ const DataTable = React.memo(
       [renderRow]
     );
 
-    const footer = useCallback(() => <View style={{ height: footerHeight }} />, [footerHeight]);
-
     return (
       <RefContext.Provider value={contextValue}>
         {renderHeader && renderHeader()}
@@ -120,7 +113,7 @@ const DataTable = React.memo(
           data={data}
           keyboardShouldPersistTaps="always"
           style={style}
-          ListFooterComponent={footer}
+          ListFooterComponent={<KeyboardSpacing />}
           renderItem={renderItem}
           {...otherProps}
         />

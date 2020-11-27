@@ -23,6 +23,14 @@ export class StocktakeItem extends Realm.Object {
     database.delete('StocktakeBatch', this.batches);
   }
 
+  get hasValidDoses() {
+    return this.batches.every(({ hasValidDoses }) => hasValidDoses);
+  }
+
+  get isVaccine() {
+    return this.item?.isVaccine ?? false;
+  }
+
   /**
    * Get snapshot of total quantity of item.
    *
@@ -139,54 +147,11 @@ export class StocktakeItem extends Realm.Object {
   }
 
   /**
-   * Returns the title of the most common option within this stocktakeItem's batches
-   * @return {string} The title of the reason with the highest frequency
-   */
-  get reasonTitle() {
-    if (!this.batches.length) return '';
-
-    // Mapping table for ranking reasons by usage
-    // {option.id: {option: OptionObject, count: X}, ... }
-    const options = {};
-
-    this.batches.forEach(batch => {
-      const { option } = batch;
-      if (!option) return;
-      const { id } = option;
-
-      // If we've counted this option before, increment,
-      // otherwise add to the table with an initial count of 1
-      if (options[id]) {
-        options[id].count += 1;
-      } else {
-        options[id] = { count: 1, option };
-      }
-    });
-
-    // Sort (ASC) the options by count
-    const sortedOptions = Object.values(options).sort((a, b) => b.count - a.count);
-    // Return the first option title or empty string if there aren't any options
-    return sortedOptions[0] ? sortedOptions[0].option.title : '';
-  }
-
-  /**
    * Returns a string representing the units for this stocktake item.
    * @return {string} the unit for this stocktake item, or N/A if none has been assigned.
    */
   get unitString() {
     return this.item?.unitString;
-  }
-
-  /**
-   * Returns an indicator that all batches related to this item have a correct
-   * reason/option applied. A correct reason being a `positiveInventoryAdjustment`
-   * for positive differences and vice versa for negative differences and no reason
-   * when there is no difference.
-   */
-  get hasValidReason() {
-    return this.batches.every(
-      ({ hasValidReason: batchHasValidatedReason }) => batchHasValidatedReason
-    );
   }
 
   /**

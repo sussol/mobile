@@ -1,9 +1,11 @@
+/* eslint-disable no-unused-expressions */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import Realm from 'realm';
+import { createRecord } from '../utilities';
 
 /**
  * A batch of items.
@@ -21,8 +23,35 @@ import Realm from 'realm';
  * @property  {List.<TransactionBatch>}  transactionBatches
  */
 export class ItemBatch extends Realm.Object {
+  get isVaccine() {
+    return this.item?.isVaccine ?? false;
+  }
+
+  get hasBreached() {
+    return !!this.breaches.length;
+  }
+
+  get breaches() {
+    return this.locationMovements?.reduce((acc, { breaches }) => [...acc, ...breaches], []) ?? [];
+  }
+
+  get currentVvmStatus() {
+    const vvmLogs = this.vaccineVialMonitorStatusLogs.sorted('timestamp', true);
+    const mostRecentVvmLog = vvmLogs[0];
+
+    return mostRecentVvmLog?.status;
+  }
+
+  get vvmStatusName() {
+    return this.currentVvmStatus?.description ?? '';
+  }
+
   get otherPartyName() {
     return this.supplier?.name || '';
+  }
+
+  get currentLocationMovement() {
+    return this.locationMovements.sorted('enterTimestamp', true)[0];
   }
 
   /**
@@ -84,6 +113,17 @@ export class ItemBatch extends Realm.Object {
   }
 
   /**
+   * Get this items restricted LocationType - the location type for which Location records must
+   * be related for this ItemBatch to be assigned. This is either on the ItemStoreJoin or on the
+   * underlying Item - preference to the more specific ItemStoreJoin.
+   *
+   * @param {Realm} database
+   */
+  restrictedLocationType(database) {
+    return this.item.restrictedLocationType(database);
+  }
+
+  /**
    * Add a transaction batch to be associated with this batch.
    *
    * @param  {TransactionBatch}  transactionBatch
@@ -111,6 +151,37 @@ export class ItemBatch extends Realm.Object {
   toString() {
     return `${this.itemName} - Batch ${this.batch}`;
   }
+
+  /**
+   * @param  {VaccineVialMonitorStatus} newVvmStatus
+   * @return {Bool} Indicator whether the new vvm status should be applied to this batch.
+   */
+  shouldApplyVvmStatus(newVvmStatus = {}) {
+    return newVvmStatus?.id !== this.currentVvmStatus?.id;
+  }
+
+  /**
+   * @param  {Location} newLocation
+   * @return {Bool} Indicator whether the new location should be applied to this batch.
+   */
+  shouldApplyLocation(newLocation = {}) {
+    return newLocation?.id !== this.location?.id;
+  }
+
+  leaveLocation(database) {
+    this.currentLocationMovement?.leaveLocation(database);
+  }
+
+  applyLocation(database, newLocation) {
+    this.location = newLocation;
+
+    this.leaveLocation(database);
+    return createRecord(database, 'LocationMovement', this, newLocation);
+  }
+
+  applyVvmStatus(database, newVvmStatus) {
+    return createRecord(database, 'VaccineVialMonitorStatusLog', this, newVvmStatus);
+  }
 }
 
 ItemBatch.schema = {
@@ -128,6 +199,18 @@ ItemBatch.schema = {
     supplier: { type: 'Name', optional: true },
     donor: { type: 'Name', optional: true },
     transactionBatches: { type: 'list', objectType: 'TransactionBatch' },
+    location: { type: 'Location', optional: true },
+    locationMovements: {
+      type: 'linkingObjects',
+      objectType: 'LocationMovement',
+      property: 'itemBatch',
+    },
+    doses: { type: 'double', default: 0 },
+    vaccineVialMonitorStatusLogs: {
+      type: 'linkingObjects',
+      objectType: 'VaccineVialMonitorStatusLog',
+      property: 'itemBatch',
+    },
   },
 };
 

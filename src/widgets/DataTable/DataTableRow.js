@@ -4,12 +4,12 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import currency from '../../localization/currency';
 
-import { dataTableStyles, SUSSOL_ORANGE } from '../../globalStyles';
+import { ROW_BLUE, dataTableStyles, SUSSOL_ORANGE } from '../../globalStyles';
 
 import Row from './Row';
 import Cell from './Cell';
@@ -17,9 +17,8 @@ import Cell from './Cell';
 import CheckableCell from './CheckableCell';
 import TouchableCell from './TouchableCell';
 import DropDownCell from '../DropDownCell';
-
+import TextInputCell from './TextInputCell';
 import { ExpiryDateInput } from '../ExpiryDateInput';
-
 import {
   CheckedIcon,
   UncheckedIcon,
@@ -28,15 +27,15 @@ import {
   ChevronRightIcon,
   HistoryIcon,
   PencilIcon,
+  HazardIcon,
   BookIcon,
 } from '../icons';
-import TextInputCell from './TextInputCell';
 
 import { COLUMN_TYPES, COLUMN_KEYS } from '../../pages/dataTableUtilities';
-import { generalStrings, tableStrings } from '../../localization/index';
-
+import { generalStrings, tableStrings } from '../../localization';
 import { formatStatus, formatDate } from '../../utilities';
 import { formatType } from '../../utilities/formatStatus';
+import { useDebounce } from '../../hooks';
 
 /**
  * Wrapper component for a mSupply DataTable page row.
@@ -56,10 +55,23 @@ import { formatType } from '../../utilities/formatStatus';
  *                             (colKey, propName) => callback
  */
 const DataTableRow = React.memo(
-  ({ rowData, rowState, rowKey, columns, isFinalised, getCallback, onPress, rowIndex }) => {
+  ({
+    rowData,
+    rowState,
+    rowKey,
+    columns,
+    isFinalised,
+    getCallback,
+    onPress,
+    rowIndex,
+    getCellError,
+    isValidated,
+  }) => {
     const {
       cellText,
       cellContainer,
+      warningCellContainer,
+      errorCellContainer,
       touchableCellContainer,
       editableCellText,
       editableCellTextView,
@@ -71,10 +83,19 @@ const DataTableRow = React.memo(
     } = dataTableStyles;
 
     const { isSelected = false } = rowState || {};
-    // If the row is selected, use selectedRow style, otherwise alternate row style on index.
-    const rowStyle = isSelected
-      ? selectedRowStyle
-      : (rowIndex % 2 === 0 && alternateRowStyle) || basicRowStyle;
+
+    const [hasFocus, setFocused] = React.useState(false);
+    const focus = useDebounce(shouldFocus => setFocused(shouldFocus), 50, false);
+
+    const rowStyle = useMemo(
+      () => ({
+        ...(rowIndex % 2 === 0 ? alternateRowStyle : basicRowStyle),
+        ...(isSelected && selectedRowStyle),
+        ...(!isValidated && { borderColor: SUSSOL_ORANGE, borderWidth: 1, borderRadius: 5 }),
+        ...(hasFocus && { backgroundColor: ROW_BLUE }),
+      }),
+      [rowIndex, isSelected, isValidated, hasFocus]
+    );
 
     // Callback for rendering a row of cells.
     const renderCells = useCallback(
@@ -87,13 +108,8 @@ const DataTableRow = React.memo(
           // This cell is disabled if:
           // - the page is finalised.
           // - the row has been explicitly set as disabled.
-          // - the data is disabled (i.e. data is an invoice).
-          // - the cell is a reason dropdown for a row with a difference of zero.
           const rowIsDisabled = rowState?.isDisabled ?? false;
-          const dataIsDisabled = rowData?.isFinalised ?? false;
-          const reasonIsDisabled =
-            columnKey === COLUMN_KEYS.REASON_TITLE && rowData?.difference === 0;
-          const isDisabled = isFinalised || rowIsDisabled || dataIsDisabled || reasonIsDisabled;
+          const isDisabled = isFinalised || rowIsDisabled;
 
           // Alignment of this particular column. Default to left hand ide.
           const cellAlignment = alignText || 'left';
@@ -101,24 +117,56 @@ const DataTableRow = React.memo(
           switch (type) {
             case COLUMN_TYPES.EDITABLE_STRING:
             case COLUMN_TYPES.EDITABLE_NUMERIC: {
-              // Special condition for stocktake counted total quantity cells.
-              // Use the placeholder 'Not counted' when a stocktake item or batch
-              // has not been counted yet.
-              let placeholder = '';
-              if (columnKey === COLUMN_KEYS.COUNTED_TOTAL_QUANTITY) {
-                placeholder = rowData.hasBeenCounted ? '' : tableStrings.not_counted;
-              }
+              const { isVaccine, hasBeenCounted } = rowData;
+
+              // Placeholder values which are determined on a per row basis. For example, display
+              // "Not counted" as a placeholder on a stocktake row. Placeholders are used under
+              // the condition [placeholder && !value] which can be a source of bugs with JS
+              // falsey values. I.e. if a value is 0, the placeholder will display rather than
+              // the value.
+              const extraPlaceholders = {
+                [COLUMN_KEYS.COUNTED_TOTAL_QUANTITY]: hasBeenCounted
+                  ? ''
+                  : tableStrings.not_counted,
+              };
+
+              // Extra disabled conditions for columns which can be determined per row. For example,
+              // only allow the doses column for vaccine items.
+              const disabledCondition = {
+                [COLUMN_KEYS.DOSES]: !isVaccine,
+              };
+
+              // Extra text which can be displayed for a column on a per row basis when the
+              // cell is disabled. For example display N/A on a row for the doses column rather
+              // than the underlying value "0".
+              const disabledText = {
+                [COLUMN_KEYS.DOSES]: isVaccine ? '' : generalStrings.not_available,
+              };
+
+              const value = disabledText[columnKey] ? disabledText[columnKey] : rowData[columnKey];
+              const placeholder = extraPlaceholders[columnKey] ?? '';
+
+              const inputIsDisabled = isDisabled || !!disabledCondition[columnKey];
+
+              const cellErrors = getCellError?.(rowData, columnKey);
+              const alternateCellStyleLookup = {
+                warning: warningCellContainer,
+                error: errorCellContainer,
+              };
+              const cellContainerStyle = alternateCellStyleLookup[cellErrors] ?? cellContainer;
 
               return (
                 <TextInputCell
+                  onFocus={() => focus(true)}
+                  onBlur={() => focus(false)}
                   key={columnKey}
-                  value={rowData[columnKey]}
+                  value={value}
                   rowKey={rowKey}
                   columnKey={columnKey}
                   onChangeText={getCallback(columnKey)}
-                  isDisabled={isDisabled}
+                  isDisabled={inputIsDisabled}
                   width={width}
-                  viewStyle={cellContainer[cellAlignment]}
+                  viewStyle={cellContainerStyle[cellAlignment]}
                   textViewStyle={editableCellTextView}
                   isLastCell={isLastCell}
                   keyboardType={type === COLUMN_TYPES.EDITABLE_NUMERIC ? 'numeric' : 'default'}
@@ -133,6 +181,8 @@ const DataTableRow = React.memo(
             case COLUMN_TYPES.EDITABLE_EXPIRY_DATE:
               return (
                 <ExpiryDateInput
+                  onFocus={() => focus(true)}
+                  onBlur={() => focus(false)}
                   key={columnKey}
                   value={rowData[columnKey]}
                   rowKey={rowKey}
@@ -206,12 +256,19 @@ const DataTableRow = React.memo(
                   ? generalStrings.not_available
                   : Math.round(rowData[columnKey]);
 
+              const cellErrors = getCellError?.(rowData, columnKey);
+              const alternateCellStyleLookup = {
+                warning: warningCellContainer,
+                error: errorCellContainer,
+              };
+              const cellContainerStyle = alternateCellStyleLookup[cellErrors] ?? cellContainer;
+
               return (
                 <Cell
                   key={columnKey}
                   value={value}
                   width={width}
-                  viewStyle={cellContainer[cellAlignment]}
+                  viewStyle={cellContainerStyle[cellAlignment]}
                   textStyle={cellText[cellAlignment]}
                   isLastCell={isLastCell}
                 />
@@ -231,11 +288,18 @@ const DataTableRow = React.memo(
               );
 
             case COLUMN_TYPES.ICON: {
+              const { hasBreached, isVaccine } = rowData ?? {};
+
               const icons = {
                 chevron_right: ChevronRightIcon,
                 history: () => <HistoryIcon color={SUSSOL_ORANGE} />,
                 pencil: () => <PencilIcon color={SUSSOL_ORANGE} />,
+                breach: () => (hasBreached ? <HazardIcon color={SUSSOL_ORANGE} /> : null),
                 book: () => <BookIcon color={SUSSOL_ORANGE} />,
+              };
+
+              const disabledConditions = {
+                [COLUMN_KEYS.HAS_BREACHED]: !(hasBreached && isVaccine),
               };
 
               const isEditReadOnlyRecord =
@@ -244,7 +308,8 @@ const DataTableRow = React.memo(
                 !rowData.isEditable;
               const iconComponent = isEditReadOnlyRecord ? icons.book : icons[icon];
 
-              const isDisabledIcon = isDisabled && columnKey !== COLUMN_KEYS.BATCH;
+              const isDisabledIcon =
+                (isDisabled || disabledConditions[columnKey]) && columnKey !== COLUMN_KEYS.BATCH;
 
               return (
                 <TouchableCell
@@ -261,11 +326,20 @@ const DataTableRow = React.memo(
               );
             }
 
-            case COLUMN_TYPES.DROP_DOWN:
+            case COLUMN_TYPES.DROP_DOWN: {
+              const { isVaccine = false, hasVariance = false } = rowData ?? {};
+
+              const disabledConditions = {
+                [COLUMN_KEYS.CURRENT_VVM_STATUS]: !isVaccine,
+                [COLUMN_KEYS.REASON_TITLE]: !hasVariance,
+              };
+
+              const extraDisabledCondition = disabledConditions[columnKey];
+
               return (
                 <DropDownCell
                   key={columnKey}
-                  isDisabled={isDisabled}
+                  isDisabled={isDisabled || extraDisabledCondition}
                   onPress={getCallback(columnKey)}
                   rowKey={rowKey}
                   columnKey={columnKey}
@@ -274,6 +348,7 @@ const DataTableRow = React.memo(
                   width={width}
                 />
               );
+            }
 
             default: {
               return (
@@ -289,7 +364,7 @@ const DataTableRow = React.memo(
             }
           }
         }),
-      [isFinalised, rowState, rowData, rowIndex]
+      [isFinalised, rowState, rowData, rowIndex, columns]
     );
 
     return (
@@ -311,6 +386,8 @@ DataTableRow.defaultProps = {
   getCallback: null,
   onPress: null,
   rowState: null,
+  getCellError: () => null,
+  isValidated: true,
 };
 
 DataTableRow.propTypes = {
@@ -322,6 +399,8 @@ DataTableRow.propTypes = {
   isFinalised: PropTypes.bool,
   getCallback: PropTypes.func,
   rowIndex: PropTypes.number.isRequired,
+  getCellError: PropTypes.func,
+  isValidated: PropTypes.bool,
 };
 
 export default DataTableRow;

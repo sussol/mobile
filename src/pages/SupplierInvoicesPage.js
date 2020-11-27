@@ -10,7 +10,7 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
-import { useNavigationFocus, useSyncListener } from '../hooks';
+import { useNavigationFocus, useSyncListener, useDebounce } from '../hooks';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 import { gotoSupplierInvoice, createSupplierInvoice } from '../navigation/actions';
 import { selectCurrentUser } from '../selectors/user';
@@ -53,6 +53,7 @@ export const SupplierInvoices = ({
   // such that any side effects that occur trigger a reconcilitation of data.
   useNavigationFocus(navigation, refreshData);
   useSyncListener(refreshData, ['Transaction']);
+  const toggleCurrentAndPast = useDebounce(toggleFinalised, 250, true);
 
   const onNewInvoice = () =>
     dispatch(PageActions.openModal(MODAL_KEYS.SELECT_EXTERNAL_SUPPLIER, route));
@@ -120,8 +121,8 @@ export const SupplierInvoices = ({
 
   const toggles = useMemo(
     () => [
-      { text: buttonStrings.current, onPress: toggleFinalised, isOn: !showFinalised },
-      { text: buttonStrings.past, onPress: toggleFinalised, isOn: showFinalised },
+      { text: buttonStrings.current, onPress: toggleCurrentAndPast, isOn: !showFinalised },
+      { text: buttonStrings.past, onPress: toggleCurrentAndPast, isOn: showFinalised },
     ],
     [showFinalised]
   );
@@ -163,7 +164,6 @@ export const SupplierInvoices = ({
         confirmText={modalStrings.delete}
       />
       <DataTablePageModal
-        fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
         onClose={onCloseModal}

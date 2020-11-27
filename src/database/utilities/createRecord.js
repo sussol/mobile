@@ -8,7 +8,7 @@ import { generateUUID } from 'react-native-database';
 
 import { UIDatabase } from '..';
 import { versionToInteger, formatDateAndTime } from '../../utilities';
-import { NUMBER_SEQUENCE_KEYS } from './constants';
+import { NUMBER_OF_DAYS_IN_A_MONTH, NUMBER_SEQUENCE_KEYS } from './constants';
 import { generalStrings } from '../../localization';
 import { SETTINGS_KEYS } from '../../settings';
 
@@ -631,7 +631,7 @@ const createInventoryAdjustment = (database, user, date, isAddition) => {
  */
 const createItemBatch = (database, item, batchString, supplier) => {
   // Handle cross-reference items.
-  const { realItem } = item;
+  const { realItem, isVaccine, id: itemId } = item;
 
   const itemBatch = database.create('ItemBatch', {
     id: generateUUID(),
@@ -646,6 +646,30 @@ const createItemBatch = (database, item, batchString, supplier) => {
 
   realItem.addBatch(itemBatch);
   database.save('Item', realItem);
+
+  // If this item batch is for an underlying vaccine item, auto apply a VVM status
+  if (isVaccine) {
+    // Find a VVM Status with the lowest level to auto assign to new item batches.
+    const vaccineVialMonitorStatus = database
+      .objects('VaccineVialMonitorStatus')
+      .sorted('level')[0];
+
+    // An item has a restriction of the location type a location must be related to,
+    // in order to be assigned to the item.
+    const itemStoreJoin = database
+      .objects('ItemStoreJoin')
+      .filtered('itemId == $0 && joinsThisStore == true', itemId)[0];
+    const { restrictedLocationType } = itemStoreJoin ?? {};
+    const { id: locationTypeId = '' } = restrictedLocationType ?? {};
+    const location = database
+      .objects('Location')
+      .filtered('locationType.id == $0', locationTypeId)[0];
+
+    if (itemBatch.shouldApplyLocation(location)) itemBatch.applyLocation(database, location);
+    if (itemBatch.shouldApplyVvmStatus(vaccineVialMonitorStatus)) {
+      itemBatch.applyVvmStatus(database, vaccineVialMonitorStatus);
+    }
+  }
 
   return itemBatch;
 };
@@ -667,7 +691,9 @@ const createRequisition = (
   const { name: orderTypeName, maxMOS, thresholdMOS } = orderType || {};
   const regimenData =
     program && program.parsedProgramSettings ? program.parsedProgramSettings.regimenData : null;
-  const daysToSupply = ((monthsLeadTime || 0) + (maxMOS || 1)) * 30;
+  const daysToSupply = Math.ceil(
+    ((monthsLeadTime || 0) + (maxMOS || 1)) * NUMBER_OF_DAYS_IN_A_MONTH
+  );
 
   const requisition = database.create('Requisition', {
     id: generateUUID(),
@@ -695,6 +721,44 @@ const createRequisition = (
 };
 
 /**
+ * Creates a customer requisition.
+ * @param {Database} database App-wide database accessor
+ * @param {User} user currently logged in user
+ * @param {Object} Program params Additional program-based parameters.
+ */
+const createCustomerRequisition = (
+  database,
+  user,
+  { otherStoreName, program, period, orderType = {} }
+) => {
+  const { REQUISITION_SERIAL_NUMBER } = NUMBER_SEQUENCE_KEYS;
+  const { name: orderTypeName, maxMOS, thresholdMOS } = orderType || {};
+  const daysToSupply = (maxMOS || 1) * NUMBER_OF_DAYS_IN_A_MONTH;
+
+  const requisition = database.create('Requisition', {
+    id: generateUUID(),
+    serialNumber: getNextNumber(database, REQUISITION_SERIAL_NUMBER),
+    status: 'suggested',
+    type: 'response',
+    entryDate: new Date(),
+    daysToSupply,
+    enteredBy: user,
+    otherStoreName,
+    program,
+    orderType: orderTypeName,
+    thresholdMOS,
+    period,
+  });
+
+  if (period) {
+    period.addRequisitionIfUnique(requisition);
+    database.save('Period', period);
+  }
+
+  return requisition;
+};
+
+/**
  * Create a new requisition item.
  *
  * @param   {Database}        database
@@ -707,6 +771,8 @@ const createRequisitionItem = (database, requisition, item, dailyUsage, stockOnH
   // Handle cross reference items.
   const { realItem } = item;
 
+  const { program, otherStoreName, period, type } = requisition;
+
   const requisitionItem = database.create('RequisitionItem', {
     id: generateUUID(),
     item: realItem,
@@ -718,7 +784,57 @@ const createRequisitionItem = (database, requisition, item, dailyUsage, stockOnH
     sortIndex: requisition.items.length + 1,
   });
 
+  // For a response requisition, calculate the stock on hand and incoming stock from the requisition
+  // items sent from this store to the customer. These are simple defaults.
+  if (program && type === 'response') {
+    const { startDate, endDate } = period;
+    const { id: realItemId } = realItem;
+
+    const requisitions = database
+      .objects('Requisition')
+      .filtered(
+        'otherStoreName == $0 && program == $1 && status == "finalised" && type == "response"',
+        otherStoreName,
+        program
+      )
+      .sorted([
+        ['period.startDate', true],
+        ['entryDate', true],
+      ]);
+
+    if (requisitions.length) {
+      const { id: requisitionId } = requisitions[0];
+
+      const lastRequisitionItem = database
+        .objects('RequisitionItem')
+        .filtered('requisition.id == $0 && item.id == $1', requisitionId, realItemId);
+
+      if (lastRequisitionItem[0]) requisitionItem.openingStock = lastRequisitionItem[0].stockOnHand;
+    }
+
+    const customerInvoices = database
+      .objects('TransactionBatch')
+      .filtered(
+        "type == 'stock_out' && transaction.otherParty.id == $0 && itemId == $1",
+        otherStoreName.id,
+        realItemId
+      );
+
+    const withinDateRange = customerInvoices.filtered(
+      'transaction.confirmDate >= $0 && transaction.confirmDate <= $1',
+      startDate,
+      endDate
+    );
+
+    const sum = withinDateRange.reduce((acc, { totalQuantity }) => acc + totalQuantity, 0);
+
+    requisitionItem.incomingStock = sum;
+    requisitionItem.stockOnHand = requisitionItem.incomingStock + requisitionItem.openingStock;
+  }
+
   requisition.addItem(requisitionItem);
+
+  database.save('RequisitionItem', requisitionItem);
   database.save('Requisition', requisition);
 
   return requisitionItem;
@@ -785,7 +901,19 @@ const createStocktakeItem = (database, stocktake, item) => {
  * @return  {StocktakeBatch}
  */
 const createStocktakeBatch = (database, stocktakeItem, itemBatch) => {
-  const { numberOfPacks, supplier, packSize, expiryDate, batch, costPrice, sellPrice } = itemBatch;
+  const {
+    numberOfPacks,
+    item,
+    supplier,
+    packSize,
+    expiryDate,
+    batch,
+    costPrice,
+    sellPrice,
+    location,
+    currentVvmStatus,
+  } = itemBatch;
+  const { isVaccine } = item;
 
   const stocktakeBatch = database.create('StocktakeBatch', {
     id: generateUUID(),
@@ -798,7 +926,11 @@ const createStocktakeBatch = (database, stocktakeItem, itemBatch) => {
     batch,
     costPrice,
     sellPrice,
+    location,
     sortIndex: (stocktakeItem?.stocktake?.numberOfBatches || 0) + 1 || 1,
+
+    // If the underlying item is a vaccine, auto apply the current itembatches VVM status.
+    vaccineVialMonitorStatus: isVaccine ? currentVvmStatus : null,
   });
 
   stocktakeItem.addBatch(stocktakeBatch);
@@ -845,8 +977,19 @@ const createSupplierInvoice = (database, supplier, user) => {
  * @return  {TransactionBatch}
  */
 const createTransactionBatch = (database, transactionItem, itemBatch, isAddition = true) => {
-  const { item, batch, expiryDate, packSize, costPrice, sellPrice, donor } = itemBatch;
+  const {
+    item,
+    batch,
+    expiryDate,
+    packSize,
+    costPrice,
+    sellPrice,
+    donor,
+    currentVvmStatus,
+    location,
+  } = itemBatch;
   const { transaction, note } = transactionItem || {};
+  const { isVaccine } = item;
 
   const transactionBatch = database.create('TransactionBatch', {
     id: generateUUID(),
@@ -862,8 +1005,13 @@ const createTransactionBatch = (database, transactionItem, itemBatch, isAddition
     sellPrice,
     donor,
     transaction,
+    location,
     type: isAddition ? 'stock_in' : 'stock_out',
     sortIndex: (transactionItem?.transaction?.numberOfBatches || 0) + 1 || 1,
+    sentPackSize: packSize,
+
+    // If the underlying item is a vaccine, auto apply the current itembatches VVM status.
+    vaccineVialMonitorStatus: isVaccine ? currentVvmStatus : null,
   });
 
   transactionItem.addBatch(transactionBatch);
@@ -899,6 +1047,93 @@ const createTransactionItem = (database, transaction, item, initialQuantity = 0)
   database.save('Transaction', transaction);
 
   return transactionItem;
+};
+
+const createLocation = (database, locationType, description, code) => {
+  const location = database.create('Location', {
+    id: generateUUID(),
+    description,
+    code,
+    locationType,
+  });
+
+  return location;
+};
+
+const createSensor = (database, macAddress, batteryLevel) => {
+  const sensor = database.create('Sensor', {
+    id: generateUUID(),
+    macAddress,
+    batteryLevel,
+  });
+
+  return sensor;
+};
+
+const createLocationMovement = (database, itemBatch, location) => {
+  const locationMovement = database.create('LocationMovement', {
+    id: generateUUID(),
+    itemBatch,
+    location,
+    enterTimestamp: new Date(),
+  });
+
+  itemBatch.location = location;
+  database.save('ItemBatch', itemBatch);
+
+  return locationMovement;
+};
+
+const createVvmStatusLog = (database, itemBatch, status) => {
+  const vvmStatus = database.create('VaccineVialMonitorStatusLog', {
+    id: generateUUID(),
+    itemBatch,
+    status,
+    timestamp: new Date(),
+  });
+
+  return vvmStatus;
+};
+
+const createSensorLog = (database, temperature, timestamp, sensor) => {
+  const { location } = sensor;
+
+  const sensorLog = database.create('SensorLog', {
+    id: generateUUID(),
+    temperature,
+    timestamp,
+    sensor,
+    location,
+  });
+
+  return sensorLog;
+};
+
+const createTemperatureLog = (database, temperature, timestamp, location) => {
+  const temperatureLog = database.create('TemperatureLog', {
+    id: generateUUID(),
+    temperature,
+    timestamp,
+    location,
+  });
+
+  return temperatureLog;
+};
+
+const createTemperatureBreach = (
+  database,
+  startTimestamp,
+  location,
+  temperatureBreachConfiguration
+) => {
+  const temperatureLog = database.create('TemperatureBreach', {
+    id: generateUUID(),
+    startTimestamp,
+    location,
+    temperatureBreachConfiguration,
+  });
+
+  return temperatureLog;
 };
 
 /**
@@ -944,6 +1179,8 @@ const createUpgradeMessage = (database, fromVersion, toVersion) => {
  */
 export const createRecord = (database, type, ...args) => {
   switch (type) {
+    case 'CustomerRequisition':
+      return createCustomerRequisition(database, ...args);
     case 'CustomerInvoice':
       return createCustomerInvoice(database, ...args);
     case 'NumberSequence':
@@ -1004,6 +1241,20 @@ export const createRecord = (database, type, ...args) => {
       return createPrescriber(database, ...args);
     case 'UpgradeMessage':
       return createUpgradeMessage(database, ...args);
+    case 'Location':
+      return createLocation(database, ...args);
+    case 'Sensor':
+      return createSensor(database, ...args);
+    case 'LocationMovement':
+      return createLocationMovement(database, ...args);
+    case 'VaccineVialMonitorStatusLog':
+      return createVvmStatusLog(database, ...args);
+    case 'SensorLog':
+      return createSensorLog(database, ...args);
+    case 'TemperatureLog':
+      return createTemperatureLog(database, ...args);
+    case 'TemperatureBreach':
+      return createTemperatureBreach(database, ...args);
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }

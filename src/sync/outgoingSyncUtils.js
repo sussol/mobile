@@ -70,13 +70,13 @@ const generateSyncData = (settings, recordType, record) => {
         cost_price: String(record.costPrice),
         sell_price: String(record.sellPrice),
         total_cost: String(record.costPrice * record.numberOfPacks),
-        name_ID: record.supplier && String(record.supplier.id),
-        donor_id: record.donor && record.donor.id,
+        name_ID: record.supplier?.id ?? '',
+        donor_id: record.donor?.id ?? '',
+        doses: String(record.doses),
+        location_ID: record.location?.id,
       };
     }
     case 'Name': {
-      if (!record.isPatient) return false;
-
       const defaultCurrency = UIDatabase.objects('Currency').filtered(
         'isDefaultCurrency == $0',
         true
@@ -124,7 +124,7 @@ const generateSyncData = (settings, recordType, record) => {
         ID: record.id,
         date_entered: getDateString(record.entryDate),
         user_ID: record.enteredById,
-        name_ID: record.otherStoreName && record.otherStoreName.id,
+        name_ID: record.otherStoreName?.id ?? '',
         status: REQUISITION_STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
         daysToSupply: String(record.daysToSupply),
         store_ID: settings.get(THIS_STORE_ID),
@@ -132,10 +132,12 @@ const generateSyncData = (settings, recordType, record) => {
         requester_reference: record.requesterReference,
         comment: record.comment,
         type: REQUISITION_TYPES.translate(record.type, INTERNAL_TO_EXTERNAL),
-        programID: record.program && record.program.id,
-        periodID: record.period && record.period.id,
+        programID: record.program?.id ?? '',
+        periodID: record.period?.id ?? '',
         orderType: record.orderType,
         custom_data: record.customData,
+        date_order_received: getDateString(record.createdDate),
+        isRemoteOrder: String(record.isRemoteOrder),
       };
     }
     case 'RequisitionItem': {
@@ -148,8 +150,15 @@ const generateSyncData = (settings, recordType, record) => {
         suggested_quantity: String(record.suggestedQuantity),
         actualQuan: String(record.suppliedQuantity),
         line_number: String(record.sortIndex),
-        Cust_stock_order: String(record.requiredQuantity),
         comment: record.comment,
+        Cust_stock_order: String(record.requiredQuantity),
+        Cust_prev_stock_balance: String(record.openingStock),
+        Cust_loss_adjust: String(record.positiveAdjustments - record.negativeAdjustments),
+        Cust_stock_received: String(record.incomingStock),
+        Cust_stock_issued: String(record.outgoingStock),
+        DOSforAMCadjustment: String(record.daysOutOfStock),
+        stockLosses: String(record.negativeAdjustments),
+        stockAdditions: String(record.positiveAdjustments),
       };
     }
     case 'Stocktake': {
@@ -167,13 +176,13 @@ const generateSyncData = (settings, recordType, record) => {
         comment: record.comment,
         stock_take_created_date: getDateString(record.createdDate),
         serial_number: record.serialNumber,
-        programID: record.program && record.program.id,
+        programID: record.program?.id ?? '',
       };
     }
     case 'StocktakeBatch': {
       return {
         ID: record.id,
-        stock_take_ID: record.stocktake && record.stocktake.id,
+        stock_take_ID: record.stocktake?.id ?? '',
         item_line_ID: record.itemBatchId,
         snapshot_qty: String(record.snapshotNumberOfPacks),
         snapshot_packsize: String(record.packSize),
@@ -184,8 +193,11 @@ const generateSyncData = (settings, recordType, record) => {
         sell_price: String(record.sellPrice),
         Batch: record.batch,
         item_ID: record.itemId,
-        optionID: record.option && record.option.id,
+        optionID: record.option?.id ?? '',
         is_edited: record.hasBeenCounted,
+        doses: String(record.doses),
+        location_ID: record.location?.id,
+        vaccine_vial_monitor_status_ID: record.vaccineVialMonitorStatus?.id,
       };
     }
     case 'Transaction': {
@@ -196,14 +208,14 @@ const generateSyncData = (settings, recordType, record) => {
 
       return {
         ID: record.id,
-        name_ID: record.otherParty && record.otherParty.id,
+        name_ID: record.otherParty?.id ?? '',
         invoice_num: record.serialNumber,
         comment: record.comment,
         entry_date: getDateString(record.entryDate),
         type: TRANSACTION_TYPES.translate(record.type, INTERNAL_TO_EXTERNAL),
         status: STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
         mode: record.mode,
-        prescriber_ID: record.prescriber && record.prescriber.id,
+        prescriber_ID: record.prescriber?.id ?? '',
         total: String(record.total),
         amount_outstanding: String(record.outstanding),
         foreign_currency_total: String(record.total),
@@ -212,7 +224,7 @@ const generateSyncData = (settings, recordType, record) => {
         confirm_date: getDateString(record.confirmDate),
         subtotal: String(record.subtotal),
         user_ID: record.enteredBy && record.enteredBy.id,
-        category_ID: record.category && record.category.id,
+        category_ID: record.category?.id ?? '',
         confirm_time: getTimeString(record.confirmDate),
         store_ID: settings.get(THIS_STORE_ID),
         linked_transaction_id: record.linkedTransaction?.id ?? '',
@@ -246,14 +258,17 @@ const generateSyncData = (settings, recordType, record) => {
         expiry_date: getDateString(record.expiryDate),
         pack_size: String(record.packSize),
         quantity: String(record.numberOfPacks),
-        // |item_line_ID| can be null due to server merge bug in v3.83.
         item_line_ID: record.itemBatch?.id ?? '',
         line_number: String(record.sortIndex),
         item_name: record.itemName,
         is_from_inventory_adjustment: transaction.isInventoryAdjustment,
-        donor_id: record.donor && record.donor.id,
+        donor_id: record.donor?.id ?? '',
         type: record.type,
         linked_transact_id: record.linkedTransaction?.id,
+        doses: String(record.doses),
+        location_ID: record.location?.id,
+        vaccine_vial_monitor_status_ID: record.vaccineVialMonitorStatus?.id,
+        sent_pack_size: String(record.sentPackSize),
       };
     }
     case 'InsurancePolicy': {
@@ -299,6 +314,71 @@ const generateSyncData = (settings, recordType, record) => {
         store_ID: settings.get(THIS_STORE_ID),
         female: String(record.female),
         initials,
+      };
+    }
+    case 'TemperatureLog': {
+      return {
+        ID: record.id,
+        temperature: String(record.temperature),
+        time: getTimeString(record.timestamp),
+        date: getDateString(record.timestamp),
+        location_ID: record.location?.id,
+        temperature_breach_ID: record.breach?.id,
+        store_ID: settings.get(THIS_STORE_ID),
+      };
+    }
+    case 'TemperatureBreach': {
+      return {
+        ID: record.id,
+        start_time: getTimeString(record.startTimestamp),
+        start_date: getDateString(record.startTimestamp),
+        end_time: getTimeString(record.endTimestamp),
+        end_date: getDateString(record.endTimestamp),
+        location_ID: record.location?.id,
+        store_ID: settings.get(THIS_STORE_ID),
+        temperature_breach_config_ID: String(record.temperatureBreachConfiguration?.id),
+      };
+    }
+    case 'LocationMovement': {
+      return {
+        ID: record.id,
+        enter_time: getTimeString(record.enterTimestamp),
+        enter_date: getDateString(record.enterTimestamp),
+        exit_time: getTimeString(record.exitTimestamp),
+        exit_date: getDateString(record.exitTimestamp),
+        item_line_ID: record.itemBatch?.id,
+        location_ID: record.location?.id,
+        store_ID: settings.get(THIS_STORE_ID),
+      };
+    }
+    case 'VaccineVialMonitorStatusLog': {
+      return {
+        ID: record.id,
+        status_ID: record.status?.id,
+        time: getTimeString(record.timestamp),
+        date: getDateString(record.timestamp),
+        item_line_ID: record.itemBatch?.id,
+        store_ID: settings.get(THIS_STORE_ID),
+      };
+    }
+    case 'Sensor': {
+      return {
+        ID: record.id,
+        macAddress: record.macAddress,
+        name: record.name,
+        batteryLevel: String(record.batteryLevel),
+        storeID: settings.get(THIS_STORE_ID),
+        locationID: record.location?.id,
+        is_active: String(record.isActive ?? true),
+      };
+    }
+    case 'Location': {
+      return {
+        ID: record.id,
+        Description: record.description,
+        code: record.code,
+        type_ID: record.locationType?.id,
+        store_ID: settings.get(THIS_STORE_ID),
       };
     }
     default:

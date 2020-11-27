@@ -14,7 +14,7 @@ import { SUSSOL_ORANGE, APP_FONT_FAMILY, DARKER_GREY } from '../../globalStyles'
  * @prop {Object} form                  Parent form object.
  * @prop {String} placeholder           Placeholder text string
  * @prop {String} placeholderTextColor  Color of the placeholder text
- * @prop {String} underlineColorAndroid Color of the underline colour
+ * @prop {String} underlineColorAndroid Color of the underline color
  * @prop {Bool}   isRequired            Indicator whether to show the is required label
  * @prop {String} label                 The form label for this text input, displayed to the left.
  * @prop {String} invalidMessage        Displayed under the TextInput when the input is invalid.
@@ -42,6 +42,7 @@ export const FormTextInput = React.forwardRef(
       textInputStyle,
       onSubmit,
       isDisabled,
+      autoFocus,
     },
     ref
   ) => {
@@ -101,6 +102,7 @@ export const FormTextInput = React.forwardRef(
               onChangeText={onChangeTextCallback}
               onSubmitEditing={onSubmitEditing}
               editable={!isDisabled}
+              autoFocus={autoFocus}
             />
             <FormInvalidMessage message={invalidMessage} isValid={isValid ?? true} />
           </View>
@@ -129,6 +131,7 @@ FormTextInput.defaultProps = {
   onValidate: null,
   onSubmit: null,
   isDisabled: false,
+  autoFocus: false,
 };
 
 FormTextInput.propTypes = {
@@ -146,4 +149,5 @@ FormTextInput.propTypes = {
   textInputStyle: PropTypes.object,
   onSubmit: PropTypes.func,
   isDisabled: PropTypes.bool,
+  autoFocus: PropTypes.bool,
 };

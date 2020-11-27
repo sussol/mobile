@@ -38,6 +38,46 @@ export class TransactionBatch extends Realm.Object {
     }
   }
 
+  get currentLocationName() {
+    return this.location?.description ?? '';
+  }
+
+  get currentVvmStatusName() {
+    return this.vaccineVialMonitorStatus?.description ?? '';
+  }
+
+  get hasBreached() {
+    return !!this.itemBatch?.hasBreached;
+  }
+
+  /**
+   * @return {Bool} Indicator if this batch has a valid number of doses.
+   */
+  get hasValidDoses() {
+    const { item } = this.itemBatch;
+    const { doses: dosesPerVial } = item;
+
+    const maximumDosesPossible = this.snapshotTotalQuantity * dosesPerVial;
+    const minimumDosesPossible = this.snapshotTotalQuantity;
+
+    const tooManyDoses = this.doses > maximumDosesPossible;
+    const tooLittleDoses = this.doses < minimumDosesPossible;
+    const justRightDoses = !tooManyDoses && !tooLittleDoses;
+
+    return justRightDoses;
+  }
+
+  /**
+   * Get this items restricted LocationType - the location type for which Location records must
+   * be related for this ItemBatch to be assigned. This is either on the ItemStoreJoin or on the
+   * underlying Item - preference to the more specific ItemStoreJoin.
+   *
+   * @param {Realm} database
+   */
+  restrictedLocationType(database) {
+    return this.itemBatch?.restrictedLocationType(database);
+  }
+
   /**
    * Returns either the prescriber name who prescribed the medicine
    * to a patient, or an N/A.
@@ -88,17 +128,41 @@ export class TransactionBatch extends Realm.Object {
    * @param  {number}  quantity
    */
   setTotalQuantity(database, quantity) {
+    // When transactions are confirmed, they can be edited, but also effect stock levels.
+    // Calculate the difference from the previous total quantity, and the new quantity to use
+    // for adjusting the underlying item batches quantity for confirmed transactions.
     const difference = quantity - this.totalQuantity;
     this.numberOfPacks = this.packSize ? quantity / this.packSize : 0;
+
+    // Do the same for the doses, which is used for items which have multiple doses per 'pack'.
+    const dosesDifference = this.dosesPerVial * this.numberOfPacks - this.doses;
+    this.doses = this.numberOfPacks * this.dosesPerVial;
+
+    // Recalculate a save the total price field of this batch
     this.total = this.totalPrice;
 
+    // When transactions are confirmed (Customer invoices are always AT LEAST confirmed) adjustments
+    // to quantities effect stock levels. Adjust the underlying item batch with the difference.
     if (this.transaction.isConfirmed) {
+      // Incoming transactions increase stock levels, while outgoing decrease.
       const inventoryDifference = this.transaction.isIncoming ? difference : -difference;
+      const dosesAdjustment = this.transaction.isIncoming ? dosesDifference : -dosesDifference;
+
       this.itemBatch.totalQuantity += inventoryDifference;
+      this.itemBatch.doses += dosesAdjustment;
+
       database.save('ItemBatch', this.itemBatch);
     }
 
     database.save('TransactionBatch', this);
+  }
+
+  get isVaccine() {
+    return this.itemBatch?.isVaccine ?? false;
+  }
+
+  get dosesPerVial() {
+    return this.isVaccine ? this.itemBatch?.item?.doses ?? 0 : 0;
   }
 
   /**
@@ -145,6 +209,13 @@ export class TransactionBatch extends Realm.Object {
     return quantity;
   }
 
+  setDoses(database, newValue) {
+    const maximumDosesPossible = this.dosesPerVial * this.totalQuantity;
+    this.doses = Math.min(newValue, maximumDosesPossible);
+
+    database.save('TransactionBatch', this);
+  }
+
   /**
    * Get string representation of transaction batch.
    *
@@ -152,6 +223,10 @@ export class TransactionBatch extends Realm.Object {
    */
   toString() {
     return `${this?.itemBatch} in a ${this.transaction.type}`;
+  }
+
+  get breaches() {
+    return this.itemBatch?.breaches;
   }
 
   get otherPartyName() {
@@ -189,6 +264,10 @@ TransactionBatch.schema = {
     total: { type: 'double', optional: true },
     type: { type: 'string', optional: true },
     linkedTransaction: { type: 'Transaction', optional: true },
+    location: { type: 'Location', optional: true },
+    doses: { type: 'double', default: 0 },
+    vaccineVialMonitorStatus: { type: 'VaccineVialMonitorStatus', optional: true },
+    sentPackSize: { type: 'double', default: 0 },
   },
 };
 

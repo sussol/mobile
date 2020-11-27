@@ -56,7 +56,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     },
     Item: {
       cannotBeBlank: ['code', 'item_name'],
-      canBeBlank: ['default_pack_size'],
+      canBeBlank: ['default_pack_size', 'doses'],
     },
     ItemCategory: {
       cannotBeBlank: [],
@@ -68,7 +68,16 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     },
     ItemBatch: {
       cannotBeBlank: ['item_ID', 'quantity'],
-      canBeBlank: ['pack_size', 'batch', 'expiry_date', 'cost_price', 'sell_price', 'donor_id'],
+      canBeBlank: [
+        'pack_size',
+        'batch',
+        'expiry_date',
+        'cost_price',
+        'sell_price',
+        'donor_id',
+        'doses',
+        'location_ID',
+      ],
     },
     ItemStoreJoin: {
       cannotBeBlank: ['item_ID', 'store_ID'],
@@ -130,7 +139,16 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
         'snapshot_qty',
         'snapshot_packsize',
       ],
-      canBeBlank: ['expiry', 'Batch', 'cost_price', 'sell_price', 'optionID'],
+      canBeBlank: [
+        'expiry',
+        'Batch',
+        'cost_price',
+        'sell_price',
+        'optionID',
+        'doses',
+        'vaccine_vial_monitor_status_ID',
+        'location_id',
+      ],
     },
     Store: {
       cannotBeBlank: [],
@@ -161,6 +179,9 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
         'cost_price',
         'sell_price',
         'donor_id',
+        'doses',
+        'vaccine_vial_monitor_status_ID',
+        'location_ID',
       ],
     },
     Options: {
@@ -223,6 +244,47 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: [],
       canBeBlank: [],
     },
+    TemperatureLog: {
+      cannotBeBlank: ['temperature', 'date', 'time', 'location_ID', 'store_ID'],
+      canBeBlank: ['temperature_breach_ID'],
+    },
+    TemperatureBreach: {
+      cannotBeBlank: ['start_time', 'start_date', 'location_ID'],
+      canBeBlank: ['end_time', 'end_date'],
+    },
+    LocationMovement: {
+      cannotBeBlank: ['item_line_ID', 'enter_time', 'enter_date', 'location_ID'],
+      canBeBlank: ['exit_time', 'exit_date'],
+    },
+    VaccineVialMonitorStatus: {
+      cannotBeBlank: [],
+      canBeBlank: ['description', 'code', 'level', 'is_active'],
+    },
+    VaccineVialMonitorStatusLog: {
+      cannotBeBlank: ['status_ID', 'item_line_ID', 'time', 'date'],
+      canBeBlank: [],
+    },
+    Location: { cannotBeBlank: [], canBeBlank: ['Description', 'code', 'type_ID'] },
+    LocationType: { cannotBeBlank: [], canBeBlank: ['Description'] },
+    Sensor: { cannotBeBlank: ['macAddress'], canBeBlank: ['batteryLevel', 'is_active', 'name'] },
+    TemperatureBreachConfiguration: {
+      cannotBeBlank: [
+        'minimum_temperature',
+        'maximum_temperature',
+        'duration',
+        'description',
+        'colour',
+      ],
+      canBeBlank: [],
+    },
+    NameTag: {
+      cannotBeBlank: ['ID'],
+      canBeBlank: ['description'],
+    },
+    NameTagJoin: {
+      cannotBeBlank: ['ID', 'name_ID', 'name_tag_ID'],
+      canBeBlank: [],
+    },
   };
 
   if (!requiredFields[recordType]) return false; // Unsupported record type
@@ -256,7 +318,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
  * @return  {none}
  */
 export const createOrUpdateRecord = (database, settings, recordType, record) => {
-  if (!sanityCheckIncomingRecord(recordType, record)) return; // Unsupported or malformed record.
+  if (!sanityCheckIncomingRecord(recordType, record)) return;
   let internalRecord;
 
   switch (recordType) {
@@ -338,6 +400,12 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         name: record.item_name,
         crossReferenceItem: database.getOrCreate('Item', record.cross_ref_item_ID),
         unit: database.getOrCreate('Unit', record.unit_ID),
+        doses: parseNumber(record.doses),
+        isVaccine: parseBoolean(record.is_vaccine),
+        defaultRestrictedLocationType: database.getOrCreate(
+          'LocationType',
+          record.default_restricted_location_type_ID
+        ),
       };
       database.update(recordType, internalRecord);
       break;
@@ -374,6 +442,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         sellPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
         supplier: database.getOrCreate('Name', record.name_ID),
         donor: database.getOrCreate('Name', record.donor_ID),
+        doses: packSize ? parseNumber(record.doses) / packSize : 0,
+        location: database.getOrCreate('Location', record.location_ID),
       };
       const itemBatch = database.update(recordType, internalRecord);
       item.addBatchIfUnique(itemBatch);
@@ -386,6 +456,10 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         id: record.ID,
         itemId: record.item_ID,
         joinsThisStore,
+        restrictedLocationType: database.getOrCreate(
+          'LocationType',
+          record.restricted_location_type_id
+        ),
       };
       database.update(recordType, internalRecord);
       if (joinsThisStore) {
@@ -501,6 +575,21 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       database.update(recordType, internalRecord);
       break;
     }
+    case 'NameTag': {
+      internalRecord = { id: record.ID, description: record.description };
+      database.update(recordType, internalRecord);
+      break;
+    }
+    case 'NameTagJoin': {
+      internalRecord = {
+        id: record.ID,
+        name: database.getOrCreate('Name', record.name_ID),
+        nameTag: database.getOrCreate('NameTag', record.name_tag_ID),
+      };
+
+      database.update(recordType, internalRecord);
+      break;
+    }
     case 'NameStoreJoin': {
       const joinsThisStore = record.store_ID === settings.get(THIS_STORE_ID);
       internalRecord = {
@@ -612,6 +701,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         period,
         orderType: record.orderType,
         customData: parseJsonString(record.custom_data),
+        isRemoteOrder: parseBoolean(record.isRemoteOrder),
+        createdDate: parseDate(record.date_order_received),
       };
       const requisition = database.update(recordType, internalRecord);
       if (period) period.addRequisitionIfUnique(requisition);
@@ -629,6 +720,12 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         suppliedQuantity: parseNumber(record.actualQuan),
         comment: record.comment,
         sortIndex: parseNumber(record.line_number),
+        openingStock: parseNumber(record.Cust_prev_stock_balance),
+        negativeAdjustments: parseNumber(record.stockLosses),
+        positiveAdjustments: parseNumber(record.stockAdditions),
+        incomingStock: parseNumber(record.Cust_stock_received),
+        outgoingStock: parseNumber(record.Cust_stock_issued),
+        daysOutOfStock: parseNumber(record.DOSforAMCadjustment),
       };
       const requisitionItem = database.update(recordType, internalRecord);
       // requisitionItem will be an orphan record if it's not unique?
@@ -674,6 +771,12 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         countedNumberOfPacks: parseNumber(record.stock_take_qty) * packSize,
         sortIndex: parseNumber(record.line_number),
         option: database.getOrCreate('Options', record.optionID),
+        doses: packSize ? parseNumber(record.doses) / packSize : 0,
+        location: database.getOrCreate('Location', record.location_id),
+        vaccineVialMonitorStatus: database.getOrCreate(
+          'VaccineVialMonitorStatus',
+          record.vaccine_vial_monitor_status_ID
+        ),
       };
       const stocktakeBatch = database.update(recordType, internalRecord);
       stocktake.addBatchIfUnique(database, stocktakeBatch);
@@ -774,6 +877,13 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         expiryDate: parseDate(record.expiry_date),
         batch: record.batch,
         type: record.type,
+        doses: packSize ? parseNumber(record.doses) / packSize : 0,
+        location: database.getOrCreate('Location', record.location_ID),
+        vaccineVialMonitorStatus: database.getOrCreate(
+          'VaccineVialMonitorStatus',
+          record.vaccine_vial_monitor_status_ID
+        ),
+        sentPackSize: parseNumber(record.sent_pack_size) || packSize,
       };
       const transactionBatch = database.update(recordType, internalRecord);
       transaction.addBatchIfUnique(database, transactionBatch);
@@ -875,6 +985,99 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       });
       break;
     }
+    case 'TemperatureLog': {
+      database.update(recordType, {
+        id: record.ID,
+        temperature: parseNumber(record.temperature),
+        timestamp: parseDate(record.date, record.time),
+        location: database.getOrCreate('Location', record.location_ID),
+        breach: database.getOrCreate('TemperatureBreach', record.temperature_breach_ID),
+      });
+      break;
+    }
+    case 'TemperatureBreach': {
+      database.update(recordType, {
+        id: record.ID,
+        startTimestamp: parseDate(record.start_date, record.start_time),
+        endTimestamp: parseDate(record.end_date, record.end_time),
+        location: database.getOrCreate('Location', record.location_ID),
+        temperatureBreachConfiguration: database.getOrCreate(
+          'TemperatureBreachConfiguration',
+          record.temperature_breach_config_ID
+        ),
+      });
+      break;
+    }
+    case 'TemperatureBreachConfiguration': {
+      database.update(recordType, {
+        id: record.ID,
+        minimumTemperature: parseNumber(record.minimum_temperature),
+        maximumTemperature: parseNumber(record.maximum_temperature),
+        duration: parseNumber(record.duration),
+        description: record.description,
+        colour: record.colour,
+      });
+      break;
+    }
+    case 'LocationMovement': {
+      database.update(recordType, {
+        id: record.ID,
+        location: database.getOrCreate('Location', record.location_ID),
+        itemBatch: database.getOrCreate('ItemBatch', record.item_line_ID),
+        enterTimestamp: parseDate(record.enter_date, record.enter_time),
+        exitTimestamp: parseDate(record.exit_date, record.exit_time),
+      });
+      break;
+    }
+    case 'VaccineVialMonitorStatus': {
+      database.update(recordType, {
+        id: record.ID,
+        description: record.description,
+        code: record.code,
+        level: parseNumber(record.level),
+        isActive: parseBoolean(record.is_active),
+      });
+      break;
+    }
+    case 'VaccineVialMonitorStatusLog': {
+      database.update(recordType, {
+        id: record.ID,
+        status: database.getOrCreate(
+          'VaccineVialMonitorStatus',
+          record.vaccine_vial_monitor_status_ID
+        ),
+        timestamp: parseDate(record.date, record.time),
+        itemBatch: database.getOrCreate('ItemBatch', record.item_line_ID),
+      });
+      break;
+    }
+    case 'Location': {
+      database.update(recordType, {
+        id: record.ID,
+        description: record.Description,
+        code: record.code,
+        locationType: database.getOrCreate('LocationType', record.type_ID),
+      });
+      break;
+    }
+    case 'LocationType': {
+      database.update(recordType, {
+        id: record.ID,
+        description: record.Description,
+      });
+      break;
+    }
+    case 'Sensor': {
+      database.update(recordType, {
+        id: record.ID,
+        macAddress: record.macAddress,
+        location: database.getOrCreate('Location', record.locationID),
+        batteryLevel: parseNumber(record.batteryLevel),
+        name: record.name,
+        isActive: parseBoolean(record.is_active),
+      });
+      break;
+    }
     default:
       break; // Silently ignore record types which are not used by mobile.
   }
@@ -894,7 +1097,9 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
 
 export const integrateRecord = (database, settings, syncRecord) => {
   // Ignore sync record if missing data, record type, sync type, or record ID.
+
   if (!syncRecord.RecordType || !syncRecord.SyncType) return;
+
   const syncType = syncRecord.SyncType;
   const recordType = syncRecord.RecordType;
   const changeType = SYNC_TYPES.translate(syncType, EXTERNAL_TO_INTERNAL);
@@ -949,6 +1154,11 @@ const RECORD_TYPE_TO_TABLE = {
     },
     Requisition: {
       field: 'otherStoreName',
+    },
+  },
+  Prescriber: {
+    Transaction: {
+      field: 'prescriber',
     },
   },
 };
@@ -1007,28 +1217,31 @@ export const mergeRecords = (database, settings, internalRecordType, syncRecord)
     }
   );
 
-  const [[tableToUpdate, { field: fieldToUpdate }]] = Object.entries(
-    RECORD_TYPE_TO_MASTERLIST[internalRecordType]
-  );
-  database
-    .objects(tableToUpdate)
-    .filtered(`${fieldToUpdate}.id == $0`, recordToMerge.id)
-    .snapshot()
-    .forEach(joinRecord => {
-      const duplicateJoinRecord = database
-        .objects(tableToUpdate)
-        .filtered(
-          `(${fieldToUpdate}.id == $0) && (masterList.id == $0)`,
-          recordToKeep.id,
-          joinRecord.masterList.id
-        )[0];
-      if (duplicateJoinRecord) {
-        deleteRecord(database, tableToUpdate, joinRecord.id);
-      } else {
-        joinRecord[fieldToUpdate] = recordToKeep;
-        createOrUpdateRecord(database, settings, tableToUpdate, joinRecord);
-      }
-    });
+  if (RECORD_TYPE_TO_MASTERLIST[internalRecordType]) {
+    const [[tableToUpdate, { field: fieldToUpdate }]] = Object.entries(
+      RECORD_TYPE_TO_MASTERLIST[internalRecordType]
+    );
+
+    database
+      .objects(tableToUpdate)
+      .filtered(`${fieldToUpdate}.id == $0`, recordToMerge.id)
+      .snapshot()
+      .forEach(joinRecord => {
+        const duplicateJoinRecord = database
+          .objects(tableToUpdate)
+          .filtered(
+            `(${fieldToUpdate}.id == $0) && (masterList.id == $0)`,
+            recordToKeep.id,
+            joinRecord.masterList.id
+          )[0];
+        if (duplicateJoinRecord) {
+          deleteRecord(database, tableToUpdate, joinRecord.id);
+        } else {
+          joinRecord[fieldToUpdate] = recordToKeep;
+          createOrUpdateRecord(database, settings, tableToUpdate, joinRecord);
+        }
+      });
+  }
 
   switch (internalRecordType) {
     case 'Item':

@@ -18,13 +18,14 @@ import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
 import { MODAL_KEYS, getAllPrograms } from '../utilities';
 import { ROUTES } from '../navigation/constants';
-import { useNavigationFocus, useSyncListener } from '../hooks';
+import { useNavigationFocus, useSyncListener, useDebounce } from '../hooks';
 import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
 import { getItemLayout, PageActions, getPageDispatchers } from './dataTableUtilities';
 import { selectCurrentUser } from '../selectors/user';
 
 import globalStyles from '../globalStyles';
 import { buttonStrings, modalStrings, generalStrings } from '../localization';
+import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
 /**
  * Renders a mSupply mobile page with a list of supplier requisitions.
@@ -67,17 +68,26 @@ export const SupplierRequisitions = ({
   // Custom hook to refresh data on this page when becoming the head of the stack again.
   useNavigationFocus(navigation, refreshData);
   useSyncListener(refreshData, 'Requisition');
+  const toggleCurrentAndPast = useDebounce(toggleFinalised, 250, true);
 
   const onPressRow = useCallback(rowData => dispatch(gotoSupplierRequisition(rowData)), []);
 
-  const onCreateRequisition = otherStoreName => {
+  const runWithLoadingIndicator = useLoadingIndicator();
+
+  const onCreateRequisition = async otherStoreName => {
     onCloseModal();
-    dispatch(createSupplierRequisition({ otherStoreName, currentUser }));
+    await runWithLoadingIndicator(
+      async () => dispatch(createSupplierRequisition({ otherStoreName, currentUser })),
+      true
+    );
   };
 
-  const onCreateProgramRequisition = requisitionParameters => {
+  const onCreateProgramRequisition = async requisitionParameters => {
     onCloseModal();
-    dispatch(createSupplierRequisition({ ...requisitionParameters, currentUser }));
+    await runWithLoadingIndicator(
+      async () => dispatch(createSupplierRequisition({ ...requisitionParameters, currentUser })),
+      true
+    );
   };
 
   const getCallback = useCallback((colKey, propName) => {
@@ -134,8 +144,8 @@ export const SupplierRequisitions = ({
 
   const toggles = useMemo(
     () => [
-      { text: buttonStrings.current, onPress: toggleFinalised, isOn: !showFinalised },
-      { text: buttonStrings.past, onPress: toggleFinalised, isOn: showFinalised },
+      { text: buttonStrings.current, onPress: toggleCurrentAndPast, isOn: !showFinalised },
+      { text: buttonStrings.past, onPress: toggleCurrentAndPast, isOn: showFinalised },
     ],
     [showFinalised]
   );

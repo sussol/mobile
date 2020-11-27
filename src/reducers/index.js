@@ -20,6 +20,11 @@ import { PrescriptionReducer } from './PrescriptionReducer';
 import { SupplierCreditReducer } from './SupplierCreditReducer';
 import { UserReducer } from './UserReducer';
 import { WizardReducer } from './WizardReducer';
+import { TemperatureSyncReducer } from './TemperatureSyncReducer';
+import { FridgeReducer } from './FridgeReducer';
+import { BreachReducer } from './BreachReducer';
+import { RowDetailReducer } from './RowDetailReducer';
+import { PermissionReducer } from './PermissionReducer';
 
 import SyncReducer from './SyncReducer';
 
@@ -38,6 +43,11 @@ export default combineReducers({
   prescription: PrescriptionReducer,
   supplierCredit: SupplierCreditReducer,
   sync: SyncReducer,
+  temperatureSync: TemperatureSyncReducer,
   user: UserReducer,
   wizard: WizardReducer,
+  fridge: FridgeReducer,
+  breach: BreachReducer,
+  rowDetail: RowDetailReducer,
+  permission: PermissionReducer,
 });

@@ -23,10 +23,12 @@ export const ROUTES = {
 
   CUSTOMER_CREDIT: 'customerCredit',
   CUSTOMER_INVOICE: 'customerInvoice',
+  CUSTOMER_INVOICE_WITH_VACCINES: 'customerInvoiceWithVaccines',
   CUSTOMER_INVOICES: 'customerInvoices',
 
   SUPPLIER_CREDIT: 'supplierCredit',
   SUPPLIER_INVOICE: 'supplierInvoice',
+  SUPPLIER_INVOICE_WITH_VACCINES: 'supplierInvoiceWithVaccines',
   SUPPLIER_INVOICE_WITH_PRICES: 'supplierInvoiceWithPrices',
   SUPPLIER_INVOICES: 'supplierInvoices',
 
@@ -46,6 +48,9 @@ export const ROUTES = {
 
   SETTINGS: 'settings',
   DASHBOARD: 'dashboard',
+
+  VACCINES: 'vaccines',
+  VACCINES_ADMIN: 'vaccinesAdmin',
 };
 
 export const FINALISABLE_PAGES = [

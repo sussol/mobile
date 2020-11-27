@@ -111,6 +111,11 @@ export const toggleTransactionType = route => ({
   payload: { route },
 });
 
+export const toggleColumnSet = route => ({
+  type: ACTIONS.TOGGLE_COLUMN_SET,
+  payload: { route },
+});
+
 /**
  * Adds all items from master lists, according to the type of pageObject.
  * i.e. a CustomerInvoice adds items from all of the custoemrs masterlists.
@@ -133,7 +138,6 @@ export const addMasterListItems = (selected, objectType, route) => (dispatch, ge
   });
 
   dispatch(refreshData(route));
-  dispatch(closeModal(route));
 };
 
 /**
@@ -159,6 +163,19 @@ export const addItem = (item, addedItemType, route) => (dispatch, getState) => {
   } else {
     dispatch(closeModal(route));
   }
+};
+
+export const addFridge = route => dispatch => {
+  UIDatabase.write(() => {
+    const fridgeLocationType = UIDatabase.objects('LocationType').filtered(
+      'description == $0',
+      'fridge'
+    )[0];
+
+    const addedLocation = createRecord(UIDatabase, 'Location', fridgeLocationType);
+
+    dispatch(addRecord(addedLocation, route));
+  });
 };
 
 /**
@@ -301,6 +318,9 @@ export const filterDataWithOverStockToggle = (searchTerm, route) => ({
   payload: { searchTerm, route },
 });
 
+export const toggleSensors = route => ({ type: ACTIONS.TOGGLE_SENSORS, payload: { route } });
+export const toggleFridges = route => ({ type: ACTIONS.TOGGLE_FRIDGES, payload: { route } });
+
 export const TableActionsLookup = {
   sortData,
   filterData,
@@ -326,4 +346,8 @@ export const TableActionsLookup = {
   refreshDataWithFinalisedToggle,
   filterDataWithFinalisedToggle,
   filterDataWithOverStockToggle,
+  toggleSensors,
+  toggleFridges,
+  addFridge,
+  toggleColumnSet,
 };

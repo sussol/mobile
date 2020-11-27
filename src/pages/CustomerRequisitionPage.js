@@ -7,7 +7,8 @@
 
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { View, StyleSheet, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
@@ -31,12 +32,13 @@ import {
   selectIndicatorTableColumns,
   selectIndicatorTableRows,
 } from '../selectors/indicators';
-import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
+import { getColumns, getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
 import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
 import globalStyles from '../globalStyles';
-import { buttonStrings, generalStrings, programStrings } from '../localization';
+import { tableStrings, buttonStrings, generalStrings, programStrings } from '../localization';
+import { RowDetailActions } from '../actions/RowDetailActions';
 
 /**
  * Renders a mSupply mobile page with a customer requisition loaded for editing
@@ -66,7 +68,6 @@ export const CustomerRequisition = ({
   keyExtractor,
   modalValue,
   searchTerm,
-  columns,
   getPageInfoColumns,
   onEditComment,
   onFilterData,
@@ -76,12 +77,45 @@ export const CustomerRequisition = ({
   onSelectIndicator,
   onEditSuppliedQuantity,
   route,
+  onToggleColumnSet,
+  onEditOpeningStock,
+  onEditNegativeAdjustments,
+  onEditPositiveAdjustments,
+  onEditOutgoingStock,
+  onEditIncomingStock,
+  onEditDaysOutOfStock,
+  onEditRequiredQuantity,
+  onRowPress,
+  onEditCreatedDate,
+  datePickerIsOpen,
+  onDatePickerClosed,
+  isRemoteOrder,
+  columnSet,
+  indicatorColumns,
 }) => {
-  const { isFinalised, comment } = pageObject;
+  const { isFinalised, comment, program, isResponse, createdDate, entryDate } = pageObject;
+
+  const currentColumns = useMemo(() => {
+    const formEntryColumnSet = isRemoteOrder
+      ? 'editableCustomerRequisitionFormEntry'
+      : 'customerRequisitionFormEntry';
+    if (usingIndicators && showIndicators) {
+      return indicatorColumns;
+    }
+    return columnSet === 'a'
+      ? getColumns(ROUTES.CUSTOMER_REQUISITION)
+      : getColumns(formEntryColumnSet);
+  }, [columnSet, usingIndicators, showIndicators, isRemoteOrder]);
+
+  const datePickerCallback = ({ type, nativeEvent: { timestamp } }) => {
+    onDatePickerClosed();
+    if (type === 'set') onEditCreatedDate(new Date(timestamp));
+  };
 
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, route), [
     comment,
     isFinalised,
+    createdDate,
   ]);
 
   const runWithLoadingIndicator = useLoadingIndicator();
@@ -95,6 +129,50 @@ export const CustomerRequisition = ({
     switch (colKey) {
       case 'suppliedQuantity':
         return onEditSuppliedQuantity;
+      case 'openingStock':
+        return onEditOpeningStock;
+      case 'incomingStock':
+        return onEditIncomingStock;
+      case 'outgoingStock':
+        return onEditOutgoingStock;
+      case 'daysOutOfStock':
+        return onEditDaysOutOfStock;
+      case 'negativeAdjustments':
+        return onEditNegativeAdjustments;
+      case 'positiveAdjustments':
+        return onEditPositiveAdjustments;
+      case 'requiredQuantity':
+        return onEditRequiredQuantity;
+
+      default:
+        return null;
+    }
+  }, []);
+
+  const getCellError = useCallback((rowData, colKey) => {
+    const { stockOnHand, daysOutOfStock, numberOfDaysInPeriod } = rowData;
+    const closingStockIsValid = stockOnHand >= 0;
+
+    switch (colKey) {
+      case 'openingStock':
+        return !closingStockIsValid ? 'warning' : null;
+      case 'incomingStock':
+        return !closingStockIsValid ? 'warning' : null;
+      case 'outgoingStock':
+        return !closingStockIsValid ? 'warning' : null;
+      case 'daysOutOfStock':
+        if (daysOutOfStock > numberOfDaysInPeriod) {
+          ToastAndroid.show(tableStrings.days_out_of_stock_validation, ToastAndroid.LONG);
+          return 'error';
+        }
+        return null;
+
+      case 'negativeAdjustments':
+        return !closingStockIsValid ? 'warning' : null;
+      case 'positiveAdjustments':
+        return !closingStockIsValid ? 'warning' : null;
+      case 'stockOnHand':
+        return !closingStockIsValid ? 'error' : null;
       default:
         return null;
     }
@@ -113,30 +191,36 @@ export const CustomerRequisition = ({
     listItem => {
       const { item, index } = listItem;
       const rowKey = keyExtractor(item);
+
+      const { fieldsAreValid } = item;
+
       return (
         <DataTableRow
           rowData={data[index]}
           rowKey={rowKey}
-          columns={columns}
+          columns={currentColumns}
           isFinalised={isFinalised}
           getCallback={getCallback}
           rowIndex={index}
+          getCellError={getCellError}
+          isValidated={fieldsAreValid}
+          onPress={isResponse && !!program ? onRowPress : null}
         />
       );
     },
-    [columns, data, dataState]
+    [currentColumns, data, dataState, columnSet, isResponse, program]
   );
 
   const renderHeader = useCallback(
     () => (
       <DataTableHeaderRow
-        columns={columns}
+        columns={currentColumns}
         onPress={onSortColumn}
         isAscending={isAscending}
         sortKey={sortKey}
       />
     ),
-    [columns, sortKey, isAscending]
+    [currentColumns, sortKey, isAscending]
   );
 
   const ItemIndicatorToggles = useMemo(
@@ -194,8 +278,8 @@ export const CustomerRequisition = ({
 
   const ButtonsSetSupplied = useCallback(() => (
     <>
-      <ButtonSetSuppliedToRequested />
       <ButtonSetSuppliedToSuggested />
+      <ButtonSetSuppliedToRequested />
     </>
   ));
 
@@ -240,9 +324,25 @@ export const CustomerRequisition = ({
     return (
       <View style={verticalContainer}>
         <Buttons />
+        {program && (
+          <ToggleBar
+            toggles={[
+              {
+                text: buttonStrings.customer_data,
+                onPress: onToggleColumnSet,
+                isOn: columnSet === 'b',
+              },
+              {
+                text: buttonStrings.supply_data,
+                onPress: onToggleColumnSet,
+                isOn: columnSet === 'a',
+              },
+            ]}
+          />
+        )}
       </View>
     );
-  }, [usingIndicators, showIndicators, indicatorCodes, currentIndicatorCode]);
+  }, [usingIndicators, showIndicators, indicatorCodes, currentIndicatorCode, columnSet, program]);
 
   const placeholderStrings = useMemo(
     () => ({
@@ -278,7 +378,7 @@ export const CustomerRequisition = ({
         renderHeader={renderHeader}
         keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}
-        columns={columns}
+        columns={currentColumns}
         windowSize={
           showIndicators
             ? DATA_TABLE_DEFAULTS.WINDOW_SIZE_SMALL
@@ -286,7 +386,6 @@ export const CustomerRequisition = ({
         }
       />
       <DataTablePageModal
-        fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
         onClose={onCloseModal}
@@ -294,12 +393,39 @@ export const CustomerRequisition = ({
         dispatch={dispatch}
         currentValue={modalValue}
       />
+      {datePickerIsOpen && (
+        <DateTimePicker
+          onChange={datePickerCallback}
+          mode="date"
+          display="spinner"
+          value={createdDate}
+          maximumDate={entryDate}
+        />
+      )}
     </DataTablePageView>
   );
 };
 
-const mapDispatchToProps = dispatch =>
-  getPageDispatchers(dispatch, 'Requisition', ROUTES.CUSTOMER_REQUISITION);
+const mapDispatchToProps = dispatch => ({
+  ...getPageDispatchers(dispatch, 'Requisition', ROUTES.CUSTOMER_REQUISITION),
+  onRowPress: requisitionItem =>
+    dispatch(RowDetailActions.openCustomerRequisitionItemDetail(requisitionItem)),
+  onEditOpeningStock: (value, rowKey) =>
+    dispatch(PageActions.editOpeningStock(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
+  onEditNegativeAdjustments: (value, rowKey) =>
+    dispatch(PageActions.editNegativeAdjustments(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
+  onEditPositiveAdjustments: (value, rowKey) =>
+    dispatch(PageActions.editPositiveAdjustments(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
+  onEditOutgoingStock: (value, rowKey) =>
+    dispatch(PageActions.editOutgoingStock(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
+  onEditIncomingStock: (value, rowKey) =>
+    dispatch(PageActions.editIncomingStock(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
+  onEditDaysOutOfStock: (value, rowKey) =>
+    dispatch(PageActions.editDaysOutOfStock(value, rowKey, ROUTES.CUSTOMER_REQUISITION)),
+  onEditCreatedDate: value =>
+    dispatch(PageActions.editCreatedDate(value, ROUTES.CUSTOMER_REQUISITION)),
+  onDatePickerClosed: () => dispatch(PageActions.closeDatePicker(ROUTES.CUSTOMER_REQUISITION)),
+});
 
 const mapStateToProps = state => {
   const { pages = {} } = state;
@@ -312,7 +438,7 @@ const mapStateToProps = state => {
       indicatorCodes: selectIndicatorCodes(customerRequisition),
       currentIndicatorCode: selectCurrentIndicatorCode(customerRequisition),
       data: selectIndicatorTableRows(customerRequisition),
-      columns: selectIndicatorTableColumns(customerRequisition),
+      indicatorColumns: selectIndicatorTableColumns(customerRequisition),
     };
   }
 
@@ -336,6 +462,7 @@ CustomerRequisition.defaultProps = {
   usingIndicators: false,
   showIndicators: false,
   indicatorCodes: [],
+  indicatorColumns: [],
   currentIndicatorCode: '',
 };
 
@@ -345,7 +472,6 @@ CustomerRequisition.propTypes = {
   sortKey: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   searchTerm: PropTypes.string.isRequired,
-  columns: PropTypes.array.isRequired,
   keyExtractor: PropTypes.func.isRequired,
   dataState: PropTypes.object.isRequired,
   modalKey: PropTypes.string.isRequired,
@@ -364,4 +490,19 @@ CustomerRequisition.propTypes = {
   onToggleIndicators: PropTypes.func.isRequired,
   onSelectIndicator: PropTypes.func.isRequired,
   route: PropTypes.string.isRequired,
+  onToggleColumnSet: PropTypes.func.isRequired,
+  columnSet: PropTypes.string.isRequired,
+  onEditOpeningStock: PropTypes.func.isRequired,
+  onEditNegativeAdjustments: PropTypes.func.isRequired,
+  onEditPositiveAdjustments: PropTypes.func.isRequired,
+  onEditOutgoingStock: PropTypes.func.isRequired,
+  onEditIncomingStock: PropTypes.func.isRequired,
+  onEditDaysOutOfStock: PropTypes.func.isRequired,
+  onEditRequiredQuantity: PropTypes.func.isRequired,
+  onRowPress: PropTypes.func.isRequired,
+  onEditCreatedDate: PropTypes.func.isRequired,
+  datePickerIsOpen: PropTypes.bool.isRequired,
+  onDatePickerClosed: PropTypes.func.isRequired,
+  isRemoteOrder: PropTypes.bool.isRequired,
+  indicatorColumns: PropTypes.array,
 };

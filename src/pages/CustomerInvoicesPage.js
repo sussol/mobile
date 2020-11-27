@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { View } from 'react-native';
 
 import { MODAL_KEYS } from '../utilities';
-import { useNavigationFocus, useSyncListener } from '../hooks';
+import { useNavigationFocus, useSyncListener, useDebounce } from '../hooks';
 import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 import { gotoCustomerInvoice, createCustomerInvoice } from '../navigation/actions';
 import { ROUTES } from '../navigation/constants';
@@ -53,6 +53,7 @@ export const CustomerInvoices = ({
   // such that any side effects that occur trigger a reconcilitation of data.
   useNavigationFocus(navigation, refreshData);
   useSyncListener(refreshData, ['Transaction']);
+  const toggleCurrentAndPast = useDebounce(toggleFinalised, 250, true);
 
   const onNavigateToInvoice = useCallback(invoice => {
     dispatch(gotoCustomerInvoice(invoice));
@@ -67,8 +68,8 @@ export const CustomerInvoices = ({
 
   const toggles = useMemo(
     () => [
-      { text: buttonStrings.current, onPress: toggleFinalised, isOn: !showFinalised },
-      { text: buttonStrings.past, onPress: toggleFinalised, isOn: showFinalised },
+      { text: buttonStrings.current, onPress: toggleCurrentAndPast, isOn: !showFinalised },
+      { text: buttonStrings.past, onPress: toggleCurrentAndPast, isOn: showFinalised },
     ],
     [showFinalised]
   );
@@ -160,7 +161,6 @@ export const CustomerInvoices = ({
         confirmText={modalStrings.delete}
       />
       <DataTablePageModal
-        fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
         onClose={onCloseModal}

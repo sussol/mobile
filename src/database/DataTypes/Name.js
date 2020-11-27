@@ -104,6 +104,10 @@ export class Name extends Realm.Object {
     return this.thisStoresPatient;
   }
 
+  get nameTags() {
+    return this.nameTagJoins.map(({ nameTag }) => nameTag.description);
+  }
+
   /**
    * Add master list to name, if it has not already been added.
    *
@@ -149,6 +153,7 @@ Name.schema = {
     policies: { type: 'linkingObjects', objectType: 'InsurancePolicy', property: 'patient' },
     female: { type: 'bool', default: false },
     thisStoresPatient: { type: 'bool', default: false },
+    nameTagJoins: { type: 'linkingObjects', objectType: 'NameTagJoin', property: 'name' },
   },
 };
 

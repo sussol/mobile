@@ -34,6 +34,30 @@ import { PREFERENCE_KEYS } from '../database/utilities/constants';
  *
  */
 
+export const createCustomerRequisition = ({
+  currentUser,
+  ...requisitionParameters
+}) => dispatch => {
+  // Create the requisition. If a program was supplied, add items from that
+  // program, otherwise just navigate to it.
+  let requisition;
+  UIDatabase.write(() => {
+    requisition = createRecord(
+      UIDatabase,
+      'CustomerRequisition',
+      currentUser,
+      requisitionParameters
+    );
+
+    if (requisition.program) {
+      requisition.addItemsFromProgram(UIDatabase);
+      requisition.createCustomerInvoice(UIDatabase, currentUser);
+    }
+  });
+
+  dispatch(gotoCustomerRequisition(requisition));
+};
+
 /**
  * Action creator for handling back navigation.
  *
@@ -92,6 +116,18 @@ export const createPrescription = patientID => (dispatch, getState) => {
 
   dispatch(gotoPrescription(newPrescription));
 };
+
+export const gotoVaccineAdminPage = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.VACCINES_ADMIN,
+    params: { title: navStrings.vaccine_admin },
+  });
+
+export const goToVaccines = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.VACCINES,
+    params: { title: navStrings.vaccines },
+  });
 
 export const goToCashRegister = () =>
   NavigationActions.navigate({
@@ -257,7 +293,10 @@ export const gotoStocktakeManagePage = (stocktakeName, stocktake) => dispatch =>
     },
   };
 
-  dispatch(navigationActionCreator(navigationParameters));
+  batch(() => {
+    dispatch(navigationActionCreator(navigationParameters));
+    dispatch(FinaliseActions.setFinaliseItem(null));
+  });
 };
 
 /**

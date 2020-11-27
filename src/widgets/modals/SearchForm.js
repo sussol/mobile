@@ -4,10 +4,14 @@
  * Sustainable Solutions (NZ) Ltd. 2020
  */
 
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { View, StyleSheet, FlatList, Text, TouchableOpacity } from 'react-native';
 import { connect, batch } from 'react-redux';
 import PropTypes from 'prop-types';
+import { getAuthHeader } from 'sussol-utilities';
+
+import { SETTINGS_KEYS } from '../../settings';
+import { UIDatabase } from '../../database';
 
 import { useFetch } from '../../hooks/useFetch';
 
@@ -40,23 +44,7 @@ import {
   selectLookupListConfig,
 } from '../../selectors/dispensary';
 
-const QueryingIndicatorComponent = ({ isQuerying }) =>
-  isQuerying ? (
-    <View style={localStyles.spinnerContainer}>
-      <Spinner isSpinning={isQuerying} color={SUSSOL_ORANGE} />
-    </View>
-  ) : null;
-
-const QueryingIndicator = React.memo(QueryingIndicatorComponent);
-
-const QueryHandlerComponent = ({ queryUrl, onData, onError }) => {
-  const [data, error, isFetching] = useFetch(queryUrl);
-  if (data) onData(data);
-  if (error) onError(error.message);
-  return <QueryingIndicator isQuerying={isFetching} />;
-};
-
-const QueryHandler = React.memo(QueryHandlerComponent);
+const { SYNC_URL, SYNC_SITE_NAME, SYNC_SITE_PASSWORD_HASH } = SETTINGS_KEYS;
 
 const SearchListItemColumnComponent = ({ value, type }) => {
   const valueText = type === 'date' ? value?.toDateString() ?? generalStrings.not_available : value;
@@ -90,31 +78,37 @@ export const SearchFormComponent = ({
   selectPatient,
   selectPrescriber,
 }) => {
-  const [data, setData] = useState([]);
-  const [error, setError] = useState('');
-  const [queryUrl, setQueryUrl] = useState('');
+  const syncUrl = UIDatabase.getSetting(SYNC_URL);
 
-  const onData = useCallback(responseData => {
-    if (isPatient) setData(processPatientResponse(responseData));
-    if (isPrescriber) setData(processPrescriberResponse(responseData));
-    resetQueryUrl();
-  }, []);
+  const { fetch, refresh, isLoading, response, error } = useFetch(syncUrl);
 
-  const onError = useCallback(responseError => {
-    setError(responseError);
-    resetData();
-    resetQueryUrl();
-  }, []);
-
-  const resetData = useCallback(() => setData(''), []);
-  const resetError = useCallback(() => setError(''), []);
-  const resetQueryUrl = useCallback(() => setQueryUrl(''), []);
+  const getAuthorizationHeader = () => {
+    const username = UIDatabase.getSetting(SYNC_SITE_NAME);
+    const password = UIDatabase.getSetting(SYNC_SITE_PASSWORD_HASH);
+    return getAuthHeader(username, password);
+  };
 
   const lookupRecords = useMemo(() => {
-    if (isPatient) return params => setQueryUrl(getPatientRequestUrl(params));
-    if (isPrescriber) return params => setQueryUrl(getPrescriberRequestUrl(params));
+    if (isPatient) {
+      return async params => {
+        fetch(
+          getPatientRequestUrl(params),
+          { headers: { authorization: getAuthorizationHeader() } },
+          { responseHandler: processPatientResponse }
+        );
+      };
+    }
+    if (isPrescriber) {
+      return async params => {
+        fetch(
+          getPrescriberRequestUrl(params),
+          { headers: { authorization: getAuthorizationHeader() } },
+          { responseHandler: processPrescriberResponse }
+        );
+      };
+    }
     return () => null;
-  }, [isPatient, isPrescriber]);
+  }, [isLoading, isPatient, isPrescriber]);
 
   const renderRecord = useCallback(
     ({ item }) => <SearchListItem item={item} config={listConfig} onSelect={selectRecord} />,
@@ -141,28 +135,30 @@ export const SearchFormComponent = ({
 
   const ListView = useCallback(
     () =>
-      queryUrl ? (
-        <QueryHandler queryUrl={queryUrl} onData={onData} onError={onError} />
+      isLoading ? (
+        <View style={localStyles.spinnerContainer}>
+          <Spinner isSpinning={isLoading} color={SUSSOL_ORANGE} />
+        </View>
       ) : (
-        <FlatList data={data} keyExtractor={recordKeyExtractor} renderItem={renderRecord} />
+        <FlatList data={response} keyExtractor={recordKeyExtractor} renderItem={renderRecord} />
       ),
-    [queryUrl, onData, onError, data, renderRecord]
+    [isLoading, response, renderRecord]
   );
 
   const ErrorView = useCallback(
     () => (
       <>
-        <ModalContainer fullScreen={true} isVisible={!!error}>
+        <ModalContainer isVisible={!!error}>
           <ConfirmForm
             isOpen={!!error}
-            questionText={error}
-            onConfirm={resetError}
+            questionText={error?.message}
+            onConfirm={refresh}
             confirmText={modalStrings.confirm}
           />
         </ModalContainer>
       </>
     ),
-    [error, resetError]
+    [error]
   );
 
   return (
@@ -195,16 +191,6 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export const SearchForm = connect(mapStateToProps, mapDispatchToProps)(SearchFormComponent);
-
-QueryingIndicatorComponent.propTypes = {
-  isQuerying: PropTypes.bool.isRequired,
-};
-
-QueryHandlerComponent.propTypes = {
-  queryUrl: PropTypes.string.isRequired,
-  onData: PropTypes.func.isRequired,
-  onError: PropTypes.func.isRequired,
-};
 
 SearchFormComponent.propTypes = {
   isPatient: PropTypes.bool.isRequired,

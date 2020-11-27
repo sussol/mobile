@@ -1,5 +1,5 @@
 /* eslint-disable react/forbid-prop-types */
-import React, { useReducer, useEffect, useCallback, useMemo } from 'react';
+import React, { useReducer, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
 
@@ -10,13 +10,18 @@ import { ModalContainer } from './ModalContainer';
 import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
 
 import { SETTINGS_KEYS } from '../../settings';
-import { getAllPrograms, getAllPeriodsForProgram } from '../../utilities';
+import {
+  getAllPrograms,
+  getAllPeriodsForProgram,
+  getAllProgramsForCustomer,
+} from '../../utilities';
 import { programStrings, navStrings } from '../../localization';
 import { UIDatabase } from '../../database';
 import {
   selectProgram,
   selectSupplier,
   selectOrderType,
+  selectCustomer,
   selectPeriod,
   setStoreTags,
   setSteps,
@@ -27,13 +32,18 @@ import {
   byProgramReducer,
   initialState,
 } from '../../reducers/ByProgramReducer';
+import { FlexColumn } from '../FlexColumn';
 
-const { THIS_STORE_TAGS } = SETTINGS_KEYS;
+const { THIS_STORE_TAGS, THIS_STORE_NAME_ID } = SETTINGS_KEYS;
 
-const modalProps = ({ dispatch, program, orderType }) => ({
+const modalProps = ({ dispatch, program, orderType, customer }) => ({
   program: {
     queryStringSecondary: 'name CONTAINS[c] $0',
     onSelect: value => dispatch(selectProgram(value)),
+  },
+  customer: {
+    secondaryFilterProperty: 'code',
+    onSelect: value => dispatch(selectCustomer(value)),
   },
   supplier: {
     secondaryFilterProperty: 'code',
@@ -49,10 +59,13 @@ const modalProps = ({ dispatch, program, orderType }) => ({
         maxMOS: itemMOS,
         thresholdMOS: itemThreshMOS,
         isEmergency,
+        name,
       } = item;
 
-      const thisStoresTags = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_TAGS);
-      const maxLinesForOrder = program.getMaxLines?.(item.name, thisStoresTags);
+      const tags = customer
+        ? customer?.nameTags.join(',')
+        : UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_TAGS);
+      const maxLinesForOrder = program?.getMaxLines?.(name, tags);
 
       const mosText = `${maxMOS}: ${itemMOS}`;
       const thresholdText = `${threshMOS}: ${itemThreshMOS}`;
@@ -60,10 +73,11 @@ const modalProps = ({ dispatch, program, orderType }) => ({
         maxLinesForOrder && maxLinesForOrder !== Infinity
           ? `${programStrings.max_items}: ${maxLinesForOrder}`
           : '';
+
       const emergencyText = `[${programStrings.emergency_order}]  ${maxItemsText}`;
       const maxOrdersText = isEmergency ? emergencyText : `${maxOPP}: ${maxOrders}`;
 
-      return `${maxOrdersText} - ${mosText} - ${thresholdText}`;
+      return `${maxOrdersText}\n${mosText}\n${customer ? '' : thresholdText}`;
     },
   },
   period: {
@@ -72,7 +86,9 @@ const modalProps = ({ dispatch, program, orderType }) => ({
       const { requisitions } = getLocalizedStrings();
       const { maxOrdersPerPeriod, isEmergency } = orderType;
 
-      const requisitionsInPeriod = item.requisitionsForOrderType(program, orderType);
+      const requisitionsInPeriod = !customer
+        ? item.numberOfSupplierRequisitionsForOrderType(program, orderType)
+        : item.numberOfCustomerRequisitionsForOrderType(program, orderType, customer);
       const requisitionsCount = `${requisitionsInPeriod}/${maxOrdersPerPeriod} ${requisitions}`;
 
       const periodText = isEmergency
@@ -88,8 +104,10 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
   const [state, dispatch] = useReducer(byProgramReducer, {}, () =>
     initialState({ transactionType })
   );
-  const { steps, modalData, program, orderType, period, supplier, storeTags, name } = state;
-  const strings = useMemo(() => getLocalizedStrings({ transactionType }), [transactionType]);
+
+  const { steps, modalData, program, orderType, period, supplier, name, customer } = state;
+  const strings = getLocalizedStrings({ transactionType });
+
   const mounting = () => {
     dispatch(setStoreTags(settings.get(THIS_STORE_TAGS)));
     dispatch(setSteps(transactionType));
@@ -100,7 +118,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
   // Calculates the current state of a step, according to what data is currently
   // stored in state, where the current step the user should perform is CURRENT,
   // data which is stored is COMPLETE and steps which can't be done yet are INCOMPLETE.
-  const getStatusCallback = key =>
+  const getStatus = key =>
     steps.reduceRight((status, value, i) => {
       if (state[key]) return 'COMPLETE';
       const previousStepIsCurrent = state[value] && steps[i + 1] === key;
@@ -108,36 +126,47 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
       if (previousStepIsCurrent || firstStepIsCurrent) return 'CURRENT';
       return status;
     }, 'INCOMPLETE');
-  const getStatus = useCallback(getStatusCallback, [
-    program,
-    orderType,
-    supplier,
-    name,
-    period,
-    steps,
-    state.isProgramBased,
-  ]);
+
+  const tags = database
+    .objects('NameTag')
+    .filtered(
+      'subquery(nameTagJoins, $joins, $joins.name.id == $0).@count > 0',
+      customer?.id ?? settings.get(THIS_STORE_NAME_ID)
+    )
+    .map(({ description }) => description);
 
   // Helper methods for fetching modal data for user selection
-  const getPrograms = () => getAllPrograms(settings, database);
+  const getPrograms = () => {
+    if (transactionType === 'customerRequisition') {
+      return getAllProgramsForCustomer(customer, database);
+    }
+    return getAllPrograms(settings, database);
+  };
   const getSuppliers = () => database.objects('InternalSupplier');
-  const getOrderTypes = () => program && program.getStoreTagObject(storeTags).orderTypes;
+  const getCustomers = () => database.objects('Customer');
+  const getOrderTypes = () => program && program.getStoreTagObject(tags).orderTypes;
   const getPeriods = () => {
     if (!(program && orderType)) return null;
-    const { periodScheduleName } = program.getStoreTagObject(storeTags);
-    return getAllPeriodsForProgram(database, program, periodScheduleName, orderType);
+    const { periodScheduleName } = program.getStoreTagObject(tags);
+    return getAllPeriodsForProgram(database, program, periodScheduleName, orderType, customer);
   };
 
   /** Call backs */
 
   // Dispatcher on clicking a step. Opens the modal and sets the passed data as modalData
   const onOpenModal = ({ key, selection }) => dispatch(setModalOpen({ key, selection }));
-  // Closed the currently ooen modal
+  // Closed the currently open modal
   const onCloseModal = () => dispatch(setModalClosed());
   // Switches from program <-> general, resetting the state.
   const onToggle = () => dispatch(setToggle());
   const onCreate = () =>
-    onConfirm({ otherStoreName: supplier, program, period, orderType, stocktakeName: name });
+    onConfirm({
+      otherStoreName: supplier || customer,
+      program,
+      period,
+      orderType,
+      stocktakeName: name,
+    });
   /** Inner components */
 
   // Togglebar for switching between general <-> program. Resets state on toggle.
@@ -167,78 +196,76 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
         primaryFilterProperty="name"
         renderLeftText={item => `${item.name}`}
         options={modalData}
-        {...modalProps({ dispatch, program, orderType })[currentKey]}
+        {...modalProps({ dispatch, program, orderType, customer })[currentKey]}
       />
     );
     const Editor = () => (
       <TextEditor text={name} onEndEditing={value => dispatch(setName(value))} />
     );
     return (
-      <ModalContainer isVisible={isModalOpen} onClose={onCloseModal} fullScreen>
+      <ModalContainer isVisible={isModalOpen} onClose={onCloseModal}>
         {currentKey !== 'name' ? <Selector /> : <Editor />}
       </ModalContainer>
     );
   };
 
   const stepProps = {
-    program: useMemo(
-      () => ({
-        data: program,
-        getModalData: getPrograms,
-        onPress: onOpenModal,
-        status: getStatus('program'),
-        stepKey: 'program',
-        type: 'select',
-        field: 'name',
-      }),
-      [program, state.isProgramBased]
-    ),
-    supplier: useMemo(
-      () => ({
-        data: supplier,
-        getModalData: getSuppliers,
-        onPress: onOpenModal,
-        status: getStatus('supplier'),
-        stepKey: 'supplier',
-        type: 'select',
-        field: 'name',
-      }),
-      [program, supplier, state.isProgramBased]
-    ),
-    orderType: useMemo(
-      () => ({
-        data: orderType,
-        getModalData: getOrderTypes,
-        onPress: onOpenModal,
-        status: getStatus('orderType'),
-        stepKey: 'orderType',
-        type: 'select',
-        field: 'name',
-      }),
-      [supplier, orderType]
-    ),
-    period: useMemo(
-      () => ({
-        data: period,
-        getModalData: getPeriods,
-        onPress: onOpenModal,
-        status: getStatus('period'),
-        stepKey: 'period',
-        type: 'select',
-        field: 'name',
-      }),
-      [orderType, period]
-    ),
-    name: useMemo(
-      () => ({
-        data: name,
-        status: getStatus('name'),
-        onPress: onOpenModal,
-        stepKey: 'name',
-        type: 'input',
-      }),
-      [program, state.isProgramBased, name]
-    ),
+    program: {
+      data: program,
+      getModalData: getPrograms,
+      onPress: onOpenModal,
+      status: getStatus('program'),
+      stepKey: 'program',
+      type: 'select',
+      field: 'name',
+    },
+    customer: {
+      data: customer,
+      getModalData: getCustomers,
+      onPress: onOpenModal,
+      status: getStatus('customer'),
+      stepKey: 'customer',
+      type: 'select',
+      field: 'name',
+    },
+
+    supplier: {
+      data: supplier,
+      getModalData: getSuppliers,
+      onPress: onOpenModal,
+      status: getStatus('supplier'),
+      stepKey: 'supplier',
+      type: 'select',
+      field: 'name',
+    },
+
+    orderType: {
+      data: orderType,
+      getModalData: getOrderTypes,
+      onPress: onOpenModal,
+      status: getStatus('orderType'),
+      stepKey: 'orderType',
+      type: 'select',
+      field: 'name',
+    },
+
+    period: {
+      data: period,
+      getModalData: getPeriods,
+      onPress: onOpenModal,
+      status: getStatus('period'),
+      stepKey: 'period',
+      type: 'select',
+      field: 'name',
+    },
+
+    name: {
+      data: name,
+      status: getStatus('name'),
+      onPress: onOpenModal,
+      stepKey: 'name',
+      type: 'input',
+    },
   };
 
   /** Render */
@@ -248,8 +275,8 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
   const isDisabled = !(steps[steps.length - 1] === currentKey);
 
   return (
-    <>
-      <ProgramToggleBar />
+    <FlexColumn flex={1} alignItems="center">
+      {transactionType !== 'customerRequisition' ? <ProgramToggleBar /> : null}
       {steps.map(stepKey => (
         <Step key={stepKey} {...stepProps[stepKey]} />
       ))}
@@ -262,7 +289,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
         textStyle={pageButtonTextStyle}
       />
       {isModalOpen && <ByProgramSelector />}
-    </>
+    </FlexColumn>
   );
 };
 
@@ -279,8 +306,7 @@ const localStyles = StyleSheet.create({
   okButton: {
     ...globalStyles.button,
     backgroundColor: SUSSOL_ORANGE,
-    alignSelf: 'center',
-    marginTop: 60,
+    marginTop: 'auto',
   },
   pageButtonTextStyle: {
     ...globalStyles.buttonText,
