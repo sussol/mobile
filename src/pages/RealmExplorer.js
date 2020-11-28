@@ -62,7 +62,7 @@ const getRealmObjects = ({ schema: objectSchemas }) => objectSchemas.map(({ name
 
 const getRealmObjectsFields = ({ schema: objectSchemas }) =>
   objectSchemas
-    .map((objectSchema) => {
+    .map(({ schema: objectSchema }) => {
       const { name, properties } = objectSchema;
       const fields = Object.entries(properties)
         .map(([field, type]) => ({
