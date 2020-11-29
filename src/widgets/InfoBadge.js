@@ -46,10 +46,6 @@ const InfoBadgeComponent = ({
     []
   );
 
-  console.log('-------------------------------------------');
-  console.log('ref', ref);
-  console.log('-------------------------------------------');
-
   return (
     <View>
       {children}
