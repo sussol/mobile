@@ -3,6 +3,7 @@ package com.msupplymobile;
 import android.app.Application;
 
 import android.content.Context;
+import com.bugsnag.android.Bugsnag;
 import com.facebook.react.PackageList;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.react.ReactApplication;
@@ -41,6 +42,7 @@ public class MainApplication extends Application implements ReactApplication {
   @Override
   public void onCreate() {
     super.onCreate();
+    Bugsnag.start(this);
     SoLoader.init(this, false);
 
     // Disabling Flipper until a point of higher understanding

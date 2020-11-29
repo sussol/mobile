@@ -8,7 +8,7 @@
 
 import moment from 'moment';
 import querystring from 'querystring';
-import { Client as BugsnagClient } from 'bugsnag-react-native';
+import Bugsnag from '@bugsnag/react-native';
 import { AUTH_ERROR_CODES } from 'sussol-utilities';
 
 import { UIDatabase } from '../database';
@@ -37,12 +37,10 @@ const PARAMETERS = {
   registrationCode: { key: 'code', type: TYPES.STRING },
 };
 
-const bugsnagClient = new BugsnagClient();
-
 class BugsnagError extends Error {
   constructor(message, data, ...args) {
     super(message, ...args);
-    bugsnagClient.notify(this, report => {
+    Bugsnag.notify(this, report => {
       report.errorMessage = message;
       report.metadata = data;
     });

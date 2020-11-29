@@ -2,7 +2,7 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
-import { Client as BugsnagClient } from 'bugsnag-react-native';
+import Bugsnag from '@bugsnag/react-native';
 
 import { UIDatabase } from '../database';
 import { RootNavigator } from '../navigation';
@@ -10,8 +10,6 @@ import { selectCurrentUser } from '../selectors/user';
 
 import { selectFinaliseItem } from '../selectors/finalise';
 import { refreshData } from '../pages/dataTableUtilities/actions/tableActions';
-
-const bugsnagClient = new BugsnagClient();
 
 export const FINALISE_ACTIONS = {
   OPEN_MODAL: 'Finalise/openModal',
@@ -36,7 +34,7 @@ const finalise = () => (dispatch, getState) => {
   try {
     UIDatabase.write(() => finaliseItem.finalise(UIDatabase, currentUser));
   } catch (error) {
-    bugsnagClient.notify(error);
+    Bugsnag.notify(error);
   }
 
   dispatch(refreshData(currentRoute));

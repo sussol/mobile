@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { AppRegistry, YellowBox, BackHandler } from 'react-native';
+import Bugsnag from '@bugsnag/react-native';
 import { Provider } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
 import { ErrorHandler } from 'redux-persist-error-handler';
@@ -14,6 +15,8 @@ import { store, persistedStore } from './Store';
 import { backHandler, rootNavigatorRef } from './navigation';
 
 import MSupplyMobileApp from './mSupplyMobileApp';
+
+Bugsnag.start();
 
 const App = () => {
   React.useEffect(() => {

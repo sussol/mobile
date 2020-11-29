@@ -1,6 +1,4 @@
-import { Client as BugsnagClient } from 'bugsnag-react-native';
-
-const bugsnagClient = new BugsnagClient();
+import Bugsnag from '@bugsnag/react-native';
 
 // versionToInteger logic is the same as ./android/app/build.gradle.
 export const versionToInteger = version => {
@@ -26,7 +24,7 @@ export const compareVersions = (versionOne, versionTwo) => {
     // Errors thrown in migration method in dataMigration.js do not trickle down to bugsnag.
     // so will need manually notify.
     error.message = `error verifying versions, versionOne: ${versionOne}, versionTwo ${versionTwo}`;
-    bugsnagClient.notify(error);
+    Bugsnag.notify(error);
   }
   return 0;
 };
