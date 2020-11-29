@@ -102,11 +102,8 @@ export class Synchroniser {
       });
     };
 
-    console.log('20', url, opts);
     const response = await fetch(url, opts);
-    console.log('21', url, opts, response);
     const responseClone = response.clone();
-    console.log('22');
 
     if (response.status < 200 || response.status >= 300) {
       throw new Error('Connection failure while attempting to sync.');
@@ -115,9 +112,6 @@ export class Synchroniser {
     try {
       responseJson = await response.json();
     } catch (error) {
-      console.log('-------------------------------------------');
-      console.log('???');
-      console.log('-------------------------------------------');
       bugsnagNotify('Failed parsing response from server', response);
       throw new Error('Unexpected response from sync server');
     }
@@ -164,23 +158,10 @@ export class Synchroniser {
     if (isFresh) this.database.write(() => this.database.deleteAll());
 
     try {
-      console.log('-------------------------------------------');
-      console.log('1');
-      console.log('-------------------------------------------');
       await this.authenticator.authenticate(serverURL, syncSiteName, syncSitePassword);
-      console.log('-------------------------------------------');
-      console.log('2');
-      console.log('-------------------------------------------');
       this.refreshSyncParams(); // Authenticate sets all the sync settings in database, so refresh.
-      console.log('-------------------------------------------');
-      console.log('3');
-      console.log('-------------------------------------------');
-
       if (isFresh) {
         // If a fresh initialisation, send request to server to prepare required sync records.
-        console.log('-------------------------------------------');
-        console.log('4');
-        console.log('-------------------------------------------');
         await this.fetchWrapper(
           `${this.serverURL}/sync/v3/initial_dump/` +
             `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
@@ -191,22 +172,12 @@ export class Synchroniser {
             },
           }
         );
-        console.log('-------------------------------------------');
-        console.log('5');
-        console.log('-------------------------------------------');
         // If the initial_dump has been successful, serverURL is valid, and should now have all sync
         // records queued and ready to send. Safe to store as this.serverURL
         this.serverURL = serverURL;
       }
-      console.log('-------------------------------------------');
-      console.log('6');
-      console.log('-------------------------------------------');
       await this.pull();
-      console.log('7');
     } catch (error) {
-      console.log('-------------------------------------------');
-      console.log('error', error, Object.keys(error), error.line, error.column, error.sourceURL);
-      console.log('-------------------------------------------');
       // Did not authenticate, sync error or no internet, bubble up error.
       this.setError(error.message);
       this.setIsSyncing(false);
@@ -350,18 +321,13 @@ export class Synchroniser {
     this.setTotal(total);
 
     // Pull |this.batchSize| records at a time from server.
-    console.log('8');
+
     while (progress < total) {
-      console.log('9');
       const batchComplete = this.batchSizeAdjustor();
-      console.log('10');
       // Get a batch of records and integrate them.
       const incomingRecords = await this.getIncomingRecords();
-      console.log('11');
       this.integrateRecords(incomingRecords);
-      console.log('12');
       await this.acknowledgeRecords(incomingRecords);
-      console.log('13');
       // Break out if incoming records is actually empty (unexpected behaviour from server API).
       // Ensure no infinite loops.
       if (incomingRecords.length <= 0) break;
@@ -375,7 +341,6 @@ export class Synchroniser {
           this.setTotal(total);
         }
       }
-
       this.incrementProgress(incomingRecords.length);
       batchComplete();
     }
@@ -462,7 +427,7 @@ export class Synchroniser {
     const requestBody = {
       SyncRecordIDs: syncIds,
     };
-    console.log('14');
+
     await this.fetchWrapper(
       `${this.serverURL}/sync/v3/acknowledged_records` +
         `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
@@ -475,7 +440,6 @@ export class Synchroniser {
         body: JSON.stringify(requestBody),
       }
     );
-    console.log('15');
   };
 
   /**
