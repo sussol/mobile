@@ -5,6 +5,8 @@
 
 export const MODALS = {
   PATIENT_HISTORY: 'patientHistory',
+  PATIENT_LOOKUP: 'patientLookup',
+  PRESCRIBER_LOOKUP: 'prescriberLookup',
   REGIMEN_DATA: 'regimenDataModal',
   STOCKTAKE_BATCH_EDIT: 'stocktakeBatchEditModal',
   STOCKTAKE_BATCH_EDIT_WITH_REASONS: 'stocktakeBatchEditModalWithReasons',

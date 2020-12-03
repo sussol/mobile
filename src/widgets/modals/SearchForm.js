@@ -5,12 +5,13 @@
  */
 
 import React, { useMemo, useCallback } from 'react';
-import { View, StyleSheet, FlatList, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { connect, batch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { getAuthHeader } from 'sussol-utilities';
 
 import { SETTINGS_KEYS } from '../../settings';
+import { MODALS } from '../constants';
 import { UIDatabase } from '../../database';
 
 import { useFetch } from '../../hooks/useFetch';
@@ -25,7 +26,8 @@ import { InsuranceActions } from '../../actions/InsuranceActions';
 import { PatientActions } from '../../actions/PatientActions';
 import { PrescriberActions } from '../../actions/PrescriberActions';
 
-import { recordKeyExtractor } from '../../pages/dataTableUtilities';
+import { getColumns } from '../../pages/dataTableUtilities';
+import { SimpleTable } from '../SimpleTable';
 
 import { modalStrings, generalStrings } from '../../localization';
 
@@ -46,41 +48,20 @@ import {
 
 const { SYNC_URL, SYNC_SITE_NAME, SYNC_SITE_PASSWORD_HASH } = SETTINGS_KEYS;
 
-const SearchListItemColumnComponent = ({ value, type }) => {
-  const valueText = type === 'date' ? value?.toDateString() ?? generalStrings.not_available : value;
-  return (
-    <View style={localStyles.columnContainer}>
-      <Text style={localStyles.text}>{valueText}</Text>
-    </View>
-  );
-};
-
-const SearchListItemComponent = ({ item, config, onSelect }) => {
-  const columns = config.map(({ key, type }) => {
-    const value = item[key];
-    return <SearchListItemColumn key={key} value={value} type={type} />;
-  });
-  return (
-    <TouchableOpacity onPress={() => onSelect(item)} style={localStyles.rowContainer}>
-      {columns}
-    </TouchableOpacity>
-  );
-};
-
-const SearchListItemColumn = React.memo(SearchListItemColumnComponent);
-const SearchListItem = React.memo(SearchListItemComponent);
-
 export const SearchFormComponent = ({
   isPatient,
   isPrescriber,
   formConfig,
-  listConfig,
   selectPatient,
   selectPrescriber,
 }) => {
   const syncUrl = UIDatabase.getSetting(SYNC_URL);
-
   const { fetch, refresh, isLoading, response, error } = useFetch(syncUrl);
+
+  const columns = React.useMemo(
+    () => (isPatient ? getColumns(MODALS.PATIENT_LOOKUP) : getColumns(MODALS.PRESCRIBER_LOOKUP)),
+    []
+  );
 
   const getAuthorizationHeader = () => {
     const username = UIDatabase.getSetting(SYNC_SITE_NAME);
@@ -110,11 +91,6 @@ export const SearchFormComponent = ({
     return () => null;
   }, [isLoading, isPatient, isPrescriber]);
 
-  const renderRecord = useCallback(
-    ({ item }) => <SearchListItem item={item} config={listConfig} onSelect={selectRecord} />,
-    [listConfig]
-  );
-
   const selectRecord = useMemo(() => {
     if (isPatient) return patient => selectPatient(patient);
     if (isPrescriber) return prescriber => selectPrescriber(prescriber);
@@ -140,9 +116,9 @@ export const SearchFormComponent = ({
           <Spinner isSpinning={isLoading} color={SUSSOL_ORANGE} />
         </View>
       ) : (
-        <FlatList data={response} keyExtractor={recordKeyExtractor} renderItem={renderRecord} />
+        <SimpleTable data={response} columns={columns} selectRow={selectRecord} />
       ),
-    [isLoading, response, renderRecord]
+    [isLoading, response]
   );
 
   const ErrorView = useCallback(
@@ -187,7 +163,9 @@ const mapDispatchToProps = dispatch => ({
     dispatch(PatientActions.patientUpdate(patient));
     batch(() => patient.policies.forEach(policy => dispatch(InsuranceActions.update(policy))));
   },
-  selectPrescriber: prescriber => dispatch(PrescriberActions.updatePrescriber(prescriber)),
+  selectPrescriber: prescriber => {
+    dispatch(PrescriberActions.updatePrescriber(prescriber));
+  },
 });
 
 export const SearchForm = connect(mapStateToProps, mapDispatchToProps)(SearchFormComponent);
@@ -196,24 +174,8 @@ SearchFormComponent.propTypes = {
   isPatient: PropTypes.bool.isRequired,
   isPrescriber: PropTypes.bool.isRequired,
   formConfig: PropTypes.array.isRequired,
-  listConfig: PropTypes.array.isRequired,
   selectPatient: PropTypes.func.isRequired,
   selectPrescriber: PropTypes.func.isRequired,
-};
-
-SearchListItemComponent.propTypes = {
-  item: PropTypes.object.isRequired,
-  config: PropTypes.array.isRequired,
-  onSelect: PropTypes.func.isRequired,
-};
-
-SearchListItemColumnComponent.defaultProps = {
-  value: null,
-};
-
-SearchListItemColumnComponent.propTypes = {
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
-  type: PropTypes.string.isRequired,
 };
 
 const localStyles = StyleSheet.create({

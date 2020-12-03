@@ -7,6 +7,7 @@ import Cell from './DataTable/Cell';
 import { dataTableStyles, GREY } from '../globalStyles/index';
 import { HeaderCell, HeaderRow, TouchableNoFeedback } from './DataTable/index';
 import { getItemLayout, recordKeyExtractor } from '../pages/dataTableUtilities';
+import { generalStrings } from '../localization';
 
 /**
  * Simple table component for rendering a large list of un-changing data.
@@ -38,12 +39,17 @@ export const SimpleTable = React.memo(
         rowData => {
           const { id } = rowData;
 
-          return columns.map(({ key, width, alignText }, index) => {
+          return columns.map(({ key, width, alignText, type }, index) => {
             const disabledStyle = disabledRows?.[id] || isDisabled ? { color: GREY } : {};
             const textStyle = { ...cellText[alignText], ...disabledStyle };
+            const valueText =
+              type === 'date'
+                ? rowData[key]?.toDateString() ?? generalStrings.not_available
+                : rowData[key];
+
             return (
               <Cell
-                value={rowData[key]}
+                value={valueText}
                 viewStyle={cellContainer[alignText]}
                 textStyle={textStyle}
                 isLastCell={index === columns.length - 1}
@@ -136,7 +142,7 @@ SimpleTable.propTypes = {
 };
 
 const SimpleRow = React.memo(({ rowData, style, rowKey, renderCells, onPress }) => {
-  const onSelect = useCallback(() => onPress(rowKey), [rowKey, onPress]);
+  const onSelect = useCallback(() => onPress(rowData), [rowData, onPress]);
   const Container = onPress ? TouchableOpacity : TouchableNoFeedback;
   return (
     <Container onPress={onSelect} key={rowKey}>
