@@ -105,7 +105,7 @@ const ItemSelectComponent = ({
 };
 
 const mapDispatchToProps = dispatch => {
-  const chooseItem = itemID => dispatch(PrescriptionActions.addItem(itemID));
+  const chooseItem = item => dispatch(PrescriptionActions.addItem(item.id));
   const nextTab = () => dispatch(WizardActions.nextTab());
   const updateQuantity = (id, quantity) => dispatch(PrescriptionActions.editQuantity(id, quantity));
   const filterItems = searchTerm => dispatch(PrescriptionActions.filter(searchTerm));
