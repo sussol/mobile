@@ -45,7 +45,7 @@ export const SimpleTable = React.memo(
             const textStyle = { ...cellText[alignText], ...disabledStyle };
             const valueText =
               type === 'date'
-                ? formatDate(rowData[key]) ?? generalStrings.not_available
+                ? formatDate(rowData[key], 'll') ?? generalStrings.not_available
                 : rowData[key];
 
             return (
