@@ -8,6 +8,7 @@ import { dataTableStyles, GREY } from '../globalStyles/index';
 import { HeaderCell, HeaderRow, TouchableNoFeedback } from './DataTable/index';
 import { getItemLayout, recordKeyExtractor } from '../pages/dataTableUtilities';
 import { generalStrings } from '../localization';
+import { formatDate } from '../utilities';
 
 /**
  * Simple table component for rendering a large list of un-changing data.
@@ -44,7 +45,7 @@ export const SimpleTable = React.memo(
             const textStyle = { ...cellText[alignText], ...disabledStyle };
             const valueText =
               type === 'date'
-                ? rowData[key]?.toDateString() ?? generalStrings.not_available
+                ? formatDate(rowData[key]) ?? generalStrings.not_available
                 : rowData[key];
 
             return (
