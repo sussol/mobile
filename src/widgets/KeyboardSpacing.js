@@ -10,6 +10,7 @@ export const KeyboardSpacing = React.memo(() => {
     toValue: height,
     duration: 100,
     easing: Easing.linear,
+    useNativeDriver: false,
   }).start();
 
   return <Animated.View style={{ height: animatedValue.current }} />;

@@ -4,7 +4,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { Client as BugsnagClient } from 'bugsnag-react-native';
+import Bugsnag from '@bugsnag/react-native';
 import moment from 'moment';
 
 import {
@@ -21,8 +21,6 @@ import { UIDatabase, CHANGE_TYPES } from '../database';
 import { SETTINGS_KEYS } from '../settings';
 
 const { THIS_STORE_ID, SYNC_URL, SYNC_SITE_NAME } = SETTINGS_KEYS;
-
-const bugsnagClient = new BugsnagClient();
 
 const getDateString = date => {
   let returnDate = '0000-00-00';
@@ -427,7 +425,7 @@ export const generateSyncJson = (database, settings, syncOutRecord) => {
     if (!recordResults || recordResults.length === 0) {
       // No such record
       const error = new Error(`${recordType} with id = ${recordId} missing`);
-      bugsnagClient.notify(error, content => {
+      Bugsnag.notify(error, content => {
         content.syncSite = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
         content.record = syncOutRecord;
       });
@@ -437,7 +435,7 @@ export const generateSyncJson = (database, settings, syncOutRecord) => {
     if (recordResults.length > 1) {
       // Duplicate records
       const error = new Error(`Multiple ${recordType} records with id = ${recordId}`);
-      bugsnagClient.notify(error, content => {
+      Bugsnag.notify(error, content => {
         content.syncSite = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
         content.record = syncOutRecord;
       });
@@ -463,7 +461,7 @@ export const generateSyncJson = (database, settings, syncOutRecord) => {
         `recordType: ${recordType}, recordId: ${recordId}, message: ${originalMessage}`;
 
       // Ping the error off to bugsnag.
-      bugsnagClient.notify(error);
+      Bugsnag.notify(error);
 
       // Make a nicer message for users and throw it again.
       error.message = `There was an error syncing. Contact mSupply mobile support. ${originalMessage}`;
