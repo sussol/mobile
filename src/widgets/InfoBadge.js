@@ -54,7 +54,7 @@ const InfoBadgeComponent = ({
           <Badge ref={ref} value={unfinalisedCountText} onPress={show} />
           <Popover
             isVisible={visible}
-            fromView={ref.current}
+            from={ref}
             onRequestClose={close}
             popoverStyle={popoverStyle}
             arrowStyle={arrowStyle}

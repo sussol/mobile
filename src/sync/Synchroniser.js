@@ -6,7 +6,7 @@
 /* eslint-disable no-await-in-loop */
 
 import DeviceInfo from 'react-native-device-info';
-import { Client as BugsnagClient } from 'bugsnag-react-native';
+import Bugsnag from '@bugsnag/react-native';
 
 import {
   incrementSyncProgress,
@@ -25,8 +25,6 @@ import { SyncQueue } from './SyncQueue';
 import { SETTINGS_KEYS } from '../settings';
 
 import { version as mobileVersion } from '../../package.json';
-
-const bugsnagClient = new BugsnagClient();
 
 const {
   SYNC_IS_INITIALISED,
@@ -60,6 +58,8 @@ export class Synchroniser {
     this.extraHeaders = {
       'msupply-site-uuid': DeviceInfo.getUniqueId(),
       'mobile-version': mobileVersion,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
     };
     this.refreshSyncParams();
     if (this.isInitialised()) this.syncQueue.enable();
@@ -96,7 +96,7 @@ export class Synchroniser {
 
     const bugsnagNotify = async message => {
       const responseText = await responseClone.text();
-      bugsnagClient.notify(new Error(message), report => {
+      Bugsnag.notify(new Error(message), report => {
         report.context = 'SYNC ERROR';
         report.metadata = { error: { url, headers, body, responseText } };
       });
@@ -160,7 +160,6 @@ export class Synchroniser {
     try {
       await this.authenticator.authenticate(serverURL, syncSiteName, syncSitePassword);
       this.refreshSyncParams(); // Authenticate sets all the sync settings in database, so refresh.
-
       if (isFresh) {
         // If a fresh initialisation, send request to server to prepare required sync records.
         await this.fetchWrapper(
@@ -322,6 +321,7 @@ export class Synchroniser {
     this.setTotal(total);
 
     // Pull |this.batchSize| records at a time from server.
+
     while (progress < total) {
       const batchComplete = this.batchSizeAdjustor();
       // Get a batch of records and integrate them.
@@ -341,7 +341,6 @@ export class Synchroniser {
           this.setTotal(total);
         }
       }
-
       this.incrementProgress(incomingRecords.length);
       batchComplete();
     }
@@ -406,7 +405,7 @@ export class Synchroniser {
           error.message =
             `SYNC ERROR. siteName: ${siteName}, serverUrl: ${syncUrl}, ` +
             `syncRecord.id: ${syncRecord.id}, message: ${originalMessage}`;
-          bugsnagClient.notify(error);
+          Bugsnag.notify(error);
 
           // Rethrow with user friendly message
           error.message = `There was an error syncing. Contact mSupply mobile support.\n${originalMessage}\n`;
