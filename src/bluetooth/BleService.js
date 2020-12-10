@@ -81,9 +81,15 @@ export class BleService {
       null,
       { scanMode: BLUETOOTH.SCAN_MODE.LOW_LATENCY },
       (_, device) => {
-        const { manufacturerData } = device;
-        if (bufferFromBase64(manufacturerData).readInt16LE(0) === BLUETOOTH.MANUFACTURER_ID) {
-          callback(device);
+        if (device) {
+          const { manufacturerData } = device;
+
+          if (
+            manufacturerData &&
+            bufferFromBase64(manufacturerData).readInt16LE(0) === BLUETOOTH.MANUFACTURER_ID
+          ) {
+            callback(device);
+          }
         }
       },
       callback
