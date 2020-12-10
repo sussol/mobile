@@ -257,6 +257,15 @@ export class Transaction extends Realm.Object {
   }
 
   /**
+   * Get if this transaction is linked to a transaction.
+   *
+   * @return  {boolean}
+   */
+  get isLinkedToTransaction() {
+    return !!this.linkedTransaction;
+  }
+
+  /**
    * Get if this transaction includes a given item.
    *
    * @param   {Item}  item
