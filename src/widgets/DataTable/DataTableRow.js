@@ -105,11 +105,15 @@ const DataTableRow = React.memo(
           // Indicator if the right hand border should be removed from styles for this cell.
           const isLastCell = index === columns.length - 1;
 
+          const { isLinkedToTransaction, isFinalised: rowIsFinalised } = rowData;
           // This cell is disabled if:
           // - the page is finalised.
           // - the row has been explicitly set as disabled.
+          // - The row itself is finalised.
+          // - The row is linked to another transaction: i.e. an SI created on the primary.
           const rowIsDisabled = rowState?.isDisabled ?? false;
-          const isDisabled = isFinalised || rowIsDisabled || rowData?.isFinalised;
+          const isDisabled =
+            isFinalised || rowIsDisabled || rowIsFinalised || isLinkedToTransaction;
 
           // Alignment of this particular column. Default to left hand ide.
           const cellAlignment = alignText || 'left';
