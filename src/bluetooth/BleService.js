@@ -225,7 +225,7 @@ export class BleService {
    * Returns a promise which resolves to a string 'Interval: XXs'
    *
    * @param {String} macAddress
-   * @param {Int} logInterval
+   * @param {Int} logInterval   The logging interval in seconds
    */
   updateLogInterval = async (macAddress, logInterval) => {
     await this.connectAndDiscoverServices(macAddress);
@@ -244,7 +244,6 @@ export class BleService {
    * Returns a promise which resolves to a string 'ok'
    *
    * @param {String} macAddress
-   * @param {Int} logInterval
    */
   blink = async macAddress => {
     await this.connectAndDiscoverServices(macAddress);
@@ -263,7 +262,6 @@ export class BleService {
    * { batteryLevel: [int: 0-100], isDisabled: [bool]}
    *
    * @param {String} macAddress
-   * @param {Int} logInterval
    */
   getInfo = async macAddress => {
     await this.connectAndDiscoverServices(macAddress);
@@ -282,7 +280,6 @@ export class BleService {
    * Returns a promise which resolves to a string 'OK'
    *
    * @param {String} macAddress
-   * @param {Int} logInterval
    */
   toggleButton = async macAddress => {
     await this.connectAndDiscoverServices(macAddress);
@@ -357,6 +354,7 @@ export class BleService {
    * Wrapper around updateLogInterval which will retry attempts if an
    * error is throwing up to {retriesLeft} times.
    * @param {String} macAddress
+   * @param {Int} logInterval The logging interval in seconds
    * @param {Int} retriesLeft
    * @param {Error} error
    */
