@@ -20,7 +20,7 @@
     "log": "react-native log-android",
     "shake": "adb shell input keyevent KEYCODE_MENU",
     "rr": "adb shell input text \"RR\"",
-    "test": "jest",
+    "test": "jest --watch",
     "build": "cd android && ./gradlew assembleRelease",
     "lint": "eslint src",
     "deploy": "./dev_scripts/deploy.sh",
