@@ -48,14 +48,11 @@ export class BleService {
    * @param {String} macAddress
    */
   connectAndDiscoverServices = async macAddress => {
-    if (await this.manager.isDeviceConnected(macAddress)) {
-      await this.manager.cancelDeviceConnection(macAddress);
+    if (!(await this.manager.isDeviceConnected(macAddress))) {
+      await this.connectToDevice(macAddress);
     }
 
-    const device = await this.connectToDevice(macAddress);
-    await this.manager.discoverAllServicesAndCharacteristicsForDevice(macAddress);
-
-    return device;
+    return this.manager.discoverAllServicesAndCharacteristicsForDevice(macAddress);
   };
 
   /**
