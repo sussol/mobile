@@ -127,7 +127,7 @@ export class BleService {
     new Promise((resolve, reject) => {
       this.manager.monitorCharacteristicForDevice(
         macAddress,
-        BLUETOOTH.SERVICE.UUID,
+        BLUETOOTH.SERVICE.UART,
         BLUETOOTH.CHARACTERISTIC.UART_READ,
         (_, result) => {
           callback(result, resolve, reject);
