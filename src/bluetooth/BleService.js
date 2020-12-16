@@ -37,8 +37,7 @@ export class BleService {
    * on the device.
    * @param {String} macAddress
    */
-  connectToDevice = async macAddress =>
-    this.manager.connectToDevice(macAddress, { scanMode: BLUETOOTH.SCAN_MODE.LOW_LATENCY });
+  connectToDevice = async macAddress => this.manager.connectToDevice(macAddress);
 
   /**
    * Connects to a device with the provided macAddress as well as discovering
