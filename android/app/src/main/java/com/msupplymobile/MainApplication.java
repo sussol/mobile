@@ -7,6 +7,7 @@ import com.bugsnag.android.Bugsnag;
 import com.facebook.react.PackageList;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.react.ReactApplication;
+import com.polidea.reactnativeble.BlePackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.ReactInstanceManager;
@@ -25,7 +26,7 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       List<ReactPackage> packages = new PackageList(this).getPackages();
-      packages.add(new BlePackage());
+
       return packages;
     }
   
