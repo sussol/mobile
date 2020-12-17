@@ -73,7 +73,7 @@
     "react": "16.13.1",
     "react-devtools": "^3",
     "react-devtools-core": "^4.4.0",
-    "react-native": "0.63.3",
+    "react-native": "0.63.4",
     "react-native-ble-plx": "^2.0.2",
     "react-native-bluetooth-status": "^1.5.1",
     "react-native-database": "^0.3.3",
