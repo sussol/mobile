@@ -1,4 +1,6 @@
 rootProject.name = 'mSupplyMobile'
+include ':react-native-ble-plx'
+project(':react-native-ble-plx').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-ble-plx/android')
 include ':react-native-datetimepicker'
 project(':react-native-datetimepicker').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/datetimepicker/android')
 include ':app'
