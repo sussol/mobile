@@ -93,7 +93,11 @@ TemperatureBreach.schema = {
     startTimestamp: { type: 'date', optional: true },
     endTimestamp: { type: 'date', optional: true },
     location: { type: 'Location', optional: true },
-    temperatureBreachConfiguration: { type: 'TemperatureBreachConfiguration', optional: false },
+    thresholdMaxTemperature: { type: 'double' },
+    thresholdMinTemperature: { type: 'double' },
+    thresholdDuration: { type: 'double' },
+    acknowledged: { type: 'boolean', default: false },
+    type: { type: 'string' },
   },
 };
 
