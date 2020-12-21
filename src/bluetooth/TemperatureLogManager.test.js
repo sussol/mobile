@@ -12,7 +12,7 @@ describe('DownloadManager: calculateNumberOfLogsToSave', () => {
 
     // Can download logs for 0, 300 & 600.
     expect(
-      downloadManager.calculateNumberOfLogsToSave(nextPossibleLogTime, logInterval, timeNow)
+      downloadManager.calculateNumberOfLogsToSave(logInterval, nextPossibleLogTime, timeNow)
     ).toBe(3);
 
     nextPossibleLogTime = 0;
@@ -20,7 +20,7 @@ describe('DownloadManager: calculateNumberOfLogsToSave', () => {
     timeNow = 599;
 
     expect(
-      downloadManager.calculateNumberOfLogsToSave(nextPossibleLogTime, logInterval, timeNow)
+      downloadManager.calculateNumberOfLogsToSave(logInterval, nextPossibleLogTime, timeNow)
     ).toBe(2);
   });
   it('Calculates correctly when the next Download time is after the time now', () => {
@@ -33,7 +33,7 @@ describe('DownloadManager: calculateNumberOfLogsToSave', () => {
     let timeNow = 299;
 
     expect(
-      downloadManager.calculateNumberOfLogsToSave(nextPossibleLogTime, logInterval, timeNow)
+      downloadManager.calculateNumberOfLogsToSave(logInterval, nextPossibleLogTime, timeNow)
     ).toBe(0);
 
     nextPossibleLogTime = 1;
@@ -41,7 +41,7 @@ describe('DownloadManager: calculateNumberOfLogsToSave', () => {
     timeNow = 0;
 
     expect(
-      downloadManager.calculateNumberOfLogsToSave(nextPossibleLogTime, logInterval, timeNow)
+      downloadManager.calculateNumberOfLogsToSave(logInterval, nextPossibleLogTime, timeNow)
     ).toBe(0);
   });
 
@@ -55,7 +55,7 @@ describe('DownloadManager: calculateNumberOfLogsToSave', () => {
     let timeNow = 301;
 
     expect(
-      downloadManager.calculateNumberOfLogsToSave(nextPossibleLogTime, logInterval, timeNow)
+      downloadManager.calculateNumberOfLogsToSave(logInterval, nextPossibleLogTime, timeNow)
     ).toBe(2);
 
     nextPossibleLogTime = 0;
@@ -63,7 +63,7 @@ describe('DownloadManager: calculateNumberOfLogsToSave', () => {
     timeNow = 599;
 
     expect(
-      downloadManager.calculateNumberOfLogsToSave(nextPossibleLogTime, logInterval, timeNow)
+      downloadManager.calculateNumberOfLogsToSave(logInterval, nextPossibleLogTime, timeNow)
     ).toBe(2);
   });
 });

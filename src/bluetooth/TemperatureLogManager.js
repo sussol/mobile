@@ -28,8 +28,8 @@ export class TemperatureLogManager {
   // Calculates the number of sensor logs that should be saved from some given starting
   // point. Where the starting point is the timestamp for the next log.
   calculateNumberOfLogsToSave = (
-    nextPossibleLogTime = 0,
     logInterval,
+    nextPossibleLogTime = 0,
     timeNow = moment().unix()
   ) => {
     const now = moment.unix(timeNow);
