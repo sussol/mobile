@@ -96,7 +96,7 @@ TemperatureBreach.schema = {
     thresholdMaxTemperature: { type: 'double' },
     thresholdMinTemperature: { type: 'double' },
     thresholdDuration: { type: 'double' },
-    acknowledged: { type: 'boolean', default: false },
+    acknowledged: { type: 'bool', default: false },
     type: { type: 'string' },
   },
 };
