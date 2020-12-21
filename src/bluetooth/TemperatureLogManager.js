@@ -60,13 +60,12 @@ export class TemperatureLogManager {
       const now = moment();
       now.subtract(mostRecentLogTime);
 
-      const numberOfLogIntervalsUntilNow = Math.floor(now.format('x') / (logInterval || 1)) + 1;
       // Take the most recent log timestamp and count log intervals until now,
       // then, remove the log intervals for the number we are saving up to.
 
       initial = moment(
         mostRecentLogTime.format('x') +
-          (numberOfLogIntervalsUntilNow * logInterval - maxNumberToSave * logInterval)
+          (maxNumberToSave * logInterval - maxNumberToSave * logInterval)
       );
     }
 
