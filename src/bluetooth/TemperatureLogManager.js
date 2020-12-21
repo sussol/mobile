@@ -47,7 +47,7 @@ export class TemperatureLogManager {
     return Math.floor(secondsBetween / logInterval) + 1;
   };
 
-  createLogs = (logs, sensor, maxNumberToSave, mostRecentLogTime, timeNow) => {
+  createLogs = (logs, sensor, maxNumberToSave, mostRecentLogTime, timeNow = moment().unix()) => {
     const { logInterval } = sensor;
     const sliceIndex = logs.length - maxNumberToSave;
     const logsToSave = logs.slice(sliceIndex);
