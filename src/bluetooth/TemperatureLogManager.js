@@ -53,9 +53,9 @@ export class TemperatureLogManager {
     const logsToSave = logs.slice(sliceIndex);
 
     let initial;
-    if (!mostRecentLogTime) {
+    if (mostRecentLogTime == null) {
       initial = moment.unix(timeNow);
-      initial.subtract((logsToSave.length - 1) * logInterval, 'seconds');
+      initial.subtract(logsToSave.length * logInterval, 'seconds');
     } else {
       // Take the most recent log timestamp and count log intervals until now,
       // then, remove the log intervals for the number we are saving up to.

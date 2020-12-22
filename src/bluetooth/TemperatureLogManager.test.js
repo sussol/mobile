@@ -165,7 +165,7 @@ describe('DownloadManager: createLogs', () => {
       {
         id: '1',
         temperature: 10,
-        timestamp: new Date(600),
+        timestamp: new Date(300),
         sensor,
         logInterval: 300,
       },
