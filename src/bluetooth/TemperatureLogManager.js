@@ -57,16 +57,9 @@ export class TemperatureLogManager {
       initial = moment.unix(timeNow);
       initial.subtract((logsToSave.length - 1) * logInterval, 'seconds');
     } else {
-      const now = moment();
-      now.subtract(mostRecentLogTime);
-
       // Take the most recent log timestamp and count log intervals until now,
       // then, remove the log intervals for the number we are saving up to.
-
-      initial = moment(
-        mostRecentLogTime.format('x') +
-          (maxNumberToSave * logInterval - maxNumberToSave * logInterval)
-      );
+      initial = moment.unix(mostRecentLogTime).add(logInterval, 's');
     }
 
     return logsToSave.map(({ temperature }, i) => {
