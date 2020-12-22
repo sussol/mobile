@@ -58,7 +58,7 @@ export class TemperatureLogManager {
     // timestamps rather than having them potentially look random.
     let initial;
     if (mostRecentLogTime == null) {
-      initial = moment.unix(timeNow).subtract(logsToSave.length * logInterval, 'seconds');
+      initial = moment.unix(timeNow).subtract((logsToSave.length - 1) * logInterval, 'seconds');
     } else {
       initial = moment.unix(mostRecentLogTime).add(logInterval, 's');
     }

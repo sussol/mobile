@@ -96,7 +96,7 @@ describe('DownloadManager: createLogs', () => {
     // a log for anytime past 600, so we assume any excess logs are passed records which have been
     // saved previously and just save the two 'most recent'.
     const sensor = { id: 'a', logInterval: 300 };
-    const maxNumberToSave = 2;
+    const maxNumberToSave = 3;
     const mostRecentLogTime = null;
     const timeNow = 600;
 
@@ -113,6 +113,13 @@ describe('DownloadManager: createLogs', () => {
         id: '1',
         temperature: 10,
         timestamp: new Date(300),
+        sensor,
+        logInterval: 300,
+      },
+      {
+        id: '1',
+        temperature: 10,
+        timestamp: new Date(600),
         sensor,
         logInterval: 300,
       },
