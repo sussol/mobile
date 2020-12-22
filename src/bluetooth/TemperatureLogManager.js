@@ -52,13 +52,14 @@ export class TemperatureLogManager {
     const sliceIndex = logs.length - maxNumberToSave;
     const logsToSave = logs.slice(sliceIndex);
 
+    // Calculate the initial timestamp for the logs to be integrated. Either adding a log interval
+    // to the most recent temperature logs timestamp, or looking back the number of logs to save
+    // times the sensors logging interval. If there exists temperature logs this will align the
+    // timestamps rather than having them potentially look random.
     let initial;
     if (mostRecentLogTime == null) {
-      initial = moment.unix(timeNow);
-      initial.subtract(logsToSave.length * logInterval, 'seconds');
+      initial = moment.unix(timeNow).subtract(logsToSave.length * logInterval, 'seconds');
     } else {
-      // Take the most recent log timestamp and count log intervals until now,
-      // then, remove the log intervals for the number we are saving up to.
       initial = moment.unix(mostRecentLogTime).add(logInterval, 's');
     }
 
