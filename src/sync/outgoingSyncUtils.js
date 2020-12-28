@@ -323,6 +323,7 @@ const generateSyncData = (settings, recordType, record) => {
         location_ID: record.location?.id,
         temperature_breach_ID: record.breach?.id,
         store_ID: settings.get(THIS_STORE_ID),
+        log_interval: String(record.logInterval),
       };
     }
     case 'TemperatureBreach': {
@@ -335,6 +336,21 @@ const generateSyncData = (settings, recordType, record) => {
         location_ID: record.location?.id,
         store_ID: settings.get(THIS_STORE_ID),
         temperature_breach_config_ID: String(record.temperatureBreachConfiguration?.id),
+        threshold_min_temperature: String(record.thresholdMinTemperature),
+        threshold_max_temperature: String(record.thresholdMaxTemperature),
+        threshold_duration_temperature: String(record.thresholdDuration),
+        type: String(record.type),
+      };
+    }
+    case 'TemperatureBreachConfiguration': {
+      return {
+        ID: record.id,
+        minimum_temperature: String(record.minimumTemperature ?? 0),
+        maximum_temperature: String(record.maximumTemperature ?? 0),
+        duration: String(record.duration ?? 0),
+        description: record.description ?? '',
+        colour: record.colour ?? '',
+        type: record.type ?? '',
       };
     }
     case 'LocationMovement': {

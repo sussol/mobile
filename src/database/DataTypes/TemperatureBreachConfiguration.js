@@ -31,9 +31,7 @@ export class TemperatureBreachConfiguration extends Realm.Object {
 
     // The potential start time of the breach - looking back from the passed
     // temperature log to the pre-configured minimum duration of a breach.
-    const startTime = moment(timestamp)
-      .subtract(this.duration, 'ms')
-      .toDate();
+    const startTime = moment(timestamp).subtract(this.duration, 'ms').toDate();
 
     // Find all of the temperature logs since the possible start time of the
     // breach.
@@ -78,11 +76,7 @@ TemperatureBreachConfiguration.schema = {
     duration: { type: 'double', optional: true },
     description: { type: 'string', optional: true },
     colour: { type: 'string', optional: true },
-    breaches: {
-      objectType: 'TemperatureBreach',
-      type: 'linkingObjects',
-      property: 'temperatureBreachConfiguration',
-    },
+    type: 'string',
   },
 };
 
