@@ -15,6 +15,8 @@ TemperatureLog.schema = {
     temperature: 'double',
     timestamp: 'date',
     location: 'Location',
+    sensor: 'Sensor',
+    logInterval: 'int',
     breach: { type: 'TemperatureBreach', optional: true },
   },
 };

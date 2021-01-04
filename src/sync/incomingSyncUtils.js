@@ -245,12 +245,19 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       canBeBlank: [],
     },
     TemperatureLog: {
-      cannotBeBlank: ['temperature', 'date', 'time', 'location_ID', 'store_ID'],
+      cannotBeBlank: ['temperature', 'date', 'time', 'location_ID', 'store_ID', 'log_interval'],
       canBeBlank: ['temperature_breach_ID'],
     },
     TemperatureBreach: {
-      cannotBeBlank: ['start_time', 'start_date', 'location_ID'],
-      canBeBlank: ['end_time', 'end_date'],
+      cannotBeBlank: ['start_time', 'start_date', 'location_ID', 'sensor_ID', 'type'],
+      canBeBlank: [
+        'end_time',
+        'end_date',
+        'acknowledged',
+        'threshold_duration',
+        'threshold_max_temperature',
+        'threshold_min_Temperature',
+      ],
     },
     LocationMovement: {
       cannotBeBlank: ['item_line_ID', 'enter_time', 'enter_date', 'location_ID'],
@@ -268,14 +275,8 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     LocationType: { cannotBeBlank: [], canBeBlank: ['Description'] },
     Sensor: { cannotBeBlank: ['macAddress'], canBeBlank: ['batteryLevel', 'is_active', 'name'] },
     TemperatureBreachConfiguration: {
-      cannotBeBlank: [
-        'minimum_temperature',
-        'maximum_temperature',
-        'duration',
-        'description',
-        'colour',
-      ],
-      canBeBlank: [],
+      cannotBeBlank: ['minimum_temperature', 'maximum_temperature', 'duration', 'type'],
+      canBeBlank: ['description', 'colour'],
     },
     NameTag: {
       cannotBeBlank: ['ID'],
@@ -992,6 +993,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         timestamp: parseDate(record.date, record.time),
         location: database.getOrCreate('Location', record.location_ID),
         breach: database.getOrCreate('TemperatureBreach', record.temperature_breach_ID),
+        logInterval: parseNumber(record.log_interval),
       });
       break;
     }
@@ -1001,10 +1003,11 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         startTimestamp: parseDate(record.start_date, record.start_time),
         endTimestamp: parseDate(record.end_date, record.end_time),
         location: database.getOrCreate('Location', record.location_ID),
-        temperatureBreachConfiguration: database.getOrCreate(
-          'TemperatureBreachConfiguration',
-          record.temperature_breach_config_ID
-        ),
+        type: record.type,
+        acknowledged: parseBoolean(record.acknowledged),
+        thresholdMaxTemperature: parseNumber(record.threshold_max_temperature),
+        thresholdMinTemperature: parseNumber(record.threshold_min_temperature),
+        thresholdDuration: parseNumber(record.threshold_duration),
       });
       break;
     }
@@ -1016,6 +1019,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         duration: parseNumber(record.duration),
         description: record.description,
         colour: record.colour,
+        type: record.type,
       });
       break;
     }
