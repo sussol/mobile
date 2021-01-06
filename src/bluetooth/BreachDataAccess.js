@@ -1,0 +1,45 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2021
+ */
+
+/**
+ * Helper methods to perform data access functionality for breach calculations
+ */
+import VACCINE_ENTITIES from '../utilities/modules/vaccines/constants';
+
+export class BreachDataAccess {
+  constructor(dbService) {
+    this.db = dbService;
+  }
+
+  getMostRecentBreachLog = sensorId => {
+    const [allBreachLogs] = this.db
+      .objects(VACCINE_ENTITIES.TEMPERATURE_LOG)
+      .filtered('sensor_ID == $0', sensorId);
+    const [mostRecentBreachLog] = allBreachLogs.sorted('timestamp', true);
+
+    return mostRecentBreachLog;
+  };
+
+  getMostRecentBreach = sensorId => {
+    const [allBreaches] = this.db
+      .objects(VACCINE_ENTITIES.TEMPERATURE_BREACH)
+      .filtered('sensor_ID == $0', sensorId);
+    const [mostRecentBreach] = allBreaches.sorted('start_time', true);
+
+    return mostRecentBreach;
+  };
+
+  getBreachConfigs = () => {
+    const configs = this.db
+      .objects(VACCINE_ENTITIES.TEMPERATURE_BREACH_CONFIGURATION)
+      .filtered('id == "HOT_BREACH" OR id == "COLD_BREACH"');
+    return configs;
+  };
+
+  upsertBreaches = breaches => this.db.update(VACCINE_ENTITIES.TEMPERATURE_BREACH, breaches);
+
+  upsertTemperatureLog = temperatureLogs =>
+    this.db.update(VACCINE_ENTITIES.TEMPERATURE_LOG, temperatureLogs);
+}
