@@ -16,13 +16,13 @@ export class DataAccess {
   getTemperatureLogsFrom = (sensorId, timeToCheckFrom) =>
     this.db
       .objects(VACCINE_ENTITIES.TEMPERATURE_LOG)
-      .filtered('sensor_ID == $0 AND timestamp >= $1', sensorId, timeToCheckFrom)
+      .filtered('sensor.id == $0 AND timestamp >= $1', sensorId, timeToCheckFrom)
       .sorted('timestamp');
 
   getMostRecentBreachLog = sensorId => {
     const allBreachLogs = this.db
       .objects(VACCINE_ENTITIES.TEMPERATURE_LOG)
-      .filtered('sensor_ID == $0', sensorId);
+      .filtered('sensor.id == $0', sensorId);
     const [mostRecentBreachLog] = allBreachLogs.sorted('timestamp', true);
 
     return mostRecentBreachLog;
@@ -31,7 +31,7 @@ export class DataAccess {
   getMostRecentBreach = sensorId => {
     const allBreaches = this.db
       .objects(VACCINE_ENTITIES.TEMPERATURE_BREACH)
-      .filtered('sensor_ID == $0', sensorId);
+      .filtered('sensorId == $0', sensorId);
     const [mostRecentBreach] = allBreaches.sorted('startTimestamp', true);
 
     return mostRecentBreach;
