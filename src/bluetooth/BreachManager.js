@@ -151,28 +151,7 @@ export class BreachManager {
       }
     });
 
-    const updatedBreaches = breaches.map(
-      ({
-        id,
-        startTimestamp,
-        endTimestamp,
-        thresholdMaxTemperature,
-        thresholdMinTemperature,
-        thresholdDuration,
-        sensorId,
-        location,
-      }) => ({
-        id,
-        startTimestamp,
-        endTimestamp,
-        thresholdMaxTemperature,
-        thresholdMinTemperature,
-        thresholdDuration,
-        sensorId,
-        location,
-      })
-    );
-    return [updatedBreaches, temperatureLogs];
+    return [breaches, temperatureLogs];
   };
 
   updateBreaches = async (breaches, temperatureLogs) => {
