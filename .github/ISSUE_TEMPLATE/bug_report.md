@@ -2,9 +2,8 @@
 name: Bug report
 about: Report a bug!
 title: A brief description of the bug
-labels: 'Bug: ????'
+labels: ''
 assignees: ''
-
 ---
 
 ## Describe the bug
