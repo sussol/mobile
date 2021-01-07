@@ -32,7 +32,7 @@ export class DataAccess {
     const allBreaches = this.db
       .objects(VACCINE_ENTITIES.TEMPERATURE_BREACH)
       .filtered('sensor_ID == $0', sensorId);
-    const [mostRecentBreach] = allBreaches.sorted('start_time', true);
+    const [mostRecentBreach] = allBreaches.sorted('startTimestamp', true);
 
     return mostRecentBreach;
   };
