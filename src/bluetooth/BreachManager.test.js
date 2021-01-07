@@ -19,7 +19,8 @@ describe('BreachManager: createBreach', () => {
     const utils = { createUuid: () => '1' };
     const breachManager = new BreachManager(dbService, utils);
 
-    const sensor = { id: 'a' };
+    const dummyLocation = { id: 'ABC', description: 'DEF' };
+    const sensor = { id: 'a', location: dummyLocation };
     const config = {
       id: 'a',
       maximumTemperature: '100',
@@ -41,6 +42,7 @@ describe('BreachManager: createBreach', () => {
       thresholdMinTemperature: '0',
       thresholdDuration: '1',
       startTimestamp: 0,
+      location: dummyLocation,
     };
 
     expect(closedBreach).toEqual(closedBreachShouldBe);
@@ -285,7 +287,8 @@ describe('BreachManager: createBreachesFrom', () => {
 
 describe('BreachManager: createBreaches', () => {
   it('Creates a simple single breach', async () => {
-    const sensor = { id: 'a', location: 'ABC' };
+    const dummyLocation = { id: 'ABC', description: 'DEF' };
+    const sensor = { id: 'a', location: dummyLocation };
     const logs = [
       { temperature: 10, timestamp: 0 },
       { temperature: 10, timestamp: 1 },
@@ -304,7 +307,7 @@ describe('BreachManager: createBreaches', () => {
         thresholdDuration: 1000,
         startTimestamp: 0,
         endTimestamp: undefined,
-        location: 'ABC',
+        location: dummyLocation,
       },
     ];
 
@@ -319,7 +322,8 @@ describe('BreachManager: createBreaches', () => {
     ]);
   });
   it('Creates a simple single breach that is closed', async () => {
-    const sensor = { id: 'a' };
+    const dummyLocation = { id: 'ABC', description: 'DEF' };
+    const sensor = { id: 'a', location: dummyLocation };
     const logs = [
       { temperature: 10, timestamp: 0 },
       { temperature: 10, timestamp: 1 },
@@ -339,6 +343,7 @@ describe('BreachManager: createBreaches', () => {
         thresholdDuration: 1000,
         startTimestamp: 0,
         endTimestamp: 2,
+        location: dummyLocation,
       },
     ];
 
@@ -353,7 +358,8 @@ describe('BreachManager: createBreaches', () => {
     ]);
   });
   it('Creates a multiple breaches', async () => {
-    const sensor = { id: 'a' };
+    const dummyLocation = { id: 'ABC', description: 'DEF' };
+    const sensor = { id: 'a', location: dummyLocation };
     const logs = [
       { temperature: 10, timestamp: 0 },
       { temperature: 10, timestamp: 1 },
@@ -375,6 +381,7 @@ describe('BreachManager: createBreaches', () => {
         thresholdMaxTemperature: 999,
         thresholdDuration: 1000,
         endTimestamp: 2,
+        location: dummyLocation,
       },
       {
         id: '1',
@@ -384,6 +391,7 @@ describe('BreachManager: createBreaches', () => {
         thresholdMaxTemperature: 999,
         thresholdDuration: 1000,
         endTimestamp: undefined,
+        location: dummyLocation,
       },
     ];
 
