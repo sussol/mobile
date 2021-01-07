@@ -8,13 +8,19 @@
  */
 import VACCINE_ENTITIES from '../utilities/modules/vaccines/constants';
 
-export class BreachDataAccess {
+export class DataAccess {
   constructor(dbService) {
     this.db = dbService;
   }
 
+  getTemperatureLogsFrom = (sensorId, timeToCheckFrom) =>
+    this.db
+      .objects(VACCINE_ENTITIES.TEMPERATURE_LOG)
+      .filtered('sensor_ID == $0 AND timestamp >= $1', sensorId, timeToCheckFrom)
+      .sorted('timestamp');
+
   getMostRecentBreachLog = sensorId => {
-    const [allBreachLogs] = this.db
+    const allBreachLogs = this.db
       .objects(VACCINE_ENTITIES.TEMPERATURE_LOG)
       .filtered('sensor_ID == $0', sensorId);
     const [mostRecentBreachLog] = allBreachLogs.sorted('timestamp', true);
@@ -23,7 +29,7 @@ export class BreachDataAccess {
   };
 
   getMostRecentBreach = sensorId => {
-    const [allBreaches] = this.db
+    const allBreaches = this.db
       .objects(VACCINE_ENTITIES.TEMPERATURE_BREACH)
       .filtered('sensor_ID == $0', sensorId);
     const [mostRecentBreach] = allBreaches.sorted('start_time', true);
