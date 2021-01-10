@@ -48,3 +48,4 @@ export { KeyboardSpacing } from './KeyboardSpacing';
 
 export * from './icons';
 export * from './images';
+export * from './TextInputs';
