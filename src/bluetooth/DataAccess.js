@@ -40,7 +40,7 @@ export class DataAccess {
   getBreachConfigs = () => {
     const configs = this.db
       .objects(VACCINE_ENTITIES.TEMPERATURE_BREACH_CONFIGURATION)
-      .filtered('id == "HOT_BREACH" OR id == "COLD_BREACH"');
+      .filtered('type == "HOT_CONSECUTIVE" OR type == "COLD_CONSECUTIVE"');
     return configs;
   };
 
