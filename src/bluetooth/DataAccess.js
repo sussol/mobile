@@ -6,7 +6,7 @@
 /**
  * Helper methods to perform data access functionality for breach calculations
  */
-import VACCINE_ENTITIES from '../utilities/modules/vaccines/constants';
+import { VACCINE_ENTITIES } from '../utilities/modules/vaccines/constants';
 
 export class DataAccess {
   constructor(dbService) {
@@ -22,7 +22,7 @@ export class DataAccess {
   getMostRecentBreachLog = sensorId => {
     const allBreachLogs = this.db
       .objects(VACCINE_ENTITIES.TEMPERATURE_LOG)
-      .filtered('sensor.id == $0', sensorId);
+      .filtered('sensor.id == $0 AND breach != null', sensorId);
     const [mostRecentBreachLog] = allBreachLogs.sorted('timestamp', true);
 
     return mostRecentBreachLog;
