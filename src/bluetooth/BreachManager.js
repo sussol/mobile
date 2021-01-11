@@ -158,15 +158,6 @@ export class BreachManager {
     // eslint-disable-next-line no-param-reassign
 
     const updatedBreaches = this.db.upsertBreaches(breaches);
-
-    const mapped = temperatureLogs.map(({ id, temperature, timestamp }) => ({
-      id,
-      temperature,
-      timestamp,
-    }));
-
-    // TODO: Copied from CCE app - not sure if needed here
-    await this.db.upsertTemperatureLog(mapped);
     const updatedLogs = await this.db.upsertTemperatureLog(temperatureLogs);
 
     return [updatedBreaches, updatedLogs];
