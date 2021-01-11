@@ -8,7 +8,7 @@
  */
 import { VACCINE_ENTITIES } from '../utilities/modules/vaccines/constants';
 
-export class DataAccess {
+export class VaccineDataAccess {
   constructor(dbService) {
     this.db = dbService;
   }
