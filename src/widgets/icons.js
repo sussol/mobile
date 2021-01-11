@@ -43,10 +43,6 @@ export const DisabledCheckedIcon = () => (
 );
 export const DisabledUncheckedIcon = () => <MaterialCommunityIcon name="cancel" size={15} />;
 
-export const OpenModalIcon = () => (
-  <FAIcon name="angle-double-up" size={20} color={SUSSOL_ORANGE} />
-);
-
 export const MagnifyingGlassIcon = React.memo(({ size, color }) => (
   <EvilIcon name="search" size={size} color={color} />
 ));
