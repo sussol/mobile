@@ -13,6 +13,7 @@ const createBreachRecord = (
     minimumTemperature: thresholdMinTemperature,
     maximumTemperature: thresholdMaxTemperature,
     duration: thresholdDuration,
+    type,
   } = temperatureBreachConfiguration;
   const id = uuid;
 
@@ -22,6 +23,7 @@ const createBreachRecord = (
     thresholdMinTemperature,
     thresholdMaxTemperature,
     thresholdDuration,
+    type,
     startTimestamp,
     endTimestamp,
     location,
