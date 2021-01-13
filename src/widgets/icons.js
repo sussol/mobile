@@ -57,6 +57,10 @@ export const CloseIcon = ({ size, color }) => <IonIcon name="md-close" size={siz
 CloseIcon.defaultProps = { color: WHITE, size: 36 };
 CloseIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
 
+export const CogIcon = ({ size, color }) => <FAIcon name="cog" size={size} color={color} />;
+CogIcon.defaultProps = { color: WHITE, size: 36 };
+CogIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
+
 export const ExpandIcon = React.memo(({ style, color, size }) => (
   <FAIcon name="external-link" style={style} size={size} color={color} />
 ));
@@ -95,6 +99,12 @@ ChevronUpIcon.propTypes = {
   size: PropTypes.number,
   style: PropTypes.object,
 };
+
+export const PowerIcon = React.memo(({ color, size }) => (
+  <FAIcon name="power-off" color={color} size={size} />
+));
+PowerIcon.defaultProps = { color: WHITE, size: 20 };
+PowerIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
 
 export const PencilIcon = React.memo(({ color, size }) => (
   <FAIcon name="pencil" color={color} size={size} />
