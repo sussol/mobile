@@ -94,11 +94,7 @@ class MSupplyMobileAppContainer extends React.Component {
       BluetoothStatus.addListener(requestBluetooth);
       dispatch(PermissionActions.checkPermissions());
 
-      DeviceInfo.isEmulator().then(isEmulator => {
-        if (isEmulator) {
-          BleService(new DevBleManager());
-        }
-      });
+      this.initialiseBtService();
     }
 
     if (!__DEV__) {
@@ -118,6 +114,16 @@ class MSupplyMobileAppContainer extends React.Component {
     }
 
     this.scheduler.clearAll();
+  };
+
+  initialiseBtService = async () => {
+    const isEmulator = await DeviceInfo.isEmulator();
+    if (isEmulator) {
+      console.log('Emulator detected - Init Dev BleManager');
+      BleService(new DevBleManager());
+    } else {
+      BleService();
+    }
   };
 
   onAppStateChange = nextAppState => {
