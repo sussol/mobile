@@ -38,9 +38,7 @@ export const DateRangeSelector = ({
         <DatePickerButton
           minimumDate={minimumDate}
           maximumDate={initialEndDate}
-          initialValue={moment(initialStartDate)
-            .startOf('day')
-            .toDate()}
+          initialValue={moment(initialStartDate).startOf('day').toDate()}
           onDateChanged={onChangeFromDate}
         />
       </FlexRow>
@@ -54,9 +52,7 @@ export const DateRangeSelector = ({
         <DatePickerButton
           maximumDate={maximumDate}
           minimumDate={initialStartDate}
-          initialValue={moment(initialEndDate)
-            .endOf('day')
-            .toDate()}
+          initialValue={moment(initialEndDate).endOf('day').toDate()}
           onDateChanged={onChangeToDate}
         />
       </FlexRow>
