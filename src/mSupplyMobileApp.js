@@ -97,8 +97,6 @@ class MSupplyMobileAppContainer extends React.Component {
       DeviceInfo.isEmulator().then(isEmulator => {
         if (isEmulator) {
           BleService(new DevBleManager());
-        } else {
-          BleService();
         }
       });
     }
