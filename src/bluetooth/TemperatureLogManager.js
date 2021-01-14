@@ -72,5 +72,5 @@ export class TemperatureLogManager {
     });
   };
 
-  saveLogs = async logsToSave => this.db.update('TemperatureLog', logsToSave);
+  saveLogs = async logsToSave => this.db.upsertTemperatureLog(logsToSave);
 }

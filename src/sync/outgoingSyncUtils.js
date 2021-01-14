@@ -329,6 +329,7 @@ const generateSyncData = (settings, recordType, record) => {
     case 'TemperatureBreach': {
       return {
         ID: record.id,
+        sensor_ID: record.sensorId,
         start_time: getTimeString(record.startTimestamp),
         start_date: getDateString(record.startTimestamp),
         end_time: getTimeString(record.endTimestamp),
