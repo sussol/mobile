@@ -89,12 +89,14 @@ const Menu = ({
     () => (
       <View style={containerStyle}>
         <CustomerImage style={image} />
-        <InfoBadge routeName={ROUTES.CUSTOMER_INVOICES}>
-          <MenuButton text={navStrings.customer_invoices} onPress={toCustomerInvoices} />
-        </InfoBadge>
-        <InfoBadge routeName={ROUTES.CUSTOMER_REQUISITIONS}>
-          <MenuButton text={navStrings.customer_requisitions} onPress={toCustomerRequisitions} />
-        </InfoBadge>
+        <View>
+          <InfoBadge routeName={ROUTES.CUSTOMER_INVOICES}>
+            <MenuButton text={navStrings.customer_invoices} onPress={toCustomerInvoices} />
+          </InfoBadge>
+          <InfoBadge routeName={ROUTES.CUSTOMER_REQUISITIONS}>
+            <MenuButton text={navStrings.customer_requisitions} onPress={toCustomerRequisitions} />
+          </InfoBadge>
+        </View>
       </View>
     ),
     [usingDashboard, usingDispensary, usingCashRegister, usingModules]
@@ -104,12 +106,14 @@ const Menu = ({
     () => (
       <View style={containerStyle}>
         <SupplierImage style={image} />
-        <InfoBadge routeName={ROUTES.SUPPLIER_INVOICES}>
-          <MenuButton text={navStrings.supplier_invoices} onPress={toSupplierInvoices} />
-        </InfoBadge>
-        <InfoBadge routeName={ROUTES.SUPPLIER_REQUISITIONS}>
-          <MenuButton text={navStrings.supplier_requisitions} onPress={toSupplierRequisitions} />
-        </InfoBadge>
+        <View>
+          <InfoBadge routeName={ROUTES.SUPPLIER_INVOICES}>
+            <MenuButton text={navStrings.supplier_invoices} onPress={toSupplierInvoices} />
+          </InfoBadge>
+          <InfoBadge routeName={ROUTES.SUPPLIER_REQUISITIONS}>
+            <MenuButton text={navStrings.supplier_requisitions} onPress={toSupplierRequisitions} />
+          </InfoBadge>
+        </View>
       </View>
     ),
     [usingDashboard, usingDispensary, usingCashRegister, usingModules]
@@ -119,10 +123,12 @@ const Menu = ({
     () => (
       <View style={containerStyle}>
         <StockImage style={image} />
-        <MenuButton text={navStrings.current_stock} onPress={toStock} />
-        <InfoBadge routeName={ROUTES.STOCKTAKES}>
-          <MenuButton text={navStrings.stocktake} onPress={toStocktakes} />
-        </InfoBadge>
+        <View>
+          <MenuButton text={navStrings.current_stock} onPress={toStock} />
+          <InfoBadge routeName={ROUTES.STOCKTAKES}>
+            <MenuButton text={navStrings.stocktake} onPress={toStocktakes} />
+          </InfoBadge>
+        </View>
       </View>
     ),
     [usingDashboard, usingDispensary, usingCashRegister, usingModules]
