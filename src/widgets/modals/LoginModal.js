@@ -214,6 +214,7 @@ export class LoginModal extends React.Component {
         <View style={globalStyles.bottomContainer}>
           <IconButton
             IconComponent={LanguageIcon}
+            size="xlarge"
             rightText={navStrings.language}
             onPress={() => {
               this.setState({ isLanguageModalOpen: true });
