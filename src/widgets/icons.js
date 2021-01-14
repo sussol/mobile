@@ -58,7 +58,7 @@ CloseIcon.defaultProps = { color: WHITE, size: 36 };
 CloseIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
 
 export const CogIcon = ({ size, color }) => <FAIcon name="cog" size={size} color={color} />;
-CogIcon.defaultProps = { color: WHITE, size: 36 };
+CogIcon.defaultProps = { color: GREY, size: 30 };
 CogIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
 
 export const ExpandIcon = React.memo(({ style, color, size }) => (
@@ -79,6 +79,12 @@ ConfirmIcon.propTypes = { style: PropTypes.object };
 export const LockIcon = React.memo(({ style }) => <FAIcon name="lock" size={28} style={style} />);
 LockIcon.defaultProps = { style: { color: FINALISED_RED } };
 LockIcon.propTypes = { style: PropTypes.object };
+
+export const LanguageIcon = ({ size, color }) => (
+  <FAIcon name="language" size={size} color={color} />
+);
+LanguageIcon.defaultProps = { color: GREY, size: 30 };
+LanguageIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
 
 export const ChevronDownIcon = React.memo(({ color, size, style }) => (
   <FA5Icon name="chevron-down" color={color} size={size} style={style} />
@@ -103,7 +109,7 @@ ChevronUpIcon.propTypes = {
 export const PowerIcon = React.memo(({ color, size }) => (
   <FAIcon name="power-off" color={color} size={size} />
 ));
-PowerIcon.defaultProps = { color: WHITE, size: 20 };
+PowerIcon.defaultProps = { color: GREY, size: 30 };
 PowerIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
 
 export const PencilIcon = React.memo(({ color, size }) => (
