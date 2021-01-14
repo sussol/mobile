@@ -75,7 +75,7 @@ IconButton.propTypes = {
   onPress: PropTypes.func,
   onPressIn: PropTypes.func,
   onPressOut: PropTypes.func,
-  containerStyle: PropTypes.any,
+  containerStyle: PropTypes.object,
   isDisabled: PropTypes.bool,
   color: PropTypes.string,
   size: PropTypes.string,
