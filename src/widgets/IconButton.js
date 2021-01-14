@@ -8,7 +8,7 @@ import React from 'react';
 import { TouchableOpacity as TouchableHighlight, StyleSheet, View, Text } from 'react-native';
 import PropTypes from 'prop-types';
 
-import globalStyles, { SUSSOL_ORANGE, LIGHT_GREY, GREY } from '../globalStyles/index';
+import globalStyles, { GREY } from '../globalStyles/index';
 
 const ICON_SIZES = {
   small: 10,
@@ -83,14 +83,8 @@ const localStyles = StyleSheet.create({
   label: {
     paddingHorizontal: 5,
   },
-  iconDisabledStyle: {
-    backgroundColor: LIGHT_GREY,
-  },
   buttonContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  iconCircle: {
-    backgroundColor: SUSSOL_ORANGE,
   },
 });
