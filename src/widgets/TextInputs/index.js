@@ -1,0 +1,1 @@
+export { TextInputWithAffix } from './TextInputWithAffix';
