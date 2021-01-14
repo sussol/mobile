@@ -24,7 +24,7 @@ const ICON_SIZES = {
  * @prop {Func} onPress OnPress callback.
  * @prop {Func} onPressIn onPressIn callback.
  * @prop {Func} onPressOut  onPressOut callback.
- * @prop {Boolean} containerStyle  When true, no action on press. Disabled styling too.
+ * @prop {Boolean} containerStyle  override default styles.
  * @prop {Boolean} isDisabled  When true, no action on press. Disabled styling too.
  * @prop {String} color  Color for the icon component
  * @prop {String} size  Use size preset. "small", "medium", "large" or xlarge.
