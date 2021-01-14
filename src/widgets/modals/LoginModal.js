@@ -7,16 +7,16 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, Text, TextInput, View } from 'react-native';
 import { Button } from 'react-native-ui-components';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { SETTINGS_KEYS, getAppVersion } from '../../settings';
 
-import globalStyles, { WHITE, SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
-import { Flag } from '..';
+import globalStyles, { WHITE, SUSSOL_ORANGE, WARM_GREY } from '../../globalStyles';
+import { Flag, IconButton } from '..';
 import { GenericChoiceList } from '../modalChildren/GenericChoiceList';
 import { ModalContainer } from './ModalContainer';
+import { LanguageIcon } from '../icons';
 
 import { LANGUAGE_NAMES, LANGUAGE_CHOICE, authStrings, navStrings } from '../../localization';
 import { getModalTitle, MODAL_KEYS } from '../../utilities';
@@ -212,19 +212,13 @@ export class LoginModal extends React.Component {
           </View>
         </View>
         <View style={globalStyles.bottomContainer}>
-          <Icon.Button
-            name="language"
-            size={25}
-            underlayColor="#888888"
-            iconStyle={localStyles.bottomIcon}
-            borderRadius={4}
-            backgroundColor="rgba(255,255,255,0)"
+          <IconButton
+            IconComponent={LanguageIcon}
+            rightText={navStrings.language}
             onPress={() => {
               this.setState({ isLanguageModalOpen: true });
             }}
-          >
-            <Text style={globalStyles.authWindowButtonText}>{navStrings.language}</Text>
-          </Icon.Button>
+          />
           <Text style={globalStyles.authWindowButtonText}>v{appVersion}</Text>
         </View>
         <ModalContainer
@@ -253,9 +247,3 @@ LoginModal.propTypes = {
   onAuthentication: PropTypes.func.isRequired,
   settings: PropTypes.object.isRequired,
 };
-
-const localStyles = StyleSheet.create({
-  bottomIcon: {
-    color: GREY,
-  },
-});
