@@ -5,18 +5,12 @@
  */
 
 import React from 'react';
-import { TouchableOpacity, StyleSheet, View, Text } from 'react-native';
+import { TouchableOpacity as TouchableHighlight, StyleSheet, View, Text } from 'react-native';
 import PropTypes from 'prop-types';
 
-import { SUSSOL_ORANGE, LIGHT_GREY } from '../globalStyles/index';
+import globalStyles, { SUSSOL_ORANGE, LIGHT_GREY, GREY } from '../globalStyles/index';
 
-const SIZE_VALUES = {
-  small: 15,
-  medium: 22,
-  large: 30,
-};
-
-const ICON_SIZE_VALUES = {
+const ICON_SIZES = {
   small: 10,
   medium: 15,
   large: 20,
@@ -37,7 +31,6 @@ const ICON_SIZE_VALUES = {
  */
 export const IconButton = ({
   IconComponent,
-  textStyle,
   onPress,
   onPressIn,
   onPressOut,
@@ -46,26 +39,19 @@ export const IconButton = ({
   leftText,
   rightText,
 }) => {
-  const styles = React.useMemo(() => localStyles(size), [size]);
-  const labelStyle = [styles.label, textStyle];
-  const Container = isDisabled ? View : TouchableOpacity;
-  const iconContainerStyle = [
-    styles.dimensions,
-    styles.container,
-    isDisabled && styles.iconDisabledStyle,
-  ];
+  const labelStyle = [localStyles.label, globalStyles.authWindowButtonText];
+  const Container = isDisabled ? View : TouchableHighlight;
+  const iconSize = ICON_SIZES[size];
 
   return (
     <Container
       onPressIn={onPressIn}
       onPressOut={onPressOut}
       onPress={onPress}
-      style={styles.buttonContainer}
+      style={localStyles.buttonContainer}
     >
       {leftText && <Text style={labelStyle}>{leftText}</Text>}
-      <View style={iconContainerStyle}>
-        <IconComponent size={ICON_SIZE_VALUES[size]} />
-      </View>
+      <IconComponent color={GREY} size={iconSize} />
       {rightText && <Text style={labelStyle}>{rightText}</Text>}
     </Container>
   );
@@ -79,12 +65,10 @@ IconButton.defaultProps = {
   size: 'large',
   leftText: null,
   rightText: null,
-  textStyle: null,
 };
 
 IconButton.propTypes = {
   IconComponent: PropTypes.oneOfType([PropTypes.object, PropTypes.func]).isRequired,
-  textStyle: PropTypes.any,
   onPress: PropTypes.func,
   onPressIn: PropTypes.func,
   onPressOut: PropTypes.func,
@@ -94,30 +78,18 @@ IconButton.propTypes = {
   rightText: PropTypes.string,
 };
 
-const localStyles = size =>
-  StyleSheet.create({
-    label: {
-      paddingHorizontal: 5,
-    },
-    dimensions: {
-      width: SIZE_VALUES[size],
-      height: SIZE_VALUES[size],
-      borderRadius: SIZE_VALUES[size],
-    },
-    iconDisabledStyle: {
-      backgroundColor: LIGHT_GREY,
-      borderColor: LIGHT_GREY,
-    },
-    buttonContainer: {
-      flex: 1,
-      flexDirection: 'row',
-      borderColor: 'red',
-      borderWidth: 1,
-      alignItems: 'center',
-    },
-    container: {
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: SUSSOL_ORANGE,
-    },
-  });
+const localStyles = StyleSheet.create({
+  label: {
+    paddingHorizontal: 5,
+  },
+  iconDisabledStyle: {
+    backgroundColor: LIGHT_GREY,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconCircle: {
+    backgroundColor: SUSSOL_ORANGE,
+  },
+});
