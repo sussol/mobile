@@ -24,6 +24,7 @@ const ICON_SIZES = {
  * @prop {Func} onPress OnPress callback.
  * @prop {Func} onPressIn onPressIn callback.
  * @prop {Func} onPressOut  onPressOut callback.
+ * @prop {Boolean} containerStyle  When true, no action on press. Disabled styling too.
  * @prop {Boolean} isDisabled  When true, no action on press. Disabled styling too.
  * @prop {String} color  Color for the icon component
  * @prop {String} size  Use size preset. "small", "medium", "large" or xlarge.
@@ -34,12 +35,14 @@ export const IconButton = ({
   onPress,
   onPressIn,
   onPressOut,
+  containerStyle,
   isDisabled,
   color,
   size,
   label,
 }) => {
   const labelStyle = [localStyles.label, globalStyles.authWindowButtonText];
+  const buttonContainerStyle = [localStyles.buttonContainer, containerStyle];
   const Container = isDisabled ? View : TouchableHighlight;
   const iconSize = ICON_SIZES[size];
 
@@ -48,7 +51,7 @@ export const IconButton = ({
       onPressIn={onPressIn}
       onPressOut={onPressOut}
       onPress={onPress}
-      style={localStyles.buttonContainer}
+      style={buttonContainerStyle}
     >
       <IconComponent color={color} size={iconSize} />
       {label && <Text style={labelStyle}>{label}</Text>}
@@ -60,6 +63,7 @@ IconButton.defaultProps = {
   onPress: null,
   onPressIn: null,
   onPressOut: null,
+  containerStyle: null,
   isDisabled: false,
   color: GREY,
   size: 'large',
@@ -71,6 +75,7 @@ IconButton.propTypes = {
   onPress: PropTypes.func,
   onPressIn: PropTypes.func,
   onPressOut: PropTypes.func,
+  containerStyle: PropTypes.any,
   isDisabled: PropTypes.bool,
   color: PropTypes.string,
   size: PropTypes.string,
