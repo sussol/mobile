@@ -156,7 +156,7 @@ const Menu = ({
       <View style={styles.bottomRow}>
         <IconButton
           IconComponent={PowerIcon}
-          size="xlarge"
+          size="large"
           rightText={navStrings.log_out}
           onPress={logout}
         />
@@ -165,7 +165,7 @@ const Menu = ({
         {isAdmin && (
           <IconButton
             IconComponent={CogIcon}
-            size="xlarge"
+            size="large"
             rightText={buttonStrings.settings}
             onPress={toSettings}
           />
