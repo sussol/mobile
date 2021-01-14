@@ -18,17 +18,16 @@ const ICON_SIZES = {
 };
 
 /**
- * Simple component rendering a button with a circular border radius
- * with an icon centered.
+ * Simple component rendering a button with an icon, and option text label on the right side
  *
  * @prop {Node} IconComponent An icon component to render in the center of the circle.
  * @prop {Func} onPress OnPress callback.
  * @prop {Func} onPressIn onPressIn callback.
  * @prop {Func} onPressOut  onPressOut callback.
  * @prop {Boolean} isDisabled  When true, no action on press. Disabled styling too.
- * @prop {String} size  Use size preset. "small", "medium" or "large".
- * @prop {String} leftText  Button label text to left of icon.
- * @prop {String} rightText Button label text to right of icon
+ * @prop {String} color  Color for the icon component
+ * @prop {String} size  Use size preset. "small", "medium", "large" or xlarge.
+ * @prop {String} label Button label text to right of icon
  */
 export const IconButton = ({
   IconComponent,
@@ -36,9 +35,9 @@ export const IconButton = ({
   onPressIn,
   onPressOut,
   isDisabled,
+  color,
   size,
-  leftText,
-  rightText,
+  label,
 }) => {
   const labelStyle = [localStyles.label, globalStyles.authWindowButtonText];
   const Container = isDisabled ? View : TouchableHighlight;
@@ -51,9 +50,8 @@ export const IconButton = ({
       onPress={onPress}
       style={localStyles.buttonContainer}
     >
-      {leftText && <Text style={labelStyle}>{leftText}</Text>}
-      <IconComponent color={GREY} size={iconSize} />
-      {rightText && <Text style={labelStyle}>{rightText}</Text>}
+      <IconComponent color={color} size={iconSize} />
+      {label && <Text style={labelStyle}>{label}</Text>}
     </Container>
   );
 };
@@ -63,9 +61,9 @@ IconButton.defaultProps = {
   onPressIn: null,
   onPressOut: null,
   isDisabled: false,
+  color: GREY,
   size: 'large',
-  leftText: null,
-  rightText: null,
+  label: null,
 };
 
 IconButton.propTypes = {
@@ -74,9 +72,9 @@ IconButton.propTypes = {
   onPressIn: PropTypes.func,
   onPressOut: PropTypes.func,
   isDisabled: PropTypes.bool,
+  color: PropTypes.string,
   size: PropTypes.string,
-  leftText: PropTypes.string,
-  rightText: PropTypes.string,
+  label: PropTypes.string,
 };
 
 const localStyles = StyleSheet.create({

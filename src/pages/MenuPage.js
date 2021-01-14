@@ -157,7 +157,7 @@ const Menu = ({
         <IconButton
           IconComponent={PowerIcon}
           size="large"
-          rightText={navStrings.log_out}
+          label={navStrings.log_out}
           onPress={logout}
         />
         {isInAdminMode && <MenuButton text="Realm Explorer" onPress={toRealmExplorer} />}
@@ -166,7 +166,7 @@ const Menu = ({
           <IconButton
             IconComponent={CogIcon}
             size="large"
-            rightText={buttonStrings.settings}
+            label={buttonStrings.settings}
             onPress={toSettings}
           />
         )}
