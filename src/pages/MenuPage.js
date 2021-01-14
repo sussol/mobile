@@ -154,21 +154,11 @@ const Menu = ({
   const AdminRow = useCallback(
     () => (
       <View style={styles.bottomRow}>
-        <IconButton
-          IconComponent={PowerIcon}
-          size="large"
-          label={navStrings.log_out}
-          onPress={logout}
-        />
+        <IconButton Icon={<PowerIcon />} label={navStrings.log_out} onPress={logout} />
         {isInAdminMode && <MenuButton text="Realm Explorer" onPress={toRealmExplorer} />}
         {isInAdminMode && <MenuButton text="Export Data" onPress={exportData} />}
         {isAdmin && (
-          <IconButton
-            IconComponent={CogIcon}
-            size="large"
-            label={buttonStrings.settings}
-            onPress={toSettings}
-          />
+          <IconButton Icon={<CogIcon />} label={buttonStrings.settings} onPress={toSettings} />
         )}
       </View>
     ),
