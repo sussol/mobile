@@ -9,20 +9,15 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { Incrementor } from './Incrementor';
 
-import { DARKER_GREY } from '../../globalStyles';
+import { APP_FONT_FAMILY, DARKER_GREY } from '../../globalStyles';
 import { useDatePicker } from '../../hooks';
 import { generalStrings } from '../../localization';
-
-const defaultTextInputProps = {
-  editable: false,
-  style: { color: DARKER_GREY },
-};
 
 export const DateEditor = ({
   label,
   date,
   onPress,
-  textInputProps,
+  textInputStyle,
   stepAmount,
   stepUnit,
   minimumDate,
@@ -37,8 +32,6 @@ export const DateEditor = ({
 
   const [datePickerIsOpen, openDatePicker, onPickDate] = useDatePicker(wrappedDatePicker);
 
-  const mergedProps = { ...defaultTextInputProps, ...textInputProps };
-
   return (
     <>
       <Incrementor
@@ -47,7 +40,7 @@ export const DateEditor = ({
         label={label}
         Content={
           <Pressable onPress={openDatePicker}>
-            <TextInput {...mergedProps} value={formatted} />
+            <TextInput editable={false} style={textInputStyle} value={formatted} />
           </Pressable>
         }
       />
@@ -67,7 +60,7 @@ export const DateEditor = ({
 
 DateEditor.defaultProps = {
   label: generalStrings.date,
-  textInputProps: {},
+  textInputStyle: { color: DARKER_GREY, fontFamily: APP_FONT_FAMILY, width: 90 },
   stepAmount: 1,
   stepUnit: 'day',
   maximumDate: null,
@@ -78,7 +71,7 @@ DateEditor.propTypes = {
   label: PropTypes.string,
   date: PropTypes.object.isRequired,
   onPress: PropTypes.func.isRequired,
-  textInputProps: PropTypes.object,
+  textInputStyle: PropTypes.object,
   stepAmount: PropTypes.number,
   stepUnit: PropTypes.string,
   maximumDate: PropTypes.oneOfType([PropTypes.instanceOf(Date), PropTypes.instanceOf(moment)]),

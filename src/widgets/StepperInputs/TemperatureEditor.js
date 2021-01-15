@@ -6,7 +6,9 @@ import { Text } from 'react-native';
 
 import { TextInputWithAffix } from '../TextInputs';
 import { Incrementor } from './Incrementor';
-import { DARKER_GREY } from '../../globalStyles';
+
+import { APP_FONT_FAMILY, DARKER_GREY } from '../../globalStyles';
+import { generalStrings } from '../../localization';
 
 const keepInRange = (num, min, max) => {
   const temp = Math.min(num, max);
@@ -37,7 +39,7 @@ export const TemperatureEditor = ({
         Content={
           <TextInputWithAffix
             editable={false}
-            SuffixComponent={<Text style={suffixTextStyle}>{`${'\u00B0'}C`}</Text>}
+            SuffixComponent={<Text style={suffixTextStyle}>{`${'\u00B0'}Celsius`}</Text>}
             style={textInputStyle}
             value={formatted}
           />
@@ -48,9 +50,15 @@ export const TemperatureEditor = ({
 };
 
 TemperatureEditor.defaultProps = {
-  label: '',
-  textInputStyle: { color: DARKER_GREY, minWidth: 60, textAlign: 'right' },
-  suffixTextStyle: { color: DARKER_GREY },
+  label: generalStrings.temp,
+  textInputStyle: {
+    fontSize: 14,
+    color: DARKER_GREY,
+    width: 40,
+    textAlign: 'right',
+    fontFamily: APP_FONT_FAMILY,
+  },
+  suffixTextStyle: { fontSize: 12, color: DARKER_GREY, fontFamily: APP_FONT_FAMILY, width: 50 },
   stepAmount: 0.5,
   maximum: 999,
   minimum: 1,
