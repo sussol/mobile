@@ -1,11 +1,12 @@
 {
   "gb": {
+    "date": "Date",
+    "time": "Time",
     "duration": "Duration",
     "temp": "Temp",
     "admin": "Admin",
     "credit": "Credit",
     "submit": "Submit",
-    "Date": "Date",
     "submitting": "Submitting...",
     "submitted": "Submitted",
     "stocktake": "Stocktake",
