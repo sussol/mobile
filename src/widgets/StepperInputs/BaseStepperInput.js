@@ -4,6 +4,8 @@ import propTypes from 'prop-types';
 import { View } from 'react-native';
 import { BaseStepperButton } from './BaseStepperButton';
 
+import { BACKGROUND_COLOR } from '../../globalStyles';
+
 export const BaseStepperInput = ({ containerStyles, LeftButton, RightButton, TextInput }) => (
   <View style={containerStyles}>
     {LeftButton}
@@ -17,6 +19,9 @@ BaseStepperInput.defaultProps = {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    maxWidth: 190,
+    height: 48,
+    backgroundColor: BACKGROUND_COLOR,
   },
   LeftButton: <BaseStepperButton />,
   RightButton: null,
