@@ -1,22 +1,28 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 export const useRepeatCallbackPress = (callback, delay = 50) => {
   const repeatConfig = React.useRef({ isRepeating: false, timeout: null });
+  const callbackRef = React.useRef(callback);
 
-  const start = React.useCallback(() => {
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
+
+  const start = useCallback(() => {
     repeatConfig.current.isPressed = true;
+
     const timeout = setInterval(() => {
-      callback();
+      callbackRef.current();
     }, delay);
     repeatConfig.current.timeout = timeout;
   }, [callback, delay]);
 
-  const end = React.useCallback(() => {
+  const end = useCallback(() => {
     clearInterval(repeatConfig.current.timeout);
 
     repeatConfig.current.isPressed = false;
     repeatConfig.current.timeout = null;
-  });
+  }, []);
 
   return [start, end];
 };

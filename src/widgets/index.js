@@ -45,6 +45,10 @@ export { Wizard } from './Wizard';
 export { FridgeDisplay } from './FridgeDisplay';
 export { FridgeDisplayInfo } from './FridgeDisplayInfo';
 export { KeyboardSpacing } from './KeyboardSpacing';
+export { Spacer } from './Spacer';
+export { SpacedChildren } from './Spacer';
+export { WithSpace } from './Spacer';
+export { WithFixedDimensions } from './WithFixedDimensions';
 
 export * from './icons';
 export * from './images';
