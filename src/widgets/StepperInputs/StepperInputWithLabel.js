@@ -5,6 +5,8 @@ import propTypes from 'prop-types';
 
 import { BaseStepperInput } from './BaseStepperInput';
 
+import { DARKER_GREY, APP_FONT_FAMILY } from '../../globalStyles';
+
 export const StepperInputWithLabel = ({
   containerStyle,
   textStyle,
@@ -26,8 +28,21 @@ export const StepperInputWithLabel = ({
 );
 
 StepperInputWithLabel.defaultProps = {
-  containerStyle: { display: 'flex', flexDirection: 'row', alignItems: 'center' },
-  textStyle: { marginRight: 20, fontSize: 14, fontFamily: 'Roboto-Medium' },
+  containerStyle: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  textStyle: {
+    marginRight: 10,
+    fontSize: 12,
+    minWidth: 90,
+    textAlign: 'right',
+    fontAlign: 'right',
+    fontFamily: APP_FONT_FAMILY,
+    color: DARKER_GREY,
+  },
   label: '',
   LeftButton: null,
   RightButton: null,

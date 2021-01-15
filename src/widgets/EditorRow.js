@@ -16,9 +16,7 @@ export const EditorRow = ({ children, label = '', Icon, containerStyle, labelSty
       <WithFixedDimensions width={30}>{Icon}</WithFixedDimensions>
       <Spacer space={20} />
       <Text style={labelStyle}>{label}</Text>
-      <SpacedChildren horizontal={false} space={50}>
-        {children}
-      </SpacedChildren>
+      <SpacedChildren space={0}>{children}</SpacedChildren>
     </FlexRow>
   );
 };
@@ -30,6 +28,7 @@ EditorRow.defaultProps = {
     fontFamily: APP_FONT_FAMILY,
     color: DARKER_GREY,
     marginRight: 'auto',
+    width: 120,
   },
 };
 
