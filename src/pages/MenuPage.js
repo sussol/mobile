@@ -5,13 +5,20 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Text, View, ToastAndroid } from 'react-native';
+import { View, ToastAndroid } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 
 import { Button } from 'react-native-ui-components';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { CustomerImage, SupplierImage, StockImage, ModulesImage, InfoBadge } from '../widgets';
+import {
+  CustomerImage,
+  IconButton,
+  SupplierImage,
+  StockImage,
+  ModulesImage,
+  InfoBadge,
+} from '../widgets';
 
+import { PowerIcon, CogIcon } from '../widgets/icons';
 import { ROUTES } from '../navigation/constants';
 import { buttonStrings, navStrings } from '../localization';
 
@@ -33,7 +40,7 @@ import {
   goToVaccines,
 } from '../navigation/actions';
 
-import globalStyles, { SHADOW_BORDER, GREY } from '../globalStyles';
+import globalStyles, { SHADOW_BORDER } from '../globalStyles';
 import { UserActions } from '../actions/index';
 import { selectCurrentUserIsAdmin } from '../selectors/user';
 
@@ -67,7 +74,7 @@ const Menu = ({
   isAdmin,
 }) => {
   const { menuButton, menuButtonText: buttonText, appBackground } = globalStyles;
-  const { image, originalContainer, moduleContainer, container, bottomIcon, moduleRow } = styles;
+  const { image, originalContainer, moduleContainer, container, moduleRow } = styles;
 
   const containerStyle = { ...container, ...(usingModules ? moduleContainer : originalContainer) };
 
@@ -147,27 +154,11 @@ const Menu = ({
   const AdminRow = useCallback(
     () => (
       <View style={styles.bottomRow}>
-        <View style={styles.bottomIconView}>
-          <Icon.Button
-            name="power-off"
-            iconStyle={bottomIcon}
-            backgroundColor="rgba(255,255,255,0)"
-            onPress={logout}
-          >
-            <Text>{navStrings.log_out}</Text>
-          </Icon.Button>
-        </View>
+        <IconButton Icon={<PowerIcon />} label={navStrings.log_out} onPress={logout} />
         {isInAdminMode && <MenuButton text="Realm Explorer" onPress={toRealmExplorer} />}
         {isInAdminMode && <MenuButton text="Export Data" onPress={exportData} />}
         {isAdmin && (
-          <Icon.Button
-            name="cog"
-            iconStyle={bottomIcon}
-            backgroundColor="rgba(255,255,255,0)"
-            onPress={toSettings}
-          >
-            <Text>{buttonStrings.settings}</Text>
-          </Icon.Button>
+          <IconButton Icon={<CogIcon />} label={buttonStrings.settings} onPress={toSettings} />
         )}
       </View>
     ),
@@ -216,7 +207,6 @@ const styles = {
   originalTopRow: { flex: 19, flexDirection: 'row' },
   moduleRow: { flex: 1, flexDirection: 'row' },
   image: { height: 150, width: 150, marginBottom: 30 },
-  bottomIcon: { color: GREY },
   bottomRow: {
     flex: 1,
     flexDirection: 'row',
