@@ -1,5 +1,5 @@
 /* eslint-disable react/forbid-prop-types */
-/* eslint-disable arrow-body-style */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text } from 'react-native';
@@ -20,22 +20,20 @@ export const CardDetail = ({
   fullContentContainerStyle,
   contentContainerStyle,
   footerContainerStyle,
-}) => {
-  return (
-    <PaperSection
-      width={width}
-      height={height}
-      Header={<Text style={headerStyle}>{headerText}</Text>}
-      innerPadding={innerPadding}
-      headerContainerStyle={headerContainerStyle}
-    >
-      <View style={fullContentContainerStyle}>
-        <View style={contentContainerStyle}>{Content}</View>
-        <View style={footerContainerStyle}>{Footer}</View>
-      </View>
-    </PaperSection>
-  );
-};
+}) => (
+  <PaperSection
+    width={width}
+    height={height}
+    Header={<Text style={headerStyle}>{headerText}</Text>}
+    innerPadding={innerPadding}
+    headerContainerStyle={headerContainerStyle}
+  >
+    <View style={fullContentContainerStyle}>
+      <View style={contentContainerStyle}>{Content}</View>
+      <View style={footerContainerStyle}>{Footer}</View>
+    </View>
+  </PaperSection>
+);
 
 CardDetail.defaultProps = {
   fullContentContainerStyle: { alignItems: 'center', justifyContent: 'center', height: 120 },
