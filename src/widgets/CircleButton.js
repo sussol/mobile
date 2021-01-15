@@ -41,15 +41,18 @@ export const CircleButton = ({
 
   const Container = isDisabled ? View : TouchableOpacity;
 
-  const containerStyle = [styles.dimensions, styles.containerStyle];
-  const internalStyle = isDisabled ? [containerStyle, styles.disabledStyle] : containerStyle;
+  const containerStyle = [
+    styles.dimensions,
+    styles.containerStyle,
+    isDisabled && styles.disabledStyle,
+  ];
 
   return (
     <Container
       onPressIn={onPressIn}
       onPressOut={onPressOut}
       onPress={onPress}
-      style={internalStyle}
+      style={containerStyle}
     >
       <IconComponent size={ICON_SIZE_VALUES[size]} />
     </Container>

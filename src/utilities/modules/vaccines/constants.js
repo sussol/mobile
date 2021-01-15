@@ -24,3 +24,11 @@ export const CHART_CONSTANTS = {
   INTERPOLATION,
   MAX_DATA_POINTS,
 };
+
+export const VACCINE_ENTITIES = {
+  SENSOR: 'Sensor',
+  TEMPERATURE_LOG: 'TemperatureLog',
+  TEMPERATURE_BREACH: 'TemperatureBreach',
+  TEMPERATURE_BREACH_CONFIGURATION: 'TemperatureBreachConfiguration',
+  SENSOR_LOG: 'SensorLog',
+};

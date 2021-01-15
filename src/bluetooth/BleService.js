@@ -24,7 +24,7 @@ const base64FromString = string => Buffer.from(string, 'utf-8').toString('base64
  *
  *
  */
-export class BleService {
+class BleService {
   constructor(manager = new BleManager()) {
     this.manager = manager;
   }
@@ -366,3 +366,14 @@ export class BleService {
     );
   };
 }
+
+let BleServiceInstance;
+
+export const getBleServiceInstance = manager => {
+  if (!BleServiceInstance) {
+    BleServiceInstance = new BleService(manager);
+  }
+  return BleServiceInstance;
+};
+
+export default getBleServiceInstance;

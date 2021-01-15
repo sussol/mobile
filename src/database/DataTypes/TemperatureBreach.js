@@ -98,6 +98,7 @@ TemperatureBreach.schema = {
     thresholdDuration: { type: 'double' },
     acknowledged: { type: 'bool', default: false },
     type: { type: 'string' },
+    sensorId: { type: 'string' },
   },
 };
 

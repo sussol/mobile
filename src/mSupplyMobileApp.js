@@ -7,6 +7,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { BluetoothStatus } from 'react-native-bluetooth-status';
 import { AppState, View } from 'react-native';
@@ -47,6 +48,8 @@ import { BreachActions } from './actions/BreachActions';
 import { TemperatureSync } from './widgets/modalChildren/TemperatureSync';
 import { RowDetail } from './widgets/RowDetail';
 import { PermissionActions } from './actions/PermissionActions';
+import BleService from './bluetooth/BleService';
+import { DevBleManager } from './bluetooth/DevBleManager';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -90,6 +93,8 @@ class MSupplyMobileAppContainer extends React.Component {
       this.scheduler.schedule(syncTemperatures, SYNC_INTERVAL);
       BluetoothStatus.addListener(requestBluetooth);
       dispatch(PermissionActions.checkPermissions());
+
+      this.initialiseBtService();
     }
 
     if (!__DEV__) {
@@ -109,6 +114,16 @@ class MSupplyMobileAppContainer extends React.Component {
     }
 
     this.scheduler.clearAll();
+  };
+
+  initialiseBtService = async () => {
+    const isEmulator = await DeviceInfo.isEmulator();
+    if (isEmulator) {
+      console.log('Emulator detected - Init Dev BleManager');
+      BleService(new DevBleManager());
+    } else {
+      BleService();
+    }
   };
 
   onAppStateChange = nextAppState => {
