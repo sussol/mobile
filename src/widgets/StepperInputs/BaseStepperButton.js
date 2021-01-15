@@ -3,7 +3,6 @@ import React from 'react';
 import propTypes from 'prop-types';
 import { View, Pressable } from 'react-native';
 import { PlusCircle } from '../icons';
-import { BACKGROUND_COLOR } from '../../globalStyles';
 
 export const BaseStepperButton = ({
   TouchableImpl,
@@ -22,7 +21,6 @@ BaseStepperButton.defaultProps = {
   Content: <PlusCircle />,
   containerStyle: {
     width: 50,
-    backgroundColor: BACKGROUND_COLOR,
     height: 50,
     display: 'flex',
     justifyContent: 'center',
