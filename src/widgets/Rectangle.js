@@ -10,7 +10,7 @@ const SIZES = {
 
 export const Rectangle = ({ children, colour, size }) => {
   const dimensions = SIZES[size];
-  const background = { background: colour };
+  const background = { backgroundColor: colour };
   const internalStyle = [containerStyle, dimensions, background];
 
   return <View style={internalStyle}>{children}</View>;
