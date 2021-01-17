@@ -1,10 +1,27 @@
+import { VACCINE_ACTIONS } from '../actions/VaccineActions';
+
 const initialState = () => ({
-  total: 0,
+  sensors: [],
   isScanning: false,
 });
 
-// eslint-disable-next-line no-unused-vars
-export const VaccineReducer = (_state = initialState(), action) => {
-  // eslint-disable-next-line no-unused-vars
+export const VaccineReducer = (state = initialState(), action) => {
   const { type } = action;
+
+  switch (type) {
+    case VACCINE_ACTIONS.SCAN_START: {
+      return {
+        ...state,
+        isScanning: true,
+      };
+    }
+    case VACCINE_ACTIONS.SCAN_STOP: {
+      return {
+        ...state,
+        isaScanning: false,
+      };
+    }
+    default:
+      return state;
+  }
 };

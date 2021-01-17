@@ -45,12 +45,12 @@ const scanForSensors = () => async dispatch => {
   BleService().scanForSensors(deviceCallback);
 };
 
-// eslint-disable-next-line no-unused-vars
 const stopSensorScan = () => async dispatch => {
+  dispatch(scanStop());
   BleService().stopScan();
-  console.log('scan stopped');
 };
 
 export const TemperatureSyncActions = {
   startSensorScan,
+  stopSensorScan,
 };
