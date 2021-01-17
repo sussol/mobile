@@ -64,7 +64,7 @@ export const StocktakeBatchModalComponent = ({
       return { page: MODALS.STOCKTAKE_BATCH_EDIT_WITH_REASONS_AND_PRICES, pageObject };
     }
     if (usingReasons) return { page: MODALS.STOCKTAKE_BATCH_EDIT_WITH_REASONS, pageObject };
-    if (usingPayments) return { page: MODALS.STOCKTAKE_BATCH_EDIT_WITH_PAYMENTS, pageObject };
+    if (usingPayments) return { page: MODALS.STOCKTAKE_BATCH_EDIT_WITH_PRICES, pageObject };
     return { page: MODALS.STOCKTAKE_BATCH_EDIT, pageObject };
   }, [stocktakeItem, usingPayments, usingReasons]);
 
