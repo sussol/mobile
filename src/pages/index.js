@@ -25,3 +25,7 @@ export { StocktakeEditPage } from './StocktakeEditPage';
 export { StockPage } from './StockPage';
 export { VaccinePage } from './VaccinePage';
 export { VaccineAdminPage } from './VaccineAdminPage';
+export { NewVaccineModulePage } from './NewVaccineModulePage';
+export { FridgeDetailPage } from './FridgeDetailPage';
+export { SensorEditPage } from './SensorEditPage';
+export { NewSensorPage } from './NewSensorPage';

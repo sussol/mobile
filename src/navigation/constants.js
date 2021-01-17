@@ -51,6 +51,11 @@ export const ROUTES = {
 
   VACCINES: 'vaccines',
   VACCINES_ADMIN: 'vaccinesAdmin',
+
+  VACCINES_NEW: 'vaccinesNew',
+  SENSOR_EDIT: 'sensorEdit',
+  SENSOR_NEW: 'sensorNew',
+  FRIDGE_DETAIL: 'fridgeDetail',
 };
 
 export const FINALISABLE_PAGES = [
