@@ -18,6 +18,7 @@ export { FormTextInput } from './FormInputs/FormTextInput';
 export { HeaderRight } from './HeaderRight';
 export { HazardPoint } from './HazardPoint';
 export { IconCell } from './IconCell';
+export { IconButton } from './IconButton';
 export { InfoBadge } from './InfoBadge';
 export { LineChart } from './LineChart';
 export { OnePressButton } from './OnePressButton';

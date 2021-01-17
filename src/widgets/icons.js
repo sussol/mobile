@@ -43,10 +43,6 @@ export const DisabledCheckedIcon = () => (
 );
 export const DisabledUncheckedIcon = () => <MaterialCommunityIcon name="cancel" size={15} />;
 
-export const OpenModalIcon = () => (
-  <FAIcon name="angle-double-up" size={20} color={SUSSOL_ORANGE} />
-);
-
 export const MagnifyingGlassIcon = React.memo(({ size, color }) => (
   <EvilIcon name="search" size={size} color={color} />
 ));
@@ -60,6 +56,10 @@ export const CancelIcon = React.memo(() => (
 export const CloseIcon = ({ size, color }) => <IonIcon name="md-close" size={size} color={color} />;
 CloseIcon.defaultProps = { color: WHITE, size: 36 };
 CloseIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
+
+export const CogIcon = ({ size, color }) => <FAIcon name="cog" size={size} color={color} />;
+CogIcon.defaultProps = { color: GREY, size: 20 };
+CogIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
 
 export const ExpandIcon = React.memo(({ style, color, size }) => (
   <FAIcon name="external-link" style={style} size={size} color={color} />
@@ -80,6 +80,12 @@ export const LockIcon = React.memo(({ style }) => <FAIcon name="lock" size={28} 
 LockIcon.defaultProps = { style: { color: FINALISED_RED } };
 LockIcon.propTypes = { style: PropTypes.object };
 
+export const LanguageIcon = ({ size, color }) => (
+  <FAIcon name="language" size={size} color={color} />
+);
+LanguageIcon.defaultProps = { color: GREY, size: 30 };
+LanguageIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
+
 export const ChevronDownIcon = React.memo(({ color, size, style }) => (
   <FA5Icon name="chevron-down" color={color} size={size} style={style} />
 ));
@@ -99,6 +105,12 @@ ChevronUpIcon.propTypes = {
   size: PropTypes.number,
   style: PropTypes.object,
 };
+
+export const PowerIcon = React.memo(({ color, size }) => (
+  <FAIcon name="power-off" color={color} size={size} />
+));
+PowerIcon.defaultProps = { color: GREY, size: 20 };
+PowerIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
 
 export const PencilIcon = React.memo(({ color, size }) => (
   <FAIcon name="pencil" color={color} size={size} />
