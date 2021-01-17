@@ -17,6 +17,7 @@ import { Flag, IconButton } from '..';
 import { GenericChoiceList } from '../modalChildren/GenericChoiceList';
 import { ModalContainer } from './ModalContainer';
 import { LanguageIcon } from '../icons';
+import { DateRangeSelector } from '../DateRangeSelector';
 
 import { LANGUAGE_NAMES, LANGUAGE_CHOICE, authStrings, navStrings } from '../../localization';
 import { getModalTitle, MODAL_KEYS } from '../../utilities';
@@ -199,6 +200,7 @@ export class LoginModal extends React.Component {
                 }}
               />
             </View>
+            <DateRangeSelector />
             <View style={globalStyles.authFormButtonContainer}>
               <Button
                 style={[globalStyles.authFormButton, globalStyles.loginButton]}

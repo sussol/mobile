@@ -11,7 +11,7 @@ import moment from 'moment';
 import { DatePickerButton } from './DatePickerButton';
 import { FlexRow } from './FlexRow';
 
-import { textStyles, LIGHT_GREY } from '../globalStyles';
+import { textStyles, LIGHT_GREY, WHITE } from '../globalStyles';
 import { useLayoutDimensions } from '../hooks/useLayoutDimensions';
 
 export const DateRangeSelector = ({
@@ -22,19 +22,24 @@ export const DateRangeSelector = ({
   dateTextStyle,
   maximumDate,
   minimumDate,
+  backgroundColor,
 }) => {
   const formattedStartDate = moment(initialStartDate).format('D/M/YYYY');
   const formattedEndDate = moment(initialEndDate).format('D/M/YYYY');
   const [, height, setDimensions] = useLayoutDimensions();
 
   return (
-    <View onLayout={setDimensions} style={[localStyles.container, { borderRadius: height }]}>
+    <View
+      onLayout={setDimensions}
+      style={[localStyles.container, { borderRadius: height, backgroundColor }]}
+    >
       <FlexRow alignItems="center">
         <DatePickerButton
           minimumDate={minimumDate}
           maximumDate={initialEndDate}
           initialValue={moment(initialStartDate).startOf('day').toDate()}
           onDateChanged={onChangeFromDate}
+          isCircle={false}
         />
         <Text style={dateTextStyle}>{formattedStartDate}</Text>
       </FlexRow>
@@ -46,6 +51,7 @@ export const DateRangeSelector = ({
           minimumDate={initialStartDate}
           initialValue={moment(initialEndDate).endOf('day').toDate()}
           onDateChanged={onChangeToDate}
+          isCircle={false}
         />
         <Text style={dateTextStyle}>{formattedEndDate}</Text>
       </FlexRow>
@@ -54,7 +60,7 @@ export const DateRangeSelector = ({
 };
 
 const localStyles = StyleSheet.create({
-  dateText: { ...textStyles },
+  dateText: { ...textStyles, paddingLeft: 5 },
   dashText: { ...textStyles, paddingHorizontal: 5 },
   container: {
     flexDirection: 'row',
@@ -70,6 +76,7 @@ DateRangeSelector.defaultProps = {
   dateTextStyle: localStyles.dateText,
   maximumDate: null,
   minimumDate: null,
+  backgroundColor: WHITE,
 };
 
 DateRangeSelector.propTypes = {
@@ -80,4 +87,5 @@ DateRangeSelector.propTypes = {
   dateTextStyle: PropTypes.object,
   maximumDate: PropTypes.instanceOf(Date),
   minimumDate: PropTypes.instanceOf(Date),
+  backgroundColor: PropTypes.string,
 };
