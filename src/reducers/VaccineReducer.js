@@ -24,11 +24,11 @@ export const VaccineReducer = (state = initialState(), action) => {
     case VACCINE_ACTIONS.SENSOR_FOUND: {
       const { payload } = action;
       const { scannedSensors } = state;
-      const updatedSensorList = scannedSensors.push(payload);
+      scannedSensors.push(payload);
 
       return {
         ...state,
-        scannedSensors: updatedSensorList,
+        scannedSensors,
       };
     }
     default:
