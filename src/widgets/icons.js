@@ -213,3 +213,47 @@ SyncArrowProblem.propTypes = {
   style: PropTypes.object,
   color: PropTypes.string,
 };
+
+export const LowBatteryIcon = ({ size, style, color }) => (
+  <FAIcon size={size} style={style} color={color} name="battery-1" />
+);
+
+LowBatteryIcon.defaultProps = { size: 40, style: {}, color: WHITE };
+LowBatteryIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
+
+export const BatteryIcon = ({ size, style, color }) => (
+  <FAIcon size={size} style={style} color={color} name="battery-full" />
+);
+
+BatteryIcon.defaultProps = { size: 20, style: {}, color: WHITE };
+BatteryIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
+
+export const HotBreachIcon = ({ size, style, color }) => (
+  <FAIcon size={size} style={style} color={color} name="thermometer" />
+);
+
+HotBreachIcon.defaultProps = { size: 40, style: {}, color: WHITE };
+HotBreachIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
+
+export const ColdBreachIcon = ({ size, style, color }) => (
+  <FAIcon size={size} style={style} color={color} name="snowflake-o" />
+);
+
+ColdBreachIcon.defaultProps = { size: 40, style: {}, color: WHITE };
+ColdBreachIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
