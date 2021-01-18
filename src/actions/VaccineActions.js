@@ -51,10 +51,10 @@ const scanForSensors = () => async (dispatch, getState) => {
     const { id: macAddress } = device;
 
     if (macAddress) {
-      const alreadyFound = selectScannedSensorAddresses(getState());
+      const alreadyScanned = selectScannedSensorAddresses(getState());
       const alreadySaved = UIDatabase.get('Sensor', macAddress, 'macAddress');
 
-      if (!alreadyFound.includes(macAddress) && !alreadySaved) {
+      if (!alreadyScanned?.includes(macAddress) && !alreadySaved) {
         dispatch(sensorFound(macAddress));
       }
     }
