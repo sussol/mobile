@@ -691,9 +691,7 @@ const createRequisition = (
   const { name: orderTypeName, maxMOS, thresholdMOS } = orderType || {};
   const regimenData =
     program && program.parsedProgramSettings ? program.parsedProgramSettings.regimenData : null;
-  const daysToSupply = Math.ceil(
-    ((monthsLeadTime || 0) + (maxMOS || 1)) * NUMBER_OF_DAYS_IN_A_MONTH
-  );
+  const daysToSupply = ((monthsLeadTime || 0) + (maxMOS || 1)) * NUMBER_OF_DAYS_IN_A_MONTH;
 
   const requisition = database.create('Requisition', {
     id: generateUUID(),
