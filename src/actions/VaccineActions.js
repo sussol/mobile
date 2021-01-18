@@ -25,7 +25,7 @@ const startSensorScan = () => async (dispatch, getState) => {
   const bluetoothEnabled = PermissionSelectors.bluetooth(getState());
   const locationPermission = PermissionSelectors.location(getState());
   // Ensure the correct permissions before initiating a new sync process.
-  if (!bluetoothEnabled) dispatch(PermissionActions.requestBluetooth());
+  if (!bluetoothEnabled) await dispatch(PermissionActions.requestBluetooth());
   if (!locationPermission) await dispatch(PermissionActions.requestLocation());
 
   if (!bluetoothEnabled) {
