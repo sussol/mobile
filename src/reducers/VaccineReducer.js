@@ -28,7 +28,7 @@ export const VaccineReducer = (state = initialState(), action) => {
 
       return {
         ...state,
-        updatedSensorList,
+        scannedSensors: updatedSensorList,
       };
     }
     default:
