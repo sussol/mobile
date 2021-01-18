@@ -26,11 +26,10 @@ export const VaccineReducer = (state = initialState(), action) => {
       const { macAddress } = payload;
 
       const { scannedSensorAddresses } = state;
-      scannedSensorAddresses.push(macAddress);
 
       return {
         ...state,
-        scannedSensorAddresses,
+        scannedSensorAddresses: [...scannedSensorAddresses, macAddress],
       };
     }
     default:
