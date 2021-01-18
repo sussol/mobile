@@ -29,12 +29,12 @@ const startSensorScan = () => async (dispatch, getState) => {
   if (!locationPermission) await dispatch(PermissionActions.requestLocation());
 
   if (!bluetoothEnabled) {
-    ToastAndroid.show(syncStrings.please_enable_bluetooth, ToastAndroid.LONG);
+    ToastAndroid.show(syncStrings.bluetooth_disabled, ToastAndroid.LONG);
     return null;
   }
 
   if (!locationPermission) {
-    ToastAndroid.show(syncStrings.grant_location_permission, ToastAndroid.LONG);
+    ToastAndroid.show(syncStrings.location_permission, ToastAndroid.LONG);
     return null;
   }
 
