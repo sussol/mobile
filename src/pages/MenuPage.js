@@ -18,7 +18,7 @@ import {
   InfoBadge,
 } from '../widgets';
 
-import { PowerIcon, CogIcon } from '../widgets/icons';
+import { PowerIcon, CogIcon, HazardIcon } from '../widgets/icons';
 import { ROUTES } from '../navigation/constants';
 import { buttonStrings, navStrings } from '../localization';
 
@@ -41,7 +41,7 @@ import {
 } from '../navigation/actions';
 
 import globalStyles, { SHADOW_BORDER } from '../globalStyles';
-import { UserActions } from '../actions/index';
+import { UserActions, VaccineActions } from '../actions/index';
 import { selectCurrentUserIsAdmin } from '../selectors/user';
 
 const exportData = async () => {
@@ -72,6 +72,7 @@ const Menu = ({
   usingModules,
   usingVaccines,
   isAdmin,
+  blink,
 }) => {
   const { menuButton, menuButtonText: buttonText, appBackground } = globalStyles;
   const { image, originalContainer, moduleContainer, container, moduleRow } = styles;
@@ -155,6 +156,7 @@ const Menu = ({
     () => (
       <View style={styles.bottomRow}>
         <IconButton Icon={<PowerIcon />} label={navStrings.log_out} onPress={logout} />
+        <IconButton Icon={<HazardIcon />} label="blink" onPress={blink} />
         {isInAdminMode && <MenuButton text="Realm Explorer" onPress={toRealmExplorer} />}
         {isInAdminMode && <MenuButton text="Export Data" onPress={exportData} />}
         {isAdmin && (
@@ -248,6 +250,7 @@ const mapDispatchToProps = dispatch => ({
   toDashboard: () => dispatch(gotoDashboard()),
   toCashRegister: () => dispatch(goToCashRegister()),
   logout: () => dispatch(UserActions.logout()),
+  blink: () => dispatch(VaccineActions.blinkSensor('FC:C0:EE:9D:80:A3')),
 });
 
 const mapStateToProps = state => {
@@ -282,6 +285,7 @@ Menu.defaultProps = {
 
 Menu.propTypes = {
   isInAdminMode: PropTypes.bool,
+  blink: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
   toVaccines: PropTypes.func.isRequired,
   toCustomerInvoices: PropTypes.func.isRequired,
