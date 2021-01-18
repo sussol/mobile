@@ -23,8 +23,10 @@ export const VaccineReducer = (state = initialState(), action) => {
     }
     case VACCINE_ACTIONS.SENSOR_FOUND: {
       const { payload } = action;
+      const { macAddress } = payload;
+
       const { scannedSensors } = state;
-      scannedSensors.push(payload);
+      scannedSensors.push(macAddress);
 
       return {
         ...state,
