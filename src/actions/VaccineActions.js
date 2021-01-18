@@ -4,10 +4,12 @@
  * Sustainable Solutions (NZ) Ltd. 2021
  */
 
+import { ToastAndroid } from 'react-native';
 import { PermissionSelectors } from '../selectors/permission';
 import selectScannedSensors from '../selectors/vaccine';
 import { PermissionActions } from './PermissionActions';
 import BleService from '../bluetooth/BleService';
+import { syncStrings } from '../localization/index';
 
 export const VACCINE_ACTIONS = {
   ERROR_BLUETOOTH_DISABLED: 'Vaccine/errorBluetoothDisabled',
@@ -27,13 +29,22 @@ const startSensorScan = () => async (dispatch, getState) => {
   const bluetoothEnabled = PermissionSelectors.bluetooth(getState());
   const locationPermission = PermissionSelectors.location(getState());
   // Ensure the correct permissions before initiating a new sync process.
-  if (!bluetoothEnabled) await dispatch(PermissionActions.requestBluetooth());
+  if (!bluetoothEnabled) dispatch(PermissionActions.requestBluetooth());
   if (!locationPermission) await dispatch(PermissionActions.requestLocation());
 
-  if (!(bluetoothEnabled && locationPermission)) return null;
+  if (!bluetoothEnabled) {
+    ToastAndroid.show(syncStrings.please_enable_bluetooth, ToastAndroid.LONG);
+    return null;
+  }
+
+  if (!locationPermission) {
+    ToastAndroid.show(syncStrings.grant_location_permission, ToastAndroid.LONG);
+    return null;
+  }
+
   dispatch(scanForSensors());
 
-  // Do we need to do something here?
+  // Scan will continue running until it is stopped...
   return null;
 };
 
