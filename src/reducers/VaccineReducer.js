@@ -1,7 +1,7 @@
 import { VACCINE_ACTIONS } from '../actions/VaccineActions';
 
 const initialState = () => ({
-  scannedSensors: [],
+  scannedSensorAddresses: [],
   isScanning: false,
 });
 
@@ -25,12 +25,12 @@ export const VaccineReducer = (state = initialState(), action) => {
       const { payload } = action;
       const { macAddress } = payload;
 
-      const { scannedSensors } = state;
-      scannedSensors.push(macAddress);
+      const { scannedSensorAddresses } = state;
+      scannedSensorAddresses.push(macAddress);
 
       return {
         ...state,
-        scannedSensors,
+        scannedSensorAddresses,
       };
     }
     default:

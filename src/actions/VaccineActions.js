@@ -5,7 +5,7 @@
 
 import { ToastAndroid } from 'react-native';
 import { PermissionSelectors } from '../selectors/permission';
-import selectScannedSensors from '../selectors/vaccine';
+import selectScannedSensorAddresses from '../selectors/vaccine';
 import { PermissionActions } from './PermissionActions';
 import BleService from '../bluetooth/BleService';
 import { syncStrings } from '../localization/index';
@@ -51,7 +51,7 @@ const scanForSensors = () => async (dispatch, getState) => {
     const { id } = device;
 
     if (id) {
-      const alreadyFound = selectScannedSensors(getState());
+      const alreadyFound = selectScannedSensorAddresses(getState());
       const alreadySaved = UIDatabase.get('Sensor', id, 'macAddress');
 
       if (!alreadyFound.includes(id) && !alreadySaved) {
