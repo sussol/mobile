@@ -1,7 +1,7 @@
 import { VACCINE_ACTIONS } from '../actions/VaccineActions';
 
 const initialState = () => ({
-  sensors: [],
+  scannedSensors: [],
   isScanning: false,
 });
 
@@ -18,7 +18,17 @@ export const VaccineReducer = (state = initialState(), action) => {
     case VACCINE_ACTIONS.SCAN_STOP: {
       return {
         ...state,
-        isaScanning: false,
+        isScanning: false,
+      };
+    }
+    case VACCINE_ACTIONS.SENSOR_FOUND: {
+      const { payload } = action;
+      const { scannedSensors } = state;
+      const updatedSensorList = scannedSensors.push(payload);
+
+      return {
+        ...state,
+        updatedSensorList,
       };
     }
     default:
