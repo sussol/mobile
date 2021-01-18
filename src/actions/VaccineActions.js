@@ -12,11 +12,7 @@ import { syncStrings } from '../localization/index';
 import { UIDatabase } from '../database/index';
 
 export const VACCINE_ACTIONS = {
-  ERROR_BLUETOOTH_DISABLED: 'Vaccine/errorBluetoothDisabled',
-  ERROR_LOCATION_DISABLED: 'Vaccine/errorLocationDisabled',
-
   SCAN_START: 'Vaccine/sensorScanStart',
-  SCAN_ERROR: 'Vaccine/sensorScanError',
   SCAN_STOP: 'Vaccine/sensorScanStop',
   SENSOR_FOUND: 'Vaccine/sensorFound',
 };
@@ -53,6 +49,7 @@ const scanForSensors = () => async (dispatch, getState) => {
 
   const deviceCallback = device => {
     const { id } = device;
+    console.log(id);
 
     if (id) {
       const alreadyFound = selectScannedSensors(getState());
