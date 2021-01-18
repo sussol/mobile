@@ -12,7 +12,7 @@ import { Rectangle } from './Rectangle';
 import temperature from '../utilities/temperature';
 
 const BigText = ({ children, colour }) => (
-  <Text style={{ fontSize: 32, fontFamily: APP_FONT_FAMILY, color: colour }}>{children}</Text>
+  <Text style={{ ...styles.bigText, color: colour }}>{children}</Text>
 );
 
 BigText.defaultProps = { colour: WHITE };
@@ -104,6 +104,7 @@ export const SensorStatus = ({ isInHotBreach, isInColdBreach, isLowBattery, curr
 
 const styles = {
   icon: { position: 'absolute', left: 30 },
+  bigText: { fontSize: 32, fontFamily: APP_FONT_FAMILY },
 };
 
 SensorStatus.defaultProps = {
