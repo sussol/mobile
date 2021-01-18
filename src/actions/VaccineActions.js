@@ -68,7 +68,7 @@ const stopSensorScan = () => async dispatch => {
   BleService().stopScan();
 };
 
-export const TemperatureSyncActions = {
+export const VaccineActions = {
   startSensorScan,
   stopSensorScan,
 };
