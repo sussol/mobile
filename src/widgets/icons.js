@@ -146,7 +146,15 @@ export const MinusIcon = ({ size, color }) => (
 MinusIcon.defaultProps = { color: WHITE, size: 30 };
 MinusIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
 
-export const CalendarIcon = () => <FAIcon name="calendar" size={20} color={WHITE} />;
+export const CalendarIcon = ({ color, size, style }) => (
+  <FAIcon name="calendar" size={size} style={style} color={color} />
+);
+CalendarIcon.defaultProps = { color: WHITE, size: 20, style: {} };
+CalendarIcon.propTypes = {
+  color: PropTypes.string,
+  size: PropTypes.number,
+  style: PropTypes.object,
+};
 
 export const BackIcon = () => <FAIcon name="chevron-left" size={16} color="black" />;
 
