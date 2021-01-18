@@ -22,6 +22,8 @@ import { PowerIcon, CogIcon, HazardIcon } from '../widgets/icons';
 import { ROUTES } from '../navigation/constants';
 import { buttonStrings, navStrings } from '../localization';
 
+import { selectIsScanning } from '../selectors/vaccine';
+
 import { SETTINGS_KEYS } from '../settings';
 import { UIDatabase } from '../database';
 
@@ -73,6 +75,9 @@ const Menu = ({
   usingVaccines,
   isAdmin,
   blink,
+  isScanning,
+  scanSensorsStart,
+  scanSensorsEnd,
 }) => {
   const { menuButton, menuButtonText: buttonText, appBackground } = globalStyles;
   const { image, originalContainer, moduleContainer, container, moduleRow } = styles;
@@ -80,6 +85,14 @@ const Menu = ({
   const containerStyle = { ...container, ...(usingModules ? moduleContainer : originalContainer) };
 
   const isFocused = useIsFocused();
+
+  const scan = () => {
+    if (isScanning) {
+      scanSensorsEnd();
+    } else {
+      scanSensorsStart();
+    }
+  };
 
   const MenuButton = useCallback(
     props => <Button style={menuButton} textStyle={buttonText} {...props} />,
@@ -157,6 +170,7 @@ const Menu = ({
       <View style={styles.bottomRow}>
         <IconButton Icon={<PowerIcon />} label={navStrings.log_out} onPress={logout} />
         <IconButton Icon={<HazardIcon />} label="blink" onPress={blink} />
+        <IconButton Icon={<HazardIcon />} label={isScanning ? 'scanning' : 'scan'} onPress={scan} />
         {isInAdminMode && <MenuButton text="Realm Explorer" onPress={toRealmExplorer} />}
         {isInAdminMode && <MenuButton text="Export Data" onPress={exportData} />}
         {isAdmin && (
@@ -164,7 +178,7 @@ const Menu = ({
         )}
       </View>
     ),
-    [isInAdminMode, isAdmin]
+    [isInAdminMode, isAdmin, isScanning]
   );
 
   const ModuleLayout = useCallback(
@@ -250,7 +264,9 @@ const mapDispatchToProps = dispatch => ({
   toDashboard: () => dispatch(gotoDashboard()),
   toCashRegister: () => dispatch(goToCashRegister()),
   logout: () => dispatch(UserActions.logout()),
-  blink: () => dispatch(VaccineActions.blinkSensor('FC:C0:EE:9D:80:A3')),
+  blink: () => dispatch(VaccineActions.st.blinkSensor('FC:C0:EE:9D:80:A3')),
+  scanSensorsStart: () => dispatch(VaccineActions.startSensorScan()),
+  scanSensorsEnd: () => dispatch(VaccineActions.stopSensorScan()),
 });
 
 const mapStateToProps = state => {
@@ -265,6 +281,7 @@ const mapStateToProps = state => {
   } = modules;
 
   const isAdmin = selectCurrentUserIsAdmin(state);
+  const isScanning = selectIsScanning(state);
 
   return {
     usingDashboard,
@@ -273,6 +290,7 @@ const mapStateToProps = state => {
     usingCashRegister,
     usingModules,
     isAdmin,
+    isScanning,
   };
 };
 
@@ -305,4 +323,7 @@ Menu.propTypes = {
   usingCashRegister: PropTypes.bool.isRequired,
   usingModules: PropTypes.bool.isRequired,
   usingVaccines: PropTypes.bool.isRequired,
+  isScanning: PropTypes.bool.isRequired,
+  scanSensorsStart: PropTypes.func.isRequired,
+  scanSensorsEnd: PropTypes.func.isRequired,
 };

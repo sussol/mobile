@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { AppRegistry, YellowBox, BackHandler } from 'react-native';
+import { AppRegistry, LogBox, BackHandler } from 'react-native';
 import Bugsnag from '@bugsnag/react-native';
 import { Provider } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
@@ -35,6 +35,6 @@ const App = () => {
   );
 };
 
-YellowBox.ignoreWarnings(['Setting a timer']);
+LogBox.ignoreLogs(['Warning:']);
 
 AppRegistry.registerComponent(appName, () => App);

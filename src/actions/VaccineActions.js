@@ -53,23 +53,22 @@ const startSensorScan = () => async (dispatch, getState) => {
   return null;
 };
 
-const scanForSensors = () => async dispatch => {
+const scanForSensors = () => dispatch => {
   dispatch(scanStart());
-
-  const deviceCallback = device => {
-    console.log(device);
+  const deviceCallback = () => {
+    // console.log(device);
   };
 
   BleService().scanForSensors(deviceCallback);
 };
 
-// eslint-disable-next-line no-unused-vars
-const stopSensorScan = () => async dispatch => {
+const stopSensorScan = () => dispatch => {
+  dispatch(scanStop());
   BleService().stopScan();
-  console.log('scan stopped');
 };
 
 export const VaccineActions = {
   blinkSensor,
   startSensorScan,
+  stopSensorScan,
 };
