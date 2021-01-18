@@ -25,6 +25,7 @@ import { FridgeReducer } from './FridgeReducer';
 import { BreachReducer } from './BreachReducer';
 import { RowDetailReducer } from './RowDetailReducer';
 import { PermissionReducer } from './PermissionReducer';
+import { VaccineReducer } from './VaccineReducer';
 
 import SyncReducer from './SyncReducer';
 
@@ -50,4 +51,5 @@ export default combineReducers({
   breach: BreachReducer,
   rowDetail: RowDetailReducer,
   permission: PermissionReducer,
+  vaccine: VaccineReducer,
 });
