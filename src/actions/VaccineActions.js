@@ -1,4 +1,3 @@
-/* eslint-disable no-await-in-loop */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2021
@@ -10,6 +9,7 @@ import selectScannedSensors from '../selectors/vaccine';
 import { PermissionActions } from './PermissionActions';
 import BleService from '../bluetooth/BleService';
 import { syncStrings } from '../localization/index';
+import { UIDatabase } from '../database/index';
 
 export const VACCINE_ACTIONS = {
   ERROR_BLUETOOTH_DISABLED: 'Vaccine/errorBluetoothDisabled',
@@ -52,11 +52,15 @@ const scanForSensors = () => async (dispatch, getState) => {
   dispatch(scanStart());
 
   const deviceCallback = device => {
-    const alreadyFound = selectScannedSensors(getState());
+    const { id } = device;
 
-    // TODO: Filter out already saved sensors?
-    if (!alreadyFound.includes(device?.id)) {
-      dispatch(sensorFound(device?.id));
+    if (id) {
+      const alreadyFound = selectScannedSensors(getState());
+      const alreadySaved = UIDatabase.get('Sensor', id, 'macAddress');
+
+      if (!alreadyFound.includes(id) && !alreadySaved) {
+        dispatch(sensorFound(id));
+      }
     }
   };
 
