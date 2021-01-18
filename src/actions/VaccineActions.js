@@ -49,7 +49,6 @@ const scanForSensors = () => async (dispatch, getState) => {
 
   const deviceCallback = device => {
     const { id } = device;
-    console.log(id);
 
     if (id) {
       const alreadyFound = selectScannedSensors(getState());
