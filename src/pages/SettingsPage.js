@@ -16,7 +16,7 @@ import { UIDatabase } from '../database';
 import { SETTINGS_KEYS } from '../settings';
 import { MODAL_KEYS } from '../utilities';
 
-import { gotoRealmExplorer } from '../navigation/actions';
+import { gotoNewVaccineModulePage, gotoRealmExplorer } from '../navigation/actions';
 
 import { ConfirmIcon } from '../widgets/icons';
 import { DataTablePageView, PageInfo } from '../widgets';
@@ -36,7 +36,12 @@ const exportData = async () => {
   ToastAndroid.show(toastMessage, ToastAndroid.SHORT);
 };
 
-const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWritePermission }) => {
+const Settings = ({
+  toRealmExplorer,
+  currentUserPasswordHash,
+  requestStorageWritePermission,
+  toNewVaccineModulePage,
+}) => {
   const [state, setState] = useState({
     syncURL: UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL),
     modalKey: '',
@@ -135,6 +140,7 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
         <View>
           <MenuButton text={buttonStrings.realm_explorer} onPress={toRealmExplorer} />
           <MenuButton text={buttonStrings.export_data} onPress={requestStorageWritePermission} />
+          <MenuButton text="New vaccine module" onPress={toNewVaccineModulePage} />
         </View>
       </View>
 
@@ -150,6 +156,7 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
 };
 
 const mapStateToDispatch = dispatch => ({
+  toNewVaccineModulePage: () => dispatch(gotoNewVaccineModulePage()),
   toRealmExplorer: () => dispatch(gotoRealmExplorer()),
   requestStorageWritePermission: () =>
     dispatch(PermissionActions.requestWriteStorage()).then(exportData),
@@ -172,4 +179,5 @@ Settings.propTypes = {
   toRealmExplorer: PropTypes.func.isRequired,
   currentUserPasswordHash: PropTypes.string.isRequired,
   requestStorageWritePermission: PropTypes.func.isRequired,
+  toNewVaccineModulePage: PropTypes.func.isRequired,
 };
