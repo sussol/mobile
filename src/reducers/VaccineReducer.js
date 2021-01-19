@@ -30,7 +30,7 @@ export const VaccineReducer = (state = initialState(), action) => {
 
       return {
         ...state,
-        sensors: [...scannedSensorAddresses, macAddress],
+        scannedSensorAddresses: [...scannedSensorAddresses, macAddress],
       };
     }
 
