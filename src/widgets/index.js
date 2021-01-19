@@ -46,6 +46,11 @@ export { Wizard } from './Wizard';
 export { FridgeDisplay } from './FridgeDisplay';
 export { FridgeDisplayInfo } from './FridgeDisplayInfo';
 export { KeyboardSpacing } from './KeyboardSpacing';
+export { SensorStatus } from './SensorStatus';
+export { Rectangle } from './Rectangle';
+export { Paper } from './Paper';
+export { PaperSection } from './PaperSection';
+export { CardDetail } from './CardDetail';
 
 export * from './icons';
 export * from './images';

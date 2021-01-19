@@ -146,7 +146,15 @@ export const MinusIcon = ({ size, color }) => (
 MinusIcon.defaultProps = { color: WHITE, size: 30 };
 MinusIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
 
-export const CalendarIcon = () => <FAIcon name="calendar" size={20} color={WHITE} />;
+export const CalendarIcon = ({ color, size, style }) => (
+  <FAIcon name="calendar" size={size} style={style} color={color} />
+);
+CalendarIcon.defaultProps = { color: WHITE, size: 20, style: {} };
+CalendarIcon.propTypes = {
+  color: PropTypes.string,
+  size: PropTypes.number,
+  style: PropTypes.object,
+};
 
 export const BackIcon = () => <FAIcon name="chevron-left" size={16} color="black" />;
 
@@ -209,6 +217,50 @@ export const SyncArrowProblem = ({ size, style, color }) => (
 );
 SyncArrowProblem.defaultProps = { size: 30, style: {}, color: GREY };
 SyncArrowProblem.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
+
+export const LowBatteryIcon = ({ size, style, color }) => (
+  <FAIcon size={size} style={style} color={color} name="battery-1" />
+);
+
+LowBatteryIcon.defaultProps = { size: 40, style: {}, color: WHITE };
+LowBatteryIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
+
+export const BatteryIcon = ({ size, style, color }) => (
+  <FAIcon size={size} style={style} color={color} name="battery-full" />
+);
+
+BatteryIcon.defaultProps = { size: 20, style: {}, color: WHITE };
+BatteryIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
+
+export const HotBreachIcon = ({ size, style, color }) => (
+  <FAIcon size={size} style={style} color={color} name="thermometer" />
+);
+
+HotBreachIcon.defaultProps = { size: 40, style: {}, color: WHITE };
+HotBreachIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
+
+export const ColdBreachIcon = ({ size, style, color }) => (
+  <FAIcon size={size} style={style} color={color} name="snowflake-o" />
+);
+
+ColdBreachIcon.defaultProps = { size: 40, style: {}, color: WHITE };
+ColdBreachIcon.propTypes = {
   size: PropTypes.number,
   style: PropTypes.object,
   color: PropTypes.string,
