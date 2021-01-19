@@ -14,19 +14,21 @@ import { selectCurrentTab } from '../selectors/wizard';
 
 import { PAGE_CONTENT_PADDING_HORIZONTAL } from '../globalStyles/pageStyles';
 import { BACKGROUND_COLOR, BLUE_WHITE, SHADOW_BORDER } from '../globalStyles/colors';
+import PageButton from './PageButton';
 
 /**
  * Layout component for a Tracker and TabNavigator, displaying steps
  * to completion for completion. See TabNavigator and StepsTracker
  * for individual component implementation.
  */
-const WizardComponent = ({ tabs, currentTab, switchTab }) => {
+const WizardComponent = ({ tabs, currentTab, switchTab, useNewStepper }) => {
   const titles = useMemo(() => tabs.map(tab => tab.title), [tabs]);
 
   return (
     <View style={localStyles.container}>
       <View style={localStyles.stepperContainer}>
         <Stepper
+          useNewStepper={useNewStepper}
           numberOfSteps={tabs.length}
           currentStep={currentTab}
           onPress={switchTab}
@@ -35,6 +37,7 @@ const WizardComponent = ({ tabs, currentTab, switchTab }) => {
       </View>
       <DataTablePageView>
         <TabNavigator tabs={tabs} currentTabIndex={currentTab} />
+        <PageButton onPress={() => switchTab(2)} />
       </DataTablePageView>
     </View>
   );
@@ -50,10 +53,15 @@ const localStyles = StyleSheet.create({
   },
 });
 
+WizardComponent.defaultProps = {
+  useNewStepper: false,
+};
+
 WizardComponent.propTypes = {
   tabs: PropTypes.array.isRequired,
   switchTab: PropTypes.func.isRequired,
   currentTab: PropTypes.number.isRequired,
+  useNewStepper: PropTypes.bool,
 };
 
 const mapStateToProps = state => {
