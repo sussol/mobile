@@ -22,9 +22,17 @@ const scanStart = () => ({ type: VACCINE_ACTIONS.SCAN_START });
 const scanStop = () => ({ type: VACCINE_ACTIONS.SCAN_STOP });
 const sensorFound = macAddress => ({ type: VACCINE_ACTIONS.SENSOR_FOUND, payload: { macAddress } });
 
-const blinkSensor = macAddress => async (dispatch, getState) => {
-  const bluetoothEnabled = PermissionSelectors.bluetooth(getState());
-  const locationPermission = PermissionSelectors.location(getState());
+/**
+ * Helper wrapper which will check permissions for
+ * bluetooth & location services before calling the supplied function
+ * @param {Func} dispatch
+ * @param {Func} getState
+ * @param {Func} func method to run if permissions are enabled
+ */
+const withPermissions = async (dispatch, getState, func) => {
+  const state = getState();
+  const bluetoothEnabled = PermissionSelectors.bluetooth(state);
+  const locationPermission = PermissionSelectors.location(state);
 
   // Ensure the correct permissions before initiating a new sync process.
   if (!bluetoothEnabled) await dispatch(PermissionActions.requestBluetooth());
@@ -40,46 +48,21 @@ const blinkSensor = macAddress => async (dispatch, getState) => {
     return null;
   }
 
-  await BleService()
-    .blinkWithRetries(macAddress, 3)
-    .catch(error => {
-      const { message } = error;
-      ToastAndroid.show(message || error, ToastAndroid.LONG);
-    });
-
-  return null;
+  return func(dispatch, state);
 };
 
-const startSensorScan = () => async (dispatch, getState) => {
-  const bluetoothEnabled = PermissionSelectors.bluetooth(getState());
-  const locationPermission = PermissionSelectors.location(getState());
-
-  // Ensure the correct permissions before initiating a new sync process.
-  if (!bluetoothEnabled) await dispatch(PermissionActions.requestBluetooth());
-  if (!locationPermission) await dispatch(PermissionActions.requestLocation());
-
-  if (!bluetoothEnabled) {
-    ToastAndroid.show(syncStrings.bluetooth_disabled, ToastAndroid.LONG);
-    return null;
-  }
-
-  if (!locationPermission) {
-    ToastAndroid.show(syncStrings.location_permission, ToastAndroid.LONG);
-    return null;
-  }
-
-  // Scan will continue running until it is stopped...
-  return dispatch(scanForSensors());
+const blinkSensor = macAddress => () => {
+  BleService().blinkWithRetries(macAddress, 3);
 };
 
-const scanForSensors = () => (dispatch, getState) => {
+const scanForSensors = (dispatch, state) => {
   dispatch(scanStart());
 
   const deviceCallback = device => {
     const { id: macAddress } = device;
 
     if (macAddress) {
-      const alreadyScanned = selectScannedSensors(getState());
+      const alreadyScanned = selectScannedSensors(state);
       const alreadySaved = UIDatabase.get('Sensor', macAddress, 'macAddress');
 
       if (!alreadyScanned?.includes(macAddress) && !alreadySaved) {
@@ -88,7 +71,18 @@ const scanForSensors = () => (dispatch, getState) => {
     }
   };
 
+  // Scan will continue running until it is stopped...
   BleService().scanForSensors(deviceCallback);
+};
+
+const startSensorBlink = macAddress => async (dispatch, getState) => {
+  await withPermissions(dispatch, getState, blinkSensor(macAddress));
+  return null;
+};
+
+const startSensorScan = () => async (dispatch, getState) => {
+  withPermissions(dispatch, getState, scanForSensors);
+  return null;
 };
 
 const stopSensorScan = () => dispatch => {
@@ -97,7 +91,7 @@ const stopSensorScan = () => dispatch => {
 };
 
 export const VaccineActions = {
-  blinkSensor,
+  startSensorBlink,
   startSensorScan,
   stopSensorScan,
 };
