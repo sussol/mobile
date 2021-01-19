@@ -1,17 +1,19 @@
+import { ToastAndroid } from 'react-native';
+
 import { VACCINE_ACTIONS } from '../actions/VaccineActions';
 import BleService from '../bluetooth/BleService';
 
 const initialState = () => ({
-  total: 0,
   isScanning: false,
-  sensors: [],
+  scannedSensorAddresses: [],
 });
 
 const blinkSensor = async macAddress => {
   const error = null;
   await BleService().blinkWithRetries(macAddress, 3, error);
   if (error) {
-    console.errror(error);
+    const { message } = error;
+    ToastAndroid.show(message || error, ToastAndroid.LONG);
   }
 };
 
@@ -30,11 +32,32 @@ export const VaccineReducer = (state = initialState(), action) => {
 
       blinkSensor(macAddress);
       sensor.blinking = true;
-      // BleService().scanForSensors(device => console.info('boop', device));
 
       return { ...state, sensors: [...sensors.filter(s => s.macAddress !== macAddress), sensor] };
     }
+    case VACCINE_ACTIONS.SCAN_START: {
+      return {
+        ...state,
+        isScanning: true,
+      };
+    }
+    case VACCINE_ACTIONS.SCAN_STOP: {
+      return {
+        ...state,
+        isScanning: false,
+      };
+    }
+    case VACCINE_ACTIONS.SENSOR_FOUND: {
+      const { payload } = action;
+      const { macAddress } = payload;
 
+      const { scannedSensorAddresses } = state;
+
+      return {
+        ...state,
+        scannedSensorAddresses: [...scannedSensorAddresses, macAddress],
+      };
+    }
     default:
       return state;
   }
