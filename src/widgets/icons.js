@@ -72,9 +72,15 @@ ExpandIcon.propTypes = {
   style: PropTypes.object,
 };
 
-export const ConfirmIcon = React.memo(({ style }) => <FAIcon name="check-circle" style={style} />);
-ConfirmIcon.defaultProps = { style: { color: FINALISE_GREEN, fontSize: 40 } };
-ConfirmIcon.propTypes = { style: PropTypes.object };
+export const ConfirmIcon = React.memo(({ style, color, size }) => (
+  <FAIcon name="check-circle" style={style} color={color} size={size} />
+));
+ConfirmIcon.defaultProps = { color: FINALISE_GREEN, size: 40, style: {} };
+ConfirmIcon.propTypes = {
+  style: PropTypes.object,
+  color: PropTypes.string,
+  size: PropTypes.number,
+};
 
 export const LockIcon = React.memo(({ style }) => <FAIcon name="lock" size={28} style={style} />);
 LockIcon.defaultProps = { style: { color: FINALISED_RED } };
