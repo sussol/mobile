@@ -14,7 +14,6 @@ import { selectCurrentTab } from '../selectors/wizard';
 
 import { PAGE_CONTENT_PADDING_HORIZONTAL } from '../globalStyles/pageStyles';
 import { BACKGROUND_COLOR, BLUE_WHITE, SHADOW_BORDER } from '../globalStyles/colors';
-import PageButton from './PageButton';
 
 /**
  * Layout component for a Tracker and TabNavigator, displaying steps
@@ -37,7 +36,6 @@ const WizardComponent = ({ tabs, currentTab, switchTab, useNewStepper }) => {
       </View>
       <DataTablePageView>
         <TabNavigator tabs={tabs} currentTabIndex={currentTab} />
-        <PageButton onPress={() => switchTab(2)} />
       </DataTablePageView>
     </View>
   );
