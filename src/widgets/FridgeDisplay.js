@@ -5,143 +5,99 @@
  */
 
 import React from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { connect } from 'react-redux';
+import { View, Text } from 'react-native';
 import PropTypes from 'prop-types';
 
-import { VaccineChart } from './VaccineChart';
-import { FridgeDisplayInfo } from './FridgeDisplayInfo';
-import { textStyles, WHITE, SUSSOL_ORANGE } from '../globalStyles';
-import { FlexView } from './FlexView';
+import { PaperSection } from './PaperSection';
+import { IconButton } from './IconButton';
+import { ChevronRightIcon, CogIcon, DownloadIcon, LightbulbIcon } from './icons';
+import { TextWithIcon } from './Typography/index';
+import { BLACK, WHITE } from '../globalStyles/index';
 
-import { FridgeActions } from '../actions/FridgeActions';
-import {
-  selectTemperatureLogsFromDate,
-  selectTemperatureLogsToDate,
-  selectTimestampFormatter,
-} from '../selectors/fridge';
-import { vaccineStrings } from '../localization';
-
-export const FridgeDisplayComponent = ({
-  minLine,
-  maxLine,
-  breaches,
-  maxDomain,
-  minDomain,
-  fridge,
-  isActive,
-  onSelectFridge,
-  onOpenBreachModal,
-  onChangeFromDate,
-  onChangeToDate,
-  fromDate,
-  toDate,
-  temperatureFormatter,
-}) => {
-  const containerStyle = React.useMemo(
-    () => ({ ...localStyles.container, height: isActive ? 400 : 45 }),
-    [isActive]
-  );
-  const [render, setRender] = React.useState(false);
-
-  React.useEffect(() => {
-    setTimeout(() => setRender(isActive), 500);
-  }, [isActive]);
-
-  const NoLogsComponent = React.useCallback(
-    () => (
-      <FlexView justifyContent="center" alignItems="center">
-        <Text style={{ ...textStyles }}>{vaccineStrings.oops_no_temperatures}</Text>
-      </FlexView>
-    ),
-    []
-  );
-
-  const ChartArea = () =>
-    (minLine.length && (
-      <VaccineChart
-        minLine={minLine}
-        maxDomain={maxDomain}
-        minDomain={minDomain}
-        maxLine={maxLine}
-        breaches={breaches}
-        onPressBreach={onOpenBreachModal}
-        xTickFormat={temperatureFormatter}
-      />
-    )) || <NoLogsComponent />;
-
-  const Spinner = () => (
-    <FlexView justifyContent="center" flex={1} alignItems="center">
-      <ActivityIndicator size="small" color={SUSSOL_ORANGE} />
-    </FlexView>
-  );
-
-  return (
-    <View style={containerStyle}>
-      <FridgeDisplayInfo
-        onPress={onSelectFridge}
-        fridge={fridge}
-        isActive={isActive}
-        fromDate={fromDate}
-        toDate={toDate}
-        onChangeFromDate={onChangeFromDate}
-        onChangeToDate={onChangeToDate}
-      />
-
-      {(isActive && (render ? <ChartArea /> : <Spinner />)) || null}
+export const FridgeHeader = () => (
+  <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+    <TextWithIcon
+      left
+      size="ms"
+      margin={20}
+      textStyle={{ textTransform: 'uppercase' }}
+      containerStyle={{ flex: 4 }}
+      Icon={<View style={{ borderRadius: 10, height: 20, backgroundColor: 'green', width: 20 }} />}
+    >
+      Some text
+    </TextWithIcon>
+    <View style={{ justifyContent: 'space-between', flex: 1, flexDirection: 'row' }}>
+      <IconButton Icon={<DownloadIcon />} />
+      <IconButton Icon={<LightbulbIcon />} />
+      <IconButton Icon={<CogIcon color={BLACK} />} />
     </View>
+  </View>
+);
+
+export const FridgeDisplay = () => {
+  return (
+    <PaperSection
+      height={120}
+      Header={<FridgeHeader />}
+      contentContainerStyle={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}
+    >
+      <TextWithIcon
+        left
+        margin={20}
+        size="ms"
+        containerStyle={{ flex: 1 }}
+        Icon={<View style={{ borderRadius: 10, height: 20, backgroundColor: WHITE, width: 20 }} />}
+      >
+        Fridge
+      </TextWithIcon>
+
+      <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
+        <TextWithIcon
+          left
+          margin={20}
+          size="ms"
+          containerStyle={1}
+          Icon={
+            <View style={{ borderRadius: 10, height: 20, backgroundColor: WHITE, width: 20 }} />
+          }
+        >
+          Fridge
+        </TextWithIcon>
+        <TextWithIcon
+          left
+          margin={20}
+          size="ms"
+          containerStyle={1}
+          Icon={
+            <View style={{ borderRadius: 10, height: 20, backgroundColor: WHITE, width: 20 }} />
+          }
+        >
+          Fridge
+        </TextWithIcon>
+        <TextWithIcon
+          left
+          margin={20}
+          size="ms"
+          containerStyle={1}
+          Icon={
+            <View style={{ borderRadius: 10, height: 20, backgroundColor: WHITE, width: 20 }} />
+          }
+        >
+          Fridge
+        </TextWithIcon>
+        <TextWithIcon
+          left
+          margin={20}
+          size="ms"
+          containerStyle={1}
+          Icon={
+            <View style={{ borderRadius: 10, height: 20, backgroundColor: WHITE, width: 20 }} />
+          }
+        >
+          Fridge
+        </TextWithIcon>
+        <IconButton Icon={<ChevronRightIcon color={BLACK} />} />
+      </View>
+    </PaperSection>
   );
 };
-// ||
-
-const localStyles = StyleSheet.create({
-  container: {
-    elevation: 3,
-    borderRadius: 5,
-    marginHorizontal: 20,
-    marginVertical: 20,
-    backgroundColor: WHITE,
-  },
-});
-
-FridgeDisplayComponent.defaultProps = {
-  minLine: [],
-  maxLine: [],
-  breaches: [],
-  maxDomain: Infinity,
-  minDomain: -Infinity,
-  onSelectFridge: null,
-};
-
-FridgeDisplayComponent.propTypes = {
-  fridge: PropTypes.object.isRequired,
-  isActive: PropTypes.bool.isRequired,
-  minLine: PropTypes.array,
-  maxLine: PropTypes.array,
-  breaches: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
-  maxDomain: PropTypes.number,
-  minDomain: PropTypes.number,
-  onSelectFridge: PropTypes.func,
-  onOpenBreachModal: PropTypes.func.isRequired,
-  onChangeFromDate: PropTypes.func.isRequired,
-  onChangeToDate: PropTypes.func.isRequired,
-  fromDate: PropTypes.instanceOf(Date).isRequired,
-  toDate: PropTypes.instanceOf(Date).isRequired,
-  temperatureFormatter: PropTypes.func.isRequired,
-};
-
-const mapStateToProps = state => {
-  const fromDate = selectTemperatureLogsFromDate(state);
-  const toDate = selectTemperatureLogsToDate(state);
-  const temperatureFormatter = selectTimestampFormatter(state);
-  return { fromDate, toDate, temperatureFormatter };
-};
-
-const mapDispatchToProps = dispatch => {
-  const onChangeToDate = date => dispatch(FridgeActions.changeToDate(date));
-  const onChangeFromDate = date => dispatch(FridgeActions.changeFromDate(date));
-
-  return { onChangeFromDate, onChangeToDate };
-};
-
-export const FridgeDisplay = connect(mapStateToProps, mapDispatchToProps)(FridgeDisplayComponent);

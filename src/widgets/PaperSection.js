@@ -23,8 +23,8 @@ export const PaperSection = ({
   const InternalHeader = headerText ? getDefaultHeader(headerText) : Header;
 
   // Pad the content and header if passed, keeping them in sync.
-  const internalContentStyle = { ...contentContainerStyle, padding: innerPadding };
-  const internalHeaderContainerStyle = { ...headerContainerStyle, padding: innerPadding };
+  const internalContentStyle = { ...contentContainerStyle, paddingHorizontal: innerPadding };
+  const internalHeaderContainerStyle = { ...headerContainerStyle, paddingHorizontal: innerPadding };
 
   return (
     <Paper width={width} height={height}>

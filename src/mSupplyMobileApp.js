@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { BluetoothStatus } from 'react-native-bluetooth-status';
-import { AppState, View } from 'react-native';
+import { AppState, View, Text } from 'react-native';
 import { Scheduler } from 'sussol-utilities';
 
 import Settings from './settings/MobileAppSettings';
@@ -50,6 +50,17 @@ import { RowDetail } from './widgets/RowDetail';
 import { PermissionActions } from './actions/PermissionActions';
 import BleService from './bluetooth/BleService';
 import { DevBleManager } from './bluetooth/DevBleManager';
+import {
+  IconButton,
+  PaperSection,
+  FlexRow,
+  CogIcon,
+  DownloadIcon,
+  LightbulbIcon,
+  TextWithIcon,
+  FridgeDisplay,
+} from './widgets/index';
+import { BLACK } from './globalStyles/index';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -218,6 +229,8 @@ class MSupplyMobileAppContainer extends React.Component {
       closeTemperatureSyncModal,
     } = this.props;
     const { isInitialised, isLoading } = this.state;
+
+    return <FridgeDisplay />;
 
     if (!isInitialised) {
       return <FirstUsePage synchroniser={this.synchroniser} onInitialised={this.onInitialised} />;

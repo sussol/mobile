@@ -20,6 +20,8 @@ export const Paper = ({ width, height, style, children }) => {
     internalContainerStyle.maxHeight = height;
     internalContainerStyle.minHeight = height;
   }
+  console.log(internalContainerStyle);
+
   return <View style={internalContainerStyle}>{children}</View>;
 };
 
