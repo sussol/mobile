@@ -25,7 +25,7 @@ TextInputWithAffix.defaultProps = {
 };
 
 TextInputWithAffix.propTypes = {
-  TextInputImpl: propTypes.element,
+  TextInputImpl: propTypes.node,
   SuffixComponent: propTypes.element,
   PrefixComponent: propTypes.element,
   textInputProps: propTypes.shape(RNTextInputProps),

@@ -24,6 +24,7 @@ import {
   DARK_GREY,
   dataTableColors,
   GREY,
+  DARKER_GREY,
 } from '../globalStyles';
 
 export const SortAscIcon = () => <FAIcon name="sort-asc" size={15} style={{ marginRight: 10 }} />;
@@ -222,6 +223,16 @@ SyncArrowProblem.propTypes = {
   color: PropTypes.string,
 };
 
+export const PlusCircle = ({ size, style, color }) => (
+  <FA5Icon name="plus-circle" size={size} style={style} color={color} />
+);
+PlusCircle.defaultProps = { size: 10, style: {}, color: DARKER_GREY };
+PlusCircle.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
+
 export const LowBatteryIcon = ({ size, style, color }) => (
   <FAIcon size={size} style={style} color={color} name="battery-1" />
 );
@@ -239,6 +250,16 @@ export const BatteryIcon = ({ size, style, color }) => (
 
 BatteryIcon.defaultProps = { size: 20, style: {}, color: WHITE };
 BatteryIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
+
+export const MinusCircle = ({ size, style, color }) => (
+  <FA5Icon name="minus-circle" size={size} style={style} color={color} />
+);
+MinusCircle.defaultProps = { size: 10, style: {}, color: DARKER_GREY };
+MinusCircle.propTypes = {
   size: PropTypes.number,
   style: PropTypes.object,
   color: PropTypes.string,
