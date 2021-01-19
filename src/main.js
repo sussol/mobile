@@ -35,6 +35,6 @@ const App = () => {
   );
 };
 
-LogBox.ignoreLogs(['Warning:']);
+LogBox.ignoreLogs(['Setting a timer']);
 
 AppRegistry.registerComponent(appName, () => App);

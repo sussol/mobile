@@ -18,11 +18,9 @@ import {
   InfoBadge,
 } from '../widgets';
 
-import { PowerIcon, CogIcon, HazardIcon } from '../widgets/icons';
+import { PowerIcon, CogIcon } from '../widgets/icons';
 import { ROUTES } from '../navigation/constants';
 import { buttonStrings, navStrings } from '../localization';
-
-import { selectIsScanning } from '../selectors/vaccine';
 
 import { SETTINGS_KEYS } from '../settings';
 import { UIDatabase } from '../database';
@@ -43,10 +41,9 @@ import {
 } from '../navigation/actions';
 
 import globalStyles, { SHADOW_BORDER } from '../globalStyles';
-import { UserActions, VaccineActions } from '../actions/index';
+import { UserActions } from '../actions/index';
 import { selectCurrentUserIsAdmin } from '../selectors/user';
 
-const sensorMacAddress = 'FC:C0:EE:9D:80:A3';
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
   const { success, message } = await UIDatabase.exportData(syncSiteName);
@@ -75,10 +72,6 @@ const Menu = ({
   usingModules,
   usingVaccines,
   isAdmin,
-  blink,
-  isScanning,
-  scanSensorsStart,
-  scanSensorsEnd,
 }) => {
   const { menuButton, menuButtonText: buttonText, appBackground } = globalStyles;
   const { image, originalContainer, moduleContainer, container, moduleRow } = styles;
@@ -86,14 +79,6 @@ const Menu = ({
   const containerStyle = { ...container, ...(usingModules ? moduleContainer : originalContainer) };
 
   const isFocused = useIsFocused();
-
-  const scan = () => {
-    if (isScanning) {
-      scanSensorsEnd();
-    } else {
-      scanSensorsStart();
-    }
-  };
 
   const MenuButton = useCallback(
     props => <Button style={menuButton} textStyle={buttonText} {...props} />,
@@ -170,8 +155,6 @@ const Menu = ({
     () => (
       <View style={styles.bottomRow}>
         <IconButton Icon={<PowerIcon />} label={navStrings.log_out} onPress={logout} />
-        <IconButton Icon={<HazardIcon />} label="blink" onPress={blink} />
-        <IconButton Icon={<HazardIcon />} label={isScanning ? 'scanning' : 'scan'} onPress={scan} />
         {isInAdminMode && <MenuButton text="Realm Explorer" onPress={toRealmExplorer} />}
         {isInAdminMode && <MenuButton text="Export Data" onPress={exportData} />}
         {isAdmin && (
@@ -179,7 +162,7 @@ const Menu = ({
         )}
       </View>
     ),
-    [isInAdminMode, isAdmin, isScanning]
+    [isInAdminMode, isAdmin]
   );
 
   const ModuleLayout = useCallback(
@@ -265,9 +248,6 @@ const mapDispatchToProps = dispatch => ({
   toDashboard: () => dispatch(gotoDashboard()),
   toCashRegister: () => dispatch(goToCashRegister()),
   logout: () => dispatch(UserActions.logout()),
-  blink: () => dispatch(VaccineActions.blinkSensor(sensorMacAddress)),
-  scanSensorsStart: () => dispatch(VaccineActions.startSensorScan()),
-  scanSensorsEnd: () => dispatch(VaccineActions.stopSensorScan()),
 });
 
 const mapStateToProps = state => {
@@ -282,7 +262,6 @@ const mapStateToProps = state => {
   } = modules;
 
   const isAdmin = selectCurrentUserIsAdmin(state);
-  const isScanning = selectIsScanning(state);
 
   return {
     usingDashboard,
@@ -291,7 +270,6 @@ const mapStateToProps = state => {
     usingCashRegister,
     usingModules,
     isAdmin,
-    isScanning,
   };
 };
 
@@ -304,7 +282,6 @@ Menu.defaultProps = {
 
 Menu.propTypes = {
   isInAdminMode: PropTypes.bool,
-  blink: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
   toVaccines: PropTypes.func.isRequired,
   toCustomerInvoices: PropTypes.func.isRequired,
@@ -324,7 +301,4 @@ Menu.propTypes = {
   usingCashRegister: PropTypes.bool.isRequired,
   usingModules: PropTypes.bool.isRequired,
   usingVaccines: PropTypes.bool.isRequired,
-  isScanning: PropTypes.bool.isRequired,
-  scanSensorsStart: PropTypes.func.isRequired,
-  scanSensorsEnd: PropTypes.func.isRequired,
 };

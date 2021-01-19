@@ -5,7 +5,7 @@
 
 import { ToastAndroid } from 'react-native';
 import { PermissionSelectors } from '../selectors/permission';
-import { selectScannedAddresses } from '../selectors/vaccine';
+import { selectScannedSensors } from '../selectors/vaccine';
 import { PermissionActions } from './PermissionActions';
 import BleService from '../bluetooth/BleService';
 import { syncStrings } from '../localization/index';
@@ -20,7 +20,7 @@ export const VACCINE_ACTIONS = {
 
 const scanStart = () => ({ type: VACCINE_ACTIONS.SCAN_START });
 const scanStop = () => ({ type: VACCINE_ACTIONS.SCAN_STOP });
-const sensorFound = sensor => ({ type: VACCINE_ACTIONS.SENSOR_FOUND, payload: { sensor } });
+const sensorFound = macAddress => ({ type: VACCINE_ACTIONS.SENSOR_FOUND, payload: { macAddress } });
 
 const blinkSensor = macAddress => async (dispatch, getState) => {
   const bluetoothEnabled = PermissionSelectors.bluetooth(getState());
@@ -76,14 +76,14 @@ const scanForSensors = () => (dispatch, getState) => {
   dispatch(scanStart());
 
   const deviceCallback = device => {
-    const { id: macAddress, name } = device;
+    const { id: macAddress } = device;
 
     if (macAddress) {
-      const alreadyScanned = selectScannedAddresses(getState()).includes(macAddress);
+      const alreadyScanned = selectScannedSensors(getState());
       const alreadySaved = UIDatabase.get('Sensor', macAddress, 'macAddress');
 
-      if (!alreadyScanned && !alreadySaved) {
-        dispatch(sensorFound({ macAddress, name }));
+      if (!alreadyScanned?.includes(macAddress) && !alreadySaved) {
+        dispatch(sensorFound(macAddress));
       }
     }
   };

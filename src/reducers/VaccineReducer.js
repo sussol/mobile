@@ -2,7 +2,7 @@ import { VACCINE_ACTIONS } from '../actions/VaccineActions';
 
 const initialState = () => ({
   isScanning: false,
-  sensors: [],
+  scannedSensorAddresses: [],
 });
 
 export const VaccineReducer = (state = initialState(), action) => {
@@ -24,16 +24,13 @@ export const VaccineReducer = (state = initialState(), action) => {
 
     case VACCINE_ACTIONS.SENSOR_FOUND: {
       const { payload } = action;
-      const { sensor } = payload;
+      const { macAddress } = payload;
 
-      const { sensors = [] } = state;
+      const { scannedSensorAddresses = [] } = state;
 
-      if (!sensor) {
-        throw new Error('sensor undefined!');
-      }
       return {
         ...state,
-        sensors: [...sensors, sensor],
+        sensors: [...scannedSensorAddresses, macAddress],
       };
     }
 
