@@ -22,7 +22,7 @@ import { PowerIcon, CogIcon, HazardIcon } from '../widgets/icons';
 import { ROUTES } from '../navigation/constants';
 import { buttonStrings, navStrings } from '../localization';
 
-import { selectIsBlinking, selectIsScanning } from '../selectors/vaccine';
+import { selectIsScanning } from '../selectors/vaccine';
 
 import { SETTINGS_KEYS } from '../settings';
 import { UIDatabase } from '../database';
@@ -76,7 +76,6 @@ const Menu = ({
   usingVaccines,
   isAdmin,
   blink,
-  isBlinking,
   isScanning,
   scanSensorsStart,
   scanSensorsEnd,
@@ -171,7 +170,7 @@ const Menu = ({
     () => (
       <View style={styles.bottomRow}>
         <IconButton Icon={<PowerIcon />} label={navStrings.log_out} onPress={logout} />
-        <IconButton Icon={<HazardIcon />} label={isBlinking ? '---' : 'blink'} onPress={blink} />
+        <IconButton Icon={<HazardIcon />} label="blink" onPress={blink} />
         <IconButton Icon={<HazardIcon />} label={isScanning ? 'scanning' : 'scan'} onPress={scan} />
         {isInAdminMode && <MenuButton text="Realm Explorer" onPress={toRealmExplorer} />}
         {isInAdminMode && <MenuButton text="Export Data" onPress={exportData} />}
@@ -180,7 +179,7 @@ const Menu = ({
         )}
       </View>
     ),
-    [isInAdminMode, isAdmin, isScanning, isBlinking]
+    [isInAdminMode, isAdmin, isScanning]
   );
 
   const ModuleLayout = useCallback(
@@ -284,7 +283,6 @@ const mapStateToProps = state => {
 
   const isAdmin = selectCurrentUserIsAdmin(state);
   const isScanning = selectIsScanning(state);
-  const isBlinking = selectIsBlinking(state, sensorMacAddress);
 
   return {
     usingDashboard,
@@ -293,7 +291,6 @@ const mapStateToProps = state => {
     usingCashRegister,
     usingModules,
     isAdmin,
-    isBlinking,
     isScanning,
   };
 };
@@ -327,7 +324,6 @@ Menu.propTypes = {
   usingCashRegister: PropTypes.bool.isRequired,
   usingModules: PropTypes.bool.isRequired,
   usingVaccines: PropTypes.bool.isRequired,
-  isBlinking: PropTypes.bool.isRequired,
   isScanning: PropTypes.bool.isRequired,
   scanSensorsStart: PropTypes.func.isRequired,
   scanSensorsEnd: PropTypes.func.isRequired,

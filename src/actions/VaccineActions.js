@@ -21,7 +21,6 @@ export const VACCINE_ACTIONS = {
 const scanStart = () => ({ type: VACCINE_ACTIONS.SCAN_START });
 const scanStop = () => ({ type: VACCINE_ACTIONS.SCAN_STOP });
 const sensorFound = sensor => ({ type: VACCINE_ACTIONS.SENSOR_FOUND, payload: { sensor } });
-const blinkSensorAction = macAddress => ({ type: VACCINE_ACTIONS.BLINK, payload: { macAddress } });
 
 const blinkSensor = macAddress => async (dispatch, getState) => {
   const bluetoothEnabled = PermissionSelectors.bluetooth(getState());
@@ -48,7 +47,7 @@ const blinkSensor = macAddress => async (dispatch, getState) => {
       ToastAndroid.show(message || error, ToastAndroid.LONG);
     });
 
-  return dispatch(blinkSensorAction(macAddress));
+  return null;
 };
 
 const startSensorScan = () => async (dispatch, getState) => {

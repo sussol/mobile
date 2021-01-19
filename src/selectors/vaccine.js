@@ -12,9 +12,3 @@ export const selectIsScanning = ({ vaccine }) => {
   const { isScanning = false } = vaccine || {};
   return isScanning;
 };
-
-export const selectIsBlinking = ({ vaccine }, macAddress) => {
-  const { sensors = [] } = vaccine || {};
-  const sensor = sensors.find(s => s.macAddress === macAddress);
-  return sensor?.isBlinking;
-};
