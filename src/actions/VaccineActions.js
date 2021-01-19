@@ -5,7 +5,7 @@
 
 import { ToastAndroid } from 'react-native';
 import { PermissionSelectors } from '../selectors/permission';
-import selectScannedSensors from '../selectors/vaccine';
+import { selectScannedAddresses } from '../selectors/vaccine';
 import { PermissionActions } from './PermissionActions';
 import BleService from '../bluetooth/BleService';
 import { syncStrings } from '../localization/index';
@@ -20,9 +20,9 @@ export const VACCINE_ACTIONS = {
 
 const scanStart = () => ({ type: VACCINE_ACTIONS.SCAN_START });
 const scanStop = () => ({ type: VACCINE_ACTIONS.SCAN_STOP });
-const sensorFound = macAddress => ({ type: VACCINE_ACTIONS.SENSOR_FOUND, payload: { macAddress } });
-
+const sensorFound = sensor => ({ type: VACCINE_ACTIONS.SENSOR_FOUND, payload: { sensor } });
 const blinkSensorAction = macAddress => ({ type: VACCINE_ACTIONS.BLINK, payload: { macAddress } });
+
 const blinkSensor = macAddress => async (dispatch, getState) => {
   const bluetoothEnabled = PermissionSelectors.bluetooth(getState());
   const locationPermission = PermissionSelectors.location(getState());
@@ -41,8 +41,14 @@ const blinkSensor = macAddress => async (dispatch, getState) => {
     return null;
   }
 
-  await dispatch(blinkSensorAction(macAddress));
-  return null;
+  await BleService()
+    .blinkWithRetries(macAddress, 3)
+    .catch(error => {
+      const { message } = error;
+      ToastAndroid.show(message || error, ToastAndroid.LONG);
+    });
+
+  return dispatch(blinkSensorAction(macAddress));
 };
 
 const startSensorScan = () => async (dispatch, getState) => {
@@ -63,24 +69,22 @@ const startSensorScan = () => async (dispatch, getState) => {
     return null;
   }
 
-  dispatch(scanForSensors());
-
   // Scan will continue running until it is stopped...
-  return null;
+  return dispatch(scanForSensors());
 };
 
 const scanForSensors = () => (dispatch, getState) => {
   dispatch(scanStart());
 
   const deviceCallback = device => {
-    const { id: macAddress } = device;
+    const { id: macAddress, name } = device;
 
     if (macAddress) {
-      const alreadyScanned = selectScannedSensors(getState());
+      const alreadyScanned = selectScannedAddresses(getState()).includes(macAddress);
       const alreadySaved = UIDatabase.get('Sensor', macAddress, 'macAddress');
 
-      if (!alreadyScanned?.includes(macAddress) && !alreadySaved) {
-        dispatch(sensorFound(macAddress));
+      if (!alreadyScanned && !alreadySaved) {
+        dispatch(sensorFound({ macAddress, name }));
       }
     }
   };
