@@ -35,6 +35,6 @@ const App = () => {
   );
 };
 
-LogBox.ignoreLogs(['Setting a timer']);
+LogBox.ignoreLogs(['Setting a timer', 'componentWillMount']);
 
 AppRegistry.registerComponent(appName, () => App);
