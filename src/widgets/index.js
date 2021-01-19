@@ -51,6 +51,7 @@ export { Rectangle } from './Rectangle';
 export { Paper } from './Paper';
 export { PaperSection } from './PaperSection';
 export { CardDetail } from './CardDetail';
+export { Circle } from './Circle';
 
 export * from './icons';
 export * from './images';
