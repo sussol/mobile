@@ -54,6 +54,5 @@ const store = createStore(
 );
 
 const persistedStore = persistStore(store);
-persistedStore.purge();
 
 export { store, persistedStore };
