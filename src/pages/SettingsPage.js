@@ -26,6 +26,9 @@ import globalStyles from '../globalStyles';
 import { generalStrings, buttonStrings } from '../localization';
 import { selectCurrentUserPasswordHash } from '../selectors/user';
 import { PermissionActions } from '../actions/PermissionActions';
+import { createRecord } from '../database/utilities/index';
+import { BreachManager } from '../bluetooth/BreachManager';
+import { VaccineDataAccess } from '../bluetooth/VaccineDataAccess';
 
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
@@ -126,6 +129,135 @@ const Settings = ({
     [syncURL]
   );
 
+  const createVaccineData = () => {
+    UIDatabase.write(() => {
+      const oldLocations = UIDatabase.objects('Location');
+      ToastAndroid.show(String(oldLocations.length), ToastAndroid.SHORT);
+      UIDatabase.delete('Location', oldLocations);
+      const oldConfigs = UIDatabase.objects('TemperatureBreachConfiguration');
+      UIDatabase.delete('TemperatureBreachConfiguration', oldConfigs);
+      const oldSensors = UIDatabase.objects('Sensor');
+      UIDatabase.delete('Sensor', oldSensors);
+      const oldLogs = UIDatabase.objects('TemperatureLog');
+      UIDatabase.delete('TemperatureLog', oldLogs);
+      const olUIDatabasereaches = UIDatabase.objects('TemperatureBreach');
+      UIDatabase.delete('TemperatureBreach', olUIDatabasereaches);
+
+      // create locations
+      createRecord(UIDatabase, 'Location', null, 'Fridge 1', 'f1');
+      createRecord(UIDatabase, 'Location', null, 'Fridge 2', 'f2');
+      createRecord(UIDatabase, 'Location', null, 'Fridge 3', 'f3');
+      createRecord(UIDatabase, 'Location', null, 'Fridge 4', 'f4');
+
+      // create sensors
+      createRecord(UIDatabase, 'Sensor', 'sensor 1', 10);
+      createRecord(UIDatabase, 'Sensor', 'sensor 2', 20);
+      createRecord(UIDatabase, 'Sensor', 'sensor 3', 30);
+      createRecord(UIDatabase, 'Sensor', 'sensor 4', 40);
+
+      // create some configs
+      UIDatabase.update('TemperatureBreachConfiguration', {
+        id: '1',
+        minimumTemperature: 20,
+        maximumTemperature: 999,
+        duration: 60 * 10,
+        description: 'Config 1, 20 to 999 consecutive',
+        type: 'HOT_CONSECUTIVE',
+      });
+
+      UIDatabase.update('TemperatureBreachConfiguration', {
+        id: '2',
+        minimumTemperature: -999,
+        maximumTemperature: 0,
+        duration: 60 * 10,
+        description: 'Config 1, 0 to -999 consecutive',
+        type: 'COLD_CONSECUTIVE',
+      });
+
+      UIDatabase.update('TemperatureBreachConfiguration', {
+        id: '3',
+        minimumTemperature: 20,
+        maximumTemperature: 999,
+        duration: 60 * 100,
+        description: 'Config 1, 20 to 999 cumulative',
+        type: 'COLD_CUMULATIVE',
+      });
+
+      UIDatabase.update('TemperatureBreachConfiguration', {
+        id: '4',
+        minimumTemperature: -999,
+        maximumTemperature: 0,
+        duration: 60 * 100,
+        description: 'Config 1, 0 to -999 cumulative',
+        type: 'COLD_CUMULATIVE',
+      });
+
+      // create some logs. Leaving one location with no logs for handling that situation
+      const locations = UIDatabase.objects('Location');
+      const sensors = UIDatabase.objects('Sensor');
+      const currentDate = new Date();
+      let count = 0;
+
+      for (let i = -250; i < 250; i++) {
+        const { logInterval } = sensors[0];
+        UIDatabase.create('TemperatureLog', {
+          id: `${i}a`,
+          temperature: Math.floor((Math.random() * 40 + 20) * 100) / 100,
+          logInterval,
+          timestamp: new Date(currentDate - logInterval * 1000 * count),
+          location: locations[0],
+          sensor: sensors[0],
+        });
+      }
+
+      count = 0;
+      for (let i = -100; i < 100; i++) {
+        count += 1;
+        const { logInterval } = sensors[1];
+        UIDatabase.create('TemperatureLog', {
+          id: `${i}b`,
+          temperature: Math.random() * 40 - 20 - i,
+          logInterval,
+          timestamp: new Date(currentDate - logInterval * 1000 * count),
+          location: locations[1],
+          sensor: sensors[1],
+        });
+      }
+
+      count = 0;
+      for (let i = -50; i < 50; i++) {
+        const { logInterval } = sensors[1];
+        UIDatabase.create('TemperatureLog', {
+          id: `${i}c`,
+          temperature: Math.random() * 40 - 10 + i,
+          logInterval,
+          timestamp: new Date(currentDate - logInterval * 1000 * count),
+          location: locations[2],
+          sensor: sensors[2],
+        });
+      }
+    });
+
+    // create breaches
+    const utils = {};
+    const sensors = UIDatabase.objects('Sensor');
+    utils.createUuid = () => String(Math.random());
+    const configs = UIDatabase.objects('TemperatureBreachConfiguration');
+    const vaccineDB = new VaccineDataAccess(UIDatabase);
+    const breachManager = new BreachManager(vaccineDB, utils);
+
+    sensors.forEach(async sensor => {
+      const [breaches, logs] = await breachManager.createBreaches(sensor, sensor.logs, configs);
+      breachManager.updateBreaches(breaches, logs);
+    });
+    // for (let i = -250; i < 250; i++) {
+    //   const timestamp = Date();
+    //   createRecord(UIDatabase, 'TemperatureLog', i * i, timestamp, locations[0]);
+    // }
+
+    ToastAndroid.show('Data generated', ToastAndroid.SHORT);
+  };
+
   return (
     <DataTablePageView>
       <TouchableOpacity style={topRow} onPress={onSave}>
@@ -141,6 +273,7 @@ const Settings = ({
           <MenuButton text={buttonStrings.realm_explorer} onPress={toRealmExplorer} />
           <MenuButton text={buttonStrings.export_data} onPress={requestStorageWritePermission} />
           <MenuButton text="New vaccine module" onPress={toNewVaccineModulePage} />
+          <MenuButton text="Generate vaccine data" onPress={createVaccineData} />
         </View>
       </View>
 
