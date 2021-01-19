@@ -248,7 +248,7 @@ const createTemperatureLogs = sensor => async dispatch => {
   // Divide the time a sensorLog ranges over by 30 minutes to find the number of sensor
   // logs per temperature log.
   const sensorLogsPerTemperatureLog = Math.floor(
-    MILLISECONDS.THIRTY_MINUTES / (intervalInSeconds * MILLISECONDS.ONE)
+    MILLISECONDS.THIRTY_MINUTES / (intervalInSeconds * MILLISECONDS.ONE_SECOND)
   );
 
   // Only create TemperatureLogs for the greatest multiple of 6 SensorLogs,

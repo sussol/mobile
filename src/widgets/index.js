@@ -50,6 +50,11 @@ export { Spacer } from './Spacer';
 export { SpacedChildren } from './Spacer';
 export { WithSpace } from './Spacer';
 export { WithFixedDimensions } from './WithFixedDimensions';
+export { SensorStatus } from './SensorStatus';
+export { Rectangle } from './Rectangle';
+export { Paper } from './Paper';
+export { PaperSection } from './PaperSection';
+export { CardDetail } from './CardDetail';
 
 export * from './icons';
 export * from './images';
