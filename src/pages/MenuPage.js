@@ -22,7 +22,7 @@ import { PowerIcon, CogIcon, HazardIcon } from '../widgets/icons';
 import { ROUTES } from '../navigation/constants';
 import { buttonStrings, navStrings } from '../localization';
 
-import { selectIsScanning } from '../selectors/vaccine';
+import { selectIsBlinking, selectIsScanning } from '../selectors/vaccine';
 
 import { SETTINGS_KEYS } from '../settings';
 import { UIDatabase } from '../database';
@@ -46,6 +46,7 @@ import globalStyles, { SHADOW_BORDER } from '../globalStyles';
 import { UserActions, VaccineActions } from '../actions/index';
 import { selectCurrentUserIsAdmin } from '../selectors/user';
 
+const sensorMacAddress = 'FC:C0:EE:9D:80:A3';
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
   const { success, message } = await UIDatabase.exportData(syncSiteName);
@@ -75,6 +76,7 @@ const Menu = ({
   usingVaccines,
   isAdmin,
   blink,
+  isBlinking,
   isScanning,
   scanSensorsStart,
   scanSensorsEnd,
@@ -169,7 +171,7 @@ const Menu = ({
     () => (
       <View style={styles.bottomRow}>
         <IconButton Icon={<PowerIcon />} label={navStrings.log_out} onPress={logout} />
-        <IconButton Icon={<HazardIcon />} label="blink" onPress={blink} />
+        <IconButton Icon={<HazardIcon />} label={isBlinking ? '---' : 'blink'} onPress={blink} />
         <IconButton Icon={<HazardIcon />} label={isScanning ? 'scanning' : 'scan'} onPress={scan} />
         {isInAdminMode && <MenuButton text="Realm Explorer" onPress={toRealmExplorer} />}
         {isInAdminMode && <MenuButton text="Export Data" onPress={exportData} />}
@@ -178,7 +180,7 @@ const Menu = ({
         )}
       </View>
     ),
-    [isInAdminMode, isAdmin, isScanning]
+    [isInAdminMode, isAdmin, isScanning, isBlinking]
   );
 
   const ModuleLayout = useCallback(
@@ -264,7 +266,7 @@ const mapDispatchToProps = dispatch => ({
   toDashboard: () => dispatch(gotoDashboard()),
   toCashRegister: () => dispatch(goToCashRegister()),
   logout: () => dispatch(UserActions.logout()),
-  blink: () => dispatch(VaccineActions.st.blinkSensor('FC:C0:EE:9D:80:A3')),
+  blink: () => dispatch(VaccineActions.blinkSensor(sensorMacAddress)),
   scanSensorsStart: () => dispatch(VaccineActions.startSensorScan()),
   scanSensorsEnd: () => dispatch(VaccineActions.stopSensorScan()),
 });
@@ -282,6 +284,7 @@ const mapStateToProps = state => {
 
   const isAdmin = selectCurrentUserIsAdmin(state);
   const isScanning = selectIsScanning(state);
+  const isBlinking = selectIsBlinking(state, sensorMacAddress);
 
   return {
     usingDashboard,
@@ -290,6 +293,7 @@ const mapStateToProps = state => {
     usingCashRegister,
     usingModules,
     isAdmin,
+    isBlinking,
     isScanning,
   };
 };
@@ -323,6 +327,7 @@ Menu.propTypes = {
   usingCashRegister: PropTypes.bool.isRequired,
   usingModules: PropTypes.bool.isRequired,
   usingVaccines: PropTypes.bool.isRequired,
+  isBlinking: PropTypes.bool.isRequired,
   isScanning: PropTypes.bool.isRequired,
   scanSensorsStart: PropTypes.func.isRequired,
   scanSensorsEnd: PropTypes.func.isRequired,
