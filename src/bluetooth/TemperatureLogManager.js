@@ -9,7 +9,7 @@ const createTemperatureLog = ({ id, sensor, timestamp, temperature, logInterval 
   logInterval,
 });
 
-export class TemperatureLogManager {
+class TemperatureLogManager {
   constructor(dbService, utils) {
     this.db = dbService;
     this.utils = utils;
@@ -74,3 +74,14 @@ export class TemperatureLogManager {
 
   saveLogs = async logsToSave => this.db.upsertTemperatureLog(logsToSave);
 }
+
+let TemperatureLogManagerInstance;
+
+export const getTemperatureLogManagerInstance = (dbService, utils) => {
+  if (!TemperatureLogManagerInstance) {
+    TemperatureLogManagerInstance = new TemperatureLogManager(dbService, utils);
+  }
+  return TemperatureLogManagerInstance;
+};
+
+export default getTemperatureLogManagerInstance;

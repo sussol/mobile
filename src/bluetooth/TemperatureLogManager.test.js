@@ -1,4 +1,4 @@
-import { TemperatureLogManager } from './TemperatureLogManager';
+import TemperatureLogManager from './TemperatureLogManager';
 
 describe('DownloadManager: calculateNumberOfLogsToSave', () => {
   it('Calculates correctly when the next possible log time is less than the time now', () => {
