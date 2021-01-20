@@ -42,5 +42,5 @@ Circle.propTypes = {
   children: PropTypes.node,
   backgroundColor: PropTypes.string,
   borderColor: PropTypes.string,
-  elevate: PropTypes.number,
+  elevate: PropTypes.bool,
 };
