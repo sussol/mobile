@@ -51,6 +51,8 @@ export class VaccineDataAccess {
 
   upsertTemperatureLog = temperatureLogs =>
     this.db.write(() => {
-      this.db.update(VACCINE_ENTITIES.TEMPERATURE_LOG, temperatureLogs);
+      temperatureLogs.forEach(temperatureLog =>
+        this.db.update(VACCINE_ENTITIES.TEMPERATURE_LOG, temperatureLog)
+      );
     });
 }
