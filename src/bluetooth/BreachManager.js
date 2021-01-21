@@ -84,7 +84,7 @@ export class BreachManager {
   // Previously used object spread, but https://github.com/realm/realm-js/issues/2844
   // Fortunately the `temperatureLog` array only needs the log.id and the breach.id
   // it's being assigned
-  addLogToBreach = (breach, log) => ({ id: log.id, temperatureBreachId: breach.id });
+  addLogToBreach = (breach, log) => ({ id: log.id, breach });
 
   willContinueBreach = (breach, log) => {
     if (!breach) return false;
