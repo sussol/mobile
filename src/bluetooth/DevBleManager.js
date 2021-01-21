@@ -1,3 +1,14 @@
+const randomMacs = [
+  'AA:BB:CC:DD:EE:FF',
+  '12:34:56:78:09:10',
+  'AB:CD:EF:GH:IJ:KL',
+  'TH:IS:IS:TO:TE:SA',
+  'RE:AL:MA:CO:MG:AA',
+  'HE:HE:WO:ND:ER:IF',
+  'AN:YO:NE:WI:LL:NO',
+  'TI:CE:TH:IS:JO:KE',
+];
+
 const COMMAND_TO_RESULT_LOOKUP = {
   // *logall
   'KmxvZ2FsbA==': callback => {
@@ -82,14 +93,13 @@ export class DevBleManager {
   async startDeviceScan(_, __, callback) {
     this.isScanning = true;
 
-    setInterval(
-      () =>
-        callback(_, {
-          id: 'AB:CD:EF:GH:IJ:KL',
-          manufacturerData: 'MwEBDAN0AFkBtwEMA3QAWQG3AMwCrAAAAAAA',
-        }),
-      1000
-    );
+    setInterval(() => {
+      const randomInt = Math.floor(Math.random() * randomMacs.length);
+      callback(_, {
+        id: randomMacs[randomInt],
+        manufacturerData: 'MwEBDAN0AFkBtwEMA3QAWQG3AMwCrAAAAAAA',
+      });
+    }, 1000);
   }
 
   async writeCharacteristicWithoutResponseForDevice(macAddress, _, __, command) {
