@@ -128,7 +128,7 @@ const stopSensorScan = () => dispatch => {
   BleService().stopScan();
 };
 
-const startSetLogFrequency = ({ macAddress, frequency }) => async (dispatch, getState) => {
+const startSetLogFrequency = ({ macAddress, frequency = 300 }) => async (dispatch, getState) => {
   const success = await withPermissions(dispatch, getState, setLogFrequency(macAddress, frequency));
   return success;
 };
