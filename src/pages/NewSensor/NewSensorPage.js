@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import { Wizard } from '../../widgets/index';
+import { Wizard } from '../../widgets';
 
 import { NewSensorStepOne } from './NewSensorStepOne';
 
