@@ -3,7 +3,7 @@ import { Buffer } from 'buffer';
 import { BLUETOOTH } from './constants';
 
 const bufferFromBase64 = base64 => Buffer.from(base64, 'base64');
-export const stringFromBase64 = base64 => bufferFromBase64(base64).toString('utf-8');
+const stringFromBase64 = base64 => bufferFromBase64(base64).toString('utf-8');
 const base64FromString = string => Buffer.from(string, 'utf-8').toString('base64');
 
 /**

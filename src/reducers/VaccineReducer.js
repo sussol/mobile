@@ -3,6 +3,7 @@ import { VACCINE_ACTIONS } from '../actions/VaccineActions';
 const initialState = () => ({
   isScanning: false,
   scannedSensorAddresses: [],
+  setLogFrequencyFor: '',
 });
 
 export const VaccineReducer = (state = initialState(), action) => {
@@ -32,6 +33,18 @@ export const VaccineReducer = (state = initialState(), action) => {
         ...state,
         scannedSensorAddresses: [...scannedSensorAddresses, macAddress],
       };
+    }
+
+    case VACCINE_ACTIONS.SET_LOG_FREQUENCY_START: {
+      const { payload } = action;
+      const { macAddress } = payload;
+
+      return { ...state, setLogFrequencyFor: macAddress };
+    }
+
+    case VACCINE_ACTIONS.SET_LOG_FREQUENCY_SUCCESS:
+    case VACCINE_ACTIONS.SET_LOG_FREQUENCY_ERROR: {
+      return { ...state, setLogFrequencyFor: '' };
     }
 
     default:

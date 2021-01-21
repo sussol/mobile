@@ -7,9 +7,8 @@ import { ToastAndroid } from 'react-native';
 import { PermissionSelectors } from '../selectors/permission';
 import { selectScannedSensors } from '../selectors/vaccine';
 import { PermissionActions } from './PermissionActions';
-import BleService, { stringFromBase64 } from '../bluetooth/BleService';
-import { BLUETOOTH } from '../bluetooth/constants';
-import { syncStrings } from '../localization/index';
+import BleService from '../bluetooth/BleService';
+import { syncStrings, vaccineStrings } from '../localization/index';
 import { UIDatabase } from '../database/index';
 
 export const VACCINE_ACTIONS = {
@@ -86,15 +85,30 @@ const scanForSensors = (dispatch, state) => {
 };
 
 const setLogFrequency = (macAddress, frequency) => async dispatch => {
-  let error;
+  let ok = false;
+  let error = '';
+
   dispatch(setLogFrequencyStart(macAddress));
 
-  const result = await BleService().updateLogIntervalWithRetries(macAddress, frequency, 3, error);
-  const regex = new RegExp(`${BLUETOOTH.COMMANDS.UPDATE_LOG_INTERVAL}${frequency}`);
-  const ok = regex.test(stringFromBase64(result));
+  try {
+    const result = await BleService().updateLogIntervalWithRetries(macAddress, frequency, 3, error);
+    const regex = new RegExp(`Interval: ${frequency}s`);
+    ok = regex.test(result);
+  } catch (e) {
+    error = e;
+    ok = false;
+  }
 
-  if (ok) dispatch(setLogFrequencySuccess());
-  else dispatch(setLogFrequencyError(error));
+  if (ok) {
+    dispatch(setLogFrequencySuccess());
+    ToastAndroid.show(
+      vaccineStrings.formatString(vaccineStrings.log_frequency_set, frequency),
+      ToastAndroid.LONG
+    );
+  } else {
+    ToastAndroid.show(vaccineStrings.E_COMMAND_FAILED, ToastAndroid.LONG);
+    dispatch(setLogFrequencyError(error));
+  }
 
   return ok;
 };
@@ -114,7 +128,7 @@ const stopSensorScan = () => dispatch => {
   BleService().stopScan();
 };
 
-const startSetLogFrequency = async ({ macAddress, frequency }) => async (dispatch, getState) => {
+const startSetLogFrequency = ({ macAddress, frequency }) => async (dispatch, getState) => {
   const success = await withPermissions(dispatch, getState, setLogFrequency(macAddress, frequency));
   return success;
 };
