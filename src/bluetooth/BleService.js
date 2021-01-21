@@ -373,6 +373,11 @@ export const getBleServiceInstance = manager => {
   if (!BleServiceInstance) {
     BleServiceInstance = new BleService(manager);
   }
+
+  if (manager) {
+    BleServiceInstance = new BleService(manager);
+  }
+
   return BleServiceInstance;
 };
 
