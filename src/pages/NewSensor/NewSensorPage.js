@@ -1,9 +1,10 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import { Wizard } from '../widgets';
+import { Wizard } from '../../widgets/index';
 
-const TabOne = () => <View style={{ backgroundColor: 'red', flex: 1, width: 500, height: 500 }} />;
+import { NewSensorStepOne } from './NewSensorStepOne';
+
 const TabTwo = () => (
   <View style={{ backgroundColor: 'green', flex: 1, width: 500, height: 500 }} />
 );
@@ -12,13 +13,9 @@ const TabThree = () => (
 );
 
 const tabs = [
-  { component: TabOne, name: 'prescription', title: '' },
+  { component: NewSensorStepOne, name: 'prescription', title: '' },
   { component: TabTwo, name: 'prescription', title: '' },
   { component: TabThree, name: 'prescription', title: '' },
 ];
 
-export const NewSensorPage = () => (
-  <>
-    <Wizard tabs={tabs} useNewStepper />
-  </>
-);
+export const NewSensorPage = () => <Wizard tabs={tabs} useNewStepper />;
