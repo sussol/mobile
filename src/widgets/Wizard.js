@@ -20,13 +20,14 @@ import { BACKGROUND_COLOR, BLUE_WHITE, SHADOW_BORDER } from '../globalStyles/col
  * to completion for completion. See TabNavigator and StepsTracker
  * for individual component implementation.
  */
-const WizardComponent = ({ tabs, currentTab, switchTab }) => {
+const WizardComponent = ({ tabs, currentTab, switchTab, useNewStepper }) => {
   const titles = useMemo(() => tabs.map(tab => tab.title), [tabs]);
 
   return (
     <View style={localStyles.container}>
       <View style={localStyles.stepperContainer}>
         <Stepper
+          useNewStepper={useNewStepper}
           numberOfSteps={tabs.length}
           currentStep={currentTab}
           onPress={switchTab}
@@ -50,10 +51,15 @@ const localStyles = StyleSheet.create({
   },
 });
 
+WizardComponent.defaultProps = {
+  useNewStepper: false,
+};
+
 WizardComponent.propTypes = {
   tabs: PropTypes.array.isRequired,
   switchTab: PropTypes.func.isRequired,
   currentTab: PropTypes.number.isRequired,
+  useNewStepper: PropTypes.bool,
 };
 
 const mapStateToProps = state => {

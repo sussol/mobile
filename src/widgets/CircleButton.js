@@ -5,10 +5,11 @@
  */
 
 import React from 'react';
-import { TouchableOpacity, StyleSheet, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import PropTypes from 'prop-types';
 
 import { SUSSOL_ORANGE, LIGHT_GREY } from '../globalStyles/index';
+import { Circle } from './Circle';
 
 const SIZE_VALUES = {
   small: 15,
@@ -37,24 +38,15 @@ export const CircleButton = ({
   isDisabled,
   size,
 }) => {
-  const styles = React.useMemo(() => localStyles(size), [size]);
-
   const Container = isDisabled ? View : TouchableOpacity;
 
-  const containerStyle = [
-    styles.dimensions,
-    styles.containerStyle,
-    isDisabled && styles.disabledStyle,
-  ];
+  const backgroundColor = isDisabled ? LIGHT_GREY : SUSSOL_ORANGE;
 
   return (
-    <Container
-      onPressIn={onPressIn}
-      onPressOut={onPressOut}
-      onPress={onPress}
-      style={containerStyle}
-    >
-      <IconComponent size={ICON_SIZE_VALUES[size]} />
+    <Container onPressIn={onPressIn} onPressOut={onPressOut} onPress={onPress}>
+      <Circle size={SIZE_VALUES[size]} backgroundColor={backgroundColor} elevate>
+        <IconComponent size={ICON_SIZE_VALUES[size]} />
+      </Circle>
     </Container>
   );
 };
@@ -75,24 +67,3 @@ CircleButton.propTypes = {
   isDisabled: PropTypes.bool,
   size: PropTypes.string,
 };
-
-const localStyles = size =>
-  StyleSheet.create({
-    dimensions: {
-      width: SIZE_VALUES[size],
-      height: SIZE_VALUES[size],
-      borderRadius: SIZE_VALUES[size],
-    },
-    disabledStyle: {
-      backgroundColor: LIGHT_GREY,
-      borderColor: LIGHT_GREY,
-    },
-    containerStyle: {
-      elevation: 5,
-      borderColor: SUSSOL_ORANGE,
-      borderWidth: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: SUSSOL_ORANGE,
-    },
-  });
