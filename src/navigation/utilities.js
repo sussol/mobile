@@ -10,6 +10,8 @@ import { ROUTES } from './constants';
 import { navStrings } from '../localization';
 
 export const SCREEN_TITLES = {
+  [ROUTES.SENSOR_EDIT]: () => navStrings.edit_sensor,
+  [ROUTES.SENSOR_NEW]: () => navStrings.new_sensor,
   [ROUTES.REALM_EXPLORER]: () => navStrings.realm_explorer,
   [ROUTES.CUSTOMER_REQUISITIONS]: () => navStrings.customer_requisitions,
   [ROUTES.SUPPLIER_REQUISITIONS]: () => navStrings.supplier_requisitions,
