@@ -21,7 +21,7 @@ export const VACCINE_ACTIONS = {
 };
 
 const blinkStart = macAddress => ({ type: VACCINE_ACTIONS.BLINK_START, payload: { macAddress } });
-const blinkStop = macAddress => ({ type: VACCINE_ACTIONS.BLINK_STOP, payload: { macAddress } });
+const blinkStop = () => ({ type: VACCINE_ACTIONS.BLINK_STOP });
 const scanStart = () => ({ type: VACCINE_ACTIONS.SCAN_START });
 const scanStop = () => ({ type: VACCINE_ACTIONS.SCAN_STOP });
 const sensorFound = macAddress => ({ type: VACCINE_ACTIONS.SENSOR_FOUND, payload: { macAddress } });
