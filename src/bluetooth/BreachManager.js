@@ -157,9 +157,7 @@ export class BreachManager {
   };
 
   updateBreaches = async (breaches, temperatureLogs) => {
-    // eslint-disable-next-line no-param-reassign
-
-    const updatedBreaches = this.db.upsertBreaches(breaches);
+    const updatedBreaches = await this.db.upsertBreaches(breaches);
     const updatedLogs = await this.db.upsertTemperatureLog(temperatureLogs);
 
     return [updatedBreaches, updatedLogs];
