@@ -7,6 +7,7 @@ const createTemperatureLog = ({ id, sensor, timestamp, temperature, logInterval 
   timestamp: new Date(timestamp),
   temperature,
   logInterval,
+  location: sensor.location,
 });
 
 class TemperatureLogManager {
