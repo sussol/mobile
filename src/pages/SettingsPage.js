@@ -139,8 +139,8 @@ const Settings = ({
       UIDatabase.delete('Sensor', oldSensors);
       const oldLogs = UIDatabase.objects('TemperatureLog');
       UIDatabase.delete('TemperatureLog', oldLogs);
-      const olUIDatabasereaches = UIDatabase.objects('TemperatureBreach');
-      UIDatabase.delete('TemperatureBreach', olUIDatabasereaches);
+      const oldUIDatabaseBreaches = UIDatabase.objects('TemperatureBreach');
+      UIDatabase.delete('TemperatureBreach', oldUIDatabaseBreaches);
 
       // create locations
       createRecord(UIDatabase, 'Location', null, 'Fridge 1', 'f1');
@@ -253,7 +253,6 @@ const Settings = ({
         sensor.logs.sorted('timestamp'),
         configs
       );
-      console.log(JSON.stringify(logs));
       return breachManager.updateBreaches(breaches, logs);
     });
     Promise.all(promises).then(() => ToastAndroid.show('Data generated', ToastAndroid.SHORT));
