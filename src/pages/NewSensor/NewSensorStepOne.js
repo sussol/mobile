@@ -2,22 +2,36 @@
 
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { FlatList } from 'react-native';
+import { ActivityIndicator, FlatList, View } from 'react-native';
 import PropTypes from 'prop-types';
 import { useIsFocused } from '@react-navigation/native';
 
 import { TabContainer } from './TabContainer';
-import { PaperSection } from '../../widgets';
+import { ScanRow } from './ScanRow';
+import { FlexRow, PaperSection } from '../../widgets';
+import { TextWithIcon } from '../../widgets/Typography';
+
 import { vaccineStrings } from '../../localization';
 import { VaccineActions } from '../../actions/VaccineActions';
-import { ScanRow } from './ScanRow';
 import { selectScannedSensors } from '../../selectors/vaccine';
+import { SUSSOL_ORANGE } from '../../globalStyles';
+
+const Spinner = () => (
+  <FlexRow justifyContent="center">
+    <View>
+      <TextWithIcon left Icon={<ActivityIndicator size="small" color={SUSSOL_ORANGE} />}>
+        {vaccineStrings.scanning}
+      </TextWithIcon>
+    </View>
+  </FlexRow>
+);
 
 export const NewSensorStepOneComponent = ({ startScan, stopScan, macAddresses }) => {
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    startScan();
+    if (isFocused) startScan();
+    else stopScan();
     return stopScan;
   }, [startScan, isFocused]);
 
@@ -25,6 +39,7 @@ export const NewSensorStepOneComponent = ({ startScan, stopScan, macAddresses })
     <TabContainer>
       <PaperSection height={420} headerText={vaccineStrings.new_sensor_step_one_title}>
         <FlatList
+          ListFooterComponent={<Spinner />}
           keyExtractor={item => item}
           style={{ height: 360 }}
           data={macAddresses}
@@ -44,6 +59,7 @@ NewSensorStepOneComponent.propTypes = {
 const dispatchToProps = dispatch => {
   const startScan = () => dispatch(VaccineActions.startSensorScan());
   const stopScan = () => dispatch(VaccineActions.stopSensorScan());
+
   return { startScan, stopScan };
 };
 
