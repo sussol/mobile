@@ -16,11 +16,11 @@ import { VACCINE_CONSTANTS } from '../utilities/modules/vaccines/index';
 import { VACCINE_ENTITIES } from '../utilities/modules/vaccines/constants';
 
 export const VACCINE_ACTIONS = {
-  SCAN_START: 'Vaccine/sensorScanStart',
-  SCAN_STOP: 'Vaccine/sensorScanStop',
   DOWNLOAD_LOGS_START: 'Vaccine/downloadLogsStart',
   DOWNLOAD_LOGS_ERROR: 'Vaccine/downloadLogsError',
   DOWNLOAD_LOGS_COMPLETE: 'Vaccine/downloadLogsComplete',
+  SCAN_START: 'Vaccine/sensorScanStart',
+  SCAN_STOP: 'Vaccine/sensorScanStop',
   SENSOR_FOUND: 'Vaccine/sensorFound',
 };
 
@@ -72,8 +72,7 @@ const downloadLogsFromSensor = sensor => async () => {
 
     const [mostRecentLog] = savedTemperatureLogs;
     const mostRecentLogTime = mostRecentLog ? mostRecentLog.timestamp : null;
-
-    const nextPossibleLogTime = moment(mostRecentLogTime).add(logInterval * 60, 's');
+    const nextPossibleLogTime = moment(mostRecentLogTime).add(logInterval, 's');
 
     const numberOfLogsToSave = await TemperatureLogManager().calculateNumberOfLogsToSave(
       logInterval,
