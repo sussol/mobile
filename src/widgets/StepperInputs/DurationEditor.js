@@ -24,8 +24,8 @@ export const DurationEditor = ({
 }) => {
   const formatted = String(keepInRange(value, 1, 999));
 
-  const onIncrement = () => onChange(value + stepAmount);
-  const onDecrement = () => onChange(value - stepAmount);
+  const onIncrement = () => onChange(keepInRange(value + stepAmount, 1, 999));
+  const onDecrement = () => onChange(keepInRange(value - stepAmount, 1, 999));
 
   return (
     <>
@@ -55,7 +55,7 @@ DurationEditor.defaultProps = {
     fontFamily: APP_FONT_FAMILY,
   },
   suffixTextStyle: { color: DARKER_GREY, fontFamily: APP_FONT_FAMILY, fontSize: 12, width: 50 },
-  stepAmount: 5,
+  stepAmount: 1,
 };
 
 DurationEditor.propTypes = {
