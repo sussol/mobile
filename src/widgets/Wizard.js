@@ -19,12 +19,18 @@ import { BACKGROUND_COLOR, SHADOW_BORDER } from '../globalStyles/colors';
  * to completion for completion. See TabNavigator and StepsTracker
  * for individual component implementation.
  */
-const WizardComponent = ({ tabs, currentTab, switchTab, useNewStepper }) => {
+const WizardComponent = ({
+  captureUncaughtGestures,
+  tabs,
+  currentTab,
+  switchTab,
+  useNewStepper,
+}) => {
   const titles = useMemo(() => tabs.map(tab => tab.title), [tabs]);
 
   return (
     <View style={localStyles.container}>
-      <DataTablePageView>
+      <DataTablePageView captureUncaughtGestures={captureUncaughtGestures}>
         <View style={localStyles.stepperContainer}>
           <Stepper
             useNewStepper={useNewStepper}
@@ -52,6 +58,7 @@ const localStyles = StyleSheet.create({
 
 WizardComponent.defaultProps = {
   useNewStepper: false,
+  captureUncaughtGestures: true,
 };
 
 WizardComponent.propTypes = {
@@ -59,6 +66,7 @@ WizardComponent.propTypes = {
   switchTab: PropTypes.func.isRequired,
   currentTab: PropTypes.number.isRequired,
   useNewStepper: PropTypes.bool,
+  captureUncaughtGestures: PropTypes.bool,
 };
 
 const mapStateToProps = state => {

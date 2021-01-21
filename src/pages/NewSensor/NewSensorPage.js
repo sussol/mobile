@@ -18,4 +18,6 @@ const tabs = [
   { component: TabThree, name: 'prescription', title: '' },
 ];
 
-export const NewSensorPage = () => <Wizard tabs={tabs} useNewStepper />;
+export const NewSensorPage = () => (
+  <Wizard captureUncaughtGestures={false} tabs={tabs} useNewStepper />
+);
