@@ -65,7 +65,7 @@ class TemperatureLogManager {
 
     return logsToSave.map(({ temperature }, i) => {
       const offset = logInterval * i;
-      const timestamp = Number(moment(initial).add(offset, 's').format('X'));
+      const timestamp = Number(moment(initial).add(offset, 's'));
       const id = this.utils.createUuid();
 
       return this.createLog({ id, sensor, timestamp, temperature, logInterval });
