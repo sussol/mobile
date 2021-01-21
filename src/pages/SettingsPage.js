@@ -132,7 +132,6 @@ const Settings = ({
   const createVaccineData = () => {
     UIDatabase.write(() => {
       const oldLocations = UIDatabase.objects('Location');
-      ToastAndroid.show(String(oldLocations.length), ToastAndroid.SHORT);
       UIDatabase.delete('Location', oldLocations);
       const oldConfigs = UIDatabase.objects('TemperatureBreachConfiguration');
       UIDatabase.delete('TemperatureBreachConfiguration', oldConfigs);
@@ -160,7 +159,7 @@ const Settings = ({
         id: '1',
         minimumTemperature: 20,
         maximumTemperature: 999,
-        duration: 60 * 10,
+        duration: 60 * 5,
         description: 'Config 1, 20 to 999 consecutive',
         type: 'HOT_CONSECUTIVE',
       });
@@ -169,7 +168,7 @@ const Settings = ({
         id: '2',
         minimumTemperature: -999,
         maximumTemperature: 0,
-        duration: 60 * 10,
+        duration: 60 * 5,
         description: 'Config 1, 0 to -999 consecutive',
         type: 'COLD_CONSECUTIVE',
       });
@@ -178,7 +177,7 @@ const Settings = ({
         id: '3',
         minimumTemperature: 20,
         maximumTemperature: 999,
-        duration: 60 * 100,
+        duration: 60 * 5,
         description: 'Config 1, 20 to 999 cumulative',
         type: 'COLD_CUMULATIVE',
       });
@@ -187,7 +186,7 @@ const Settings = ({
         id: '4',
         minimumTemperature: -999,
         maximumTemperature: 0,
-        duration: 60 * 100,
+        duration: 60 * 5,
         description: 'Config 1, 0 to -999 cumulative',
         type: 'COLD_CUMULATIVE',
       });
@@ -200,9 +199,10 @@ const Settings = ({
 
       for (let i = -250; i < 250; i++) {
         const { logInterval } = sensors[0];
+        count += 1;
         UIDatabase.create('TemperatureLog', {
           id: `${i}a`,
-          temperature: Math.floor((Math.random() * 40 + 20) * 100) / 100,
+          temperature: Math.floor((Math.random() * 20 + 5) * 100) / 100,
           logInterval,
           timestamp: new Date(currentDate - logInterval * 1000 * count),
           location: locations[0],
@@ -212,8 +212,8 @@ const Settings = ({
 
       count = 0;
       for (let i = -100; i < 100; i++) {
-        count += 1;
         const { logInterval } = sensors[1];
+        count += 1;
         UIDatabase.create('TemperatureLog', {
           id: `${i}b`,
           temperature: Math.random() * 40 - 20 - i,
@@ -227,6 +227,7 @@ const Settings = ({
       count = 0;
       for (let i = -50; i < 50; i++) {
         const { logInterval } = sensors[1];
+        count += 1;
         UIDatabase.create('TemperatureLog', {
           id: `${i}c`,
           temperature: Math.random() * 40 - 10 + i,
@@ -240,22 +241,22 @@ const Settings = ({
 
     // create breaches
     const utils = {};
-    const sensors = UIDatabase.objects('Sensor');
     utils.createUuid = () => String(Math.random());
-    const configs = UIDatabase.objects('TemperatureBreachConfiguration');
     const vaccineDB = new VaccineDataAccess(UIDatabase);
     const breachManager = new BreachManager(vaccineDB, utils);
+    const sensors = UIDatabase.objects('Sensor');
+    const configs = vaccineDB.getBreachConfigs();
 
-    sensors.forEach(async sensor => {
-      const [breaches, logs] = await breachManager.createBreaches(sensor, sensor.logs, configs);
-      breachManager.updateBreaches(breaches, logs);
+    const promises = sensors.map(sensor => {
+      const [breaches, logs] = breachManager.createBreaches(
+        sensor,
+        sensor.logs.sorted('timestamp'),
+        configs
+      );
+      console.log(JSON.stringify(logs));
+      return breachManager.updateBreaches(breaches, logs);
     });
-    // for (let i = -250; i < 250; i++) {
-    //   const timestamp = Date();
-    //   createRecord(UIDatabase, 'TemperatureLog', i * i, timestamp, locations[0]);
-    // }
-
-    ToastAndroid.show('Data generated', ToastAndroid.SHORT);
+    Promise.all(promises).then(() => ToastAndroid.show('Data generated', ToastAndroid.SHORT));
   };
 
   return (
