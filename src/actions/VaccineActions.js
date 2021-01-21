@@ -7,20 +7,30 @@ import { ToastAndroid } from 'react-native';
 import { PermissionSelectors } from '../selectors/permission';
 import { selectScannedSensors } from '../selectors/vaccine';
 import { PermissionActions } from './PermissionActions';
-import BleService from '../bluetooth/BleService';
+import BleService, { stringFromBase64 } from '../bluetooth/BleService';
+import { BLUETOOTH } from '../bluetooth/constants';
 import { syncStrings } from '../localization/index';
 import { UIDatabase } from '../database/index';
 
 export const VACCINE_ACTIONS = {
+  BLINK: 'Vaccine/blinkSensor',
   SCAN_START: 'Vaccine/sensorScanStart',
   SCAN_STOP: 'Vaccine/sensorScanStop',
   SENSOR_FOUND: 'Vaccine/sensorFound',
-  BLINK: 'Vaccine/blinkSensor',
+  SET_LOG_FREQUENCY_ERROR: 'Vaccine/setLogFrequencyError',
+  SET_LOG_FREQUENCY_START: 'Vaccine/setLogFrequencyStart',
+  SET_LOG_FREQUENCY_SUCCESS: 'Vaccine/setLogFrequencySuccess',
 };
 
 const scanStart = () => ({ type: VACCINE_ACTIONS.SCAN_START });
 const scanStop = () => ({ type: VACCINE_ACTIONS.SCAN_STOP });
 const sensorFound = macAddress => ({ type: VACCINE_ACTIONS.SENSOR_FOUND, payload: { macAddress } });
+const setLogFrequencyStart = macAddress => ({
+  type: VACCINE_ACTIONS.SET_LOG_FREQUENCY_START,
+  payload: { macAddress },
+});
+const setLogFrequencySuccess = () => ({ type: VACCINE_ACTIONS.SET_LOG_FREQUENCY_SUCCESS });
+const setLogFrequencyError = () => ({ type: VACCINE_ACTIONS.SET_LOG_FREQUENCY_ERROR });
 
 /**
  * Helper wrapper which will check permissions for
@@ -75,6 +85,20 @@ const scanForSensors = (dispatch, state) => {
   BleService().scanForSensors(deviceCallback);
 };
 
+const setLogFrequency = (macAddress, frequency) => async dispatch => {
+  let error;
+  dispatch(setLogFrequencyStart(macAddress));
+
+  const result = await BleService().updateLogIntervalWithRetries(macAddress, frequency, 3, error);
+  const regex = new RegExp(`${BLUETOOTH.COMMANDS.UPDATE_LOG_INTERVAL}${frequency}`);
+  const ok = regex.test(stringFromBase64(result));
+
+  if (ok) dispatch(setLogFrequencySuccess());
+  else dispatch(setLogFrequencyError(error));
+
+  return ok;
+};
+
 const startSensorBlink = macAddress => async (dispatch, getState) => {
   await withPermissions(dispatch, getState, blinkSensor(macAddress));
   return null;
@@ -90,8 +114,14 @@ const stopSensorScan = () => dispatch => {
   BleService().stopScan();
 };
 
+const startSetLogFrequency = async ({ macAddress, frequency }) => async (dispatch, getState) => {
+  const success = await withPermissions(dispatch, getState, setLogFrequency(macAddress, frequency));
+  return success;
+};
+
 export const VaccineActions = {
   startSensorBlink,
   startSensorScan,
+  startSetLogFrequency,
   stopSensorScan,
 };
