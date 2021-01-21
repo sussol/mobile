@@ -1,3 +1,5 @@
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 const randomMacs = [
   'AA:BB:CC:DD:EE:FF',
   '12:34:56:78:09:10',
@@ -93,7 +95,7 @@ export class DevBleManager {
   async startDeviceScan(_, __, callback) {
     this.isScanning = true;
 
-    setInterval(() => {
+    this.scannerInterval = setInterval(() => {
       const randomInt = Math.floor(Math.random() * randomMacs.length);
       callback(_, {
         id: randomMacs[randomInt],
@@ -106,7 +108,8 @@ export class DevBleManager {
     const connectedDevice = this.connectedDevices[macAddress];
     const { callback } = this.connectedDevices[macAddress];
     if (connectedDevice && callback) {
-      COMMAND_TO_RESULT_LOOKUP[command](callback);
+      await delay(3000);
+      await COMMAND_TO_RESULT_LOOKUP[command](callback);
       this.connectedDevices[macAddress] = null;
     } else {
       throw new Error("Trying to write to a device which isn't connected or isn't being monitored");
