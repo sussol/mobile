@@ -4,17 +4,15 @@ import { View } from 'react-native';
 import { Wizard } from '../../widgets';
 
 import { NewSensorStepOne } from './NewSensorStepOne';
+import { NewSensorStepTwo } from './NewSensorStepTwo';
 
-const TabTwo = () => (
-  <View style={{ backgroundColor: 'green', flex: 1, width: 500, height: 500 }} />
-);
 const TabThree = () => (
   <View style={{ backgroundColor: 'blue', flex: 1, width: 500, height: 500 }} />
 );
 
 const tabs = [
-  { component: NewSensorStepOne, name: 'prescription', title: '' },
-  { component: TabTwo, name: 'prescription', title: '' },
+  { component: NewSensorStepOne, name: 'newSensorStepThree', title: '' },
+  { component: NewSensorStepTwo, name: 'newSensorStepTwo', title: '' },
   { component: TabThree, name: 'prescription', title: '' },
 ];
 
