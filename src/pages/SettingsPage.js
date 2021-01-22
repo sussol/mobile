@@ -16,7 +16,11 @@ import { UIDatabase } from '../database';
 import { SETTINGS_KEYS } from '../settings';
 import { MODAL_KEYS } from '../utilities';
 
-import { gotoNewVaccineModulePage, gotoRealmExplorer } from '../navigation/actions';
+import {
+  gotoNewSensorPage,
+  gotoNewVaccineModulePage,
+  gotoRealmExplorer,
+} from '../navigation/actions';
 
 import { ConfirmIcon } from '../widgets/icons';
 import { DataTablePageView, PageInfo } from '../widgets';
@@ -44,6 +48,7 @@ const Settings = ({
   currentUserPasswordHash,
   requestStorageWritePermission,
   toNewVaccineModulePage,
+  toNewSensorPage,
 }) => {
   const [state, setState] = useState({
     syncURL: UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL),
@@ -273,6 +278,7 @@ const Settings = ({
           <MenuButton text={buttonStrings.realm_explorer} onPress={toRealmExplorer} />
           <MenuButton text={buttonStrings.export_data} onPress={requestStorageWritePermission} />
           <MenuButton text="New vaccine module" onPress={toNewVaccineModulePage} />
+          <MenuButton text="New Sensor" onPress={toNewSensorPage} />
           <MenuButton text="Generate vaccine data" onPress={createVaccineData} />
         </View>
       </View>
@@ -291,6 +297,7 @@ const Settings = ({
 const mapStateToDispatch = dispatch => ({
   toNewVaccineModulePage: () => dispatch(gotoNewVaccineModulePage()),
   toRealmExplorer: () => dispatch(gotoRealmExplorer()),
+  toNewSensorPage: () => dispatch(gotoNewSensorPage()),
   requestStorageWritePermission: () =>
     dispatch(PermissionActions.requestWriteStorage()).then(exportData),
 });
@@ -313,4 +320,5 @@ Settings.propTypes = {
   currentUserPasswordHash: PropTypes.string.isRequired,
   requestStorageWritePermission: PropTypes.func.isRequired,
   toNewVaccineModulePage: PropTypes.func.isRequired,
+  toNewSensorPage: PropTypes.func.isRequired,
 };
