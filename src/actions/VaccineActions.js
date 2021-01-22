@@ -75,7 +75,9 @@ const downloadLogsFromSensor = sensor => async () => {
 
     const [mostRecentLog] = savedTemperatureLogs;
     const mostRecentLogTime = mostRecentLog ? mostRecentLog.timestamp : null;
-    const nextPossibleLogTime = moment(mostRecentLogTime).add(logInterval, 's');
+    const nextPossibleLogTime = mostRecentLogTime
+      ? moment(mostRecentLogTime).add(logInterval, 's')
+      : 0;
 
     const numberOfLogsToSave = await TemperatureLogManager().calculateNumberOfLogsToSave(
       logInterval,
