@@ -42,5 +42,5 @@ Paper.propTypes = {
   width: PropTypes.number,
   height: PropTypes.number,
   style: PropTypes.object,
-  children: PropTypes.element,
+  children: PropTypes.node,
 };

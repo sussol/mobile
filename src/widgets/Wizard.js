@@ -12,28 +12,35 @@ import DataTablePageView from './DataTablePageView';
 import { WizardActions } from '../actions/WizardActions';
 import { selectCurrentTab } from '../selectors/wizard';
 
-import { PAGE_CONTENT_PADDING_HORIZONTAL } from '../globalStyles/pageStyles';
-import { BACKGROUND_COLOR, BLUE_WHITE, SHADOW_BORDER } from '../globalStyles/colors';
+import { BACKGROUND_COLOR, SHADOW_BORDER } from '../globalStyles/colors';
 
 /**
  * Layout component for a Tracker and TabNavigator, displaying steps
  * to completion for completion. See TabNavigator and StepsTracker
  * for individual component implementation.
  */
-const WizardComponent = ({ tabs, currentTab, switchTab }) => {
+const WizardComponent = ({
+  captureUncaughtGestures,
+  tabs,
+  currentTab,
+  switchTab,
+  useNewStepper,
+}) => {
   const titles = useMemo(() => tabs.map(tab => tab.title), [tabs]);
 
   return (
     <View style={localStyles.container}>
-      <View style={localStyles.stepperContainer}>
-        <Stepper
-          numberOfSteps={tabs.length}
-          currentStep={currentTab}
-          onPress={switchTab}
-          titles={titles}
-        />
-      </View>
-      <DataTablePageView>
+      <DataTablePageView captureUncaughtGestures={captureUncaughtGestures}>
+        <View style={localStyles.stepperContainer}>
+          <Stepper
+            useNewStepper={useNewStepper}
+            numberOfSteps={tabs.length}
+            currentStep={currentTab}
+            onPress={switchTab}
+            titles={titles}
+          />
+        </View>
+
         <TabNavigator tabs={tabs} currentTabIndex={currentTab} />
       </DataTablePageView>
     </View>
@@ -43,17 +50,23 @@ const WizardComponent = ({ tabs, currentTab, switchTab }) => {
 const localStyles = StyleSheet.create({
   container: { backgroundColor: BACKGROUND_COLOR, flex: 1 },
   stepperContainer: {
-    backgroundColor: BLUE_WHITE,
-    borderColor: SHADOW_BORDER,
     marginBottom: 2,
-    marginHorizontal: PAGE_CONTENT_PADDING_HORIZONTAL,
+    borderBottomColor: SHADOW_BORDER,
+    borderBottomWidth: 1,
   },
 });
+
+WizardComponent.defaultProps = {
+  useNewStepper: false,
+  captureUncaughtGestures: true,
+};
 
 WizardComponent.propTypes = {
   tabs: PropTypes.array.isRequired,
   switchTab: PropTypes.func.isRequired,
   currentTab: PropTypes.number.isRequired,
+  useNewStepper: PropTypes.bool,
+  captureUncaughtGestures: PropTypes.bool,
 };
 
 const mapStateToProps = state => {

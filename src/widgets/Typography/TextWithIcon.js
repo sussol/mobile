@@ -45,7 +45,7 @@ export const TextWithIcon = ({
   const internalStyle = getInternalStyle(size, left, color, textStyle, margin);
 
   return (
-    <FlexRow alignItems="center" {...containerStyle}>
+    <FlexRow alignItems="center" flex={1} style={containerStyle}>
       {left ? Icon : null}
       <Text style={internalStyle}>{children}</Text>
       {!left ? Icon : null}
@@ -59,7 +59,6 @@ TextWithIcon.defaultProps = {
   left: false,
   color: DARKER_GREY,
   size: 'xs',
-  spaceOverride: 0,
   containerStyle: {},
   textStyle: {},
   margin: 5,
@@ -72,7 +71,6 @@ TextWithIcon.propTypes = {
   children: PropTypes.node.isRequired,
   color: PropTypes.string,
   size: PropTypes.string,
-  spaceOverride: PropTypes.number,
   containerStyle: PropTypes.object,
   textStyle: PropTypes.object,
 };

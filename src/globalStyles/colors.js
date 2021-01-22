@@ -7,6 +7,7 @@ export const BACKGROUND_COLOR = '#f8fbfe';
 export const BLUE_WHITE = '#ecf3fc';
 export const DARK_GREY = '#4a4a4a';
 export const DARKER_GREY = '#333333';
+export const MISTY_CHARCOAL = 'rgba(51,51,51,0.2)';
 export const FINALISE_GREEN = '#219d1b';
 export const FINALISED_RED = '#f63b30';
 export const GREY = '#909192';

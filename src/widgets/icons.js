@@ -24,8 +24,9 @@ import {
   DARK_GREY,
   dataTableColors,
   GREY,
+  DARKER_GREY,
+  BLACK,
 } from '../globalStyles';
-import { BLACK } from '../globalStyles/index';
 
 export const SortAscIcon = () => <FAIcon name="sort-asc" size={15} style={{ marginRight: 10 }} />;
 export const SortNeutralIcon = () => <FAIcon name="sort" size={15} style={{ marginRight: 10 }} />;
@@ -73,9 +74,15 @@ ExpandIcon.propTypes = {
   style: PropTypes.object,
 };
 
-export const ConfirmIcon = React.memo(({ style }) => <FAIcon name="check-circle" style={style} />);
-ConfirmIcon.defaultProps = { style: { color: FINALISE_GREEN, fontSize: 40 } };
-ConfirmIcon.propTypes = { style: PropTypes.object };
+export const ConfirmIcon = React.memo(({ style, color, size }) => (
+  <FAIcon name="check-circle" style={style} color={color} size={size} />
+));
+ConfirmIcon.defaultProps = { color: FINALISE_GREEN, size: 40, style: {} };
+ConfirmIcon.propTypes = {
+  style: PropTypes.object,
+  color: PropTypes.string,
+  size: PropTypes.number,
+};
 
 export const LockIcon = React.memo(({ style }) => <FAIcon name="lock" size={28} style={style} />);
 LockIcon.defaultProps = { style: { color: FINALISED_RED } };
@@ -129,7 +136,11 @@ export const ChevronRightIcon = ({ color, size, style }) => (
   <FA5Icon name="chevron-right" color={color} size={size} style={style} />
 );
 ChevronRightIcon.defaultProps = { color: SUSSOL_ORANGE, size: 20, style: {} };
-ChevronRightIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
+ChevronRightIcon.propTypes = {
+  color: PropTypes.string,
+  size: PropTypes.number,
+  style: PropTypes.object,
+};
 
 export const FavouriteStarIcon = () => <FAIcon name="star-o" color={SUSSOL_ORANGE} size={20} />;
 export const BurgerMenuIcon = () => <EntypoIcon name="menu" color={SUSSOL_ORANGE} size={30} />;
@@ -160,7 +171,7 @@ CalendarIcon.propTypes = {
   style: PropTypes.object,
 };
 
-export const BackIcon = () => <FAIcon name="chevron-left" size={16} color="black" />;
+export const BackIcon = () => <FAIcon name="chevron-left" size={16} color={BLACK} />;
 
 export const CloudIcon = ({ color, size, style }) => (
   <IonIcon name="md-cloud" size={size} color={color} style={style} />
@@ -226,6 +237,16 @@ SyncArrowProblem.propTypes = {
   color: PropTypes.string,
 };
 
+export const PlusCircle = ({ size, style, color }) => (
+  <FA5Icon name="plus-circle" size={size} style={style} color={color} />
+);
+PlusCircle.defaultProps = { size: 10, style: {}, color: DARKER_GREY };
+PlusCircle.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
+
 export const LowBatteryIcon = ({ size, style, color }) => (
   <FAIcon size={size} style={style} color={color} name="battery-1" />
 );
@@ -243,6 +264,16 @@ export const BatteryIcon = ({ size, style, color }) => (
 
 BatteryIcon.defaultProps = { size: 20, style: {}, color: WHITE };
 BatteryIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
+
+export const MinusCircle = ({ size, style, color }) => (
+  <FA5Icon name="minus-circle" size={size} style={style} color={color} />
+);
+MinusCircle.defaultProps = { size: 10, style: {}, color: DARKER_GREY };
+MinusCircle.propTypes = {
   size: PropTypes.number,
   style: PropTypes.object,
   color: PropTypes.string,
@@ -274,7 +305,7 @@ export const LightbulbIcon = ({ size, style, color }) => (
   <FAIcon size={size} style={style} color={color} name="lightbulb-o" />
 );
 
-LightbulbIcon.defaultProps = { size: 20, style: {}, color: BLACK };
+LightbulbIcon.defaultProps = { size: 20, style: {}, color: 'white' };
 LightbulbIcon.propTypes = {
   size: PropTypes.number,
   style: PropTypes.object,

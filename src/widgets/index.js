@@ -46,12 +46,17 @@ export { Wizard } from './Wizard';
 export { FridgeDisplay } from './FridgeDisplay';
 export { FridgeDisplayInfo } from './FridgeDisplayInfo';
 export { KeyboardSpacing } from './KeyboardSpacing';
+export { Spacer } from './Spacer';
+export { SpacedChildren } from './Spacer';
+export { WithSpace } from './Spacer';
+export { WithFixedDimensions } from './WithFixedDimensions';
 export { SensorStatus } from './SensorStatus';
 export { Rectangle } from './Rectangle';
 export { Paper } from './Paper';
 export { PaperSection } from './PaperSection';
 export { CardDetail } from './CardDetail';
 export { TextWithIcon } from './Typography';
+export { Circle } from './Circle';
 
 export * from './icons';
 export * from './images';
