@@ -35,26 +35,23 @@ const sensorFound = macAddress => ({ type: VACCINE_ACTIONS.SENSOR_FOUND, payload
 const downloadLogsStart = () => ({
   type: VACCINE_ACTIONS.DOWNLOAD_LOGS_START,
 });
-// const downloadLogsError = () => ({ type: VACCINE_ACTIONS.DOWNLOAD_LOGS_ERROR });
-
-const downloadLogsComplete = macAddress => ({
+const downloadLogsError = () => ({
+  type: VACCINE_ACTIONS.DOWNLOAD_LOGS_ERROR,
+});
+const downloadLogsComplete = () => ({
   type: VACCINE_ACTIONS.DOWNLOAD_LOGS_COMPLETE,
-  payload: { macAddress },
 });
 
 const downloadAllLogs = () => async dispatch => {
   dispatch(downloadLogsStart());
 
-  // TEST CODE
-  const sensor = {
-    id: 'Hufflepuff Sensor One',
-    macAddress: 'E7:6F:FC:15:13:F2',
-    logInterval: 1800,
-    location: { id: 'Hufflepuff location' },
-  };
-  const sensors = [sensor];
+  // Ensure there are some sensors which have been assigned a location before syncing.
+  const sensors = UIDatabase.objects('Sensor').filtered('location != null && isActive == true');
 
-  sensors.forEach(async () => {
+  // TODO: Should we do something if there are errors?
+  dispatch(downloadLogsError());
+
+  sensors.forEach(async sensor => {
     await dispatch(downloadLogsFromSensor(sensor));
   });
 
@@ -93,12 +90,10 @@ const downloadLogsFromSensor = sensor => async () => {
     );
 
     console.log(temperatureLogs);
+
     await TemperatureLogManager().saveLogs(temperatureLogs);
   }
 
-  // TODO: Figure out what to do if an error happens. Just ignore??
-  // const { code = '' } = error;
-  // dispatch(downloadLogsError(code));
   return null;
 };
 

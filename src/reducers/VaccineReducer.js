@@ -2,6 +2,7 @@ import { VACCINE_ACTIONS } from '../actions/VaccineActions';
 
 const initialState = () => ({
   isScanning: false,
+  isSyncingTemps: false,
   scannedSensorAddresses: [],
   sendingBlinkTo: '',
 });
@@ -19,6 +20,14 @@ export const VaccineReducer = (state = initialState(), action) => {
 
     case VACCINE_ACTIONS.BLINK_STOP: {
       return { ...state, sendingBlinkTo: '' };
+    }
+
+    case VACCINE_ACTIONS.DOWNLOAD_LOGS_START: {
+      return { ...state, isSyncingTemps: true };
+    }
+
+    case VACCINE_ACTIONS.DOWNLOAD_LOGS_COMPLETE: {
+      return { ...state, isSyncingTemps: false };
     }
 
     case VACCINE_ACTIONS.SCAN_START: {
