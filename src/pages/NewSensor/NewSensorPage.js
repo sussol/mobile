@@ -11,7 +11,7 @@ const TabThree = () => (
 );
 
 const tabs = [
-  { component: NewSensorStepOne, name: 'newSensorStepThree', title: '' },
+  { component: NewSensorStepOne, name: 'newSensorStepOne', title: '' },
   { component: NewSensorStepTwo, name: 'newSensorStepTwo', title: '' },
   { component: TabThree, name: 'prescription', title: '' },
 ];
