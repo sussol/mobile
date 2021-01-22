@@ -36,7 +36,7 @@ export const TextWithIcon = ({ Icon, left, children, color, size, containerStyle
   const internalStyle = getInternalStyle(size, left, color, textStyle);
 
   return (
-    <FlexRow alignItems="center" flex={0} {...containerStyle}>
+    <FlexRow alignItems="center" flex={1} style={containerStyle}>
       {left ? Icon : null}
       <Text style={internalStyle}>{children}</Text>
       {!left ? Icon : null}
@@ -50,7 +50,6 @@ TextWithIcon.defaultProps = {
   left: false,
   color: DARKER_GREY,
   size: 'xs',
-  spaceOverride: 0,
   containerStyle: {},
   textStyle: {},
 };
@@ -61,7 +60,6 @@ TextWithIcon.propTypes = {
   children: PropTypes.node.isRequired,
   color: PropTypes.string,
   size: PropTypes.string,
-  spaceOverride: PropTypes.number,
   containerStyle: PropTypes.object,
   textStyle: PropTypes.object,
 };

@@ -1,5 +1,7 @@
 {
   "gb": {
+    "new_sensor": "New Sensor",
+    "edit_sensor": "Edit Sensor",
     "cash_register": "Cash Register",
     "credit": "Credit",
     "current_stock": "Current Stock",
