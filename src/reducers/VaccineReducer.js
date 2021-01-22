@@ -3,6 +3,7 @@ import { VACCINE_ACTIONS } from '../actions/VaccineActions';
 const initialState = () => ({
   isScanning: false,
   scannedSensorAddresses: [],
+  setLogIntervalFor: '',
   sendingBlinkTo: '',
 });
 
@@ -46,6 +47,18 @@ export const VaccineReducer = (state = initialState(), action) => {
         ...state,
         scannedSensorAddresses: [...scannedSensorAddresses, macAddress],
       };
+    }
+
+    case VACCINE_ACTIONS.SET_LOG_INTERVAL_START: {
+      const { payload } = action;
+      const { macAddress } = payload;
+
+      return { ...state, setLogIntervalFor: macAddress };
+    }
+
+    case VACCINE_ACTIONS.SET_LOG_INTERVAL_SUCCESS:
+    case VACCINE_ACTIONS.SET_LOG_INTERVAL_ERROR: {
+      return { ...state, setLogIntervalFor: '' };
     }
 
     default:
