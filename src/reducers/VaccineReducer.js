@@ -32,6 +32,7 @@ export const VaccineReducer = (state = initialState(), action) => {
     case VACCINE_ACTIONS.SCAN_STOP: {
       return {
         ...state,
+        scannedSensorAddresses: [],
         isScanning: false,
       };
     }
