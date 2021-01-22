@@ -131,9 +131,16 @@ export const HistoryIcon = ({ color, size }) => (
 HistoryIcon.defaultProps = { color: WHITE, size: 20 };
 HistoryIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
 
-export const ChevronRightIcon = () => (
-  <FA5Icon name="chevron-right" color={SUSSOL_ORANGE} size={20} />
+export const ChevronRightIcon = ({ color, size, style }) => (
+  <FA5Icon name="chevron-right" color={color} size={size} style={style} />
 );
+ChevronRightIcon.defaultProps = { color: SUSSOL_ORANGE, size: 20, style: {} };
+ChevronRightIcon.propTypes = {
+  color: PropTypes.string,
+  size: PropTypes.number,
+  style: PropTypes.object,
+};
+
 export const FavouriteStarIcon = () => <FAIcon name="star-o" color={SUSSOL_ORANGE} size={20} />;
 export const BurgerMenuIcon = () => <EntypoIcon name="menu" color={SUSSOL_ORANGE} size={30} />;
 
@@ -288,6 +295,17 @@ export const ColdBreachIcon = ({ size, style, color }) => (
 
 ColdBreachIcon.defaultProps = { size: 40, style: {}, color: WHITE };
 ColdBreachIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
+
+export const LightbulbIcon = ({ size, style, color }) => (
+  <FAIcon size={size} style={style} color={color} name="lightbulb-o" />
+);
+
+LightbulbIcon.defaultProps = { size: 20, style: {}, color: 'white' };
+LightbulbIcon.propTypes = {
   size: PropTypes.number,
   style: PropTypes.object,
   color: PropTypes.string,

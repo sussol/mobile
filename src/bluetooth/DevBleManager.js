@@ -1,3 +1,16 @@
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+const randomMacs = [
+  'AA:BB:CC:DD:EE:FF',
+  '12:34:56:78:09:10',
+  'AB:CD:EF:GH:IJ:KL',
+  'TH:IS:IS:TO:TE:SA',
+  'RE:AL:MA:CO:MG:AA',
+  'HE:HE:WO:ND:ER:IF',
+  'AN:YO:NE:WI:LL:NO',
+  'TI:CE:TH:IS:JO:KE',
+];
+
 const COMMAND_TO_RESULT_LOOKUP = {
   // *logall
   'KmxvZ2FsbA==': callback => {
@@ -82,21 +95,21 @@ export class DevBleManager {
   async startDeviceScan(_, __, callback) {
     this.isScanning = true;
 
-    setInterval(
-      () =>
-        callback(_, {
-          id: 'AB:CD:EF:GH:IJ:KL',
-          manufacturerData: 'MwEBDAN0AFkBtwEMA3QAWQG3AMwCrAAAAAAA',
-        }),
-      1000
-    );
+    this.scannerInterval = setInterval(() => {
+      const randomInt = Math.floor(Math.random() * randomMacs.length);
+      callback(_, {
+        id: randomMacs[randomInt],
+        manufacturerData: 'MwEBDAN0AFkBtwEMA3QAWQG3AMwCrAAAAAAA',
+      });
+    }, 1000);
   }
 
   async writeCharacteristicWithoutResponseForDevice(macAddress, _, __, command) {
     const connectedDevice = this.connectedDevices[macAddress];
     const { callback } = this.connectedDevices[macAddress];
     if (connectedDevice && callback) {
-      COMMAND_TO_RESULT_LOOKUP[command](callback);
+      await delay(3000);
+      await COMMAND_TO_RESULT_LOOKUP[command](callback);
       this.connectedDevices[macAddress] = null;
     } else {
       throw new Error("Trying to write to a device which isn't connected or isn't being monitored");

@@ -15,7 +15,6 @@ import {
   SUSSOL_ORANGE,
   GREY,
   APP_FONT_FAMILY,
-  SHADOW_BORDER,
 } from '../globalStyles';
 
 const getNewLocalStyles = (step, numberOfSteps, currentStep) => ({
@@ -200,8 +199,6 @@ export const Stepper = ({ useNewStepper, ...stepperProps }) =>
 
 const localStyles = StyleSheet.create({
   oldContainer: {
-    borderColor: SHADOW_BORDER,
-    borderWidth: 1,
     flexDirection: 'row',
     paddingHorizontal: 10,
     paddingVertical: 10,

@@ -35,6 +35,8 @@ const persistConfig = {
     'rowDetail',
     'permission',
     'cashTransaction',
+    'vaccine',
+    'newSensor',
   ],
 };
 

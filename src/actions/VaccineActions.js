@@ -10,7 +10,7 @@ import { selectScannedSensors } from '../selectors/vaccine';
 import { PermissionActions } from './PermissionActions';
 import BleService from '../bluetooth/BleService';
 import TemperatureLogManager from '../bluetooth/TemperatureLogManager';
-import { syncStrings } from '../localization/index';
+import { syncStrings } from '../localization';
 import { UIDatabase } from '../database';
 import { VACCINE_CONSTANTS } from '../utilities/modules/vaccines/index';
 import { VACCINE_ENTITIES } from '../utilities/modules/vaccines/constants';
@@ -22,9 +22,13 @@ export const VACCINE_ACTIONS = {
   SCAN_START: 'Vaccine/sensorScanStart',
   SCAN_STOP: 'Vaccine/sensorScanStop',
   SENSOR_FOUND: 'Vaccine/sensorFound',
+  BLINK_START: 'Vaccine/blinkSensorStart',
+  BLINK_STOP: 'Vaccine/blinkSensorStop',
   BLINK: 'Vaccine/blinkSensor',
 };
 
+const blinkStart = macAddress => ({ type: VACCINE_ACTIONS.BLINK_START, payload: { macAddress } });
+const blinkStop = () => ({ type: VACCINE_ACTIONS.BLINK_STOP });
 const scanStart = () => ({ type: VACCINE_ACTIONS.SCAN_START });
 const scanStop = () => ({ type: VACCINE_ACTIONS.SCAN_STOP });
 const sensorFound = macAddress => ({ type: VACCINE_ACTIONS.SENSOR_FOUND, payload: { macAddress } });
@@ -124,20 +128,22 @@ const withPermissions = async (dispatch, getState, func) => {
     return null;
   }
 
-  return func(dispatch, state);
+  return func(dispatch, getState);
 };
 
-const blinkSensor = macAddress => () => {
+const blinkSensor = macAddress => async dispatch => {
+  dispatch(blinkStart(macAddress));
   BleService().blinkWithRetries(macAddress, VACCINE_CONSTANTS.MAX_BLUETOOTH_COMMAND_ATTEMPTS);
+  dispatch(blinkStop(macAddress));
 };
 
-const scanForSensors = (dispatch, state) => {
+const scanForSensors = (dispatch, getState) => {
   dispatch(scanStart());
 
   const deviceCallback = device => {
     const { id: macAddress } = device;
     if (macAddress) {
-      const alreadyScanned = selectScannedSensors(state);
+      const alreadyScanned = selectScannedSensors(getState());
       const alreadySaved = UIDatabase.get('Sensor', macAddress, 'macAddress');
 
       if (!alreadyScanned?.includes(macAddress) && !alreadySaved) {
@@ -173,6 +179,7 @@ const stopSensorScan = () => dispatch => {
 export const VaccineActions = {
   startDownloadAllLogs,
   startSensorBlink,
+  blinkSensor,
   startSensorScan,
   stopSensorScan,
 };
