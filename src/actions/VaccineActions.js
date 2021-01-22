@@ -89,8 +89,6 @@ const downloadLogsFromSensor = sensor => async () => {
       mostRecentLogTime
     );
 
-    console.log(temperatureLogs);
-
     await TemperatureLogManager().saveLogs(temperatureLogs);
   }
 
@@ -128,7 +126,7 @@ const withPermissions = async (dispatch, getState, func) => {
 
 const blinkSensor = macAddress => async dispatch => {
   dispatch(blinkStart(macAddress));
-  BleService().blinkWithRetries(macAddress, VACCINE_CONSTANTS.MAX_BLUETOOTH_COMMAND_ATTEMPTS);
+  await BleService().blinkWithRetries(macAddress, VACCINE_CONSTANTS.MAX_BLUETOOTH_COMMAND_ATTEMPTS);
   dispatch(blinkStop(macAddress));
 };
 
