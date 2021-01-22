@@ -16,20 +16,20 @@ export const VACCINE_ACTIONS = {
   SCAN_START: 'Vaccine/sensorScanStart',
   SCAN_STOP: 'Vaccine/sensorScanStop',
   SENSOR_FOUND: 'Vaccine/sensorFound',
-  SET_LOG_FREQUENCY_ERROR: 'Vaccine/setLogFrequencyError',
-  SET_LOG_FREQUENCY_START: 'Vaccine/setLogFrequencyStart',
-  SET_LOG_FREQUENCY_SUCCESS: 'Vaccine/setLogFrequencySuccess',
+  SET_LOG_INTERVAL_ERROR: 'Vaccine/setLogIntervalError',
+  SET_LOG_INTERVAL_START: 'Vaccine/setLogIntervalStart',
+  SET_LOG_INTERVAL_SUCCESS: 'Vaccine/setLogIntervalSuccess',
 };
 
 const scanStart = () => ({ type: VACCINE_ACTIONS.SCAN_START });
 const scanStop = () => ({ type: VACCINE_ACTIONS.SCAN_STOP });
 const sensorFound = macAddress => ({ type: VACCINE_ACTIONS.SENSOR_FOUND, payload: { macAddress } });
-const setLogFrequencyStart = macAddress => ({
-  type: VACCINE_ACTIONS.SET_LOG_FREQUENCY_START,
+const setLogIntervalStart = macAddress => ({
+  type: VACCINE_ACTIONS.SET_LOG_INTERVAL_START,
   payload: { macAddress },
 });
-const setLogFrequencySuccess = () => ({ type: VACCINE_ACTIONS.SET_LOG_FREQUENCY_SUCCESS });
-const setLogFrequencyError = () => ({ type: VACCINE_ACTIONS.SET_LOG_FREQUENCY_ERROR });
+const setLogIntervalSuccess = () => ({ type: VACCINE_ACTIONS.SET_LOG_INTERVAL_SUCCESS });
+const setLogIntervalError = () => ({ type: VACCINE_ACTIONS.SET_LOG_INTERVAL_ERROR });
 
 /**
  * Helper wrapper which will check permissions for
@@ -84,15 +84,15 @@ const scanForSensors = (dispatch, state) => {
   BleService().scanForSensors(deviceCallback);
 };
 
-const setLogFrequency = (macAddress, frequency) => async dispatch => {
+const setLogInterval = (macAddress, interval) => async dispatch => {
   let ok = false;
-  let error = `Sensor response was not equal to 'Interval: ${frequency}s'`;
+  let error = `Sensor response was not equal to 'Interval: ${interval}s'`;
 
-  dispatch(setLogFrequencyStart(macAddress));
+  dispatch(setLogIntervalStart(macAddress));
 
   try {
-    const result = await BleService().updateLogIntervalWithRetries(macAddress, frequency, 3, error);
-    const regex = new RegExp(`Interval: ${frequency}s`); // TODO: update with sensor specific response as needed
+    const result = await BleService().updateLogIntervalWithRetries(macAddress, interval, 3, error);
+    const regex = new RegExp(`Interval: ${interval}s`); // TODO: update with sensor specific response as needed
     ok = regex.test(result);
   } catch (e) {
     error = e;
@@ -100,14 +100,14 @@ const setLogFrequency = (macAddress, frequency) => async dispatch => {
   }
 
   if (ok) {
-    dispatch(setLogFrequencySuccess());
+    dispatch(setLogIntervalSuccess());
     ToastAndroid.show(
-      vaccineStrings.formatString(vaccineStrings.log_frequency_set, frequency),
+      vaccineStrings.formatString(vaccineStrings.log_interval_set, interval),
       ToastAndroid.LONG
     );
   } else {
     ToastAndroid.show(vaccineStrings.E_COMMAND_FAILED, ToastAndroid.LONG);
-    dispatch(setLogFrequencyError(error));
+    dispatch(setLogIntervalError(error));
   }
 
   return ok;
@@ -128,14 +128,14 @@ const stopSensorScan = () => dispatch => {
   BleService().stopScan();
 };
 
-const startSetLogFrequency = ({ macAddress, frequency = 300 }) => async (dispatch, getState) => {
-  const success = await withPermissions(dispatch, getState, setLogFrequency(macAddress, frequency));
+const startSetLogInterval = ({ macAddress, interval = 300 }) => async (dispatch, getState) => {
+  const success = await withPermissions(dispatch, getState, setLogInterval(macAddress, interval));
   return success;
 };
 
 export const VaccineActions = {
   startSensorBlink,
   startSensorScan,
-  startSetLogFrequency,
+  startSetLogInterval,
   stopSensorScan,
 };
