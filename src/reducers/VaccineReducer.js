@@ -26,6 +26,10 @@ export const VaccineReducer = (state = initialState(), action) => {
       return { ...state, isSyncingTemps: true };
     }
 
+    case VACCINE_ACTIONS.DOWNLOAD_LOGS_ERROR: {
+      return { ...state, isSyncingTemps: false };
+    }
+
     case VACCINE_ACTIONS.DOWNLOAD_LOGS_COMPLETE: {
       return { ...state, isSyncingTemps: false };
     }
