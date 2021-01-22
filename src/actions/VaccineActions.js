@@ -86,13 +86,13 @@ const scanForSensors = (dispatch, state) => {
 
 const setLogFrequency = (macAddress, frequency) => async dispatch => {
   let ok = false;
-  let error = '';
+  let error = `Sensor response was not equal to 'Interval: ${frequency}s'`;
 
   dispatch(setLogFrequencyStart(macAddress));
 
   try {
     const result = await BleService().updateLogIntervalWithRetries(macAddress, frequency, 3, error);
-    const regex = new RegExp(`Interval: ${frequency}s`);
+    const regex = new RegExp(`Interval: ${frequency}s`); // TODO: update with sensor specific response as needed
     ok = regex.test(result);
   } catch (e) {
     error = e;
