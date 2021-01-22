@@ -48,8 +48,11 @@ const downloadAllLogs = () => async dispatch => {
   // Ensure there are some sensors which have been assigned a location before syncing.
   const sensors = UIDatabase.objects('Sensor').filtered('location != null && isActive == true');
 
-  // TODO: Should we do something if there are errors?
-  dispatch(downloadLogsError());
+  if (!sensors.length) {
+    // TODO: Should we do something if there are errors?
+    dispatch(downloadLogsError());
+    return null;
+  }
 
   sensors.forEach(async sensor => {
     await dispatch(downloadLogsFromSensor(sensor));
