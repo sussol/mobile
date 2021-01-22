@@ -130,7 +130,7 @@ export class Requisition extends Realm.Object {
    * @return  {number}
    */
   get monthsToSupply() {
-    return Math.ceil(this.daysToSupply / NUMBER_OF_DAYS_IN_A_MONTH);
+    return Math.floor(this.daysToSupply / NUMBER_OF_DAYS_IN_A_MONTH);
   }
 
   /**
