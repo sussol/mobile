@@ -8,29 +8,28 @@ import { BreachConfigRow } from './BreachConfigRow';
 import { PaperSection, FlexRow, PageButton, Spacer } from '../../widgets';
 
 import { SUSSOL_ORANGE, WHITE } from '../../globalStyles';
-import { vaccineStrings } from '../../localization';
+import { buttonStrings, vaccineStrings } from '../../localization';
 import { WizardActions } from '../../actions/WizardActions';
 import { goBack } from '../../navigation/actions';
 
 export const NewSensorStepTwoComponent = ({ nextTab, previousTab, exit }) => (
   <TabContainer>
     <PaperSection height={320} headerText={vaccineStrings.new_sensor_step_two_title}>
-      <View style={{ height: 280 }}>
-        <BreachConfigRow type="HOT_CONSECUTIVE" />
-        <BreachConfigRow type="COLD_CONSECUTIVE" />
-        <BreachConfigRow type="HOT_CUMULATIVE" />
-        <BreachConfigRow type="COLD_CUMULATIVE" />
-      </View>
+      <BreachConfigRow type="HOT_CONSECUTIVE" />
+      <BreachConfigRow type="COLD_CONSECUTIVE" />
+      <BreachConfigRow type="HOT_CUMULATIVE" />
+      <BreachConfigRow type="COLD_CUMULATIVE" />
     </PaperSection>
+
     <FlexRow flex={1} justifyContent="flex-end" alignItems="flex-end">
       <View style={{ marginRight: 'auto' }}>
-        <PageButton text="BACK" onPress={previousTab} />
+        <PageButton text={buttonStrings.back} onPress={previousTab} />
       </View>
 
-      <PageButton text="CANCEL" onPress={exit} />
+      <PageButton text={buttonStrings.cancel} onPress={exit} />
       <Spacer space={20} />
       <PageButton
-        text="NEXT"
+        text={buttonStrings.next}
         style={{ backgroundColor: SUSSOL_ORANGE }}
         textStyle={{ color: WHITE }}
         onPress={nextTab}
