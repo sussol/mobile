@@ -32,6 +32,7 @@ const downloadLogsStart = () => ({
   type: VACCINE_ACTIONS.DOWNLOAD_LOGS_START,
 });
 // const downloadLogsError = () => ({ type: VACCINE_ACTIONS.DOWNLOAD_LOGS_ERROR });
+
 const downloadLogsComplete = macAddress => ({
   type: VACCINE_ACTIONS.DOWNLOAD_LOGS_COMPLETE,
   payload: { macAddress },
@@ -86,6 +87,8 @@ const downloadLogsFromSensor = sensor => async () => {
       numberOfLogsToSave,
       mostRecentLogTime
     );
+
+    console.log(temperatureLogs);
     await TemperatureLogManager().saveLogs(temperatureLogs);
   }
 
@@ -125,7 +128,7 @@ const withPermissions = async (dispatch, getState, func) => {
 };
 
 const blinkSensor = macAddress => () => {
-  BleService().blinkWithRetries(macAddress, 3);
+  BleService().blinkWithRetries(macAddress, VACCINE_CONSTANTS.MAX_BLUETOOTH_COMMAND_ATTEMPTS);
 };
 
 const scanForSensors = (dispatch, state) => {
@@ -147,6 +150,11 @@ const scanForSensors = (dispatch, state) => {
   BleService().scanForSensors(deviceCallback);
 };
 
+const startDownloadAllLogs = macAddress => async (dispatch, getState) => {
+  await withPermissions(dispatch, getState, downloadAllLogs(macAddress));
+  return null;
+};
+
 const startSensorBlink = macAddress => async (dispatch, getState) => {
   await withPermissions(dispatch, getState, blinkSensor(macAddress));
   return null;
@@ -163,7 +171,7 @@ const stopSensorScan = () => dispatch => {
 };
 
 export const VaccineActions = {
-  downloadAllLogs,
+  startDownloadAllLogs,
   startSensorBlink,
   startSensorScan,
   stopSensorScan,
