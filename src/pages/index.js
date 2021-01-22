@@ -28,4 +28,4 @@ export { VaccineAdminPage } from './VaccineAdminPage';
 export { NewVaccineModulePage } from './NewVaccineModulePage';
 export { FridgeDetailPage } from './FridgeDetailPage';
 export { SensorEditPage } from './SensorEditPage';
-export { NewSensorPage } from './NewSensorPage';
+export { NewSensorPage } from './NewSensor/NewSensorPage';

@@ -81,10 +81,10 @@ export class BreachManager {
     return [!!configToCreateBreachFrom, configToCreateBreachFrom];
   };
 
-  addLogToBreach = (breach, log) => {
-    const { id: temperatureBreachId } = breach;
-    return { ...log, temperatureBreachId };
-  };
+  // Previously used object spread, but https://github.com/realm/realm-js/issues/2844
+  // Fortunately the `temperatureLog` array only needs the log.id and the breach.id
+  // it's being assigned
+  addLogToBreach = (breach, log) => ({ id: log.id, breach });
 
   willContinueBreach = (breach, log) => {
     if (!breach) return false;
@@ -157,9 +157,7 @@ export class BreachManager {
   };
 
   updateBreaches = async (breaches, temperatureLogs) => {
-    // eslint-disable-next-line no-param-reassign
-
-    const updatedBreaches = this.db.upsertBreaches(breaches);
+    const updatedBreaches = await this.db.upsertBreaches(breaches);
     const updatedLogs = await this.db.upsertTemperatureLog(temperatureLogs);
 
     return [updatedBreaches, updatedLogs];

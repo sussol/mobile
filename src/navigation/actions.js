@@ -546,33 +546,12 @@ export const updateStocktake = (stocktake, itemIds, name = '') => dispatch => {
 };
 
 export const gotoNewVaccineModulePage = () =>
-  NavigationActions.navigate({
-    routeName: ROUTES.VACCINES_NEW,
-    params: {
-      title: navStrings.current_stock,
-    },
-  });
+  NavigationActions.navigate({ routeName: ROUTES.VACCINES_NEW });
 
 export const gotoFridgeDetailPage = () =>
-  NavigationActions.navigate({
-    routeName: ROUTES.FRIDGE_DETAIL,
-    params: {
-      title: navStrings.current_stock,
-    },
-  });
+  NavigationActions.navigate({ routeName: ROUTES.FRIDGE_DETAIL });
 
-export const gotoNewSensorPage = () =>
-  NavigationActions.navigate({
-    routeName: ROUTES.SENSOR_NEW,
-    params: {
-      title: navStrings.current_stock,
-    },
-  });
+export const gotoNewSensorPage = () => NavigationActions.navigate({ routeName: ROUTES.SENSOR_NEW });
 
 export const gotoEditSensorPage = () =>
-  NavigationActions.navigate({
-    routeName: ROUTES.SENSOR_EDIT,
-    params: {
-      title: navStrings.current_stock,
-    },
-  });
+  NavigationActions.navigate({ routeName: ROUTES.SENSOR_EDIT });

@@ -19,8 +19,6 @@ import globalStyles from '../globalStyles/index';
  * @prop {Func} onPressOut  onPressOut callback.
  * @prop {Boolean} containerStyle  override default styles.
  * @prop {Boolean} isDisabled  When true, no action on press. Disabled styling too.
- * @prop {String} color  Color for the icon component
- * @prop {String} size  Use size preset. "small", "medium", "large" or xlarge.
  * @prop {String} label Button label text to right of icon
  */
 export const IconButton = ({
@@ -31,8 +29,10 @@ export const IconButton = ({
   containerStyle,
   isDisabled,
   label,
+  labelStyle,
+  right,
 }) => {
-  const labelStyle = [localStyles.label, globalStyles.authWindowButtonText];
+  const internalLabelStyle = [localStyles.label, globalStyles.authWindowButtonText, labelStyle];
   const buttonContainerStyle = [localStyles.buttonContainer, containerStyle];
   const Container = isDisabled ? View : TouchableHighlight;
 
@@ -43,8 +43,9 @@ export const IconButton = ({
       onPress={onPress}
       style={buttonContainerStyle}
     >
-      {Icon}
-      {label && <Text style={labelStyle}>{label}</Text>}
+      {!right && Icon}
+      {label && <Text style={internalLabelStyle}>{label}</Text>}
+      {right && Icon}
     </Container>
   );
 };
@@ -56,9 +57,12 @@ IconButton.defaultProps = {
   containerStyle: null,
   isDisabled: false,
   label: null,
+  labelStyle: {},
+  right: false,
 };
 
 IconButton.propTypes = {
+  labelStyle: PropTypes.object,
   Icon: PropTypes.node.isRequired,
   onPress: PropTypes.func,
   onPressIn: PropTypes.func,
@@ -66,6 +70,7 @@ IconButton.propTypes = {
   containerStyle: PropTypes.object,
   isDisabled: PropTypes.bool,
   label: PropTypes.string,
+  right: PropTypes.bool,
 };
 
 const localStyles = StyleSheet.create({

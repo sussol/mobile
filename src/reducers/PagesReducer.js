@@ -25,7 +25,7 @@ export const PagesReducer = (state = {}, action) => {
     case 'Navigation/REPLACE':
     case 'Navigation/NAVIGATE': {
       const { routeName, params } = action;
-      const { pageObject } = params;
+      const { pageObject } = params ?? {};
 
       const pageInitialiser = getPageInitialiser(routeName);
       const pageInitialState = pageInitialiser(pageObject);

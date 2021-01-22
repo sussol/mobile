@@ -115,10 +115,7 @@ const createInsurancePolicy = (database, policyDetails) => {
 
   const id = policyId ?? generateUUID();
   const expiryDate =
-    policyExpiryDate ??
-    moment(new Date())
-      .add(insuranceProvider.validityDays, 'days')
-      .toDate();
+    policyExpiryDate ?? moment(new Date()).add(insuranceProvider.validityDays, 'days').toDate();
 
   const isActive = policyIsActive ?? true;
 
