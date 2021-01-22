@@ -173,13 +173,13 @@ const editQuantity = (id, quantity) => (dispatch, getState) => {
 const assignPrescriber = prescriber => (dispatch, getState) => {
   const { prescription } = getState();
   const { transaction } = prescription;
-
-  UIDatabase.write(() =>
+  UIDatabase.write(() => {
     UIDatabase.update('Transaction', {
-      ...transaction,
+      // Previously used spread, but Realm.Objects don't like being spread it turns out. Issue#3323
+      id: transaction.id,
       prescriber,
-    })
-  );
+    });
+  });
 
   batch(() => {
     dispatch(PrescriberActions.setPrescriber(prescriber));
