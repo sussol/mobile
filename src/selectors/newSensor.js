@@ -50,7 +50,6 @@ export const selectConfigTemperatureThresholds = state => {
     COLD_CUMULATIVE: coldCumulativeConfigTempThreshold,
     HOT_CUMULATIVE: hotCumulativeConfigTempThreshold,
     COLD_CONSECUTIVE: coldConsecutiveConfigTempThreshold,
-
     HOT_CONSECUTIVE: hotConsecutiveConfigTempThreshold,
   };
 };

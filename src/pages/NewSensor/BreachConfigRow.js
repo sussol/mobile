@@ -49,6 +49,7 @@ const stateToProps = (state, props) => {
 
   return { duration, temperature, threshold: thresholds[type] };
 };
+
 const dispatchToProps = (dispatch, props) => {
   const { type } = props;
 

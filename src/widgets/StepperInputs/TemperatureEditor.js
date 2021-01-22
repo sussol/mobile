@@ -8,7 +8,7 @@ import { TextInputWithAffix } from '../TextInputs';
 import { Incrementor } from './Incrementor';
 
 import { APP_FONT_FAMILY, DARKER_GREY } from '../../globalStyles';
-import { generalStrings } from '../../localization';
+import { vaccineStrings, generalStrings } from '../../localization';
 import { FlexColumn } from '../FlexColumn';
 import temperature from '../../utilities/temperature';
 
@@ -51,7 +51,9 @@ export const TemperatureEditor = ({
             SuffixComponent={
               <FlexColumn style={{ marginTop: 12 }}>
                 <Text style={suffixTextStyle}>{`${'\u00B0'}Celsius`}</Text>
-                <Text style={{ fontSize: 10 }}> and below</Text>
+                <Text style={{ fontSize: 10 }}>
+                  {above ? vaccineStrings.and_above : vaccineStrings.and_below}
+                </Text>
               </FlexColumn>
             }
             style={textInputStyle}
