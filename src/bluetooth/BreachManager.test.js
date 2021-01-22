@@ -145,12 +145,12 @@ describe('BreachManager: addLogToBreach', () => {
     const utils = { createUuid: () => '1' };
     const breachManager = new BreachManager(dbService, utils);
 
-    const log = { timestamp: 0, temperature: 10 };
+    const log = { id: 'a', timestamp: 0, temperature: 10 };
     const breach = { id: 'breach' };
 
     const resultLog = breachManager.addLogToBreach(breach, log);
 
-    expect(resultLog).toEqual({ timestamp: 0, temperature: 10, temperatureBreachId: 'breach' });
+    expect(resultLog).toEqual({ id: 'a', breach });
   });
 });
 
@@ -290,8 +290,8 @@ describe('BreachManager: createBreaches', () => {
     const dummyLocation = { id: 'ABC', description: 'DEF' };
     const sensor = { id: 'a', location: dummyLocation };
     const logs = [
-      { temperature: 10, timestamp: 0 },
-      { temperature: 10, timestamp: 1 },
+      { id: 'a', temperature: 10, timestamp: 0 },
+      { id: 'b', temperature: 10, timestamp: 1 },
     ];
     const configs = [{ id: 'a', duration: 1000, minimumTemperature: 8, maximumTemperature: 999 }];
     const utils = { createUuid: () => '1' };
@@ -312,8 +312,8 @@ describe('BreachManager: createBreaches', () => {
     ];
 
     const logsShouldBe = [
-      { temperature: 10, timestamp: 0, temperatureBreachId: '1' },
-      { temperature: 10, timestamp: 1, temperatureBreachId: '1' },
+      { id: 'a', breach: breachesShouldBe[0] },
+      { id: 'b', breach: breachesShouldBe[0] },
     ];
 
     await expect(breachManager.createBreaches(sensor, logs, configs)).toEqual([
@@ -325,11 +325,19 @@ describe('BreachManager: createBreaches', () => {
     const dummyLocation = { id: 'ABC', description: 'DEF' };
     const sensor = { id: 'a', location: dummyLocation };
     const logs = [
-      { temperature: 10, timestamp: 0 },
-      { temperature: 10, timestamp: 1 },
-      { temperature: 1, timestamp: 2 },
+      { id: 'a', temperature: 10, timestamp: 0 },
+      { id: 'b', temperature: 10, timestamp: 1 },
+      { id: 'c', temperature: 1, timestamp: 2 },
     ];
-    const configs = [{ id: 'a', duration: 1000, minimumTemperature: 8, maximumTemperature: 999 }];
+    const configs = [
+      {
+        id: 'a',
+        duration: 1000,
+        minimumTemperature: 8,
+        maximumTemperature: 999,
+        type: 'HOT_CONSECUTIVE',
+      },
+    ];
 
     const utils = { createUuid: () => '1' };
     const breachManager = new BreachManager({}, utils);
@@ -344,12 +352,13 @@ describe('BreachManager: createBreaches', () => {
         startTimestamp: 0,
         endTimestamp: 2,
         location: dummyLocation,
+        type: 'HOT_CONSECUTIVE',
       },
     ];
 
     const logsShouldBe = [
-      { temperature: 10, timestamp: 0, temperatureBreachId: '1' },
-      { temperature: 10, timestamp: 1, temperatureBreachId: '1' },
+      { id: 'a', breach: breachesShouldBe[0] },
+      { id: 'b', breach: breachesShouldBe[0] },
     ];
 
     await expect(breachManager.createBreaches(sensor, logs, configs)).toEqual([
@@ -361,13 +370,21 @@ describe('BreachManager: createBreaches', () => {
     const dummyLocation = { id: 'ABC', description: 'DEF' };
     const sensor = { id: 'a', location: dummyLocation };
     const logs = [
-      { temperature: 10, timestamp: 0 },
-      { temperature: 10, timestamp: 1 },
-      { temperature: 1, timestamp: 2 },
-      { temperature: 10, timestamp: 3 },
-      { temperature: 10, timestamp: 4 },
+      { id: 'a', temperature: 10, timestamp: 0 },
+      { id: 'b', temperature: 10, timestamp: 1 },
+      { id: 'c', temperature: 1, timestamp: 2 },
+      { id: 'd', temperature: 10, timestamp: 3 },
+      { id: 'e', temperature: 10, timestamp: 4 },
     ];
-    const configs = [{ id: 'a', duration: 1000, minimumTemperature: 8, maximumTemperature: 999 }];
+    const configs = [
+      {
+        id: 'a',
+        duration: 1000,
+        minimumTemperature: 8,
+        maximumTemperature: 999,
+        type: 'HOT_CONSECUTIVE',
+      },
+    ];
     const mockDbService = {};
     const utils = { createUuid: () => '1' };
     const breachManager = new BreachManager(mockDbService, utils);
@@ -382,6 +399,7 @@ describe('BreachManager: createBreaches', () => {
         thresholdDuration: 1000,
         endTimestamp: 2,
         location: dummyLocation,
+        type: 'HOT_CONSECUTIVE',
       },
       {
         id: '1',
@@ -392,14 +410,15 @@ describe('BreachManager: createBreaches', () => {
         thresholdDuration: 1000,
         endTimestamp: undefined,
         location: dummyLocation,
+        type: 'HOT_CONSECUTIVE',
       },
     ];
 
     const logsShouldBe = [
-      { temperature: 10, timestamp: 0, temperatureBreachId: '1' },
-      { temperature: 10, timestamp: 1, temperatureBreachId: '1' },
-      { temperature: 10, timestamp: 3, temperatureBreachId: '1' },
-      { temperature: 10, timestamp: 4, temperatureBreachId: '1' },
+      { id: 'a', breach: breachesShouldBe[0] },
+      { id: 'b', breach: breachesShouldBe[0] },
+      { id: 'd', breach: breachesShouldBe[1] },
+      { id: 'e', breach: breachesShouldBe[1] },
     ];
 
     await expect(breachManager.createBreaches(sensor, logs, configs)).toEqual([

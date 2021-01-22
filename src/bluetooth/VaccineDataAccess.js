@@ -46,13 +46,15 @@ export class VaccineDataAccess {
 
   upsertBreaches = breaches =>
     this.db.write(() => {
-      this.db.update(VACCINE_ENTITIES.TEMPERATURE_BREACH, breaches);
+      breaches.forEach(breach => {
+        this.db.update(VACCINE_ENTITIES.TEMPERATURE_BREACH, breach);
+      });
     });
 
   upsertTemperatureLog = temperatureLogs =>
     this.db.write(() => {
-      temperatureLogs.forEach(temperatureLog =>
-        this.db.update(VACCINE_ENTITIES.TEMPERATURE_LOG, temperatureLog)
-      );
+      temperatureLogs.forEach(log => {
+        this.db.update(VACCINE_ENTITIES.TEMPERATURE_LOG, log);
+      });
     });
 }
