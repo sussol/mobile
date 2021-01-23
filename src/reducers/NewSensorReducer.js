@@ -33,8 +33,13 @@ export const NewSensorReducer = (state = initialState(), action) => {
       const { configField, configType, value } = payload;
 
       const oldConfig = state[configType];
-      const newConfig = { ...oldConfig, [configField]: value };
 
+      if (configField === 'duration') {
+        const newConfig = { ...oldConfig, [configField]: value * 60 };
+        return { ...state, [configType]: newConfig };
+      }
+
+      const newConfig = { ...oldConfig, [configField]: value };
       return { ...state, [configType]: newConfig };
     }
 
