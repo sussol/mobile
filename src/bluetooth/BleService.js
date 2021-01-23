@@ -29,6 +29,10 @@ class BleService {
     this.manager = manager;
   }
 
+  setManager = manager => {
+    this.manager = manager;
+  };
+
   /**
    * Connects to a device with the provided macAddress.
    *
@@ -371,10 +375,6 @@ let BleServiceInstance;
 
 export const getBleServiceInstance = manager => {
   if (!BleServiceInstance) {
-    BleServiceInstance = new BleService(manager);
-  }
-
-  if (manager) {
     BleServiceInstance = new BleService(manager);
   }
 
