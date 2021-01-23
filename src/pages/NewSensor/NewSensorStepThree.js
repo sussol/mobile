@@ -29,6 +29,7 @@ import { NewSensorActions } from '../../actions/index';
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 import { DARKER_GREY, LIGHT_GREY, SUSSOL_ORANGE, WHITE } from '../../globalStyles';
 import { buttonStrings, vaccineStrings } from '../../localization';
+import { SECONDS } from '../../utilities/constants';
 
 export const NewSensorStepThreeComponent = ({
   logInterval,
@@ -57,7 +58,11 @@ export const NewSensorStepThreeComponent = ({
             label={vaccineStrings.logging_interval}
             Icon={<InfoIcon color={DARKER_GREY} />}
           >
-            <DurationEditor value={logInterval} label="" onChange={updateLogInterval} />
+            <DurationEditor
+              value={logInterval / SECONDS.ONE_MINUTE}
+              label=""
+              onChange={updateLogInterval}
+            />
           </EditorRow>
         </PaperSection>
       </WithSpace>

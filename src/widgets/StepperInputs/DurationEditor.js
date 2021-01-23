@@ -6,8 +6,11 @@ import { Text } from 'react-native';
 
 import { TextInputWithAffix } from '../TextInputs';
 import { Incrementor } from './Incrementor';
+
 import { APP_FONT_FAMILY, DARKER_GREY } from '../../globalStyles';
 import { generalStrings } from '../../localization';
+import { VACCINE_CONSTANTS } from '../../utilities/modules/vaccines';
+import { SECONDS } from '../../utilities/constants';
 
 const keepInRange = (num, min, max) => {
   const temp = Math.min(num, max);
@@ -21,11 +24,13 @@ export const DurationEditor = ({
   textInputStyle,
   suffixTextStyle,
   stepAmount,
+  maxValue,
+  minValue,
 }) => {
-  const formatted = String(keepInRange(value, 1, 999));
+  const formatted = String(keepInRange(value, minValue, maxValue));
 
-  const onIncrement = () => onChange(keepInRange(value + stepAmount, 1, 999));
-  const onDecrement = () => onChange(keepInRange(value - stepAmount, 1, 999));
+  const onIncrement = () => onChange(keepInRange(value + stepAmount, minValue, maxValue));
+  const onDecrement = () => onChange(keepInRange(value - stepAmount, minValue, maxValue));
 
   return (
     <>
@@ -55,10 +60,14 @@ DurationEditor.defaultProps = {
     fontFamily: APP_FONT_FAMILY,
   },
   suffixTextStyle: { color: DARKER_GREY, fontFamily: APP_FONT_FAMILY, fontSize: 12, width: 50 },
-  stepAmount: 1,
+  stepAmount: 60,
+  maxValue: SECONDS.ONE_MINUTE * VACCINE_CONSTANTS.MAX_LOGGING_INTERVAL_MINUTES, // 99 * 60
+  minValue: SECONDS.ONE_MINUTE * VACCINE_CONSTANTS.MIN_LOGGING_INTERVAL_MINUTES, // 1 * 60
 };
 
 DurationEditor.propTypes = {
+  maxValue: PropTypes.number,
+  minValue: PropTypes.number,
   label: PropTypes.string,
   textInputStyle: PropTypes.object,
   suffixTextStyle: PropTypes.object,
