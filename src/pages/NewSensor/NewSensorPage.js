@@ -1,19 +1,15 @@
 import React from 'react';
-import { View } from 'react-native';
 
 import { Wizard } from '../../widgets';
 
 import { NewSensorStepOne } from './NewSensorStepOne';
+import { NewSensorStepThree } from './NewSensorStepThree';
 import { NewSensorStepTwo } from './NewSensorStepTwo';
-
-const TabThree = () => (
-  <View style={{ backgroundColor: 'blue', flex: 1, width: 500, height: 500 }} />
-);
 
 const tabs = [
   { component: NewSensorStepOne, name: 'newSensorStepOne', title: '' },
   { component: NewSensorStepTwo, name: 'newSensorStepTwo', title: '' },
-  { component: TabThree, name: 'prescription', title: '' },
+  { component: NewSensorStepThree, name: 'newSensorStepThree', title: '' },
 ];
 
 export const NewSensorPage = () => (
