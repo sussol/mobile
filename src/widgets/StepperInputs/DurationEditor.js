@@ -10,7 +10,6 @@ import { Incrementor } from './Incrementor';
 import { APP_FONT_FAMILY, DARKER_GREY } from '../../globalStyles';
 import { generalStrings } from '../../localization';
 import { VACCINE_CONSTANTS } from '../../utilities/modules/vaccines';
-import { SECONDS } from '../../utilities/constants';
 
 const keepInRange = (num, min, max) => {
   const temp = Math.min(num, max);
@@ -61,8 +60,8 @@ DurationEditor.defaultProps = {
   },
   suffixTextStyle: { color: DARKER_GREY, fontFamily: APP_FONT_FAMILY, fontSize: 12, width: 50 },
   stepAmount: 60,
-  maxValue: SECONDS.ONE_MINUTE * VACCINE_CONSTANTS.MAX_LOGGING_INTERVAL_MINUTES, // 99 * 60
-  minValue: SECONDS.ONE_MINUTE * VACCINE_CONSTANTS.MIN_LOGGING_INTERVAL_MINUTES, // 1 * 60
+  maxValue: VACCINE_CONSTANTS.MAX_LOGGING_INTERVAL_MINUTES, // 99
+  minValue: VACCINE_CONSTANTS.MIN_LOGGING_INTERVAL_MINUTES, // 1
 };
 
 DurationEditor.propTypes = {
