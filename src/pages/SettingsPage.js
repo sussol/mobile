@@ -280,6 +280,12 @@ const Settings = ({
           <MenuButton text="New vaccine module" onPress={toNewVaccineModulePage} />
           <MenuButton text="New Sensor" onPress={toNewSensorPage} />
           <MenuButton text="Generate vaccine data" onPress={createVaccineData} />
+          {UIDatabase.objects('Sensor').map(sensor => (
+            <MenuButton
+              text={sensor.name || sensor.macAddress}
+              onPress={() => toEditSensorPage(sensor)}
+            />
+          ))}
         </View>
       </View>
 
