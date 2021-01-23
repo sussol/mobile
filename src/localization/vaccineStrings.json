@@ -38,7 +38,8 @@
     "E_CANT_SCAN": "Problem when initiating a BLE scan",
     "E_BLUETOOTH_DISABLED": "Problem enabling the bluetooth adapter",
     "E_BLUETOOTH_ADAPTER": "Problem accessing the bluetooth adapter",
-    "E_BLUETOOTH_DENIED": "Denied access to the bluetooth adapter"
+    "E_BLUETOOTH_DENIED": "Denied access to the bluetooth adapter",
+    "log_interval_set": "Log interval updated to {0}s"
   },
   "fr": {},
   "gil": {},
