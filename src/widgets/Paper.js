@@ -10,7 +10,7 @@ export const Paper = ({ width, height, style, children }) => {
   // let the axis which isn't passed flex. Plain width or height properties
   // sometimes act as suggestions when the container is flexing so use
   // max/min properties.
-  const internalContainerStyle = { ...style };
+  const internalContainerStyle = { ...defaultStyle, ...style };
   if (width) {
     internalContainerStyle.maxWidth = width;
     internalContainerStyle.minWidth = width;
@@ -23,16 +23,18 @@ export const Paper = ({ width, height, style, children }) => {
   return <View style={internalContainerStyle}>{children}</View>;
 };
 
+const defaultStyle = {
+  backgroundColor: WHITE,
+  elevation: 2,
+  borderRadius: 4,
+  display: 'flex',
+  flex: 1,
+};
+
 Paper.defaultProps = {
   width: 0,
   height: 0,
-  style: {
-    backgroundColor: WHITE,
-    elevation: 2,
-    borderRadius: 4,
-    display: 'flex',
-    flex: 1,
-  },
+  style: { paddingHorizontal: 20 },
   children: null,
 };
 
