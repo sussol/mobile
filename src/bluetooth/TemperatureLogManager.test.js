@@ -1,4 +1,5 @@
 import TemperatureLogManager from './TemperatureLogManager';
+import { MILLISECONDS } from '../utilities/constants';
 
 describe('DownloadManager: calculateNumberOfLogsToSave', () => {
   it('Calculates correctly when the next possible log time is less than the time now', () => {
@@ -96,7 +97,6 @@ describe('DownloadManager: createLogs', () => {
     // a log for anytime past 600, so we assume any excess logs are passed records which have been
     // saved previously and just save the two 'most recent'.
     const sensor = { id: 'a', logInterval: 300 };
-    const MILLISECONDS_PER_SECOND = 1000;
     const maxNumberToSave = 3;
     const mostRecentLogTime = null;
     const timeNow = 600;
@@ -106,21 +106,21 @@ describe('DownloadManager: createLogs', () => {
       {
         id: '1',
         temperature: 10,
-        timestamp: new Date(0 * MILLISECONDS_PER_SECOND),
+        timestamp: new Date(0 * MILLISECONDS.ONE_SECOND),
         sensor,
         logInterval: 300,
       },
       {
         id: '1',
         temperature: 10,
-        timestamp: new Date(300 * MILLISECONDS_PER_SECOND),
+        timestamp: new Date(300 * MILLISECONDS.ONE_SECOND),
         sensor,
         logInterval: 300,
       },
       {
         id: '1',
         temperature: 10,
-        timestamp: new Date(600 * MILLISECONDS_PER_SECOND),
+        timestamp: new Date(600 * MILLISECONDS.ONE_SECOND),
         sensor,
         logInterval: 300,
       },
@@ -136,7 +136,6 @@ describe('DownloadManager: createLogs', () => {
     const downloadManager = new TemperatureLogManager(dbService, utils);
 
     const sensor = { id: 'a', logInterval: 300 };
-    const MILLISECONDS_PER_SECOND = 1000;
     const maxNumberToSave = 1;
     const mostRecentLogTime = 1;
     const timeNow = 600;
@@ -149,7 +148,7 @@ describe('DownloadManager: createLogs', () => {
       {
         id: '1',
         temperature: 12,
-        timestamp: new Date(301 * MILLISECONDS_PER_SECOND),
+        timestamp: new Date(301 * MILLISECONDS.ONE_SECOND),
         sensor,
         logInterval: 300,
       },
@@ -165,7 +164,6 @@ describe('DownloadManager: createLogs', () => {
     const downloadManager = new TemperatureLogManager(dbService, utils);
 
     const sensor = { id: 'a', logInterval: 300 };
-    const MILLISECONDS_PER_SECOND = 1000;
     const maxNumberToSave = 1;
     const mostRecentLogTime = 0;
     const timeNow = 600;
@@ -175,7 +173,7 @@ describe('DownloadManager: createLogs', () => {
       {
         id: '1',
         temperature: 10,
-        timestamp: new Date(300 * MILLISECONDS_PER_SECOND),
+        timestamp: new Date(300 * MILLISECONDS.ONE_SECOND),
         sensor,
         logInterval: 300,
       },
