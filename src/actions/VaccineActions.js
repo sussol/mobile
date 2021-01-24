@@ -54,10 +54,11 @@ const downloadAllLogs = () => async dispatch => {
     return null;
   }
 
-  sensors.forEach(async sensor => {
-    await dispatch(downloadLogsFromSensor(sensor));
-  });
-
+  for (let i = 0; i < sensors.length; i++) {
+    // Intentionally sequential
+    // eslint-disable-next-line no-await-in-loop
+    await dispatch(downloadLogsFromSensor(sensors[i]));
+  }
   dispatch(downloadLogsComplete());
   return null;
 };
