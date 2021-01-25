@@ -110,10 +110,10 @@ const dispatchToProps = dispatch => {
       if (saveSuccess) {
         dispatch(gotoSettings());
       } else {
-        ToastAndroid.show('Unable to connect to sensor', ToastAndroid.LONG);
+        ToastAndroid.show('Unable to save to database', ToastAndroid.LONG);
       }
     } else {
-      ToastAndroid.show('Unable to save to database', ToastAndroid.LONG);
+      ToastAndroid.show('Unable to connect to sensor', ToastAndroid.LONG);
     }
   };
 
