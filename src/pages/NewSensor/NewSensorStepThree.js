@@ -54,6 +54,7 @@ export const NewSensorStepThreeComponent = ({
             <TextEditor size="large" value={name} onChangeText={updateName} />
             <TextEditor label={vaccineStrings.sensor_code} value={code} onChangeText={updateCode} />
           </EditorRow>
+
           <EditorRow
             label={vaccineStrings.logging_interval}
             Icon={<InfoIcon color={DARKER_GREY} />}
@@ -73,16 +74,20 @@ export const NewSensorStepThreeComponent = ({
           <TimeEditor onPress={updateLoggingDelay} time={loggingDelay} />
         </EditorRow>
       </PaperSection>
+
       <TextWithIcon left size="s" Icon={<HazardIcon color={LIGHT_GREY} />}>
         {vaccineStrings.please_be_in_close_proximity}
       </TextWithIcon>
+
       <FlexRow flex={1} justifyContent="flex-end" alignItems="flex-end">
         <View style={{ marginRight: 'auto' }}>
           <PageButton text={buttonStrings.back} onPress={previousTab} />
         </View>
 
         <PageButton text={buttonStrings.cancel} onPress={exit} />
+
         <Spacer space={20} />
+
         <PageButton
           text={vaccineStrings.connect}
           style={{ backgroundColor: SUSSOL_ORANGE }}

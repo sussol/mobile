@@ -28,8 +28,8 @@ export const DurationEditor = ({
 }) => {
   const formatted = String(keepInRange(value, minValue, maxValue));
 
-  const onIncrement = () => onChange(keepInRange(value + stepAmount, minValue, maxValue));
-  const onDecrement = () => onChange(keepInRange(value - stepAmount, minValue, maxValue));
+  const onIncrement = () => onChange(value + stepAmount);
+  const onDecrement = () => onChange(value - stepAmount);
 
   return (
     <>
@@ -51,7 +51,7 @@ export const DurationEditor = ({
 };
 
 DurationEditor.defaultProps = {
-  label: 'Duration',
+  label: generalStrings.duration,
   textInputStyle: {
     color: DARKER_GREY,
     width: 40,
@@ -59,7 +59,7 @@ DurationEditor.defaultProps = {
     fontFamily: APP_FONT_FAMILY,
   },
   suffixTextStyle: { color: DARKER_GREY, fontFamily: APP_FONT_FAMILY, fontSize: 12, width: 50 },
-  stepAmount: 60,
+  stepAmount: 1,
   maxValue: VACCINE_CONSTANTS.MAX_LOGGING_INTERVAL_MINUTES, // 99
   minValue: VACCINE_CONSTANTS.MIN_LOGGING_INTERVAL_MINUTES, // 1
 };

@@ -31,6 +31,7 @@ export const IconButton = ({
   label,
   labelStyle,
   right,
+  hitSlop,
 }) => {
   const internalLabelStyle = [localStyles.label, globalStyles.authWindowButtonText, labelStyle];
   const buttonContainerStyle = [localStyles.buttonContainer, containerStyle];
@@ -41,6 +42,7 @@ export const IconButton = ({
       onPressIn={onPressIn}
       onPressOut={onPressOut}
       onPress={onPress}
+      hitSlop={hitSlop}
       style={buttonContainerStyle}
     >
       {!right && Icon}
@@ -59,9 +61,16 @@ IconButton.defaultProps = {
   label: null,
   labelStyle: {},
   right: false,
+  hitSlop: {},
 };
 
 IconButton.propTypes = {
+  hitSlop: PropTypes.shape({
+    bottom: PropTypes.number,
+    top: PropTypes.number,
+    left: PropTypes.number,
+    right: PropTypes.number,
+  }),
   labelStyle: PropTypes.object,
   Icon: PropTypes.node.isRequired,
   onPress: PropTypes.func,

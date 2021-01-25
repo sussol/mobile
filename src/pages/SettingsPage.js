@@ -17,6 +17,7 @@ import { SETTINGS_KEYS } from '../settings';
 import { MODAL_KEYS } from '../utilities';
 
 import {
+  gotoEditSensorPage,
   gotoNewSensorPage,
   gotoNewVaccineModulePage,
   gotoRealmExplorer,
@@ -49,6 +50,7 @@ const Settings = ({
   requestStorageWritePermission,
   toNewVaccineModulePage,
   toNewSensorPage,
+  toEditSensorPage,
 }) => {
   const [state, setState] = useState({
     syncURL: UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL),
@@ -281,6 +283,14 @@ const Settings = ({
           <MenuButton text="New Sensor" onPress={toNewSensorPage} />
           <MenuButton text="Generate vaccine data" onPress={createVaccineData} />
         </View>
+        <View>
+          {UIDatabase.objects('Sensor').map(sensor => (
+            <MenuButton
+              text={sensor.name || sensor.macAddress}
+              onPress={() => toEditSensorPage(sensor)}
+            />
+          ))}
+        </View>
       </View>
 
       <DataTablePageModal
@@ -297,6 +307,7 @@ const Settings = ({
 const mapStateToDispatch = dispatch => ({
   toNewVaccineModulePage: () => dispatch(gotoNewVaccineModulePage()),
   toRealmExplorer: () => dispatch(gotoRealmExplorer()),
+  toEditSensorPage: sensor => dispatch(gotoEditSensorPage(sensor)),
   toNewSensorPage: () => dispatch(gotoNewSensorPage()),
   requestStorageWritePermission: () =>
     dispatch(PermissionActions.requestWriteStorage()).then(exportData),
@@ -321,4 +332,5 @@ Settings.propTypes = {
   requestStorageWritePermission: PropTypes.func.isRequired,
   toNewVaccineModulePage: PropTypes.func.isRequired,
   toNewSensorPage: PropTypes.func.isRequired,
+  toEditSensorPage: PropTypes.func.isRequired,
 };
