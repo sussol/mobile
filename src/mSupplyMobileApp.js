@@ -49,10 +49,11 @@ import { TemperatureSync } from './widgets/modalChildren/TemperatureSync';
 import { RowDetail } from './widgets/RowDetail';
 import { PermissionActions } from './actions/PermissionActions';
 import BleService from './bluetooth/BleService';
+import TemperatureLogManager from './bluetooth/TemperatureLogManager';
 import { DevBleManager } from './bluetooth/DevBleManager';
 import { SensorManager } from './bluetooth/SensorManager';
 import { VaccineDataAccess } from './bluetooth/VaccineDataAccess';
-// import { UtilService } from './database/utilities/utilService';
+import { UtilService } from './database/utilities/utilService';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -97,7 +98,7 @@ class MSupplyMobileAppContainer extends React.Component {
       BluetoothStatus.addListener(requestBluetooth);
       dispatch(PermissionActions.checkPermissions());
 
-      this.initialiseBtService();
+      this.initialiseBtServices();
     }
 
     if (!__DEV__) {
@@ -119,7 +120,7 @@ class MSupplyMobileAppContainer extends React.Component {
     this.scheduler.clearAll();
   };
 
-  initialiseBtService = async () => {
+  initialiseBtServices = async () => {
     const isEmulator = await DeviceInfo.isEmulator();
     if (isEmulator) {
       console.log('Emulator detected - Init Dev BleManager');
@@ -128,6 +129,7 @@ class MSupplyMobileAppContainer extends React.Component {
       BleService();
     }
     SensorManager(new VaccineDataAccess(UIDatabase), new UtilService());
+    TemperatureLogManager(new VaccineDataAccess(UIDatabase), new UtilService());
   };
 
   onAppStateChange = nextAppState => {
