@@ -553,5 +553,5 @@ export const gotoFridgeDetailPage = fridge =>
 
 export const gotoNewSensorPage = () => NavigationActions.navigate({ routeName: ROUTES.SENSOR_NEW });
 
-export const gotoEditSensorPage = () =>
-  NavigationActions.navigate({ routeName: ROUTES.SENSOR_EDIT });
+export const gotoEditSensorPage = sensor =>
+  NavigationActions.navigate({ routeName: ROUTES.SENSOR_EDIT, params: { sensor } });

@@ -22,7 +22,7 @@ export const EditorRow = ({ children, label = '', Icon, containerStyle, labelSty
 };
 
 EditorRow.defaultProps = {
-  containerStyle: { maxHeight: 60, backgroundColor: WHITE, paddingHorizontal: 30 },
+  containerStyle: { maxHeight: 60, backgroundColor: WHITE },
   labelStyle: {
     fontSize: 12,
     fontFamily: APP_FONT_FAMILY,

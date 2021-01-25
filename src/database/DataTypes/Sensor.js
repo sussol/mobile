@@ -50,6 +50,13 @@ export class Sensor extends Realm.Object {
   get currentLocationName() {
     return this.location?.description ?? '';
   }
+
+  get lastSyncDate() {
+    const mostRecentLog = this.logs.sorted('timestamp', false)[0] ?? {};
+    const { timestamp = new Date(0) } = mostRecentLog;
+
+    return timestamp;
+  }
 }
 
 Sensor.schema = {

@@ -1,7 +1,18 @@
 {
   "gb": {
+    "bluetooth_changes_can_take_time": "Bluetooth changes can take up to a minute.",
+    "sensor_thresholds": "Sensor Thresholds",
+    "please_be_in_close_proximity": "Please be in proximity to sensor. Bluetooth connection can take up to a minute",
+    "sensor_code": "Sensor Code",
+    "sensor_name": "Sensor Name",
+    "start_logging": "Start Logging",
+    "logging_interval": "Logging Interval",
+    "and_below": "and below",
+    "and_above": "and above",
     "scanning": "Scanning...",
     "new_sensor_step_one_title": "Step: 1 Select the correct sensor",
+    "new_sensor_step_two_title": "Step: 2 Sensor Thresholds",
+    "new_sensor_step_three_title": "Step: 3 Sensor Connection",
     "connect": "connect",
     "blink": "blink",
     "found_sensors": "Updated {0} sensor(s)",

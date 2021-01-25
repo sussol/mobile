@@ -33,6 +33,14 @@ export const WizardReducer = (state = initialState(), action) => {
       return { ...state, currentTab: currentTab + 1 };
     }
 
+    case WIZARD_ACTIONS.PREVIOUS_TAB: {
+      const { currentTab } = state;
+
+      const nextTab = Math.max(currentTab - 1, 0);
+
+      return { ...state, currentTab: nextTab };
+    }
+
     default:
       return state;
   }

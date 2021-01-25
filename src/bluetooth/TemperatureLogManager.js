@@ -7,9 +7,10 @@ const createTemperatureLog = ({ id, sensor, timestamp, temperature, logInterval 
   timestamp: new Date(timestamp),
   temperature,
   logInterval,
+  location: sensor.location,
 });
 
-export class TemperatureLogManager {
+class TemperatureLogManager {
   constructor(dbService, utils) {
     this.db = dbService;
     this.utils = utils;
@@ -65,7 +66,7 @@ export class TemperatureLogManager {
 
     return logsToSave.map(({ temperature }, i) => {
       const offset = logInterval * i;
-      const timestamp = Number(moment(initial).add(offset, 's').format('X'));
+      const timestamp = Number(moment(initial).add(offset, 's'));
       const id = this.utils.createUuid();
 
       return this.createLog({ id, sensor, timestamp, temperature, logInterval });
@@ -74,3 +75,14 @@ export class TemperatureLogManager {
 
   saveLogs = async logsToSave => this.db.upsertTemperatureLog(logsToSave);
 }
+
+let TemperatureLogManagerInstance;
+
+export const getTemperatureLogManagerInstance = (dbService, utils) => {
+  if (!TemperatureLogManagerInstance) {
+    TemperatureLogManagerInstance = new TemperatureLogManager(dbService, utils);
+  }
+  return TemperatureLogManagerInstance;
+};
+
+export default getTemperatureLogManagerInstance;

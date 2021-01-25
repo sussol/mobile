@@ -1,4 +1,5 @@
-import { TemperatureLogManager } from './TemperatureLogManager';
+import TemperatureLogManager from './TemperatureLogManager';
+import { MILLISECONDS } from '../utilities/constants';
 
 describe('DownloadManager: calculateNumberOfLogsToSave', () => {
   it('Calculates correctly when the next possible log time is less than the time now', () => {
@@ -105,21 +106,21 @@ describe('DownloadManager: createLogs', () => {
       {
         id: '1',
         temperature: 10,
-        timestamp: new Date(0),
+        timestamp: new Date(0 * MILLISECONDS.ONE_SECOND),
         sensor,
         logInterval: 300,
       },
       {
         id: '1',
         temperature: 10,
-        timestamp: new Date(300),
+        timestamp: new Date(300 * MILLISECONDS.ONE_SECOND),
         sensor,
         logInterval: 300,
       },
       {
         id: '1',
         temperature: 10,
-        timestamp: new Date(600),
+        timestamp: new Date(600 * MILLISECONDS.ONE_SECOND),
         sensor,
         logInterval: 300,
       },
@@ -147,7 +148,7 @@ describe('DownloadManager: createLogs', () => {
       {
         id: '1',
         temperature: 12,
-        timestamp: new Date(301),
+        timestamp: new Date(301 * MILLISECONDS.ONE_SECOND),
         sensor,
         logInterval: 300,
       },
@@ -172,7 +173,7 @@ describe('DownloadManager: createLogs', () => {
       {
         id: '1',
         temperature: 10,
-        timestamp: new Date(300),
+        timestamp: new Date(300 * MILLISECONDS.ONE_SECOND),
         sensor,
         logInterval: 300,
       },

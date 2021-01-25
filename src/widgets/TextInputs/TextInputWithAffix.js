@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import { TextInput as RNTextInput, TextInputProps as RNTextInputProps } from 'react-native';
 import propTypes from 'prop-types';
@@ -25,7 +26,7 @@ TextInputWithAffix.defaultProps = {
 };
 
 TextInputWithAffix.propTypes = {
-  TextInputImpl: propTypes.node,
+  TextInputImpl: propTypes.object,
   SuffixComponent: propTypes.element,
   PrefixComponent: propTypes.element,
   textInputProps: propTypes.shape(RNTextInputProps),

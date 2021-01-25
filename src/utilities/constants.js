@@ -9,3 +9,7 @@ export const MILLISECONDS = {
   ONE_DAY: 1000 * 60 * 60 * 24,
   ONE_SECOND: 1000,
 };
+
+export const SECONDS = {
+  ONE_MINUTE: 60,
+};
