@@ -53,7 +53,7 @@ export class Sensor extends Realm.Object {
 
   get lastSyncDate() {
     const mostRecentLog = this.logs.sorted('timestamp', false)[0] ?? {};
-    const { timestamp = 0 } = mostRecentLog;
+    const { timestamp = new Date(0) } = mostRecentLog;
 
     return timestamp;
   }
