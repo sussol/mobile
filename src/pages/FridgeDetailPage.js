@@ -99,57 +99,46 @@ export const FridgeDetailPageComponent = ({
   averageTemperature,
 }) => (
   <DataTablePageView>
-    <AfterInteractions>
-      <View style={localStyles.container}>
-        <SpacedChildren space={30} after vertical horizontal={false}>
-          <DateRangeSelector
-            containerStyle={localStyles.datePickerContainer}
-            initialStartDate={fromDate}
-            initialEndDate={toDate}
-            onChangeToDate={onChangeToDate}
-            onChangeFromDate={onChangeFromDate}
-            minimumDate={minimumDate}
-            maximumDate={maximumDate}
-          />
+    <View style={localStyles.container}>
+      <SpacedChildren space={30} after vertical horizontal={false}>
+        <DateRangeSelector
+          containerStyle={localStyles.datePickerContainer}
+          initialStartDate={fromDate}
+          initialEndDate={toDate}
+          onChangeToDate={onChangeToDate}
+          onChangeFromDate={onChangeFromDate}
+          minimumDate={minimumDate}
+          maximumDate={maximumDate}
+        />
 
-          <PaperSection height={280}>
-            <AfterInteractions>
-              <Animatable.View
-                style={{ height: 225 }}
-                animation="fadeIn"
-                duration={3000}
-                useNativeDriver
-              >
-                <VaccineChart
-                  breaches={[breaches[0]]}
-                  minLine={minLine}
-                  maxLine={maxLine}
-                  minDomain={minDomain}
-                  maxDomain={maxDomain}
-                />
-              </Animatable.View>
-            </AfterInteractions>
-          </PaperSection>
-
+        <PaperSection height={280}>
           <AfterInteractions>
-            <Animatable.View animation="fadeIn" duration={2000} useNativeDriver>
-              <FlexRow justifyContent="space-between">
-                <BreachCard content={coldCumulativeBreach} type="COLD_CUMULATIVE" />
-                <BreachCard numberOfBreaches={numberOfColdBreaches} type="COLD_CONSECUTIVE" />
-
-                <CardDetail
-                  headerText="Average Temperature"
-                  Content={<CardText color={DARKER_GREY}>{averageTemperature}</CardText>}
-                />
-
-                <BreachCard content={hotCumulativeBreach} type="HOT_CUMULATIVE" />
-                <BreachCard content={numberOfHotBreaches} type="HOT_CONSECUTIVE" />
-              </FlexRow>
-            </Animatable.View>
+            <VaccineChart
+              breaches={[breaches[0]]}
+              minLine={minLine}
+              maxLine={maxLine}
+              minDomain={minDomain}
+              maxDomain={maxDomain}
+            />
           </AfterInteractions>
-        </SpacedChildren>
-      </View>
-    </AfterInteractions>
+        </PaperSection>
+
+        <Animatable.View animation="fadeIn" duration={3000} useNativeDriver>
+          <FlexRow justifyContent="space-between">
+            <BreachCard content={coldCumulativeBreach} type="COLD_CUMULATIVE" />
+            <BreachCard numberOfBreaches={numberOfColdBreaches} type="COLD_CONSECUTIVE" />
+
+            <CardDetail
+              headerText="Average Temperature"
+              Content={<CardText color={DARKER_GREY}>{averageTemperature}</CardText>}
+            />
+
+            <BreachCard content={hotCumulativeBreach} type="HOT_CUMULATIVE" />
+            <BreachCard content={numberOfHotBreaches} type="HOT_CONSECUTIVE" />
+          </FlexRow>
+        </Animatable.View>
+      </SpacedChildren>
+    </View>
   </DataTablePageView>
 );
 
