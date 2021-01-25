@@ -1,7 +1,10 @@
 {
   "gb": {
+    "and_below": "and below",
+    "and_above": "and above",
     "scanning": "Scanning...",
     "new_sensor_step_one_title": "Step: 1 Select the correct sensor",
+    "new_sensor_step_two_title": "Step: 2 Sensor Thresholds",
     "connect": "connect",
     "blink": "blink",
     "found_sensors": "Updated {0} sensor(s)",
