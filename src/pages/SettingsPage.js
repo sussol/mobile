@@ -18,6 +18,7 @@ import { MODAL_KEYS } from '../utilities';
 
 import {
   gotoEditSensorPage,
+  gotoFridgeDetailPage,
   gotoNewSensorPage,
   gotoNewVaccineModulePage,
   gotoRealmExplorer,
@@ -48,6 +49,7 @@ const Settings = ({
   toRealmExplorer,
   currentUserPasswordHash,
   requestStorageWritePermission,
+  toFridgeDetail,
   toNewVaccineModulePage,
   toNewSensorPage,
   toEditSensorPage,
@@ -291,6 +293,11 @@ const Settings = ({
             />
           ))}
         </View>
+        <View>
+          {UIDatabase.objects('Location').map(location => (
+            <MenuButton text={location.code} onPress={() => toFridgeDetail(location)} />
+          ))}
+        </View>
       </View>
 
       <DataTablePageModal
@@ -308,6 +315,7 @@ const mapStateToDispatch = dispatch => ({
   toNewVaccineModulePage: () => dispatch(gotoNewVaccineModulePage()),
   toRealmExplorer: () => dispatch(gotoRealmExplorer()),
   toEditSensorPage: sensor => dispatch(gotoEditSensorPage(sensor)),
+  toFridgeDetail: fridge => dispatch(gotoFridgeDetailPage(fridge)),
   toNewSensorPage: () => dispatch(gotoNewSensorPage()),
   requestStorageWritePermission: () =>
     dispatch(PermissionActions.requestWriteStorage()).then(exportData),
@@ -333,4 +341,5 @@ Settings.propTypes = {
   toNewVaccineModulePage: PropTypes.func.isRequired,
   toNewSensorPage: PropTypes.func.isRequired,
   toEditSensorPage: PropTypes.func.isRequired,
+  toFridgeDetail: PropTypes.func.isRequired,
 };
