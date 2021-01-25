@@ -51,7 +51,7 @@ import { PermissionActions } from './actions/PermissionActions';
 import BleService from './bluetooth/BleService';
 import TemperatureLogManager from './bluetooth/TemperatureLogManager';
 import { DevBleManager } from './bluetooth/DevBleManager';
-import { SensorManager } from './bluetooth/SensorManager';
+import SensorManager from './bluetooth/SensorManager';
 import { VaccineDataAccess } from './bluetooth/VaccineDataAccess';
 import { UtilService } from './database/utilities/utilService';
 

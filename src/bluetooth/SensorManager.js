@@ -9,7 +9,7 @@ const createSensor = ({ id, macAddress, name, location, batteryLevel, isActive, 
   logInterval,
 });
 
-export class SensorManager {
+class SensorManager {
   constructor(dbService, utils) {
     this.db = dbService;
     this.utils = utils;
@@ -46,7 +46,7 @@ let SensorManagerInstance;
 
 export const getSensorManagerInstance = (dbService, utils) => {
   if (!SensorManagerInstance) {
-    SensorManagerInstance = new SensorManagerInstance(dbService, utils);
+    SensorManagerInstance = new SensorManager(dbService, utils);
   }
   return SensorManagerInstance;
 };

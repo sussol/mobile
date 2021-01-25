@@ -12,7 +12,7 @@ import BleService from '../bluetooth/BleService';
 import TemperatureLogManager from '../bluetooth/TemperatureLogManager';
 import { syncStrings, vaccineStrings } from '../localization';
 import { UIDatabase } from '../database';
-import { SensorManager } from '../bluetooth/SensorManager';
+import SensorManager from '../bluetooth/SensorManager';
 import { VACCINE_CONSTANTS } from '../utilities/modules/vaccines/index';
 import { VACCINE_ENTITIES } from '../utilities/modules/vaccines/constants';
 
@@ -216,7 +216,11 @@ const setLogInterval = (macAddress, interval) => async dispatch => {
 
 const saveSensor = sensor => async dispatch => {
   dispatch(saveSensorStart(sensor.macAddress));
-  await SensorManager().saveSensor(sensor);
+
+  const { location, logInterval, macAddress, name } = sensor;
+  const sensorManager = SensorManager();
+  const newSensor = sensorManager.createSensor({ location, logInterval, macAddress, name });
+  await sensorManager.saveSensor(newSensor);
 };
 
 const toggleSensorButton = macAddress => async dispatch => {
