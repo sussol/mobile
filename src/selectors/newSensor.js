@@ -1,7 +1,4 @@
-export const selectNewSensor = ({ newSensor }) => {
-  const { macAddress = '' } = newSensor || {};
-  return macAddress;
-};
+export const selectNewSensor = ({ newSensor }) => newSensor;
 
 export const selectHotConsecutiveTemperatureThreshold = ({ newSensor }) => {
   const { COLD_CONSECUTIVE: coldConfig } = newSensor;

@@ -1,7 +1,12 @@
+import moment from 'moment';
 import { NEW_SENSOR_ACTIONS, VACCINE_ACTIONS } from '../actions';
 
 const initialState = () => ({
   macAddress: '',
+  code: '',
+  name: '',
+  loggingDelay: moment(new Date()).add(5, 'minutes').toDate(),
+  logInterval: 300,
   HOT_CUMULATIVE: { duration: 300, temperature: 8 },
   COLD_CUMULATIVE: { duration: 300, temperature: 2 },
   HOT_CONSECUTIVE: { duration: 300, temperature: 8 },
@@ -31,6 +36,34 @@ export const NewSensorReducer = (state = initialState(), action) => {
       const newConfig = { ...oldConfig, [configField]: value };
 
       return { ...state, [configType]: newConfig };
+    }
+
+    case NEW_SENSOR_ACTIONS.UPDATE_LOG_INTERVAL: {
+      const { payload } = action;
+      const { logInterval } = payload;
+
+      return { ...state, logInterval };
+    }
+
+    case NEW_SENSOR_ACTIONS.UPDATE_LOGGING_DELAY: {
+      const { payload } = action;
+      const { loggingDelay } = payload;
+
+      return { ...state, loggingDelay };
+    }
+
+    case NEW_SENSOR_ACTIONS.UPDATE_NAME: {
+      const { payload } = action;
+      const { name } = payload;
+
+      return { ...state, name };
+    }
+
+    case NEW_SENSOR_ACTIONS.UPDATE_CODE: {
+      const { payload } = action;
+      const { code } = payload;
+
+      return { ...state, code };
     }
 
     default:

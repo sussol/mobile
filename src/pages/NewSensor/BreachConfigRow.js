@@ -7,6 +7,7 @@ import { DurationEditor, TemperatureEditor } from '../../widgets/StepperInputs';
 import { COLD_BREACH_BLUE, DANGER_RED } from '../../globalStyles';
 import { NewSensorActions } from '../../actions';
 import { selectConfigTemperatureThresholds } from '../../selectors/newSensor';
+import { SECONDS } from '../../utilities/constants';
 
 export const TYPE_TO_LABEL = {
   HOT_CONSECUTIVE: 'Hot consecutive',
@@ -29,7 +30,7 @@ export const BreachConfigRowComponent = ({
 
   return (
     <EditorRow Icon={<Icon color={color} size={20} />} label={TYPE_TO_LABEL[type]}>
-      <DurationEditor value={duration} onChange={updateDuration} />
+      <DurationEditor value={duration / SECONDS.ONE_MINUTE} onChange={updateDuration} />
       <TemperatureEditor
         above={isHotBreach}
         value={temperature}
