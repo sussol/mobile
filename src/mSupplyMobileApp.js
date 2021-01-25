@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { BluetoothStatus } from 'react-native-bluetooth-status';
-import { AppState, View, Text } from 'react-native';
+import { AppState, View } from 'react-native';
 import { Scheduler } from 'sussol-utilities';
 
 import Settings from './settings/MobileAppSettings';
@@ -49,18 +49,11 @@ import { TemperatureSync } from './widgets/modalChildren/TemperatureSync';
 import { RowDetail } from './widgets/RowDetail';
 import { PermissionActions } from './actions/PermissionActions';
 import BleService from './bluetooth/BleService';
+import TemperatureLogManager from './bluetooth/TemperatureLogManager';
 import { DevBleManager } from './bluetooth/DevBleManager';
-import {
-  IconButton,
-  PaperSection,
-  FlexRow,
-  CogIcon,
-  DownloadIcon,
-  LightbulbIcon,
-  TextWithIcon,
-  FridgeDisplay,
-} from './widgets/index';
-import { BLACK } from './globalStyles/index';
+
+import { VaccineDataAccess } from './bluetooth/VaccineDataAccess';
+import { UtilService } from './database/utilities/utilService';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -105,7 +98,7 @@ class MSupplyMobileAppContainer extends React.Component {
       BluetoothStatus.addListener(requestBluetooth);
       dispatch(PermissionActions.checkPermissions());
 
-      this.initialiseBtService();
+      this.initialiseBtServices();
     }
 
     if (!__DEV__) {
@@ -127,7 +120,7 @@ class MSupplyMobileAppContainer extends React.Component {
     this.scheduler.clearAll();
   };
 
-  initialiseBtService = async () => {
+  initialiseBtServices = async () => {
     const isEmulator = await DeviceInfo.isEmulator();
     if (isEmulator) {
       console.log('Emulator detected - Init Dev BleManager');
@@ -135,6 +128,7 @@ class MSupplyMobileAppContainer extends React.Component {
     } else {
       BleService();
     }
+    TemperatureLogManager(new VaccineDataAccess(UIDatabase), new UtilService());
   };
 
   onAppStateChange = nextAppState => {
@@ -229,8 +223,6 @@ class MSupplyMobileAppContainer extends React.Component {
       closeTemperatureSyncModal,
     } = this.props;
     const { isInitialised, isLoading } = this.state;
-
-    return <FridgeDisplay />;
 
     if (!isInitialised) {
       return <FirstUsePage synchroniser={this.synchroniser} onInitialised={this.onInitialised} />;

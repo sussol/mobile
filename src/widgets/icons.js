@@ -315,9 +315,18 @@ LightbulbIcon.propTypes = {
 export const DownloadIcon = ({ size, style, color }) => (
   <FAIcon size={size} style={style} color={color} name="download" />
 );
-
 DownloadIcon.defaultProps = { size: 20, style: {}, color: BLACK };
 DownloadIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
+
+export const InfoIcon = ({ size, style, color }) => (
+  <FAIcon size={size} style={style} color={color} name="info-circle" />
+);
+InfoIcon.defaultProps = { size: 20, style: {}, color: DARKER_GREY };
+InfoIcon.propTypes = {
   size: PropTypes.number,
   style: PropTypes.object,
   color: PropTypes.string,

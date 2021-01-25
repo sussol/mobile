@@ -55,9 +55,12 @@ export { Rectangle } from './Rectangle';
 export { Paper } from './Paper';
 export { PaperSection } from './PaperSection';
 export { CardDetail } from './CardDetail';
-export { TextWithIcon } from './Typography';
 export { Circle } from './Circle';
+export { TextEditor } from './TextEditor';
+export { EditorRow } from './EditorRow';
 
+export * from './StepperInputs';
+export * from './Typography';
 export * from './icons';
 export * from './images';
 export * from './TextInputs';

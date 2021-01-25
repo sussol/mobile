@@ -49,7 +49,7 @@ PaperSection.defaultProps = {
     backgroundColor: BACKGROUND_COLOR,
     padding: 10,
   },
-  contentContainerStyle: {},
+  contentContainerStyle: { flex: 1 },
 };
 
 PaperSection.propTypes = {
