@@ -50,6 +50,9 @@ import { RowDetail } from './widgets/RowDetail';
 import { PermissionActions } from './actions/PermissionActions';
 import BleService from './bluetooth/BleService';
 import { DevBleManager } from './bluetooth/DevBleManager';
+import { SensorManager } from './bluetooth/SensorManager';
+import { VaccineDataAccess } from './bluetooth/VaccineDataAccess';
+// import { UtilService } from './database/utilities/utilService';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -124,6 +127,7 @@ class MSupplyMobileAppContainer extends React.Component {
     } else {
       BleService();
     }
+    SensorManager(new VaccineDataAccess(UIDatabase), new UtilService());
   };
 
   onAppStateChange = nextAppState => {

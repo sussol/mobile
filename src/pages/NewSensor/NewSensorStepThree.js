@@ -1,6 +1,6 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
-import { View } from 'react-native';
+import { ToastAndroid, View } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -23,7 +23,7 @@ import {
 } from '../../widgets';
 
 import { WizardActions } from '../../actions/WizardActions';
-import { goBack } from '../../navigation/actions';
+import { goBack, gotoSettings } from '../../navigation/actions';
 import { selectNewSensor } from '../../selectors/newSensor';
 import { NewSensorActions } from '../../actions/index';
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
@@ -102,9 +102,19 @@ const dispatchToProps = dispatch => {
   const previousTab = () => dispatch(WizardActions.previousTab());
   const exit = () => dispatch(goBack());
 
-  // TODO Use thunks to send commands to the sensor and save to the database.
   const connectToSensor = async () => {
-    await new Promise(r => setTimeout(r, 3000));
+    const updateSuccess = await dispatch(NewSensorActions.updateSensor);
+
+    if (updateSuccess) {
+      const saveSuccess = await dispatch(NewSensorActions.saveSensor);
+      if (saveSuccess) {
+        dispatch(gotoSettings());
+      } else {
+        ToastAndroid.show('Unable to connect to sensor', ToastAndroid.LONG);
+      }
+    } else {
+      ToastAndroid.show('Unable to save to database', ToastAndroid.LONG);
+    }
   };
 
   return {

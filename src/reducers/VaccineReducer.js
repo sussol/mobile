@@ -62,6 +62,17 @@ export const VaccineReducer = (state = initialState(), action) => {
       return { ...state, setLogIntervalFor: '' };
     }
 
+    case VACCINE_ACTIONS.TOGGLE_BUTTON_START: {
+      const { payload } = action;
+      const { macAddress } = payload;
+
+      return { ...state, sendingToggleButtonTo: macAddress };
+    }
+
+    case VACCINE_ACTIONS.TOGGLE_BUTTON_STOP: {
+      return { ...state, sendingToggleButtonTo: '' };
+    }
+
     default:
       return state;
   }

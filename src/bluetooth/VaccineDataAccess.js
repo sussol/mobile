@@ -44,11 +44,18 @@ export class VaccineDataAccess {
     return configs;
   };
 
+  getSensors = () => this.db.objects(VACCINE_ENTITIES.SENSOR);
+
   upsertBreaches = breaches =>
     this.db.write(() => {
       breaches.forEach(breach => {
         this.db.update(VACCINE_ENTITIES.TEMPERATURE_BREACH, breach);
       });
+    });
+
+  upsertSensor = sensor =>
+    this.db.write(() => {
+      this.db.update(VACCINE_ENTITIES.SENSOR, sensor);
     });
 
   upsertTemperatureLog = temperatureLogs =>
