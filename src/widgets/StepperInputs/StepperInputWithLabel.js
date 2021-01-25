@@ -39,7 +39,6 @@ StepperInputWithLabel.defaultProps = {
     fontSize: 12,
     minWidth: 90,
     textAlign: 'right',
-    fontAlign: 'right',
     fontFamily: APP_FONT_FAMILY,
     color: DARKER_GREY,
   },
