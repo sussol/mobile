@@ -2,30 +2,17 @@ import { SENSOR_DETAIL_ACTIONS } from '../actions/SensorDetailActions';
 import { ROUTES } from '../navigation/index';
 import { SECONDS } from '../utilities/constants';
 
-const getState = sensor => ({
-  name: sensor.name,
-  code: sensor.location?.code,
-  macAddress: sensor?.macAddress,
-  logInterval: sensor?.logInterval,
+const initialState = sensor => ({
+  name: sensor?.name ?? '',
+  code: sensor?.location?.code ?? '',
+  macAddress: sensor?.macAddress ?? '',
+  logInterval: sensor?.logInterval ?? 0,
   HOT_CUMULATIVE: { duration: 0, threshold: 99, temperature: 2 },
   HOT_CONSECUTIVE: { duration: 0, threshold: 99, temperature: 2 },
   COLD_CUMULATIVE: { duration: 0, threshold: 99, temperature: 2 },
   COLD_CONSECUTIVE: { duration: 0, threshold: 99, temperature: 2 },
-  batteryLevel: sensor.batteryLevel,
-  lastSyncDate: new Date(),
-});
-
-export const initialState = () => ({
-  name: '',
-  code: '',
-  macAddress: '',
-  logInterval: 300,
-  HOT_CUMULATIVE: { duration: 0, threshold: 99, temperature: 2 },
-  HOT_CONSECUTIVE: { duration: 0, threshold: 99, temperature: 2 },
-  COLD_CUMULATIVE: { duration: 0, threshold: 99, temperature: 2 },
-  COLD_CONSECUTIVE: { duration: 0, threshold: 99, temperature: 2 },
-  batteryLevel: 99,
-  lastSyncDate: new Date(),
+  batteryLevel: sensor?.batteryLevel ?? 0,
+  lastSyncDate: sensor?.lastSyncDate ?? new Date(),
 });
 
 export const SensorDetailReducer = (state = initialState(), action) => {
@@ -38,7 +25,7 @@ export const SensorDetailReducer = (state = initialState(), action) => {
       if (routeName !== ROUTES.SENSOR_EDIT) return state;
       const { sensor } = params;
 
-      return getState(sensor);
+      return initialState(sensor);
     }
 
     case SENSOR_DETAIL_ACTIONS.UPDATE_NAME: {

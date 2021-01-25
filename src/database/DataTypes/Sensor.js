@@ -50,6 +50,13 @@ export class Sensor extends Realm.Object {
   get currentLocationName() {
     return this.location?.description ?? '';
   }
+
+  get lastSyncDate() {
+    const mostRecentLog = this.logs.sorted('timestamp', false)[0] ?? {};
+    const { timestamp = 0 } = mostRecentLog;
+
+    return timestamp;
+  }
 }
 
 Sensor.schema = {
@@ -64,6 +71,8 @@ Sensor.schema = {
     logs: { type: 'linkingObjects', objectType: 'TemperatureLog', property: 'sensor' },
     isActive: { type: 'bool', default: true },
     logInterval: { type: 'int', default: 300 },
+    loggingDelay: {},
+    programmedDate: {},
   },
 };
 
