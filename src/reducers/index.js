@@ -28,6 +28,7 @@ import { PermissionReducer } from './PermissionReducer';
 import { VaccineReducer } from './VaccineReducer';
 import { NewSensorReducer } from './NewSensorReducer';
 import SyncReducer from './SyncReducer';
+import { SensorDetailReducer } from './SensorDetailReducer';
 
 export default combineReducers({
   cashTransaction: CashTransactionReducer,
@@ -53,4 +54,5 @@ export default combineReducers({
   permission: PermissionReducer,
   vaccine: VaccineReducer,
   newSensor: NewSensorReducer,
+  sensorDetail: SensorDetailReducer,
 });

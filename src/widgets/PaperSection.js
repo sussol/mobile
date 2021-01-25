@@ -7,7 +7,12 @@ import { Paper } from './Paper';
 
 import { APP_FONT_FAMILY, DARKER_GREY, BACKGROUND_COLOR } from '../globalStyles';
 
-const defaultHeaderStyle = { fontFamily: APP_FONT_FAMILY, color: DARKER_GREY, fontSize: 13 };
+const defaultHeaderStyle = {
+  fontFamily: APP_FONT_FAMILY,
+  color: DARKER_GREY,
+  fontSize: 13,
+  textTransform: 'uppercase',
+};
 const getDefaultHeader = text => <Text style={defaultHeaderStyle}>{text}</Text>;
 
 export const PaperSection = ({
@@ -27,7 +32,7 @@ export const PaperSection = ({
   const internalHeaderContainerStyle = { ...headerContainerStyle, paddingHorizontal: innerPadding };
 
   return (
-    <Paper width={width} height={height}>
+    <Paper width={width} height={height} style={{ paddingHorizontal: 0 }}>
       <View style={internalHeaderContainerStyle}>{InternalHeader}</View>
       <View style={internalContentStyle}>{children}</View>
     </Paper>
