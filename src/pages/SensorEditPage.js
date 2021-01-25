@@ -19,7 +19,6 @@ import {
   BatteryIcon,
   IconButton,
   LightbulbIcon,
-  Spacer,
   WifiIcon,
 } from '../widgets';
 import { BreachConfigRow } from './NewSensor/BreachConfigRow';
@@ -46,12 +45,7 @@ import { VaccineActions } from '../actions/VaccineActions';
 const formatLastSyncDate = date => moment(date).fromNow();
 const formatBatteryLevel = batteryLevel => `${batteryLevel}%`;
 
-export const FridgeHeader = ({
-  macAddress,
-  batteryLevel = 99,
-  lastSyncDate = new Date(),
-  onBlink,
-}) => (
+export const FridgeHeader = ({ macAddress, batteryLevel, lastSyncDate, onBlink }) => (
   <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
     <View style={{ flex: 2, justifyContent: 'center' }}>
       <Text
@@ -66,15 +60,19 @@ export const FridgeHeader = ({
         {macAddress}
       </Text>
     </View>
-    <View style={{ flex: 1, flexDirection: 'row' }}>
-      <TextWithIcon size="s" Icon={<WifiIcon size={20} color={MISTY_CHARCOAL} />}>
-        {formatLastSyncDate(lastSyncDate)}
-      </TextWithIcon>
-      <Spacer space={10} />
-      <TextWithIcon size="s" Icon={<BatteryIcon color={MISTY_CHARCOAL} />}>
-        {formatBatteryLevel(batteryLevel)}
-      </TextWithIcon>
-
+    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
+      <FlexRow flex={3}>
+        <TextWithIcon
+          containerStyle={{ flex: 2 }}
+          size="s"
+          Icon={<WifiIcon size={20} color={MISTY_CHARCOAL} />}
+        >
+          {formatLastSyncDate(lastSyncDate)}
+        </TextWithIcon>
+        <TextWithIcon size="s" Icon={<BatteryIcon color={MISTY_CHARCOAL} />}>
+          {formatBatteryLevel(batteryLevel)}
+        </TextWithIcon>
+      </FlexRow>
       <IconButton
         Icon={<LightbulbIcon color={DARKER_GREY} />}
         onPress={() => onBlink(macAddress)}
