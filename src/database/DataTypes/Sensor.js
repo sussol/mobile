@@ -71,8 +71,6 @@ Sensor.schema = {
     logs: { type: 'linkingObjects', objectType: 'TemperatureLog', property: 'sensor' },
     isActive: { type: 'bool', default: true },
     logInterval: { type: 'int', default: 300 },
-    loggingDelay: {},
-    programmedDate: {},
   },
 };
 
