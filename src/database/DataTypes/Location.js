@@ -59,7 +59,6 @@ export class Location extends Realm.Object {
   }
 
   get hotCumulativeBreachConfig() {
-    console.log('this.breachConfigs', this.breachConfigs);
     return this.breachConfigs.filtered("type == 'HOT_CUMULATIVE'")[0];
   }
 
