@@ -45,12 +45,7 @@ const downloadLogsComplete = () => ({
   type: VACCINE_ACTIONS.DOWNLOAD_LOGS_COMPLETE,
 });
 
-const downloadAllLogs = () => async (dispatch, getState) => {
-  // Ensure there isn't already a download in progress before starting a new one
-  const state = getState();
-  const isDownloadingTemps = selectIsSyncingTemps(state);
-  if (isDownloadingTemps) return null;
-
+const downloadAllLogs = () => async dispatch => {
   dispatch(downloadLogsStart());
   // Ensure there are some sensors which have been assigned a location before syncing.
   const sensors = UIDatabase.objects('Sensor').filtered('location != null && isActive == true');
@@ -169,6 +164,11 @@ const scanForSensors = (dispatch, getState) => {
 };
 
 const startDownloadAllLogs = macAddress => async (dispatch, getState) => {
+  // Ensure there isn't already a download in progress before starting a new one
+  const state = getState();
+  const isDownloadingTemps = selectIsSyncingTemps(state);
+  if (isDownloadingTemps) return null;
+
   await withPermissions(dispatch, getState, downloadAllLogs(macAddress));
   return null;
 };
