@@ -37,7 +37,7 @@ const updateSensor = () => (dispatch, getState) => {
   const { macAddress, logInterval } = sensor;
 
   return dispatch(VaccineActions.startSetLogInterval({ macAddress, logInterval })).then(() =>
-    dispatch(VaccineActions.startSensorToggleButton(sensor.macAddress))
+    dispatch(VaccineActions.startSensorDisableButton(sensor.macAddress))
   );
 };
 

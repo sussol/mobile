@@ -32,8 +32,8 @@ export const VACCINE_ACTIONS = {
   SET_LOG_INTERVAL_ERROR: 'Vaccine/setLogIntervalError',
   SET_LOG_INTERVAL_START: 'Vaccine/setLogIntervalStart',
   SET_LOG_INTERVAL_SUCCESS: 'Vaccine/setLogIntervalSuccess',
-  TOGGLE_BUTTON_START: 'Vaccine/toggleButtonStart',
-  TOGGLE_BUTTON_STOP: 'Vaccine/toggleButtonStop',
+  DISABLE_BUTTON_START: 'Vaccine/disableButtonStart',
+  DISABLE_BUTTON_STOP: 'Vaccine/disableButtonStop',
 };
 
 const blinkStart = macAddress => ({ type: VACCINE_ACTIONS.BLINK_START, payload: { macAddress } });
@@ -115,12 +115,12 @@ const setLogIntervalStart = macAddress => ({
 });
 const setLogIntervalSuccess = () => ({ type: VACCINE_ACTIONS.SET_LOG_INTERVAL_SUCCESS });
 const setLogIntervalError = () => ({ type: VACCINE_ACTIONS.SET_LOG_INTERVAL_ERROR });
-const toggleButtonStart = macAddress => ({
-  type: VACCINE_ACTIONS.TOGGLE_BUTTON_START,
+const disableButtonStart = macAddress => ({
+  type: VACCINE_ACTIONS.DISABLE_BUTTON_START,
   payload: { macAddress },
 });
-const toggleButtonStop = macAddress => ({
-  type: VACCINE_ACTIONS.TOGGLE_BUTTON_STOP,
+const disableButtonStop = macAddress => ({
+  type: VACCINE_ACTIONS.DISABLE_BUTTON_STOP,
   payload: { macAddress },
 });
 const saveSensorError = () => ({ type: VACCINE_ACTIONS.SAVE_SENSOR_ERROR });
@@ -222,12 +222,13 @@ const saveSensor = sensor => dispatch =>
     }
   });
 
-const toggleSensorButton = macAddress => dispatch => {
-  dispatch(toggleButtonStart(macAddress));
+const disableSensorButton = macAddress => dispatch => {
+  dispatch(disableButtonStart(macAddress));
   return BleService()
-    .toggleButton(macAddress)
+    .getInfo(macAddress)
+    .then(info => (info.isDisabled ? true : BleService().toggleButton(macAddress)))
     .finally(() => {
-      dispatch(toggleButtonStop(macAddress));
+      dispatch(disableButtonStop(macAddress));
     });
 };
 
@@ -246,8 +247,8 @@ const stopSensorScan = () => dispatch => {
   BleService().stopScan();
 };
 
-const startSensorToggleButton = macAddress => async (dispatch, getState) => {
-  const result = await withPermissions(dispatch, getState, toggleSensorButton(macAddress));
+const startSensorDisableButton = macAddress => async (dispatch, getState) => {
+  const result = await withPermissions(dispatch, getState, disableSensorButton(macAddress));
   return result;
 };
 
@@ -262,7 +263,7 @@ export const VaccineActions = {
   startDownloadAllLogs,
   startSensorBlink,
   startSensorScan,
-  startSensorToggleButton,
+  startSensorDisableButton,
   startSetLogInterval,
   stopSensorScan,
   setLogInterval,
