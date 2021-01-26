@@ -1057,11 +1057,12 @@ const createLocation = (database, locationType, description, code) => {
   return location;
 };
 
-const createSensor = (database, macAddress, batteryLevel) => {
+const createSensor = (database, macAddress, batteryLevel, location) => {
   const sensor = database.create('Sensor', {
     id: generateUUID(),
     macAddress,
     batteryLevel,
+    location,
   });
 
   return sensor;

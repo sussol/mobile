@@ -337,9 +337,9 @@ const generateSyncData = (settings, recordType, record) => {
         location_ID: record.location?.id,
         store_ID: settings.get(THIS_STORE_ID),
         temperature_breach_config_ID: String(record.temperatureBreachConfiguration?.id),
-        threshold_min_temperature: String(record.thresholdMinTemperature),
-        threshold_max_temperature: String(record.thresholdMaxTemperature),
-        threshold_duration_temperature: String(record.thresholdDuration),
+        threshold_minimum_temperature: String(record.thresholdMinTemperature),
+        threshold_maximum_temperature: String(record.thresholdMaxTemperature),
+        threshold_duration: String(record.thresholdDuration),
         type: String(record.type),
       };
     }
