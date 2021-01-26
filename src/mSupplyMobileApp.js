@@ -53,6 +53,7 @@ import TemperatureLogManager from './bluetooth/TemperatureLogManager';
 import { DevBleManager } from './bluetooth/DevBleManager';
 import { VaccineDataAccess } from './bluetooth/VaccineDataAccess';
 import { UtilService } from './database/utilities/utilService';
+import { VaccineActions } from './actions/VaccineActions';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -279,7 +280,7 @@ const mapDispatchToProps = dispatch => {
   const closeTemperatureSyncModal = () => dispatch(TemperatureSyncActions.closeModal());
   const onOpenSyncModal = () => dispatch(openSyncModal());
   const closeBreachModal = () => dispatch(BreachActions.close());
-  const syncTemperatures = () => dispatch(TemperatureSyncActions.syncTemperatures());
+  const syncTemperatures = () => dispatch(VaccineActions.startDownloadAllLogs());
   const requestBluetooth = newStatus => dispatch(PermissionActions.requestBluetooth(newStatus));
 
   return {

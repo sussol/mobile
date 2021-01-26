@@ -6,7 +6,7 @@
 import moment from 'moment';
 import { ToastAndroid } from 'react-native';
 import { PermissionSelectors } from '../selectors/permission';
-import { selectScannedSensors } from '../selectors/vaccine';
+import { selectScannedSensors, selectIsSyncingTemps } from '../selectors/vaccine';
 import { PermissionActions } from './PermissionActions';
 import BleService from '../bluetooth/BleService';
 import TemperatureLogManager from '../bluetooth/TemperatureLogManager';
@@ -45,9 +45,13 @@ const downloadLogsComplete = () => ({
   type: VACCINE_ACTIONS.DOWNLOAD_LOGS_COMPLETE,
 });
 
-const downloadAllLogs = () => async dispatch => {
-  dispatch(downloadLogsStart());
+const downloadAllLogs = () => async (dispatch, getState) => {
+  // Ensure there isn't already a download in progress before starting a new one
+  const state = getState();
+  const isDownloadingTemps = selectIsSyncingTemps(state);
+  if (isDownloadingTemps) return null;
 
+  dispatch(downloadLogsStart());
   // Ensure there are some sensors which have been assigned a location before syncing.
   const sensors = UIDatabase.objects('Sensor').filtered('location != null && isActive == true');
 
