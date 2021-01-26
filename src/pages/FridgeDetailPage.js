@@ -69,7 +69,13 @@ const BreachCard = ({ content, type }) => {
       headerText={header}
       Content={content ? <CardText color={color}>{content}</CardText> : <NoBreachMan />}
       Footer={
-        content ? <Icon color={color} /> : <CardText small>{vaccineStrings.no_breaches}</CardText>
+        content ? (
+          <Icon color={color} />
+        ) : (
+          <CardText color={color} small>
+            {vaccineStrings.no_breaches}
+          </CardText>
+        )
       }
     />
   );
