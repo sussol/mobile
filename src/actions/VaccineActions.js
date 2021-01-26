@@ -163,13 +163,13 @@ const scanForSensors = (dispatch, getState) => {
   BleService().scanForSensors(deviceCallback);
 };
 
-const startDownloadAllLogs = macAddress => async (dispatch, getState) => {
+const startDownloadAllLogs = () => async (dispatch, getState) => {
   // Ensure there isn't already a download in progress before starting a new one
   const state = getState();
   const isDownloadingTemps = selectIsSyncingTemps(state);
   if (isDownloadingTemps) return null;
 
-  await withPermissions(dispatch, getState, downloadAllLogs(macAddress));
+  await withPermissions(dispatch, getState, downloadAllLogs());
   return null;
 };
 
