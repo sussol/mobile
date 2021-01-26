@@ -10,7 +10,7 @@ import { selectScannedSensors } from '../selectors/vaccine';
 import { PermissionActions } from './PermissionActions';
 import BleService from '../bluetooth/BleService';
 import TemperatureLogManager from '../bluetooth/TemperatureLogManager';
-import { syncStrings, vaccineStrings } from '../localization';
+import { syncStrings } from '../localization';
 import { UIDatabase } from '../database';
 import SensorManager from '../bluetooth/SensorManager';
 import { VACCINE_CONSTANTS } from '../utilities/modules/vaccines/index';
@@ -135,28 +135,32 @@ const saveSensorSuccess = () => ({ type: VACCINE_ACTIONS.SAVE_SENSOR_SUCCESS });
  * bluetooth & location services before calling the supplied function
  * @param {Func} dispatch
  * @param {Func} getState
- * @param {Func} func method to run if permissions are enabled
+ * @param {Func} action method to dispatch if permissions are enabled
  */
-const withPermissions = async (dispatch, getState, func) => {
-  const state = getState();
-  const bluetoothEnabled = PermissionSelectors.bluetooth(state);
-  const locationPermission = PermissionSelectors.location(state);
+const withPermissions = async (dispatch, getState, action) => {
+  try {
+    const state = getState();
+    const bluetoothEnabled = PermissionSelectors.bluetooth(state);
+    const locationPermission = PermissionSelectors.location(state);
 
-  // Ensure the correct permissions before initiating a new sync process.
-  if (!bluetoothEnabled) await dispatch(PermissionActions.requestBluetooth());
-  if (!locationPermission) await dispatch(PermissionActions.requestLocation());
+    // Ensure the correct permissions before initiating a new sync process.
+    if (!bluetoothEnabled) await dispatch(PermissionActions.requestBluetooth());
+    if (!locationPermission) await dispatch(PermissionActions.requestLocation());
 
-  if (!bluetoothEnabled) {
-    ToastAndroid.show(syncStrings.bluetooth_disabled, ToastAndroid.LONG);
+    if (!bluetoothEnabled) {
+      ToastAndroid.show(syncStrings.bluetooth_disabled, ToastAndroid.LONG);
+      return null;
+    }
+
+    if (!locationPermission) {
+      ToastAndroid.show(syncStrings.location_permission, ToastAndroid.LONG);
+      return null;
+    }
+
+    return dispatch(action);
+  } catch {
     return null;
   }
-
-  if (!locationPermission) {
-    ToastAndroid.show(syncStrings.location_permission, ToastAndroid.LONG);
-    return null;
-  }
-
-  return func(dispatch, getState);
 };
 
 const blinkSensor = macAddress => async dispatch => {
@@ -189,21 +193,22 @@ const startDownloadAllLogs = macAddress => async (dispatch, getState) => {
   return null;
 };
 
-const setLogInterval = (macAddress, interval) => async dispatch => {
+const setLogInterval = (macAddress, interval) => dispatch => {
   dispatch(setLogIntervalStart(macAddress));
   const regex = new RegExp(`Interval: ${interval}s`); // TODO: update with sensor specific response as needed
   const error = `Sensor response was not equal to 'Interval: ${interval}s'`;
 
   return BleService()
     .updateLogInterval(macAddress, interval)
-    .then(result => (regex.test(result) ? setLogIntervalSuccess() : setLogIntervalError(error)))
+    .then(result =>
+      regex.test(result.toString()) ? setLogIntervalSuccess() : setLogIntervalError(error)
+    )
     .then(action => dispatch(action));
 };
 
-const saveSensor = sensor => async dispatch =>
+const saveSensor = sensor => dispatch =>
   new Promise((resolve, reject) => {
     dispatch(saveSensorStart(sensor.macAddress));
-
     try {
       const { location, logInterval, macAddress, name } = sensor;
       const sensorManager = SensorManager();
@@ -217,14 +222,10 @@ const saveSensor = sensor => async dispatch =>
     }
   });
 
-const toggleSensorButton = macAddress => async dispatch => {
+const toggleSensorButton = macAddress => dispatch => {
   dispatch(toggleButtonStart(macAddress));
   return BleService()
     .toggleButton(macAddress)
-    .then(() => dispatch(toggleButtonStop(macAddress)))
-    .catch(() => {
-      throw new Error(vaccineStrings.E_SENSOR_SAVE);
-    })
     .finally(() => {
       dispatch(toggleButtonStop(macAddress));
     });
@@ -246,13 +247,13 @@ const stopSensorScan = () => dispatch => {
 };
 
 const startSensorToggleButton = macAddress => async (dispatch, getState) => {
-  const success = await withPermissions(dispatch, getState, toggleSensorButton(macAddress));
-  return success;
+  const result = await withPermissions(dispatch, getState, toggleSensorButton(macAddress));
+  return result;
 };
 
 const startSetLogInterval = ({ macAddress, interval = 300 }) => async (dispatch, getState) => {
-  const success = withPermissions(dispatch, getState, setLogInterval(macAddress, interval));
-  return success;
+  const result = await withPermissions(dispatch, getState, setLogInterval(macAddress, interval));
+  return result;
 };
 
 export const VaccineActions = {
@@ -264,4 +265,5 @@ export const VaccineActions = {
   startSensorToggleButton,
   startSetLogInterval,
   stopSensorScan,
+  setLogInterval,
 };

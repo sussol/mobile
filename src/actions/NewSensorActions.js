@@ -32,19 +32,21 @@ const updateLoggingDelay = loggingDelay => ({
   payload: { loggingDelay },
 });
 
-const updateSensor = async (dispatch, getState) => {
+const updateSensor = () => (dispatch, getState) => {
   const sensor = selectNewSensor(getState());
   const { macAddress, logInterval } = sensor;
 
-  return dispatch(VaccineActions.startSetLogInterval({ macAddress, logInterval })).then(
+  return dispatch(VaccineActions.startSetLogInterval({ macAddress, logInterval })).then(() =>
     dispatch(VaccineActions.startSensorToggleButton(sensor.macAddress))
   );
 };
 
-const saveSensor = async (dispatch, getState) => {
+const saveSensor = () => (dispatch, getState) => {
   const sensor = selectNewSensor(getState());
 
-  return dispatch(VaccineActions.saveSensor(sensor)).catch(() => vaccineStrings.E_SENSOR_SAVE);
+  return dispatch(VaccineActions.saveSensor(sensor)).catch(() => {
+    throw new Error(vaccineStrings.E_SENSOR_SAVE);
+  });
 };
 
 export const NewSensorActions = {

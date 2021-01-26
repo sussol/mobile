@@ -101,12 +101,12 @@ const dispatchToProps = dispatch => {
   const updateLogInterval = value => dispatch(NewSensorActions.updateLogInterval(value));
   const previousTab = () => dispatch(WizardActions.previousTab());
   const exit = () => dispatch(goBack());
-  const connectToSensor = async () => {
+  const connectToSensor = () => {
     dispatch(NewSensorActions.updateSensor)
-      .then(dispatch(NewSensorActions.saveSensor))
-      .then(dispatch(gotoSettings()))
+      .then(() => dispatch(NewSensorActions.saveSensor))
+      .then(() => dispatch(gotoSettings()))
       .catch(reason => {
-        ToastAndroid.show(reason, ToastAndroid.LONG);
+        ToastAndroid.show(reason.toString(), ToastAndroid.LONG);
       });
   };
 
