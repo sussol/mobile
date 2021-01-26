@@ -201,8 +201,9 @@ export const selectHotCumulativeBreach = createSelector(
 
     const logsOverThreshold = logs.filtered('temperature >= $0', minimumTemperature);
     const sum = logsOverThreshold.sum('logInterval') ?? 0;
+    const hasCumulativeBreach = sum >= duration && duration;
 
-    return sum >= duration ? formatTime(sum * 1000) : null;
+    return hasCumulativeBreach ? formatTime(sum * 1000) : null;
   }
 );
 
@@ -215,8 +216,9 @@ export const selectColdCumulativeBreach = createSelector(
 
     const logsOverThreshold = logs.filtered('temperature <= $0', maximumTemperature);
     const sum = logsOverThreshold.sum('logInterval') ?? 0;
+    const hasCumulativeBreach = sum >= duration && duration;
 
-    return sum >= duration ? formatTime(sum * 1000) : null;
+    return hasCumulativeBreach ? formatTime(sum * 1000) : null;
   }
 );
 
