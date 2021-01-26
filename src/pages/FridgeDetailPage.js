@@ -42,6 +42,7 @@ import {
   COLD_BREACH_BLUE,
   DANGER_RED,
 } from '../globalStyles';
+import { vaccineStrings } from '../localization/index';
 
 const CardText = ({ children, color, small }) => (
   <Text style={{ color, fontSize: small ? 12 : 50, fontFamily: APP_FONT_FAMILY }}>{children}</Text>
@@ -59,13 +60,17 @@ const BreachCard = ({ content, type }) => {
   const color = type === 'HOT_CUMULATIVE' ? DANGER_RED : COLD_BREACH_BLUE;
   const Icon = type === 'HOT_CUMULATIVE' ? HotBreachIcon : ColdBreachIcon;
 
-  const header = type.includes('CUMULATIVE') ? 'Cumulative Breach' : 'Consecutive Breach';
+  const header = type.includes('CUMULATIVE')
+    ? vaccineStrings.cumulative_breach
+    : vaccineStrings.consecutive_breach;
 
   return (
     <CardDetail
       headerText={header}
       Content={content ? <CardText color={color}>{content}</CardText> : <NoBreachMan />}
-      Footer={content ? <Icon color={color} /> : <CardText small>No breaches!</CardText>}
+      Footer={
+        content ? <Icon color={color} /> : <CardText small>{vaccineStrings.no_breaches}</CardText>
+      }
     />
   );
 };
@@ -129,7 +134,7 @@ export const FridgeDetailPageComponent = ({
             <BreachCard numberOfBreaches={numberOfColdBreaches} type="COLD_CONSECUTIVE" />
 
             <CardDetail
-              headerText="Average Temperature"
+              headerText={vaccineStrings.average_temperature}
               Content={<CardText color={DARKER_GREY}>{averageTemperature}</CardText>}
             />
 
