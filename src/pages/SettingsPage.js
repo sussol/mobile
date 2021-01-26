@@ -34,6 +34,7 @@ import { PermissionActions } from '../actions/PermissionActions';
 import { createRecord } from '../database/utilities/index';
 import { BreachManager } from '../bluetooth/BreachManager';
 import { VaccineDataAccess } from '../bluetooth/VaccineDataAccess';
+import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
@@ -57,6 +58,8 @@ const Settings = ({
     modalKey: '',
     syncPassword: '',
   });
+
+  const withLoadingIndicator = useLoadingIndicator();
 
   const { modalKey, syncURL, syncPassword } = state;
 
@@ -284,7 +287,10 @@ const Settings = ({
           <MenuButton text={buttonStrings.export_data} onPress={requestStorageWritePermission} />
           <MenuButton text="New vaccine module" onPress={toNewVaccineModulePage} />
           <MenuButton text="New Sensor" onPress={toNewSensorPage} />
-          <MenuButton text="Generate vaccine data" onPress={createVaccineData} />
+          <MenuButton
+            text="Generate vaccine data"
+            onPress={() => withLoadingIndicator(createVaccineData)}
+          />
         </View>
         <View>
           {UIDatabase.objects('Sensor').map(sensor => (
