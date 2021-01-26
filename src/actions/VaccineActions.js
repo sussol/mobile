@@ -123,12 +123,12 @@ const toggleButtonStop = macAddress => ({
   type: VACCINE_ACTIONS.TOGGLE_BUTTON_STOP,
   payload: { macAddress },
 });
-// const saveSensorError = () => ({ type: VACCINE_ACTIONS.SAVE_SENSOR_ERROR });
+const saveSensorError = () => ({ type: VACCINE_ACTIONS.SAVE_SENSOR_ERROR });
 const saveSensorStart = macAddress => ({
   type: VACCINE_ACTIONS.SAVE_SENSOR_START,
   payload: { macAddress },
 });
-// const saveSensorSuccess = () => ({ type: VACCINE_ACTIONS.SAVE_SENSOR_SUCCESS });
+const saveSensorSuccess = () => ({ type: VACCINE_ACTIONS.SAVE_SENSOR_SUCCESS });
 
 /**
  * Helper wrapper which will check permissions for
@@ -190,44 +190,44 @@ const startDownloadAllLogs = macAddress => async (dispatch, getState) => {
 };
 
 const setLogInterval = (macAddress, interval) => async dispatch => {
-  let ok = false;
-  let error = `Sensor response was not equal to 'Interval: ${interval}s'`;
-
   dispatch(setLogIntervalStart(macAddress));
+  const regex = new RegExp(`Interval: ${interval}s`); // TODO: update with sensor specific response as needed
+  const error = `Sensor response was not equal to 'Interval: ${interval}s'`;
 
-  try {
-    const result = await BleService().updateLogIntervalWithRetries(macAddress, interval, 3, error);
-    const regex = new RegExp(`Interval: ${interval}s`); // TODO: update with sensor specific response as needed
-    ok = regex.test(result);
-  } catch (e) {
-    error = e;
-    ok = false;
-  }
-
-  if (ok) {
-    dispatch(setLogIntervalSuccess());
-  } else {
-    ToastAndroid.show(vaccineStrings.E_COMMAND_FAILED, ToastAndroid.LONG);
-    dispatch(setLogIntervalError(error));
-  }
-
-  return ok;
+  return BleService()
+    .updateLogInterval(macAddress, interval)
+    .then(result => (regex.test(result) ? setLogIntervalSuccess() : setLogIntervalError(error)))
+    .then(action => dispatch(action));
 };
 
-const saveSensor = sensor => async dispatch => {
-  dispatch(saveSensorStart(sensor.macAddress));
+const saveSensor = sensor => async dispatch =>
+  new Promise((resolve, reject) => {
+    dispatch(saveSensorStart(sensor.macAddress));
 
-  const { location, logInterval, macAddress, name } = sensor;
-  const sensorManager = SensorManager();
-  const newSensor = sensorManager.createSensor({ location, logInterval, macAddress, name });
-  await sensorManager.saveSensor(newSensor);
-};
+    try {
+      const { location, logInterval, macAddress, name } = sensor;
+      const sensorManager = SensorManager();
+      const newSensor = sensorManager.createSensor({ location, logInterval, macAddress, name });
+      sensorManager.saveSensor(newSensor);
+      dispatch(saveSensorSuccess());
+      resolve();
+    } catch (error) {
+      dispatch(saveSensorError());
+      reject(error);
+    }
+  });
 
 const toggleSensorButton = macAddress => async dispatch => {
   dispatch(toggleButtonStart(macAddress));
-  const result = await BleService().toggleButton(macAddress);
-  dispatch(toggleButtonStop(macAddress));
-  return result;
+  return BleService()
+    .toggleButton(macAddress)
+    .then(() => dispatch(toggleButtonStop(macAddress)))
+    .catch(() => {
+      throw new Error(vaccineStrings.E_SENSOR_SAVE);
+    })
+    .finally(() => {
+      dispatch(toggleButtonStop(macAddress));
+    });
 };
 
 const startSensorBlink = macAddress => async (dispatch, getState) => {

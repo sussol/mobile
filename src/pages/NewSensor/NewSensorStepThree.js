@@ -101,20 +101,13 @@ const dispatchToProps = dispatch => {
   const updateLogInterval = value => dispatch(NewSensorActions.updateLogInterval(value));
   const previousTab = () => dispatch(WizardActions.previousTab());
   const exit = () => dispatch(goBack());
-
   const connectToSensor = async () => {
-    const updateSuccess = await dispatch(NewSensorActions.updateSensor);
-
-    if (updateSuccess) {
-      const saveSuccess = await dispatch(NewSensorActions.saveSensor);
-      if (saveSuccess) {
-        dispatch(gotoSettings());
-      } else {
-        ToastAndroid.show('Unable to save to database', ToastAndroid.LONG);
-      }
-    } else {
-      ToastAndroid.show('Unable to connect to sensor', ToastAndroid.LONG);
-    }
+    dispatch(NewSensorActions.updateSensor)
+      .then(dispatch(NewSensorActions.saveSensor))
+      .then(dispatch(gotoSettings()))
+      .catch(reason => {
+        ToastAndroid.show(reason, ToastAndroid.LONG);
+      });
   };
 
   return {

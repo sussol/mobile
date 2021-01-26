@@ -1,5 +1,6 @@
 import { selectNewSensor } from '../selectors/newSensor';
 import { VaccineActions } from './VaccineActions';
+import { vaccineStrings } from '../localization';
 
 export const NEW_SENSOR_ACTIONS = {
   SELECT: 'SensorActions/select',
@@ -35,19 +36,15 @@ const updateSensor = async (dispatch, getState) => {
   const sensor = selectNewSensor(getState());
   const { macAddress, logInterval } = sensor;
 
-  const setIntervalOk = await dispatch(
-    VaccineActions.startSetLogInterval({ macAddress, logInterval })
+  return dispatch(VaccineActions.startSetLogInterval({ macAddress, logInterval })).then(
+    dispatch(VaccineActions.startSensorToggleButton(sensor.macAddress))
   );
-  const setButtonOk = await dispatch(VaccineActions.startSensorToggleButton(sensor.macAddress));
-
-  return setIntervalOk && setButtonOk;
 };
 
 const saveSensor = async (dispatch, getState) => {
   const sensor = selectNewSensor(getState());
-  const success = await dispatch(VaccineActions.saveSensor(sensor));
 
-  return success;
+  return dispatch(VaccineActions.saveSensor(sensor)).catch(() => vaccineStrings.E_SENSOR_SAVE);
 };
 
 export const NewSensorActions = {
