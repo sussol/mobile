@@ -81,8 +81,12 @@ const BreachCard = ({ content, type }) => {
   );
 };
 
+BreachCard.defaultProps = {
+  content: null,
+};
+
 BreachCard.propTypes = {
-  content: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+  content: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   type: PropTypes.oneOf([
     'COLD_CUMULATIVE',
     'COLD_CONSECUTIVE',
