@@ -23,6 +23,7 @@ export const DateRangeSelector = ({
   maximumDate,
   minimumDate,
   backgroundColor,
+  containerStyle,
 }) => {
   const formattedStartDate = moment(initialStartDate).format('D/M/YYYY');
   const formattedEndDate = moment(initialEndDate).format('D/M/YYYY');
@@ -31,7 +32,7 @@ export const DateRangeSelector = ({
   return (
     <View
       onLayout={setDimensions}
-      style={[localStyles.container, { borderRadius: height, backgroundColor }]}
+      style={[localStyles.container, { borderRadius: height, backgroundColor }, containerStyle]}
     >
       <FlexRow alignItems="center">
         <DatePickerButton
@@ -77,9 +78,11 @@ DateRangeSelector.defaultProps = {
   maximumDate: null,
   minimumDate: null,
   backgroundColor: WHITE,
+  containerStyle: {},
 };
 
 DateRangeSelector.propTypes = {
+  containerStyle: PropTypes.object,
   initialStartDate: PropTypes.instanceOf(Date).isRequired,
   initialEndDate: PropTypes.instanceOf(Date).isRequired,
   onChangeFromDate: PropTypes.func.isRequired,

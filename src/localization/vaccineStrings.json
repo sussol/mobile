@@ -1,5 +1,9 @@
 {
   "gb": {
+    "consecutive_breach": "Consecutive Breach",
+    "cumulative_breach": "Cumulative Breach",
+    "average_temperature": "Average Temperature",
+    "no_breaches": "No breaches!",
     "bluetooth_changes_can_take_time": "Bluetooth changes can take up to a minute.",
     "sensor_thresholds": "Sensor Thresholds",
     "please_be_in_close_proximity": "Please be in proximity to sensor. Bluetooth connection can take up to a minute",

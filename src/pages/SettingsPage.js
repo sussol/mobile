@@ -18,6 +18,7 @@ import { MODAL_KEYS } from '../utilities';
 
 import {
   gotoEditSensorPage,
+  gotoFridgeDetailPage,
   gotoNewSensorPage,
   gotoNewVaccineModulePage,
   gotoRealmExplorer,
@@ -34,6 +35,7 @@ import { PermissionActions } from '../actions/PermissionActions';
 import { createRecord } from '../database/utilities/index';
 import { BreachManager } from '../bluetooth/BreachManager';
 import { VaccineDataAccess } from '../bluetooth/VaccineDataAccess';
+import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
@@ -48,6 +50,7 @@ const Settings = ({
   toRealmExplorer,
   currentUserPasswordHash,
   requestStorageWritePermission,
+  toFridgeDetail,
   toNewVaccineModulePage,
   toNewSensorPage,
   toEditSensorPage,
@@ -57,6 +60,8 @@ const Settings = ({
     modalKey: '',
     syncPassword: '',
   });
+
+  const withLoadingIndicator = useLoadingIndicator();
 
   const { modalKey, syncURL, syncPassword } = state;
 
@@ -150,56 +155,59 @@ const Settings = ({
       UIDatabase.delete('TemperatureBreach', oldUIDatabaseBreaches);
 
       // create locations
-      createRecord(UIDatabase, 'Location', null, 'Fridge 1', 'f1');
-      createRecord(UIDatabase, 'Location', null, 'Fridge 2', 'f2');
-      createRecord(UIDatabase, 'Location', null, 'Fridge 3', 'f3');
-      createRecord(UIDatabase, 'Location', null, 'Fridge 4', 'f4');
+      const fridge1 = createRecord(UIDatabase, 'Location', null, 'Fridge 1', 'f1');
+      const fridge2 = createRecord(UIDatabase, 'Location', null, 'Fridge 2', 'f2');
+      const fridge3 = createRecord(UIDatabase, 'Location', null, 'Fridge 3', 'f3');
+      const fridge4 = createRecord(UIDatabase, 'Location', null, 'Fridge 4', 'f4');
 
       // create sensors
-      createRecord(UIDatabase, 'Sensor', 'sensor 1', 10);
-      createRecord(UIDatabase, 'Sensor', 'sensor 2', 20);
-      createRecord(UIDatabase, 'Sensor', 'sensor 3', 30);
-      createRecord(UIDatabase, 'Sensor', 'sensor 4', 40);
+      createRecord(UIDatabase, 'Sensor', 'sensor 1', 10, fridge1);
+      createRecord(UIDatabase, 'Sensor', 'sensor 2', 20, fridge2);
+      createRecord(UIDatabase, 'Sensor', 'sensor 3', 30, fridge3);
+      createRecord(UIDatabase, 'Sensor', 'sensor 4', 40, fridge4);
 
       // create some configs
-      UIDatabase.update('TemperatureBreachConfiguration', {
-        id: '1',
-        minimumTemperature: 20,
-        maximumTemperature: 999,
-        duration: 60 * 5,
-        description: 'Config 1, 20 to 999 consecutive',
-        type: 'HOT_CONSECUTIVE',
-      });
+      UIDatabase.objects('Location').forEach((location, i) => {
+        const { id: locationID } = location;
+        UIDatabase.update('TemperatureBreachConfiguration', {
+          id: `${locationID}${i + 1}`,
+          minimumTemperature: 8,
+          maximumTemperature: 999,
+          duration: 60 * 20,
+          description: 'Config 1, 8 to 999 consecutive for 20 minutes',
+          type: 'HOT_CONSECUTIVE',
+        });
 
-      UIDatabase.update('TemperatureBreachConfiguration', {
-        id: '2',
-        minimumTemperature: -999,
-        maximumTemperature: 0,
-        duration: 60 * 5,
-        description: 'Config 1, 0 to -999 consecutive',
-        type: 'COLD_CONSECUTIVE',
-      });
+        UIDatabase.update('TemperatureBreachConfiguration', {
+          id: `${locationID}${i + 2}`,
+          minimumTemperature: -999,
+          maximumTemperature: 0,
+          duration: 60 * 20,
+          description: 'Config 1, 0 to -999 consecutive for 20 minutes',
+          type: 'COLD_CONSECUTIVE',
+        });
 
-      UIDatabase.update('TemperatureBreachConfiguration', {
-        id: '3',
-        minimumTemperature: 20,
-        maximumTemperature: 999,
-        duration: 60 * 5,
-        description: 'Config 1, 20 to 999 cumulative',
-        type: 'COLD_CUMULATIVE',
-      });
+        UIDatabase.update('TemperatureBreachConfiguration', {
+          id: `${locationID}${i + 3}`,
+          minimumTemperature: 8,
+          maximumTemperature: 999,
+          duration: 60 * 60,
+          description: 'Config 1, 8 to 999 cumulative for 1 hour',
+          type: 'HOT_CUMULATIVE',
+        });
 
-      UIDatabase.update('TemperatureBreachConfiguration', {
-        id: '4',
-        minimumTemperature: -999,
-        maximumTemperature: 0,
-        duration: 60 * 5,
-        description: 'Config 1, 0 to -999 cumulative',
-        type: 'COLD_CUMULATIVE',
+        UIDatabase.update('TemperatureBreachConfiguration', {
+          id: `${locationID}${i + 4}`,
+          minimumTemperature: -999,
+          maximumTemperature: 0,
+          duration: 60 * 60,
+          description: 'Config 1, 0 to -999 cumulative',
+          type: 'COLD_CUMULATIVE',
+        });
       });
 
       // create some logs. Leaving one location with no logs for handling that situation
-      const locations = UIDatabase.objects('Location');
+
       const sensors = UIDatabase.objects('Sensor');
       const currentDate = new Date();
       let count = 0;
@@ -212,7 +220,7 @@ const Settings = ({
           temperature: Math.floor((Math.random() * 20 + 5) * 100) / 100,
           logInterval,
           timestamp: new Date(currentDate - logInterval * 1000 * count),
-          location: locations[0],
+          location: sensors[0].location,
           sensor: sensors[0],
         });
       }
@@ -226,7 +234,7 @@ const Settings = ({
           temperature: Math.random() * 40 - 20 - i,
           logInterval,
           timestamp: new Date(currentDate - logInterval * 1000 * count),
-          location: locations[1],
+          location: sensors[1].location,
           sensor: sensors[1],
         });
       }
@@ -240,7 +248,7 @@ const Settings = ({
           temperature: Math.random() * 40 - 10 + i,
           logInterval,
           timestamp: new Date(currentDate - logInterval * 1000 * count),
-          location: locations[2],
+          location: sensors[2].location,
           sensor: sensors[2],
         });
       }
@@ -281,7 +289,10 @@ const Settings = ({
           <MenuButton text={buttonStrings.export_data} onPress={requestStorageWritePermission} />
           <MenuButton text="New vaccine module" onPress={toNewVaccineModulePage} />
           <MenuButton text="New Sensor" onPress={toNewSensorPage} />
-          <MenuButton text="Generate vaccine data" onPress={createVaccineData} />
+          <MenuButton
+            text="Generate vaccine data"
+            onPress={() => withLoadingIndicator(createVaccineData)}
+          />
         </View>
         <View>
           {UIDatabase.objects('Sensor').map(sensor => (
@@ -289,6 +300,11 @@ const Settings = ({
               text={sensor.name || sensor.macAddress}
               onPress={() => toEditSensorPage(sensor)}
             />
+          ))}
+        </View>
+        <View>
+          {UIDatabase.objects('Location').map(location => (
+            <MenuButton text={location.code} onPress={() => toFridgeDetail(location)} />
           ))}
         </View>
       </View>
@@ -308,6 +324,7 @@ const mapStateToDispatch = dispatch => ({
   toNewVaccineModulePage: () => dispatch(gotoNewVaccineModulePage()),
   toRealmExplorer: () => dispatch(gotoRealmExplorer()),
   toEditSensorPage: sensor => dispatch(gotoEditSensorPage(sensor)),
+  toFridgeDetail: fridge => dispatch(gotoFridgeDetailPage(fridge)),
   toNewSensorPage: () => dispatch(gotoNewSensorPage()),
   requestStorageWritePermission: () =>
     dispatch(PermissionActions.requestWriteStorage()).then(exportData),
@@ -333,4 +350,5 @@ Settings.propTypes = {
   toNewVaccineModulePage: PropTypes.func.isRequired,
   toNewSensorPage: PropTypes.func.isRequired,
   toEditSensorPage: PropTypes.func.isRequired,
+  toFridgeDetail: PropTypes.func.isRequired,
 };
