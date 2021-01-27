@@ -1,4 +1,3 @@
-import { selectNewSensor } from '../selectors/newSensor';
 import { VaccineActions } from './VaccineActions';
 import { vaccineStrings } from '../localization';
 
@@ -32,22 +31,15 @@ const updateLoggingDelay = loggingDelay => ({
   payload: { loggingDelay },
 });
 
-const updateSensor = () => (dispatch, getState) => {
-  const sensor = selectNewSensor(getState());
-  const { macAddress, logInterval } = sensor;
-
-  return dispatch(VaccineActions.startSetLogInterval({ macAddress, logInterval })).then(() =>
+const updateSensor = sensor => dispatch =>
+  dispatch(VaccineActions.startSetLogInterval(sensor)).then(() =>
     dispatch(VaccineActions.startSensorDisableButton(sensor.macAddress))
   );
-};
 
-const saveSensor = () => (dispatch, getState) => {
-  const sensor = selectNewSensor(getState());
-
-  return dispatch(VaccineActions.saveSensor(sensor)).catch(() => {
+const saveSensor = sensor => dispatch =>
+  dispatch(VaccineActions.saveSensor(sensor)).catch(() => {
     throw new Error(vaccineStrings.E_SENSOR_SAVE);
   });
-};
 
 export const NewSensorActions = {
   saveSensor,

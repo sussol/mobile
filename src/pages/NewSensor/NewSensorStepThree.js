@@ -43,8 +43,10 @@ export const NewSensorStepThreeComponent = ({
   updateLoggingDelay,
   exit,
   previousTab,
+  macAddress,
 }) => {
   const withLoadingIndicator = useLoadingIndicator();
+  const sensor = { logInterval, loggingDelay, name, code, macAddress };
 
   return (
     <TabContainer>
@@ -87,7 +89,7 @@ export const NewSensorStepThreeComponent = ({
           text={vaccineStrings.connect}
           style={{ backgroundColor: SUSSOL_ORANGE }}
           textStyle={{ color: WHITE, textTransform: 'capitalize' }}
-          onPress={() => withLoadingIndicator(connectToSensor)}
+          onPress={() => withLoadingIndicator(connectToSensor(sensor))}
         />
       </FlexRow>
     </TabContainer>
@@ -101,14 +103,13 @@ const dispatchToProps = dispatch => {
   const updateLogInterval = value => dispatch(NewSensorActions.updateLogInterval(value));
   const previousTab = () => dispatch(WizardActions.previousTab());
   const exit = () => dispatch(goBack());
-  const connectToSensor = () => {
-    dispatch(NewSensorActions.updateSensor)
-      .then(() => dispatch(NewSensorActions.saveSensor))
+  const connectToSensor = sensor => () =>
+    dispatch(NewSensorActions.updateSensor(sensor))
+      .then(() => dispatch(NewSensorActions.saveSensor(sensor)))
       .then(() => dispatch(gotoSettings()))
       .catch(reason => {
         ToastAndroid.show(reason.toString(), ToastAndroid.LONG);
       });
-  };
 
   return {
     previousTab,
@@ -123,9 +124,9 @@ const dispatchToProps = dispatch => {
 
 const stateToProps = state => {
   const newSensor = selectNewSensor(state);
-  const { logInterval, loggingDelay, name, code } = newSensor;
+  const { logInterval, loggingDelay, name, code, macAddress } = newSensor;
 
-  return { logInterval, loggingDelay, name, code };
+  return { logInterval, loggingDelay, name, code, macAddress };
 };
 
 NewSensorStepThreeComponent.propTypes = {
@@ -133,6 +134,7 @@ NewSensorStepThreeComponent.propTypes = {
   loggingDelay: PropTypes.object.isRequired,
   name: PropTypes.string.isRequired,
   code: PropTypes.string.isRequired,
+  macAddress: PropTypes.string.isRequired,
   updateName: PropTypes.func.isRequired,
   updateCode: PropTypes.func.isRequired,
   updateLoggingDelay: PropTypes.func.isRequired,
