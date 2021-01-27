@@ -43,7 +43,6 @@ export { TemperatureSyncState } from './TemperatureSyncState';
 export { TextInput } from './TextInput';
 export { ToggleBar } from './ToggleBar';
 export { Wizard } from './Wizard';
-export { FridgeDisplay } from './FridgeDisplay';
 export { FridgeDisplayInfo } from './FridgeDisplayInfo';
 export { KeyboardSpacing } from './KeyboardSpacing';
 export { Spacer } from './Spacer';

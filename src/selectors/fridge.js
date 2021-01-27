@@ -195,6 +195,7 @@ const formatTime = sum => {
 export const selectHotCumulativeBreach = createSelector(
   [selectSelectedFridge, selectFridgeTemperatureLogsFromDate],
   (fridge, logs) => {
+    console.log(fridge);
     const { hotCumulativeBreachConfig } = fridge;
 
     const { minimumTemperature, duration } = hotCumulativeBreachConfig;

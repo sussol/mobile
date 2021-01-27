@@ -331,3 +331,13 @@ InfoIcon.propTypes = {
   style: PropTypes.object,
   color: PropTypes.string,
 };
+
+export const AlarmClockIcon = ({ size, style, color }) => (
+  <IonIcon size={size} style={style} color={color} name="alarm-outline" />
+);
+AlarmClockIcon.defaultProps = { size: 30, style: {}, color: DARKER_GREY };
+AlarmClockIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};

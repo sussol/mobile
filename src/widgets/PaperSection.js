@@ -1,19 +1,11 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
 import { Paper } from './Paper';
 
 import { APP_FONT_FAMILY, DARKER_GREY, BACKGROUND_COLOR } from '../globalStyles';
-
-const defaultHeaderStyle = {
-  fontFamily: APP_FONT_FAMILY,
-  color: DARKER_GREY,
-  fontSize: 13,
-  textTransform: 'uppercase',
-};
-const getDefaultHeader = text => <Text style={defaultHeaderStyle}>{text}</Text>;
 
 export const PaperSection = ({
   width,
@@ -21,49 +13,63 @@ export const PaperSection = ({
   Header,
   children,
   headerText,
-  innerPadding,
   headerContainerStyle,
   contentContainerStyle,
+  paperStyle,
 }) => {
-  const InternalHeader = headerText ? getDefaultHeader(headerText) : Header;
-
-  // Pad the content and header if passed, keeping them in sync.
-  const internalContentStyle = { ...contentContainerStyle, paddingHorizontal: innerPadding };
-  const internalHeaderContainerStyle = { ...headerContainerStyle, paddingHorizontal: innerPadding };
+  const InternalHeader = headerText ? (
+    <Text style={localStyles.headerText}>{headerText}</Text>
+  ) : (
+    Header
+  );
 
   return (
-    <Paper width={width} height={height} style={{ paddingHorizontal: 0 }}>
-      <View style={internalHeaderContainerStyle}>{InternalHeader}</View>
-      <View style={internalContentStyle}>{children}</View>
+    <Paper width={width} height={height} style={[localStyles.paper, paperStyle && paperStyle]}>
+      <View style={[localStyles.headerContainer, headerContainerStyle]}>{InternalHeader}</View>
+      <View style={[localStyles.contentContainer, contentContainerStyle]}>{children}</View>
     </Paper>
   );
 };
 
 PaperSection.defaultProps = {
-  width: 0,
-  height: 0,
-  innerPadding: 20,
+  width: null,
+  height: null,
   children: null,
   Header: null,
   headerText: '',
-  headerContainerStyle: {
-    height: 40,
-    display: 'flex',
-    paddingHorizontal: 10,
-    justifyContent: 'center',
-    backgroundColor: BACKGROUND_COLOR,
-    padding: 10,
-  },
-  contentContainerStyle: { flex: 1 },
+  headerContainerStyle: {},
+  contentContainerStyle: {},
+  paperStyle: {},
 };
 
 PaperSection.propTypes = {
   Header: PropTypes.node,
-  innerPadding: PropTypes.number,
   headerContainerStyle: PropTypes.object,
   contentContainerStyle: PropTypes.object,
+  paperStyle: PropTypes.object,
   width: PropTypes.number,
   height: PropTypes.number,
   children: PropTypes.node,
   headerText: PropTypes.string,
 };
+
+const localStyles = StyleSheet.create({
+  paper: {
+    height: 40,
+    paddingHorizontal: 20,
+    margin: 20,
+    flex: 1,
+    justifyContent: 'center',
+    alignContent: 'stretch',
+    backgroundColor: BACKGROUND_COLOR,
+  },
+  headerContainer: {
+    flex: 1,
+  },
+  headerText: {
+    fontFamily: APP_FONT_FAMILY,
+    color: DARKER_GREY,
+    fontSize: 13,
+    textTransform: 'uppercase',
+  },
+});
