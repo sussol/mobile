@@ -199,7 +199,7 @@ const setLogInterval = (macAddress, interval) => async dispatch => {
   try {
     const regex = new RegExp(`Interval: ${interval}s`); // TODO: update with sensor specific response as needed
     const error = `Sensor response was not equal to 'Interval: ${interval}s'`;
-    const response = await BleService.updateLogIntervalWithRetries(macAddress, interval, 10);
+    const response = await BleService().updateLogIntervalWithRetries(macAddress, interval, 10);
     const action = regex.test(response.toString())
       ? setLogIntervalSuccess()
       : setLogIntervalError(error);
