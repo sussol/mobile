@@ -25,8 +25,14 @@ class SensorManager {
     return this.createSensorFunc;
   }
 
-  createSensor({ location, logInterval, macAddress, name }) {
+  createSensor = async ({ location: newLocation, logInterval, macAddress, name }) => {
     const id = this.utils.createUuid();
+    let location = newLocation;
+
+    if (!newLocation) {
+      const locations = await this.db.getLocations();
+      [location] = locations;
+    }
 
     return this.sensorCreator({
       id,
@@ -37,7 +43,7 @@ class SensorManager {
       isActive: true,
       logInterval,
     });
-  }
+  };
 
   saveSensor = async sensor => this.db.upsertSensor(sensor);
 }

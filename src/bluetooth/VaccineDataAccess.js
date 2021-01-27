@@ -44,6 +44,8 @@ export class VaccineDataAccess {
     return configs;
   };
 
+  getLocations = () => this.db.objects(VACCINE_ENTITIES.LOCATION);
+
   getSensors = () => this.db.objects(VACCINE_ENTITIES.SENSOR);
 
   upsertBreaches = breaches =>

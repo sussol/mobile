@@ -32,6 +32,7 @@ export const CHART_CONSTANTS = {
 };
 
 export const VACCINE_ENTITIES = {
+  LOCATION: 'Location',
   SENSOR: 'Sensor',
   TEMPERATURE_LOG: 'TemperatureLog',
   TEMPERATURE_BREACH: 'TemperatureBreach',
