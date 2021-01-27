@@ -8,9 +8,9 @@ export const selectScannedSensors = ({ vaccine }) => {
   return scannedSensorAddresses;
 };
 
-export const selectIsSyncingTemps = ({ vaccine }) => {
-  const { isSyncingTemps = false } = vaccine || {};
-  return isSyncingTemps;
+export const selectIsDownloadingLogs = ({ vaccine }) => {
+  const { isDownloadingLogs = false } = vaccine || {};
+  return isDownloadingLogs;
 };
 
 export const selectIsScanning = ({ vaccine }) => {

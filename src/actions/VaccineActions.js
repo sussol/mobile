@@ -6,7 +6,7 @@
 import moment from 'moment';
 import { ToastAndroid } from 'react-native';
 import { PermissionSelectors } from '../selectors/permission';
-import { selectScannedSensors, selectIsSyncingTemps } from '../selectors/vaccine';
+import { selectScannedSensors, selectIsDownloadingLogs } from '../selectors/vaccine';
 import { PermissionActions } from './PermissionActions';
 import BleService from '../bluetooth/BleService';
 import TemperatureLogManager from '../bluetooth/TemperatureLogManager';
@@ -166,8 +166,8 @@ const scanForSensors = (dispatch, getState) => {
 const startDownloadAllLogs = () => async (dispatch, getState) => {
   // Ensure there isn't already a download in progress before starting a new one
   const state = getState();
-  const isDownloadingTemps = selectIsSyncingTemps(state);
-  if (isDownloadingTemps) return null;
+  const isDownloadingLogs = selectIsDownloadingLogs(state);
+  if (isDownloadingLogs) return null;
 
   await withPermissions(dispatch, getState, downloadAllLogs());
   return null;
