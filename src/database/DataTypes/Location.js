@@ -88,6 +88,11 @@ Location.schema = {
       objectType: 'LocationMovement',
       property: 'location',
     },
+    sensors: {
+      type: 'linkingObjects',
+      objectType: 'Sensor',
+      property: 'location',
+    },
     temperatureLogs: {
       type: 'linkingObjects',
       objectType: 'TemperatureLog',

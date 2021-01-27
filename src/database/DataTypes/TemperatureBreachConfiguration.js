@@ -26,7 +26,7 @@ export class TemperatureBreachConfiguration extends Realm.Object {
    * @param {TemperatureLog} temperatureLog A potential log which may create a breach.
    */
   createBreach(database, location, temperatureLog) {
-    const { timestamp } = temperatureLog;
+    const { timestamp, sensor } = temperatureLog;
     const { temperatureLogs } = location;
 
     // The potential start time of the breach - looking back from the passed
@@ -58,7 +58,7 @@ export class TemperatureBreachConfiguration extends Realm.Object {
     // Create a breach if the duration of logs and temperatures define a breach and set
     // each temperature log as part of the breach.
     if (willCreateBreach) {
-      const breach = createRecord(database, 'TemperatureBreach', startTime, location, this);
+      const breach = createRecord(database, 'TemperatureBreach', startTime, location, sensor, this);
       proximalLogs.forEach(log => database.update('TemperatureLog', { ...log, breach }));
     }
 
