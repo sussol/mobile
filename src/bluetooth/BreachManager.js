@@ -8,7 +8,6 @@ const createBreachRecord = (
   startTimestamp,
   endTimestamp
 ) => {
-  const { id: sensorId, location } = sensor;
   const {
     minimumTemperature: thresholdMinTemperature,
     maximumTemperature: thresholdMaxTemperature,
@@ -16,10 +15,11 @@ const createBreachRecord = (
     type,
   } = temperatureBreachConfiguration;
   const id = uuid;
+  const { location } = sensor;
 
   return {
     id,
-    sensorId,
+    sensor,
     thresholdMinTemperature,
     thresholdMaxTemperature,
     thresholdDuration,
