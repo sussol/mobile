@@ -15,17 +15,7 @@ export const selectSelectedFridgeID = ({ fridge }) => {
   return id;
 };
 
-export const selectTemperatureLogsFromDate = ({ fridge }) => {
-  const { fromDate } = fridge;
-
-  return fromDate;
-};
-
-export const selectTemperatureLogsToDate = ({ fridge }) => {
-  const { toDate } = fridge;
-
-  return toDate;
-};
+export const selectFridgeState = ({ fridge }) => fridge;
 
 export const selectSelectedFridge = createSelector([selectSelectedFridgeID], selectedFridgeID => {
   const selectedFridge = UIDatabase.get('Location', selectedFridgeID);
@@ -38,6 +28,41 @@ export const selectFridgeTemperatureLogs = createSelector([selectSelectedFridge]
 
   return temperatureLogs.sorted?.('timestamp') ?? [];
 });
+
+export const selectLeastRecentTemperatureLogDate = createSelector(
+  [selectSelectedFridge],
+  fridge => {
+    const { leastRecentTemperatureLog } = fridge;
+
+    const { timestamp: minimumDate } = leastRecentTemperatureLog ?? {};
+
+    return minimumDate;
+  }
+);
+
+export const selectMostRecentTemperatureLogDate = createSelector([selectSelectedFridge], fridge => {
+  const { mostRecentTemperatureLog } = fridge;
+
+  const { timestamp: minimumDate } = mostRecentTemperatureLog ?? {};
+
+  return minimumDate;
+});
+
+export const selectTemperatureLogsFromDate = createSelector(
+  [selectFridgeState, selectLeastRecentTemperatureLogDate],
+  (fridgeState, minimumDate) => {
+    const { fromDate } = fridgeState;
+    return moment.max([moment(fromDate), moment(minimumDate)]).toDate();
+  }
+);
+
+export const selectTemperatureLogsToDate = createSelector(
+  [selectFridgeState, selectMostRecentTemperatureLogDate],
+  (fridgeState, maximumDate) => {
+    const { toDate } = fridgeState;
+    return moment.min([moment(toDate), moment(maximumDate)]).toDate();
+  }
+);
 
 export const selectFridgeTemperatureLogsFromDate = createSelector(
   [selectFridgeTemperatureLogs, selectTemperatureLogsFromDate, selectTemperatureLogsToDate],
@@ -102,13 +127,22 @@ export const selectBreaches = createSelector(
       toDate
     );
 
-    const adjustedBreaches = breachesInDateRange?.map(({ timestamp, id, temperature }) => ({
+    return breachesInDateRange;
+  }
+);
+
+export const selectAdjustedBreaches = createSelector(
+  [selectFridgeTemperatureLogsFromDate, selectBreaches],
+  (fromDate, breaches) => {
+    // If a breach started before the date range but is still on going, adjust the start date to
+    // be the minimum date in the chart.
+    const adjustedBreaches = breaches.map(({ timestamp, id, temperature }) => ({
       id,
       temperature,
       timestamp: moment(timestamp).isBefore(moment(fromDate)) ? fromDate : timestamp,
     }));
 
-    return adjustedBreaches ?? [];
+    return adjustedBreaches;
   }
 );
 
@@ -127,5 +161,76 @@ export const selectTimestampFormatter = createSelector(
     if (durationInDays <= 3) return getTickFormat(dateAndTime);
 
     return getTickFormat(date);
+  }
+);
+
+export const selectNumberOfHotConsecutiveBreaches = createSelector([selectBreaches], breaches => {
+  const hotBreaches = breaches?.filtered("type == 'HOT_CONSECUTIVE'");
+  return hotBreaches.length;
+});
+
+export const selectNumberOfColdConsecutiveBreaches = createSelector([selectBreaches], breaches => {
+  const coldBreaches = breaches?.filtered("type == 'COLD_CONSECUTIVE'");
+  return coldBreaches.length;
+});
+
+const formatTime = sum => {
+  const asMoment = moment.duration(sum);
+
+  const asDays = Math.floor(asMoment.asDays());
+  const asHours = Math.floor(asMoment.asHours());
+  const asMinutes = Math.floor(asMoment.asMinutes());
+
+  const lengthOfHours = String(asHours).length;
+  const lengthOfMinutes = String(asMinutes).length;
+
+  const addSuffix = (amount, suffix) => `${amount} ${suffix}`;
+
+  if (lengthOfMinutes < 3) return addSuffix(asMinutes, 'm');
+  if (lengthOfHours < 3) return addSuffix(asHours, 'h');
+
+  return addSuffix(asDays, 'd');
+};
+
+export const selectHotCumulativeBreach = createSelector(
+  [selectSelectedFridge, selectFridgeTemperatureLogsFromDate],
+  (fridge, logs) => {
+    const { hotCumulativeBreachConfig } = fridge;
+
+    const { minimumTemperature, duration } = hotCumulativeBreachConfig;
+
+    const logsOverThreshold = logs.filtered('temperature >= $0', minimumTemperature);
+    const sum = logsOverThreshold.sum('logInterval') ?? 0;
+    const hasCumulativeBreach = sum >= duration && duration;
+
+    return hasCumulativeBreach ? formatTime(sum * 1000) : null;
+  }
+);
+
+export const selectColdCumulativeBreach = createSelector(
+  [selectSelectedFridge, selectFridgeTemperatureLogsFromDate],
+  (fridge, logs) => {
+    const { coldCumulativeBreachConfig } = fridge;
+
+    const { maximumTemperature, duration } = coldCumulativeBreachConfig;
+
+    const logsOverThreshold = logs.filtered('temperature <= $0', maximumTemperature);
+    const sum = logsOverThreshold.sum('logInterval') ?? 0;
+    const hasCumulativeBreach = sum >= duration && duration;
+
+    return hasCumulativeBreach ? formatTime(sum * 1000) : null;
+  }
+);
+
+export const selectAverageTemperature = createSelector(
+  [selectFridgeTemperatureLogsFromDate],
+  logs => {
+    // Aggregate methods return undefined if the collection is empty.
+    // Return early to avoid having to handle falsey values (the
+    // average can be 0 which is a valid value but undefined is not)
+    if (!logs.length) return null;
+
+    const averageTemperature = logs.avg('temperature');
+    return Number(averageTemperature).toFixed(1);
   }
 );

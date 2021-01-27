@@ -18,6 +18,7 @@ import { MODAL_KEYS } from '../utilities';
 
 import {
   gotoEditSensorPage,
+  gotoFridgeDetailPage,
   gotoNewSensorPage,
   gotoNewVaccineModulePage,
   gotoRealmExplorer,
@@ -34,6 +35,7 @@ import { PermissionActions } from '../actions/PermissionActions';
 import { createRecord } from '../database/utilities/index';
 import { BreachManager } from '../bluetooth/BreachManager';
 import { VaccineDataAccess } from '../bluetooth/VaccineDataAccess';
+import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
@@ -48,6 +50,7 @@ const Settings = ({
   toRealmExplorer,
   currentUserPasswordHash,
   requestStorageWritePermission,
+  toFridgeDetail,
   toNewVaccineModulePage,
   toNewSensorPage,
   toEditSensorPage,
@@ -57,6 +60,8 @@ const Settings = ({
     modalKey: '',
     syncPassword: '',
   });
+
+  const withLoadingIndicator = useLoadingIndicator();
 
   const { modalKey, syncURL, syncPassword } = state;
 
@@ -284,7 +289,10 @@ const Settings = ({
           <MenuButton text={buttonStrings.export_data} onPress={requestStorageWritePermission} />
           <MenuButton text="New vaccine module" onPress={toNewVaccineModulePage} />
           <MenuButton text="New Sensor" onPress={toNewSensorPage} />
-          <MenuButton text="Generate vaccine data" onPress={createVaccineData} />
+          <MenuButton
+            text="Generate vaccine data"
+            onPress={() => withLoadingIndicator(createVaccineData)}
+          />
         </View>
         <View>
           {UIDatabase.objects('Sensor').map(sensor => (
@@ -292,6 +300,11 @@ const Settings = ({
               text={sensor.name || sensor.macAddress}
               onPress={() => toEditSensorPage(sensor)}
             />
+          ))}
+        </View>
+        <View>
+          {UIDatabase.objects('Location').map(location => (
+            <MenuButton text={location.code} onPress={() => toFridgeDetail(location)} />
           ))}
         </View>
       </View>
@@ -311,6 +324,7 @@ const mapStateToDispatch = dispatch => ({
   toNewVaccineModulePage: () => dispatch(gotoNewVaccineModulePage()),
   toRealmExplorer: () => dispatch(gotoRealmExplorer()),
   toEditSensorPage: sensor => dispatch(gotoEditSensorPage(sensor)),
+  toFridgeDetail: fridge => dispatch(gotoFridgeDetailPage(fridge)),
   toNewSensorPage: () => dispatch(gotoNewSensorPage()),
   requestStorageWritePermission: () =>
     dispatch(PermissionActions.requestWriteStorage()).then(exportData),
@@ -336,4 +350,5 @@ Settings.propTypes = {
   toNewVaccineModulePage: PropTypes.func.isRequired,
   toNewSensorPage: PropTypes.func.isRequired,
   toEditSensorPage: PropTypes.func.isRequired,
+  toFridgeDetail: PropTypes.func.isRequired,
 };
