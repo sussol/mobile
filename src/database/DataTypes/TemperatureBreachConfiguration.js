@@ -76,6 +76,7 @@ TemperatureBreachConfiguration.schema = {
     duration: { type: 'double', optional: true },
     description: { type: 'string', optional: true },
     colour: { type: 'string', optional: true },
+    location: { type: 'Location', optional: true },
     type: 'string',
   },
 };

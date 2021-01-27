@@ -18,13 +18,8 @@ const initialState = () => {
   return {
     fridges: locationsWithASensor,
     selectedFridge: locationsWithASensor[0],
-    fromDate: moment(new Date())
-      .subtract(30, 'd')
-      .startOf('day')
-      .toDate(),
-    toDate: moment(new Date())
-      .endOf('day')
-      .toDate(),
+    fromDate: moment(new Date()).subtract(30, 'd').startOf('day').toDate(),
+    toDate: moment(new Date()).endOf('day').toDate(),
   };
 };
 
@@ -59,10 +54,14 @@ export const FridgeReducer = (state = initialState(), action) => {
 
     case 'Navigation/BACK':
     case 'Navigation/NAVIGATE': {
-      const { routeName, payload } = action;
-      const { prevRouteName } = payload ?? {};
+      const { routeName, params } = action;
 
-      if (routeName === ROUTES.VACCINES || prevRouteName === ROUTES.VACCINES) return initialState();
+      const { fridge } = params ?? {};
+
+      if (routeName === ROUTES.VACCINES || routeName === ROUTES.FRIDGE_DETAIL) {
+        const newState = initialState();
+        return { ...newState, selectedFridge: fridge };
+      }
 
       return state;
     }

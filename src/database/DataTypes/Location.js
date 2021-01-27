@@ -57,6 +57,22 @@ export class Location extends Realm.Object {
   totalStock() {
     return this.batches.sum('numberOfPacks') ?? 0;
   }
+
+  get hotCumulativeBreachConfig() {
+    return this.breachConfigs.filtered("type == 'HOT_CUMULATIVE'")[0];
+  }
+
+  get coldCumulativeBreachConfig() {
+    return this.breachConfigs.filtered("type == 'COLD_CUMULATIVE'")[0];
+  }
+
+  get hotConsecutiveBreachConfig() {
+    return this.breachConfigs.filtered("type == 'HOT_CONSECUTIVE'")[0];
+  }
+
+  get coldConsecutiveBreachConfig() {
+    return this.breachConfigs.filtered("type == 'COLD_CONSECUTIVE'")[0];
+  }
 }
 
 Location.schema = {
@@ -85,6 +101,11 @@ Location.schema = {
     batches: {
       type: 'linkingObjects',
       objectType: 'ItemBatch',
+      property: 'location',
+    },
+    breachConfigs: {
+      type: 'linkingObjects',
+      objectType: 'TemperatureBreachConfiguration',
       property: 'location',
     },
   },
