@@ -31,15 +31,18 @@ const updateLoggingDelay = loggingDelay => ({
   payload: { loggingDelay },
 });
 
-const updateSensor = sensor => dispatch =>
-  dispatch(VaccineActions.startSetLogInterval(sensor)).then(() =>
-    dispatch(VaccineActions.startSensorDisableButton(sensor.macAddress))
-  );
+const updateSensor = sensor => async dispatch => {
+  await dispatch(VaccineActions.startSetLogInterval(sensor));
+  await dispatch(VaccineActions.startSensorDisableButton(sensor.macAddress));
+};
 
-const saveSensor = sensor => dispatch =>
-  dispatch(VaccineActions.saveSensor(sensor)).catch(() => {
+const saveSensor = sensor => async dispatch => {
+  try {
+    await dispatch(VaccineActions.saveSensor(sensor));
+  } catch {
     throw new Error(vaccineStrings.E_SENSOR_SAVE);
-  });
+  }
+};
 
 export const NewSensorActions = {
   saveSensor,

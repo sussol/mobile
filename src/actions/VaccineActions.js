@@ -193,43 +193,49 @@ const startDownloadAllLogs = macAddress => async (dispatch, getState) => {
   return null;
 };
 
-const setLogInterval = (macAddress, interval) => dispatch => {
+const setLogInterval = (macAddress, interval) => async dispatch => {
   dispatch(setLogIntervalStart(macAddress));
-  const regex = new RegExp(`Interval: ${interval}s`); // TODO: update with sensor specific response as needed
-  const error = `Sensor response was not equal to 'Interval: ${interval}s'`;
 
-  return BleService()
-    .updateLogInterval(macAddress, interval)
-    .then(result =>
-      regex.test(result.toString()) ? setLogIntervalSuccess() : setLogIntervalError(error)
-    )
-    .then(action => dispatch(action));
+  try {
+    const regex = new RegExp(`Interval: ${interval}s`); // TODO: update with sensor specific response as needed
+    const error = `Sensor response was not equal to 'Interval: ${interval}s'`;
+    const response = await BleService.updateLogIntervalWithRetries(macAddress, interval, 10);
+    const action = regex.test(response.toString())
+      ? setLogIntervalSuccess()
+      : setLogIntervalError(error);
+    await dispatch(action);
+  } catch (e) {
+    dispatch(setLogIntervalError(e));
+    throw e;
+  }
 };
 
-const saveSensor = sensor => dispatch =>
-  new Promise((resolve, reject) => {
-    dispatch(saveSensorStart(sensor.macAddress));
-    try {
-      const { location, logInterval, macAddress, name } = sensor;
-      const sensorManager = SensorManager();
-      const newSensor = sensorManager.createSensor({ location, logInterval, macAddress, name });
-      sensorManager.saveSensor(newSensor);
-      dispatch(saveSensorSuccess());
-      resolve();
-    } catch (error) {
-      dispatch(saveSensorError());
-      reject(error);
-    }
-  });
+const saveSensor = sensor => async dispatch => {
+  dispatch(saveSensorStart(sensor.macAddress));
+  try {
+    const { location, logInterval, macAddress, name } = sensor;
+    const sensorManager = SensorManager();
+    const newSensor = await sensorManager.createSensor({ location, logInterval, macAddress, name });
+    await sensorManager.saveSensor(newSensor);
+    dispatch(saveSensorSuccess());
+  } catch (error) {
+    dispatch(saveSensorError());
+    throw error;
+  }
+};
 
-const disableSensorButton = macAddress => dispatch => {
+const disableSensorButton = macAddress => async dispatch => {
   dispatch(disableButtonStart(macAddress));
-  return BleService()
-    .getInfo(macAddress)
-    .then(info => (info.isDisabled ? true : BleService().toggleButton(macAddress)))
-    .finally(() => {
+  try {
+    const info = await BleService().getInfoWithRetries(macAddress, 10);
+    if (!info.isDisabled) {
+      await BleService().toggleButtonWithRetries(macAddress, 10);
       dispatch(disableButtonStop(macAddress));
-    });
+    }
+  } catch (error) {
+    dispatch(disableButtonStop(macAddress));
+    throw error;
+  }
 };
 
 const startSensorBlink = macAddress => async (dispatch, getState) => {
