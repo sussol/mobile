@@ -106,7 +106,10 @@ const dispatchToProps = dispatch => {
   const connectToSensor = sensor => () =>
     dispatch(NewSensorActions.updateSensor(sensor))
       .then(() => dispatch(NewSensorActions.saveSensor(sensor)))
-      .then(() => dispatch(gotoSettings()))
+      .then(() => {
+        ToastAndroid.show(vaccineStrings.sensor_save_success, ToastAndroid.LONG);
+        dispatch(gotoSettings());
+      })
       .catch(reason => {
         ToastAndroid.show(reason.toString(), ToastAndroid.LONG);
       });

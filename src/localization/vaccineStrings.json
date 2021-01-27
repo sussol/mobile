@@ -22,6 +22,7 @@
     "temperature_breaches_for": "Temperature breaches for",
     "fridges": "Fridges",
     "sensors": "Sensors",
+    "sensor_save_success": "Sensor saved successfully",
     "oops_no_temperatures": "Oops! There are no temperatures recorded during this time",
     "no_temperatures": "No temperatures recorded",
     "E_PARSING_FAILED": "Problem parsing, decode failed",
