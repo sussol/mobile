@@ -28,6 +28,7 @@
     "temperature_breaches_for": "Temperature breaches for",
     "fridges": "Fridges",
     "sensors": "Sensors",
+    "sensor_save_success": "Sensor saved successfully",
     "oops_no_temperatures": "Oops! There are no temperatures recorded during this time",
     "no_temperatures": "No temperatures recorded",
     "E_PARSING_FAILED": "Problem parsing, decode failed",
@@ -45,7 +46,8 @@
     "E_BLUETOOTH_DISABLED": "Problem enabling the bluetooth adapter",
     "E_BLUETOOTH_ADAPTER": "Problem accessing the bluetooth adapter",
     "E_BLUETOOTH_DENIED": "Denied access to the bluetooth adapter",
-    "log_interval_set": "Log interval updated to {0}s"
+    "log_interval_set": "Log interval updated to {0}s",
+    "E_SENSOR_SAVE": "Problem saving sensor details"
   },
   "fr": {},
   "gil": {},

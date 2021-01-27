@@ -1,3 +1,6 @@
+import { VaccineActions } from './VaccineActions';
+import { vaccineStrings } from '../localization';
+
 export const NEW_SENSOR_ACTIONS = {
   SELECT: 'SensorActions/select',
   UPDATE_CONFIG: 'SensorActions/updateConfig',
@@ -28,11 +31,26 @@ const updateLoggingDelay = loggingDelay => ({
   payload: { loggingDelay },
 });
 
+const updateSensor = sensor => async dispatch => {
+  await dispatch(VaccineActions.startSetLogInterval(sensor));
+  await dispatch(VaccineActions.startSensorDisableButton(sensor.macAddress));
+};
+
+const saveSensor = sensor => async dispatch => {
+  try {
+    await dispatch(VaccineActions.saveSensor(sensor));
+  } catch {
+    throw new Error(vaccineStrings.E_SENSOR_SAVE);
+  }
+};
+
 export const NewSensorActions = {
+  saveSensor,
   select,
   updateConfig,
   updateLoggingDelay,
   updateLogInterval,
   updateName,
   updateCode,
+  updateSensor,
 };
