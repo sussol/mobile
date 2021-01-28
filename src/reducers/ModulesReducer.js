@@ -49,7 +49,7 @@ const initialState = () => {
     usingPayments,
     usingDashboard,
     usingDispensary,
-    usingVaccines,
+    usingVaccines: true,
     usingCashRegister,
     usingModules,
     usingInsurance,
