@@ -998,6 +998,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'TemperatureBreach': {
+      const sensor = database.getOrCreate('Sensor', record.sensor_ID);
       database.update(recordType, {
         id: record.ID,
         startTimestamp: parseDate(record.start_date, record.start_time),
@@ -1008,6 +1009,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         thresholdMaxTemperature: parseNumber(record.threshold_max_temperature),
         thresholdMinTemperature: parseNumber(record.threshold_min_temperature),
         thresholdDuration: parseNumber(record.threshold_duration),
+        sensor,
       });
       break;
     }

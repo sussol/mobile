@@ -69,6 +69,7 @@ Sensor.schema = {
     location: { type: 'Location', optional: true },
     batteryLevel: { type: 'double', default: 0 },
     logs: { type: 'linkingObjects', objectType: 'TemperatureLog', property: 'sensor' },
+    breaches: { type: 'linkingObjects', objectType: 'TemperatureBreach', property: 'sensor' },
     isActive: { type: 'bool', default: true },
     logInterval: { type: 'int', default: 300 },
   },

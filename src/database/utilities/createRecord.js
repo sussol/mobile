@@ -1120,11 +1120,13 @@ const createTemperatureBreach = (
   database,
   startTimestamp,
   location,
+  sensor,
   temperatureBreachConfiguration
 ) => {
   const temperatureLog = database.create('TemperatureBreach', {
     id: generateUUID(),
     startTimestamp,
+    sensor,
     location,
     temperatureBreachConfiguration,
   });

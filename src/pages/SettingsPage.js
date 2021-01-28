@@ -176,6 +176,7 @@ const Settings = ({
           duration: 60 * 20,
           description: 'Config 1, 8 to 999 consecutive for 20 minutes',
           type: 'HOT_CONSECUTIVE',
+          location,
         });
 
         UIDatabase.update('TemperatureBreachConfiguration', {
@@ -185,6 +186,7 @@ const Settings = ({
           duration: 60 * 20,
           description: 'Config 1, 0 to -999 consecutive for 20 minutes',
           type: 'COLD_CONSECUTIVE',
+          location,
         });
 
         UIDatabase.update('TemperatureBreachConfiguration', {
@@ -194,6 +196,7 @@ const Settings = ({
           duration: 60 * 60,
           description: 'Config 1, 8 to 999 cumulative for 1 hour',
           type: 'HOT_CUMULATIVE',
+          location,
         });
 
         UIDatabase.update('TemperatureBreachConfiguration', {
@@ -203,6 +206,7 @@ const Settings = ({
           duration: 60 * 60,
           description: 'Config 1, 0 to -999 cumulative',
           type: 'COLD_CUMULATIVE',
+          location,
         });
       });
 
