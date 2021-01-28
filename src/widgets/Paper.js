@@ -11,10 +11,10 @@ export const Paper = ({
   paddingHorizontal,
   Header,
   headerText,
+  style,
   headerContainerStyle,
   contentContainerStyle,
   children,
-  style,
 }) => {
   let internalContainerStyle = [localStyles.container, style];
   if (width) internalContainerStyle = [localStyles.container, { width }];
@@ -23,13 +23,16 @@ export const Paper = ({
   const InternalHeader =
     Header || (headerText && <Text style={localStyles.headerText}>{headerText}</Text>);
 
+  const internalHeaderContainerStyle = InternalHeader && [
+    localStyles.headerContainer,
+    { paddingHorizontal },
+    headerText && { alignItems: 'center', justifyContent: 'center' },
+    headerContainerStyle,
+  ];
+
   return (
     <View style={internalContainerStyle}>
-      {InternalHeader && (
-        <View style={[localStyles.headerContainer, { paddingHorizontal }, headerContainerStyle]}>
-          {InternalHeader}
-        </View>
-      )}
+      {InternalHeader && <View style={internalHeaderContainerStyle}>{InternalHeader}</View>}
       <View style={[localStyles.contentContainer, { paddingHorizontal }, contentContainerStyle]}>
         {children}
       </View>
@@ -45,6 +48,9 @@ const localStyles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: WHITE,
   },
+  contentContainer: {
+    flex: 0,
+  },
   headerContainer: {
     flex: 0,
     height: 40,
@@ -55,8 +61,7 @@ const localStyles = StyleSheet.create({
   headerText: {
     fontFamily: APP_FONT_FAMILY,
     color: DARKER_GREY,
-    fontSize: 13,
-    textTransform: 'uppercase',
+    fontSize: 14,
   },
 });
 

@@ -52,7 +52,6 @@ export { WithFixedDimensions } from './WithFixedDimensions';
 export { SensorStatus } from './SensorStatus';
 export { Rectangle } from './Rectangle';
 export { Paper } from './Paper';
-export { CardDetail } from './CardDetail';
 export { Circle } from './Circle';
 export { TextEditor } from './TextEditor';
 export { EditorRow } from './EditorRow';

@@ -2,19 +2,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Text, View } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 
 import { DateRangeSelector } from '../widgets/DateRangeSelector';
-import {
-  CardDetail,
-  ColdBreachIcon,
-  DataTablePageView,
-  FlexRow,
-  HotBreachIcon,
-  Paper,
-  SpacedChildren,
-} from '../widgets';
+import { ColdBreachIcon, DataTablePageView, FlexRow, HotBreachIcon, Paper } from '../widgets';
 import { VaccineChart } from '../widgets/VaccineChart';
 import { NoBreachMan } from '../widgets/NoBreachMan';
 import { FridgeActions } from '../actions/FridgeActions';
@@ -44,56 +36,20 @@ import {
 } from '../globalStyles';
 import { vaccineStrings } from '../localization/index';
 
-const CardText = ({ children, color, small }) => (
-  <Text style={{ color, fontSize: small ? 12 : 50, fontFamily: APP_FONT_FAMILY }}>{children}</Text>
+const NoBreachMessage = () => (
+  <>
+    <NoBreachMan />
+    <Text style={localStyles.noBreachText}>{vaccineStrings.no_breaches}</Text>
+  </>
 );
 
-CardText.defaultProps = { small: false };
-
-CardText.propTypes = {
-  children: PropTypes.node.isRequired,
-  color: PropTypes.string.isRequired,
-  small: PropTypes.bool,
-};
-
-const BreachCard = ({ content, type }) => {
-  const color = type === 'HOT_CUMULATIVE' ? DANGER_RED : COLD_BREACH_BLUE;
-  const Icon = type === 'HOT_CUMULATIVE' ? HotBreachIcon : ColdBreachIcon;
-
-  const header = type.includes('CUMULATIVE')
-    ? vaccineStrings.cumulative_breach
-    : vaccineStrings.consecutive_breach;
-
-  return (
-    <CardDetail
-      headerText={header}
-      Content={content ? <CardText color={color}>{content}</CardText> : <NoBreachMan />}
-      Footer={
-        content ? (
-          <Icon color={color} />
-        ) : (
-          <CardText color={color} small>
-            {vaccineStrings.no_breaches}
-          </CardText>
-        )
-      }
-    />
-  );
-};
-
-BreachCard.defaultProps = {
-  content: null,
-};
-
-BreachCard.propTypes = {
-  content: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-  type: PropTypes.oneOf([
-    'COLD_CUMULATIVE',
-    'COLD_CONSECUTIVE',
-    'HOT_CONSECUTIVE',
-    'HOT_CUMULATIVE',
-  ]).isRequired,
-};
+const BreachCard = props => (
+  <Paper
+    {...props}
+    style={localStyles.card}
+    contentContainerStyle={{ alignItems: 'center', paddingBottom: 10 }}
+  />
+);
 
 export const FridgeDetailPageComponent = ({
   breaches,
@@ -115,52 +71,103 @@ export const FridgeDetailPageComponent = ({
 }) => (
   <DataTablePageView>
     <View style={localStyles.container}>
-      <SpacedChildren space={30} after vertical horizontal={false}>
-        <DateRangeSelector
-          containerStyle={localStyles.datePickerContainer}
-          initialStartDate={fromDate}
-          initialEndDate={toDate}
-          onChangeToDate={onChangeToDate}
-          onChangeFromDate={onChangeFromDate}
-          minimumDate={minimumDate}
-          maximumDate={maximumDate}
-        />
+      <DateRangeSelector
+        containerStyle={localStyles.datePickerContainer}
+        initialStartDate={fromDate}
+        initialEndDate={toDate}
+        onChangeToDate={onChangeToDate}
+        onChangeFromDate={onChangeFromDate}
+        minimumDate={minimumDate}
+        maximumDate={maximumDate}
+      />
 
-        <Paper height={280}>
-          <AfterInteractions>
-            <VaccineChart
-              breaches={[breaches[0]]}
-              minLine={minLine}
-              maxLine={maxLine}
-              minDomain={minDomain}
-              maxDomain={maxDomain}
-            />
-          </AfterInteractions>
-        </Paper>
+      <Paper style={{ flex: 1 }} contentContainerStyle={{ flex: 1, marginTop: 20 }}>
+        <AfterInteractions>
+          <VaccineChart
+            breaches={[breaches[0]]}
+            minLine={minLine}
+            maxLine={maxLine}
+            minDomain={minDomain}
+            maxDomain={maxDomain}
+          />
+        </AfterInteractions>
+      </Paper>
 
-        <Animatable.View animation="fadeIn" duration={3000} useNativeDriver>
-          <FlexRow justifyContent="space-between">
-            <BreachCard content={coldCumulativeBreach} type="COLD_CUMULATIVE" />
-            <BreachCard numberOfBreaches={numberOfColdBreaches} type="COLD_CONSECUTIVE" />
+      <Animatable.View animation="fadeIn" duration={3000} useNativeDriver>
+        <FlexRow>
+          <BreachCard headerText={vaccineStrings.cumulative_breach}>
+            {coldCumulativeBreach ? (
+              <>
+                <Text style={localStyles.coldText}>{numberOfColdBreaches}</Text>
+                <ColdBreachIcon />
+              </>
+            ) : (
+              <NoBreachMessage />
+            )}
+          </BreachCard>
 
-            <CardDetail
-              headerText={vaccineStrings.average_temperature}
-              Content={<CardText color={DARKER_GREY}>{averageTemperature}</CardText>}
-            />
+          <BreachCard headerText={vaccineStrings.consecutive_breach}>
+            {0 ? (
+              <>
+                <Text style={localStyles.coldText}>{numberOfColdBreaches}</Text>
+                <ColdBreachIcon />
+              </>
+            ) : (
+              <NoBreachMessage />
+            )}
+          </BreachCard>
 
-            <BreachCard content={hotCumulativeBreach} type="HOT_CUMULATIVE" />
-            <BreachCard content={numberOfHotBreaches} type="HOT_CONSECUTIVE" />
-          </FlexRow>
-        </Animatable.View>
-      </SpacedChildren>
+          <BreachCard headerText={vaccineStrings.average_temperature}>
+            <Text style={[localStyles.hotText, { color: DARKER_GREY }]}>{averageTemperature}</Text>
+          </BreachCard>
+
+          <BreachCard headerText={vaccineStrings.consecutive_breach}>
+            {numberOfColdBreaches ? (
+              <>
+                <Text style={localStyles.hotText}>{hotCumulativeBreach}</Text>
+                <HotBreachIcon />
+              </>
+            ) : (
+              <NoBreachMessage />
+            )}
+          </BreachCard>
+
+          <BreachCard headerText={vaccineStrings.consecutive_breach}>
+            {numberOfColdBreaches ? (
+              <>
+                <Text style={localStyles.hotText}>{numberOfHotBreaches}</Text>
+                <HotBreachIcon />
+              </>
+            ) : (
+              <NoBreachMessage />
+            )}
+          </BreachCard>
+        </FlexRow>
+      </Animatable.View>
     </View>
   </DataTablePageView>
 );
 
-const localStyles = {
+const localStyles = StyleSheet.create({
   container: { padding: 50, flex: 1, backgroundColor: BLUE_WHITE },
   datePickerContainer: { width: 250, borderRadius: 50, height: 50 },
-};
+  card: { flex: 1 },
+  hotText: {
+    color: DANGER_RED,
+    fontSize: 50,
+    fontFamily: APP_FONT_FAMILY,
+  },
+  coldText: {
+    color: COLD_BREACH_BLUE,
+    fontSize: 50,
+    fontFamily: APP_FONT_FAMILY,
+  },
+  noBreachText: {
+    fontSize: 12,
+    color: DARKER_GREY,
+    fontFamily: APP_FONT_FAMILY,
+  },
+});
 
 const stateToProps = state => {
   const { fridge } = state;

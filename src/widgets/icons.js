@@ -26,6 +26,8 @@ import {
   GREY,
   DARKER_GREY,
   BLACK,
+  COLD_BREACH_BLUE,
+  DANGER_RED,
 } from '../globalStyles';
 
 export const SortAscIcon = () => <FAIcon name="sort-asc" size={15} style={{ marginRight: 10 }} />;
@@ -282,8 +284,7 @@ MinusCircle.propTypes = {
 export const HotBreachIcon = ({ size, style, color }) => (
   <FAIcon size={size} style={style} color={color} name="thermometer" />
 );
-
-HotBreachIcon.defaultProps = { size: 40, style: {}, color: WHITE };
+HotBreachIcon.defaultProps = { size: 40, style: {}, color: DANGER_RED };
 HotBreachIcon.propTypes = {
   size: PropTypes.number,
   style: PropTypes.object,
@@ -293,8 +294,7 @@ HotBreachIcon.propTypes = {
 export const ColdBreachIcon = ({ size, style, color }) => (
   <FAIcon size={size} style={style} color={color} name="snowflake-o" />
 );
-
-ColdBreachIcon.defaultProps = { size: 40, style: {}, color: WHITE };
+ColdBreachIcon.defaultProps = { size: 40, style: {}, color: COLD_BREACH_BLUE };
 ColdBreachIcon.propTypes = {
   size: PropTypes.number,
   style: PropTypes.object,
@@ -304,7 +304,6 @@ ColdBreachIcon.propTypes = {
 export const LightbulbIcon = ({ size, style, color }) => (
   <FAIcon size={size} style={style} color={color} name="lightbulb-o" />
 );
-
 LightbulbIcon.defaultProps = { size: 20, style: {}, color: 'white' };
 LightbulbIcon.propTypes = {
   size: PropTypes.number,
