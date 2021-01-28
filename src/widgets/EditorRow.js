@@ -33,7 +33,6 @@ EditorRow.propTypes = {
 };
 
 const localStyles = StyleSheet.create({
-  containerStyle: { padding: 5 },
   labelStyle: {
     fontSize: 12,
     fontFamily: APP_FONT_FAMILY,

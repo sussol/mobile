@@ -45,7 +45,7 @@ const formatBatteryLevel = batteryLevel => `${batteryLevel}%`;
 
 export const FridgeHeader = ({ macAddress, batteryLevel, lastSyncDate, onBlink }) => (
   <>
-    <View>
+    <View style={{ flex: 1, justifyContent: 'center' }}>
       <Text style={localStyles.paperTitleText}>{macAddress}</Text>
     </View>
     <TextWithIcon
@@ -116,33 +116,40 @@ export const SensorEditPageComponent = ({
           />
         }
       >
-        <EditorRow label={vaccineStrings.sensor_name} Icon={<InfoIcon color={DARKER_GREY} />}>
+        <EditorRow
+          label={vaccineStrings.sensor_name}
+          Icon={<InfoIcon color={DARKER_GREY} />}
+          containerStyle={localStyles.paperContentRow}
+        >
           <TextEditor size="large" value={name} onChangeText={updateName} />
-
           <TextEditor label={vaccineStrings.sensor_code} value={code} onChangeText={updateCode} />
         </EditorRow>
       </Paper>
 
       <Paper>
         <BreachConfigRow
+          containerStyle={localStyles.paperContentRow}
           type="HOT_CONSECUTIVE"
           {...hotConsecutiveConfig}
           updateDuration={updateDuration}
           updateTemperature={updateTemperature}
         />
         <BreachConfigRow
+          containerStyle={localStyles.paperContentRow}
           type="COLD_CONSECUTIVE"
           {...coldConsecutiveConfig}
           updateDuration={updateDuration}
           updateTemperature={updateTemperature}
         />
         <BreachConfigRow
+          containerStyle={localStyles.paperContentRow}
           type="HOT_CUMULATIVE"
           {...hotCumulativeConfig}
           updateDuration={updateDuration}
           updateTemperature={updateTemperature}
         />
         <BreachConfigRow
+          containerStyle={localStyles.paperContentRow}
           type="COLD_CUMULATIVE"
           {...coldCumulativeConfig}
           updateDuration={updateDuration}
@@ -151,8 +158,9 @@ export const SensorEditPageComponent = ({
       </Paper>
 
       <Paper>
-        <FlexRow alignItems="center" justifyContent="flex-end">
+        <FlexRow justifyContent="flex-end">
           <DurationEditor
+            containerStyle={localStyles.paperContentRow}
             value={logInterval / SECONDS.ONE_MINUTE}
             onChange={updateLogInterval}
             label={vaccineStrings.logging_interval}
@@ -160,7 +168,7 @@ export const SensorEditPageComponent = ({
         </FlexRow>
       </Paper>
 
-      <FlexRow flex={1} alignItems="center">
+      <FlexRow flex={1} alignItems="flex-end">
         <TextWithIcon left Icon={<HazardIcon color={LIGHT_GREY} />} size="ms">
           {vaccineStrings.bluetooth_changes_can_take_time}
         </TextWithIcon>
@@ -177,12 +185,14 @@ export const SensorEditPageComponent = ({
 };
 
 const localStyles = StyleSheet.create({
+  paperContentRow: {
+    padding: 8,
+  },
   paperTitleText: {
     color: DARKER_GREY,
     fontSize: 14,
     fontFamily: APP_FONT_FAMILY,
     textTransform: 'uppercase',
-    backgroundColor: 'red',
   },
   headerTextWithIcon: {
     flex: 0,

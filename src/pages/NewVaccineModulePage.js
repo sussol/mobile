@@ -90,7 +90,7 @@ const FridgeDisplay = ({ fridge, blinkSensor, toFridgeDetail, toEditSensorPage }
               left
               containerStyle={localStyles.fridgeDetail}
               size="ms"
-              Icon={<AlarmClockIcon size={30} color={DARKER_GREY} />}
+              Icon={<AlarmClockIcon color={DARKER_GREY} />}
             >
               {lastBreachMessage}
             </TextWithIcon>

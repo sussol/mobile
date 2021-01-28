@@ -46,6 +46,7 @@ const localStyles = StyleSheet.create({
     backgroundColor: WHITE,
   },
   headerContainer: {
+    flex: 0,
     height: 40,
     flexDirection: 'row',
     alignItems: 'stretch',

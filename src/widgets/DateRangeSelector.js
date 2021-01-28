@@ -66,7 +66,6 @@ const localStyles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     backgroundColor: LIGHT_GREY,
-    borderColor: 'red',
     alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: 15,
