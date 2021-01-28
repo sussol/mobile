@@ -6,7 +6,7 @@
 import moment from 'moment';
 import { ToastAndroid } from 'react-native';
 import { PermissionSelectors } from '../selectors/permission';
-import { selectScannedSensors } from '../selectors/vaccine';
+import { selectScannedSensors, selectIsDownloadingLogs } from '../selectors/vaccine';
 import { PermissionActions } from './PermissionActions';
 import BleService from '../bluetooth/BleService';
 import TemperatureLogManager from '../bluetooth/TemperatureLogManager';
@@ -53,7 +53,6 @@ const downloadLogsComplete = () => ({
 
 const downloadAllLogs = () => async dispatch => {
   dispatch(downloadLogsStart());
-
   // Ensure there are some sensors which have been assigned a location before syncing.
   const sensors = UIDatabase.objects('Sensor').filtered('location != null && isActive == true');
 
@@ -188,8 +187,13 @@ const scanForSensors = (dispatch, getState) => {
   BleService().scanForSensors(deviceCallback);
 };
 
-const startDownloadAllLogs = macAddress => async (dispatch, getState) => {
-  await withPermissions(dispatch, getState, downloadAllLogs(macAddress));
+const startDownloadAllLogs = () => async (dispatch, getState) => {
+  // Ensure there isn't already a download in progress before starting a new one
+  const state = getState();
+  const isDownloadingLogs = selectIsDownloadingLogs(state);
+  if (isDownloadingLogs) return null;
+
+  await withPermissions(dispatch, getState, downloadAllLogs());
   return null;
 };
 

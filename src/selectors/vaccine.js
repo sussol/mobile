@@ -8,6 +8,11 @@ export const selectScannedSensors = ({ vaccine }) => {
   return scannedSensorAddresses;
 };
 
+export const selectIsDownloadingLogs = ({ vaccine }) => {
+  const { isDownloadingLogs = false } = vaccine || {};
+  return isDownloadingLogs;
+};
+
 export const selectIsScanning = ({ vaccine }) => {
   const { isScanning = false } = vaccine || {};
   return isScanning;
