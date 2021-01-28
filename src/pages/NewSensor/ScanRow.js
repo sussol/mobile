@@ -11,10 +11,10 @@ import { vaccineStrings } from '../../localization';
 import { WithFixedDimensions } from '../../widgets/WithFixedDimensions';
 import { Spacer } from '../../widgets/Spacer';
 
-import { VaccineActions } from '../../actions/VaccineActions';
 import { NewSensorActions } from '../../actions';
 import { WizardActions } from '../../actions/WizardActions';
 import { selectSendingBlinkTo } from '../../selectors/vaccine';
+import { BlinkActions } from '../../actions/Bluetooth/BlinkActions';
 
 export const RectangleButton = ({ isDisabled, onPress, isSpinning }) =>
   isSpinning ? (
@@ -69,7 +69,7 @@ export const ScanRowComponent = ({ macAddress, blink, isBlinking, isDisabled, se
 );
 
 const dispatchToProps = dispatch => {
-  const blink = macAddress => dispatch(VaccineActions.blinkSensor(macAddress));
+  const blink = macAddress => dispatch(BlinkActions.startSensorBlink(macAddress));
   const selectSensor = macAddress => {
     dispatch(NewSensorActions.select(macAddress));
     dispatch(WizardActions.nextTab());
