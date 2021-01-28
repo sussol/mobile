@@ -17,7 +17,11 @@ import { selectScannedSensors } from '../../selectors/vaccine';
 import { SUSSOL_ORANGE } from '../../globalStyles';
 
 const Spinner = () => (
-  <TextWithIcon left Icon={<ActivityIndicator color={SUSSOL_ORANGE} />}>
+  <TextWithIcon
+    left
+    Icon={<ActivityIndicator color={SUSSOL_ORANGE} />}
+    containerStyle={{ justifyContent: 'center' }}
+  >
     {vaccineStrings.scanning}
   </TextWithIcon>
 );
@@ -35,11 +39,11 @@ export const NewSensorStepOneComponent = ({ startScan, stopScan, macAddresses })
     <TabContainer>
       <Paper height={420} headerText={vaccineStrings.new_sensor_step_one_title}>
         <FlatList
-          ListFooterComponent={<Spinner containerStyle={{ flex: 1, backgroundColor: 'red' }} />}
-          keyExtractor={item => item}
-          style={{ height: 360 }}
           data={macAddresses}
           renderItem={({ item }) => <ScanRow macAddress={item} />}
+          keyExtractor={item => item}
+          style={{ height: 360 }}
+          ListFooterComponent={<Spinner />}
         />
       </Paper>
     </TabContainer>
