@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
+import { FlatList, StyleSheet } from 'react-native';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -7,7 +7,7 @@ import {
   DataTablePageView,
   ChevronRightIcon,
   PageButton,
-  PaperSection,
+  Paper,
   BatteryIcon,
   DownloadIcon,
   TemperatureIcon,
@@ -37,39 +37,31 @@ const FridgeDisplay = ({ fridge, blinkSensor, toFridgeDetail, toEditSensorPage }
       <TextWithIcon
         left
         size="ms"
-        margin={6}
         textStyle={{ textTransform: 'uppercase' }}
-        containerStyle={{ flex: 3 }}
+        containerStyle={{ flex: 1 }}
         Icon={<Circle size={20} backgroundColor={FINALISE_GREEN} />}
       >
         {description}
       </TextWithIcon>
-      <View style={{ flex: 1, flexDirection: 'row' }}>
-        <IconButton
-          Icon={<DownloadIcon color={BLACK} />}
-          containerStyle={localStyles.fridgebutton}
-        />
-        <IconButton
-          Icon={<LightbulbIcon color={BLACK} />}
-          onPress={() => blinkSensor(sensor.macAddress)}
-          containerStyle={localStyles.fridgebutton}
-        />
-        <IconButton
-          Icon={<CogIcon color={BLACK} />}
-          onPress={() => toEditSensorPage(sensor)}
-          containerStyle={localStyles.fridgebutton}
-        />
-      </View>
+      <IconButton Icon={<DownloadIcon color={BLACK} />} containerStyle={localStyles.iconButton} />
+      <IconButton
+        Icon={<LightbulbIcon color={BLACK} />}
+        onPress={() => blinkSensor(sensor.macAddress)}
+        containerStyle={localStyles.iconButton}
+      />
+      <IconButton
+        Icon={<CogIcon color={BLACK} />}
+        onPress={() => toEditSensorPage(sensor)}
+        containerStyle={localStyles.iconButton}
+      />
     </>
   );
 
   return (
-    <PaperSection
+    <Paper
       // macAddress passed to fridgeHeader is quite naff. The settings page for the "fridge" is
       // actually for a sensor, assuming 1 sensor per fridge.
       Header={header}
-      paperStyle={localStyles.paper}
-      headerContainerStyle={localStyles.fridgePaperHeaderContainer}
       contentContainerStyle={localStyles.fridgePaperContentContainer}
     >
       {sensors.map(({ id, macAddress, batteryLevel, logs, breaches }) => {
@@ -82,49 +74,51 @@ const FridgeDisplay = ({ fridge, blinkSensor, toFridgeDetail, toEditSensorPage }
           : 'Never!';
 
         return (
-          <FlexRow key={id} flex={1}>
-            <TextWithIcon
-              left
-              margin={6}
-              size="ms"
-              containerStyle={{ flex: 1 }}
-              Icon={<Circle size={20} />}
-            >
+          <FlexRow key={id}>
+            <TextWithIcon left size="ms" containerStyle={{ flex: 1 }} Icon={<Circle size={20} />}>
               {macAddress}
             </TextWithIcon>
-            <FlexRow flex={1}>
-              <TextWithIcon
-                left
-                margin={6}
-                size="ms"
-                Icon={<TemperatureIcon color={DARKER_GREY} />}
-              >
-                {temperature}
-              </TextWithIcon>
-              <TextWithIcon
-                left
-                margin={6}
-                size="ms"
-                Icon={<AlarmClockIcon size={30} color={DARKER_GREY} />}
-              >
-                {lastBreachMessage}
-              </TextWithIcon>
-              <TextWithIcon left margin={6} size="ms" Icon={<WifiIcon color={DARKER_GREY} />}>
-                {lastSyncMessage}
-              </TextWithIcon>
-              <TextWithIcon left margin={6} size="ms" Icon={<BatteryIcon color={DARKER_GREY} />}>
-                {`${batteryLevel}%`}
-              </TextWithIcon>
-              <IconButton
-                Icon={<ChevronRightIcon color={BLACK} />}
-                onPress={() => toFridgeDetail(fridge)}
-                hitSlop={{ bottom: 15, left: 20, right: 20, top: 15 }}
-              />
-            </FlexRow>
+            <TextWithIcon
+              left
+              size="ms"
+              containerStyle={localStyles.fridgeDetail}
+              Icon={<TemperatureIcon color={DARKER_GREY} />}
+            >
+              {temperature}
+            </TextWithIcon>
+            <TextWithIcon
+              left
+              containerStyle={localStyles.fridgeDetail}
+              size="ms"
+              Icon={<AlarmClockIcon size={30} color={DARKER_GREY} />}
+            >
+              {lastBreachMessage}
+            </TextWithIcon>
+            <TextWithIcon
+              left
+              size="ms"
+              containerStyle={localStyles.fridgeDetail}
+              Icon={<WifiIcon color={DARKER_GREY} />}
+            >
+              {lastSyncMessage}
+            </TextWithIcon>
+            <TextWithIcon
+              left
+              size="ms"
+              containerStyle={localStyles.fridgeDetail}
+              Icon={<BatteryIcon color={DARKER_GREY} />}
+            >
+              {`${batteryLevel}%`}
+            </TextWithIcon>
+            <IconButton
+              Icon={<ChevronRightIcon color={BLACK} />}
+              onPress={() => toFridgeDetail(fridge)}
+              containerStyle={localStyles.iconButton}
+            />
           </FlexRow>
         );
       })}
-    </PaperSection>
+    </Paper>
   );
 };
 FridgeDisplay.defaultProps = {
@@ -164,32 +158,18 @@ NewVaccineModulePageComponent.propTypes = {
 };
 
 const localStyles = StyleSheet.create({
-  paper: {
-    height: 120,
-    marginBottom: 20,
-    margin: 0,
-    marginHorizontal: 0,
-    flex: 1,
-  },
-  fridgebutton: {
-    flex: 1,
+  iconButton: {
+    flexBasis: 50,
     justifyContent: 'center',
   },
-  fridgeContentItem: {
-    flex: 1,
+  fridgeDetail: {
+    flex: 0,
+    height: 60,
+    paddingHorizontal: 10,
   },
   fridgePaperContentContainer: {
     flex: 2,
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignContent: 'stretch',
-    flexWrap: 'wrap',
-  },
-  fridgePaperHeaderContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    alignContent: 'stretch',
-    backgroundColor: 'pink',
+    flexDirection: 'column',
   },
 });
 

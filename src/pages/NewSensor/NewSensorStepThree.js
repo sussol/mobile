@@ -9,7 +9,7 @@ import {
   CalendarIcon,
   HazardIcon,
   InfoIcon,
-  PaperSection,
+  Paper,
   FlexRow,
   PageButton,
   Spacer,
@@ -49,7 +49,7 @@ export const NewSensorStepThreeComponent = ({
   return (
     <TabContainer>
       <WithSpace space={10} horizontal={false} vertical>
-        <PaperSection height={200} headerText={vaccineStrings.new_sensor_step_three_title}>
+        <Paper height={200} headerText={vaccineStrings.new_sensor_step_three_title}>
           <EditorRow label={vaccineStrings.sensor_name} Icon={<InfoIcon color={DARKER_GREY} />}>
             <TextEditor size="large" value={name} onChangeText={updateName} />
             <TextEditor label={vaccineStrings.sensor_code} value={code} onChangeText={updateCode} />
@@ -65,15 +65,15 @@ export const NewSensorStepThreeComponent = ({
               onChange={updateLogInterval}
             />
           </EditorRow>
-        </PaperSection>
+        </Paper>
       </WithSpace>
 
-      <PaperSection height={130} contentContainerStyle={{ flex: 1 }}>
+      <Paper height={130} contentContainerStyle={{ flex: 1 }}>
         <EditorRow label={vaccineStrings.start_logging} Icon={<CalendarIcon color={DARKER_GREY} />}>
           <DateEditor onPress={updateLoggingDelay} date={loggingDelay} />
           <TimeEditor onPress={updateLoggingDelay} time={loggingDelay} />
         </EditorRow>
-      </PaperSection>
+      </Paper>
 
       <TextWithIcon left size="s" Icon={<HazardIcon color={LIGHT_GREY} />}>
         {vaccineStrings.please_be_in_close_proximity}

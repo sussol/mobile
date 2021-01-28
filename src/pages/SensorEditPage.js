@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-wrap-multilines */
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -13,8 +13,6 @@ import {
   InfoIcon,
   PageButton,
   Paper,
-  PaperSection,
-  SpacedChildren,
   TextEditor,
   BatteryIcon,
   IconButton,
@@ -46,40 +44,30 @@ const formatLastSyncDate = date => moment(date).fromNow();
 const formatBatteryLevel = batteryLevel => `${batteryLevel}%`;
 
 export const FridgeHeader = ({ macAddress, batteryLevel, lastSyncDate, onBlink }) => (
-  <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
-    <View style={{ flex: 2, justifyContent: 'center' }}>
-      <Text
-        style={{
-          marginLeft: 10,
-          color: DARKER_GREY,
-          fontSize: 14,
-          fontFamily: APP_FONT_FAMILY,
-          textTransform: 'uppercase',
-        }}
-      >
-        {macAddress}
-      </Text>
+  <>
+    <View>
+      <Text style={localStyles.paperTitleText}>{macAddress}</Text>
     </View>
-    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
-      <FlexRow flex={3}>
-        <TextWithIcon
-          containerStyle={{ flex: 2 }}
-          size="s"
-          Icon={<WifiIcon size={20} color={MISTY_CHARCOAL} />}
-        >
-          {formatLastSyncDate(lastSyncDate)}
-        </TextWithIcon>
-        <TextWithIcon size="s" Icon={<BatteryIcon color={MISTY_CHARCOAL} />}>
-          {formatBatteryLevel(batteryLevel)}
-        </TextWithIcon>
-      </FlexRow>
-      <IconButton
-        Icon={<LightbulbIcon color={DARKER_GREY} />}
-        onPress={() => onBlink(macAddress)}
-        hitSlop={{ bottom: 100, left: 100, right: 100, top: 100 }}
-      />
-    </View>
-  </View>
+    <TextWithIcon
+      containerStyle={localStyles.headerTextWithIcon}
+      size="s"
+      Icon={<BatteryIcon color={MISTY_CHARCOAL} />}
+    >
+      {formatBatteryLevel(batteryLevel)}
+    </TextWithIcon>
+    <TextWithIcon
+      containerStyle={localStyles.headerTextWithIcon}
+      size="s"
+      Icon={<WifiIcon size={20} color={MISTY_CHARCOAL} />}
+    >
+      {formatLastSyncDate(lastSyncDate)}
+    </TextWithIcon>
+    <IconButton
+      containerStyle={{ width: 50, justifyContent: 'center' }}
+      Icon={<LightbulbIcon color={DARKER_GREY} />}
+      onPress={() => onBlink(macAddress)}
+    />
+  </>
 );
 
 FridgeHeader.defaultProps = {
@@ -117,98 +105,96 @@ export const SensorEditPageComponent = ({
   const withLoadingIndicator = useLoadingIndicator();
 
   return (
-    <DataTablePageView>
-      <View style={localStyles.container}>
-        <SpacedChildren space={20} horizontal={false} vertical>
-          <PaperSection
-            height={120}
-            Header={
-              <FridgeHeader
-                onBlink={blink}
-                lastSyncDate={lastSyncDate}
-                macAddress={macAddress}
-                batteryLevel={batteryLevel}
-              />
-            }
-          >
-            <EditorRow label={vaccineStrings.sensor_name} Icon={<InfoIcon color={DARKER_GREY} />}>
-              <TextEditor size="large" value={name} onChangeText={updateName} />
+    <DataTablePageView style={{ paddingHorizontal: 20, paddingVertical: 30 }}>
+      <Paper
+        Header={
+          <FridgeHeader
+            onBlink={blink}
+            lastSyncDate={lastSyncDate}
+            macAddress={macAddress}
+            batteryLevel={batteryLevel}
+          />
+        }
+      >
+        <EditorRow label={vaccineStrings.sensor_name} Icon={<InfoIcon color={DARKER_GREY} />}>
+          <TextEditor size="large" value={name} onChangeText={updateName} />
 
-              <TextEditor
-                label={vaccineStrings.sensor_code}
-                value={code}
-                onChangeText={updateCode}
-              />
-            </EditorRow>
-          </PaperSection>
+          <TextEditor label={vaccineStrings.sensor_code} value={code} onChangeText={updateCode} />
+        </EditorRow>
+      </Paper>
 
-          <Paper height={260} style={localStyles.lastPaperContainer}>
-            <BreachConfigRow
-              type="HOT_CONSECUTIVE"
-              {...hotConsecutiveConfig}
-              updateDuration={updateDuration}
-              updateTemperature={updateTemperature}
-            />
-            <BreachConfigRow
-              type="COLD_CONSECUTIVE"
-              {...coldConsecutiveConfig}
-              updateDuration={updateDuration}
-              updateTemperature={updateTemperature}
-            />
-            <BreachConfigRow
-              type="HOT_CUMULATIVE"
-              {...hotCumulativeConfig}
-              updateDuration={updateDuration}
-              updateTemperature={updateTemperature}
-            />
-            <BreachConfigRow
-              type="COLD_CUMULATIVE"
-              {...coldCumulativeConfig}
-              updateDuration={updateDuration}
-              updateTemperature={updateTemperature}
-            />
-          </Paper>
+      <Paper>
+        <BreachConfigRow
+          type="HOT_CONSECUTIVE"
+          {...hotConsecutiveConfig}
+          updateDuration={updateDuration}
+          updateTemperature={updateTemperature}
+        />
+        <BreachConfigRow
+          type="COLD_CONSECUTIVE"
+          {...coldConsecutiveConfig}
+          updateDuration={updateDuration}
+          updateTemperature={updateTemperature}
+        />
+        <BreachConfigRow
+          type="HOT_CUMULATIVE"
+          {...hotCumulativeConfig}
+          updateDuration={updateDuration}
+          updateTemperature={updateTemperature}
+        />
+        <BreachConfigRow
+          type="COLD_CUMULATIVE"
+          {...coldCumulativeConfig}
+          updateDuration={updateDuration}
+          updateTemperature={updateTemperature}
+        />
+      </Paper>
 
-          <Paper height={100} style={localStyles.lastPaperContainer}>
-            <FlexRow alignItems="center" justifyContent="flex-end" flex={1}>
-              <DurationEditor
-                value={logInterval / SECONDS.ONE_MINUTE}
-                onChange={updateLogInterval}
-                label={vaccineStrings.logging_interval}
-              />
-            </FlexRow>
-          </Paper>
+      <Paper>
+        <FlexRow alignItems="center" justifyContent="flex-end">
+          <DurationEditor
+            value={logInterval / SECONDS.ONE_MINUTE}
+            onChange={updateLogInterval}
+            label={vaccineStrings.logging_interval}
+          />
+        </FlexRow>
+      </Paper>
 
-          <FlexRow alignItems="center" justifyContent="flex-end">
-            <TextWithIcon left Icon={<HazardIcon color={LIGHT_GREY} />} size="ms">
-              {vaccineStrings.bluetooth_changes_can_take_time}
-            </TextWithIcon>
+      <FlexRow flex={1} alignItems="center">
+        <TextWithIcon left Icon={<HazardIcon color={LIGHT_GREY} />} size="ms">
+          {vaccineStrings.bluetooth_changes_can_take_time}
+        </TextWithIcon>
 
-            <PageButton
-              onPress={() => withLoadingIndicator(saveSensor)}
-              text={generalStrings.save}
-              textStyle={localStyles.pageButtonText}
-              style={{ backgroundColor: SUSSOL_ORANGE }}
-            />
-          </FlexRow>
-        </SpacedChildren>
-      </View>
+        <PageButton
+          onPress={() => withLoadingIndicator(saveSensor)}
+          text={generalStrings.save}
+          textStyle={localStyles.pageButtonText}
+          style={{ backgroundColor: SUSSOL_ORANGE }}
+        />
+      </FlexRow>
     </DataTablePageView>
   );
 };
 
-const localStyles = {
-  container: { flex: 1, padding: 50 },
+const localStyles = StyleSheet.create({
+  paperTitleText: {
+    color: DARKER_GREY,
+    fontSize: 14,
+    fontFamily: APP_FONT_FAMILY,
+    textTransform: 'uppercase',
+    backgroundColor: 'red',
+  },
+  headerTextWithIcon: {
+    flex: 0,
+    paddingHorizontal: 8,
+  },
   pageButtonText: {
     fontSize: 14,
     fontFamily: APP_FONT_FAMILY,
     textTransform: 'uppercase',
     color: WHITE,
   },
-  lastPaperContainer: {
-    paddingHorizontal: 20,
-  },
-};
+});
 
 const stateToProps = state => {
   const sensorDetail = selectSensorDetail(state);

@@ -12,7 +12,7 @@ import {
   DataTablePageView,
   FlexRow,
   HotBreachIcon,
-  PaperSection,
+  Paper,
   SpacedChildren,
 } from '../widgets';
 import { VaccineChart } from '../widgets/VaccineChart';
@@ -126,7 +126,7 @@ export const FridgeDetailPageComponent = ({
           maximumDate={maximumDate}
         />
 
-        <PaperSection height={280}>
+        <Paper height={280}>
           <AfterInteractions>
             <VaccineChart
               breaches={[breaches[0]]}
@@ -136,7 +136,7 @@ export const FridgeDetailPageComponent = ({
               maxDomain={maxDomain}
             />
           </AfterInteractions>
-        </PaperSection>
+        </Paper>
 
         <Animatable.View animation="fadeIn" duration={3000} useNativeDriver>
           <FlexRow justifyContent="space-between">

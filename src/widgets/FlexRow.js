@@ -19,24 +19,21 @@ import PropTypes from 'prop-types';
  * @param {Bool}       reverse        Indicator to use row-reverse. Defaults to false.
  */
 export const FlexRow = ({ children, flex, alignItems, justifyContent, style, reverse }) => {
-  const internalStyle = React.useMemo(
-    () => ({
-      flex,
-      flexDirection: reverse ? 'row-reverse' : 'row',
-      [alignItems ? 'alignItems' : undefined]: alignItems,
-      [justifyContent ? 'justifyContent' : undefined]: justifyContent,
-      ...style,
-    }),
-    [style, alignItems, justifyContent, flex]
-  );
-  return <View style={internalStyle}>{children}</View>;
+  const proppedStyles = {
+    flex,
+    alignItems,
+    justifyContent,
+    flexDirection: reverse ? 'row-reverse' : 'row',
+  };
+
+  return <View style={[proppedStyles, style]}>{children}</View>;
 };
 
 FlexRow.defaultProps = {
   children: null,
   flex: 0,
-  alignItems: '',
-  justifyContent: '',
+  alignItems: null,
+  justifyContent: null,
   style: {},
   reverse: false,
 };

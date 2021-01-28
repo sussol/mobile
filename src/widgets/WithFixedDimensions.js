@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 export const WithFixedDimensions = ({ width, height, children }) => {
   // Only use a style if passed as a prop, otherwise ignore it.
   // Passing no width or height results in no change to children.
-  const internalStyle = {};
+  const internalStyle = { backgroundColor: 'red', alignItems: 'center' };
   if (width) internalStyle.width = width;
   if (height) internalStyle.height = height;
 

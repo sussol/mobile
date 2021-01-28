@@ -4,7 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text } from 'react-native';
 
-import { PaperSection } from './PaperSection';
+import { Paper } from './Paper';
 
 import { APP_FONT_FAMILY, DARKER_GREY, BACKGROUND_COLOR } from '../globalStyles';
 
@@ -21,7 +21,7 @@ export const CardDetail = ({
   contentContainerStyle,
   footerContainerStyle,
 }) => (
-  <PaperSection
+  <Paper
     width={width}
     height={height}
     Header={<Text style={headerStyle}>{headerText}</Text>}
@@ -32,7 +32,7 @@ export const CardDetail = ({
       <View style={contentContainerStyle}>{Content}</View>
       <View style={footerContainerStyle}>{Footer}</View>
     </View>
-  </PaperSection>
+  </Paper>
 );
 
 CardDetail.defaultProps = {

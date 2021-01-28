@@ -1,42 +1,84 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
-import { WHITE } from '../globalStyles';
+import { WHITE, DARKER_GREY, BACKGROUND_COLOR, APP_FONT_FAMILY } from '../globalStyles';
 
-export const Paper = ({ width, height, children, style }) => {
-  // If width and height are passed hard fix them in the container style,
-  // let the axis which isn't passed flex. Plain width or height properties
-  // sometimes act as suggestions when the container is flexing so use
-  // max/min properties.
+export const Paper = ({
+  width,
+  height,
+  paddingHorizontal,
+  Header,
+  headerText,
+  headerContainerStyle,
+  contentContainerStyle,
+  children,
+  style,
+}) => {
   let internalContainerStyle = [localStyles.container, style];
   if (width) internalContainerStyle = [localStyles.container, { width }];
   if (height) internalContainerStyle = [localStyles.container, { height }];
 
-  return <View style={internalContainerStyle}>{children}</View>;
+  const InternalHeader =
+    Header || (headerText && <Text style={localStyles.headerText}>{headerText}</Text>);
+
+  return (
+    <View style={internalContainerStyle}>
+      {InternalHeader && (
+        <View style={[localStyles.headerContainer, { paddingHorizontal }, headerContainerStyle]}>
+          {InternalHeader}
+        </View>
+      )}
+      <View style={[localStyles.contentContainer, { paddingHorizontal }, contentContainerStyle]}>
+        {children}
+      </View>
+    </View>
+  );
 };
 
 const localStyles = StyleSheet.create({
   container: {
-    backgroundColor: WHITE,
+    margin: 5, // Need some margin to accomodate shadow (elevation prop)
+    marginVertical: 15,
     elevation: 2,
     borderRadius: 4,
-    paddingHorizontal: 20,
-    flex: 1,
+    backgroundColor: WHITE,
+  },
+  headerContainer: {
+    height: 40,
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    backgroundColor: BACKGROUND_COLOR,
+  },
+  headerText: {
+    fontFamily: APP_FONT_FAMILY,
+    color: DARKER_GREY,
+    fontSize: 13,
+    textTransform: 'uppercase',
   },
 });
 
 Paper.defaultProps = {
   width: null,
   height: null,
+  paddingHorizontal: 10,
   style: {},
+  headerContainerStyle: {},
+  contentContainerStyle: {},
+  Header: null,
+  headerText: null,
   children: null,
 };
 
 Paper.propTypes = {
   width: PropTypes.number,
   height: PropTypes.number,
+  paddingHorizontal: PropTypes.number,
   style: PropTypes.object,
+  contentContainerStyle: PropTypes.object,
+  Header: PropTypes.node,
+  headerText: PropTypes.string,
+  headerContainerStyle: PropTypes.object,
   children: PropTypes.node,
 };
