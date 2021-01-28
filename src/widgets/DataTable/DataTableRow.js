@@ -105,11 +105,19 @@ const DataTableRow = React.memo(
           // Indicator if the right hand border should be removed from styles for this cell.
           const isLastCell = index === columns.length - 1;
 
+          const { isLinkedToTransaction, isFinalised: rowIsFinalised, isRemoteOrder } = rowData;
           // This cell is disabled if:
           // - the page is finalised.
           // - the row has been explicitly set as disabled.
+          // - The row itself is finalised.
+          // - The row was created on the primary
           const rowIsDisabled = rowState?.isDisabled ?? false;
-          const isDisabled = isFinalised || rowIsDisabled;
+          const isDisabled =
+            isFinalised ||
+            rowIsDisabled ||
+            rowIsFinalised ||
+            isLinkedToTransaction ||
+            isRemoteOrder;
 
           // Alignment of this particular column. Default to left hand ide.
           const cellAlignment = alignText || 'left';
@@ -291,7 +299,7 @@ const DataTableRow = React.memo(
               const { hasBreached, isVaccine } = rowData ?? {};
 
               const icons = {
-                chevron_right: ChevronRightIcon,
+                chevron_right: () => <ChevronRightIcon />,
                 history: () => <HistoryIcon color={SUSSOL_ORANGE} />,
                 pencil: () => <PencilIcon color={SUSSOL_ORANGE} />,
                 breach: () => (hasBreached ? <HazardIcon color={SUSSOL_ORANGE} /> : null),

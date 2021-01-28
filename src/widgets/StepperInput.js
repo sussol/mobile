@@ -97,6 +97,7 @@ export const StepperInput = React.memo(
           onPressOut={isDisabled ? null : onEndLongPress}
         />
         <TextInput
+          keyboardType="numeric"
           editable={!isDisabled}
           onChangeText={onManualEdit}
           value={String(currentValue.current)}

@@ -6,12 +6,13 @@
 import moment from 'moment';
 import { ToastAndroid } from 'react-native';
 import { PermissionSelectors } from '../selectors/permission';
-import { selectScannedSensors } from '../selectors/vaccine';
+import { selectScannedSensors, selectIsDownloadingLogs } from '../selectors/vaccine';
 import { PermissionActions } from './PermissionActions';
 import BleService from '../bluetooth/BleService';
 import TemperatureLogManager from '../bluetooth/TemperatureLogManager';
-import { syncStrings, vaccineStrings } from '../localization';
+import { syncStrings } from '../localization';
 import { UIDatabase } from '../database';
+import SensorManager from '../bluetooth/SensorManager';
 import { VACCINE_CONSTANTS } from '../utilities/modules/vaccines/index';
 import { VACCINE_ENTITIES } from '../utilities/modules/vaccines/constants';
 
@@ -19,6 +20,9 @@ export const VACCINE_ACTIONS = {
   BLINK: 'Vaccine/blinkSensor',
   BLINK_START: 'Vaccine/blinkSensorStart',
   BLINK_STOP: 'Vaccine/blinkSensorStop',
+  SAVE_SENSOR_ERROR: 'Vaccine/saveSensorError',
+  SAVE_SENSOR_START: 'Vaccine/saveSensorStart',
+  SAVE_SENSOR_SUCCESS: 'Vaccine/saveSensorSuccess',
   DOWNLOAD_LOGS_START: 'Vaccine/downloadLogsStart',
   DOWNLOAD_LOGS_ERROR: 'Vaccine/downloadLogsError',
   DOWNLOAD_LOGS_COMPLETE: 'Vaccine/downloadLogsComplete',
@@ -28,6 +32,8 @@ export const VACCINE_ACTIONS = {
   SET_LOG_INTERVAL_ERROR: 'Vaccine/setLogIntervalError',
   SET_LOG_INTERVAL_START: 'Vaccine/setLogIntervalStart',
   SET_LOG_INTERVAL_SUCCESS: 'Vaccine/setLogIntervalSuccess',
+  DISABLE_BUTTON_START: 'Vaccine/disableButtonStart',
+  DISABLE_BUTTON_STOP: 'Vaccine/disableButtonStop',
 };
 
 const blinkStart = macAddress => ({ type: VACCINE_ACTIONS.BLINK_START, payload: { macAddress } });
@@ -47,7 +53,6 @@ const downloadLogsComplete = () => ({
 
 const downloadAllLogs = () => async dispatch => {
   dispatch(downloadLogsStart());
-
   // Ensure there are some sensors which have been assigned a location before syncing.
   const sensors = UIDatabase.objects('Sensor').filtered('location != null && isActive == true');
 
@@ -109,34 +114,52 @@ const setLogIntervalStart = macAddress => ({
 });
 const setLogIntervalSuccess = () => ({ type: VACCINE_ACTIONS.SET_LOG_INTERVAL_SUCCESS });
 const setLogIntervalError = () => ({ type: VACCINE_ACTIONS.SET_LOG_INTERVAL_ERROR });
+const disableButtonStart = macAddress => ({
+  type: VACCINE_ACTIONS.DISABLE_BUTTON_START,
+  payload: { macAddress },
+});
+const disableButtonStop = macAddress => ({
+  type: VACCINE_ACTIONS.DISABLE_BUTTON_STOP,
+  payload: { macAddress },
+});
+const saveSensorError = () => ({ type: VACCINE_ACTIONS.SAVE_SENSOR_ERROR });
+const saveSensorStart = macAddress => ({
+  type: VACCINE_ACTIONS.SAVE_SENSOR_START,
+  payload: { macAddress },
+});
+const saveSensorSuccess = () => ({ type: VACCINE_ACTIONS.SAVE_SENSOR_SUCCESS });
 
 /**
  * Helper wrapper which will check permissions for
  * bluetooth & location services before calling the supplied function
  * @param {Func} dispatch
  * @param {Func} getState
- * @param {Func} func method to run if permissions are enabled
+ * @param {Func} action method to dispatch if permissions are enabled
  */
-const withPermissions = async (dispatch, getState, func) => {
-  const state = getState();
-  const bluetoothEnabled = PermissionSelectors.bluetooth(state);
-  const locationPermission = PermissionSelectors.location(state);
+const withPermissions = async (dispatch, getState, action) => {
+  try {
+    const state = getState();
+    const bluetoothEnabled = PermissionSelectors.bluetooth(state);
+    const locationPermission = PermissionSelectors.location(state);
 
-  // Ensure the correct permissions before initiating a new sync process.
-  if (!bluetoothEnabled) await dispatch(PermissionActions.requestBluetooth());
-  if (!locationPermission) await dispatch(PermissionActions.requestLocation());
+    // Ensure the correct permissions before initiating a new sync process.
+    if (!bluetoothEnabled) await dispatch(PermissionActions.requestBluetooth());
+    if (!locationPermission) await dispatch(PermissionActions.requestLocation());
 
-  if (!bluetoothEnabled) {
-    ToastAndroid.show(syncStrings.bluetooth_disabled, ToastAndroid.LONG);
+    if (!bluetoothEnabled) {
+      ToastAndroid.show(syncStrings.bluetooth_disabled, ToastAndroid.LONG);
+      return null;
+    }
+
+    if (!locationPermission) {
+      ToastAndroid.show(syncStrings.location_permission, ToastAndroid.LONG);
+      return null;
+    }
+
+    return dispatch(action);
+  } catch {
     return null;
   }
-
-  if (!locationPermission) {
-    ToastAndroid.show(syncStrings.location_permission, ToastAndroid.LONG);
-    return null;
-  }
-
-  return func(dispatch, getState);
 };
 
 const blinkSensor = macAddress => async dispatch => {
@@ -164,38 +187,59 @@ const scanForSensors = (dispatch, getState) => {
   BleService().scanForSensors(deviceCallback);
 };
 
-const startDownloadAllLogs = macAddress => async (dispatch, getState) => {
-  await withPermissions(dispatch, getState, downloadAllLogs(macAddress));
+const startDownloadAllLogs = () => async (dispatch, getState) => {
+  // Ensure there isn't already a download in progress before starting a new one
+  const state = getState();
+  const isDownloadingLogs = selectIsDownloadingLogs(state);
+  if (isDownloadingLogs) return null;
+
+  await withPermissions(dispatch, getState, downloadAllLogs());
   return null;
 };
 
 const setLogInterval = (macAddress, interval) => async dispatch => {
-  let ok = false;
-  let error = `Sensor response was not equal to 'Interval: ${interval}s'`;
-
   dispatch(setLogIntervalStart(macAddress));
 
   try {
-    const result = await BleService().updateLogIntervalWithRetries(macAddress, interval, 3, error);
     const regex = new RegExp(`Interval: ${interval}s`); // TODO: update with sensor specific response as needed
-    ok = regex.test(result);
+    const error = `Sensor response was not equal to 'Interval: ${interval}s'`;
+    const response = await BleService().updateLogIntervalWithRetries(macAddress, interval, 10);
+    const action = regex.test(response.toString())
+      ? setLogIntervalSuccess()
+      : setLogIntervalError(error);
+    await dispatch(action);
   } catch (e) {
-    error = e;
-    ok = false;
+    dispatch(setLogIntervalError(e));
+    throw e;
   }
+};
 
-  if (ok) {
-    dispatch(setLogIntervalSuccess());
-    ToastAndroid.show(
-      vaccineStrings.formatString(vaccineStrings.log_interval_set, interval),
-      ToastAndroid.LONG
-    );
-  } else {
-    ToastAndroid.show(vaccineStrings.E_COMMAND_FAILED, ToastAndroid.LONG);
-    dispatch(setLogIntervalError(error));
+const saveSensor = sensor => async dispatch => {
+  dispatch(saveSensorStart(sensor.macAddress));
+  try {
+    const { location, logInterval, macAddress, name } = sensor;
+    const sensorManager = SensorManager();
+    const newSensor = await sensorManager.createSensor({ location, logInterval, macAddress, name });
+    await sensorManager.saveSensor(newSensor);
+    dispatch(saveSensorSuccess());
+  } catch (error) {
+    dispatch(saveSensorError());
+    throw error;
   }
+};
 
-  return ok;
+const disableSensorButton = macAddress => async dispatch => {
+  dispatch(disableButtonStart(macAddress));
+  try {
+    const info = await BleService().getInfoWithRetries(macAddress, 10);
+    if (!info.isDisabled) {
+      await BleService().toggleButtonWithRetries(macAddress, 10);
+      dispatch(disableButtonStop(macAddress));
+    }
+  } catch (error) {
+    dispatch(disableButtonStop(macAddress));
+    throw error;
+  }
 };
 
 const startSensorBlink = macAddress => async (dispatch, getState) => {
@@ -213,16 +257,24 @@ const stopSensorScan = () => dispatch => {
   BleService().stopScan();
 };
 
+const startSensorDisableButton = macAddress => async (dispatch, getState) => {
+  const result = await withPermissions(dispatch, getState, disableSensorButton(macAddress));
+  return result;
+};
+
 const startSetLogInterval = ({ macAddress, interval = 300 }) => async (dispatch, getState) => {
-  const success = await withPermissions(dispatch, getState, setLogInterval(macAddress, interval));
-  return success;
+  const result = await withPermissions(dispatch, getState, setLogInterval(macAddress, interval));
+  return result;
 };
 
 export const VaccineActions = {
+  blinkSensor,
+  saveSensor,
   startDownloadAllLogs,
   startSensorBlink,
-  blinkSensor,
   startSensorScan,
+  startSensorDisableButton,
   startSetLogInterval,
   stopSensorScan,
+  setLogInterval,
 };

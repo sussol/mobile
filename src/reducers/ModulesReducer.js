@@ -32,10 +32,7 @@ const initialState = () => {
 
   const usingDashboard = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.DASHBOARD_MODULE));
   const usingDispensary = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.DISPENSARY_MODULE));
-
-  // Temporarily force disabling of the vaccines module
-  // const usingVaccines = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.VACCINE_MODULE));
-  const usingVaccines = false;
+  const usingVaccines = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.VACCINE_MODULE));
 
   const usingCashRegister = Boolean(
     UIDatabase.getPreference(PREFERENCE_KEYS.CASH_REGISTER_MODULE) && usingPaymentTypes
@@ -52,7 +49,7 @@ const initialState = () => {
     usingPayments,
     usingDashboard,
     usingDispensary,
-    usingVaccines: false,
+    usingVaccines,
     usingCashRegister,
     usingModules,
     usingInsurance,
