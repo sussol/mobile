@@ -299,7 +299,7 @@ const DataTableRow = React.memo(
               const { hasBreached, isVaccine } = rowData ?? {};
 
               const icons = {
-                chevron_right: ChevronRightIcon,
+                chevron_right: () => <ChevronRightIcon />,
                 history: () => <HistoryIcon color={SUSSOL_ORANGE} />,
                 pencil: () => <PencilIcon color={SUSSOL_ORANGE} />,
                 breach: () => (hasBreached ? <HazardIcon color={SUSSOL_ORANGE} /> : null),
