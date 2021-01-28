@@ -98,7 +98,7 @@ export const FridgeDetailPageComponent = ({
           <BreachCard headerText={vaccineStrings.cumulative_breach}>
             {coldCumulativeBreach ? (
               <>
-                <Text style={localStyles.coldText}>{numberOfColdBreaches}</Text>
+                <Text style={localStyles.coldText}>{coldCumulativeBreach}</Text>
                 <ColdBreachIcon />
               </>
             ) : (
@@ -107,7 +107,7 @@ export const FridgeDetailPageComponent = ({
           </BreachCard>
 
           <BreachCard headerText={vaccineStrings.consecutive_breach}>
-            {0 ? (
+            {numberOfColdBreaches ? (
               <>
                 <Text style={localStyles.coldText}>{numberOfColdBreaches}</Text>
                 <ColdBreachIcon />
@@ -121,8 +121,8 @@ export const FridgeDetailPageComponent = ({
             <Text style={[localStyles.hotText, { color: DARKER_GREY }]}>{averageTemperature}</Text>
           </BreachCard>
 
-          <BreachCard headerText={vaccineStrings.consecutive_breach}>
-            {numberOfColdBreaches ? (
+          <BreachCard headerText={vaccineStrings.cumulative_breach}>
+            {hotCumulativeBreach ? (
               <>
                 <Text style={localStyles.hotText}>{hotCumulativeBreach}</Text>
                 <HotBreachIcon />
@@ -133,7 +133,7 @@ export const FridgeDetailPageComponent = ({
           </BreachCard>
 
           <BreachCard headerText={vaccineStrings.consecutive_breach}>
-            {numberOfColdBreaches ? (
+            {numberOfHotBreaches ? (
               <>
                 <Text style={localStyles.hotText}>{numberOfHotBreaches}</Text>
                 <HotBreachIcon />
