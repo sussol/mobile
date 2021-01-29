@@ -13,6 +13,7 @@ import { WizardActions } from '../../actions/WizardActions';
 import { goBack } from '../../navigation/actions';
 import { selectConfigs } from '../../selectors/newSensor';
 import { NewSensorActions } from '../../actions';
+import { AfterInteractions } from '../../widgets/AfterInteractions';
 
 export const NewSensorStepTwoComponent = ({
   nextTab,
@@ -27,30 +28,32 @@ export const NewSensorStepTwoComponent = ({
 }) => (
   <TabContainer>
     <Paper height={320} headerText={vaccineStrings.new_sensor_step_two_title}>
-      <BreachConfigRow
-        type="HOT_CONSECUTIVE"
-        {...hotConsecutiveConfig}
-        updateDuration={updateDuration}
-        updateTemperature={updateTemperature}
-      />
-      <BreachConfigRow
-        type="COLD_CONSECUTIVE"
-        {...coldConsecutiveConfig}
-        updateDuration={updateDuration}
-        updateTemperature={updateTemperature}
-      />
-      <BreachConfigRow
-        type="HOT_CUMULATIVE"
-        {...hotCumulativeConfig}
-        updateDuration={updateDuration}
-        updateTemperature={updateTemperature}
-      />
-      <BreachConfigRow
-        type="COLD_CUMULATIVE"
-        {...coldCumulativeConfig}
-        updateDuration={updateDuration}
-        updateTemperature={updateTemperature}
-      />
+      <AfterInteractions>
+        <BreachConfigRow
+          type="HOT_CONSECUTIVE"
+          {...hotConsecutiveConfig}
+          updateDuration={updateDuration}
+          updateTemperature={updateTemperature}
+        />
+        <BreachConfigRow
+          type="COLD_CONSECUTIVE"
+          {...coldConsecutiveConfig}
+          updateDuration={updateDuration}
+          updateTemperature={updateTemperature}
+        />
+        <BreachConfigRow
+          type="HOT_CUMULATIVE"
+          {...hotCumulativeConfig}
+          updateDuration={updateDuration}
+          updateTemperature={updateTemperature}
+        />
+        <BreachConfigRow
+          type="COLD_CUMULATIVE"
+          {...coldCumulativeConfig}
+          updateDuration={updateDuration}
+          updateTemperature={updateTemperature}
+        />
+      </AfterInteractions>
     </Paper>
 
     <FlexRow flex={1} justifyContent="flex-end" alignItems="flex-end">
