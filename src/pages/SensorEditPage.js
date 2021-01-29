@@ -39,6 +39,7 @@ import {
 
 import { SECONDS } from '../utilities/constants';
 import { VaccineActions } from '../actions/VaccineActions';
+import { AfterInteractions } from '../widgets/AfterInteractions';
 
 const formatLastSyncDate = date => moment(date).fromNow();
 const formatBatteryLevel = batteryLevel => `${batteryLevel}%`;
@@ -106,80 +107,82 @@ export const SensorEditPageComponent = ({
 
   return (
     <DataTablePageView style={{ paddingHorizontal: 20, paddingVertical: 30 }}>
-      <Paper
-        Header={
-          <FridgeHeader
-            onBlink={blink}
-            lastSyncDate={lastSyncDate}
-            macAddress={macAddress}
-            batteryLevel={batteryLevel}
-          />
-        }
-      >
-        <EditorRow
-          label={vaccineStrings.sensor_name}
-          Icon={<InfoIcon color={DARKER_GREY} />}
-          containerStyle={localStyles.paperContentRow}
+      <AfterInteractions>
+        <Paper
+          Header={
+            <FridgeHeader
+              onBlink={blink}
+              lastSyncDate={lastSyncDate}
+              macAddress={macAddress}
+              batteryLevel={batteryLevel}
+            />
+          }
         >
-          <TextEditor size="large" value={name} onChangeText={updateName} />
-          <TextEditor label={vaccineStrings.sensor_code} value={code} onChangeText={updateCode} />
-        </EditorRow>
-      </Paper>
-
-      <Paper>
-        <BreachConfigRow
-          containerStyle={localStyles.paperContentRow}
-          type="HOT_CONSECUTIVE"
-          {...hotConsecutiveConfig}
-          updateDuration={updateDuration}
-          updateTemperature={updateTemperature}
-        />
-        <BreachConfigRow
-          containerStyle={localStyles.paperContentRow}
-          type="COLD_CONSECUTIVE"
-          {...coldConsecutiveConfig}
-          updateDuration={updateDuration}
-          updateTemperature={updateTemperature}
-        />
-        <BreachConfigRow
-          containerStyle={localStyles.paperContentRow}
-          type="HOT_CUMULATIVE"
-          {...hotCumulativeConfig}
-          updateDuration={updateDuration}
-          updateTemperature={updateTemperature}
-        />
-        <BreachConfigRow
-          containerStyle={localStyles.paperContentRow}
-          type="COLD_CUMULATIVE"
-          {...coldCumulativeConfig}
-          updateDuration={updateDuration}
-          updateTemperature={updateTemperature}
-        />
-      </Paper>
-
-      <Paper>
-        <FlexRow justifyContent="flex-end">
-          <DurationEditor
+          <EditorRow
+            label={vaccineStrings.sensor_name}
+            Icon={<InfoIcon color={DARKER_GREY} />}
             containerStyle={localStyles.paperContentRow}
-            value={logInterval / SECONDS.ONE_MINUTE}
-            onChange={updateLogInterval}
-            label={vaccineStrings.logging_interval}
+          >
+            <TextEditor size="large" value={name} onChangeText={updateName} />
+            <TextEditor label={vaccineStrings.sensor_code} value={code} onChangeText={updateCode} />
+          </EditorRow>
+        </Paper>
+
+        <Paper>
+          <BreachConfigRow
+            containerStyle={localStyles.paperContentRow}
+            type="HOT_CONSECUTIVE"
+            {...hotConsecutiveConfig}
+            updateDuration={updateDuration}
+            updateTemperature={updateTemperature}
+          />
+          <BreachConfigRow
+            containerStyle={localStyles.paperContentRow}
+            type="COLD_CONSECUTIVE"
+            {...coldConsecutiveConfig}
+            updateDuration={updateDuration}
+            updateTemperature={updateTemperature}
+          />
+          <BreachConfigRow
+            containerStyle={localStyles.paperContentRow}
+            type="HOT_CUMULATIVE"
+            {...hotCumulativeConfig}
+            updateDuration={updateDuration}
+            updateTemperature={updateTemperature}
+          />
+          <BreachConfigRow
+            containerStyle={localStyles.paperContentRow}
+            type="COLD_CUMULATIVE"
+            {...coldCumulativeConfig}
+            updateDuration={updateDuration}
+            updateTemperature={updateTemperature}
+          />
+        </Paper>
+
+        <Paper>
+          <FlexRow justifyContent="flex-end">
+            <DurationEditor
+              containerStyle={localStyles.paperContentRow}
+              value={logInterval / SECONDS.ONE_MINUTE}
+              onChange={updateLogInterval}
+              label={vaccineStrings.logging_interval}
+            />
+          </FlexRow>
+        </Paper>
+
+        <FlexRow flex={1} alignItems="flex-end">
+          <TextWithIcon left Icon={<HazardIcon color={LIGHT_GREY} />} size="ms">
+            {vaccineStrings.bluetooth_changes_can_take_time}
+          </TextWithIcon>
+
+          <PageButton
+            onPress={() => withLoadingIndicator(saveSensor)}
+            text={generalStrings.save}
+            textStyle={localStyles.pageButtonText}
+            style={{ backgroundColor: SUSSOL_ORANGE }}
           />
         </FlexRow>
-      </Paper>
-
-      <FlexRow flex={1} alignItems="flex-end">
-        <TextWithIcon left Icon={<HazardIcon color={LIGHT_GREY} />} size="ms">
-          {vaccineStrings.bluetooth_changes_can_take_time}
-        </TextWithIcon>
-
-        <PageButton
-          onPress={() => withLoadingIndicator(saveSensor)}
-          text={generalStrings.save}
-          textStyle={localStyles.pageButtonText}
-          style={{ backgroundColor: SUSSOL_ORANGE }}
-        />
-      </FlexRow>
+      </AfterInteractions>
     </DataTablePageView>
   );
 };
