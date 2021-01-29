@@ -1,125 +1,196 @@
 /* eslint-disable react/forbid-prop-types */
-/**
- * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
- */
-
 import React from 'react';
-import { connect } from 'react-redux';
-import { StyleSheet, Text, FlatList } from 'react-native';
+import { FlatList, StyleSheet } from 'react-native';
+import moment from 'moment';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import * as Animatable from 'react-native-animatable';
+import {
+  DataTablePageView,
+  ChevronRightIcon,
+  PageButton,
+  Paper,
+  BatteryIcon,
+  DownloadIcon,
+  TemperatureIcon,
+  IconButton,
+  LightbulbIcon,
+  WifiIcon,
+  CogIcon,
+  Circle,
+  FlexRow,
+  AlarmClockIcon,
+} from '../widgets/index';
+import { TextWithIcon } from '../widgets/Typography';
 
-import { PageButton, DataTablePageView, FridgeDisplay, FlexView } from '../widgets';
+import { buttonStrings } from '../localization';
+import { DARKER_GREY, BLACK, FINALISE_GREEN } from '../globalStyles';
+import { VaccineActions } from '../actions/index';
+import { gotoEditSensorPage, gotoFridgeDetailPage, gotoNewSensorPage } from '../navigation/actions';
+import { AfterInteractions } from '../widgets/AfterInteractions';
 
-import { selectMinAndMaxLogs, selectMinAndMaxDomains, selectBreaches } from '../selectors/fridge';
-import { FridgeActions } from '../actions/FridgeActions';
-import { BreachActions } from '../actions/BreachActions';
-import { gotoVaccineAdminPage } from '../navigation/actions';
+const formatDate = date => moment(date).fromNow();
+const formatTemperature = temperature => `${Math.round(temperature * 10) / 10}°C`;
 
-import { APP_FONT_FAMILY } from '../globalStyles';
-import { vaccineStrings, generalStrings } from '../localization';
-import { selectCurrentUserIsAdmin } from '../selectors/user';
-
-export const VaccinePageComponent = ({
-  selectedFridge,
-  minLine,
-  maxLine,
-  breaches,
-  maxDomain,
-  minDomain,
-  fridges,
-  onSelectFridge,
-  onOpenBreachModal,
-  onViewAdminPage,
-  isAdmin,
-}) => {
-  const Fridge = React.useCallback(
-    ({ item }) => (
-      <FridgeDisplay
-        fridge={item}
-        minLine={minLine}
-        maxLine={maxLine}
-        breaches={breaches}
-        maxDomain={maxDomain}
-        minDomain={minDomain}
-        onSelectFridge={onSelectFridge}
-        isActive={item.id === selectedFridge?.id}
-        onOpenBreachModal={onOpenBreachModal}
+const FridgeDisplay = ({ fridge, blinkSensor, toFridgeDetail, toEditSensorPage }) => {
+  const { description, sensors } = fridge;
+  const [sensor] = sensors;
+  const header = (
+    <>
+      <TextWithIcon
+        left
+        size="ms"
+        textStyle={{ textTransform: 'uppercase' }}
+        containerStyle={{ flex: 1 }}
+        Icon={<Circle size={20} backgroundColor={FINALISE_GREEN} />}
+      >
+        {description}
+      </TextWithIcon>
+      <IconButton Icon={<DownloadIcon color={BLACK} />} containerStyle={localStyles.iconButton} />
+      <IconButton
+        Icon={<LightbulbIcon color={BLACK} />}
+        onPress={() => blinkSensor(sensor.macAddress)}
+        containerStyle={localStyles.iconButton}
       />
-    ),
-    [minLine, maxLine, breaches, maxDomain, minDomain, onSelectFridge, selectedFridge]
-  );
-
-  const BlankComponent = React.useCallback(
-    () => (
-      <FlexView flex={1} justifyContent="center" alignItems="center">
-        <Text style={localStyles.blankText}>{vaccineStrings.no_fridges}</Text>
-      </FlexView>
-    ),
-    []
+      <IconButton
+        Icon={<CogIcon color={BLACK} />}
+        onPress={() => toEditSensorPage(sensor)}
+        containerStyle={localStyles.iconButton}
+      />
+    </>
   );
 
   return (
-    <DataTablePageView>
-      {isAdmin && (
-        <FlexView flex={0} alignItems="flex-end" style={{ marginRight: 20, marginTop: 10 }}>
-          <PageButton text={generalStrings.admin} onPress={onViewAdminPage} />
-        </FlexView>
-      )}
+    <Paper
+      // macAddress passed to fridgeHeader is quite naff. The settings page for the "fridge" is
+      // actually for a sensor, assuming 1 sensor per fridge.
+      Header={header}
+      contentContainerStyle={localStyles.fridgePaperContentContainer}
+    >
+      {sensors.map(({ id, macAddress, batteryLevel, logs, breaches }) => {
+        const mostRecentLog = logs.sorted('timestamp', true)[0];
+        const lastSyncMessage = mostRecentLog ? formatDate(mostRecentLog.timestamp) : 'No logs yet';
+        const temperature = mostRecentLog ? formatTemperature(mostRecentLog.temperature) : 'N/A';
+        const mostRecentBreach = breaches?.sorted('endTimestamp', true)[0];
+        const lastBreachMessage = mostRecentBreach
+          ? formatDate(mostRecentBreach.endTimestamp)
+          : 'Never!';
 
-      {fridges?.length ? <FlatList data={fridges} renderItem={Fridge} /> : <BlankComponent />}
-    </DataTablePageView>
+        return (
+          <FlexRow key={id}>
+            <TextWithIcon left size="ms" containerStyle={{ flex: 1 }} Icon={<Circle size={20} />}>
+              {macAddress}
+            </TextWithIcon>
+            <TextWithIcon
+              left
+              size="ms"
+              containerStyle={localStyles.fridgeDetail}
+              Icon={<TemperatureIcon color={DARKER_GREY} />}
+            >
+              {temperature}
+            </TextWithIcon>
+            <TextWithIcon
+              left
+              containerStyle={localStyles.fridgeDetail}
+              size="ms"
+              Icon={<AlarmClockIcon color={DARKER_GREY} />}
+            >
+              {lastBreachMessage}
+            </TextWithIcon>
+            <TextWithIcon
+              left
+              size="ms"
+              containerStyle={localStyles.fridgeDetail}
+              Icon={<WifiIcon color={DARKER_GREY} />}
+            >
+              {lastSyncMessage}
+            </TextWithIcon>
+            <TextWithIcon
+              left
+              size="ms"
+              containerStyle={localStyles.fridgeDetail}
+              Icon={<BatteryIcon color={DARKER_GREY} />}
+            >
+              {`${batteryLevel}%`}
+            </TextWithIcon>
+            <IconButton
+              Icon={<ChevronRightIcon color={BLACK} />}
+              onPress={() => toFridgeDetail(fridge)}
+              containerStyle={localStyles.iconButton}
+            />
+          </FlexRow>
+        );
+      })}
+    </Paper>
   );
 };
-
-const mapStateToProps = state => {
-  const { fridge } = state;
-  const { fridges, selectedFridge } = fridge;
-  const breaches = selectBreaches(state);
-  const isAdmin = selectCurrentUserIsAdmin(state);
-  const { minLine, maxLine } = selectMinAndMaxLogs(state);
-  const { minDomain, maxDomain } = selectMinAndMaxDomains(state);
-  return {
-    isAdmin,
-    minLine,
-    maxLine,
-    minDomain,
-    maxDomain,
-    fridges,
-    selectedFridge,
-    breaches,
-  };
+FridgeDisplay.defaultProps = {
+  fridge: null,
+};
+FridgeDisplay.propTypes = {
+  fridge: PropTypes.shape({
+    id: PropTypes.string,
+    description: PropTypes.string,
+    sensors: PropTypes.object,
+  }),
+  blinkSensor: PropTypes.func.isRequired,
+  toFridgeDetail: PropTypes.func.isRequired,
+  toEditSensorPage: PropTypes.func.isRequired,
 };
 
-const mapDispatchToProps = dispatch => ({
-  onViewAdminPage: () => dispatch(gotoVaccineAdminPage()),
-  onSelectFridge: fridge => dispatch(FridgeActions.select(fridge)),
-  onOpenBreachModal: breachId => {
-    dispatch(BreachActions.viewFridgeBreach(breachId));
-  },
-});
-
+export const VaccinePageComponent = ({ fridges, toNewSensorPage, ...dispatchers }) => (
+  <DataTablePageView style={{ paddingHorizontal: 20, paddingVertical: 30 }}>
+    <FlexRow style={{ justifyContent: 'flex-end', marginBottom: 10 }}>
+      <PageButton text={buttonStrings.add_sensor} onPress={toNewSensorPage} />
+    </FlexRow>
+    <AfterInteractions placeholder={null}>
+      <Animatable.View animation="fadeIn" duration={500} useNativeDriver>
+        <FlatList
+          renderItem={({ item }) => <FridgeDisplay fridge={item} {...dispatchers} />}
+          data={fridges}
+        />
+      </Animatable.View>
+    </AfterInteractions>
+  </DataTablePageView>
+);
 VaccinePageComponent.defaultProps = {
-  breaches: [],
-  selectedFridge: null,
+  fridges: null,
 };
-
 VaccinePageComponent.propTypes = {
-  selectedFridge: PropTypes.object,
-  minLine: PropTypes.array.isRequired,
-  maxLine: PropTypes.array.isRequired,
-  breaches: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
-  maxDomain: PropTypes.number.isRequired,
-  minDomain: PropTypes.number.isRequired,
-  fridges: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
-  onSelectFridge: PropTypes.func.isRequired,
-  onOpenBreachModal: PropTypes.func.isRequired,
-  onViewAdminPage: PropTypes.func.isRequired,
-  isAdmin: PropTypes.bool.isRequired,
+  fridges: PropTypes.object,
+  blinkSensor: PropTypes.func.isRequired,
+  toFridgeDetail: PropTypes.func.isRequired,
+  toEditSensorPage: PropTypes.func.isRequired,
+  toNewSensorPage: PropTypes.func.isRequired,
 };
 
 const localStyles = StyleSheet.create({
-  blankText: { textAlign: 'center', fontFamily: APP_FONT_FAMILY, fontSize: 20 },
+  iconButton: {
+    flexBasis: 50,
+    justifyContent: 'center',
+  },
+  fridgeDetail: {
+    flex: 0,
+    height: 60,
+    paddingHorizontal: 10,
+  },
+  fridgePaperContentContainer: {
+    flex: 2,
+    flexDirection: 'column',
+  },
 });
 
-export const VaccinePage = connect(mapStateToProps, mapDispatchToProps)(VaccinePageComponent);
+const stateToProps = state => {
+  const { fridge } = state;
+  const { fridges } = fridge;
+  return { fridges };
+};
+
+const dispatchToProps = dispatch => ({
+  blinkSensor: macAddress => dispatch(VaccineActions.startSensorBlink(macAddress)),
+  toFridgeDetail: fridge => dispatch(gotoFridgeDetailPage(fridge)),
+  toEditSensorPage: sensor => dispatch(gotoEditSensorPage(sensor)),
+  toNewSensorPage: () => dispatch(gotoNewSensorPage()),
+});
+
+export const VaccinePage = connect(stateToProps, dispatchToProps)(VaccinePageComponent);
