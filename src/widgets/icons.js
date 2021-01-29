@@ -135,7 +135,7 @@ HistoryIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
 export const ChevronRightIcon = ({ color, size, style }) => (
   <FA5Icon name="chevron-right" color={color} size={size} style={style} />
 );
-ChevronRightIcon.defaultProps = { color: 'SUSSOL_ORANGE', size: 20, style: {} };
+ChevronRightIcon.defaultProps = { color: SUSSOL_ORANGE, size: 20, style: {} };
 ChevronRightIcon.propTypes = {
   color: PropTypes.string,
   size: PropTypes.number,

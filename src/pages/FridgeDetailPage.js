@@ -99,7 +99,7 @@ export const FridgeDetailPageComponent = ({
             {coldCumulativeBreach ? (
               <>
                 <Text style={localStyles.coldText}>{coldCumulativeBreach}</Text>
-                <ColdBreachIcon />
+                <ColdBreachIcon color={COLD_BREACH_BLUE} />
               </>
             ) : (
               <NoBreachMessage />
@@ -110,7 +110,7 @@ export const FridgeDetailPageComponent = ({
             {numberOfColdBreaches ? (
               <>
                 <Text style={localStyles.coldText}>{numberOfColdBreaches}</Text>
-                <ColdBreachIcon />
+                <ColdBreachIcon color={COLD_BREACH_BLUE} />
               </>
             ) : (
               <NoBreachMessage />
@@ -125,7 +125,7 @@ export const FridgeDetailPageComponent = ({
             {hotCumulativeBreach ? (
               <>
                 <Text style={localStyles.hotText}>{hotCumulativeBreach}</Text>
-                <HotBreachIcon />
+                <HotBreachIcon color={DANGER_RED} />
               </>
             ) : (
               <NoBreachMessage />
@@ -136,7 +136,7 @@ export const FridgeDetailPageComponent = ({
             {numberOfHotBreaches ? (
               <>
                 <Text style={localStyles.hotText}>{numberOfHotBreaches}</Text>
-                <HotBreachIcon />
+                <HotBreachIcon color={DANGER_RED} />
               </>
             ) : (
               <NoBreachMessage />
