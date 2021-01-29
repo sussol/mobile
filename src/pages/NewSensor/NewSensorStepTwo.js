@@ -28,7 +28,7 @@ export const NewSensorStepTwoComponent = ({
 }) => (
   <TabContainer>
     <Paper height={320} headerText={vaccineStrings.new_sensor_step_two_title}>
-      <AfterInteractions>
+      <AfterInteractions placeholder={null}>
         <BreachConfigRow
           type="HOT_CONSECUTIVE"
           {...hotConsecutiveConfig}
