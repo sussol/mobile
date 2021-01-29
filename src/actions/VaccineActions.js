@@ -4,7 +4,7 @@
  */
 
 import moment from 'moment';
-import { selectScannedSensors, selectIsDownloadingLogs } from '../selectors/vaccine';
+import { selectIsDownloadingLogs } from '../selectors/vaccine';
 import { PermissionActions } from './PermissionActions';
 import BleService from '../bluetooth/BleService';
 import TemperatureLogManager from '../bluetooth/TemperatureLogManager';
@@ -20,9 +20,6 @@ export const VACCINE_ACTIONS = {
   DOWNLOAD_LOGS_START: 'Vaccine/downloadLogsStart',
   DOWNLOAD_LOGS_ERROR: 'Vaccine/downloadLogsError',
   DOWNLOAD_LOGS_COMPLETE: 'Vaccine/downloadLogsComplete',
-  SCAN_START: 'Vaccine/sensorScanStart',
-  SCAN_STOP: 'Vaccine/sensorScanStop',
-  SENSOR_FOUND: 'Vaccine/sensorFound',
   SET_LOG_INTERVAL_ERROR: 'Vaccine/setLogIntervalError',
   SET_LOG_INTERVAL_START: 'Vaccine/setLogIntervalStart',
   SET_LOG_INTERVAL_SUCCESS: 'Vaccine/setLogIntervalSuccess',
@@ -30,9 +27,6 @@ export const VACCINE_ACTIONS = {
   DISABLE_BUTTON_STOP: 'Vaccine/disableButtonStop',
 };
 
-const scanStart = () => ({ type: VACCINE_ACTIONS.SCAN_START });
-const scanStop = () => ({ type: VACCINE_ACTIONS.SCAN_STOP });
-const sensorFound = macAddress => ({ type: VACCINE_ACTIONS.SENSOR_FOUND, payload: { macAddress } });
 const downloadLogsStart = () => ({
   type: VACCINE_ACTIONS.DOWNLOAD_LOGS_START,
 });
@@ -121,25 +115,6 @@ const saveSensorStart = macAddress => ({
 });
 const saveSensorSuccess = () => ({ type: VACCINE_ACTIONS.SAVE_SENSOR_SUCCESS });
 
-const scanForSensors = (dispatch, getState) => {
-  dispatch(scanStart());
-
-  const deviceCallback = device => {
-    const { id: macAddress } = device;
-    if (macAddress) {
-      const alreadyScanned = selectScannedSensors(getState());
-      const alreadySaved = UIDatabase.get('Sensor', macAddress, 'macAddress');
-
-      if (!alreadyScanned?.includes(macAddress) && !alreadySaved) {
-        dispatch(sensorFound(macAddress));
-      }
-    }
-  };
-
-  // Scan will continue running until it is stopped...
-  BleService().scanForSensors(deviceCallback);
-};
-
 const startDownloadAllLogs = () => async (dispatch, getState) => {
   // Ensure there isn't already a download in progress before starting a new one
   const state = getState();
@@ -195,16 +170,6 @@ const disableSensorButton = macAddress => async dispatch => {
   }
 };
 
-const startSensorScan = () => async (dispatch, getState) => {
-  PermissionActions.withLocationAndBluetooth(dispatch, getState, scanForSensors);
-  return null;
-};
-
-const stopSensorScan = () => dispatch => {
-  dispatch(scanStop());
-  BleService().stopScan();
-};
-
 const startSensorDisableButton = macAddress => async (dispatch, getState) => {
   const result = await PermissionActions.withLocationAndBluetooth(
     dispatch,
@@ -226,9 +191,7 @@ const startSetLogInterval = ({ macAddress, interval = 300 }) => async (dispatch,
 export const VaccineActions = {
   saveSensor,
   startDownloadAllLogs,
-  startSensorScan,
   startSensorDisableButton,
   startSetLogInterval,
-  stopSensorScan,
   setLogInterval,
 };
