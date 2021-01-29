@@ -8,7 +8,9 @@ import { BluetoothStatus } from 'react-native-bluetooth-status';
 import { request, check, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import DeviceInfo from 'react-native-device-info';
 
+import { ToastAndroid } from 'react-native';
 import { PermissionSelectors } from '../selectors/permission';
+import { syncStrings } from '../localization/index';
 
 export const PERMISSION_ACTIONS = {
   SET_LOCATION: 'permissionActions/setLocation',
@@ -71,6 +73,45 @@ const checkPermissions = () => async dispatch => {
   });
 };
 
+/**
+ * Helper wrapper which will check permissions for
+ * bluetooth & location services before calling the supplied function
+ * @param {Func} dispatch
+ * @param {Func} getState
+ * @param {Func} action method to dispatch if permissions are enabled
+ */
+const withLocationAndBluetooth = async (dispatch, getState, action) => {
+  try {
+    const state = getState();
+    const bluetoothEnabled = PermissionSelectors.bluetooth(state);
+    const locationPermission = PermissionSelectors.location(state);
+
+    // Ensure the correct permissions before initiating a new sync process.
+    if (!bluetoothEnabled) await dispatch(PermissionActions.requestBluetooth());
+    if (!locationPermission) await dispatch(PermissionActions.requestLocation());
+
+    if (!bluetoothEnabled) {
+      const result = await dispatch(PermissionActions.requestBluetooth());
+      if (!result) {
+        ToastAndroid.show(syncStrings.bluetooth_disabled, ToastAndroid.LONG);
+        return null;
+      }
+    }
+
+    if (!locationPermission) {
+      const result = await dispatch(PermissionActions.requestLocation());
+      if (!result) {
+        ToastAndroid.show(syncStrings.location_permission, ToastAndroid.LONG);
+        return null;
+      }
+    }
+
+    return dispatch(action);
+  } catch (e) {
+    return null;
+  }
+};
+
 export const PermissionActions = {
   requestLocation,
   requestWriteStorage,
@@ -78,4 +119,5 @@ export const PermissionActions = {
   setLocation,
   setWriteStorage,
   checkPermissions,
+  withLocationAndBluetooth,
 };
