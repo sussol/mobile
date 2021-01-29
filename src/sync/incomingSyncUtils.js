@@ -255,8 +255,8 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
         'end_date',
         'acknowledged',
         'threshold_duration',
-        'threshold_max_temperature',
-        'threshold_min_Temperature',
+        'threshold_maximum_temperature',
+        'threshold_minimum_temperature',
       ],
     },
     LocationMovement: {
@@ -1006,8 +1006,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         location: database.getOrCreate('Location', record.location_ID),
         type: record.type,
         acknowledged: parseBoolean(record.acknowledged),
-        thresholdMaxTemperature: parseNumber(record.threshold_max_temperature),
-        thresholdMinTemperature: parseNumber(record.threshold_min_temperature),
+        thresholdMaxTemperature: parseNumber(record.threshold_maximum_temperature),
+        thresholdMinTemperature: parseNumber(record.threshold_minimum_temperature),
         thresholdDuration: parseNumber(record.threshold_duration),
         sensor,
       });

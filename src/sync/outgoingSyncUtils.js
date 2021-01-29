@@ -324,6 +324,7 @@ const generateSyncData = (settings, recordType, record) => {
         temperature_breach_ID: record.breach?.id,
         store_ID: settings.get(THIS_STORE_ID),
         log_interval: String(record.logInterval),
+        sensor_ID: record.sensor?.id,
       };
     }
     case 'TemperatureBreach': {
