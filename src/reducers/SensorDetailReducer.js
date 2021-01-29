@@ -41,7 +41,7 @@ export const SensorDetailReducer = (state = initialState(), action) => {
       const { payload } = action;
       const { code } = payload;
 
-      const isValid = code.length < 50;
+      const isValid = code.length < 10;
       if (!isValid) return state;
 
       return { ...state, code };
