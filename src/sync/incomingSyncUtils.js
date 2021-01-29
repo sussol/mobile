@@ -255,8 +255,8 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
         'end_date',
         'acknowledged',
         'threshold_duration',
-        'threshold_max_temperature',
-        'threshold_min_Temperature',
+        'threshold_maximum_temperature',
+        'threshold_minimum_temperature',
       ],
     },
     LocationMovement: {
