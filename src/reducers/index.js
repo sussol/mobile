@@ -5,7 +5,7 @@
 
 import { combineReducers } from 'redux';
 
-import { BlinkReducer } from './Bluetooth/BlinkReducer';
+import { BluetoothReducer } from './Bluetooth';
 import { CashTransactionReducer } from './CashTransactionReducer';
 import { DashboardReducer } from './DashboardReducer';
 import { DispensaryReducer } from './DispensaryReducer';
@@ -30,8 +30,6 @@ import { VaccineReducer } from './VaccineReducer';
 import { NewSensorReducer } from './NewSensorReducer';
 import SyncReducer from './SyncReducer';
 import { SensorDetailReducer } from './SensorDetailReducer';
-
-const BluetoothReducer = combineReducers({ blink: BlinkReducer });
 
 export default combineReducers({
   bluetooth: BluetoothReducer,
