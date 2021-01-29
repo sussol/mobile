@@ -5,6 +5,7 @@
 
 import { combineReducers } from 'redux';
 
+import { BluetoothReducer } from './Bluetooth';
 import { CashTransactionReducer } from './CashTransactionReducer';
 import { DashboardReducer } from './DashboardReducer';
 import { DispensaryReducer } from './DispensaryReducer';
@@ -31,6 +32,7 @@ import SyncReducer from './SyncReducer';
 import { SensorDetailReducer } from './SensorDetailReducer';
 
 export default combineReducers({
+  bluetooth: BluetoothReducer,
   cashTransaction: CashTransactionReducer,
   dashboard: DashboardReducer,
   dispensary: DispensaryReducer,

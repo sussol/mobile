@@ -5,24 +5,12 @@ const initialState = () => ({
   isSyncingTemps: false,
   scannedSensorAddresses: [],
   setLogIntervalFor: '',
-  sendingBlinkTo: '',
 });
 
 export const VaccineReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
-    case VACCINE_ACTIONS.BLINK_START: {
-      const { payload } = action;
-      const { macAddress } = payload;
-
-      return { ...state, sendingBlinkTo: macAddress };
-    }
-
-    case VACCINE_ACTIONS.BLINK_STOP: {
-      return { ...state, sendingBlinkTo: '' };
-    }
-
     case VACCINE_ACTIONS.DOWNLOAD_LOGS_START: {
       return { ...state, isSyncingTemps: true };
     }
