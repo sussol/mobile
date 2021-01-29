@@ -4,7 +4,9 @@ import PropTypes from 'prop-types';
 
 import { FlexRow } from './FlexRow';
 import { FlexView } from './FlexView';
-import { LowBatteryIcon, HotBreachIcon, ColdBreachIcon } from './icons';
+import { HotBreachIcon } from './HotBreachIcon';
+import { ColdBreachIcon } from './ColdBreachIcon';
+import { LowBatteryIcon } from './icons';
 
 import { DARKER_GREY, APP_FONT_FAMILY, COLD_BREACH_BLUE, WHITE, DANGER_RED } from '../globalStyles';
 import { MILLISECONDS } from '../utilities';
