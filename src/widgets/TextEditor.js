@@ -22,7 +22,7 @@ export const TextEditor = ({
   return (
     <FlexRow flex={0} alignItems="center" style={{ ...containerStyle }}>
       {isSmall && <Text style={labelStyle}>{label}</Text>}
-      <TextInput {...textInputProps} style={internalTextInput} />
+      <TextInput {...textInputProps} selectTextOnFocus style={internalTextInput} />
     </FlexRow>
   );
 };
