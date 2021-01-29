@@ -12,6 +12,7 @@ import { UIDatabase } from '../database';
 import SensorManager from '../bluetooth/SensorManager';
 import { VACCINE_CONSTANTS } from '../utilities/modules/vaccines/index';
 import { VACCINE_ENTITIES } from '../utilities/modules/vaccines/constants';
+import { SECONDS } from '../utilities/constants';
 
 export const VACCINE_ACTIONS = {
   SAVE_SENSOR_ERROR: 'Vaccine/saveSensorError',
@@ -147,7 +148,12 @@ const saveSensor = sensor => async dispatch => {
   try {
     const { location, logInterval, macAddress, name } = sensor;
     const sensorManager = SensorManager();
-    const newSensor = await sensorManager.createSensor({ location, logInterval, macAddress, name });
+    const newSensor = await sensorManager.createSensor({
+      location,
+      logInterval: logInterval * SECONDS.ONE_MINUTE,
+      macAddress,
+      name,
+    });
     await sensorManager.saveSensor(newSensor);
     dispatch(saveSensorSuccess());
   } catch (error) {
