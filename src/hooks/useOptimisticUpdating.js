@@ -38,9 +38,6 @@ export const useOptimisticUpdating = (value, onChange, preChangeHook, postChange
   // the TextInput - this draws to the screen without causing a full re-render cycle in
   // React. Then, attempt to update the source of truth.
   const withOptimisticState = addend => {
-    console.log('-------------------------------------------');
-    console.log('preChangeHook(optimisticValue.current, addend)', optimisticValue.current, addend);
-    console.log('-------------------------------------------');
     const newValue = preChangeHook(optimisticValue.current, addend);
     optimisticValue.current = newValue;
     ref?.current?.setNativeProps({ text: postChangeHook(optimisticValue.current) });
