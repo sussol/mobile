@@ -143,21 +143,24 @@ const withPermissions = async (dispatch, getState, action) => {
     const locationPermission = PermissionSelectors.location(state);
 
     // Ensure the correct permissions before initiating a new sync process.
-    if (!bluetoothEnabled) await dispatch(PermissionActions.requestBluetooth());
-    if (!locationPermission) await dispatch(PermissionActions.requestLocation());
-
     if (!bluetoothEnabled) {
-      ToastAndroid.show(syncStrings.bluetooth_disabled, ToastAndroid.LONG);
-      return null;
+      const result = await dispatch(PermissionActions.requestBluetooth());
+      if (!result) {
+        ToastAndroid.show(syncStrings.bluetooth_disabled, ToastAndroid.LONG);
+        return null;
+      }
     }
 
     if (!locationPermission) {
-      ToastAndroid.show(syncStrings.location_permission, ToastAndroid.LONG);
-      return null;
+      const result = await dispatch(PermissionActions.requestLocation());
+      if (!result) {
+        ToastAndroid.show(syncStrings.location_permission, ToastAndroid.LONG);
+        return null;
+      }
     }
 
     return dispatch(action);
-  } catch {
+  } catch (e) {
     return null;
   }
 };

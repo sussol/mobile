@@ -55,6 +55,8 @@ export { Paper } from './Paper';
 export { Circle } from './Circle';
 export { TextEditor } from './TextEditor';
 export { EditorRow } from './EditorRow';
+export { HotBreachIcon } from './HotBreachIcon';
+export { ColdBreachIcon } from './ColdBreachIcon';
 
 export * from './StepperInputs';
 export * from './Typography';
