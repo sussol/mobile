@@ -10,7 +10,9 @@ import { Incrementor } from './Incrementor';
 import { APP_FONT_FAMILY, DARKER_GREY } from '../../globalStyles';
 import { vaccineStrings, generalStrings } from '../../localization';
 import { FlexColumn } from '../FlexColumn';
+
 import temperature from '../../utilities/temperature';
+import { useOptimisticUpdating } from '../../hooks/useOptimisticUpdating';
 
 const keepInRange = (num, min, max) => {
   const temp = Math.min(num, max);
@@ -32,21 +34,26 @@ export const TemperatureEditor = ({
   const minimum = above ? threshold : belowMinimum;
   const maximum = above ? aboveMaximum : threshold;
 
-  const formatted = keepInRange(value, minimum, maximum).toFixed(2);
+  const getAdjustedValue = (toUpdate, addend) =>
+    keepInRange(temperature(toUpdate + addend).temperature(), minimum, maximum);
+  const formatter = updated => keepInRange(updated, minimum, maximum).toFixed(2);
 
-  const onIncrement = () =>
-    onChange(keepInRange(temperature(value + stepAmount).temperature(), minimum, maximum));
-  const onDecrement = () =>
-    onChange(keepInRange(temperature(value - stepAmount).temperature(), minimum, maximum));
+  const [textInputRef, newValue, newOnChange] = useOptimisticUpdating(
+    value,
+    onChange,
+    getAdjustedValue,
+    formatter
+  );
 
   return (
     <>
       <Incrementor
-        onIncrement={onIncrement}
-        onDecrement={onDecrement}
+        onIncrement={() => newOnChange(stepAmount)}
+        onDecrement={() => newOnChange(-stepAmount)}
         label={label}
         Content={
           <TextInputWithAffix
+            ref={textInputRef}
             editable={false}
             SuffixComponent={
               <FlexColumn style={{ marginTop: 12 }}>
@@ -57,7 +64,7 @@ export const TemperatureEditor = ({
               </FlexColumn>
             }
             style={textInputStyle}
-            value={formatted}
+            value={newValue}
           />
         }
       />
