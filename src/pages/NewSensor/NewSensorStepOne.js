@@ -12,9 +12,9 @@ import { FlexRow, PaperSection } from '../../widgets';
 import { TextWithIcon } from '../../widgets/Typography';
 
 import { vaccineStrings } from '../../localization';
-import { VaccineActions } from '../../actions/VaccineActions';
-import { selectScannedSensors } from '../../selectors/vaccine';
 import { SUSSOL_ORANGE } from '../../globalStyles';
+import { ScanActions } from '../../actions/Bluetooth/ScanActions';
+import { selectScannedSensors } from '../../selectors/Bluetooth/bluetooth';
 
 const Spinner = () => (
   <FlexRow justifyContent="center">
@@ -57,8 +57,8 @@ NewSensorStepOneComponent.propTypes = {
 };
 
 const dispatchToProps = dispatch => {
-  const startScan = () => dispatch(VaccineActions.startSensorScan());
-  const stopScan = () => dispatch(VaccineActions.stopSensorScan());
+  const startScan = () => dispatch(ScanActions.startSensorScan());
+  const stopScan = () => dispatch(ScanActions.stopSensorScan());
 
   return { startScan, stopScan };
 };
