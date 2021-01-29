@@ -9,7 +9,6 @@ import { PermissionActions } from './PermissionActions';
 import BleService from '../bluetooth/BleService';
 import TemperatureLogManager from '../bluetooth/TemperatureLogManager';
 import { UIDatabase } from '../database';
-import SensorManager from '../bluetooth/SensorManager';
 import { VACCINE_CONSTANTS } from '../utilities/modules/vaccines/index';
 import { VACCINE_ENTITIES } from '../utilities/modules/vaccines/constants';
 
@@ -94,27 +93,6 @@ const downloadLogsFromSensor = sensor => async () => {
 
   return null;
 };
-const setLogIntervalStart = macAddress => ({
-  type: VACCINE_ACTIONS.SET_LOG_INTERVAL_START,
-  payload: { macAddress },
-});
-const setLogIntervalSuccess = () => ({ type: VACCINE_ACTIONS.SET_LOG_INTERVAL_SUCCESS });
-const setLogIntervalError = () => ({ type: VACCINE_ACTIONS.SET_LOG_INTERVAL_ERROR });
-const disableButtonStart = macAddress => ({
-  type: VACCINE_ACTIONS.DISABLE_BUTTON_START,
-  payload: { macAddress },
-});
-const disableButtonStop = macAddress => ({
-  type: VACCINE_ACTIONS.DISABLE_BUTTON_STOP,
-  payload: { macAddress },
-});
-const saveSensorError = () => ({ type: VACCINE_ACTIONS.SAVE_SENSOR_ERROR });
-const saveSensorStart = macAddress => ({
-  type: VACCINE_ACTIONS.SAVE_SENSOR_START,
-  payload: { macAddress },
-});
-const saveSensorSuccess = () => ({ type: VACCINE_ACTIONS.SAVE_SENSOR_SUCCESS });
-
 const startDownloadAllLogs = () => async (dispatch, getState) => {
   // Ensure there isn't already a download in progress before starting a new one
   const state = getState();
@@ -125,73 +103,6 @@ const startDownloadAllLogs = () => async (dispatch, getState) => {
   return null;
 };
 
-const setLogInterval = (macAddress, interval) => async dispatch => {
-  dispatch(setLogIntervalStart(macAddress));
-
-  try {
-    const regex = new RegExp(`Interval: ${interval}s`); // TODO: update with sensor specific response as needed
-    const error = `Sensor response was not equal to 'Interval: ${interval}s'`;
-    const response = await BleService().updateLogIntervalWithRetries(macAddress, interval, 10);
-    const action = regex.test(response.toString())
-      ? setLogIntervalSuccess()
-      : setLogIntervalError(error);
-    await dispatch(action);
-  } catch (e) {
-    dispatch(setLogIntervalError(e));
-    throw e;
-  }
-};
-
-const saveSensor = sensor => async dispatch => {
-  dispatch(saveSensorStart(sensor.macAddress));
-  try {
-    const { location, logInterval, macAddress, name } = sensor;
-    const sensorManager = SensorManager();
-    const newSensor = await sensorManager.createSensor({ location, logInterval, macAddress, name });
-    await sensorManager.saveSensor(newSensor);
-    dispatch(saveSensorSuccess());
-  } catch (error) {
-    dispatch(saveSensorError());
-    throw error;
-  }
-};
-
-const disableSensorButton = macAddress => async dispatch => {
-  dispatch(disableButtonStart(macAddress));
-  try {
-    const info = await BleService().getInfoWithRetries(macAddress, 10);
-    if (!info.isDisabled) {
-      await BleService().toggleButtonWithRetries(macAddress, 10);
-      dispatch(disableButtonStop(macAddress));
-    }
-  } catch (error) {
-    dispatch(disableButtonStop(macAddress));
-    throw error;
-  }
-};
-
-const startSensorDisableButton = macAddress => async (dispatch, getState) => {
-  const result = await PermissionActions.withLocationAndBluetooth(
-    dispatch,
-    getState,
-    disableSensorButton(macAddress)
-  );
-  return result;
-};
-
-const startSetLogInterval = ({ macAddress, interval = 300 }) => async (dispatch, getState) => {
-  const result = await PermissionActions.withLocationAndBluetooth(
-    dispatch,
-    getState,
-    setLogInterval(macAddress, interval)
-  );
-  return result;
-};
-
 export const VaccineActions = {
-  saveSensor,
   startDownloadAllLogs,
-  startSensorDisableButton,
-  startSetLogInterval,
-  setLogInterval,
 };
