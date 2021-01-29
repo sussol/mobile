@@ -13,8 +13,8 @@ import { Spacer } from '../../widgets/Spacer';
 
 import { NewSensorActions } from '../../actions';
 import { WizardActions } from '../../actions/WizardActions';
-import { selectSendingBlinkTo } from '../../selectors/vaccine';
 import { BlinkActions } from '../../actions/Bluetooth/BlinkActions';
+import { selectSendingBlinkTo } from '../../selectors/Bluetooth/bluetooth';
 
 export const RectangleButton = ({ isDisabled, onPress, isSpinning }) =>
   isSpinning ? (
