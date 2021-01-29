@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -18,7 +19,7 @@ const dismiss = () => Keyboard.dismiss();
  * Touchable, dismissing the keyboard when an event propogates
  * to this level.
  */
-export const DataTablePageView = React.memo(({ children, captureUncaughtGestures }) => {
+export const DataTablePageView = React.memo(({ children, captureUncaughtGestures, style }) => {
   // Use a Fragment over TouchableWithoutFeedback so no gesture events are caught.
   // Fragment over a view as TouchableWithoutFeedback does not have implicit styling, a View does.
   const Container = captureUncaughtGestures ? TouchableWithoutFeedback : Fragment;
@@ -29,7 +30,7 @@ export const DataTablePageView = React.memo(({ children, captureUncaughtGestures
   return (
     <Container {...containerProps}>
       <View style={pageContentContainer}>
-        <View style={container}>{children}</View>
+        <View style={[container, style]}>{children}</View>
       </View>
     </Container>
   );
@@ -37,11 +38,13 @@ export const DataTablePageView = React.memo(({ children, captureUncaughtGestures
 
 DataTablePageView.defaultProps = {
   captureUncaughtGestures: true,
+  style: {},
 };
 
 DataTablePageView.propTypes = {
   children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
   captureUncaughtGestures: PropTypes.bool,
+  style: PropTypes.object,
 };
 
 export default DataTablePageView;

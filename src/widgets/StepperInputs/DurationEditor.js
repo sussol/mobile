@@ -2,7 +2,7 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Text } from 'react-native';
+import { View, Text } from 'react-native';
 
 import { TextInputWithAffix } from '../TextInputs';
 import { Incrementor } from './Incrementor';
@@ -25,6 +25,7 @@ export const DurationEditor = ({
   stepAmount,
   maxValue,
   minValue,
+  containerStyle,
 }) => {
   const formatted = String(keepInRange(value, minValue, maxValue));
 
@@ -32,7 +33,7 @@ export const DurationEditor = ({
   const onDecrement = () => onChange(value - stepAmount);
 
   return (
-    <>
+    <View style={containerStyle}>
       <Incrementor
         onIncrement={onIncrement}
         onDecrement={onDecrement}
@@ -46,7 +47,7 @@ export const DurationEditor = ({
           />
         }
       />
-    </>
+    </View>
   );
 };
 
@@ -59,6 +60,7 @@ DurationEditor.defaultProps = {
     fontFamily: APP_FONT_FAMILY,
   },
   suffixTextStyle: { color: DARKER_GREY, fontFamily: APP_FONT_FAMILY, fontSize: 12, width: 50 },
+  containerStyle: {},
   stepAmount: 1,
   maxValue: VACCINE_CONSTANTS.MAX_LOGGING_INTERVAL_MINUTES, // 99
   minValue: VACCINE_CONSTANTS.MIN_LOGGING_INTERVAL_MINUTES, // 1
@@ -70,6 +72,7 @@ DurationEditor.propTypes = {
   label: PropTypes.string,
   textInputStyle: PropTypes.object,
   suffixTextStyle: PropTypes.object,
+  containerStyle: PropTypes.object,
   stepAmount: PropTypes.number,
   value: PropTypes.number.isRequired,
   onChange: PropTypes.func.isRequired,

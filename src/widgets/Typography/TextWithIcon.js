@@ -17,13 +17,13 @@ const SIZES = {
   l: 20,
 };
 
-const getInternalStyle = (size, left, color, textStyle) => {
-  const margin = left ? 'marginLeft' : 'marginRight';
+const getInternalStyle = (size, left, color, textStyle, margin) => {
+  const marginSide = left ? 'marginLeft' : 'marginRight';
   const alignment = left ? 'left' : 'right';
 
   const styleAdjustment = {
     fontSize: SIZES[size],
-    [margin]: 5,
+    [marginSide]: margin,
     textAlign: alignment,
     color,
     ...textStyle,
@@ -32,8 +32,17 @@ const getInternalStyle = (size, left, color, textStyle) => {
   return [defaultStyle, styleAdjustment];
 };
 
-export const TextWithIcon = ({ Icon, left, children, color, size, containerStyle, textStyle }) => {
-  const internalStyle = getInternalStyle(size, left, color, textStyle);
+export const TextWithIcon = ({
+  Icon,
+  left,
+  children,
+  color,
+  size,
+  containerStyle,
+  textStyle,
+  margin,
+}) => {
+  const internalStyle = getInternalStyle(size, left, color, textStyle, margin);
 
   return (
     <FlexRow alignItems="center" flex={1} style={containerStyle}>
@@ -52,9 +61,11 @@ TextWithIcon.defaultProps = {
   size: 'xs',
   containerStyle: {},
   textStyle: {},
+  margin: 5,
 };
 
 TextWithIcon.propTypes = {
+  margin: PropTypes.number,
   Icon: PropTypes.node.isRequired,
   left: PropTypes.bool,
   children: PropTypes.node.isRequired,

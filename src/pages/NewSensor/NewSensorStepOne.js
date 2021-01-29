@@ -2,13 +2,13 @@
 
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { ActivityIndicator, FlatList, View } from 'react-native';
+import { ActivityIndicator, FlatList } from 'react-native';
 import PropTypes from 'prop-types';
 import { useIsFocused } from '@react-navigation/native';
 
 import { TabContainer } from './TabContainer';
 import { ScanRow } from './ScanRow';
-import { FlexRow, PaperSection } from '../../widgets';
+import { Paper } from '../../widgets';
 import { TextWithIcon } from '../../widgets/Typography';
 
 import { vaccineStrings } from '../../localization';
@@ -17,13 +17,13 @@ import { selectScannedSensors } from '../../selectors/vaccine';
 import { SUSSOL_ORANGE } from '../../globalStyles';
 
 const Spinner = () => (
-  <FlexRow justifyContent="center">
-    <View>
-      <TextWithIcon left Icon={<ActivityIndicator size="small" color={SUSSOL_ORANGE} />}>
-        {vaccineStrings.scanning}
-      </TextWithIcon>
-    </View>
-  </FlexRow>
+  <TextWithIcon
+    left
+    Icon={<ActivityIndicator color={SUSSOL_ORANGE} />}
+    containerStyle={{ justifyContent: 'center' }}
+  >
+    {vaccineStrings.scanning}
+  </TextWithIcon>
 );
 
 export const NewSensorStepOneComponent = ({ startScan, stopScan, macAddresses }) => {
@@ -37,15 +37,15 @@ export const NewSensorStepOneComponent = ({ startScan, stopScan, macAddresses })
 
   return (
     <TabContainer>
-      <PaperSection height={420} headerText={vaccineStrings.new_sensor_step_one_title}>
+      <Paper height={420} headerText={vaccineStrings.new_sensor_step_one_title}>
         <FlatList
-          ListFooterComponent={<Spinner />}
-          keyExtractor={item => item}
-          style={{ height: 360 }}
           data={macAddresses}
           renderItem={({ item }) => <ScanRow macAddress={item} />}
+          keyExtractor={item => item}
+          style={{ height: 360 }}
+          ListFooterComponent={<Spinner />}
         />
-      </PaperSection>
+      </Paper>
     </TabContainer>
   );
 };
