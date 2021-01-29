@@ -278,28 +278,6 @@ MinusCircle.propTypes = {
   color: PropTypes.string,
 };
 
-export const HotBreachIcon = ({ size, style, color }) => (
-  <FAIcon size={size} style={style} color={color} name="thermometer" />
-);
-
-HotBreachIcon.defaultProps = { size: 40, style: {}, color: WHITE };
-HotBreachIcon.propTypes = {
-  size: PropTypes.number,
-  style: PropTypes.object,
-  color: PropTypes.string,
-};
-
-export const ColdBreachIcon = ({ size, style, color }) => (
-  <FAIcon size={size} style={style} color={color} name="snowflake-o" />
-);
-
-ColdBreachIcon.defaultProps = { size: 40, style: {}, color: WHITE };
-ColdBreachIcon.propTypes = {
-  size: PropTypes.number,
-  style: PropTypes.object,
-  color: PropTypes.string,
-};
-
 export const LightbulbIcon = ({ size, style, color }) => (
   <FAIcon size={size} style={style} color={color} name="lightbulb-o" />
 );

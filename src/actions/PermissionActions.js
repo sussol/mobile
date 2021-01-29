@@ -6,9 +6,9 @@
 import { batch } from 'react-redux';
 import { BluetoothStatus } from 'react-native-bluetooth-status';
 import { request, check, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import DeviceInfo from 'react-native-device-info';
 
 import { ToastAndroid } from 'react-native';
-import DeviceInfo from 'react-native-device-info';
 import { PermissionSelectors } from '../selectors/permission';
 import { syncStrings } from '../localization/index';
 
@@ -28,6 +28,7 @@ const setWriteStorage = status => ({
 const requestBluetooth = () => async dispatch => {
   const isEmulator = await DeviceInfo.isEmulator();
   BluetoothStatus.enable();
+
   const result = isEmulator ? true : await BluetoothStatus.state();
 
   dispatch(setBluetooth(result));
