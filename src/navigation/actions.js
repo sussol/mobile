@@ -545,9 +545,6 @@ export const updateStocktake = (stocktake, itemIds, name = '') => dispatch => {
   dispatch(gotoStocktakeEditPage(stocktake));
 };
 
-export const gotoNewVaccineModulePage = () =>
-  NavigationActions.navigate({ routeName: ROUTES.VACCINES_NEW });
-
 export const gotoFridgeDetailPage = fridge =>
   NavigationActions.navigate({ routeName: ROUTES.FRIDGE_DETAIL, params: { fridge } });
 
