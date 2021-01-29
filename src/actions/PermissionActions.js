@@ -8,6 +8,7 @@ import { BluetoothStatus } from 'react-native-bluetooth-status';
 import { request, check, PERMISSIONS, RESULTS } from 'react-native-permissions';
 
 import { ToastAndroid } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
 import { PermissionSelectors } from '../selectors/permission';
 import { syncStrings } from '../localization/index';
 
@@ -25,10 +26,13 @@ const setWriteStorage = status => ({
 });
 
 const requestBluetooth = () => async dispatch => {
+  const isEmulator = await DeviceInfo.isEmulator();
   BluetoothStatus.enable();
-  const result = await BluetoothStatus.state();
+  const result = isEmulator ? true : await BluetoothStatus.state();
 
   dispatch(setBluetooth(result));
+
+  return result;
 };
 
 const requestWriteStorage = () => async (dispatch, getState) => {
@@ -43,10 +47,13 @@ const requestWriteStorage = () => async (dispatch, getState) => {
 const requestLocation = () => async (dispatch, getState) => {
   const locationPermission = PermissionSelectors.location(getState());
 
-  if (!locationPermission) {
-    const result = await request(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION);
-    dispatch(setLocation(result === RESULTS.GRANTED));
-  }
+  const result = !locationPermission
+    ? await request(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION)
+    : true;
+
+  dispatch(setLocation(result === RESULTS.GRANTED));
+
+  return result;
 };
 
 const checkPermissions = () => async dispatch => {
@@ -83,17 +90,23 @@ const withLocationAndBluetooth = async (dispatch, getState, action) => {
     if (!locationPermission) await dispatch(PermissionActions.requestLocation());
 
     if (!bluetoothEnabled) {
-      ToastAndroid.show(syncStrings.bluetooth_disabled, ToastAndroid.LONG);
-      return null;
+      const result = await dispatch(PermissionActions.requestBluetooth());
+      if (!result) {
+        ToastAndroid.show(syncStrings.bluetooth_disabled, ToastAndroid.LONG);
+        return null;
+      }
     }
 
     if (!locationPermission) {
-      ToastAndroid.show(syncStrings.location_permission, ToastAndroid.LONG);
-      return null;
+      const result = await dispatch(PermissionActions.requestLocation());
+      if (!result) {
+        ToastAndroid.show(syncStrings.location_permission, ToastAndroid.LONG);
+        return null;
+      }
     }
 
     return dispatch(action);
-  } catch {
+  } catch (e) {
     return null;
   }
 };
