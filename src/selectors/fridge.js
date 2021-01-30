@@ -235,39 +235,26 @@ export const selectAverageTemperature = createSelector(
   }
 );
 
-export const selectSelectedFridgeIsInHotBreach = createSelector(
-  [selectSelectedFridgeID],
-  fridgeID => {
-    const fridge = UIDatabase.get('Location', fridgeID);
-    const { isInHotBreach } = fridge;
-    return isInHotBreach;
-  }
-);
+export const selectSelectedFridgeIsInHotBreach = state => {
+  const fridge = selectSelectedFridge(state);
+  const { isInHotBreach } = fridge;
+  return isInHotBreach;
+};
 
-export const selectSelectedFridgeIsInColdBreach = createSelector(
-  [selectSelectedFridgeID],
-  fridgeID => {
-    const fridge = UIDatabase.get('Location', fridgeID);
-    const { isInColdBreach } = fridge;
-    return isInColdBreach;
-  }
-);
+export const selectSelectedFridgeIsInColdBreach = state => {
+  const fridge = selectSelectedFridge(state);
+  const { isInColdBreach } = fridge;
+  return isInColdBreach;
+};
 
-export const selectSelectedFridgeIsLowBattery = createSelector(
-  [selectSelectedFridgeID],
-  fridgeID => {
-    const fridge = UIDatabase.get('Location', fridgeID);
-    const { batteryLevel } = fridge;
-    return batteryLevel <= VACCINE_CONSTANTS.LOW_BATTERY_PERCENTAGE;
-  }
-);
+export const selectSelectedFridgeIsLowBattery = state => {
+  const fridge = selectSelectedFridge(state);
+  const { batteryLevel } = fridge;
+  return batteryLevel <= VACCINE_CONSTANTS.LOW_BATTERY_PERCENTAGE;
+};
 
-export const selectSelectFridgeCurrentTemperature = createSelector(
-  [selectSelectedFridgeID],
-  fridgeID => {
-    const fridge = UIDatabase.get('Location', fridgeID);
-    const { currentTemperature } = fridge;
-
-    return currentTemperature;
-  }
-);
+export const selectSelectFridgeCurrentTemperature = state => {
+  const fridge = selectSelectedFridge(state);
+  const { currentTemperature } = fridge;
+  return currentTemperature;
+};
