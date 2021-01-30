@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import { Animated, TouchableOpacity, Text } from 'react-native';
+import { Animated, Text } from 'react-native';
 import PropTypes from 'prop-types';
 
 import { FlexRow } from './FlexRow';
 import { FlexView } from './FlexView';
 import { HotBreachIcon } from './HotBreachIcon';
 import { ColdBreachIcon } from './ColdBreachIcon';
-import { LowBatteryIcon } from './icons';
+import { LowBatteryIcon, TemperatureIcon } from './icons';
 
 import { DARKER_GREY, APP_FONT_FAMILY, COLD_BREACH_BLUE, WHITE, DANGER_RED } from '../globalStyles';
 import { MILLISECONDS } from '../utilities';
@@ -26,7 +26,7 @@ export const SensorStatus = ({ isInHotBreach, isInColdBreach, isLowBattery, curr
   const fadeAnim3 = React.useRef(new Animated.Value(0)).current;
   const animRef = React.useRef(null);
 
-  const conditions = [isInHotBreach, isInColdBreach, isLowBattery, !!currentTemp != null];
+  const conditions = [isInHotBreach, isInColdBreach, isLowBattery];
   const animationValues = [fadeAnim1, fadeAnim2, fadeAnim3].filter((_, i) => conditions[i]);
   const isInDanger = isInHotBreach || isInColdBreach || isLowBattery;
 
@@ -75,45 +75,46 @@ export const SensorStatus = ({ isInHotBreach, isInColdBreach, isLowBattery, curr
 
   return !isInDanger ? (
     <Rectangle colour={WHITE}>
-      <BigText colour={DARKER_GREY}>{temperature(currentTemp).format()}</BigText>
+      <FlexRow alignItems="center">
+        <BigText colour={DARKER_GREY}>{temperature(currentTemp).format()}</BigText>
+        <TemperatureIcon />
+      </FlexRow>
     </Rectangle>
   ) : (
-    <TouchableOpacity>
-      <Rectangle colour={isInColdBreach ? COLD_BREACH_BLUE : DANGER_RED}>
-        <FlexRow flex={1}>
-          <FlexView alignItems="center" justifyContent="center">
-            <BigText>{temperature(currentTemp).format()}</BigText>
-          </FlexView>
+    <Rectangle colour={isInColdBreach ? COLD_BREACH_BLUE : DANGER_RED}>
+      <FlexRow flex={1}>
+        <FlexView flex={2} alignItems="center" justifyContent="center">
+          <BigText>{temperature(currentTemp).format()}</BigText>
+        </FlexView>
 
-          <FlexView alignItems="center" justifyContent="center">
-            <Animated.View style={styles.icon} opacity={fadeAnim1}>
-              <HotBreachIcon />
-            </Animated.View>
+        <FlexView alignItems="center" justifyContent="center">
+          <Animated.View style={styles.icon} opacity={fadeAnim1}>
+            <HotBreachIcon />
+          </Animated.View>
 
-            <Animated.View style={styles.icon} opacity={fadeAnim2}>
-              <ColdBreachIcon />
-            </Animated.View>
+          <Animated.View style={styles.icon} opacity={fadeAnim2}>
+            <ColdBreachIcon />
+          </Animated.View>
 
-            <Animated.View style={styles.icon} opacity={fadeAnim3}>
-              <LowBatteryIcon />
-            </Animated.View>
-          </FlexView>
-        </FlexRow>
-      </Rectangle>
-    </TouchableOpacity>
+          <Animated.View style={{ ...styles.icon, paddingRight: 5 }} opacity={fadeAnim3}>
+            <LowBatteryIcon size={20} />
+          </Animated.View>
+        </FlexView>
+      </FlexRow>
+    </Rectangle>
   );
 };
 
 const styles = {
-  icon: { position: 'absolute', left: 30 },
-  bigText: { fontSize: 32, fontFamily: APP_FONT_FAMILY },
+  icon: { position: 'absolute', alignSelf: 'flex-end' },
+  bigText: { fontSize: 24, fontFamily: APP_FONT_FAMILY },
 };
 
 SensorStatus.defaultProps = {
-  isInHotBreach: false,
-  isInColdBreach: false,
-  isLowBattery: false,
-  currentTemp: 0,
+  isInHotBreach: true,
+  isInColdBreach: true,
+  isLowBattery: true,
+  currentTemp: 22.22,
 };
 
 SensorStatus.propTypes = {
