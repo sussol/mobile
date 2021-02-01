@@ -25,9 +25,9 @@ import { TextWithIcon } from '../widgets/Typography';
 
 import { buttonStrings } from '../localization';
 import { DARKER_GREY, BLACK, FINALISE_GREEN } from '../globalStyles';
-import { VaccineActions } from '../actions/index';
 import { gotoEditSensorPage, gotoFridgeDetailPage, gotoNewSensorPage } from '../navigation/actions';
 import { AfterInteractions } from '../widgets/AfterInteractions';
+import { BlinkActions } from '../actions/Bluetooth/BlinkActions';
 
 const formatDate = date => moment(date).fromNow();
 const formatTemperature = temperature => `${Math.round(temperature * 10) / 10}°C`;
@@ -187,7 +187,7 @@ const stateToProps = state => {
 };
 
 const dispatchToProps = dispatch => ({
-  blinkSensor: macAddress => dispatch(VaccineActions.startSensorBlink(macAddress)),
+  blinkSensor: macAddress => dispatch(BlinkActions.startSensorBlink(macAddress)),
   toFridgeDetail: fridge => dispatch(gotoFridgeDetailPage(fridge)),
   toEditSensorPage: sensor => dispatch(gotoEditSensorPage(sensor)),
   toNewSensorPage: () => dispatch(gotoNewSensorPage()),
