@@ -96,7 +96,7 @@ export const FridgeDetailPageComponent = ({
         maximumDate={maximumDate}
       />
 
-      <Paper height={300} contentContainerStyle={{ flex: 1, marginTop: 20 }}>
+      <Paper style={{ flex: 1 }} contentContainerStyle={{ flex: 1, marginTop: 20 }}>
         <AfterInteractions>
           <FlexRow alignItems="center">
             <VaccineChart
