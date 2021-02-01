@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -26,26 +26,30 @@ export const NewSensorStepTwoComponent = ({
   updateTemperature,
 }) => (
   <TabContainer>
-    <Paper height={320} headerText={vaccineStrings.new_sensor_step_two_title}>
+    <Paper headerText={vaccineStrings.new_sensor_step_two_title}>
       <BreachConfigRow
+        containerStyle={localStyles.paperContentRow}
         type="HOT_CONSECUTIVE"
         {...hotConsecutiveConfig}
         updateDuration={updateDuration}
         updateTemperature={updateTemperature}
       />
       <BreachConfigRow
+        containerStyle={localStyles.paperContentRow}
         type="COLD_CONSECUTIVE"
         {...coldConsecutiveConfig}
         updateDuration={updateDuration}
         updateTemperature={updateTemperature}
       />
       <BreachConfigRow
+        containerStyle={localStyles.paperContentRow}
         type="HOT_CUMULATIVE"
         {...hotCumulativeConfig}
         updateDuration={updateDuration}
         updateTemperature={updateTemperature}
       />
       <BreachConfigRow
+        containerStyle={localStyles.paperContentRow}
         type="COLD_CUMULATIVE"
         {...coldCumulativeConfig}
         updateDuration={updateDuration}
@@ -69,6 +73,12 @@ export const NewSensorStepTwoComponent = ({
     </FlexRow>
   </TabContainer>
 );
+
+const localStyles = StyleSheet.create({
+  paperContentRow: {
+    padding: 8,
+  },
+});
 
 const stateToProps = state => {
   const {
