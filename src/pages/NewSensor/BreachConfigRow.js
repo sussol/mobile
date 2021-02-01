@@ -20,7 +20,8 @@ export const BreachConfigRow = React.memo(
   ({
     type,
     duration,
-    temperature,
+    maximumTemperature,
+    minimumTemperature,
     threshold,
     updateDuration,
     updateTemperature,
@@ -42,7 +43,7 @@ export const BreachConfigRow = React.memo(
         />
         <TemperatureEditor
           above={isHotBreach}
-          value={temperature}
+          value={isHotBreach ? minimumTemperature : maximumTemperature}
           onChange={value => updateTemperature(type, value)}
           threshold={threshold}
         />
@@ -57,8 +58,9 @@ BreachConfigRow.propTypes = {
   threshold: PropTypes.number.isRequired,
   type: PropTypes.string.isRequired,
   duration: PropTypes.number.isRequired,
-  temperature: PropTypes.number.isRequired,
   updateDuration: PropTypes.func.isRequired,
   updateTemperature: PropTypes.func.isRequired,
   containerStyle: PropTypes.object,
+  maximumTemperature: PropTypes.number.isRequired,
+  minimumTemperature: PropTypes.number.isRequired,
 };
