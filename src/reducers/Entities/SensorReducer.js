@@ -1,5 +1,6 @@
 import { SENSOR_ACTIONS } from '../../actions/Entities/SensorActions';
 import { UIDatabase } from '../../database';
+import { ROUTES } from '../../navigation/index';
 
 const initialState = () => ({
   byId: UIDatabase.objects('Sensor').reduce(
@@ -17,6 +18,16 @@ export const SensorReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
+    case 'Navigation/NAVIGATE': {
+      const { params, routeName } = action;
+
+      if (routeName !== ROUTES.SENSOR_EDIT) return state;
+      const { sensor } = params;
+      const { id } = sensor;
+
+      return { ...state, editingId: id };
+    }
+
     case SENSOR_ACTIONS.CREATE: {
       const { byId } = state;
       const { payload } = action;

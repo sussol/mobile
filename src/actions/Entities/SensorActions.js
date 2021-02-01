@@ -77,6 +77,12 @@ const updateLoggingDelay = (id, loggingDelay, isNew = false) => dispatch => {
   dispatch(update(id, 'loggingDelay', loggingDelay));
 };
 
+const updateNewSensor = (value, field) => (dispatch, getState) => {
+  const state = getState();
+  const newId = selectNewSensorId(state);
+  dispatch(update(newId, field, value));
+};
+
 const updateNewSensorName = value => (dispatch, getState) => {
   const state = getState();
   const newId = selectNewSensorId(state);
@@ -112,4 +118,5 @@ export const SensorActions = {
   updateNewSensorLoggingDelay,
   updateNewSensorLogInterval,
   resetNew,
+  updateNewSensor,
 };
