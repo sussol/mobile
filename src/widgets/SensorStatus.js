@@ -111,10 +111,10 @@ const styles = {
 };
 
 SensorStatus.defaultProps = {
-  isInHotBreach: true,
-  isInColdBreach: true,
-  isLowBattery: true,
-  currentTemp: 22.22,
+  isInHotBreach: false,
+  isInColdBreach: false,
+  isLowBattery: false,
+  currentTemp: 0,
 };
 
 SensorStatus.propTypes = {
