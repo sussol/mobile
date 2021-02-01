@@ -157,7 +157,7 @@ VaccinePageComponent.defaultProps = {
   fridges: null,
 };
 VaccinePageComponent.propTypes = {
-  fridges: PropTypes.object,
+  fridges: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   blinkSensor: PropTypes.func.isRequired,
   toFridgeDetail: PropTypes.func.isRequired,
   toEditSensorPage: PropTypes.func.isRequired,
