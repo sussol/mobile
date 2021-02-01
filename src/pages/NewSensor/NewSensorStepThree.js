@@ -25,7 +25,7 @@ import {
 import { WizardActions } from '../../actions/WizardActions';
 import { goBack, gotoSettings } from '../../navigation/actions';
 import { selectNewSensor } from '../../selectors/Entities/sensor';
-import { NewSensorActions } from '../../actions/index';
+import { VaccineActions } from '../../actions/index';
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 import { DARKER_GREY, LIGHT_GREY, SUSSOL_ORANGE, WHITE } from '../../globalStyles';
 import { buttonStrings, vaccineStrings } from '../../localization';
@@ -106,8 +106,8 @@ const dispatchToProps = dispatch => {
   const previousTab = () => dispatch(WizardActions.previousTab());
   const exit = () => dispatch(goBack());
   const connectToSensor = sensor => () =>
-    dispatch(NewSensorActions.updateSensor(sensor))
-      .then(() => dispatch(NewSensorActions.saveSensor(sensor)))
+    dispatch(VaccineActions.updateSensor(sensor))
+      .then(() => dispatch(VaccineActions.saveSensor(sensor)))
       .then(() => {
         ToastAndroid.show(vaccineStrings.sensor_save_success, ToastAndroid.LONG);
         dispatch(gotoSettings());

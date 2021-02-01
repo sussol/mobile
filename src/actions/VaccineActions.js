@@ -194,7 +194,13 @@ const startSetLogInterval = ({ macAddress, interval = 300 }) => async (dispatch,
   return result;
 };
 
+const updateSensor = sensor => async dispatch => {
+  await dispatch(VaccineActions.startSetLogInterval(sensor));
+  await dispatch(VaccineActions.startSensorDisableButton(sensor.macAddress));
+};
+
 export const VaccineActions = {
+  updateSensor,
   saveSensor,
   startDownloadAllLogs,
   startSensorDisableButton,
