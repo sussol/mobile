@@ -1044,26 +1044,22 @@ const createTransactionItem = (database, transaction, item, initialQuantity = 0)
   return transactionItem;
 };
 
-const createLocation = (database, locationType, description, code) => {
-  const location = database.create('Location', {
-    id: generateUUID(),
-    description,
-    code,
-    locationType,
-  });
-
-  return location;
+const createLocation = (database, location) => {
+  const defaultLocation = { id: generateUUID() };
+  const mergedLocation = { ...defaultLocation, ...location };
+  return database.update('Location', mergedLocation);
 };
 
-const createSensor = (database, macAddress, batteryLevel, location) => {
-  const sensor = database.create('Sensor', {
-    id: generateUUID(),
-    macAddress,
-    batteryLevel,
-    location,
-  });
+const createTemperatureBreachConfiguration = (database, config) => {
+  const defaultConfig = { id: generateUUID() };
+  const mergedConfig = { ...defaultConfig, ...config };
+  return database.update('TemperatureBreachConfiguration', mergedConfig);
+};
 
-  return sensor;
+const createSensor = (database, sensor) => {
+  const defaultSensor = { id: generateUUID() };
+  const mergedSensor = { ...defaultSensor, ...sensor };
+  return database.update('Sensor', mergedSensor);
 };
 
 const createLocationMovement = (database, itemBatch, location) => {
@@ -1253,6 +1249,8 @@ export const createRecord = (database, type, ...args) => {
       return createTemperatureLog(database, ...args);
     case 'TemperatureBreach':
       return createTemperatureBreach(database, ...args);
+    case 'TemperatureBreachConfiguration':
+      return createTemperatureBreachConfiguration(database, ...args);
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }
