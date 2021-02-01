@@ -1,4 +1,3 @@
-import { LocationActions } from './LocationActions';
 import { SensorManager } from '../../bluetooth';
 import { TemperatureBreachConfigActions } from './TemperatureBreachConfigActions';
 import { selectNewSensorId } from '../../selectors/Entities/sensor';
@@ -10,7 +9,6 @@ export const SENSOR_ACTIONS = {
 };
 
 const createFromScanner = macAddress => dispatch => {
-  dispatch(LocationActions.create());
   dispatch(TemperatureBreachConfigActions.createGroup());
   dispatch(SensorActions.create(macAddress));
 };
