@@ -38,6 +38,7 @@ const persistConfig = {
     'vaccine',
     'newSensor',
     'sensorDetail',
+    'entities',
   ],
 };
 
