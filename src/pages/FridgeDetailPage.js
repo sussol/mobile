@@ -32,7 +32,7 @@ import {
   selectNumberOfHotConsecutiveBreaches,
   selectSelectedFridgeIsInColdBreach,
   selectSelectedFridgeIsInHotBreach,
-  selectSelectedFridgeIsLowBattery,
+  selectSelectedFridgeSensorIsLowBattery,
   selectSelectFridgeCurrentTemperature,
   selectTemperatureLogsFromDate,
   selectTemperatureLogsToDate,
@@ -96,11 +96,11 @@ export const FridgeDetailPageComponent = ({
         maximumDate={maximumDate}
       />
 
-      <Paper height={300} contentContainerStyle={{ flex: 1, marginTop: 20 }}>
+      <Paper style={{ flex: 1 }} contentContainerStyle={{ flex: 1, marginTop: 20 }}>
         <AfterInteractions>
           <FlexRow alignItems="center">
             <VaccineChart
-              breaches={[breaches[0]]}
+              breaches={breaches}
               minLine={minLine}
               maxLine={maxLine}
               minDomain={minDomain}
@@ -210,7 +210,7 @@ const stateToProps = state => {
   const coldCumulativeBreach = selectColdCumulativeBreach(state);
   const isInHotBreach = selectSelectedFridgeIsInHotBreach(state);
   const isInColdBreach = selectSelectedFridgeIsInColdBreach(state);
-  const isLowBattery = selectSelectedFridgeIsLowBattery(state);
+  const isLowBattery = selectSelectedFridgeSensorIsLowBattery(state);
   const currentTemperature = selectSelectFridgeCurrentTemperature(state);
 
   return {

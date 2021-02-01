@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef } from 'react';
 
 import { debounce } from '../utilities';
 
+const DEBOUNCE_MS = 500;
+
 /**
  * Custom hook to be used to optimistically update a TextInput with direct manipulation
  * before invoking the passed onChange callback.
@@ -30,7 +32,7 @@ export const useOptimisticUpdating = (value, onChange, preChangeHook, postChange
   const wrappedOnChange = useCallback(
     debounce(newValue => {
       onChange(newValue);
-    }, 500),
+    }, DEBOUNCE_MS),
     []
   );
 
