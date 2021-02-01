@@ -24,11 +24,12 @@ import {
 
 import { WizardActions } from '../../actions/WizardActions';
 import { goBack, gotoSettings } from '../../navigation/actions';
-import { selectNewSensor } from '../../selectors/newSensor';
+import { selectNewSensor } from '../../selectors/Entities/sensor';
 import { NewSensorActions } from '../../actions/index';
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 import { DARKER_GREY, LIGHT_GREY, SUSSOL_ORANGE, WHITE } from '../../globalStyles';
 import { buttonStrings, vaccineStrings } from '../../localization';
+import { SensorActions } from '../../actions/Entities/SensorActions';
 
 export const NewSensorStepThreeComponent = ({
   logInterval,
@@ -97,10 +98,10 @@ export const NewSensorStepThreeComponent = ({
 };
 
 const dispatchToProps = dispatch => {
-  const updateName = value => dispatch(NewSensorActions.updateName(value));
-  const updateCode = value => dispatch(NewSensorActions.updateCode(value));
-  const updateLoggingDelay = value => dispatch(NewSensorActions.updateLoggingDelay(value));
-  const updateLogInterval = value => dispatch(NewSensorActions.updateLogInterval(value));
+  const updateName = value => dispatch(SensorActions.updateNewSensorName(value));
+  const updateCode = value => dispatch(SensorActions.updateNewSensorCode(value));
+  const updateLoggingDelay = value => dispatch(SensorActions.updateNewSensorLoggingDelay(value));
+  const updateLogInterval = value => dispatch(SensorActions.updateNewSensorLogInterval(value));
   const previousTab = () => dispatch(WizardActions.previousTab());
   const exit = () => dispatch(goBack());
   const connectToSensor = sensor => () =>
@@ -127,7 +128,7 @@ const dispatchToProps = dispatch => {
 
 const stateToProps = state => {
   const newSensor = selectNewSensor(state);
-  const { logInterval, loggingDelay, name, code, macAddress } = newSensor;
+  const { logInterval, loggingDelay, name, code, macAddress } = newSensor ?? {};
 
   return { logInterval, loggingDelay, name, code, macAddress };
 };
