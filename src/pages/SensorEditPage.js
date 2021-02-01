@@ -242,9 +242,10 @@ const dispatchToProps = (dispatch, ownProps) => {
   const { id } = sensor;
 
   const blink = macAddress => dispatch(VaccineActions.startSensorBlink(macAddress));
-  const updateName = name => dispatch(SensorActions.updateName(id, name));
-  const updateCode = code => dispatch(SensorActions.updateCode(id, code));
-  const updateLogInterval = logInterval => dispatch(SensorActions.updateLogInterval(logInterval));
+  const updateName = name => dispatch(SensorActions.update(id, 'name', name));
+  const updateCode = code => dispatch(SensorActions.update(id, 'code', code));
+  const updateLogInterval = logInterval =>
+    dispatch(SensorActions.update(id, 'logInterval', logInterval));
   const updateDuration = (type, value) =>
     dispatch(SensorDetailActions.updateConfig(type, 'duration', value));
   const updateTemperature = (type, value) =>

@@ -35,6 +35,7 @@ const updateNewSensor = (value, field) => (dispatch, getState) => {
 };
 
 export const SensorActions = {
+  update,
   create,
   createFromScanner,
   resetNew,
