@@ -7,7 +7,6 @@ import { EditorRow } from '../../widgets/EditorRow';
 import { DurationEditor, TemperatureEditor } from '../../widgets/StepperInputs';
 
 import { COLD_BREACH_BLUE, DANGER_RED } from '../../globalStyles';
-import { SECONDS } from '../../utilities/constants';
 
 export const TYPE_TO_LABEL = {
   HOT_CONSECUTIVE: 'Hot consecutive',
@@ -36,10 +35,7 @@ export const BreachConfigRow = React.memo(
         Icon={<Icon color={color} size={20} />}
         label={TYPE_TO_LABEL[type]}
       >
-        <DurationEditor
-          value={duration / SECONDS.ONE_MINUTE}
-          onChange={value => updateDuration(type, value)}
-        />
+        <DurationEditor value={duration} onChange={value => updateDuration(type, value)} />
         <TemperatureEditor
           above={isHotBreach}
           value={temperature}

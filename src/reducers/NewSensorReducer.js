@@ -7,10 +7,10 @@ const initialState = () => ({
   name: '',
   loggingDelay: moment(new Date()).add(5, 'minutes').toDate(),
   logInterval: 5,
-  HOT_CUMULATIVE: { duration: 300, temperature: 8 },
-  COLD_CUMULATIVE: { duration: 300, temperature: 2 },
-  HOT_CONSECUTIVE: { duration: 300, temperature: 8 },
-  COLD_CONSECUTIVE: { duration: 300, temperature: 2 },
+  HOT_CUMULATIVE: { duration: 20, temperature: 8 },
+  COLD_CUMULATIVE: { duration: 20, temperature: 2 },
+  HOT_CONSECUTIVE: { duration: 20, temperature: 8 },
+  COLD_CONSECUTIVE: { duration: 20, temperature: 2 },
 });
 
 export const NewSensorReducer = (state = initialState(), action) => {

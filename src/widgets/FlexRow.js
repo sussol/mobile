@@ -43,6 +43,6 @@ FlexRow.propTypes = {
   flex: PropTypes.number,
   alignItems: PropTypes.string,
   justifyContent: PropTypes.string,
-  style: PropTypes.object,
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   reverse: PropTypes.bool,
 };
