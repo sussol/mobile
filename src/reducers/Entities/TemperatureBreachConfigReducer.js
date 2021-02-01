@@ -44,7 +44,6 @@ export const TemperatureBreachConfigReducer = (state = initialState(), action) =
 
       const oldConfig = byId[id];
       const newConfig = { ...oldConfig, [field]: value };
-
       const newByIds = { ...byId, [id]: newConfig };
 
       return { ...state, byId: newByIds };

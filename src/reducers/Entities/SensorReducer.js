@@ -47,6 +47,9 @@ export const SensorReducer = (state = initialState(), action) => {
       const { payload } = action;
       const { id, field, value } = payload;
 
+      if (field === 'name' && value?.length > 50) return state;
+      if (field === 'code' && value?.length > 10) return state;
+
       const newSensorState = { ...byId[id], [field]: value };
       const newById = { ...byId, [id]: newSensorState };
 

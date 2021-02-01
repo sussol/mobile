@@ -98,10 +98,11 @@ export const NewSensorStepThreeComponent = ({
 };
 
 const dispatchToProps = dispatch => {
-  const updateName = value => dispatch(SensorActions.updateNewSensorName(value));
-  const updateCode = value => dispatch(SensorActions.updateNewSensorCode(value));
-  const updateLoggingDelay = value => dispatch(SensorActions.updateNewSensorLoggingDelay(value));
-  const updateLogInterval = value => dispatch(SensorActions.updateNewSensorLogInterval(value));
+  const updateName = value => dispatch(SensorActions.updateNewSensor(value, 'name'));
+  const updateCode = value => dispatch(SensorActions.updateNewSensor(value, 'code'));
+  const updateLoggingDelay = value =>
+    dispatch(SensorActions.updateNewSensor(value, 'loggingDelay'));
+  const updateLogInterval = value => dispatch(SensorActions.updateNewSensor(value, 'logInterval'));
   const previousTab = () => dispatch(WizardActions.previousTab());
   const exit = () => dispatch(goBack());
   const connectToSensor = sensor => () =>
