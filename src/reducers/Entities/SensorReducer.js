@@ -25,6 +25,12 @@ export const SensorReducer = (state = initialState(), action) => {
       return { ...state, byId: { ...byId, [id]: payload }, newId: id };
     }
 
+    case SENSOR_ACTIONS.RESET_NEW: {
+      const { byId, newId } = state;
+      const newById = { ...byId, [newId]: null };
+      return { ...state, byId: newById, newId: '' };
+    }
+
     case SENSOR_ACTIONS.UPDATE: {
       const { byId } = state;
       const { payload } = action;
@@ -33,7 +39,6 @@ export const SensorReducer = (state = initialState(), action) => {
       const newSensorState = { ...byId[id], [field]: value };
       const newById = { ...byId, [id]: newSensorState };
 
-      console.log('newSensorState', newSensorState);
       return { ...state, byId: newById };
     }
 

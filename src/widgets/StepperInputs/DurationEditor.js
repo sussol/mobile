@@ -69,6 +69,7 @@ DurationEditor.defaultProps = {
   suffixTextStyle: { color: DARKER_GREY, fontFamily: APP_FONT_FAMILY, fontSize: 12, width: 50 },
   containerStyle: {},
   stepAmount: 1,
+  value: 0,
   maxValue: VACCINE_CONSTANTS.MAX_LOGGING_INTERVAL_MINUTES, // 99
   minValue: VACCINE_CONSTANTS.MIN_LOGGING_INTERVAL_MINUTES, // 1
 };
@@ -81,6 +82,6 @@ DurationEditor.propTypes = {
   suffixTextStyle: PropTypes.object,
   containerStyle: PropTypes.object,
   stepAmount: PropTypes.number,
-  value: PropTypes.number.isRequired,
+  value: PropTypes.number,
   onChange: PropTypes.func.isRequired,
 };

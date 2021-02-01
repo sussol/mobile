@@ -6,6 +6,7 @@ import { SECONDS } from '../../utilities/constants';
 export const TEMPERATURE_BREACH_CONFIG_ACTIONS = {
   CREATE_GROUP: 'TEMPERATURE_BREACH_CONFIG/createGroup',
   UPDATE: 'TEMPERATURE_BREACH_CONFIG/update',
+  RESET_NEW_GROUP: 'TEMPERATURE_BREACH_CONFIG/resetNewGroup',
 };
 
 const isHot = type => type.includes('HOT');
@@ -17,6 +18,8 @@ const createDefaultConfig = type => ({
   type,
   duration: SECONDS.ONE_MINUTE * 20,
 });
+
+const resetNewGroup = () => ({ type: TEMPERATURE_BREACH_CONFIG_ACTIONS.RESET_NEW_GROUP });
 
 const createGroup = () => ({
   type: TEMPERATURE_BREACH_CONFIG_ACTIONS.CREATE_GROUP,
@@ -87,4 +90,5 @@ export const TemperatureBreachConfigActions = {
   updateMinimumTemperature,
   updateNewConfigTemperature,
   updateNewConfigDuration,
+  resetNewGroup,
 };

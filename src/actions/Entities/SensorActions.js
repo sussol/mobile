@@ -7,6 +7,7 @@ import { selectNewSensorId } from '../../selectors/Entities/sensor';
 export const SENSOR_ACTIONS = {
   CREATE: 'SENSOR/create',
   UPDATE: 'SENSOR/update',
+  RESET_NEW: 'SENSOR/resetNew',
 };
 
 const createFromScanner = macAddress => dispatch => {
@@ -14,6 +15,8 @@ const createFromScanner = macAddress => dispatch => {
   dispatch(TemperatureBreachConfigActions.createGroup());
   dispatch(SensorActions.create(macAddress));
 };
+
+const resetNew = () => ({ type: SENSOR_ACTIONS.RESET_NEW });
 
 const update = (id, field, value) => ({
   type: SENSOR_ACTIONS.UPDATE,
@@ -108,4 +111,5 @@ export const SensorActions = {
   updateNewSensorCode,
   updateNewSensorLoggingDelay,
   updateNewSensorLogInterval,
+  resetNew,
 };

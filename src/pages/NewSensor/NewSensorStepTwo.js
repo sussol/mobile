@@ -18,6 +18,7 @@ import {
   selectNewConfigsByType,
   selectNewConfigThresholds,
 } from '../../selectors/Entities/temperatureBreachConfig';
+import { SensorActions } from '../../actions/Entities/SensorActions';
 
 export const NewSensorStepTwoComponent = ({
   nextTab,
@@ -115,7 +116,11 @@ const stateToProps = state => {
 const dispatchToProps = dispatch => {
   const nextTab = () => dispatch(WizardActions.nextTab());
   const previousTab = () => dispatch(WizardActions.previousTab());
-  const exit = () => dispatch(goBack());
+  const exit = () => {
+    dispatch(goBack());
+    dispatch(SensorActions.reset());
+    dispatch(TemperatureBreachConfigActions.resetGroup());
+  };
   const updateDuration = (type, value) =>
     dispatch(TemperatureBreachConfigActions.updateNewConfigDuration(type, value));
   const updateTemperature = (type, value) =>

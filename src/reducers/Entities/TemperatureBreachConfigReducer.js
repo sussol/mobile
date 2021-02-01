@@ -29,6 +29,14 @@ export const TemperatureBreachConfigReducer = (state = initialState(), action) =
 
       return { ...state, byId: newByIds, newIds };
     }
+    case TEMPERATURE_BREACH_CONFIG_ACTIONS.RESET_NEW_GROUP: {
+      const { byId, newIds } = state;
+
+      const idsToKeep = Object.keys(byId).filter(id => !newIds.includes(id));
+      const newById = idsToKeep.reduce((acc, id) => ({ ...acc, [id]: byId[id] }), {});
+
+      return { ...state, byId: newById, newIds: [] };
+    }
     case TEMPERATURE_BREACH_CONFIG_ACTIONS.UPDATE: {
       const { byId } = state;
       const { payload } = action;
