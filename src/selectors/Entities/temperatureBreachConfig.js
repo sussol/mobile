@@ -1,6 +1,6 @@
 import { selectSpecificEntityState } from './index';
 
-const selectNewConfigs = state => {
+export const selectNewConfigs = state => {
   const configState = selectSpecificEntityState(state, 'temperatureBreachConfiguration');
   const { byId, newIds } = configState;
   return newIds.map(id => byId[id]);

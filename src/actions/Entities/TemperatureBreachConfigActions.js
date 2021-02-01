@@ -6,6 +6,7 @@ export const TEMPERATURE_BREACH_CONFIG_ACTIONS = {
   CREATE_GROUP: 'TEMPERATURE_BREACH_CONFIG/createGroup',
   UPDATE: 'TEMPERATURE_BREACH_CONFIG/update',
   RESET_NEW_GROUP: 'TEMPERATURE_BREACH_CONFIG/resetNewGroup',
+  SAVE_NEW_GROUP: 'TEMPERATURE_BREACH_CONFIG/saveNewGroup',
 };
 
 const isHot = type => type.includes('HOT');
@@ -35,6 +36,11 @@ const update = (id, field, value) => ({
   payload: { id, field, value },
 });
 
+const saveNewGroup = configs => ({
+  type: TEMPERATURE_BREACH_CONFIG_ACTIONS.SAVE_NEW_GROUP,
+  payload: { configs },
+});
+
 const updateNewConfig = (type, field, value) => (dispatch, getState) => {
   const configs = selectNewConfigsByType(getState());
   const config = configs[type];
@@ -47,4 +53,5 @@ export const TemperatureBreachConfigActions = {
   resetNewGroup,
   update,
   updateNewConfig,
+  saveNewGroup,
 };
