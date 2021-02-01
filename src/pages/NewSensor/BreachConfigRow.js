@@ -53,14 +53,17 @@ export const BreachConfigRow = React.memo(
 );
 BreachConfigRow.defaultProps = {
   containerStyle: {},
+  maximumTemperature: 0,
+  minimumTemperature: 0,
+  duration: 0,
 };
 BreachConfigRow.propTypes = {
   threshold: PropTypes.number.isRequired,
   type: PropTypes.string.isRequired,
-  duration: PropTypes.number.isRequired,
+  duration: PropTypes.number,
   updateDuration: PropTypes.func.isRequired,
   updateTemperature: PropTypes.func.isRequired,
   containerStyle: PropTypes.object,
-  maximumTemperature: PropTypes.number.isRequired,
-  minimumTemperature: PropTypes.number.isRequired,
+  maximumTemperature: PropTypes.number,
+  minimumTemperature: PropTypes.number,
 };

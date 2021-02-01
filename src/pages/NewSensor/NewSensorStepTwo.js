@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import { View } from 'react-native';
 import PropTypes from 'prop-types';
@@ -128,20 +129,21 @@ const dispatchToProps = dispatch => {
   return { nextTab, previousTab, exit, updateDuration, updateTemperature };
 };
 
-const configShape = {
-  temperature: PropTypes.number.isRequired,
-  duration: PropTypes.number.isRequired,
-  threshold: PropTypes.number.isRequired,
+NewSensorStepTwoComponent.defaultProps = {
+  hotConsecutiveConfig: {},
+  coldCumulativeConfig: {},
+  coldConsecutiveConfig: {},
+  hotCumulativeConfig: {},
 };
 
 NewSensorStepTwoComponent.propTypes = {
   nextTab: PropTypes.func.isRequired,
   previousTab: PropTypes.func.isRequired,
   exit: PropTypes.func.isRequired,
-  hotConsecutiveConfig: PropTypes.shape(configShape).isRequired,
-  coldCumulativeConfig: PropTypes.shape(configShape).isRequired,
-  coldConsecutiveConfig: PropTypes.shape(configShape).isRequired,
-  hotCumulativeConfig: PropTypes.shape(configShape).isRequired,
+  hotConsecutiveConfig: PropTypes.object,
+  coldCumulativeConfig: PropTypes.object,
+  coldConsecutiveConfig: PropTypes.object,
+  hotCumulativeConfig: PropTypes.object,
   updateDuration: PropTypes.func.isRequired,
   updateTemperature: PropTypes.func.isRequired,
   coldConsecutiveThreshold: PropTypes.number.isRequired,

@@ -140,13 +140,15 @@ NewSensorStepThreeComponent.defaultProps = {
   macAddress: '',
   loggingDelay: new Date(),
   logInterval: 300,
+  name: '',
+  code: '',
 };
 
 NewSensorStepThreeComponent.propTypes = {
   logInterval: PropTypes.number,
   loggingDelay: PropTypes.object,
-  name: PropTypes.string.isRequired,
-  code: PropTypes.string.isRequired,
+  name: PropTypes.string,
+  code: PropTypes.string,
   macAddress: PropTypes.string,
   updateName: PropTypes.func.isRequired,
   updateCode: PropTypes.func.isRequired,
