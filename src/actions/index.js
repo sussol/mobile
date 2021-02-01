@@ -8,6 +8,7 @@ export {
   setSyncCompletionTime,
 } from './SyncActions';
 
+export { WIZARD_ACTIONS, WizardActions } from './WizardActions';
 export { USER_ACTION_TYPES, UserActions } from './UserActions';
 export { CASH_TRANSACTION_ACTION_TYPES, CashTransactionActions } from './CashTransactionActions';
 export { DASHBOARD_ACTION_TYPES, DashboardActions } from './DashboardActions';

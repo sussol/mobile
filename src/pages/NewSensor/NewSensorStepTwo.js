@@ -10,15 +10,13 @@ import { AfterInteractions } from '../../widgets/AfterInteractions';
 
 import { SUSSOL_ORANGE, WHITE } from '../../globalStyles';
 import { buttonStrings, vaccineStrings } from '../../localization';
-import { WizardActions } from '../../actions/WizardActions';
+import { SensorActions, TemperatureBreachConfigActions, WizardActions } from '../../actions';
 import { goBack } from '../../navigation/actions';
 // eslint-disable-next-line max-len
-import { TemperatureBreachConfigActions } from '../../actions/Entities/TemperatureBreachConfigActions';
 import {
   selectNewConfigsByType,
   selectNewConfigThresholds,
 } from '../../selectors/Entities/temperatureBreachConfig';
-import { SensorActions } from '../../actions/Entities/SensorActions';
 import { SECONDS } from '../../utilities/constants';
 
 export const NewSensorStepTwoComponent = ({

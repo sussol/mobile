@@ -12,10 +12,9 @@ import { vaccineStrings } from '../../localization';
 import { WithFixedDimensions } from '../../widgets/WithFixedDimensions';
 import { Spacer } from '../../widgets/Spacer';
 
-import { WizardActions } from '../../actions/WizardActions';
+import { SensorActions, WizardActions } from '../../actions';
 import { BlinkActions } from '../../actions/Bluetooth/BlinkActions';
 import { selectSendingBlinkTo } from '../../selectors/Bluetooth/bluetooth';
-import { SensorActions } from '../../actions/Entities/SensorActions';
 
 export const RectangleButton = ({ isDisabled, onPress, isSpinning }) =>
   isSpinning ? (

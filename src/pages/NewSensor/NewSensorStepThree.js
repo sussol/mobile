@@ -25,11 +25,10 @@ import {
 import { WizardActions } from '../../actions/WizardActions';
 import { goBack, gotoSettings } from '../../navigation/actions';
 import { selectNewSensor } from '../../selectors/Entities/sensor';
-import { VaccineActions } from '../../actions/index';
+import { SensorActions, VaccineActions } from '../../actions/index';
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 import { DARKER_GREY, LIGHT_GREY, SUSSOL_ORANGE, WHITE } from '../../globalStyles';
 import { buttonStrings, vaccineStrings } from '../../localization';
-import { SensorActions } from '../../actions/Entities/SensorActions';
 
 export const NewSensorStepThreeComponent = ({
   logInterval,

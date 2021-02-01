@@ -38,8 +38,7 @@ import {
 } from '../globalStyles';
 
 import { SECONDS } from '../utilities/constants';
-import { VaccineActions } from '../actions/VaccineActions';
-import { SensorActions } from '../actions/Entities/SensorActions';
+import { SensorActions, VaccineActions } from '../actions';
 import { AfterInteractions } from '../widgets/AfterInteractions';
 import { selectEditingSensor } from '../selectors/Entities/sensor';
 
