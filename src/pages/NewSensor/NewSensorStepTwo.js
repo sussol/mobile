@@ -10,7 +10,7 @@ import { AfterInteractions } from '../../widgets/AfterInteractions';
 
 import { SUSSOL_ORANGE, WHITE } from '../../globalStyles';
 import { buttonStrings, vaccineStrings } from '../../localization';
-import { SensorActions, TemperatureBreachConfigActions, WizardActions } from '../../actions';
+import { TemperatureBreachConfigActions, WizardActions } from '../../actions';
 import { goBack } from '../../navigation/actions';
 // eslint-disable-next-line max-len
 import {
@@ -115,11 +115,7 @@ const stateToProps = state => {
 const dispatchToProps = dispatch => {
   const nextTab = () => dispatch(WizardActions.nextTab());
   const previousTab = () => dispatch(WizardActions.previousTab());
-  const exit = () => {
-    dispatch(goBack());
-    dispatch(SensorActions.reset());
-    dispatch(TemperatureBreachConfigActions.resetGroup());
-  };
+  const exit = () => dispatch(goBack());
   const updateDuration = (type, value) =>
     dispatch(
       TemperatureBreachConfigActions.updateNewConfig(type, 'duration', value * SECONDS.ONE_MINUTE)
