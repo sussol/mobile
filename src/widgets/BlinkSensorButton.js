@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { ActivityIndicator } from 'react-native';
-import { DARKER_GREY } from '../globalStyles/index';
+import { DARKER_GREY, LIGHT_GREY } from '../globalStyles/index';
 import { IconButton } from './IconButton';
 import { LightbulbIcon } from './icons';
 import { selectSendingBlinkTo } from '../selectors/Bluetooth/bluetooth';
@@ -14,7 +14,7 @@ export const BlinkSensorButtonComponent = ({ isBlinking, blink, isBlinkDisabled 
   ) : (
     <IconButton
       containerStyle={{ width: 50, justifyContent: 'center' }}
-      Icon={<LightbulbIcon color={DARKER_GREY} />}
+      Icon={<LightbulbIcon color={isBlinkDisabled ? LIGHT_GREY : DARKER_GREY} />}
       onPress={blink}
       isDisabled={isBlinkDisabled}
     />
