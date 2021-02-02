@@ -15,7 +15,7 @@ import { BlinkSensorButton } from './BlinkSensorButton';
 
 const formatBatteryLevel = batteryLevel => `${batteryLevel}%`;
 
-export const FridgeHeaderComponent = ({ batteryLevel, name, macAddress, editSensor }) => (
+export const FridgeHeaderComponent = ({ batteryLevel, name, macAddress, editSensor, showCog }) => (
   <>
     <FlexView justifyContent="center">
       <Text style={localStyles.paperTitleText}>{name}</Text>
@@ -35,11 +35,13 @@ export const FridgeHeaderComponent = ({ batteryLevel, name, macAddress, editSens
       containerStyle={{ width: 50, justifyContent: 'center' }}
     />
     <BlinkSensorButton macAddress={macAddress} />
-    <IconButton
-      Icon={<CogIcon color={BLACK} />}
-      onPress={editSensor}
-      containerStyle={{ width: 50, justifyContent: 'center' }}
-    />
+    {showCog && (
+      <IconButton
+        Icon={<CogIcon color={BLACK} />}
+        onPress={editSensor}
+        containerStyle={{ width: 50, justifyContent: 'center' }}
+      />
+    )}
   </>
 );
 
@@ -47,6 +49,7 @@ FridgeHeaderComponent.defaultProps = {
   macAddress: 'AA:BB:CC:DD:EE:FF',
   batteryLevel: 99,
   name: '',
+  showCog: false,
 };
 
 FridgeHeaderComponent.propTypes = {
@@ -54,6 +57,7 @@ FridgeHeaderComponent.propTypes = {
   macAddress: PropTypes.string,
   batteryLevel: PropTypes.number,
   editSensor: PropTypes.func.isRequired,
+  showCog: PropTypes.bool,
 };
 
 const localStyles = StyleSheet.create({
@@ -71,11 +75,11 @@ const localStyles = StyleSheet.create({
 
 const stateToProps = (state, props) => {
   const { sensor } = props;
-  const { id: sensorID, macAddress } = sensor;
+  const { id: sensorID, macAddress } = sensor ?? {};
 
-  const { byId } = selectSensorState(state);
+  const { byId = {} } = selectSensorState(state) ?? {};
   const sensorState = byId[sensorID];
-  const { batteryLevel, name } = sensorState;
+  const { batteryLevel, name } = sensorState ?? {};
 
   return { batteryLevel, name, macAddress };
 };
