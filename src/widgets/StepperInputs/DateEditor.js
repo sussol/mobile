@@ -9,9 +9,9 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { Incrementor } from './Incrementor';
 
-import { APP_FONT_FAMILY, DARKER_GREY } from '../../globalStyles';
-import { useDatePicker } from '../../hooks';
+import { useOptimisticUpdating, useDatePicker } from '../../hooks';
 import { generalStrings } from '../../localization';
+import { APP_FONT_FAMILY, DARKER_GREY } from '../../globalStyles';
 
 export const DateEditor = ({
   label,
@@ -23,24 +23,32 @@ export const DateEditor = ({
   minimumDate,
   maximumDate,
 }) => {
-  const asMoment = moment(date);
-  const formatted = asMoment.format('DD/MM/YYYY');
-
-  const onIncrement = () => onPress(asMoment.add(stepAmount, stepUnit).toDate());
-  const onDecrement = () => onPress(asMoment.subtract(stepAmount, stepUnit).toDate());
+  const adjustValue = (toUpdate, addend) => moment(toUpdate).add(addend, stepUnit).toDate();
+  const formatter = toFormat => moment(toFormat).format('DD/MM/YYYY');
   const wrappedDatePicker = timestamp => onPress(new Date(timestamp));
 
   const [datePickerIsOpen, openDatePicker, onPickDate] = useDatePicker(wrappedDatePicker);
+  const [textInputRef, newValue, newOnChange] = useOptimisticUpdating(
+    date,
+    onPress,
+    adjustValue,
+    formatter
+  );
 
   return (
     <>
       <Incrementor
-        onIncrement={onIncrement}
-        onDecrement={onDecrement}
+        onIncrement={() => newOnChange(stepAmount)}
+        onDecrement={() => newOnChange(-stepAmount)}
         label={label}
         Content={
           <Pressable onPress={openDatePicker}>
-            <TextInput editable={false} style={textInputStyle} value={formatted} />
+            <TextInput
+              ref={textInputRef}
+              editable={false}
+              style={textInputStyle}
+              value={newValue}
+            />
           </Pressable>
         }
       />
@@ -65,11 +73,12 @@ DateEditor.defaultProps = {
   stepUnit: 'day',
   maximumDate: null,
   minimumDate: null,
+  date: new Date(),
 };
 
 DateEditor.propTypes = {
   label: PropTypes.string,
-  date: PropTypes.object.isRequired,
+  date: PropTypes.object,
   onPress: PropTypes.func.isRequired,
   textInputStyle: PropTypes.object,
   stepAmount: PropTypes.number,

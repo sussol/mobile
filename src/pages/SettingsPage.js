@@ -20,7 +20,6 @@ import {
   gotoEditSensorPage,
   gotoFridgeDetailPage,
   gotoNewSensorPage,
-  gotoNewVaccineModulePage,
   gotoRealmExplorer,
 } from '../navigation/actions';
 
@@ -46,15 +45,7 @@ const exportData = async () => {
   ToastAndroid.show(toastMessage, ToastAndroid.SHORT);
 };
 
-const Settings = ({
-  toRealmExplorer,
-  currentUserPasswordHash,
-  requestStorageWritePermission,
-  toFridgeDetail,
-  toNewVaccineModulePage,
-  toNewSensorPage,
-  toEditSensorPage,
-}) => {
+const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWritePermission }) => {
   const [state, setState] = useState({
     syncURL: UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL),
     modalKey: '',
@@ -291,25 +282,10 @@ const Settings = ({
         <View>
           <MenuButton text={buttonStrings.realm_explorer} onPress={toRealmExplorer} />
           <MenuButton text={buttonStrings.export_data} onPress={requestStorageWritePermission} />
-          <MenuButton text="New vaccine module" onPress={toNewVaccineModulePage} />
-          <MenuButton text="New Sensor" onPress={toNewSensorPage} />
           <MenuButton
             text="Generate vaccine data"
             onPress={() => withLoadingIndicator(createVaccineData)}
           />
-        </View>
-        <View>
-          {UIDatabase.objects('Sensor').map(sensor => (
-            <MenuButton
-              text={sensor.name || sensor.macAddress}
-              onPress={() => toEditSensorPage(sensor)}
-            />
-          ))}
-        </View>
-        <View>
-          {UIDatabase.objects('Location').map(location => (
-            <MenuButton text={location.code} onPress={() => toFridgeDetail(location)} />
-          ))}
         </View>
       </View>
 
@@ -325,7 +301,6 @@ const Settings = ({
 };
 
 const mapStateToDispatch = dispatch => ({
-  toNewVaccineModulePage: () => dispatch(gotoNewVaccineModulePage()),
   toRealmExplorer: () => dispatch(gotoRealmExplorer()),
   toEditSensorPage: sensor => dispatch(gotoEditSensorPage(sensor)),
   toFridgeDetail: fridge => dispatch(gotoFridgeDetailPage(fridge)),
@@ -351,8 +326,4 @@ Settings.propTypes = {
   toRealmExplorer: PropTypes.func.isRequired,
   currentUserPasswordHash: PropTypes.string.isRequired,
   requestStorageWritePermission: PropTypes.func.isRequired,
-  toNewVaccineModulePage: PropTypes.func.isRequired,
-  toNewSensorPage: PropTypes.func.isRequired,
-  toEditSensorPage: PropTypes.func.isRequired,
-  toFridgeDetail: PropTypes.func.isRequired,
 };

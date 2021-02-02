@@ -1,6 +1,7 @@
 import React from 'react';
 import { ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 import PropTypes from 'prop-types';
 import * as Animatable from 'react-native-animatable';
 
@@ -11,8 +12,7 @@ import { vaccineStrings } from '../../localization';
 import { WithFixedDimensions } from '../../widgets/WithFixedDimensions';
 import { Spacer } from '../../widgets/Spacer';
 
-import { NewSensorActions } from '../../actions';
-import { WizardActions } from '../../actions/WizardActions';
+import { SensorActions, WizardActions } from '../../actions';
 import { BlinkActions } from '../../actions/Bluetooth/BlinkActions';
 import { selectSendingBlinkTo } from '../../selectors/Bluetooth/bluetooth';
 
@@ -41,37 +41,44 @@ RectangleButton.propTypes = {
   isSpinning: PropTypes.bool.isRequired,
 };
 
-export const ScanRowComponent = ({ macAddress, blink, isBlinking, isDisabled, selectSensor }) => (
-  <Animatable.View animation="fadeIn" duration={1000} useNativeDriver>
-    <WithFixedDimensions height={60}>
-      <FlexRow flex={0} alignItems="center" justifyContent="flex-end">
-        <RectangleButton
-          isSpinning={isBlinking}
-          isDisabled={isDisabled}
-          onPress={() => blink(macAddress)}
-        />
-        <Spacer space={20} />
-        <TextWithIcon left size="ms" Icon={<WifiIcon />}>
-          {macAddress}
-        </TextWithIcon>
+export const ScanRowComponent = ({ macAddress, blink, isBlinking, isDisabled, selectSensor }) => {
+  const navigation = useNavigation();
+  return (
+    <Animatable.View animation="fadeIn" duration={1000} useNativeDriver>
+      <WithFixedDimensions height={60}>
+        <FlexRow flex={0} alignItems="center" justifyContent="flex-end">
+          <RectangleButton
+            isSpinning={isBlinking}
+            isDisabled={isDisabled}
+            onPress={() => blink(macAddress)}
+          />
+          <Spacer space={20} />
+          <TextWithIcon left size="ms" Icon={<WifiIcon />}>
+            {macAddress}
+          </TextWithIcon>
 
-        <IconButton
-          onPress={() => selectSensor(macAddress)}
-          right
-          labelStyle={localStyles.connectText}
-          label={vaccineStrings.connect}
-          size="ms"
-          Icon={<ChevronRightIcon color={DARKER_GREY} />}
-        />
-      </FlexRow>
-    </WithFixedDimensions>
-  </Animatable.View>
-);
+          <IconButton
+            onPress={() => {
+              // Navigating to the next tab whose name is '1'
+              navigation.navigate('1');
+              selectSensor(macAddress);
+            }}
+            right
+            labelStyle={localStyles.connectText}
+            label={vaccineStrings.connect}
+            size="ms"
+            Icon={<ChevronRightIcon color={DARKER_GREY} />}
+          />
+        </FlexRow>
+      </WithFixedDimensions>
+    </Animatable.View>
+  );
+};
 
 const dispatchToProps = dispatch => {
   const blink = macAddress => dispatch(BlinkActions.startSensorBlink(macAddress));
   const selectSensor = macAddress => {
-    dispatch(NewSensorActions.select(macAddress));
+    dispatch(SensorActions.createFromScanner(macAddress));
     dispatch(WizardActions.nextTab());
   };
 

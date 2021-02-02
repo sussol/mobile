@@ -73,6 +73,28 @@ export class Location extends Realm.Object {
   get coldConsecutiveBreachConfig() {
     return this.breachConfigs.filtered("type == 'COLD_CONSECUTIVE'")[0];
   }
+
+  get currentBreach() {
+    return this.breaches.filtered('endTimestamp == null')[0];
+  }
+
+  get isInHotBreach() {
+    return !!this.currentBreach?.type === 'HOT_CONSECUTIVE';
+  }
+
+  get isInColdBreach() {
+    return !!this.currentBreach?.type === 'COLD_CONSECUTIVE';
+  }
+
+  // Sensor to location should be a one to one relationship at all times. Pick the first and
+  // make the assumption it is the correct one.
+  get sensor() {
+    return this.sensors[0];
+  }
+
+  get batteryLevel() {
+    return this.sensor?.batteryLevel ?? 0;
+  }
 }
 
 Location.schema = {

@@ -2,6 +2,7 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2021
  */
+import throttle from 'lodash.throttle';
 
 import { PermissionActions } from '../PermissionActions';
 import BleService from '../../bluetooth/BleService';
@@ -21,17 +22,21 @@ const sensorFound = macAddress => ({ type: SCAN_ACTIONS.SENSOR_FOUND, payload: {
 const scanForSensors = (dispatch, getState) => {
   dispatch(scanStart());
 
-  const deviceCallback = device => {
-    const { id: macAddress } = device;
-    if (macAddress) {
-      const alreadyScanned = selectScannedSensors(getState());
-      const alreadySaved = UIDatabase.get('Sensor', macAddress, 'macAddress');
+  const deviceCallback = throttle(
+    device => {
+      const { id: macAddress } = device;
+      if (macAddress) {
+        const alreadyScanned = selectScannedSensors(getState());
+        const alreadySaved = UIDatabase.get('Sensor', macAddress, 'macAddress');
 
-      if (!alreadyScanned?.includes(macAddress) && !alreadySaved) {
-        dispatch(sensorFound(macAddress));
+        if (!alreadyScanned?.includes(macAddress) && !alreadySaved) {
+          dispatch(sensorFound(macAddress));
+        }
       }
-    }
-  };
+    },
+    500,
+    { leading: true }
+  );
 
   // Scan will continue running until it is stopped...
   BleService().scanForSensors(deviceCallback);

@@ -2,49 +2,44 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Text, Pressable } from 'react-native';
+import { TextInput, Pressable } from 'react-native';
 import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-import { TextInputWithAffix } from '../TextInputs';
 import { Incrementor } from './Incrementor';
 
 import { APP_FONT_FAMILY, DARKER_GREY } from '../../globalStyles';
-import { useDatePicker } from '../../hooks';
+import { useOptimisticUpdating, useDatePicker } from '../../hooks';
 import { generalStrings } from '../../localization';
 
-export const TimeEditor = ({
-  label,
-  time,
-  onPress,
-  textInputStyle,
-  suffixTextStyle,
-  stepAmount,
-  stepUnit,
-}) => {
-  const asMoment = moment(time);
-  const formatted = asMoment.format('hh:mm');
-  const timeFormat = asMoment.format('a');
+export const TimeEditor = ({ label, time, onPress, textInputStyle, stepAmount, stepUnit }) => {
+  const adjustValue = (currentValue, addend) => moment(currentValue).add(addend, stepUnit).toDate();
+  const formatter = currentValue => moment(currentValue).format('hh:mm a');
 
-  const onIncrement = () => onPress(asMoment.add(stepAmount, stepUnit).toDate());
-  const onDecrement = () => onPress(asMoment.subtract(stepAmount, stepUnit).toDate());
   const wrappedTimePicker = timestamp => onPress(new Date(timestamp));
 
   const [timePickerIsOpen, openTimePicker, onPickTime] = useDatePicker(wrappedTimePicker);
 
+  const [textInputRef, newValue, newOnChange] = useOptimisticUpdating(
+    time,
+    onPress,
+    adjustValue,
+    formatter
+  );
+
   return (
     <>
       <Incrementor
-        onIncrement={onIncrement}
-        onDecrement={onDecrement}
+        onIncrement={() => newOnChange(stepAmount)}
+        onDecrement={() => newOnChange(-stepAmount)}
         label={label}
         Content={
           <Pressable onPress={openTimePicker}>
-            <TextInputWithAffix
+            <TextInput
+              ref={textInputRef}
               editable={false}
-              SuffixComponent={<Text style={suffixTextStyle}>{timeFormat}</Text>}
-              style={textInputStyle}
-              value={formatted}
+              style={{ ...textInputStyle, width: 90, textAlign: 'right' }}
+              value={newValue}
             />
           </Pressable>
         }
@@ -58,16 +53,15 @@ export const TimeEditor = ({
 
 TimeEditor.defaultProps = {
   label: generalStrings.time,
-  textInputStyle: { color: DARKER_GREY, fontFamily: APP_FONT_FAMILY, width: 50 },
-  suffixTextStyle: { color: DARKER_GREY, fontFamily: APP_FONT_FAMILY, fontSize: 12, width: 50 },
+  textInputStyle: { color: DARKER_GREY, fontFamily: APP_FONT_FAMILY, width: 90 },
   stepAmount: 1,
   stepUnit: 'minutes',
+  time: new Date(),
 };
 
 TimeEditor.propTypes = {
-  suffixTextStyle: PropTypes.object,
   label: PropTypes.string,
-  time: PropTypes.object.isRequired,
+  time: PropTypes.object,
   onPress: PropTypes.func.isRequired,
   textInputStyle: PropTypes.object,
   stepAmount: PropTypes.number,
