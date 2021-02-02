@@ -42,6 +42,17 @@ export const SensorReducer = (state = initialState(), action) => {
       return { ...state, byId: newById, newId: '' };
     }
 
+    case SENSOR_ACTIONS.SAVE_NEW: {
+      const { byId } = state;
+      const { payload } = action;
+      const { sensor } = payload;
+      const { id } = sensor;
+
+      const newById = { ...byId, [id]: sensor };
+
+      return { ...state, byId: newById, newId: '' };
+    }
+
     case SENSOR_ACTIONS.UPDATE: {
       const { byId } = state;
       const { payload } = action;
