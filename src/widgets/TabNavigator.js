@@ -24,7 +24,7 @@ export const TabNavigator = ({ tabs, currentTabIndex }) => {
   useEffect(() => navigatorRef.current.navigate(String(currentTabIndex)), [currentTabIndex]);
 
   return (
-    <Tab.Navigator>
+    <Tab.Navigator tabBar={() => null}>
       {tabs.map((tab, idx) => (
         <Tab.Screen
           {...DEFAULT_TAB_CONFIG}

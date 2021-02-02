@@ -24,7 +24,7 @@ import { DurationEditor } from '../widgets/StepperInputs';
 import { TextWithIcon } from '../widgets/Typography';
 
 import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
-import { selectConfigs, selectSensorDetail } from '../selectors/sensorDetail';
+import { selectConfigs } from '../selectors/sensorDetail';
 import { SensorDetailActions } from '../actions/SensorDetailActions';
 
 import { generalStrings, vaccineStrings } from '../localization';
@@ -38,7 +38,9 @@ import {
 } from '../globalStyles';
 
 import { SECONDS } from '../utilities/constants';
-import { VaccineActions } from '../actions/VaccineActions';
+import { SensorActions, VaccineActions } from '../actions';
+import { AfterInteractions } from '../widgets/AfterInteractions';
+import { selectEditingSensor } from '../selectors/Entities/sensor';
 
 const formatLastSyncDate = date => moment(date).fromNow();
 const formatBatteryLevel = batteryLevel => `${batteryLevel}%`;
@@ -106,80 +108,82 @@ export const SensorEditPageComponent = ({
 
   return (
     <DataTablePageView style={{ paddingHorizontal: 20, paddingVertical: 30 }}>
-      <Paper
-        Header={
-          <FridgeHeader
-            onBlink={blink}
-            lastSyncDate={lastSyncDate}
-            macAddress={macAddress}
-            batteryLevel={batteryLevel}
-          />
-        }
-      >
-        <EditorRow
-          label={vaccineStrings.sensor_name}
-          Icon={<InfoIcon color={DARKER_GREY} />}
-          containerStyle={localStyles.paperContentRow}
+      <AfterInteractions>
+        <Paper
+          Header={
+            <FridgeHeader
+              onBlink={blink}
+              lastSyncDate={lastSyncDate}
+              macAddress={macAddress}
+              batteryLevel={batteryLevel}
+            />
+          }
         >
-          <TextEditor size="large" value={name} onChangeText={updateName} />
-          <TextEditor label={vaccineStrings.sensor_code} value={code} onChangeText={updateCode} />
-        </EditorRow>
-      </Paper>
-
-      <Paper>
-        <BreachConfigRow
-          containerStyle={localStyles.paperContentRow}
-          type="HOT_CONSECUTIVE"
-          {...hotConsecutiveConfig}
-          updateDuration={updateDuration}
-          updateTemperature={updateTemperature}
-        />
-        <BreachConfigRow
-          containerStyle={localStyles.paperContentRow}
-          type="COLD_CONSECUTIVE"
-          {...coldConsecutiveConfig}
-          updateDuration={updateDuration}
-          updateTemperature={updateTemperature}
-        />
-        <BreachConfigRow
-          containerStyle={localStyles.paperContentRow}
-          type="HOT_CUMULATIVE"
-          {...hotCumulativeConfig}
-          updateDuration={updateDuration}
-          updateTemperature={updateTemperature}
-        />
-        <BreachConfigRow
-          containerStyle={localStyles.paperContentRow}
-          type="COLD_CUMULATIVE"
-          {...coldCumulativeConfig}
-          updateDuration={updateDuration}
-          updateTemperature={updateTemperature}
-        />
-      </Paper>
-
-      <Paper>
-        <FlexRow justifyContent="flex-end">
-          <DurationEditor
+          <EditorRow
+            label={vaccineStrings.sensor_name}
+            Icon={<InfoIcon color={DARKER_GREY} />}
             containerStyle={localStyles.paperContentRow}
-            value={logInterval / SECONDS.ONE_MINUTE}
-            onChange={updateLogInterval}
-            label={vaccineStrings.logging_interval}
+          >
+            <TextEditor size="large" value={name} onChangeText={updateName} />
+            <TextEditor label={vaccineStrings.sensor_code} value={code} onChangeText={updateCode} />
+          </EditorRow>
+        </Paper>
+
+        <Paper>
+          <BreachConfigRow
+            containerStyle={localStyles.paperContentRow}
+            type="HOT_CONSECUTIVE"
+            {...hotConsecutiveConfig}
+            updateDuration={updateDuration}
+            updateTemperature={updateTemperature}
+          />
+          <BreachConfigRow
+            containerStyle={localStyles.paperContentRow}
+            type="COLD_CONSECUTIVE"
+            {...coldConsecutiveConfig}
+            updateDuration={updateDuration}
+            updateTemperature={updateTemperature}
+          />
+          <BreachConfigRow
+            containerStyle={localStyles.paperContentRow}
+            type="HOT_CUMULATIVE"
+            {...hotCumulativeConfig}
+            updateDuration={updateDuration}
+            updateTemperature={updateTemperature}
+          />
+          <BreachConfigRow
+            containerStyle={localStyles.paperContentRow}
+            type="COLD_CUMULATIVE"
+            {...coldCumulativeConfig}
+            updateDuration={updateDuration}
+            updateTemperature={updateTemperature}
+          />
+        </Paper>
+
+        <Paper>
+          <FlexRow justifyContent="flex-end">
+            <DurationEditor
+              containerStyle={localStyles.paperContentRow}
+              value={logInterval / SECONDS.ONE_MINUTE}
+              onChange={updateLogInterval}
+              label={vaccineStrings.logging_interval}
+            />
+          </FlexRow>
+        </Paper>
+
+        <FlexRow flex={1} alignItems="flex-end">
+          <TextWithIcon left Icon={<HazardIcon color={LIGHT_GREY} />} size="ms">
+            {vaccineStrings.bluetooth_changes_can_take_time}
+          </TextWithIcon>
+
+          <PageButton
+            onPress={() => withLoadingIndicator(saveSensor)}
+            text={generalStrings.save}
+            textStyle={localStyles.pageButtonText}
+            style={{ backgroundColor: SUSSOL_ORANGE }}
           />
         </FlexRow>
-      </Paper>
-
-      <FlexRow flex={1} alignItems="flex-end">
-        <TextWithIcon left Icon={<HazardIcon color={LIGHT_GREY} />} size="ms">
-          {vaccineStrings.bluetooth_changes_can_take_time}
-        </TextWithIcon>
-
-        <PageButton
-          onPress={() => withLoadingIndicator(saveSensor)}
-          text={generalStrings.save}
-          textStyle={localStyles.pageButtonText}
-          style={{ backgroundColor: SUSSOL_ORANGE }}
-        />
-      </FlexRow>
+      </AfterInteractions>
     </DataTablePageView>
   );
 };
@@ -207,7 +211,7 @@ const localStyles = StyleSheet.create({
 });
 
 const stateToProps = state => {
-  const sensorDetail = selectSensorDetail(state);
+  const sensorDetail = selectEditingSensor(state);
   const { code, name, logInterval, macAddress, batteryLevel, lastSyncDate } = sensorDetail;
   const {
     hotConsecutiveConfig,
@@ -230,12 +234,17 @@ const stateToProps = state => {
   };
 };
 
-const dispatchToProps = dispatch => {
+const dispatchToProps = (dispatch, ownProps) => {
+  const { route } = ownProps;
+  const { params } = route;
+  const { sensor } = params;
+  const { id } = sensor;
+
   const blink = macAddress => dispatch(VaccineActions.startSensorBlink(macAddress));
-  const updateName = name => dispatch(SensorDetailActions.updateName(name));
-  const updateCode = code => dispatch(SensorDetailActions.updateCode(code));
+  const updateName = name => dispatch(SensorActions.update(id, 'name', name));
+  const updateCode = code => dispatch(SensorActions.update(id, 'code', code));
   const updateLogInterval = logInterval =>
-    dispatch(SensorDetailActions.updateLogInterval(logInterval));
+    dispatch(SensorActions.update(id, 'logInterval', logInterval));
   const updateDuration = (type, value) =>
     dispatch(SensorDetailActions.updateConfig(type, 'duration', value));
   const updateTemperature = (type, value) =>

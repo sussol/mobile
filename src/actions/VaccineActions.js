@@ -9,14 +9,10 @@ import { PermissionActions } from './PermissionActions';
 import BleService from '../bluetooth/BleService';
 import TemperatureLogManager from '../bluetooth/TemperatureLogManager';
 import { UIDatabase } from '../database';
-import SensorManager from '../bluetooth/SensorManager';
 import { VACCINE_CONSTANTS } from '../utilities/modules/vaccines/index';
 import { VACCINE_ENTITIES } from '../utilities/modules/vaccines/constants';
 
 export const VACCINE_ACTIONS = {
-  SAVE_SENSOR_ERROR: 'Vaccine/saveSensorError',
-  SAVE_SENSOR_START: 'Vaccine/saveSensorStart',
-  SAVE_SENSOR_SUCCESS: 'Vaccine/saveSensorSuccess',
   DOWNLOAD_LOGS_START: 'Vaccine/downloadLogsStart',
   DOWNLOAD_LOGS_ERROR: 'Vaccine/downloadLogsError',
   DOWNLOAD_LOGS_COMPLETE: 'Vaccine/downloadLogsComplete',
@@ -108,12 +104,6 @@ const disableButtonStop = macAddress => ({
   type: VACCINE_ACTIONS.DISABLE_BUTTON_STOP,
   payload: { macAddress },
 });
-const saveSensorError = () => ({ type: VACCINE_ACTIONS.SAVE_SENSOR_ERROR });
-const saveSensorStart = macAddress => ({
-  type: VACCINE_ACTIONS.SAVE_SENSOR_START,
-  payload: { macAddress },
-});
-const saveSensorSuccess = () => ({ type: VACCINE_ACTIONS.SAVE_SENSOR_SUCCESS });
 
 const startDownloadAllLogs = () => async (dispatch, getState) => {
   // Ensure there isn't already a download in progress before starting a new one
@@ -139,20 +129,6 @@ const setLogInterval = (macAddress, interval) => async dispatch => {
   } catch (e) {
     dispatch(setLogIntervalError(e));
     throw e;
-  }
-};
-
-const saveSensor = sensor => async dispatch => {
-  dispatch(saveSensorStart(sensor.macAddress));
-  try {
-    const { location, logInterval, macAddress, name } = sensor;
-    const sensorManager = SensorManager();
-    const newSensor = await sensorManager.createSensor({ location, logInterval, macAddress, name });
-    await sensorManager.saveSensor(newSensor);
-    dispatch(saveSensorSuccess());
-  } catch (error) {
-    dispatch(saveSensorError());
-    throw error;
   }
 };
 
@@ -188,8 +164,13 @@ const startSetLogInterval = ({ macAddress, interval = 300 }) => async (dispatch,
   return result;
 };
 
+const updateSensor = sensor => async dispatch => {
+  await dispatch(VaccineActions.startSetLogInterval(sensor));
+  await dispatch(VaccineActions.startSensorDisableButton(sensor.macAddress));
+};
+
 export const VaccineActions = {
-  saveSensor,
+  updateSensor,
   startDownloadAllLogs,
   startSensorDisableButton,
   startSetLogInterval,

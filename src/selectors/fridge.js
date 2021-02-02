@@ -6,7 +6,7 @@ import moment from 'moment';
 import { createSelector } from 'reselect';
 import { UIDatabase } from '../database';
 import { chunk } from '../utilities';
-import { CHART_CONSTANTS } from '../utilities/modules/vaccines/constants';
+import { CHART_CONSTANTS, VACCINE_CONSTANTS } from '../utilities/modules/vaccines/constants';
 
 export const selectSelectedFridgeID = ({ fridge }) => {
   const { selectedFridge = {} } = fridge;
@@ -195,7 +195,6 @@ const formatTime = sum => {
 export const selectHotCumulativeBreach = createSelector(
   [selectSelectedFridge, selectFridgeTemperatureLogsFromDate],
   (fridge, logs) => {
-    console.log(fridge);
     const { hotCumulativeBreachConfig } = fridge;
 
     const { minimumTemperature, duration } = hotCumulativeBreachConfig;
@@ -235,3 +234,27 @@ export const selectAverageTemperature = createSelector(
     return Number(averageTemperature).toFixed(1);
   }
 );
+
+export const selectSelectedFridgeIsInHotBreach = state => {
+  const fridge = selectSelectedFridge(state);
+  const { isInHotBreach } = fridge;
+  return isInHotBreach;
+};
+
+export const selectSelectedFridgeIsInColdBreach = state => {
+  const fridge = selectSelectedFridge(state);
+  const { isInColdBreach } = fridge;
+  return isInColdBreach;
+};
+
+export const selectSelectedFridgeSensorIsLowBattery = state => {
+  const fridge = selectSelectedFridge(state);
+  const { batteryLevel } = fridge;
+  return batteryLevel <= VACCINE_CONSTANTS.LOW_BATTERY_PERCENTAGE;
+};
+
+export const selectSelectFridgeCurrentTemperature = state => {
+  const fridge = selectSelectedFridge(state);
+  const { currentTemperature } = fridge;
+  return currentTemperature;
+};

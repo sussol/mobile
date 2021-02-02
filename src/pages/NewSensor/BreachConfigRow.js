@@ -7,7 +7,6 @@ import { EditorRow } from '../../widgets/EditorRow';
 import { DurationEditor, TemperatureEditor } from '../../widgets/StepperInputs';
 
 import { COLD_BREACH_BLUE, DANGER_RED } from '../../globalStyles';
-import { SECONDS } from '../../utilities/constants';
 
 export const TYPE_TO_LABEL = {
   HOT_CONSECUTIVE: 'Hot consecutive',
@@ -20,7 +19,8 @@ export const BreachConfigRow = React.memo(
   ({
     type,
     duration,
-    temperature,
+    maximumTemperature,
+    minimumTemperature,
     threshold,
     updateDuration,
     updateTemperature,
@@ -36,13 +36,10 @@ export const BreachConfigRow = React.memo(
         Icon={<Icon color={color} size={20} />}
         label={TYPE_TO_LABEL[type]}
       >
-        <DurationEditor
-          value={duration / SECONDS.ONE_MINUTE}
-          onChange={value => updateDuration(type, value)}
-        />
+        <DurationEditor value={duration} onChange={value => updateDuration(type, value)} />
         <TemperatureEditor
           above={isHotBreach}
-          value={temperature}
+          value={isHotBreach ? minimumTemperature : maximumTemperature}
           onChange={value => updateTemperature(type, value)}
           threshold={threshold}
         />
@@ -52,13 +49,17 @@ export const BreachConfigRow = React.memo(
 );
 BreachConfigRow.defaultProps = {
   containerStyle: {},
+  maximumTemperature: 0,
+  minimumTemperature: 0,
+  duration: 0,
 };
 BreachConfigRow.propTypes = {
   threshold: PropTypes.number.isRequired,
   type: PropTypes.string.isRequired,
-  duration: PropTypes.number.isRequired,
-  temperature: PropTypes.number.isRequired,
+  duration: PropTypes.number,
   updateDuration: PropTypes.func.isRequired,
   updateTemperature: PropTypes.func.isRequired,
   containerStyle: PropTypes.object,
+  maximumTemperature: PropTypes.number,
+  minimumTemperature: PropTypes.number,
 };

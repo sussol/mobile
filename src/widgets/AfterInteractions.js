@@ -27,5 +27,5 @@ AfterInteractions.defaultProps = {
 
 AfterInteractions.propTypes = {
   placeholder: PropTypes.node,
-  children: PropTypes.oneOf([PropTypes.node, PropTypes.arrayOf(PropTypes.node)]).isRequired,
+  children: PropTypes.oneOfType([PropTypes.node, PropTypes.arrayOf(PropTypes.node)]).isRequired,
 };

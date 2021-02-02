@@ -10,6 +10,7 @@ import { Incrementor } from './Incrementor';
 import { APP_FONT_FAMILY, DARKER_GREY } from '../../globalStyles';
 import { generalStrings } from '../../localization';
 import { VACCINE_CONSTANTS } from '../../utilities/modules/vaccines';
+import { useOptimisticUpdating } from '../../hooks/index';
 
 const keepInRange = (num, min, max) => {
   const temp = Math.min(num, max);
@@ -27,23 +28,29 @@ export const DurationEditor = ({
   minValue,
   containerStyle,
 }) => {
-  const formatted = String(keepInRange(value, minValue, maxValue));
+  const formatter = val => String(keepInRange(val, minValue, maxValue));
+  const adjustValue = (toUpdate, addend) => toUpdate + addend;
 
-  const onIncrement = () => onChange(value + stepAmount);
-  const onDecrement = () => onChange(value - stepAmount);
+  const [textInputRef, newValue, newOnChange] = useOptimisticUpdating(
+    value,
+    onChange,
+    adjustValue,
+    formatter
+  );
 
   return (
     <View style={containerStyle}>
       <Incrementor
-        onIncrement={onIncrement}
-        onDecrement={onDecrement}
+        onIncrement={() => newOnChange(stepAmount)}
+        onDecrement={() => newOnChange(-stepAmount)}
         label={label}
         Content={
           <TextInputWithAffix
+            ref={textInputRef}
             editable={false}
             SuffixComponent={<Text style={suffixTextStyle}>{generalStrings.minutes}</Text>}
             style={textInputStyle}
-            value={formatted}
+            value={newValue}
           />
         }
       />
@@ -62,6 +69,7 @@ DurationEditor.defaultProps = {
   suffixTextStyle: { color: DARKER_GREY, fontFamily: APP_FONT_FAMILY, fontSize: 12, width: 50 },
   containerStyle: {},
   stepAmount: 1,
+  value: 0,
   maxValue: VACCINE_CONSTANTS.MAX_LOGGING_INTERVAL_MINUTES, // 99
   minValue: VACCINE_CONSTANTS.MIN_LOGGING_INTERVAL_MINUTES, // 1
 };
@@ -74,6 +82,6 @@ DurationEditor.propTypes = {
   suffixTextStyle: PropTypes.object,
   containerStyle: PropTypes.object,
   stepAmount: PropTypes.number,
-  value: PropTypes.number.isRequired,
+  value: PropTypes.number,
   onChange: PropTypes.func.isRequired,
 };
