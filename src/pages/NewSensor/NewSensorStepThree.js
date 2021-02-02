@@ -45,7 +45,6 @@ export const NewSensorStepThreeComponent = ({
   macAddress,
 }) => {
   const withLoadingIndicator = useLoadingIndicator();
-  const sensor = { logInterval, loggingDelay, name, code, macAddress };
 
   return (
     <TabContainer>
@@ -89,7 +88,7 @@ export const NewSensorStepThreeComponent = ({
           text={vaccineStrings.connect}
           style={{ backgroundColor: SUSSOL_ORANGE }}
           textStyle={{ color: WHITE, textTransform: 'capitalize' }}
-          onPress={() => withLoadingIndicator(connectToSensor(sensor))}
+          onPress={() => withLoadingIndicator(connectToSensor(macAddress, logInterval))}
         />
       </FlexRow>
     </TabContainer>
@@ -104,8 +103,8 @@ const dispatchToProps = dispatch => {
   const updateLogInterval = value => dispatch(SensorActions.updateNewSensor(value, 'logInterval'));
   const previousTab = () => dispatch(WizardActions.previousTab());
   const exit = () => dispatch(goBack());
-  const connectToSensor = sensor => () =>
-    dispatch(VaccineActions.updateSensor(sensor))
+  const connectToSensor = (macAddress, logInterval) => () =>
+    dispatch(VaccineActions.updateSensor(macAddress, logInterval))
       .then(() => dispatch(SensorActions.createNew()))
       .then(() => {
         ToastAndroid.show(vaccineStrings.sensor_save_success, ToastAndroid.LONG);

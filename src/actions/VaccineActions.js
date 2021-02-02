@@ -155,7 +155,7 @@ const startSensorDisableButton = macAddress => async (dispatch, getState) => {
   return result;
 };
 
-const startSetLogInterval = ({ macAddress, interval = 300 }) => async (dispatch, getState) => {
+const startSetLogInterval = (macAddress, interval) => async (dispatch, getState) => {
   const result = await PermissionActions.withLocationAndBluetooth(
     dispatch,
     getState,
@@ -164,9 +164,9 @@ const startSetLogInterval = ({ macAddress, interval = 300 }) => async (dispatch,
   return result;
 };
 
-const updateSensor = sensor => async dispatch => {
-  await dispatch(VaccineActions.startSetLogInterval(sensor));
-  await dispatch(VaccineActions.startSensorDisableButton(sensor.macAddress));
+const updateSensor = (macAddress, logInterval) => async dispatch => {
+  await dispatch(VaccineActions.startSetLogInterval(macAddress, logInterval));
+  await dispatch(VaccineActions.startSensorDisableButton(macAddress));
 };
 
 export const VaccineActions = {
