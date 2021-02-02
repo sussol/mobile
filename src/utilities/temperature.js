@@ -87,7 +87,7 @@ const DEFAULT_OPTIONS = {
   precision: 1,
   formatWithSymbol: true,
   pattern: '#*',
-  negativePattern: '-#*',
+  negativePattern: '#*',
   invalidPattern: 'N/A',
 };
 

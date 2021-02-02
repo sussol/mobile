@@ -73,11 +73,12 @@ DateEditor.defaultProps = {
   stepUnit: 'day',
   maximumDate: null,
   minimumDate: null,
+  date: new Date(),
 };
 
 DateEditor.propTypes = {
   label: PropTypes.string,
-  date: PropTypes.object.isRequired,
+  date: PropTypes.object,
   onPress: PropTypes.func.isRequired,
   textInputStyle: PropTypes.object,
   stepAmount: PropTypes.number,

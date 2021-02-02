@@ -22,13 +22,13 @@ import {
   TimeEditor,
 } from '../../widgets';
 
-import { WizardActions } from '../../actions/WizardActions';
-import { goBack, gotoSettings } from '../../navigation/actions';
-import { selectNewSensor } from '../../selectors/newSensor';
-import { NewSensorActions } from '../../actions/index';
+import { goBack } from '../../navigation/actions';
+import { selectNewSensor } from '../../selectors/Entities/sensor';
+import { WizardActions, LocationActions, SensorActions, VaccineActions } from '../../actions';
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 import { DARKER_GREY, LIGHT_GREY, SUSSOL_ORANGE, WHITE } from '../../globalStyles';
 import { buttonStrings, vaccineStrings } from '../../localization';
+import { selectNewLocation } from '../../selectors/Entities/location';
 
 export const NewSensorStepThreeComponent = ({
   logInterval,
@@ -97,18 +97,19 @@ export const NewSensorStepThreeComponent = ({
 };
 
 const dispatchToProps = dispatch => {
-  const updateName = value => dispatch(NewSensorActions.updateName(value));
-  const updateCode = value => dispatch(NewSensorActions.updateCode(value));
-  const updateLoggingDelay = value => dispatch(NewSensorActions.updateLoggingDelay(value));
-  const updateLogInterval = value => dispatch(NewSensorActions.updateLogInterval(value));
+  const updateName = value => dispatch(SensorActions.updateNewSensor(value, 'name'));
+  const updateCode = value => dispatch(LocationActions.updateNew(value, 'code'));
+  const updateLoggingDelay = value =>
+    dispatch(SensorActions.updateNewSensor(value, 'loggingDelay'));
+  const updateLogInterval = value => dispatch(SensorActions.updateNewSensor(value, 'logInterval'));
   const previousTab = () => dispatch(WizardActions.previousTab());
   const exit = () => dispatch(goBack());
   const connectToSensor = sensor => () =>
-    dispatch(NewSensorActions.updateSensor(sensor))
-      .then(() => dispatch(NewSensorActions.saveSensor(sensor)))
+    dispatch(VaccineActions.updateSensor(sensor))
+      .then(() => dispatch(SensorActions.createNew()))
       .then(() => {
         ToastAndroid.show(vaccineStrings.sensor_save_success, ToastAndroid.LONG);
-        dispatch(gotoSettings());
+        dispatch(goBack());
       })
       .catch(reason => {
         ToastAndroid.show(reason.toString(), ToastAndroid.LONG);
@@ -127,17 +128,28 @@ const dispatchToProps = dispatch => {
 
 const stateToProps = state => {
   const newSensor = selectNewSensor(state);
-  const { logInterval, loggingDelay, name, code, macAddress } = newSensor;
+  const location = selectNewLocation(state);
+
+  const { logInterval, loggingDelay, name, macAddress } = newSensor ?? {};
+  const { code } = location ?? {};
 
   return { logInterval, loggingDelay, name, code, macAddress };
 };
 
+NewSensorStepThreeComponent.defaultProps = {
+  macAddress: '',
+  loggingDelay: new Date(),
+  logInterval: 300,
+  name: '',
+  code: '',
+};
+
 NewSensorStepThreeComponent.propTypes = {
-  logInterval: PropTypes.number.isRequired,
-  loggingDelay: PropTypes.object.isRequired,
-  name: PropTypes.string.isRequired,
-  code: PropTypes.string.isRequired,
-  macAddress: PropTypes.string.isRequired,
+  logInterval: PropTypes.number,
+  loggingDelay: PropTypes.object,
+  name: PropTypes.string,
+  code: PropTypes.string,
+  macAddress: PropTypes.string,
   updateName: PropTypes.func.isRequired,
   updateCode: PropTypes.func.isRequired,
   updateLoggingDelay: PropTypes.func.isRequired,

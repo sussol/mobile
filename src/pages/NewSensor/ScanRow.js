@@ -12,8 +12,7 @@ import { vaccineStrings } from '../../localization';
 import { WithFixedDimensions } from '../../widgets/WithFixedDimensions';
 import { Spacer } from '../../widgets/Spacer';
 
-import { NewSensorActions } from '../../actions';
-import { WizardActions } from '../../actions/WizardActions';
+import { SensorActions, WizardActions } from '../../actions';
 import { BlinkActions } from '../../actions/Bluetooth/BlinkActions';
 import { selectSendingBlinkTo } from '../../selectors/Bluetooth/bluetooth';
 
@@ -79,7 +78,7 @@ export const ScanRowComponent = ({ macAddress, blink, isBlinking, isDisabled, se
 const dispatchToProps = dispatch => {
   const blink = macAddress => dispatch(BlinkActions.startSensorBlink(macAddress));
   const selectSensor = macAddress => {
-    dispatch(NewSensorActions.select(macAddress));
+    dispatch(SensorActions.createFromScanner(macAddress));
     dispatch(WizardActions.nextTab());
   };
 

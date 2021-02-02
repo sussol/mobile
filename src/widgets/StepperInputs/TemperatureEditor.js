@@ -86,6 +86,7 @@ TemperatureEditor.defaultProps = {
   above: true,
   belowMinimum: -30,
   aboveMaximum: 999,
+  value: 0,
 };
 
 TemperatureEditor.propTypes = {
@@ -95,7 +96,7 @@ TemperatureEditor.propTypes = {
   textInputStyle: PropTypes.object,
   suffixTextStyle: PropTypes.object,
   stepAmount: PropTypes.number,
-  value: PropTypes.number.isRequired,
+  value: PropTypes.number,
   onChange: PropTypes.func.isRequired,
   belowMinimum: PropTypes.number,
   aboveMaximum: PropTypes.number,

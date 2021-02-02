@@ -24,7 +24,7 @@ import { DurationEditor } from '../widgets/StepperInputs';
 import { TextWithIcon } from '../widgets/Typography';
 
 import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
-import { selectConfigs, selectSensorDetail } from '../selectors/sensorDetail';
+import { selectConfigs } from '../selectors/sensorDetail';
 import { SensorDetailActions } from '../actions/SensorDetailActions';
 
 import { generalStrings, vaccineStrings } from '../localization';
@@ -38,8 +38,9 @@ import {
 } from '../globalStyles';
 
 import { SECONDS } from '../utilities/constants';
-import { VaccineActions } from '../actions/VaccineActions';
+import { SensorActions, VaccineActions } from '../actions';
 import { AfterInteractions } from '../widgets/AfterInteractions';
+import { selectEditingSensor } from '../selectors/Entities/sensor';
 
 const formatLastSyncDate = date => moment(date).fromNow();
 const formatBatteryLevel = batteryLevel => `${batteryLevel}%`;
@@ -210,7 +211,7 @@ const localStyles = StyleSheet.create({
 });
 
 const stateToProps = state => {
-  const sensorDetail = selectSensorDetail(state);
+  const sensorDetail = selectEditingSensor(state);
   const { code, name, logInterval, macAddress, batteryLevel, lastSyncDate } = sensorDetail;
   const {
     hotConsecutiveConfig,
@@ -233,12 +234,17 @@ const stateToProps = state => {
   };
 };
 
-const dispatchToProps = dispatch => {
+const dispatchToProps = (dispatch, ownProps) => {
+  const { route } = ownProps;
+  const { params } = route;
+  const { sensor } = params;
+  const { id } = sensor;
+
   const blink = macAddress => dispatch(VaccineActions.startSensorBlink(macAddress));
-  const updateName = name => dispatch(SensorDetailActions.updateName(name));
-  const updateCode = code => dispatch(SensorDetailActions.updateCode(code));
+  const updateName = name => dispatch(SensorActions.update(id, 'name', name));
+  const updateCode = code => dispatch(SensorActions.update(id, 'code', code));
   const updateLogInterval = logInterval =>
-    dispatch(SensorDetailActions.updateLogInterval(logInterval));
+    dispatch(SensorActions.update(id, 'logInterval', logInterval));
   const updateDuration = (type, value) =>
     dispatch(SensorDetailActions.updateConfig(type, 'duration', value));
   const updateTemperature = (type, value) =>

@@ -39,9 +39,9 @@ class SensorManager {
       macAddress,
       name,
       location,
+      logInterval,
       batteryLevel: 0,
       isActive: true,
-      logInterval,
     });
   };
 
