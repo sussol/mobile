@@ -15,3 +15,4 @@ export { useKeyboardHeight } from './useKeyboardHeight';
 export { useDebounce } from './useDebounce';
 export { useRepeatCallbackPress } from './useRepeatCallbackPress';
 export { useDatePicker } from './useDatePicker';
+export { useOptimisticUpdating } from './useOptimisticUpdating';

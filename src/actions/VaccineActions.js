@@ -13,9 +13,6 @@ import { VACCINE_CONSTANTS } from '../utilities/modules/vaccines/index';
 import { VACCINE_ENTITIES } from '../utilities/modules/vaccines/constants';
 
 export const VACCINE_ACTIONS = {
-  SAVE_SENSOR_ERROR: 'Vaccine/saveSensorError',
-  SAVE_SENSOR_START: 'Vaccine/saveSensorStart',
-  SAVE_SENSOR_SUCCESS: 'Vaccine/saveSensorSuccess',
   DOWNLOAD_LOGS_START: 'Vaccine/downloadLogsStart',
   DOWNLOAD_LOGS_ERROR: 'Vaccine/downloadLogsError',
   DOWNLOAD_LOGS_COMPLETE: 'Vaccine/downloadLogsComplete',
@@ -93,6 +90,7 @@ const downloadLogsFromSensor = sensor => async () => {
 
   return null;
 };
+
 const startDownloadAllLogs = () => async (dispatch, getState) => {
   // Ensure there isn't already a download in progress before starting a new one
   const state = getState();
@@ -103,6 +101,12 @@ const startDownloadAllLogs = () => async (dispatch, getState) => {
   return null;
 };
 
+const updateSensor = sensor => async dispatch => {
+  await dispatch(VaccineActions.startSetLogInterval(sensor));
+  await dispatch(VaccineActions.startSensorDisableButton(sensor.macAddress));
+};
+
 export const VaccineActions = {
+  updateSensor,
   startDownloadAllLogs,
 };

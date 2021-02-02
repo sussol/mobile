@@ -32,7 +32,6 @@ import {
   VaccineAdminPage,
   FridgeDetailPage,
   NewSensorPage,
-  NewVaccineModulePage,
   SensorEditPage,
 } from '../pages';
 
@@ -75,8 +74,6 @@ const ROUTE_NAME_TO_PAGE = {
   [ROUTES.DASHBOARD]: DashboardPage,
   [ROUTES.VACCINES]: VaccinePage,
   [ROUTES.VACCINES_ADMIN]: VaccineAdminPage,
-
-  [ROUTES.VACCINES_NEW]: NewVaccineModulePage,
   [ROUTES.FRIDGE_DETAIL]: FridgeDetailPage,
   [ROUTES.SENSOR_NEW]: NewSensorPage,
   [ROUTES.SENSOR_EDIT]: SensorEditPage,

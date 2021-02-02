@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -49,9 +50,9 @@ const initialState = () => {
     usingPayments,
     usingDashboard,
     usingDispensary,
-    usingVaccines: true,
+    usingVaccines: __DEV__ || usingVaccines,
     usingCashRegister,
-    usingModules,
+    usingModules: __DEV__ || usingModules,
     usingInsurance,
     usingPrescriptionCategories,
     usingSupplierCreditCategories,

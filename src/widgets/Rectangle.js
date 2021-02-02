@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { DANGER_RED } from '../globalStyles';
 
 const SIZES = {
-  large: { width: 180, height: 60 },
+  large: { width: 140, height: 40 },
 };
 
 export const Rectangle = ({ children, colour, size }) => {
