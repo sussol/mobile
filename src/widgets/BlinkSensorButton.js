@@ -16,7 +16,7 @@ export const BlinkSensorButtonComponent = ({ isBlinking, blink, isBlinkDisabled 
       containerStyle={{ width: 50, justifyContent: 'center' }}
       Icon={<LightbulbIcon color={isBlinkDisabled ? LIGHT_GREY : DARKER_GREY} />}
       onPress={blink}
-      isDisabled={isBlinkDisabled}
+      isDisabled={!!isBlinkDisabled}
     />
   );
 
@@ -31,7 +31,7 @@ const stateToProps = (state, props) => {
 
   const sendingBlinkTo = selectSendingBlinkTo(state);
   const isBlinking = sendingBlinkTo === macAddress;
-  const isBlinkDisabled = !isBlinking && sendingBlinkTo;
+  const isBlinkDisabled = !isBlinking && !!sendingBlinkTo;
 
   return { isBlinking, isBlinkDisabled };
 };
