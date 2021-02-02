@@ -326,6 +326,7 @@ describe('BreachManager: createBreaches', () => {
       logsShouldBe,
     ]);
   });
+
   it('Creates a simple single breach that is closed', async () => {
     const dummyLocation = { id: 'ABC', description: 'DEF' };
     const sensor = { id: 'a', location: dummyLocation };
@@ -371,7 +372,8 @@ describe('BreachManager: createBreaches', () => {
       logsShouldBe,
     ]);
   });
-  it('Creates a multiple breaches', async () => {
+
+  it('Creates multiple breaches', async () => {
     const dummyLocation = { id: 'ABC', description: 'DEF' };
     const sensor = { id: 'a', location: dummyLocation };
     const logs = [
@@ -431,7 +433,8 @@ describe('BreachManager: createBreaches', () => {
       logsShouldBe,
     ]);
   });
-  it('Creates respects duration when creating breaches', async () => {
+
+  it('Respects duration when creating breaches', async () => {
     const sensor = { id: 'a' };
     const logs = [
       { temperature: 10, timestamp: 0 },
