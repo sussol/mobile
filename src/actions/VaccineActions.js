@@ -16,6 +16,9 @@ export const VACCINE_ACTIONS = {
   DOWNLOAD_LOGS_START: 'Vaccine/downloadLogsStart',
   DOWNLOAD_LOGS_ERROR: 'Vaccine/downloadLogsError',
   DOWNLOAD_LOGS_COMPLETE: 'Vaccine/downloadLogsComplete',
+  SENSOR_DOWNLOAD_START: 'Vaccine/sensorDownloadStart',
+  SENSOR_DOWNLOAD_SUCCESS: 'Vaccine/sensorDownloadSuccess',
+  SENSOR_DOWNLOAD_ERROR: 'Vaccine/sensorDownloadError',
   SET_LOG_INTERVAL_ERROR: 'Vaccine/setLogIntervalError',
   SET_LOG_INTERVAL_START: 'Vaccine/setLogIntervalStart',
   SET_LOG_INTERVAL_SUCCESS: 'Vaccine/setLogIntervalSuccess',
@@ -23,14 +26,23 @@ export const VACCINE_ACTIONS = {
   DISABLE_BUTTON_STOP: 'Vaccine/disableButtonStop',
 };
 
-const downloadLogsStart = () => ({
-  type: VACCINE_ACTIONS.DOWNLOAD_LOGS_START,
+const downloadLogsStart = () => ({ type: VACCINE_ACTIONS.DOWNLOAD_LOGS_START });
+const downloadLogsError = () => ({ type: VACCINE_ACTIONS.DOWNLOAD_LOGS_ERROR });
+const downloadLogsComplete = () => ({ type: VACCINE_ACTIONS.DOWNLOAD_LOGS_COMPLETE });
+
+const sensorDownloadStart = sensor => ({
+  type: VACCINE_ACTIONS.SENSOR_DOWNLOAD_START,
+  payload: { sensor },
 });
-const downloadLogsError = () => ({
-  type: VACCINE_ACTIONS.DOWNLOAD_LOGS_ERROR,
+
+const sensorDownloadError = (sensor, error) => ({
+  type: VACCINE_ACTIONS.SENSOR_DOWNLOAD_ERROR,
+  payload: { sensor, error },
 });
-const downloadLogsComplete = () => ({
-  type: VACCINE_ACTIONS.DOWNLOAD_LOGS_COMPLETE,
+
+const sensorDownloadSuccess = sensor => ({
+  type: VACCINE_ACTIONS.SENSOR_DOWNLOAD_SUCCESS,
+  payload: { sensor },
 });
 
 const downloadAllLogs = () => async dispatch => {
@@ -53,39 +65,48 @@ const downloadAllLogs = () => async dispatch => {
   return null;
 };
 
-const downloadLogsFromSensor = sensor => async () => {
-  const { macAddress, logInterval } = sensor;
+const downloadLogsFromSensor = sensor => async dispatch => {
+  dispatch(sensorDownloadStart(sensor));
 
-  const downloadedLogsResult =
-    (await BleService().downloadLogsWithRetries(
-      macAddress,
-      VACCINE_CONSTANTS.MAX_BLUETOOTH_COMMAND_ATTEMPTS
-    )) ?? {};
+  try {
+    const { macAddress, logInterval } = sensor;
 
-  if (downloadedLogsResult) {
-    const savedTemperatureLogs = UIDatabase.objects(VACCINE_ENTITIES.TEMPERATURE_LOG)
-      .filtered('sensor.macAddress == $0', macAddress)
-      .sorted('timestamp', true);
+    if (macAddress === 'AB:CD:EF:GH:IJ:KL') throw new Error();
 
-    const [mostRecentLog] = savedTemperatureLogs;
-    const mostRecentLogTime = mostRecentLog ? mostRecentLog.timestamp : null;
-    const nextPossibleLogTime = mostRecentLogTime
-      ? moment(mostRecentLogTime).add(logInterval, 's')
-      : 0;
+    const downloadedLogsResult =
+      (await BleService().downloadLogsWithRetries(
+        macAddress,
+        VACCINE_CONSTANTS.MAX_BLUETOOTH_COMMAND_ATTEMPTS
+      )) ?? {};
 
-    const numberOfLogsToSave = await TemperatureLogManager().calculateNumberOfLogsToSave(
-      logInterval,
-      nextPossibleLogTime
-    );
+    if (downloadedLogsResult) {
+      const savedTemperatureLogs = UIDatabase.objects(VACCINE_ENTITIES.TEMPERATURE_LOG)
+        .filtered('sensor.macAddress == $0', macAddress)
+        .sorted('timestamp', true);
 
-    const temperatureLogs = await TemperatureLogManager().createLogs(
-      downloadedLogsResult,
-      sensor,
-      numberOfLogsToSave,
-      mostRecentLogTime
-    );
+      const [mostRecentLog] = savedTemperatureLogs;
+      const mostRecentLogTime = mostRecentLog ? mostRecentLog.timestamp : null;
+      const nextPossibleLogTime = mostRecentLogTime
+        ? moment(mostRecentLogTime).add(logInterval, 's')
+        : 0;
 
-    await TemperatureLogManager().saveLogs(temperatureLogs);
+      const numberOfLogsToSave = await TemperatureLogManager().calculateNumberOfLogsToSave(
+        logInterval,
+        nextPossibleLogTime
+      );
+
+      const temperatureLogs = await TemperatureLogManager().createLogs(
+        downloadedLogsResult,
+        sensor,
+        numberOfLogsToSave,
+        mostRecentLogTime
+      );
+
+      await TemperatureLogManager().saveLogs(temperatureLogs);
+      dispatch(sensorDownloadSuccess(sensor));
+    }
+  } catch (error) {
+    dispatch(sensorDownloadError(sensor, error));
   }
 
   return null;
