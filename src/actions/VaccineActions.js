@@ -16,11 +16,6 @@ export const VACCINE_ACTIONS = {
   DOWNLOAD_LOGS_START: 'Vaccine/downloadLogsStart',
   DOWNLOAD_LOGS_ERROR: 'Vaccine/downloadLogsError',
   DOWNLOAD_LOGS_COMPLETE: 'Vaccine/downloadLogsComplete',
-  SET_LOG_INTERVAL_ERROR: 'Vaccine/setLogIntervalError',
-  SET_LOG_INTERVAL_START: 'Vaccine/setLogIntervalStart',
-  SET_LOG_INTERVAL_SUCCESS: 'Vaccine/setLogIntervalSuccess',
-  DISABLE_BUTTON_START: 'Vaccine/disableButtonStart',
-  DISABLE_BUTTON_STOP: 'Vaccine/disableButtonStop',
 };
 
 const downloadLogsStart = () => ({
@@ -101,12 +96,6 @@ const startDownloadAllLogs = () => async (dispatch, getState) => {
   return null;
 };
 
-const updateSensor = sensor => async dispatch => {
-  await dispatch(VaccineActions.startSetLogInterval(sensor));
-  await dispatch(VaccineActions.startSensorDisableButton(sensor.macAddress));
-};
-
 export const VaccineActions = {
-  updateSensor,
   startDownloadAllLogs,
 };
