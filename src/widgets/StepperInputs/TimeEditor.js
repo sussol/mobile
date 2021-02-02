@@ -56,11 +56,12 @@ TimeEditor.defaultProps = {
   textInputStyle: { color: DARKER_GREY, fontFamily: APP_FONT_FAMILY, width: 90 },
   stepAmount: 1,
   stepUnit: 'minutes',
+  time: new Date(),
 };
 
 TimeEditor.propTypes = {
   label: PropTypes.string,
-  time: PropTypes.object.isRequired,
+  time: PropTypes.object,
   onPress: PropTypes.func.isRequired,
   textInputStyle: PropTypes.object,
   stepAmount: PropTypes.number,

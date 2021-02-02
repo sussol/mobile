@@ -27,9 +27,9 @@ import { BreachReducer } from './BreachReducer';
 import { RowDetailReducer } from './RowDetailReducer';
 import { PermissionReducer } from './PermissionReducer';
 import { VaccineReducer } from './VaccineReducer';
-import { NewSensorReducer } from './NewSensorReducer';
 import SyncReducer from './SyncReducer';
 import { SensorDetailReducer } from './SensorDetailReducer';
+import { EntitiesReducer } from './Entities';
 
 export default combineReducers({
   bluetooth: BluetoothReducer,
@@ -55,6 +55,6 @@ export default combineReducers({
   rowDetail: RowDetailReducer,
   permission: PermissionReducer,
   vaccine: VaccineReducer,
-  newSensor: NewSensorReducer,
   sensorDetail: SensorDetailReducer,
+  entities: EntitiesReducer,
 });
