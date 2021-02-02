@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-curly-newline */
+/* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/jsx-wrap-multilines */
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
@@ -24,8 +26,6 @@ import { DurationEditor } from '../widgets/StepperInputs';
 import { TextWithIcon } from '../widgets/Typography';
 
 import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
-import { selectConfigs } from '../selectors/sensorDetail';
-import { SensorDetailActions } from '../actions/SensorDetailActions';
 
 import { generalStrings, vaccineStrings } from '../localization';
 import {
@@ -36,11 +36,16 @@ import {
   SUSSOL_ORANGE,
   WHITE,
 } from '../globalStyles';
-
-import { SECONDS } from '../utilities/constants';
 import { SensorActions, VaccineActions } from '../actions';
 import { AfterInteractions } from '../widgets/AfterInteractions';
 import { selectEditingSensor } from '../selectors/Entities/sensor';
+import {
+  selectEditingConfigsByType,
+  selectEditingConfigThresholds,
+} from '../selectors/Entities/temperatureBreachConfig';
+import { LocationActions, TemperatureBreachConfigActions } from '../actions/Entities/index';
+import { selectEditingLocation } from '../selectors/Entities/location';
+import { goBack } from '../navigation/actions';
 
 const formatLastSyncDate = date => moment(date).fromNow();
 const formatBatteryLevel = batteryLevel => `${batteryLevel}%`;
@@ -103,9 +108,12 @@ export const SensorEditPageComponent = ({
   batteryLevel,
   lastSyncDate,
   blink,
+  hotConsecutiveThreshold,
+  coldCumulativeThreshold,
+  coldConsecutiveThreshold,
+  hotCumulativeThreshold,
 }) => {
   const withLoadingIndicator = useLoadingIndicator();
-
   return (
     <DataTablePageView style={{ paddingHorizontal: 20, paddingVertical: 30 }}>
       <AfterInteractions>
@@ -131,32 +139,44 @@ export const SensorEditPageComponent = ({
 
         <Paper>
           <BreachConfigRow
+            threshold={hotConsecutiveThreshold}
             containerStyle={localStyles.paperContentRow}
             type="HOT_CONSECUTIVE"
             {...hotConsecutiveConfig}
-            updateDuration={updateDuration}
-            updateTemperature={updateTemperature}
+            updateDuration={(_, value) => updateDuration(hotConsecutiveConfig.id, value)}
+            updateTemperature={(type, value) =>
+              updateTemperature(type, hotConsecutiveConfig.id, value)
+            }
           />
           <BreachConfigRow
+            threshold={coldConsecutiveThreshold}
             containerStyle={localStyles.paperContentRow}
             type="COLD_CONSECUTIVE"
             {...coldConsecutiveConfig}
-            updateDuration={updateDuration}
-            updateTemperature={updateTemperature}
+            updateDuration={(_, value) => updateDuration(coldConsecutiveConfig.id, value)}
+            updateTemperature={(type, value) =>
+              updateTemperature(type, coldConsecutiveConfig.id, value)
+            }
           />
           <BreachConfigRow
+            threshold={hotCumulativeThreshold}
             containerStyle={localStyles.paperContentRow}
             type="HOT_CUMULATIVE"
             {...hotCumulativeConfig}
-            updateDuration={updateDuration}
-            updateTemperature={updateTemperature}
+            updateDuration={(_, value) => updateDuration(hotCumulativeConfig.id, value)}
+            updateTemperature={(type, value) =>
+              updateTemperature(type, hotCumulativeConfig.id, value)
+            }
           />
           <BreachConfigRow
+            threshold={coldCumulativeThreshold}
             containerStyle={localStyles.paperContentRow}
             type="COLD_CUMULATIVE"
             {...coldCumulativeConfig}
-            updateDuration={updateDuration}
-            updateTemperature={updateTemperature}
+            updateDuration={(_, value) => updateDuration(coldCumulativeConfig.id, value)}
+            updateTemperature={(type, value) =>
+              updateTemperature(type, coldCumulativeConfig.id, value)
+            }
           />
         </Paper>
 
@@ -164,7 +184,7 @@ export const SensorEditPageComponent = ({
           <FlexRow justifyContent="flex-end">
             <DurationEditor
               containerStyle={localStyles.paperContentRow}
-              value={logInterval / SECONDS.ONE_MINUTE}
+              value={logInterval}
               onChange={updateLogInterval}
               label={vaccineStrings.logging_interval}
             />
@@ -177,7 +197,7 @@ export const SensorEditPageComponent = ({
           </TextWithIcon>
 
           <PageButton
-            onPress={() => withLoadingIndicator(saveSensor)}
+            onPress={() => withLoadingIndicator(() => saveSensor(macAddress, logInterval))}
             text={generalStrings.save}
             textStyle={localStyles.pageButtonText}
             style={{ backgroundColor: SUSSOL_ORANGE }}
@@ -212,13 +232,23 @@ const localStyles = StyleSheet.create({
 
 const stateToProps = state => {
   const sensorDetail = selectEditingSensor(state);
-  const { code, name, logInterval, macAddress, batteryLevel, lastSyncDate } = sensorDetail;
+  const location = selectEditingLocation(state);
+
+  const { code } = location ?? {};
+  const { name, logInterval, macAddress, batteryLevel, lastSyncDate } = sensorDetail ?? {};
   const {
-    hotConsecutiveConfig,
-    coldCumulativeConfig,
-    coldConsecutiveConfig,
-    hotCumulativeConfig,
-  } = selectConfigs(state);
+    HOT_CONSECUTIVE: hotConsecutiveConfig = {},
+    COLD_CONSECUTIVE: coldConsecutiveConfig = {},
+    HOT_CUMULATIVE: hotCumulativeConfig = {},
+    COLD_CUMULATIVE: coldCumulativeConfig = {},
+  } = selectEditingConfigsByType(state);
+
+  const {
+    hotConsecutiveThreshold,
+    coldCumulativeThreshold,
+    coldConsecutiveThreshold,
+    hotCumulativeThreshold,
+  } = selectEditingConfigThresholds(state);
 
   return {
     lastSyncDate,
@@ -230,6 +260,10 @@ const stateToProps = state => {
     coldCumulativeConfig,
     coldConsecutiveConfig,
     hotCumulativeConfig,
+    hotConsecutiveThreshold,
+    coldCumulativeThreshold,
+    coldConsecutiveThreshold,
+    hotCumulativeThreshold,
     batteryLevel,
   };
 };
@@ -238,20 +272,27 @@ const dispatchToProps = (dispatch, ownProps) => {
   const { route } = ownProps;
   const { params } = route;
   const { sensor } = params;
-  const { id } = sensor;
+  const { id: sensorID } = sensor;
+  const { location } = sensor;
+  const { id: locationID } = location;
 
   const blink = macAddress => dispatch(VaccineActions.startSensorBlink(macAddress));
-  const updateName = name => dispatch(SensorActions.update(id, 'name', name));
-  const updateCode = code => dispatch(SensorActions.update(id, 'code', code));
+  const updateName = name => dispatch(SensorActions.update(sensorID, 'name', name));
+  const updateCode = code => dispatch(LocationActions.update(locationID, 'code', code));
   const updateLogInterval = logInterval =>
-    dispatch(SensorActions.update(id, 'logInterval', logInterval));
-  const updateDuration = (type, value) =>
-    dispatch(SensorDetailActions.updateConfig(type, 'duration', value));
-  const updateTemperature = (type, value) =>
-    dispatch(SensorDetailActions.updateConfig(type, 'temperature', value));
-  const saveSensor = async () => {
-    await new Promise(r => setTimeout(r, 3000));
+    dispatch(SensorActions.update(sensorID, 'logInterval', logInterval));
+  const updateDuration = (id, value) =>
+    dispatch(TemperatureBreachConfigActions.update(id, 'duration', value * 60));
+  const updateTemperature = (type, id, value) => {
+    const isHot = type.includes('HOT');
+    const field = isHot ? 'minimumTemperature' : 'maximumTemperature';
+    dispatch(TemperatureBreachConfigActions.update(id, field, value));
   };
+  const saveSensor = (macAddress, logInterval) =>
+    dispatch(VaccineActions.updateSensor(macAddress, logInterval))
+      .then(() => dispatch(SensorActions.save()))
+      .then(() => dispatch(goBack()))
+      .catch(e => console.log(e));
 
   return {
     blink,
@@ -264,30 +305,29 @@ const dispatchToProps = (dispatch, ownProps) => {
   };
 };
 
-const configShape = {
-  duration: PropTypes.number.isRequired,
-  temperature: PropTypes.number.isRequired,
-  threshold: PropTypes.number.isRequired,
-};
-
 SensorEditPageComponent.defaultProps = {
   hotConsecutiveConfig: {},
   coldConsecutiveConfig: {},
   hotCumulativeConfig: {},
   coldCumulativeConfig: {},
+  name: '',
+  code: '',
+  logInterval: 300,
+  macAddress: '',
+  batteryLevel: 0,
 };
 
 SensorEditPageComponent.propTypes = {
   lastSyncDate: PropTypes.instanceOf(Date).isRequired,
-  batteryLevel: PropTypes.number.isRequired,
-  macAddress: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  logInterval: PropTypes.number.isRequired,
-  code: PropTypes.string.isRequired,
-  hotConsecutiveConfig: PropTypes.shape(configShape),
-  coldConsecutiveConfig: PropTypes.shape(configShape),
-  hotCumulativeConfig: PropTypes.shape(configShape),
-  coldCumulativeConfig: PropTypes.shape(configShape),
+  batteryLevel: PropTypes.number,
+  macAddress: PropTypes.string,
+  name: PropTypes.string,
+  logInterval: PropTypes.number,
+  code: PropTypes.string,
+  hotConsecutiveConfig: PropTypes.object,
+  coldConsecutiveConfig: PropTypes.object,
+  hotCumulativeConfig: PropTypes.object,
+  coldCumulativeConfig: PropTypes.object,
   updateDuration: PropTypes.func.isRequired,
   updateTemperature: PropTypes.func.isRequired,
   updateLogInterval: PropTypes.func.isRequired,
@@ -295,6 +335,10 @@ SensorEditPageComponent.propTypes = {
   updateName: PropTypes.func.isRequired,
   updateCode: PropTypes.func.isRequired,
   blink: PropTypes.func.isRequired,
+  hotConsecutiveThreshold: PropTypes.number.isRequired,
+  coldCumulativeThreshold: PropTypes.number.isRequired,
+  coldConsecutiveThreshold: PropTypes.number.isRequired,
+  hotCumulativeThreshold: PropTypes.number.isRequired,
 };
 
 export const SensorEditPage = connect(stateToProps, dispatchToProps)(SensorEditPageComponent);
