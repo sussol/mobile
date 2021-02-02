@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { MILLISECONDS } from '../utilities';
 
 // Default breach creation method.
 const createBreachRecord = (
@@ -68,7 +69,7 @@ export class BreachManager {
     const { timestamp: endTimestamp } = logs[logs.length - 1];
     const { timestamp: startTimestamp } = logs[0];
     const logsDuration = endTimestamp - startTimestamp;
-    if (logsDuration < duration / 1000) return false;
+    if (logsDuration < duration * MILLISECONDS.ONE_MINUTE) return false;
     const temperaturesWithinBounds = logs.every(log => {
       const { temperature } = log;
       return temperature <= maximumTemperature && temperature >= minimumTemperature;
