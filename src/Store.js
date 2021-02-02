@@ -36,7 +36,6 @@ const persistConfig = {
     'permission',
     'cashTransaction',
     'vaccine',
-    'sensorDetail',
     'entities',
   ],
 };
