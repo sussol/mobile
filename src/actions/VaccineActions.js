@@ -71,8 +71,6 @@ const downloadLogsFromSensor = sensor => async dispatch => {
   try {
     const { macAddress, logInterval } = sensor;
 
-    if (macAddress === 'AB:CD:EF:GH:IJ:KL') throw new Error();
-
     const downloadedLogsResult =
       (await BleService().downloadLogsWithRetries(
         macAddress,
