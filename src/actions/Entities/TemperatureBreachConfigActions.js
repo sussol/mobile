@@ -1,6 +1,5 @@
 import { generateUUID } from 'react-native-database';
 import { selectNewConfigsByType } from '../../selectors/Entities/temperatureBreachConfig';
-import { SECONDS } from '../../utilities/constants';
 
 export const TEMPERATURE_BREACH_CONFIG_ACTIONS = {
   CREATE_GROUP: 'TEMPERATURE_BREACH_CONFIG/createGroup',
@@ -16,7 +15,7 @@ const createDefaultConfig = type => ({
   minimumTemperature: isHot(type) ? 8 : -999,
   maximumTemperature: isHot(type) ? 999 : 2,
   type,
-  duration: SECONDS.ONE_MINUTE * 20,
+  duration: 20,
 });
 
 const resetNewGroup = () => ({ type: TEMPERATURE_BREACH_CONFIG_ACTIONS.RESET_NEW_GROUP });
