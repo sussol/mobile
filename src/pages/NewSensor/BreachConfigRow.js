@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 import React from 'react';
 
 import PropTypes from 'prop-types';
@@ -16,13 +17,25 @@ export const TYPE_TO_LABEL = {
 };
 
 export const BreachConfigRow = React.memo(
-  ({ type, duration, temperature, threshold, updateDuration, updateTemperature }) => {
+  ({
+    type,
+    duration,
+    temperature,
+    threshold,
+    updateDuration,
+    updateTemperature,
+    containerStyle,
+  }) => {
     const isHotBreach = type.includes('HOT');
     const Icon = isHotBreach ? HotBreachIcon : ColdBreachIcon;
     const color = isHotBreach ? DANGER_RED : COLD_BREACH_BLUE;
 
     return (
-      <EditorRow Icon={<Icon color={color} size={20} />} label={TYPE_TO_LABEL[type]}>
+      <EditorRow
+        containerStyle={containerStyle}
+        Icon={<Icon color={color} size={20} />}
+        label={TYPE_TO_LABEL[type]}
+      >
         <DurationEditor
           value={duration / SECONDS.ONE_MINUTE}
           onChange={value => updateDuration(type, value)}
@@ -37,7 +50,9 @@ export const BreachConfigRow = React.memo(
     );
   }
 );
-
+BreachConfigRow.defaultProps = {
+  containerStyle: {},
+};
 BreachConfigRow.propTypes = {
   threshold: PropTypes.number.isRequired,
   type: PropTypes.string.isRequired,
@@ -45,4 +60,5 @@ BreachConfigRow.propTypes = {
   temperature: PropTypes.number.isRequired,
   updateDuration: PropTypes.func.isRequired,
   updateTemperature: PropTypes.func.isRequired,
+  containerStyle: PropTypes.object,
 };

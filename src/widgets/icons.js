@@ -25,6 +25,7 @@ import {
   dataTableColors,
   GREY,
   DARKER_GREY,
+  BLACK,
 } from '../globalStyles';
 
 export const SortAscIcon = () => <FAIcon name="sort-asc" size={15} style={{ marginRight: 10 }} />;
@@ -170,7 +171,7 @@ CalendarIcon.propTypes = {
   style: PropTypes.object,
 };
 
-export const BackIcon = () => <FAIcon name="chevron-left" size={16} color="black" />;
+export const BackIcon = () => <FAIcon name="chevron-left" size={16} color={BLACK} />;
 
 export const CloudIcon = ({ color, size, style }) => (
   <IonIcon name="md-cloud" size={size} color={color} style={style} />
@@ -281,9 +282,18 @@ MinusCircle.propTypes = {
 export const LightbulbIcon = ({ size, style, color }) => (
   <FAIcon size={size} style={style} color={color} name="lightbulb-o" />
 );
-
 LightbulbIcon.defaultProps = { size: 20, style: {}, color: 'white' };
 LightbulbIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
+
+export const DownloadIcon = ({ size, style, color }) => (
+  <FAIcon size={size} style={style} color={color} name="download" />
+);
+DownloadIcon.defaultProps = { size: 20, style: {}, color: BLACK };
+DownloadIcon.propTypes = {
   size: PropTypes.number,
   style: PropTypes.object,
   color: PropTypes.string,
@@ -292,9 +302,18 @@ LightbulbIcon.propTypes = {
 export const InfoIcon = ({ size, style, color }) => (
   <FAIcon size={size} style={style} color={color} name="info-circle" />
 );
-
 InfoIcon.defaultProps = { size: 20, style: {}, color: DARKER_GREY };
 InfoIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
+
+export const AlarmClockIcon = ({ size, style, color }) => (
+  <IonIcon size={size} style={style} color={color} name="alarm-outline" />
+);
+AlarmClockIcon.defaultProps = { size: 30, style: {}, color: DARKER_GREY };
+AlarmClockIcon.propTypes = {
   size: PropTypes.number,
   style: PropTypes.object,
   color: PropTypes.string,

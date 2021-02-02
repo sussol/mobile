@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import { TabContainer } from './TabContainer';
 import { BreachConfigRow } from './BreachConfigRow';
-import { PaperSection, FlexRow, PageButton, Spacer } from '../../widgets';
+import { Paper, FlexRow, PageButton, Spacer } from '../../widgets';
 
 import { SUSSOL_ORANGE, WHITE } from '../../globalStyles';
 import { buttonStrings, vaccineStrings } from '../../localization';
@@ -26,7 +26,7 @@ export const NewSensorStepTwoComponent = ({
   updateTemperature,
 }) => (
   <TabContainer>
-    <PaperSection height={320} headerText={vaccineStrings.new_sensor_step_two_title}>
+    <Paper height={320} headerText={vaccineStrings.new_sensor_step_two_title}>
       <BreachConfigRow
         type="HOT_CONSECUTIVE"
         {...hotConsecutiveConfig}
@@ -51,7 +51,7 @@ export const NewSensorStepTwoComponent = ({
         updateDuration={updateDuration}
         updateTemperature={updateTemperature}
       />
-    </PaperSection>
+    </Paper>
 
     <FlexRow flex={1} justifyContent="flex-end" alignItems="flex-end">
       <View style={{ marginRight: 'auto' }}>

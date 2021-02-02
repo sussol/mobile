@@ -32,11 +32,17 @@ export const SensorDetailReducer = (state = initialState(), action) => {
       const { payload } = action;
       const { name } = payload;
 
+      const isValid = name.length < 50;
+      if (!isValid) return state;
+
       return { ...state, name };
     }
     case SENSOR_DETAIL_ACTIONS.UPDATE_CODE: {
       const { payload } = action;
       const { code } = payload;
+
+      const isValid = code.length < 10;
+      if (!isValid) return state;
 
       return { ...state, code };
     }
