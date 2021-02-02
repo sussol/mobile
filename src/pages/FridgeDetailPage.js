@@ -6,7 +6,14 @@ import { Text, View, StyleSheet } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 
 import { DateRangeSelector } from '../widgets/DateRangeSelector';
-import { ColdBreachIcon, DataTablePageView, FlexRow, HotBreachIcon, Paper } from '../widgets';
+import {
+  ColdBreachIcon,
+  DataTablePageView,
+  FlexRow,
+  HotBreachIcon,
+  Paper,
+  SensorStatus,
+} from '../widgets';
 import { VaccineChart } from '../widgets/VaccineChart';
 import { NoBreachMan } from '../widgets/NoBreachMan';
 import { FridgeActions } from '../actions/FridgeActions';
@@ -23,6 +30,10 @@ import {
   selectMostRecentTemperatureLogDate,
   selectNumberOfColdConsecutiveBreaches,
   selectNumberOfHotConsecutiveBreaches,
+  selectSelectedFridgeIsInColdBreach,
+  selectSelectedFridgeIsInHotBreach,
+  selectSelectedFridgeSensorIsLowBattery,
+  selectSelectFridgeCurrentTemperature,
   selectTemperatureLogsFromDate,
   selectTemperatureLogsToDate,
 } from '../selectors/fridge';
@@ -68,6 +79,10 @@ export const FridgeDetailPageComponent = ({
   hotCumulativeBreach,
   coldCumulativeBreach,
   averageTemperature,
+  isInHotBreach,
+  isInColdBreach,
+  isLowBattery,
+  currentTemperature,
 }) => (
   <DataTablePageView>
     <View style={localStyles.container}>
@@ -83,13 +98,21 @@ export const FridgeDetailPageComponent = ({
 
       <Paper style={{ flex: 1 }} contentContainerStyle={{ flex: 1, marginTop: 20 }}>
         <AfterInteractions>
-          <VaccineChart
-            breaches={[breaches[0]]}
-            minLine={minLine}
-            maxLine={maxLine}
-            minDomain={minDomain}
-            maxDomain={maxDomain}
-          />
+          <FlexRow alignItems="center">
+            <VaccineChart
+              breaches={breaches}
+              minLine={minLine}
+              maxLine={maxLine}
+              minDomain={minDomain}
+              maxDomain={maxDomain}
+            />
+            <SensorStatus
+              isInHotBreach={isInHotBreach}
+              isInColdBreach={isInColdBreach}
+              isLowBattery={isLowBattery}
+              currentTemp={currentTemperature}
+            />
+          </FlexRow>
         </AfterInteractions>
       </Paper>
 
@@ -149,7 +172,7 @@ export const FridgeDetailPageComponent = ({
 );
 
 const localStyles = StyleSheet.create({
-  container: { padding: 50, flex: 1, backgroundColor: BLUE_WHITE },
+  container: { padding: 20, flex: 1, backgroundColor: BLUE_WHITE },
   datePickerContainer: { width: 250, borderRadius: 50, height: 50 },
   card: { flex: 1 },
   hotText: {
@@ -185,6 +208,10 @@ const stateToProps = state => {
   const averageTemperature = selectAverageTemperature(state);
   const hotCumulativeBreach = selectHotCumulativeBreach(state);
   const coldCumulativeBreach = selectColdCumulativeBreach(state);
+  const isInHotBreach = selectSelectedFridgeIsInHotBreach(state);
+  const isInColdBreach = selectSelectedFridgeIsInColdBreach(state);
+  const isLowBattery = selectSelectedFridgeSensorIsLowBattery(state);
+  const currentTemperature = selectSelectFridgeCurrentTemperature(state);
 
   return {
     averageTemperature,
@@ -202,6 +229,10 @@ const stateToProps = state => {
     toDate,
     minimumDate,
     maximumDate,
+    isInHotBreach,
+    isInColdBreach,
+    isLowBattery,
+    currentTemperature,
   };
 };
 
@@ -229,6 +260,10 @@ FridgeDetailPageComponent.propTypes = {
   hotCumulativeBreach: PropTypes.string.isRequired,
   coldCumulativeBreach: PropTypes.string.isRequired,
   averageTemperature: PropTypes.number.isRequired,
+  isInHotBreach: PropTypes.bool.isRequired,
+  isInColdBreach: PropTypes.bool.isRequired,
+  isLowBattery: PropTypes.bool.isRequired,
+  currentTemperature: PropTypes.number.isRequired,
 };
 
 export const FridgeDetailPage = connect(stateToProps, dispatchToProps)(FridgeDetailPageComponent);

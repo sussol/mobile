@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import { View } from 'react-native';
 import PropTypes from 'prop-types';
@@ -6,14 +7,18 @@ import { connect } from 'react-redux';
 import { TabContainer } from './TabContainer';
 import { BreachConfigRow } from './BreachConfigRow';
 import { Paper, FlexRow, PageButton, Spacer } from '../../widgets';
+import { AfterInteractions } from '../../widgets/AfterInteractions';
 
 import { SUSSOL_ORANGE, WHITE } from '../../globalStyles';
 import { buttonStrings, vaccineStrings } from '../../localization';
-import { WizardActions } from '../../actions/WizardActions';
+import { TemperatureBreachConfigActions, WizardActions } from '../../actions';
 import { goBack } from '../../navigation/actions';
-import { selectConfigs } from '../../selectors/newSensor';
-import { NewSensorActions } from '../../actions';
-import { AfterInteractions } from '../../widgets/AfterInteractions';
+// eslint-disable-next-line max-len
+import {
+  selectNewConfigsByType,
+  selectNewConfigThresholds,
+} from '../../selectors/Entities/temperatureBreachConfig';
+import { SECONDS } from '../../utilities/constants';
 
 export const NewSensorStepTwoComponent = ({
   nextTab,
@@ -25,29 +30,37 @@ export const NewSensorStepTwoComponent = ({
   hotCumulativeConfig,
   updateDuration,
   updateTemperature,
+  coldConsecutiveThreshold,
+  hotConsecutiveThreshold,
+  hotCumulativeThreshold,
+  coldCumulativeThreshold,
 }) => (
   <TabContainer>
     <Paper height={320} headerText={vaccineStrings.new_sensor_step_two_title}>
       <AfterInteractions placeholder={null}>
         <BreachConfigRow
+          threshold={hotConsecutiveThreshold}
           type="HOT_CONSECUTIVE"
           {...hotConsecutiveConfig}
           updateDuration={updateDuration}
           updateTemperature={updateTemperature}
         />
         <BreachConfigRow
+          threshold={coldConsecutiveThreshold}
           type="COLD_CONSECUTIVE"
           {...coldConsecutiveConfig}
           updateDuration={updateDuration}
           updateTemperature={updateTemperature}
         />
         <BreachConfigRow
+          threshold={hotCumulativeThreshold}
           type="HOT_CUMULATIVE"
           {...hotCumulativeConfig}
           updateDuration={updateDuration}
           updateTemperature={updateTemperature}
         />
         <BreachConfigRow
+          threshold={coldCumulativeThreshold}
           type="COLD_CUMULATIVE"
           {...coldCumulativeConfig}
           updateDuration={updateDuration}
@@ -75,13 +88,29 @@ export const NewSensorStepTwoComponent = ({
 
 const stateToProps = state => {
   const {
+    HOT_CONSECUTIVE: hotConsecutiveConfig,
+    COLD_CONSECUTIVE: coldConsecutiveConfig,
+    HOT_CUMULATIVE: hotCumulativeConfig,
+    COLD_CUMULATIVE: coldCumulativeConfig,
+  } = selectNewConfigsByType(state);
+
+  const {
+    coldConsecutiveThreshold,
+    hotConsecutiveThreshold,
+    hotCumulativeThreshold,
+    coldCumulativeThreshold,
+  } = selectNewConfigThresholds(state);
+
+  return {
     hotConsecutiveConfig,
     coldCumulativeConfig,
     coldConsecutiveConfig,
     hotCumulativeConfig,
-  } = selectConfigs(state);
-
-  return { hotConsecutiveConfig, coldCumulativeConfig, coldConsecutiveConfig, hotCumulativeConfig };
+    coldConsecutiveThreshold,
+    hotConsecutiveThreshold,
+    hotCumulativeThreshold,
+    coldCumulativeThreshold,
+  };
 };
 
 const dispatchToProps = dispatch => {
@@ -89,29 +118,38 @@ const dispatchToProps = dispatch => {
   const previousTab = () => dispatch(WizardActions.previousTab());
   const exit = () => dispatch(goBack());
   const updateDuration = (type, value) =>
-    dispatch(NewSensorActions.updateConfig(type, 'duration', value));
-  const updateTemperature = (type, value) =>
-    dispatch(NewSensorActions.updateConfig(type, 'temperature', value));
+    dispatch(
+      TemperatureBreachConfigActions.updateNewConfig(type, 'duration', value * SECONDS.ONE_MINUTE)
+    );
+  const updateTemperature = (type, value) => {
+    const field = type.includes('HOT') ? 'minimumTemperature' : 'maximumTemperature';
+    dispatch(TemperatureBreachConfigActions.updateNewConfig(type, field, value));
+  };
 
   return { nextTab, previousTab, exit, updateDuration, updateTemperature };
 };
 
-const configShape = {
-  temperature: PropTypes.number.isRequired,
-  duration: PropTypes.number.isRequired,
-  threshold: PropTypes.number.isRequired,
+NewSensorStepTwoComponent.defaultProps = {
+  hotConsecutiveConfig: {},
+  coldCumulativeConfig: {},
+  coldConsecutiveConfig: {},
+  hotCumulativeConfig: {},
 };
 
 NewSensorStepTwoComponent.propTypes = {
   nextTab: PropTypes.func.isRequired,
   previousTab: PropTypes.func.isRequired,
   exit: PropTypes.func.isRequired,
-  hotConsecutiveConfig: PropTypes.shape(configShape).isRequired,
-  coldCumulativeConfig: PropTypes.shape(configShape).isRequired,
-  coldConsecutiveConfig: PropTypes.shape(configShape).isRequired,
-  hotCumulativeConfig: PropTypes.shape(configShape).isRequired,
+  hotConsecutiveConfig: PropTypes.object,
+  coldCumulativeConfig: PropTypes.object,
+  coldConsecutiveConfig: PropTypes.object,
+  hotCumulativeConfig: PropTypes.object,
   updateDuration: PropTypes.func.isRequired,
   updateTemperature: PropTypes.func.isRequired,
+  coldConsecutiveThreshold: PropTypes.number.isRequired,
+  hotConsecutiveThreshold: PropTypes.number.isRequired,
+  hotCumulativeThreshold: PropTypes.number.isRequired,
+  coldCumulativeThreshold: PropTypes.number.isRequired,
 };
 
 export const NewSensorStepTwo = connect(stateToProps, dispatchToProps)(NewSensorStepTwoComponent);

@@ -15,6 +15,8 @@ import { RootNavigator } from './RootNavigator';
 import { PrescriptionActions } from '../actions/PrescriptionActions';
 import { FinaliseActions } from '../actions/FinaliseActions';
 import { PREFERENCE_KEYS } from '../database/utilities/constants';
+import { SensorActions } from '../actions/Entities/SensorActions';
+import { TemperatureBreachConfigActions } from '../actions/Entities/TemperatureBreachConfigActions';
 
 /**
  * Navigation Action Creators.
@@ -80,6 +82,8 @@ export const goBack = () => dispatch => {
 
       const cleanUp = () => {
         dispatch(PrescriptionActions.deletePrescription());
+        dispatch(SensorActions.resetNew());
+        dispatch(TemperatureBreachConfigActions.resetNewGroup());
       };
 
       batch(() => {
@@ -544,9 +548,6 @@ export const updateStocktake = (stocktake, itemIds, name = '') => dispatch => {
 
   dispatch(gotoStocktakeEditPage(stocktake));
 };
-
-export const gotoNewVaccineModulePage = () =>
-  NavigationActions.navigate({ routeName: ROUTES.VACCINES_NEW });
 
 export const gotoFridgeDetailPage = fridge =>
   NavigationActions.navigate({ routeName: ROUTES.FRIDGE_DETAIL, params: { fridge } });
