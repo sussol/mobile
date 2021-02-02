@@ -353,6 +353,7 @@ const generateSyncData = (settings, recordType, record) => {
         description: record.description ?? '',
         colour: record.colour ?? '',
         type: record.type ?? '',
+        location_ID: record.location?.id,
       };
     }
     case 'LocationMovement': {

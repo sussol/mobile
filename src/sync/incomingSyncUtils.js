@@ -1014,6 +1014,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'TemperatureBreachConfiguration': {
+      const location = database.getOrCreate('Location', record.location_ID);
       database.update(recordType, {
         id: record.ID,
         minimumTemperature: parseNumber(record.minimum_temperature),
@@ -1022,6 +1023,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         description: record.description,
         colour: record.colour,
         type: record.type,
+        location,
       });
       break;
     }
