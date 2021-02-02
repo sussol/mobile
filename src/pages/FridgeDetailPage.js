@@ -282,16 +282,6 @@ const localStyles = StyleSheet.create({
     color: DARKER_GREY,
     fontFamily: APP_FONT_FAMILY,
   },
-  paperTitleText: {
-    color: DARKER_GREY,
-    fontSize: 14,
-    fontFamily: APP_FONT_FAMILY,
-    textTransform: 'uppercase',
-  },
-  headerTextWithIcon: {
-    flex: 0,
-    paddingHorizontal: 8,
-  },
 });
 
 export const FridgeDetailPage = connect(stateToProps, dispatchToProps)(FridgeDetailPageComponent);
