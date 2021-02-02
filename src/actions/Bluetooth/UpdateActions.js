@@ -4,13 +4,9 @@
  */
 
 import { PermissionActions } from '../PermissionActions';
-import SensorManager from '../../bluetooth/SensorManager';
 import BleService from '../../bluetooth/BleService';
 
 export const UPDATE_ACTIONS = {
-  SAVE_SENSOR_ERROR: 'Bluetooth/saveSensorError',
-  SAVE_SENSOR_START: 'Bluetooth/saveSensorStart',
-  SAVE_SENSOR_SUCCESS: 'Bluetooth/saveSensorSuccess',
   SET_LOG_INTERVAL_ERROR: 'Bluetooth/setLogIntervalError',
   SET_LOG_INTERVAL_START: 'Bluetooth/setLogIntervalStart',
   SET_LOG_INTERVAL_SUCCESS: 'Bluetooth/setLogIntervalSuccess',
@@ -23,21 +19,18 @@ const setLogIntervalStart = macAddress => ({
   payload: { macAddress },
 });
 const setLogIntervalSuccess = () => ({ type: UPDATE_ACTIONS.SET_LOG_INTERVAL_SUCCESS });
+
 const setLogIntervalError = () => ({ type: UPDATE_ACTIONS.SET_LOG_INTERVAL_ERROR });
+
 const disableButtonStart = macAddress => ({
   type: UPDATE_ACTIONS.DISABLE_BUTTON_START,
   payload: { macAddress },
 });
+
 const disableButtonStop = macAddress => ({
   type: UPDATE_ACTIONS.DISABLE_BUTTON_STOP,
   payload: { macAddress },
 });
-const saveSensorError = () => ({ type: UPDATE_ACTIONS.SAVE_SENSOR_ERROR });
-const saveSensorStart = macAddress => ({
-  type: UPDATE_ACTIONS.SAVE_SENSOR_START,
-  payload: { macAddress },
-});
-const saveSensorSuccess = () => ({ type: UPDATE_ACTIONS.SAVE_SENSOR_SUCCESS });
 
 const setLogInterval = (macAddress, interval) => async dispatch => {
   dispatch(setLogIntervalStart(macAddress));
@@ -53,20 +46,6 @@ const setLogInterval = (macAddress, interval) => async dispatch => {
   } catch (e) {
     dispatch(setLogIntervalError(e));
     throw e;
-  }
-};
-
-const saveSensor = sensor => async dispatch => {
-  dispatch(saveSensorStart(sensor.macAddress));
-  try {
-    const { location, logInterval, macAddress, name } = sensor;
-    const sensorManager = SensorManager();
-    const newSensor = await sensorManager.createSensor({ location, logInterval, macAddress, name });
-    await sensorManager.saveSensor(newSensor);
-    dispatch(saveSensorSuccess());
-  } catch (error) {
-    dispatch(saveSensorError());
-    throw error;
   }
 };
 
@@ -108,7 +87,6 @@ const updateSensor = sensor => async dispatch => {
 };
 
 export const UpdateActions = {
-  saveSensor,
   startSensorDisableButton,
   startSetLogInterval,
   setLogInterval,
