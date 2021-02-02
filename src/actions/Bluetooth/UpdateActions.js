@@ -82,7 +82,7 @@ const startSetLogInterval = ({ macAddress, interval = 300 }) => async (dispatch,
 };
 
 const updateSensor = sensor => async dispatch => {
-  await dispatch(UpdateActions.startSetLogInterval(sensor));
+  await dispatch(UpdateActions.startSetLogInterval(sensor.macAddress));
   await dispatch(UpdateActions.startSensorDisableButton(sensor.macAddress));
 };
 

@@ -38,7 +38,8 @@ import {
 } from '../globalStyles';
 
 import { SECONDS } from '../utilities/constants';
-import { SensorActions, VaccineActions } from '../actions';
+import { SensorActions } from '../actions';
+import { BlinkActions } from '../actions/Bluetooth/BlinkActions';
 import { AfterInteractions } from '../widgets/AfterInteractions';
 import { selectEditingSensor } from '../selectors/Entities/sensor';
 
@@ -240,7 +241,7 @@ const dispatchToProps = (dispatch, ownProps) => {
   const { sensor } = params;
   const { id } = sensor;
 
-  const blink = macAddress => dispatch(VaccineActions.startSensorBlink(macAddress));
+  const blink = macAddress => dispatch(BlinkActions.startSensorBlink(macAddress));
   const updateName = name => dispatch(SensorActions.update(id, 'name', name));
   const updateCode = code => dispatch(SensorActions.update(id, 'code', code));
   const updateLogInterval = logInterval =>
