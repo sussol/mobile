@@ -7,3 +7,27 @@ export const selectIsDownloadingLogs = ({ vaccine }) => {
   const { isDownloadingLogs = false } = vaccine || {};
   return isDownloadingLogs;
 };
+
+export const selectDownloadingLogsFrom = ({ vaccine }) => {
+  const { downloadingLogsFrom } = vaccine;
+  return downloadingLogsFrom;
+};
+
+export const selectLastDownloadTime = ({ vaccine }, macAddress) => {
+  const { lastDownloadTime } = vaccine;
+  return lastDownloadTime[macAddress];
+};
+
+export const selectLastDownloadFailed = ({ vaccine }, macAddress) => {
+  const { lastDownloadStatus } = vaccine;
+  const status = lastDownloadStatus[macAddress];
+  const lastDownloadFailed = status === 'ERROR';
+  return lastDownloadFailed;
+};
+
+export const selectIsDownloading = (state, macAddress) => {
+  const downloadingLogsFrom = selectDownloadingLogsFrom(state);
+  const isDownloading = downloadingLogsFrom === macAddress;
+
+  return isDownloading;
+};
