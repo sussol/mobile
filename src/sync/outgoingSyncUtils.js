@@ -354,6 +354,7 @@ const generateSyncData = (settings, recordType, record) => {
         colour: record.colour ?? '',
         type: record.type ?? '',
         location_ID: record.location?.id,
+        store_ID: settings.get(THIS_STORE_ID),
       };
     }
     case 'LocationMovement': {
