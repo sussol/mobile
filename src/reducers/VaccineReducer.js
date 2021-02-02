@@ -38,7 +38,7 @@ export const VaccineReducer = (state = initialState(), action) => {
 
       const newLastDownloadTime = {
         ...lastDownloadTime,
-        [macAddress]: new Date(),
+        [macAddress]: new Date().getTime(),
       };
 
       return {
@@ -62,7 +62,7 @@ export const VaccineReducer = (state = initialState(), action) => {
 
       const newLastDownloadTime = {
         ...lastDownloadTime,
-        [macAddress]: new Date(),
+        [macAddress]: new Date().getTime(),
       };
 
       return {

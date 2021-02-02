@@ -15,7 +15,7 @@ export const selectDownloadingLogsFrom = ({ vaccine }) => {
 
 export const selectLastDownloadTime = ({ vaccine }, macAddress) => {
   const { lastDownloadTime } = vaccine;
-  return lastDownloadTime[macAddress];
+  return new Date(lastDownloadTime[macAddress] ?? 0);
 };
 
 export const selectLastDownloadFailed = ({ vaccine }, macAddress) => {
