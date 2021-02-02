@@ -8,6 +8,7 @@ export const MILLISECONDS = {
   FIVE_MINUTES: 1000 * 60 * 5,
   ONE_DAY: 1000 * 60 * 60 * 24,
   ONE_SECOND: 1000,
+  TEN_SECONDS: 1000 * 10,
 };
 
 export const SECONDS = {
