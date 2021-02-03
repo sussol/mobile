@@ -37,6 +37,7 @@ import { LocationActions, TemperatureBreachConfigActions } from '../actions/Enti
 import { selectEditingLocation } from '../selectors/Entities/location';
 import { goBack } from '../navigation/actions';
 import { FridgeHeader } from '../widgets/FridgeHeader';
+import { MILLISECONDS } from '../utilities/index';
 
 export const SensorEditPageComponent = ({
   logInterval,
@@ -134,7 +135,7 @@ export const SensorEditPageComponent = ({
           </TextWithIcon>
 
           <PageButton
-            onPress={() => withLoadingIndicator(() => saveSensor(macAddress, logInterval))}
+            onPress={() => withLoadingIndicator(() => saveSensor({ macAddress, logInterval }))}
             text={generalStrings.save}
             textStyle={localStyles.pageButtonText}
             style={{ backgroundColor: SUSSOL_ORANGE }}
@@ -210,14 +211,16 @@ const dispatchToProps = (dispatch, ownProps) => {
   const updateLogInterval = logInterval =>
     dispatch(SensorActions.update(sensorID, 'logInterval', logInterval));
   const updateDuration = (id, value) =>
-    dispatch(TemperatureBreachConfigActions.update(id, 'duration', value * 60));
+    dispatch(
+      TemperatureBreachConfigActions.update(id, 'duration', value * MILLISECONDS.ONE_MINUTE)
+    );
   const updateTemperature = (type, id, value) => {
     const isHot = type.includes('HOT');
     const field = isHot ? 'minimumTemperature' : 'maximumTemperature';
     dispatch(TemperatureBreachConfigActions.update(id, field, value));
   };
-  const saveSensor = (macAddress, logInterval) =>
-    dispatch(SensorUpdateActions.updateSensor(macAddress, logInterval))
+  const saveSensor = sensorToUpdate =>
+    dispatch(SensorUpdateActions.updateSensor(sensorToUpdate))
       .then(() => dispatch(SensorActions.save()))
       .then(() => dispatch(goBack()))
       .catch(e => ToastAndroid.show(e.toString(), ToastAndroid.LONG));
@@ -244,11 +247,12 @@ SensorEditPageComponent.defaultProps = {
   macAddress: '',
   batteryLevel: 0,
   sensor: {},
+  lastSyncDate: null,
 };
 
 SensorEditPageComponent.propTypes = {
   sensor: PropTypes.object,
-  lastSyncDate: PropTypes.instanceOf(Date).isRequired,
+  lastSyncDate: PropTypes.instanceOf(Date),
   batteryLevel: PropTypes.number,
   macAddress: PropTypes.string,
   name: PropTypes.string,
