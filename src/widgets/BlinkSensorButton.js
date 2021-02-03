@@ -6,7 +6,7 @@ import { DARKER_GREY, LIGHT_GREY } from '../globalStyles/index';
 import { IconButton } from './IconButton';
 import { LightbulbIcon } from './icons';
 import { selectSendingBlinkTo } from '../selectors/Bluetooth/bluetooth';
-import { BlinkActions } from '../actions/Bluetooth/BlinkActions';
+import { SensorBlinkActions } from '../actions/Bluetooth/SensorBlinkActions';
 
 export const BlinkSensorButtonComponent = ({ isBlinking, blink, isBlinkDisabled }) =>
   isBlinking ? (
@@ -39,7 +39,7 @@ const stateToProps = (state, props) => {
 const dispatchToProps = (dispatch, props) => {
   const { macAddress } = props;
 
-  const blink = () => dispatch(BlinkActions.startSensorBlink(macAddress));
+  const blink = () => dispatch(SensorBlinkActions.startSensorBlink(macAddress));
 
   return { blink };
 };
