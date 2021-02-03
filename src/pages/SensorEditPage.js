@@ -200,7 +200,7 @@ export const SensorEditPageComponent = ({
           </TextWithIcon>
 
           <PageButton
-            onPress={() => withLoadingIndicator(() => saveSensor(macAddress, logInterval))}
+            onPress={() => withLoadingIndicator(() => saveSensor({ macAddress, logInterval }))}
             text={generalStrings.save}
             textStyle={localStyles.pageButtonText}
             style={{ backgroundColor: SUSSOL_ORANGE }}
