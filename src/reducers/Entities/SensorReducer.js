@@ -9,7 +9,7 @@ const getPlainSensor = sensor => ({
   macAddress: sensor.macAddress,
   name: sensor.name,
   batteryLevel: sensor.batteryLevel,
-  locationID: sensor.location.id,
+  locationID: sensor.location?.id,
   isActive: sensor.isActive,
   logInterval: sensor.logInterval,
 });
