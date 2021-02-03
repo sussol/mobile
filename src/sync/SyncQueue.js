@@ -27,6 +27,7 @@ const recordTypesSynced = [
   'Sensor',
   'TemperatureLog',
   'TemperatureBreach',
+  'TemperatureBreachConfiguration',
   'VaccineVialMonitorStatusLog',
   'LocationMovement',
 ];
