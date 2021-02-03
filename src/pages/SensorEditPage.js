@@ -293,8 +293,8 @@ const dispatchToProps = (dispatch, ownProps) => {
     const field = isHot ? 'minimumTemperature' : 'maximumTemperature';
     dispatch(TemperatureBreachConfigActions.update(id, field, value));
   };
-  const saveSensor = (macAddress, logInterval) =>
-    dispatch(SensorUpdateActions.updateSensor(macAddress, logInterval))
+  const saveSensor = sensorToUpdate =>
+    dispatch(SensorUpdateActions.updateSensor(sensorToUpdate))
       .then(() => dispatch(SensorActions.save()))
       .then(() => dispatch(goBack()))
       .catch(e => console.log(e));
