@@ -37,12 +37,14 @@ describe('BreachManager: createBreach', () => {
     );
     const closedBreachShouldBe = {
       id: '1',
-      sensorId: 'a',
+      endTimestamp: undefined,
+      location: dummyLocation,
+      sensor,
+      startTimestamp: 0,
+      thresholdDuration: '1',
       thresholdMaxTemperature: '100',
       thresholdMinTemperature: '0',
-      thresholdDuration: '1',
-      startTimestamp: 0,
-      location: dummyLocation,
+      type: undefined,
     };
 
     expect(closedBreach).toEqual(closedBreachShouldBe);
@@ -65,6 +67,7 @@ describe('BreachManager: willCreateBreach', () => {
 
     expect(willCreateBreach).toEqual(true);
   });
+
   it('Correctly determines when a breach should not be created because of temperature', () => {
     const dbService = {};
     const utils = { createUuid: () => '1' };
@@ -80,6 +83,7 @@ describe('BreachManager: willCreateBreach', () => {
 
     expect(willCreateBreach).toEqual(false);
   });
+
   it('Correctly determines when a breach should not be created because of duration', () => {
     const dbService = {};
     const utils = { createUuid: () => '1' };
@@ -119,6 +123,7 @@ describe('BreachManager: willCreateBreachFromConfigs', () => {
       { id: 'b', minimumTemperature: 8, duration: 1000, maximumTemperature: 999 },
     ]);
   });
+
   it('Correctly returns false when none should be made', () => {
     const dbService = {};
     const utils = { createUuid: () => '1' };
@@ -301,7 +306,7 @@ describe('BreachManager: createBreaches', () => {
     const breachesShouldBe = [
       {
         id: '1',
-        sensorId: 'a',
+        sensor,
         thresholdMaxTemperature: 999,
         thresholdMinTemperature: 8,
         thresholdDuration: 1000,
@@ -321,6 +326,7 @@ describe('BreachManager: createBreaches', () => {
       logsShouldBe,
     ]);
   });
+
   it('Creates a simple single breach that is closed', async () => {
     const dummyLocation = { id: 'ABC', description: 'DEF' };
     const sensor = { id: 'a', location: dummyLocation };
@@ -345,7 +351,7 @@ describe('BreachManager: createBreaches', () => {
     const breachesShouldBe = [
       {
         id: '1',
-        sensorId: 'a',
+        sensor,
         thresholdMinTemperature: 8,
         thresholdMaxTemperature: 999,
         thresholdDuration: 1000,
@@ -366,7 +372,8 @@ describe('BreachManager: createBreaches', () => {
       logsShouldBe,
     ]);
   });
-  it('Creates a multiple breaches', async () => {
+
+  it('Creates multiple breaches', async () => {
     const dummyLocation = { id: 'ABC', description: 'DEF' };
     const sensor = { id: 'a', location: dummyLocation };
     const logs = [
@@ -392,7 +399,7 @@ describe('BreachManager: createBreaches', () => {
     const breachesShouldBe = [
       {
         id: '1',
-        sensorId: 'a',
+        sensor,
         startTimestamp: 0,
         thresholdMinTemperature: 8,
         thresholdMaxTemperature: 999,
@@ -403,7 +410,7 @@ describe('BreachManager: createBreaches', () => {
       },
       {
         id: '1',
-        sensorId: 'a',
+        sensor,
         startTimestamp: 3,
         thresholdMinTemperature: 8,
         thresholdMaxTemperature: 999,
@@ -426,7 +433,8 @@ describe('BreachManager: createBreaches', () => {
       logsShouldBe,
     ]);
   });
-  it('Creates respects duration when creating breaches', async () => {
+
+  it('Respects duration when creating breaches', async () => {
     const sensor = { id: 'a' };
     const logs = [
       { temperature: 10, timestamp: 0 },

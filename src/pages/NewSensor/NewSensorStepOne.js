@@ -13,7 +13,7 @@ import { TextWithIcon } from '../../widgets/Typography';
 
 import { vaccineStrings } from '../../localization';
 import { SUSSOL_ORANGE } from '../../globalStyles';
-import { ScanActions } from '../../actions/Bluetooth/ScanActions';
+import { SensorScanActions } from '../../actions/Bluetooth/SensorScanActions';
 import { selectScannedSensors } from '../../selectors/Bluetooth/bluetooth';
 
 const Spinner = () => (
@@ -57,8 +57,8 @@ NewSensorStepOneComponent.propTypes = {
 };
 
 const dispatchToProps = dispatch => {
-  const startScan = () => dispatch(ScanActions.startSensorScan());
-  const stopScan = () => dispatch(ScanActions.stopSensorScan());
+  const startScan = () => dispatch(SensorScanActions.startSensorScan());
+  const stopScan = () => dispatch(SensorScanActions.stopSensorScan());
 
   return { startScan, stopScan };
 };
