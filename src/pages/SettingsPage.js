@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-curly-newline */
 /* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
@@ -29,12 +30,13 @@ import { DataTablePageModal } from '../widgets/modals';
 
 import globalStyles from '../globalStyles';
 import { generalStrings, buttonStrings } from '../localization';
-import { selectCurrentUserPasswordHash } from '../selectors/user';
+import { selectCurrentUser, selectCurrentUserPasswordHash } from '../selectors/user';
 import { PermissionActions } from '../actions/PermissionActions';
 import { createRecord } from '../database/utilities/index';
 import { BreachManager } from '../bluetooth/BreachManager';
 import { VaccineDataAccess } from '../bluetooth/VaccineDataAccess';
 import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
+import { emailVaccineReport } from '../utilities/vaccineReport';
 
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
@@ -45,7 +47,12 @@ const exportData = async () => {
   ToastAndroid.show(toastMessage, ToastAndroid.SHORT);
 };
 
-const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWritePermission }) => {
+const Settings = ({
+  currentUser,
+  toRealmExplorer,
+  currentUserPasswordHash,
+  requestStorageWritePermission,
+}) => {
   const [state, setState] = useState({
     syncURL: UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL),
     modalKey: '',
@@ -302,6 +309,15 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
         <View>
           <MenuButton text={buttonStrings.realm_explorer} onPress={toRealmExplorer} />
           <MenuButton text={buttonStrings.export_data} onPress={requestStorageWritePermission} />
+          {UIDatabase.objects('Sensor').map(sensor => (
+            <MenuButton
+              text="Email report"
+              onPress={() =>
+                emailVaccineReport(sensor, currentUser, 'Comment!', ['griffinjoshua5@gmail.com'])
+              }
+            />
+          ))}
+
           <MenuButton
             text="Generate vaccine data"
             onPress={() => withLoadingIndicator(createVaccineData)}
@@ -330,6 +346,7 @@ const mapStateToDispatch = dispatch => ({
 });
 
 const mapStateToProps = state => ({
+  currentUser: selectCurrentUser(state),
   currentUserPasswordHash: selectCurrentUserPasswordHash(state),
 });
 
@@ -343,6 +360,7 @@ const styles = {
 export const SettingsPage = connect(mapStateToProps, mapStateToDispatch)(Settings);
 
 Settings.propTypes = {
+  currentUser: PropTypes.object.isRequired,
   toRealmExplorer: PropTypes.func.isRequired,
   currentUserPasswordHash: PropTypes.string.isRequired,
   requestStorageWritePermission: PropTypes.func.isRequired,
