@@ -35,7 +35,7 @@ export const selectLastDownloadTime = ({ vaccine }, macAddress) => {
 export const selectLastDownloadFailed = ({ vaccine }, macAddress) => {
   const { lastDownloadStatus } = vaccine;
   const status = lastDownloadStatus[macAddress];
-  const lastDownloadFailed = status === 'ERROR';
+  const lastDownloadFailed = status !== 'OK';
   return lastDownloadFailed;
 };
 
