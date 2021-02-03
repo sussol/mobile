@@ -97,7 +97,7 @@ export const NewSensorStepThreeComponent = ({
           text={vaccineStrings.connect}
           style={{ backgroundColor: SUSSOL_ORANGE }}
           textStyle={{ color: WHITE, textTransform: 'capitalize' }}
-          onPress={() => withLoadingIndicator(connectToSensor(macAddress, logInterval))}
+          onPress={() => withLoadingIndicator(connectToSensor({ macAddress, logInterval }))}
         />
       </FlexRow>
     </TabContainer>
