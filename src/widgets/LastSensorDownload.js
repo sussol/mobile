@@ -15,8 +15,9 @@ import {
   selectLastDownloadFailed,
   selectLastDownloadTime,
 } from '../selectors/vaccine';
+import { generalStrings } from '../localization';
 
-const formatLastSyncDate = date => moment(date).fromNow();
+const formatLastSyncDate = date => (date ? moment(date).fromNow() : generalStrings.not_available);
 
 export const LastSensorDownloadComponent = ({
   isDownloading,
@@ -64,7 +65,7 @@ LastSensorDownloadComponent.defaultProps = {
 LastSensorDownloadComponent.propTypes = {
   isDownloading: PropTypes.bool.isRequired,
   lastDownloadFailed: PropTypes.bool.isRequired,
-  lastDownloadTime: PropTypes.instanceOf(Date),
+  lastDownloadTime: PropTypes.oneOf([PropTypes.instanceOf(Date), null]),
 };
 
 const localStyles = StyleSheet.create({
