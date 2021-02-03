@@ -224,15 +224,7 @@ const DataTablePageModalComponent = ({ isOpen, onClose, modalKey, onSelect, curr
       case MODAL_KEYS.SELECT_LOCATION: {
         const { currentLocationName } = currentValue;
 
-        const placeholderLookup = {
-          [MODAL_KEYS.SELECT_LOCATION]: generalStrings.no_locations_for_batch,
-        };
-
         const locations = UIDatabase.objects('Location');
-
-        const placeholder = generalStrings.formatString(
-          placeholderLookup[modalKey] ?? generalStrings.no_locations
-        );
 
         return (
           <GenericChoiceList
@@ -240,7 +232,7 @@ const DataTablePageModalComponent = ({ isOpen, onClose, modalKey, onSelect, curr
             highlightValue={currentLocationName}
             onPress={onSelect}
             keyToDisplay="description"
-            placeholderText={placeholder}
+            placeholderText={generalStrings.no_locations}
           />
         );
       }

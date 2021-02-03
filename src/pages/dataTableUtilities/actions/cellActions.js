@@ -114,7 +114,7 @@ export const editStocktakeBatchVvmStatus = (vvmStatus, route) =>
 export const editBatchLocation = (location, objectType, route) => (dispatch, getState) => {
   const { modalValue, keyExtractor } = selectPageState(getState());
 
-  UIDatabase.write(() => UIDatabase.update(objectType, { ...modalValue, location }));
+  UIDatabase.write(() => UIDatabase.update(objectType, { id: modalValue.id, location }));
 
   reduxBatch(() => {
     dispatch(refreshRow(keyExtractor(modalValue), route));
