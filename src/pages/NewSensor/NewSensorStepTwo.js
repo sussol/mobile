@@ -18,7 +18,7 @@ import {
   selectNewConfigsByType,
   selectNewConfigThresholds,
 } from '../../selectors/Entities/temperatureBreachConfig';
-import { SECONDS } from '../../utilities/constants';
+import { MILLISECONDS } from '../../utilities/constants';
 
 export const NewSensorStepTwoComponent = ({
   nextTab,
@@ -129,7 +129,11 @@ const dispatchToProps = dispatch => {
   const exit = () => dispatch(goBack());
   const updateDuration = (type, value) =>
     dispatch(
-      TemperatureBreachConfigActions.updateNewConfig(type, 'duration', value * SECONDS.ONE_MINUTE)
+      TemperatureBreachConfigActions.updateNewConfig(
+        type,
+        'duration',
+        value * MILLISECONDS.ONE_MINUTE
+      )
     );
   const updateTemperature = (type, value) => {
     const field = type.includes('HOT') ? 'minimumTemperature' : 'maximumTemperature';

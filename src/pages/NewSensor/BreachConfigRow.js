@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { ColdBreachIcon, HotBreachIcon } from '../../widgets';
 import { EditorRow } from '../../widgets/EditorRow';
 import { DurationEditor, TemperatureEditor } from '../../widgets/StepperInputs';
+import { MILLISECONDS } from '../../utilities/constants';
 
 import { COLD_BREACH_BLUE, DANGER_RED } from '../../globalStyles';
 
@@ -29,6 +30,7 @@ export const BreachConfigRow = React.memo(
     const isHotBreach = type.includes('HOT');
     const Icon = isHotBreach ? HotBreachIcon : ColdBreachIcon;
     const color = isHotBreach ? DANGER_RED : COLD_BREACH_BLUE;
+    const durationInMinutes = duration / MILLISECONDS.ONE_MINUTE;
 
     return (
       <EditorRow
@@ -36,7 +38,7 @@ export const BreachConfigRow = React.memo(
         Icon={<Icon color={color} size={20} />}
         label={TYPE_TO_LABEL[type]}
       >
-        <DurationEditor value={duration} onChange={value => updateDuration(type, value)} />
+        <DurationEditor value={durationInMinutes} onChange={value => updateDuration(type, value)} />
         <TemperatureEditor
           above={isHotBreach}
           value={isHotBreach ? minimumTemperature : maximumTemperature}

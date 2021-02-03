@@ -37,7 +37,7 @@ import {
   WHITE,
 } from '../globalStyles';
 
-import { SECONDS } from '../utilities/constants';
+import { MILLISECONDS, SECONDS } from '../utilities/constants';
 import { SensorActions, VaccineActions } from '../actions';
 import { AfterInteractions } from '../widgets/AfterInteractions';
 import { selectEditingSensor } from '../selectors/Entities/sensor';
@@ -212,7 +212,7 @@ const localStyles = StyleSheet.create({
 
 const stateToProps = state => {
   const sensorDetail = selectEditingSensor(state);
-  const { code, name, logInterval, macAddress, batteryLevel, lastSyncDate } = sensorDetail;
+  const { code, name, logInterval, macAddress, batteryLevel, lastSyncDate } = sensorDetail ?? {};
   const {
     hotConsecutiveConfig,
     coldCumulativeConfig,
@@ -246,7 +246,7 @@ const dispatchToProps = (dispatch, ownProps) => {
   const updateLogInterval = logInterval =>
     dispatch(SensorActions.update(id, 'logInterval', logInterval));
   const updateDuration = (type, value) =>
-    dispatch(SensorDetailActions.updateConfig(type, 'duration', value));
+    dispatch(SensorDetailActions.updateConfig(type, 'duration', value * MILLISECONDS.ONE_MINUTE));
   const updateTemperature = (type, value) =>
     dispatch(SensorDetailActions.updateConfig(type, 'temperature', value));
   const saveSensor = async () => {
