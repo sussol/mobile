@@ -59,13 +59,13 @@ export const LastSensorDownloadComponent = ({
 };
 
 LastSensorDownloadComponent.defaultProps = {
-  lastDownloadTime: new Date(),
+  lastDownloadTime: null,
 };
 
 LastSensorDownloadComponent.propTypes = {
   isDownloading: PropTypes.bool.isRequired,
   lastDownloadFailed: PropTypes.bool.isRequired,
-  lastDownloadTime: PropTypes.oneOf([PropTypes.instanceOf(Date), null]),
+  lastDownloadTime: PropTypes.instanceOf(Date),
 };
 
 const localStyles = StyleSheet.create({
