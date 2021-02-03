@@ -1,11 +1,11 @@
-import { UPDATE_ACTIONS } from '../../actions/Bluetooth/UpdateActions';
+import { UPDATE_ACTIONS } from '../../actions/Bluetooth/SensorUpdateActions';
 
 const initialState = () => ({
   setLogIntervalFor: '',
   sendingDisableButtonTo: '',
 });
 
-export const UpdateReducer = (state = initialState(), action) => {
+export const SensorUpdateReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
