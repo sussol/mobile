@@ -24,7 +24,9 @@ import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
 import { generalStrings, vaccineStrings } from '../localization';
 import { APP_FONT_FAMILY, DARKER_GREY, LIGHT_GREY, SUSSOL_ORANGE, WHITE } from '../globalStyles';
-import { SensorActions, VaccineActions } from '../actions';
+import { SensorActions } from '../actions';
+import { SensorBlinkActions } from '../actions/Bluetooth/SensorBlinkActions';
+import { SensorUpdateActions } from '../actions/Bluetooth/SensorUpdateActions';
 import { AfterInteractions } from '../widgets/AfterInteractions';
 import { selectEditingSensor } from '../selectors/Entities/sensor';
 import {
@@ -202,7 +204,7 @@ const dispatchToProps = (dispatch, ownProps) => {
   const { location } = sensor;
   const { id: locationID } = location;
 
-  const blink = macAddress => dispatch(VaccineActions.startSensorBlink(macAddress));
+  const blink = macAddress => dispatch(SensorBlinkActions.startSensorBlink(macAddress));
   const updateName = name => dispatch(SensorActions.update(sensorID, 'name', name));
   const updateCode = code => dispatch(LocationActions.update(locationID, 'code', code));
   const updateLogInterval = logInterval =>
@@ -215,7 +217,7 @@ const dispatchToProps = (dispatch, ownProps) => {
     dispatch(TemperatureBreachConfigActions.update(id, field, value));
   };
   const saveSensor = (macAddress, logInterval) =>
-    dispatch(VaccineActions.updateSensor(macAddress, logInterval))
+    dispatch(SensorUpdateActions.updateSensor(macAddress, logInterval))
       .then(() => dispatch(SensorActions.save()))
       .then(() => dispatch(goBack()))
       .catch(e => ToastAndroid.show(e.toString(), ToastAndroid.LONG));
