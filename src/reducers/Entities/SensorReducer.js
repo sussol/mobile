@@ -2,7 +2,9 @@ import { SENSOR_ACTIONS } from '../../actions/Entities/SensorActions';
 import { UIDatabase } from '../../database';
 import { ROUTES } from '../../navigation/index';
 
-const plainSensor = sensor => ({
+// Extracts the required fields of a realm instance into a plain JS object
+// which is more suitable to store in redux as immutable updates are simpler.
+const getPlainSensor = sensor => ({
   id: sensor.id,
   macAddress: sensor.macAddress,
   name: sensor.name,
@@ -16,7 +18,7 @@ const initialState = () => ({
   byId: UIDatabase.objects('Sensor').reduce(
     (acc, sensor) => ({
       ...acc,
-      [sensor.id]: plainSensor(sensor),
+      [sensor.id]: getPlainSensor(sensor),
     }),
     {}
   ),
@@ -68,7 +70,7 @@ export const SensorReducer = (state = initialState(), action) => {
       const { id } = sensor;
 
       // Only use plain objects.
-      const newById = { ...byId, [id]: plainSensor(sensor) };
+      const newById = { ...byId, [id]: getPlainSensor(sensor) };
 
       return { ...state, byId: newById, editingId: '' };
     }

@@ -3,7 +3,9 @@ import { TEMPERATURE_BREACH_CONFIG_ACTIONS } from '../../actions/Entities/Temper
 import { UIDatabase } from '../../database';
 import { ROUTES } from '../../navigation/index';
 
-const plainTemperatureBreachConfiguration = config => ({
+// Extracts the required fields of a realm instance into a plain JS object
+// which is more suitable to store in redux as immutable updates are simpler.
+const getPlainTemperatureBreachConfiguration = config => ({
   id: config.id,
   minimumTemperature: config.minimumTemperature,
   maximumTemperature: config.maximumTemperature,
@@ -18,7 +20,7 @@ const initialState = () => ({
   byId: UIDatabase.objects('TemperatureBreachConfiguration').reduce(
     (acc, config) => ({
       ...acc,
-      [config.id]: plainTemperatureBreachConfiguration(config),
+      [config.id]: getPlainTemperatureBreachConfiguration(config),
     }),
     {}
   ),
@@ -50,7 +52,7 @@ export const TemperatureBreachConfigReducer = (state = initialState(), action) =
       const newByIds = payload.reduce(
         (acc, newConfig) => ({
           ...acc,
-          [newConfig.id]: plainTemperatureBreachConfiguration(newConfig),
+          [newConfig.id]: getPlainTemperatureBreachConfiguration(newConfig),
         }),
         byId
       );
@@ -85,7 +87,7 @@ export const TemperatureBreachConfigReducer = (state = initialState(), action) =
       const newById = configs.reduce(
         (acc, config) => ({
           ...acc,
-          [config.id]: plainTemperatureBreachConfiguration(config),
+          [config.id]: getPlainTemperatureBreachConfiguration(config),
         }),
         byId
       );
