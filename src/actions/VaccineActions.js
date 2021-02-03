@@ -4,13 +4,15 @@
  */
 
 import moment from 'moment';
-import { selectIsDownloadingLogs } from '../selectors/vaccine';
+import { selectIsSyncingTemps } from '../selectors/vaccine';
 import { PermissionActions } from './PermissionActions';
 import BleService from '../bluetooth/BleService';
 import TemperatureLogManager from '../bluetooth/TemperatureLogManager';
+import SensorManager from '../bluetooth/SensorManager';
 import { UIDatabase } from '../database';
 import { VACCINE_CONSTANTS } from '../utilities/modules/vaccines/index';
 import { VACCINE_ENTITIES } from '../utilities/modules/vaccines/constants';
+import { syncStrings } from '../localization';
 
 export const VACCINE_ACTIONS = {
   DOWNLOAD_LOGS_START: 'Vaccine/downloadLogsStart',
@@ -26,36 +28,62 @@ export const VACCINE_ACTIONS = {
 const downloadLogsStart = () => ({
   type: VACCINE_ACTIONS.DOWNLOAD_LOGS_START,
 });
-const downloadLogsError = () => ({
+const downloadLogsError = error => ({
   type: VACCINE_ACTIONS.DOWNLOAD_LOGS_ERROR,
+  payload: { error },
 });
 const downloadLogsComplete = () => ({
   type: VACCINE_ACTIONS.DOWNLOAD_LOGS_COMPLETE,
 });
 
-const downloadAllLogs = () => async dispatch => {
+const downloadAll = () => async dispatch => {
   dispatch(downloadLogsStart());
   // Ensure there are some sensors which have been assigned a location before syncing.
   const sensors = UIDatabase.objects('Sensor').filtered('location != null && isActive == true');
 
   if (!sensors.length) {
-    // TODO: Should we do something if there are errors?
-    dispatch(downloadLogsError());
+    dispatch(downloadLogsError(syncStrings.no_sensors));
     return null;
   }
 
   for (let i = 0; i < sensors.length; i++) {
     // Intentionally sequential
-    // eslint-disable-next-line no-await-in-loop
-    await dispatch(downloadLogsFromSensor(sensors[i]));
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      await dispatch(downloadLogsFromSensor(sensors[i]));
+      // eslint-disable-next-line no-await-in-loop
+      await dispatch(downloadInfoFromSensor(sensors[i]));
+    } catch (exception) {
+      dispatch(downloadLogsError(exception.message));
+    }
   }
+  // this will now overwrite the error message
   dispatch(downloadLogsComplete());
+  return null;
+};
+
+const downloadInfoFromSensor = sensor => async () => {
+  const { macAddress } = sensor;
+  const sensorInfo =
+    (await BleService().getInfoWithRetries(
+      macAddress,
+      VACCINE_CONSTANTS.MAX_BLUETOOTH_COMMAND_ATTEMPTS
+    )) ?? {};
+
+  if (sensorInfo) {
+    // creating a new object to allow mutating.
+    // cannot use spread operator down here
+    const updatedSensor = SensorManager().sensorCreator(sensor);
+    updatedSensor.batteryLevel = parseInt(sensorInfo.batteryLevel, 10);
+
+    await SensorManager().saveSensor(updatedSensor);
+  }
+
   return null;
 };
 
 const downloadLogsFromSensor = sensor => async () => {
   const { macAddress, logInterval } = sensor;
-
   const downloadedLogsResult =
     (await BleService().downloadLogsWithRetries(
       macAddress,
@@ -90,6 +118,7 @@ const downloadLogsFromSensor = sensor => async () => {
 
   return null;
 };
+
 const setLogIntervalStart = macAddress => ({
   type: VACCINE_ACTIONS.SET_LOG_INTERVAL_START,
   payload: { macAddress },
@@ -105,13 +134,13 @@ const disableButtonStop = macAddress => ({
   payload: { macAddress },
 });
 
-const startDownloadAllLogs = () => async (dispatch, getState) => {
+const startDownloadAll = () => async (dispatch, getState) => {
   // Ensure there isn't already a download in progress before starting a new one
   const state = getState();
-  const isDownloadingLogs = selectIsDownloadingLogs(state);
-  if (isDownloadingLogs) return null;
+  const isSyncingTemps = selectIsSyncingTemps(state);
+  if (isSyncingTemps) return null;
 
-  await PermissionActions.withLocationAndBluetooth(dispatch, getState, downloadAllLogs());
+  await PermissionActions.withLocationAndBluetooth(dispatch, getState, downloadAll());
   return null;
 };
 
@@ -171,7 +200,7 @@ const updateSensor = sensor => async dispatch => {
 
 export const VaccineActions = {
   updateSensor,
-  startDownloadAllLogs,
+  startDownloadAll,
   startSensorDisableButton,
   startSetLogInterval,
   setLogInterval,

@@ -282,7 +282,7 @@ const mapDispatchToProps = dispatch => {
   const closeTemperatureSyncModal = () => dispatch(TemperatureSyncActions.closeModal());
   const onOpenSyncModal = () => dispatch(openSyncModal());
   const closeBreachModal = () => dispatch(BreachActions.close());
-  const syncTemperatures = () => dispatch(VaccineActions.startDownloadAllLogs());
+  const syncTemperatures = () => dispatch(VaccineActions.startDownloadAll());
   const requestBluetooth = newStatus => dispatch(PermissionActions.requestBluetooth(newStatus));
 
   return {
