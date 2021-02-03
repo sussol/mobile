@@ -1,10 +1,10 @@
-import { BLINK_ACTIONS } from '../../actions/Bluetooth/BlinkActions';
+import { BLINK_ACTIONS } from '../../actions/Bluetooth/SensorBlinkActions';
 
 const initialState = () => ({
   sendingBlinkTo: '',
 });
 
-export const BlinkReducer = (state = initialState(), action) => {
+export const SensorBlinkReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {

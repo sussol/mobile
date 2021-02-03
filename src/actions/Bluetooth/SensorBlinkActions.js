@@ -27,6 +27,6 @@ const startSensorBlink = macAddress => async (dispatch, getState) => {
   return null;
 };
 
-export const BlinkActions = {
+export const SensorBlinkActions = {
   startSensorBlink,
 };

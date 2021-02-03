@@ -1,11 +1,11 @@
-import { SCAN_ACTIONS } from '../../actions/Bluetooth/ScanActions';
+import { SCAN_ACTIONS } from '../../actions/Bluetooth/SensorScanActions';
 
 const initialState = () => ({
   isScanning: false,
   scannedSensorAddresses: [],
 });
 
-export const ScanReducer = (state = initialState(), action) => {
+export const SensorScanReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {

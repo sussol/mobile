@@ -23,7 +23,8 @@ import {
 
 import { goBack } from '../../navigation/actions';
 import { selectNewSensor } from '../../selectors/Entities/sensor';
-import { WizardActions, LocationActions, SensorActions, VaccineActions } from '../../actions';
+import { WizardActions, LocationActions, SensorActions } from '../../actions';
+import { SensorUpdateActions } from '../../actions/Bluetooth/SensorUpdateActions';
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 import { DARKER_GREY, LIGHT_GREY, SUSSOL_ORANGE, WHITE } from '../../globalStyles';
 import { buttonStrings, vaccineStrings } from '../../localization';
@@ -113,7 +114,7 @@ const dispatchToProps = dispatch => {
   const previousTab = () => dispatch(WizardActions.previousTab());
   const exit = () => dispatch(goBack());
   const connectToSensor = sensor => () =>
-    dispatch(VaccineActions.updateSensor(sensor))
+    dispatch(SensorUpdateActions.updateSensor(sensor))
       .then(() => dispatch(SensorActions.createNew()))
       .then(() => {
         ToastAndroid.show(vaccineStrings.sensor_save_success, ToastAndroid.LONG);
