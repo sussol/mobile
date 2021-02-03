@@ -11,7 +11,6 @@ import {
   PageButton,
   Paper,
   BatteryIcon,
-  DownloadIcon,
   TemperatureIcon,
   IconButton,
   LightbulbIcon,
@@ -28,6 +27,7 @@ import { DARKER_GREY, BLACK, FINALISE_GREEN } from '../globalStyles';
 import { gotoEditSensorPage, gotoFridgeDetailPage, gotoNewSensorPage } from '../navigation/actions';
 import { AfterInteractions } from '../widgets/AfterInteractions';
 import { BlinkActions } from '../actions/Bluetooth/BlinkActions';
+import { ExportTemperatureDataButton } from '../widgets/ExportTemperatureDataButton';
 
 const formatDate = date => moment(date).fromNow();
 const formatTemperature = temperature => `${Math.round(temperature * 10) / 10}°C`;
@@ -46,7 +46,7 @@ const FridgeDisplay = ({ fridge, blinkSensor, toFridgeDetail, toEditSensorPage }
       >
         {description}
       </TextWithIcon>
-      <IconButton Icon={<DownloadIcon color={BLACK} />} containerStyle={localStyles.iconButton} />
+      <ExportTemperatureDataButton sensor={sensor} />
       <IconButton
         Icon={<LightbulbIcon color={BLACK} />}
         onPress={() => blinkSensor(sensor.macAddress)}
