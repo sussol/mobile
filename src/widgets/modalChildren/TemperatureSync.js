@@ -12,16 +12,15 @@ import { PageButton, ProgressBar, FlexColumn } from '..';
 import { syncStrings } from '../../localization';
 import globalStyles, { WARM_GREY } from '../../globalStyles';
 
-import { TemperatureSyncActions } from '../../actions/TemperatureSyncActions';
+import { VaccineActions } from '../../actions/VaccineActions';
 import {
-  selectTemperatureSyncMessage,
   selectTemperatureSyncLastSyncString,
   selectCurrentSensorNameString,
   selectTemperatureSyncIsComplete,
   selectTemperatureSyncProgress,
-  selectIsSyncingTemperatures,
   selectErrorMessage,
 } from '../../selectors/temperatureSync';
+import { selectIsSyncingTemps, selectTemperatureSyncMessage } from '../../selectors/vaccine';
 
 const TemperatureSyncComponent = ({
   total,
@@ -62,7 +61,7 @@ const mapStateToProps = state => {
   const currentSensor = selectCurrentSensorNameString(state);
   const isComplete = selectTemperatureSyncIsComplete(state);
   const { progress, total } = selectTemperatureSyncProgress(state);
-  const isSyncing = selectIsSyncingTemperatures(state);
+  const isSyncing = selectIsSyncingTemps(state);
   const errorMessage = selectErrorMessage(state);
 
   return {
@@ -78,7 +77,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  syncTemperatures: () => dispatch(TemperatureSyncActions.manualTemperatureSync()),
+  syncTemperatures: () => dispatch(VaccineActions.startDownloadAll()),
 });
 
 TemperatureSyncComponent.defaultProps = {

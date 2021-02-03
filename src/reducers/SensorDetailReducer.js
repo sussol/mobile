@@ -58,11 +58,6 @@ export const SensorDetailReducer = (state = initialState(), action) => {
 
       const config = state[configType];
 
-      if (configField === 'duration') {
-        const newConfig = { ...config, [configField]: value * SECONDS.ONE_MINUTE };
-        return { ...state, [configType]: newConfig };
-      }
-
       const newConfig = { ...config, [configField]: value };
       return { ...state, [configType]: newConfig };
     }
