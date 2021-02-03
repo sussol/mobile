@@ -50,7 +50,7 @@ import { selectEditingLocation } from '../selectors/Entities/location';
 import { goBack } from '../navigation/actions';
 import { MILLISECONDS } from '../utilities/index';
 
-const formatLastSyncDate = date => moment(date).fromNow();
+const formatLastSyncDate = date => (date ? moment(date).fromNow() : generalStrings.not_available);
 const formatBatteryLevel = batteryLevel => `${batteryLevel}%`;
 
 export const FridgeHeader = ({ macAddress, batteryLevel, lastSyncDate, onBlink }) => (
@@ -83,7 +83,7 @@ export const FridgeHeader = ({ macAddress, batteryLevel, lastSyncDate, onBlink }
 FridgeHeader.defaultProps = {
   macAddress: 'AA:BB:CC:DD:EE:FF',
   batteryLevel: 99,
-  lastSyncDate: new Date(),
+  lastSyncDate: null,
 };
 
 FridgeHeader.propTypes = {
@@ -238,7 +238,7 @@ const stateToProps = state => {
   const location = selectEditingLocation(state);
 
   const { code } = location ?? {};
-  const { name, logInterval, macAddress, batteryLevel, lastSyncDate } = sensorDetail ?? {};
+  const { name, logInterval, macAddress, batteryLevel, lastSyncDate = null } = sensorDetail ?? {};
   const {
     HOT_CONSECUTIVE: hotConsecutiveConfig = {},
     COLD_CONSECUTIVE: coldConsecutiveConfig = {},
@@ -320,10 +320,11 @@ SensorEditPageComponent.defaultProps = {
   logInterval: 300,
   macAddress: '',
   batteryLevel: 0,
+  lastSyncDate: null,
 };
 
 SensorEditPageComponent.propTypes = {
-  lastSyncDate: PropTypes.instanceOf(Date).isRequired,
+  lastSyncDate: PropTypes.instanceOf(Date),
   batteryLevel: PropTypes.number,
   macAddress: PropTypes.string,
   name: PropTypes.string,
