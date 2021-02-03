@@ -48,6 +48,7 @@ import {
 import { LocationActions, TemperatureBreachConfigActions } from '../actions/Entities/index';
 import { selectEditingLocation } from '../selectors/Entities/location';
 import { goBack } from '../navigation/actions';
+import { MILLISECONDS } from '../utilities/index';
 
 const formatLastSyncDate = date => moment(date).fromNow();
 const formatBatteryLevel = batteryLevel => `${batteryLevel}%`;
@@ -284,7 +285,9 @@ const dispatchToProps = (dispatch, ownProps) => {
   const updateLogInterval = logInterval =>
     dispatch(SensorActions.update(sensorID, 'logInterval', logInterval));
   const updateDuration = (id, value) =>
-    dispatch(TemperatureBreachConfigActions.update(id, 'duration', value * 60));
+    dispatch(
+      TemperatureBreachConfigActions.update(id, 'duration', value * MILLISECONDS.ONE_MINUTE)
+    );
   const updateTemperature = (type, id, value) => {
     const isHot = type.includes('HOT');
     const field = isHot ? 'minimumTemperature' : 'maximumTemperature';
