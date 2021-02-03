@@ -1,10 +1,12 @@
 import { combineReducers } from 'redux';
-import { BlinkReducer } from './BlinkReducer';
-import { ScanReducer } from './ScanReducer';
+import { SensorBlinkReducer } from './SensorBlinkReducer';
+import { SensorScanReducer } from './SensorScanReducer';
+import { SensorUpdateReducer } from './SensorUpdateReducer';
 import { DownloadReducer } from './DownloadReducer';
 
 export const BluetoothReducer = combineReducers({
-  blink: BlinkReducer,
-  scan: ScanReducer,
+  blink: SensorBlinkReducer,
   download: DownloadReducer,
+  scan: SensorScanReducer,
+  update: SensorUpdateReducer,
 });

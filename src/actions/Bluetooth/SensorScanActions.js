@@ -52,7 +52,7 @@ const stopSensorScan = () => dispatch => {
   BleService().stopScan();
 };
 
-export const ScanActions = {
+export const SensorScanActions = {
   startSensorScan,
   stopSensorScan,
 };
