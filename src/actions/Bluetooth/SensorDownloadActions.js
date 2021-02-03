@@ -96,6 +96,6 @@ const startDownloadAllLogs = () => async (dispatch, getState) => {
   return null;
 };
 
-export const DownloadActions = {
+export const SensorDownloadActions = {
   startDownloadAllLogs,
 };

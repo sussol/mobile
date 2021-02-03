@@ -1,10 +1,10 @@
-import { DOWNLOAD_ACTIONS } from '../../actions/Bluetooth/DownloadActions';
+import { DOWNLOAD_ACTIONS } from '../../actions/Bluetooth/SensorDownloadActions';
 
 const initialState = () => ({
   isSyncingTemps: false,
 });
 
-export const DownloadReducer = (state = initialState(), action) => {
+export const SensorDownloadReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
