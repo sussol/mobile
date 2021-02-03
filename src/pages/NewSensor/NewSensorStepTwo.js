@@ -36,7 +36,7 @@ export const NewSensorStepTwoComponent = ({
   coldCumulativeThreshold,
 }) => (
   <TabContainer>
-    <Paper headerText={vaccineStrings.new_sensor_step_two_title}>
+    <Paper height={420} headerText={vaccineStrings.new_sensor_step_two_title}>
       <AfterInteractions placeholder={null}>
         <BreachConfigRow
           threshold={hotConsecutiveThreshold}
