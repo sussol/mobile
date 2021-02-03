@@ -52,7 +52,7 @@ export class Sensor extends Realm.Object {
   }
 
   get mostRecentLog() {
-    return this.logs.sorted('timestamp', false)[0];
+    return this.logs.sorted('timestamp', true)[0];
   }
 
   get lastSyncDate() {
