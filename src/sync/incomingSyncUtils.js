@@ -403,10 +403,6 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         unit: database.getOrCreate('Unit', record.unit_ID),
         doses: parseNumber(record.doses),
         isVaccine: parseBoolean(record.is_vaccine),
-        defaultRestrictedLocationType: database.getOrCreate(
-          'LocationType',
-          record.default_restricted_location_type_ID
-        ),
       };
       database.update(recordType, internalRecord);
       break;
@@ -457,10 +453,6 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         id: record.ID,
         itemId: record.item_ID,
         joinsThisStore,
-        restrictedLocationType: database.getOrCreate(
-          'LocationType',
-          record.restricted_location_type_id
-        ),
       };
       database.update(recordType, internalRecord);
       if (joinsThisStore) {

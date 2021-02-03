@@ -34,8 +34,6 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
       dispatch(PageActions.refreshData(route));
     },
     onToggleTransactionType: () => dispatch(PageActions.toggleTransactionType(route)),
-    onToggleFridges: () => dispatch(PageActions.toggleFridges(route)),
-    onToggleSensors: () => dispatch(PageActions.toggleSensors(route)),
     onSelectIndicator: indicatorCode => dispatch(PageActions.selectIndicator(indicatorCode, route)),
     onEditIndicatorValue: (value, rowKey, columnKey) =>
       dispatch(PageActions.editIndicatorValue(value, rowKey, columnKey, route)),
@@ -46,8 +44,6 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
     onSortColumn: columnKey => dispatch(PageActions.sortData(columnKey, route)),
 
     // Modals
-    onSelectSensorLocation: rowKey =>
-      dispatch(PageActions.openModal(MODAL_KEYS.SELECT_SENSOR_LOCATION, rowKey, route)),
     onSelectLocation: rowKey =>
       dispatch(PageActions.openModal(MODAL_KEYS.SELECT_LOCATION, rowKey, route)),
     onSelectVvmStatus: rowKey =>
@@ -65,9 +61,6 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
     onNewCustomerInvoice: () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_CUSTOMER, route)),
     onNewPrescription: () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_PATIENT, route)),
     onCloseModal: () => dispatch(PageActions.closeModal(route)),
-    onEditLocation: rowKey =>
-      dispatch(PageActions.openModal(MODAL_KEYS.EDIT_LOCATION, rowKey, route)),
-    onSaveLocation: locationValues => dispatch(PageActions.saveLocation(locationValues, route)),
 
     // Modal callbacks
     onApplyReason: ({ item }) => dispatch(PageActions.applyReason(item, route)),
@@ -83,7 +76,6 @@ export const getPageDispatchers = (dispatch, dataType, route) => {
       dispatch(PageActions.editStocktakeBatchVvmStatus(item, route)),
 
     // Adding items/batch rows.
-    onAddFridge: () => dispatch(PageActions.addFridge(route)),
     onAddTransactionBatch: item => dispatch(PageActions.addTransactionBatch(item, route)),
     onAddStocktakeBatch: () => dispatch(PageActions.addStocktakeBatch(route)),
     onAddTransactionItem: item => dispatch(PageActions.addItem(item, 'TransactionItem', route)),

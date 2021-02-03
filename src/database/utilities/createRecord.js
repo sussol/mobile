@@ -628,7 +628,7 @@ const createInventoryAdjustment = (database, user, date, isAddition) => {
  */
 const createItemBatch = (database, item, batchString, supplier) => {
   // Handle cross-reference items.
-  const { realItem, isVaccine, id: itemId } = item;
+  const { realItem, isVaccine } = item;
 
   const itemBatch = database.create('ItemBatch', {
     id: generateUUID(),
@@ -651,18 +651,6 @@ const createItemBatch = (database, item, batchString, supplier) => {
       .objects('VaccineVialMonitorStatus')
       .sorted('level')[0];
 
-    // An item has a restriction of the location type a location must be related to,
-    // in order to be assigned to the item.
-    const itemStoreJoin = database
-      .objects('ItemStoreJoin')
-      .filtered('itemId == $0 && joinsThisStore == true', itemId)[0];
-    const { restrictedLocationType } = itemStoreJoin ?? {};
-    const { id: locationTypeId = '' } = restrictedLocationType ?? {};
-    const location = database
-      .objects('Location')
-      .filtered('locationType.id == $0', locationTypeId)[0];
-
-    if (itemBatch.shouldApplyLocation(location)) itemBatch.applyLocation(database, location);
     if (itemBatch.shouldApplyVvmStatus(vaccineVialMonitorStatus)) {
       itemBatch.applyVvmStatus(database, vaccineVialMonitorStatus);
     }
@@ -1047,6 +1035,7 @@ const createTransactionItem = (database, transaction, item, initialQuantity = 0)
 const createLocation = (database, location) => {
   const defaultLocation = { id: generateUUID() };
   const mergedLocation = { ...defaultLocation, ...location };
+
   return database.update('Location', mergedLocation);
 };
 

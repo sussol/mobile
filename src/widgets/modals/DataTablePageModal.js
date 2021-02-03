@@ -221,28 +221,22 @@ const DataTablePageModalComponent = ({ isOpen, onClose, modalKey, onSelect, curr
             emptyMessage={modalStrings.no_masterlist_available}
           />
         );
-      case MODAL_KEYS.SELECT_SENSOR_LOCATION:
       case MODAL_KEYS.SELECT_LOCATION: {
         const { currentLocationName } = currentValue;
-        const { id = '', description = '' } =
-          currentValue?.restrictedLocationType?.(UIDatabase) ?? {};
 
         const placeholderLookup = {
           [MODAL_KEYS.SELECT_LOCATION]: generalStrings.no_locations_for_batch,
-          [MODAL_KEYS.SELECT_SENSOR_LOCATION]: generalStrings.no_locations,
         };
 
         const locations = UIDatabase.objects('Location');
-        const selection = id ? locations.filtered('locationType.id == $0', id) : locations;
 
         const placeholder = generalStrings.formatString(
-          placeholderLookup[modalKey] ?? generalStrings.no_locations,
-          description
+          placeholderLookup[modalKey] ?? generalStrings.no_locations
         );
 
         return (
           <GenericChoiceList
-            data={selection}
+            data={locations}
             highlightValue={currentLocationName}
             onPress={onSelect}
             keyToDisplay="description"
