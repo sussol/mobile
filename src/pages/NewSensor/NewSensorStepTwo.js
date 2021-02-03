@@ -1,6 +1,6 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -36,7 +36,7 @@ export const NewSensorStepTwoComponent = ({
   coldCumulativeThreshold,
 }) => (
   <TabContainer>
-    <Paper height={320} headerText={vaccineStrings.new_sensor_step_two_title}>
+    <Paper headerText={vaccineStrings.new_sensor_step_two_title}>
       <AfterInteractions placeholder={null}>
         <BreachConfigRow
           threshold={hotConsecutiveThreshold}
@@ -44,6 +44,7 @@ export const NewSensorStepTwoComponent = ({
           {...hotConsecutiveConfig}
           updateDuration={updateDuration}
           updateTemperature={updateTemperature}
+          containerStyle={localStyles.paperContentRow}
         />
         <BreachConfigRow
           threshold={coldConsecutiveThreshold}
@@ -51,6 +52,7 @@ export const NewSensorStepTwoComponent = ({
           {...coldConsecutiveConfig}
           updateDuration={updateDuration}
           updateTemperature={updateTemperature}
+          containerStyle={localStyles.paperContentRow}
         />
         <BreachConfigRow
           threshold={hotCumulativeThreshold}
@@ -58,6 +60,7 @@ export const NewSensorStepTwoComponent = ({
           {...hotCumulativeConfig}
           updateDuration={updateDuration}
           updateTemperature={updateTemperature}
+          containerStyle={localStyles.paperContentRow}
         />
         <BreachConfigRow
           threshold={coldCumulativeThreshold}
@@ -65,6 +68,7 @@ export const NewSensorStepTwoComponent = ({
           {...coldCumulativeConfig}
           updateDuration={updateDuration}
           updateTemperature={updateTemperature}
+          containerStyle={localStyles.paperContentRow}
         />
       </AfterInteractions>
     </Paper>
@@ -85,6 +89,12 @@ export const NewSensorStepTwoComponent = ({
     </FlexRow>
   </TabContainer>
 );
+
+const localStyles = StyleSheet.create({
+  paperContentRow: {
+    padding: 8,
+  },
+});
 
 const stateToProps = state => {
   const {
