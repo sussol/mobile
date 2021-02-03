@@ -15,3 +15,9 @@ export const selectScannedSensors = ({ bluetooth }) => {
   const { scannedSensorAddresses = [] } = scan || {};
   return scannedSensorAddresses;
 };
+
+export const selectIsDownloadingLogs = ({ bluetooth }) => {
+  const { download } = bluetooth || {};
+  const { isDownloadingLogs = false } = download || {};
+  return isDownloadingLogs;
+};
