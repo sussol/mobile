@@ -12,6 +12,10 @@ const getPlainSensor = sensor => ({
   locationID: sensor.location?.id,
   isActive: sensor.isActive,
   logInterval: sensor.logInterval,
+  currentTemperature: sensor?.currentTemperature ?? null,
+  mostRecentBreachTime: sensor?.mostRecentBreachTime
+    ? new Date(sensor?.mostRecentBreachTime).getTime()
+    : null,
 });
 
 const initialState = () => ({
