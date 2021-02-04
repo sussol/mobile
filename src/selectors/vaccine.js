@@ -21,3 +21,27 @@ export const selectIsSyncingTemps = ({ vaccine }) => {
   const { isSyncingTemps = false } = vaccine || {};
   return isSyncingTemps;
 };
+
+export const selectDownloadingLogsFrom = ({ vaccine }) => {
+  const { downloadingLogsFrom } = vaccine;
+  return downloadingLogsFrom;
+};
+
+export const selectLastDownloadTime = ({ vaccine }, macAddress) => {
+  const { lastDownloadTime } = vaccine;
+  return lastDownloadTime[macAddress] ? new Date(lastDownloadTime[macAddress]) : null;
+};
+
+export const selectLastDownloadFailed = ({ vaccine }, macAddress) => {
+  const { lastDownloadStatus } = vaccine;
+  const status = lastDownloadStatus[macAddress];
+  const lastDownloadFailed = status !== 'OK';
+  return lastDownloadFailed;
+};
+
+export const selectIsDownloading = (state, macAddress) => {
+  const downloadingLogsFrom = selectDownloadingLogsFrom(state);
+  const isDownloading = downloadingLogsFrom === macAddress;
+
+  return isDownloading;
+};

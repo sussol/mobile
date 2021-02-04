@@ -2,8 +2,7 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/jsx-wrap-multilines */
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import moment from 'moment';
+import { StyleSheet, ToastAndroid } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -16,10 +15,6 @@ import {
   PageButton,
   Paper,
   TextEditor,
-  BatteryIcon,
-  IconButton,
-  LightbulbIcon,
-  WifiIcon,
 } from '../widgets';
 import { BreachConfigRow } from './NewSensor/BreachConfigRow';
 import { DurationEditor } from '../widgets/StepperInputs';
@@ -28,14 +23,7 @@ import { TextWithIcon } from '../widgets/Typography';
 import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
 import { generalStrings, vaccineStrings } from '../localization';
-import {
-  MISTY_CHARCOAL,
-  APP_FONT_FAMILY,
-  DARKER_GREY,
-  LIGHT_GREY,
-  SUSSOL_ORANGE,
-  WHITE,
-} from '../globalStyles';
+import { APP_FONT_FAMILY, DARKER_GREY, LIGHT_GREY, SUSSOL_ORANGE, WHITE } from '../globalStyles';
 import { SensorActions } from '../actions';
 import { SensorBlinkActions } from '../actions/Bluetooth/SensorBlinkActions';
 import { SensorUpdateActions } from '../actions/Bluetooth/SensorUpdateActions';
@@ -48,50 +36,8 @@ import {
 import { LocationActions, TemperatureBreachConfigActions } from '../actions/Entities/index';
 import { selectEditingLocation } from '../selectors/Entities/location';
 import { goBack } from '../navigation/actions';
+import { FridgeHeader } from '../widgets/FridgeHeader';
 import { MILLISECONDS } from '../utilities/index';
-
-const formatLastSyncDate = date => (date ? moment(date).fromNow() : generalStrings.not_available);
-const formatBatteryLevel = batteryLevel => `${batteryLevel}%`;
-
-export const FridgeHeader = ({ macAddress, batteryLevel, lastSyncDate, onBlink }) => (
-  <>
-    <View style={{ flex: 1, justifyContent: 'center' }}>
-      <Text style={localStyles.paperTitleText}>{macAddress}</Text>
-    </View>
-    <TextWithIcon
-      containerStyle={localStyles.headerTextWithIcon}
-      size="s"
-      Icon={<BatteryIcon color={MISTY_CHARCOAL} />}
-    >
-      {formatBatteryLevel(batteryLevel)}
-    </TextWithIcon>
-    <TextWithIcon
-      containerStyle={localStyles.headerTextWithIcon}
-      size="s"
-      Icon={<WifiIcon size={20} color={MISTY_CHARCOAL} />}
-    >
-      {formatLastSyncDate(lastSyncDate)}
-    </TextWithIcon>
-    <IconButton
-      containerStyle={{ width: 50, justifyContent: 'center' }}
-      Icon={<LightbulbIcon color={DARKER_GREY} />}
-      onPress={() => onBlink(macAddress)}
-    />
-  </>
-);
-
-FridgeHeader.defaultProps = {
-  macAddress: 'AA:BB:CC:DD:EE:FF',
-  batteryLevel: 99,
-  lastSyncDate: null,
-};
-
-FridgeHeader.propTypes = {
-  macAddress: PropTypes.string,
-  batteryLevel: PropTypes.number,
-  lastSyncDate: PropTypes.instanceOf(Date),
-  onBlink: PropTypes.func.isRequired,
-};
 
 export const SensorEditPageComponent = ({
   logInterval,
@@ -108,28 +54,17 @@ export const SensorEditPageComponent = ({
   updateLogInterval,
   saveSensor,
   macAddress,
-  batteryLevel,
-  lastSyncDate,
-  blink,
   hotConsecutiveThreshold,
   coldCumulativeThreshold,
   coldConsecutiveThreshold,
   hotCumulativeThreshold,
+  sensor,
 }) => {
   const withLoadingIndicator = useLoadingIndicator();
   return (
     <DataTablePageView style={{ paddingHorizontal: 20, paddingVertical: 30 }}>
       <AfterInteractions>
-        <Paper
-          Header={
-            <FridgeHeader
-              onBlink={blink}
-              lastSyncDate={lastSyncDate}
-              macAddress={macAddress}
-              batteryLevel={batteryLevel}
-            />
-          }
-        >
+        <Paper Header={<FridgeHeader sensor={sensor} />}>
           <EditorRow
             label={vaccineStrings.sensor_name}
             Icon={<InfoIcon color={DARKER_GREY} />}
@@ -215,16 +150,6 @@ const localStyles = StyleSheet.create({
   paperContentRow: {
     padding: 8,
   },
-  paperTitleText: {
-    color: DARKER_GREY,
-    fontSize: 14,
-    fontFamily: APP_FONT_FAMILY,
-    textTransform: 'uppercase',
-  },
-  headerTextWithIcon: {
-    flex: 0,
-    paddingHorizontal: 8,
-  },
   pageButtonText: {
     fontSize: 14,
     fontFamily: APP_FONT_FAMILY,
@@ -234,11 +159,11 @@ const localStyles = StyleSheet.create({
 });
 
 const stateToProps = state => {
-  const sensorDetail = selectEditingSensor(state);
+  const sensor = selectEditingSensor(state);
   const location = selectEditingLocation(state);
 
   const { code } = location ?? {};
-  const { name, logInterval, macAddress, batteryLevel, lastSyncDate = null } = sensorDetail ?? {};
+  const { name, logInterval, macAddress, batteryLevel, lastSyncDate } = sensor ?? {};
   const {
     HOT_CONSECUTIVE: hotConsecutiveConfig = {},
     COLD_CONSECUTIVE: coldConsecutiveConfig = {},
@@ -254,6 +179,7 @@ const stateToProps = state => {
   } = selectEditingConfigThresholds(state);
 
   return {
+    sensor,
     lastSyncDate,
     code,
     name,
@@ -297,7 +223,7 @@ const dispatchToProps = (dispatch, ownProps) => {
     dispatch(SensorUpdateActions.updateSensor(sensorToUpdate))
       .then(() => dispatch(SensorActions.save()))
       .then(() => dispatch(goBack()))
-      .catch(e => console.log(e));
+      .catch(e => ToastAndroid.show(e.toString(), ToastAndroid.LONG));
 
   return {
     blink,
@@ -320,10 +246,12 @@ SensorEditPageComponent.defaultProps = {
   logInterval: 300,
   macAddress: '',
   batteryLevel: 0,
+  sensor: {},
   lastSyncDate: null,
 };
 
 SensorEditPageComponent.propTypes = {
+  sensor: PropTypes.object,
   lastSyncDate: PropTypes.instanceOf(Date),
   batteryLevel: PropTypes.number,
   macAddress: PropTypes.string,
