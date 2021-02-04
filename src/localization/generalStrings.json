@@ -1,5 +1,10 @@
 {
   "gb": {
+    "no": "No",
+    "yes": "Yes",
+    "ongoing": "ongoing",
+    "above": "Above",
+    "below": "Below",
     "require_permission_to_send_data": "We require storage permissions to send temperature data",
     "report_generation_failed": "Report generation failed.",
     "a_csv_file": "A CSV File will be sent to this email address",

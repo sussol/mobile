@@ -18,6 +18,7 @@ import validationStringsJSON from './validationStrings.json';
 import formInputStringsJSON from './formInputStrings.json';
 import dispensingStringsJSON from './dispensingStrings.json';
 import vaccineStringsJSON from './vaccineStrings.json';
+import reportStringsJSON from './reportStrings.json';
 
 export const authStrings = new LocalizedStrings(authStringsJSON);
 export const buttonStrings = new LocalizedStrings(buttonStringsJSON);
@@ -33,6 +34,7 @@ export const validationStrings = new LocalizedStrings(validationStringsJSON);
 export const formInputStrings = new LocalizedStrings(formInputStringsJSON);
 export const dispensingStrings = new LocalizedStrings(dispensingStringsJSON);
 export const vaccineStrings = new LocalizedStrings(vaccineStringsJSON);
+export const reportStrings = new LocalizedStrings(reportStringsJSON);
 
 export const LANGUAGE_CODES = {
   ENGLISH: 'gb',
