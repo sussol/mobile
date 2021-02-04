@@ -1,6 +1,8 @@
+/* eslint-disable react/require-default-props */
+/* eslint-disable arrow-body-style */
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -10,128 +12,66 @@ import {
   ChevronRightIcon,
   PageButton,
   Paper,
-  BatteryIcon,
-  DownloadIcon,
   TemperatureIcon,
-  IconButton,
-  CogIcon,
   Circle,
   FlexRow,
   AlarmClockIcon,
-  WifiIcon,
 } from '../widgets/index';
 import { TextWithIcon } from '../widgets/Typography';
 
-import { buttonStrings } from '../localization';
-import { DARKER_GREY, BLACK, FINALISE_GREEN } from '../globalStyles';
-import { gotoEditSensorPage, gotoFridgeDetailPage, gotoNewSensorPage } from '../navigation/actions';
+import { generalStrings, buttonStrings } from '../localization';
+import { DARKER_GREY, BLACK } from '../globalStyles';
+import { gotoFridgeDetailPage, gotoNewSensorPage } from '../navigation/actions';
 import { AfterInteractions } from '../widgets/AfterInteractions';
-import { BlinkSensorButton } from '../widgets/BlinkSensorButton';
+import { FridgeHeader } from '../widgets/FridgeHeader';
+import { selectSensors } from '../selectors/Entities/sensor';
+import temperature from '../utilities/temperature';
 
-const formatDate = date => moment(date).fromNow();
-const formatTemperature = temperature => `${Math.round(temperature * 10) / 10}°C`;
+const formatDate = date => (date ? moment(date).fromNow() : generalStrings.not_available);
 
-const FridgeDisplay = ({ fridge, toFridgeDetail, toEditSensorPage }) => {
-  const { description, sensors } = fridge;
-  const [sensor] = sensors;
-  const header = (
-    <>
-      <TextWithIcon
-        left
-        size="ms"
-        textStyle={{ textTransform: 'uppercase' }}
-        containerStyle={{ flex: 1 }}
-        Icon={<Circle size={20} backgroundColor={FINALISE_GREEN} />}
-      >
-        {description}
-      </TextWithIcon>
-      <IconButton Icon={<DownloadIcon color={BLACK} />} containerStyle={localStyles.iconButton} />
-      <BlinkSensorButton macAddress={sensor?.macAddress} />
-      <IconButton
-        Icon={<CogIcon color={BLACK} />}
-        onPress={() => toEditSensorPage(sensor)}
-        containerStyle={localStyles.iconButton}
-      />
-    </>
-  );
+const FridgeDisplay = ({ sensor, toFridgeDetail }) => {
+  const { id, macAddress, currentTemperature, mostRecentBreachTime, locationID } = sensor;
 
   return (
     <Paper
-      // macAddress passed to fridgeHeader is quite naff. The settings page for the "fridge" is
-      // actually for a sensor, assuming 1 sensor per fridge.
-      Header={header}
+      Header={<FridgeHeader showCog sensor={sensor} />}
       contentContainerStyle={localStyles.fridgePaperContentContainer}
     >
-      {sensors.map(({ id, macAddress, batteryLevel, breaches, mostRecentLog }) => {
-        const lastSyncMessage = mostRecentLog ? formatDate(mostRecentLog.timestamp) : 'No logs yet';
-        const temperature = mostRecentLog ? formatTemperature(mostRecentLog.temperature) : 'N/A';
-        const mostRecentBreach = breaches?.sorted('endTimestamp', true)[0];
-        const lastBreachMessage = mostRecentBreach
-          ? formatDate(mostRecentBreach.endTimestamp)
-          : 'Never!';
+      <TouchableOpacity onPress={() => toFridgeDetail(locationID)}>
+        <FlexRow key={id}>
+          <TextWithIcon left size="ms" containerStyle={{ flex: 1 }} Icon={<Circle size={20} />}>
+            {macAddress}
+          </TextWithIcon>
+          <TextWithIcon
+            left
+            size="ms"
+            containerStyle={localStyles.fridgeDetail}
+            Icon={<TemperatureIcon color={DARKER_GREY} />}
+          >
+            {temperature(currentTemperature).format()}
+          </TextWithIcon>
+          <TextWithIcon
+            left
+            containerStyle={localStyles.fridgeDetail}
+            size="ms"
+            Icon={<AlarmClockIcon color={DARKER_GREY} />}
+          >
+            {formatDate(mostRecentBreachTime)}
+          </TextWithIcon>
 
-        return (
-          <FlexRow key={id}>
-            <TextWithIcon left size="ms" containerStyle={{ flex: 1 }} Icon={<Circle size={20} />}>
-              {macAddress}
-            </TextWithIcon>
-            <TextWithIcon
-              left
-              size="ms"
-              containerStyle={localStyles.fridgeDetail}
-              Icon={<TemperatureIcon color={DARKER_GREY} />}
-            >
-              {temperature}
-            </TextWithIcon>
-            <TextWithIcon
-              left
-              containerStyle={localStyles.fridgeDetail}
-              size="ms"
-              Icon={<AlarmClockIcon color={DARKER_GREY} />}
-            >
-              {lastBreachMessage}
-            </TextWithIcon>
-            <TextWithIcon
-              left
-              size="ms"
-              containerStyle={localStyles.fridgeDetail}
-              Icon={<WifiIcon color={DARKER_GREY} />}
-            >
-              {lastSyncMessage}
-            </TextWithIcon>
-            <TextWithIcon
-              left
-              size="ms"
-              containerStyle={localStyles.fridgeDetail}
-              Icon={<BatteryIcon color={DARKER_GREY} />}
-            >
-              {`${batteryLevel}%`}
-            </TextWithIcon>
-            <IconButton
-              Icon={<ChevronRightIcon color={BLACK} />}
-              onPress={() => toFridgeDetail(fridge)}
-              containerStyle={localStyles.iconButton}
-            />
-          </FlexRow>
-        );
-      })}
+          <ChevronRightIcon color={BLACK} style={{ alignSelf: 'center' }} />
+        </FlexRow>
+      </TouchableOpacity>
     </Paper>
   );
 };
-FridgeDisplay.defaultProps = {
-  fridge: null,
-};
+
 FridgeDisplay.propTypes = {
-  fridge: PropTypes.shape({
-    id: PropTypes.string,
-    description: PropTypes.string,
-    sensors: PropTypes.object,
-  }),
+  sensor: PropTypes.object.isRequired,
   toFridgeDetail: PropTypes.func.isRequired,
-  toEditSensorPage: PropTypes.func.isRequired,
 };
 
-export const VaccinePageComponent = ({ fridges, toNewSensorPage, ...dispatchers }) => (
+export const VaccinePageComponent = ({ sensors, toNewSensorPage, toFridgeDetail }) => (
   <DataTablePageView
     captureUncaughtGestures={false}
     style={{ paddingHorizontal: 20, paddingVertical: 30 }}
@@ -142,20 +82,21 @@ export const VaccinePageComponent = ({ fridges, toNewSensorPage, ...dispatchers 
     <AfterInteractions placeholder={null}>
       <Animatable.View animation="fadeIn" duration={500} useNativeDriver>
         <FlatList
-          renderItem={({ item }) => <FridgeDisplay fridge={item} {...dispatchers} />}
-          data={fridges}
+          renderItem={({ item }) => <FridgeDisplay sensor={item} toFridgeDetail={toFridgeDetail} />}
+          data={sensors}
         />
       </Animatable.View>
     </AfterInteractions>
   </DataTablePageView>
 );
+
 VaccinePageComponent.defaultProps = {
-  fridges: null,
+  sensors: null,
 };
+
 VaccinePageComponent.propTypes = {
-  fridges: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+  sensors: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   toFridgeDetail: PropTypes.func.isRequired,
-  toEditSensorPage: PropTypes.func.isRequired,
   toNewSensorPage: PropTypes.func.isRequired,
 };
 
@@ -168,6 +109,7 @@ const localStyles = StyleSheet.create({
     flex: 0,
     height: 60,
     paddingHorizontal: 10,
+    width: 120,
   },
   fridgePaperContentContainer: {
     flex: 2,
@@ -178,12 +120,13 @@ const localStyles = StyleSheet.create({
 const stateToProps = state => {
   const { fridge } = state;
   const { fridges } = fridge;
-  return { fridges };
+
+  const sensors = selectSensors(state);
+  return { fridges, sensors };
 };
 
 const dispatchToProps = dispatch => ({
   toFridgeDetail: fridge => dispatch(gotoFridgeDetailPage(fridge)),
-  toEditSensorPage: sensor => dispatch(gotoEditSensorPage(sensor)),
   toNewSensorPage: () => dispatch(gotoNewSensorPage()),
 });
 
