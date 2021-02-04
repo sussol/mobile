@@ -43,6 +43,7 @@ export const LastSensorDownloadComponent = ({
     >
       <TextWithIcon
         containerStyle={localStyles.headerTextWithIcon}
+        margin={0}
         size="s"
         Icon={
           lastDownloadFailed ? (
@@ -72,7 +73,7 @@ const localStyles = StyleSheet.create({
   headerTextWithIcon: {
     flex: 0,
     paddingHorizontal: 8,
-    width: 140,
+    width: 150,
     justifyContent: 'flex-end',
   },
 });
