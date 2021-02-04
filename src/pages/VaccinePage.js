@@ -34,7 +34,7 @@ const FridgeDisplay = ({ sensor, toFridgeDetail }) => {
 
   return (
     <Paper
-      Header={<FridgeHeader showCog sensor={sensor} />}
+      Header={<FridgeHeader showTitle showCog sensor={sensor} />}
       contentContainerStyle={localStyles.fridgePaperContentContainer}
     >
       <TouchableOpacity onPress={() => toFridgeDetail(locationID)}>

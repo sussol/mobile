@@ -103,7 +103,7 @@ export const FridgeDetailPageComponent = ({
         <Paper
           height={300}
           contentContainerStyle={{ flex: 1, marginTop: 20 }}
-          Header={<FridgeHeader showCog sensor={sensor} />}
+          Header={<FridgeHeader showTitle showCog sensor={sensor} />}
         >
           <AfterInteractions>
             <FlexRow alignItems="center">
