@@ -5,8 +5,9 @@ import { MILLISECONDS } from '../../utilities/constants';
 export const TEMPERATURE_BREACH_CONFIG_ACTIONS = {
   CREATE_GROUP: 'TEMPERATURE_BREACH_CONFIG/createGroup',
   UPDATE: 'TEMPERATURE_BREACH_CONFIG/update',
-  RESET_NEW_GROUP: 'TEMPERATURE_BREACH_CONFIG/resetNewGroup',
+  RESET: 'TEMPERATURE_BREACH_CONFIG/reset',
   SAVE_NEW_GROUP: 'TEMPERATURE_BREACH_CONFIG/saveNewGroup',
+  SAVE_EDITING_GROUP: 'TEMPERATURE_BREACH_CONFIG/saveEditingGroup',
 };
 
 const isHot = type => type.includes('HOT');
@@ -19,7 +20,7 @@ const createDefaultConfig = type => ({
   duration: 20 * MILLISECONDS.ONE_MINUTE,
 });
 
-const resetNewGroup = () => ({ type: TEMPERATURE_BREACH_CONFIG_ACTIONS.RESET_NEW_GROUP });
+const reset = () => ({ type: TEMPERATURE_BREACH_CONFIG_ACTIONS.RESET });
 
 const createGroup = () => ({
   type: TEMPERATURE_BREACH_CONFIG_ACTIONS.CREATE_GROUP,
@@ -36,6 +37,11 @@ const update = (id, field, value) => ({
   payload: { id, field, value },
 });
 
+const saveEditingGroup = configs => ({
+  type: TEMPERATURE_BREACH_CONFIG_ACTIONS.SAVE_EDITING_GROUP,
+  payload: { configs },
+});
+
 const saveNewGroup = configs => ({
   type: TEMPERATURE_BREACH_CONFIG_ACTIONS.SAVE_NEW_GROUP,
   payload: { configs },
@@ -50,8 +56,9 @@ const updateNewConfig = (type, field, value) => (dispatch, getState) => {
 
 export const TemperatureBreachConfigActions = {
   createGroup,
-  resetNewGroup,
+  reset,
   update,
   updateNewConfig,
   saveNewGroup,
+  saveEditingGroup,
 };

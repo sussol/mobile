@@ -29,7 +29,7 @@ export const DurationEditor = ({
   containerStyle,
 }) => {
   const formatter = val => String(keepInRange(val, minValue, maxValue));
-  const adjustValue = (toUpdate, addend) => toUpdate + addend;
+  const adjustValue = (toUpdate, addend) => keepInRange(toUpdate + addend, minValue, maxValue);
 
   const [textInputRef, newValue, newOnChange] = useOptimisticUpdating(
     value,

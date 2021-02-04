@@ -45,7 +45,6 @@ export const NewSensorStepThreeComponent = ({
   macAddress,
 }) => {
   const withLoadingIndicator = useLoadingIndicator();
-  const sensor = { logInterval, loggingDelay, name, code, macAddress };
 
   return (
     <TabContainer>
@@ -98,7 +97,7 @@ export const NewSensorStepThreeComponent = ({
           text={vaccineStrings.connect}
           style={{ backgroundColor: SUSSOL_ORANGE }}
           textStyle={{ color: WHITE, textTransform: 'capitalize' }}
-          onPress={() => withLoadingIndicator(connectToSensor(sensor))}
+          onPress={() => withLoadingIndicator(connectToSensor({ macAddress, logInterval }))}
         />
       </FlexRow>
     </TabContainer>

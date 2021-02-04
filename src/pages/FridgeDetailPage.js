@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -46,6 +47,7 @@ import {
   DANGER_RED,
 } from '../globalStyles';
 import { vaccineStrings } from '../localization/index';
+import { FridgeHeader } from '../widgets/FridgeHeader';
 
 const NoBreachMessage = () => (
   <>
@@ -83,116 +85,108 @@ export const FridgeDetailPageComponent = ({
   isInColdBreach,
   isLowBattery,
   currentTemperature,
+  sensor,
 }) => (
   <DataTablePageView>
-    <View style={localStyles.container}>
-      <DateRangeSelector
-        containerStyle={localStyles.datePickerContainer}
-        initialStartDate={fromDate}
-        initialEndDate={toDate}
-        onChangeToDate={onChangeToDate}
-        onChangeFromDate={onChangeFromDate}
-        minimumDate={minimumDate}
-        maximumDate={maximumDate}
-      />
+    <AfterInteractions>
+      <View style={localStyles.container}>
+        <DateRangeSelector
+          containerStyle={localStyles.datePickerContainer}
+          initialStartDate={fromDate}
+          initialEndDate={toDate}
+          onChangeToDate={onChangeToDate}
+          onChangeFromDate={onChangeFromDate}
+          minimumDate={minimumDate}
+          maximumDate={maximumDate}
+        />
 
-      <Paper style={{ flex: 1 }} contentContainerStyle={{ flex: 1, marginTop: 20 }}>
-        <AfterInteractions>
-          <FlexRow alignItems="center">
-            <VaccineChart
-              breaches={breaches}
-              minLine={minLine}
-              maxLine={maxLine}
-              minDomain={minDomain}
-              maxDomain={maxDomain}
-            />
-            <SensorStatus
-              isInHotBreach={isInHotBreach}
-              isInColdBreach={isInColdBreach}
-              isLowBattery={isLowBattery}
-              currentTemp={currentTemperature}
-            />
+        <Paper
+          height={300}
+          contentContainerStyle={{ flex: 1, marginTop: 20 }}
+          Header={<FridgeHeader showCog sensor={sensor} />}
+        >
+          <AfterInteractions>
+            <FlexRow alignItems="center">
+              <VaccineChart
+                breaches={breaches}
+                minLine={minLine}
+                maxLine={maxLine}
+                minDomain={minDomain}
+                maxDomain={maxDomain}
+              />
+              <SensorStatus
+                isInHotBreach={isInHotBreach}
+                isInColdBreach={isInColdBreach}
+                isLowBattery={isLowBattery}
+                currentTemp={currentTemperature}
+              />
+            </FlexRow>
+          </AfterInteractions>
+        </Paper>
+
+        <Animatable.View animation="fadeIn" duration={3000} useNativeDriver>
+          <FlexRow>
+            <BreachCard headerText={vaccineStrings.cumulative_breach}>
+              {coldCumulativeBreach ? (
+                <>
+                  <Text style={localStyles.coldText}>{coldCumulativeBreach}</Text>
+                  <ColdBreachIcon color={COLD_BREACH_BLUE} />
+                </>
+              ) : (
+                <NoBreachMessage />
+              )}
+            </BreachCard>
+
+            <BreachCard headerText={vaccineStrings.consecutive_breach}>
+              {numberOfColdBreaches ? (
+                <>
+                  <Text style={localStyles.coldText}>{numberOfColdBreaches}</Text>
+                  <ColdBreachIcon color={COLD_BREACH_BLUE} />
+                </>
+              ) : (
+                <NoBreachMessage />
+              )}
+            </BreachCard>
+
+            <BreachCard headerText={vaccineStrings.average_temperature}>
+              <Text style={[localStyles.hotText, { color: DARKER_GREY }]}>
+                {averageTemperature}
+              </Text>
+            </BreachCard>
+
+            <BreachCard headerText={vaccineStrings.cumulative_breach}>
+              {hotCumulativeBreach ? (
+                <>
+                  <Text style={localStyles.hotText}>{hotCumulativeBreach}</Text>
+                  <HotBreachIcon color={DANGER_RED} />
+                </>
+              ) : (
+                <NoBreachMessage />
+              )}
+            </BreachCard>
+
+            <BreachCard headerText={vaccineStrings.consecutive_breach}>
+              {numberOfHotBreaches ? (
+                <>
+                  <Text style={localStyles.hotText}>{numberOfHotBreaches}</Text>
+                  <HotBreachIcon color={DANGER_RED} />
+                </>
+              ) : (
+                <NoBreachMessage />
+              )}
+            </BreachCard>
           </FlexRow>
-        </AfterInteractions>
-      </Paper>
-
-      <Animatable.View animation="fadeIn" duration={3000} useNativeDriver>
-        <FlexRow>
-          <BreachCard headerText={vaccineStrings.cumulative_breach}>
-            {coldCumulativeBreach ? (
-              <>
-                <Text style={localStyles.coldText}>{coldCumulativeBreach}</Text>
-                <ColdBreachIcon color={COLD_BREACH_BLUE} />
-              </>
-            ) : (
-              <NoBreachMessage />
-            )}
-          </BreachCard>
-
-          <BreachCard headerText={vaccineStrings.consecutive_breach}>
-            {numberOfColdBreaches ? (
-              <>
-                <Text style={localStyles.coldText}>{numberOfColdBreaches}</Text>
-                <ColdBreachIcon color={COLD_BREACH_BLUE} />
-              </>
-            ) : (
-              <NoBreachMessage />
-            )}
-          </BreachCard>
-
-          <BreachCard headerText={vaccineStrings.average_temperature}>
-            <Text style={[localStyles.hotText, { color: DARKER_GREY }]}>{averageTemperature}</Text>
-          </BreachCard>
-
-          <BreachCard headerText={vaccineStrings.cumulative_breach}>
-            {hotCumulativeBreach ? (
-              <>
-                <Text style={localStyles.hotText}>{hotCumulativeBreach}</Text>
-                <HotBreachIcon color={DANGER_RED} />
-              </>
-            ) : (
-              <NoBreachMessage />
-            )}
-          </BreachCard>
-
-          <BreachCard headerText={vaccineStrings.consecutive_breach}>
-            {numberOfHotBreaches ? (
-              <>
-                <Text style={localStyles.hotText}>{numberOfHotBreaches}</Text>
-                <HotBreachIcon color={DANGER_RED} />
-              </>
-            ) : (
-              <NoBreachMessage />
-            )}
-          </BreachCard>
-        </FlexRow>
-      </Animatable.View>
-    </View>
+        </Animatable.View>
+      </View>
+    </AfterInteractions>
   </DataTablePageView>
 );
 
-const localStyles = StyleSheet.create({
-  container: { padding: 20, flex: 1, backgroundColor: BLUE_WHITE },
-  datePickerContainer: { width: 250, borderRadius: 50, height: 50 },
-  card: { flex: 1 },
-  hotText: {
-    color: DANGER_RED,
-    fontSize: 50,
-    fontFamily: APP_FONT_FAMILY,
-  },
-  coldText: {
-    color: COLD_BREACH_BLUE,
-    fontSize: 50,
-    fontFamily: APP_FONT_FAMILY,
-  },
-  noBreachText: {
-    fontSize: 12,
-    color: DARKER_GREY,
-    fontFamily: APP_FONT_FAMILY,
-  },
-});
-
-const stateToProps = state => {
+const stateToProps = (state, props) => {
+  const { route } = props;
+  const { params } = route;
+  const { fridge: fridgeProp } = params;
+  const { sensor } = fridgeProp;
   const { fridge } = state;
   const { code } = fridge;
 
@@ -214,6 +208,8 @@ const stateToProps = state => {
   const currentTemperature = selectSelectFridgeCurrentTemperature(state);
 
   return {
+    sensor,
+    fridge: fridgeProp,
     averageTemperature,
     coldCumulativeBreach,
     hotCumulativeBreach,
@@ -244,7 +240,7 @@ const dispatchToProps = dispatch => ({
 FridgeDetailPageComponent.defaultProps = {};
 
 FridgeDetailPageComponent.propTypes = {
-  breaches: PropTypes.array.isRequired,
+  breaches: PropTypes.object.isRequired,
   minLine: PropTypes.array.isRequired,
   maxLine: PropTypes.array.isRequired,
   minDomain: PropTypes.number.isRequired,
@@ -259,11 +255,33 @@ FridgeDetailPageComponent.propTypes = {
   numberOfColdBreaches: PropTypes.number.isRequired,
   hotCumulativeBreach: PropTypes.string.isRequired,
   coldCumulativeBreach: PropTypes.string.isRequired,
-  averageTemperature: PropTypes.number.isRequired,
+  averageTemperature: PropTypes.string.isRequired,
   isInHotBreach: PropTypes.bool.isRequired,
   isInColdBreach: PropTypes.bool.isRequired,
   isLowBattery: PropTypes.bool.isRequired,
   currentTemperature: PropTypes.number.isRequired,
+  sensor: PropTypes.object.isRequired,
 };
+
+const localStyles = StyleSheet.create({
+  container: { padding: 20, flex: 1, backgroundColor: BLUE_WHITE },
+  datePickerContainer: { width: 250, borderRadius: 50, height: 50 },
+  card: { flex: 1 },
+  hotText: {
+    color: DANGER_RED,
+    fontSize: 50,
+    fontFamily: APP_FONT_FAMILY,
+  },
+  coldText: {
+    color: COLD_BREACH_BLUE,
+    fontSize: 50,
+    fontFamily: APP_FONT_FAMILY,
+  },
+  noBreachText: {
+    fontSize: 12,
+    color: DARKER_GREY,
+    fontFamily: APP_FONT_FAMILY,
+  },
+});
 
 export const FridgeDetailPage = connect(stateToProps, dispatchToProps)(FridgeDetailPageComponent);

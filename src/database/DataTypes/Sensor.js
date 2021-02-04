@@ -57,6 +57,10 @@ export class Sensor extends Realm.Object {
 
     return timestamp;
   }
+
+  get breachConfigs() {
+    return this.location?.breachConfigs;
+  }
 }
 
 Sensor.schema = {

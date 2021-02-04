@@ -11,3 +11,9 @@ export const selectNewLocationId = state => {
   const { newId } = locationState;
   return newId;
 };
+
+export const selectEditingLocation = state => {
+  const locationState = selectSpecificEntityState(state, 'location');
+  const { editingId, byId } = locationState;
+  return byId[editingId];
+};

@@ -5,6 +5,8 @@ export const LOCATION_ACTIONS = {
   CREATE: 'LOCATION/create',
   UPDATE: 'LOCATION/update',
   SAVE_NEW: 'LOCATION/saveNew',
+  SAVE_EDITING: 'LOCATION/saveEditing',
+  RESET: 'LOCATION/reset',
 };
 
 const createDefaultLocation = () => ({
@@ -15,7 +17,11 @@ const createDefaultLocation = () => ({
 
 const create = () => ({
   type: LOCATION_ACTIONS.CREATE,
-  payload: createDefaultLocation(),
+  payload: { location: createDefaultLocation() },
+});
+
+const reset = () => ({
+  type: LOCATION_ACTIONS.RESET,
 });
 
 const update = (id, field, value) => ({
@@ -25,6 +31,11 @@ const update = (id, field, value) => ({
 
 const saveNew = location => ({
   type: LOCATION_ACTIONS.SAVE_NEW,
+  payload: { location },
+});
+
+const saveEditing = location => ({
+  type: LOCATION_ACTIONS.SAVE_EDITING,
   payload: { location },
 });
 
@@ -38,4 +49,6 @@ export const LocationActions = {
   update,
   updateNew,
   saveNew,
+  saveEditing,
+  reset,
 };

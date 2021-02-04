@@ -28,7 +28,6 @@ import { RowDetailReducer } from './RowDetailReducer';
 import { PermissionReducer } from './PermissionReducer';
 import { VaccineReducer } from './VaccineReducer';
 import SyncReducer from './SyncReducer';
-import { SensorDetailReducer } from './SensorDetailReducer';
 import { EntitiesReducer } from './Entities';
 
 export default combineReducers({
@@ -55,6 +54,5 @@ export default combineReducers({
   rowDetail: RowDetailReducer,
   permission: PermissionReducer,
   vaccine: VaccineReducer,
-  sensorDetail: SensorDetailReducer,
   entities: EntitiesReducer,
 });
