@@ -201,9 +201,7 @@ const dispatchToProps = (dispatch, ownProps) => {
   const { route } = ownProps;
   const { params } = route;
   const { sensor } = params;
-  const { id: sensorID } = sensor;
-  const { location } = sensor;
-  const { id: locationID } = location;
+  const { id: sensorID, locationID } = sensor;
 
   const blink = macAddress => dispatch(SensorBlinkActions.startSensorBlink(macAddress));
   const updateName = name => dispatch(SensorActions.update(sensorID, 'name', name));
