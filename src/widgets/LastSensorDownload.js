@@ -72,6 +72,8 @@ const localStyles = StyleSheet.create({
   headerTextWithIcon: {
     flex: 0,
     paddingHorizontal: 8,
+    width: 140,
+    justifyContent: 'flex-end',
   },
 });
 
