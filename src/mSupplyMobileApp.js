@@ -41,11 +41,9 @@ import { FirstUsePage } from './pages';
 import { SupplierCredit } from './widgets/modalChildren/SupplierCredit';
 
 import globalStyles, { SUSSOL_ORANGE } from './globalStyles';
-import { TemperatureSyncActions } from './actions/TemperatureSyncActions';
 import { BreachDisplay } from './widgets/modalChildren/BreachDisplay';
 import { selectIsBreachModalOpen, selectBreachModalTitle } from './selectors/breach';
 import { BreachActions } from './actions/BreachActions';
-import { TemperatureSync } from './widgets/modalChildren/TemperatureSync';
 import { RowDetail } from './widgets/RowDetail';
 import { PermissionActions } from './actions/PermissionActions';
 import BleService from './bluetooth/BleService';
@@ -221,8 +219,6 @@ class MSupplyMobileAppContainer extends React.Component {
       isBreachModalOpen,
       closeBreachModal,
       breachModalTitle,
-      temperatureSyncModalIsOpen,
-      closeTemperatureSyncModal,
     } = this.props;
     const { isInitialised, isLoading } = this.state;
 
@@ -262,12 +258,6 @@ class MSupplyMobileAppContainer extends React.Component {
           >
             <BreachDisplay />
           </ModalContainer>
-          <ModalContainer
-            isVisible={temperatureSyncModalIsOpen}
-            onClose={closeTemperatureSyncModal}
-          >
-            <TemperatureSync />
-          </ModalContainer>
           <RowDetail />
         </View>
       </LoadingIndicatorContext.Provider>
@@ -279,7 +269,6 @@ const mapDispatchToProps = dispatch => {
   const openFinaliseModal = () => dispatch(FinaliseActions.openModal());
   const closeFinaliseModal = () => dispatch(FinaliseActions.closeModal());
   const closeSupplierCreditModal = () => dispatch(SupplierCreditActions.close());
-  const closeTemperatureSyncModal = () => dispatch(TemperatureSyncActions.closeModal());
   const onOpenSyncModal = () => dispatch(openSyncModal());
   const closeBreachModal = () => dispatch(BreachActions.close());
   const syncTemperatures = () => dispatch(VaccineActions.startDownloadAll());
@@ -294,14 +283,12 @@ const mapDispatchToProps = dispatch => {
     closeFinaliseModal,
     closeSupplierCreditModal,
     closeBreachModal,
-    closeTemperatureSyncModal,
   };
 };
 
 const mapStateToProps = state => {
-  const { temperatureSync, finalise, supplierCredit } = state;
+  const { finalise, supplierCredit } = state;
   const { open: supplierCreditModalOpen } = supplierCredit;
-  const { modalIsOpen: temperatureSyncModalIsOpen } = temperatureSync;
   const { finaliseModalOpen } = finalise;
 
   const usingVaccines = selectUsingVaccines(state);
@@ -311,7 +298,7 @@ const mapStateToProps = state => {
   const breachModalTitle = selectBreachModalTitle(state);
   return {
     usingVaccines,
-    temperatureSyncModalIsOpen,
+
     isSyncing,
     currentUser,
     finaliseModalOpen,
@@ -340,8 +327,6 @@ MSupplyMobileAppContainer.propTypes = {
   isBreachModalOpen: PropTypes.bool.isRequired,
   closeBreachModal: PropTypes.func.isRequired,
   breachModalTitle: PropTypes.string.isRequired,
-  temperatureSyncModalIsOpen: PropTypes.bool.isRequired,
-  closeTemperatureSyncModal: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MSupplyMobileAppContainer);
