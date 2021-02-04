@@ -48,7 +48,7 @@ export const NewSensorStepThreeComponent = ({
 
   return (
     <TabContainer>
-      <Paper headerText={vaccineStrings.new_sensor_step_three_title}>
+      <Paper height={200} headerText={vaccineStrings.new_sensor_step_three_title}>
         <EditorRow
           containerStyle={localStyles.paperContentRow}
           label={vaccineStrings.sensor_name}
