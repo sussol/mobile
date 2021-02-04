@@ -12,7 +12,7 @@ import { UIDatabase } from '../../database';
 import { VACCINE_CONSTANTS } from '../../utilities/modules/vaccines/index';
 import { VACCINE_ENTITIES } from '../../utilities/modules/vaccines/constants';
 import { syncStrings } from '../../localization';
-import { selectIsSyncingTemps } from '../../selectors/Bluetooth/bluetooth';
+import { selectIsSyncingTemps } from '../../selectors/Bluetooth/sensorDownload';
 
 export const DOWNLOAD_ACTIONS = {
   DOWNLOAD_LOGS_START: 'Bluetooth/downloadLogsStart',

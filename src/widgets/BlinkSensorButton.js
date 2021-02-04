@@ -5,8 +5,8 @@ import { ActivityIndicator } from 'react-native';
 import { DARKER_GREY, LIGHT_GREY } from '../globalStyles/index';
 import { IconButton } from './IconButton';
 import { LightbulbIcon } from './icons';
-import { selectSendingBlinkTo } from '../selectors/Bluetooth/bluetooth';
 import { SensorBlinkActions } from '../actions/Bluetooth/SensorBlinkActions';
+import { selectSendingBlinkTo } from '../selectors/Bluetooth/sensorBlink';
 
 export const BlinkSensorButtonComponent = ({ isBlinking, blink, isBlinkDisabled }) =>
   isBlinking ? (
