@@ -5,6 +5,7 @@
 
 import { PermissionActions } from '../PermissionActions';
 import BleService from '../../bluetooth/BleService';
+import { VACCINE_CONSTANTS } from '../../utilities/modules/vaccines/index';
 
 export const UPDATE_ACTIONS = {
   SET_LOG_INTERVAL_ERROR: 'Bluetooth/setLogIntervalError',
@@ -38,7 +39,11 @@ const setLogInterval = (macAddress, interval) => async dispatch => {
   try {
     const regex = new RegExp(`Interval: ${interval}s`); // TODO: update with sensor specific response as needed
     const error = `Sensor response was not equal to 'Interval: ${interval}s'`;
-    const response = await BleService().updateLogIntervalWithRetries(macAddress, interval, 10);
+    const response = await BleService().updateLogIntervalWithRetries(
+      macAddress,
+      interval,
+      VACCINE_CONSTANTS.MAX_BLUETOOTH_COMMAND_ATTEMPTS
+    );
     const action = regex.test(response.toString())
       ? setLogIntervalSuccess()
       : setLogIntervalError(error);
@@ -52,9 +57,15 @@ const setLogInterval = (macAddress, interval) => async dispatch => {
 const disableSensorButton = macAddress => async dispatch => {
   dispatch(disableButtonStart(macAddress));
   try {
-    const info = await BleService().getInfoWithRetries(macAddress, 10);
+    const info = await BleService().getInfoWithRetries(
+      macAddress,
+      VACCINE_CONSTANTS.MAX_BLUETOOTH_COMMAND_ATTEMPTS
+    );
     if (!info.isDisabled) {
-      await BleService().toggleButtonWithRetries(macAddress, 10);
+      await BleService().toggleButtonWithRetries(
+        macAddress,
+        VACCINE_CONSTANTS.MAX_BLUETOOTH_COMMAND_ATTEMPTS
+      );
       dispatch(disableButtonStop(macAddress));
     }
   } catch (error) {
