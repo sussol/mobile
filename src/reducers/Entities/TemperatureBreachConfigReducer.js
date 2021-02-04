@@ -1,41 +1,66 @@
 /* eslint-disable max-len */
 import { TEMPERATURE_BREACH_CONFIG_ACTIONS } from '../../actions/Entities/TemperatureBreachConfigActions';
 import { UIDatabase } from '../../database';
+import { ROUTES } from '../../navigation/index';
+
+// Extracts the required fields of a realm instance into a plain JS object
+// which is more suitable to store in redux as immutable updates are simpler.
+const getPlainTemperatureBreachConfiguration = config => ({
+  id: config.id,
+  minimumTemperature: config.minimumTemperature,
+  maximumTemperature: config.maximumTemperature,
+  duration: config.duration,
+  description: config.description,
+  colour: config.colour,
+  locationID: config.location?.id,
+  type: config.type,
+});
 
 const initialState = () => ({
   byId: UIDatabase.objects('TemperatureBreachConfiguration').reduce(
     (acc, config) => ({
       ...acc,
-      [config.id]: config,
+      [config.id]: getPlainTemperatureBreachConfiguration(config),
     }),
     {}
   ),
   newIds: [],
+  editingIds: [],
 });
 
 export const TemperatureBreachConfigReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
+    case 'Navigation/NAVIGATE': {
+      const { params, routeName } = action;
+
+      if (routeName !== ROUTES.SENSOR_EDIT) return state;
+      const { sensor } = params;
+      const { breachConfigs } = sensor;
+
+      const editingIds = breachConfigs.map(({ id }) => id);
+
+      return { ...state, editingIds };
+    }
+
     case TEMPERATURE_BREACH_CONFIG_ACTIONS.CREATE_GROUP: {
       const { byId } = state;
       const { payload } = action;
 
       const newIds = payload.map(({ id }) => id);
       const newByIds = payload.reduce(
-        (acc, newConfig) => ({ ...acc, [newConfig.id]: newConfig }),
+        (acc, newConfig) => ({
+          ...acc,
+          [newConfig.id]: getPlainTemperatureBreachConfiguration(newConfig),
+        }),
         byId
       );
 
       return { ...state, byId: newByIds, newIds };
     }
-    case TEMPERATURE_BREACH_CONFIG_ACTIONS.RESET_NEW_GROUP: {
-      const { byId, newIds } = state;
-
-      const idsToKeep = Object.keys(byId).filter(id => !newIds.includes(id));
-      const newById = idsToKeep.reduce((acc, id) => ({ ...acc, [id]: byId[id] }), {});
-
-      return { ...state, byId: newById, newIds: [] };
+    case TEMPERATURE_BREACH_CONFIG_ACTIONS.RESET: {
+      return initialState();
     }
 
     case TEMPERATURE_BREACH_CONFIG_ACTIONS.SAVE_NEW_GROUP: {
@@ -52,6 +77,22 @@ export const TemperatureBreachConfigReducer = (state = initialState(), action) =
       );
 
       return { ...state, byId: newById, newIds: [] };
+    }
+
+    case TEMPERATURE_BREACH_CONFIG_ACTIONS.SAVE_EDITING_GROUP: {
+      const { byId } = state;
+      const { payload } = action;
+      const { configs } = payload;
+
+      const newById = configs.reduce(
+        (acc, config) => ({
+          ...acc,
+          [config.id]: getPlainTemperatureBreachConfiguration(config),
+        }),
+        byId
+      );
+
+      return { ...state, byId: newById, editingIds: [] };
     }
 
     case TEMPERATURE_BREACH_CONFIG_ACTIONS.UPDATE: {

@@ -17,7 +17,7 @@ export const TextEditor = ({
   ...textInputProps
 }) => {
   const isSmall = size === 'small';
-  const sizeAdjustment = { width: isSmall ? 190 : 350 };
+  const sizeAdjustment = { width: isSmall ? 190 : 500 };
   const internalTextInput = [textInputStyle, sizeAdjustment];
   return (
     <FlexRow flex={0} alignItems="center" style={{ ...containerStyle }}>

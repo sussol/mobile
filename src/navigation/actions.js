@@ -17,6 +17,7 @@ import { FinaliseActions } from '../actions/FinaliseActions';
 import { PREFERENCE_KEYS } from '../database/utilities/constants';
 import { SensorActions } from '../actions/Entities/SensorActions';
 import { TemperatureBreachConfigActions } from '../actions/Entities/TemperatureBreachConfigActions';
+import { LocationActions } from '../actions/Entities/index';
 
 /**
  * Navigation Action Creators.
@@ -82,8 +83,9 @@ export const goBack = () => dispatch => {
 
       const cleanUp = () => {
         dispatch(PrescriptionActions.deletePrescription());
-        dispatch(SensorActions.resetNew());
-        dispatch(TemperatureBreachConfigActions.resetNewGroup());
+        dispatch(SensorActions.reset());
+        dispatch(TemperatureBreachConfigActions.reset());
+        dispatch(LocationActions.reset());
       };
 
       batch(() => {

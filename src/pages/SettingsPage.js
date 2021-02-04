@@ -15,7 +15,7 @@ import { Button } from 'react-native-ui-components';
 
 import { UIDatabase } from '../database';
 import { SETTINGS_KEYS } from '../settings';
-import { MODAL_KEYS } from '../utilities';
+import { MILLISECONDS, MODAL_KEYS } from '../utilities';
 
 import {
   gotoEditSensorPage,
@@ -191,7 +191,7 @@ const Settings = ({
           id: `${locationID}${i + 1}`,
           minimumTemperature: 8,
           maximumTemperature: 999,
-          duration: 60 * 20,
+          duration: 20 * MILLISECONDS.ONE_MINUTE,
           description: 'Config 1, 8 to 999 consecutive for 20 minutes',
           type: 'HOT_CONSECUTIVE',
           location,
@@ -201,7 +201,7 @@ const Settings = ({
           id: `${locationID}${i + 2}`,
           minimumTemperature: -999,
           maximumTemperature: 0,
-          duration: 60 * 20,
+          duration: 20 * MILLISECONDS.ONE_MINUTE,
           description: 'Config 1, 0 to -999 consecutive for 20 minutes',
           type: 'COLD_CONSECUTIVE',
           location,
@@ -211,7 +211,7 @@ const Settings = ({
           id: `${locationID}${i + 3}`,
           minimumTemperature: 8,
           maximumTemperature: 999,
-          duration: 60 * 60,
+          duration: 60 * MILLISECONDS.ONE_MINUTE,
           description: 'Config 1, 8 to 999 cumulative for 1 hour',
           type: 'HOT_CUMULATIVE',
           location,
@@ -221,7 +221,7 @@ const Settings = ({
           id: `${locationID}${i + 4}`,
           minimumTemperature: -999,
           maximumTemperature: 0,
-          duration: 60 * 60,
+          duration: 60 * MILLISECONDS.ONE_MINUTE,
           description: 'Config 1, 0 to -999 cumulative',
           type: 'COLD_CUMULATIVE',
           location,
