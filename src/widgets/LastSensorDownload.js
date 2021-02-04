@@ -14,7 +14,7 @@ import {
   selectIsDownloading,
   selectLastDownloadFailed,
   selectLastDownloadTime,
-} from '../selectors/vaccine';
+} from '../selectors/Bluetooth/sensorDownload';
 import { generalStrings } from '../localization';
 
 const formatLastSyncDate = date => (date ? moment(date).fromNow() : generalStrings.not_available);
