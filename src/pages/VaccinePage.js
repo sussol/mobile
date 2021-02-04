@@ -133,7 +133,10 @@ FridgeDisplay.propTypes = {
 };
 
 export const VaccinePageComponent = ({ fridges, toNewSensorPage, ...dispatchers }) => (
-  <DataTablePageView style={{ paddingHorizontal: 20, paddingVertical: 30 }}>
+  <DataTablePageView
+    captureUncaughtGestures={false}
+    style={{ paddingHorizontal: 20, paddingVertical: 30 }}
+  >
     <FlexRow style={{ justifyContent: 'flex-end', marginBottom: 10 }}>
       <PageButton text={buttonStrings.add_sensor} onPress={toNewSensorPage} />
     </FlexRow>
