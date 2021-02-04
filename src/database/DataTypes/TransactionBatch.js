@@ -68,17 +68,6 @@ export class TransactionBatch extends Realm.Object {
   }
 
   /**
-   * Get this items restricted LocationType - the location type for which Location records must
-   * be related for this ItemBatch to be assigned. This is either on the ItemStoreJoin or on the
-   * underlying Item - preference to the more specific ItemStoreJoin.
-   *
-   * @param {Realm} database
-   */
-  restrictedLocationType(database) {
-    return this.itemBatch?.restrictedLocationType(database);
-  }
-
-  /**
    * Returns either the prescriber name who prescribed the medicine
    * to a patient, or an N/A.
    * @return {String}

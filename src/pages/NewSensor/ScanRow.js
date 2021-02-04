@@ -13,7 +13,7 @@ import { WithFixedDimensions } from '../../widgets/WithFixedDimensions';
 import { Spacer } from '../../widgets/Spacer';
 
 import { SensorActions, WizardActions } from '../../actions';
-import { BlinkActions } from '../../actions/Bluetooth/BlinkActions';
+import { SensorBlinkActions } from '../../actions/Bluetooth/SensorBlinkActions';
 import { selectSendingBlinkTo } from '../../selectors/Bluetooth/bluetooth';
 
 export const RectangleButton = ({ isDisabled, onPress, isSpinning }) =>
@@ -76,7 +76,7 @@ export const ScanRowComponent = ({ macAddress, blink, isBlinking, isDisabled, se
 };
 
 const dispatchToProps = dispatch => {
-  const blink = macAddress => dispatch(BlinkActions.startSensorBlink(macAddress));
+  const blink = macAddress => dispatch(SensorBlinkActions.startSensorBlink(macAddress));
   const selectSensor = macAddress => {
     dispatch(SensorActions.createFromScanner(macAddress));
     dispatch(WizardActions.nextTab());

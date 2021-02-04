@@ -39,7 +39,6 @@ export { SyncState } from './SyncState';
 export { TableShortcut } from './TableShortcuts';
 export { TableShortcuts } from './TableShortcuts';
 export { TabNavigator } from './TabNavigator';
-export { TemperatureSyncState } from './TemperatureSyncState';
 export { TextInput } from './TextInput';
 export { ToggleBar } from './ToggleBar';
 export { Wizard } from './Wizard';

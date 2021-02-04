@@ -2,11 +2,23 @@ import { SENSOR_ACTIONS } from '../../actions/Entities/SensorActions';
 import { UIDatabase } from '../../database';
 import { ROUTES } from '../../navigation/index';
 
+// Extracts the required fields of a realm instance into a plain JS object
+// which is more suitable to store in redux as immutable updates are simpler.
+const getPlainSensor = sensor => ({
+  id: sensor.id,
+  macAddress: sensor.macAddress,
+  name: sensor.name,
+  batteryLevel: sensor.batteryLevel,
+  locationID: sensor.location?.id,
+  isActive: sensor.isActive,
+  logInterval: sensor.logInterval,
+});
+
 const initialState = () => ({
   byId: UIDatabase.objects('Sensor').reduce(
     (acc, sensor) => ({
       ...acc,
-      [sensor.id]: sensor,
+      [sensor.id]: getPlainSensor(sensor),
     }),
     {}
   ),
@@ -36,10 +48,8 @@ export const SensorReducer = (state = initialState(), action) => {
       return { ...state, byId: { ...byId, [id]: payload }, newId: id };
     }
 
-    case SENSOR_ACTIONS.RESET_NEW: {
-      const { byId, newId } = state;
-      const newById = { ...byId, [newId]: null };
-      return { ...state, byId: newById, newId: '' };
+    case SENSOR_ACTIONS.RESET: {
+      return initialState();
     }
 
     case SENSOR_ACTIONS.SAVE_NEW: {
@@ -51,6 +61,18 @@ export const SensorReducer = (state = initialState(), action) => {
       const newById = { ...byId, [id]: sensor };
 
       return { ...state, byId: newById, newId: '' };
+    }
+
+    case SENSOR_ACTIONS.SAVE_EDITING: {
+      const { byId } = state;
+      const { payload } = action;
+      const { sensor } = payload;
+      const { id } = sensor;
+
+      // Only use plain objects.
+      const newById = { ...byId, [id]: getPlainSensor(sensor) };
+
+      return { ...state, byId: newById, editingId: '' };
     }
 
     case SENSOR_ACTIONS.UPDATE: {

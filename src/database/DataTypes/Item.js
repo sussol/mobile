@@ -238,22 +238,6 @@ export class Item extends Realm.Object {
   }
 
   /**
-   * Get this items restricted LocationType - the location type for which Location records must
-   * be related for this ItemBatch to be assigned. This is either on the ItemStoreJoin or on the
-   * underlying Item - preference to the more specific ItemStoreJoin.
-   *
-   * @param {Realm} database
-   */
-  restrictedLocationType(database) {
-    const itemStoreJoins = database
-      .objects('ItemStoreJoin')
-      .filtered('itemId == $0 && joinsThisStore == true', this.id)[0];
-    const { restrictedLocationType } = itemStoreJoins ?? {};
-
-    return restrictedLocationType || this.restrictedLocationType;
-  }
-
-  /**
    * A vaccine item can have multiple doses per 'unit' or 'pack'. For example, you can have
    * a single vaccine which has two doses. Once a vaccine has been opened, the doses must be
    * given quickly. When recording outgoing stock, the doses and quantity (or number of packs)
@@ -328,7 +312,6 @@ Item.schema = {
     isVisible: { type: 'bool', default: false },
     crossReferenceItem: { type: 'Item', optional: true },
     unit: { type: 'Unit', optional: true },
-    defaultRestrictedLocationType: { type: 'LocationType', optional: true },
     doses: { type: 'double', default: 0 },
     isVaccine: { type: 'bool', default: false },
     directions: { type: 'linkingObjects', objectType: 'ItemDirection', property: 'item' },

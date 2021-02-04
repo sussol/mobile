@@ -24,7 +24,8 @@ export const useOptimisticUpdating = (value, onChange, preChangeHook, postChange
   const optimisticValue = useRef(value);
   useEffect(() => {
     optimisticValue.current = value;
-  }, [value]);
+    ref?.current?.setNativeProps({ text: postChangeHook(optimisticValue.current) });
+  }, [value, ref?.current]);
 
   // Wrapping the onChange callback such that it is only triggered every second attempts to
   // keep the real source of truth in sync with this optimistic state being used for more

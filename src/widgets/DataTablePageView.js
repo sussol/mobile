@@ -16,8 +16,11 @@ const dismiss = () => Keyboard.dismiss();
 /**
  * Simple template container for a standard data table page.
  * Handles placement of content and wraps the page with a
- * Touchable, dismissing the keyboard when an event propogates
+ * Touchable, dismissing the keyboard when an event propagates
  * to this level.
+ *
+ * WARNING: If this component captures events they are not propagated further.
+ *          Be careful with components which scroll.
  */
 export const DataTablePageView = React.memo(({ children, captureUncaughtGestures, style }) => {
   // Use a Fragment over TouchableWithoutFeedback so no gesture events are caught.

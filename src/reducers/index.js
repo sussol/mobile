@@ -21,14 +21,12 @@ import { PrescriptionReducer } from './PrescriptionReducer';
 import { SupplierCreditReducer } from './SupplierCreditReducer';
 import { UserReducer } from './UserReducer';
 import { WizardReducer } from './WizardReducer';
-import { TemperatureSyncReducer } from './TemperatureSyncReducer';
 import { FridgeReducer } from './FridgeReducer';
 import { BreachReducer } from './BreachReducer';
 import { RowDetailReducer } from './RowDetailReducer';
 import { PermissionReducer } from './PermissionReducer';
 import { VaccineReducer } from './VaccineReducer';
 import SyncReducer from './SyncReducer';
-import { SensorDetailReducer } from './SensorDetailReducer';
 import { EntitiesReducer } from './Entities';
 
 export default combineReducers({
@@ -47,7 +45,6 @@ export default combineReducers({
   prescription: PrescriptionReducer,
   supplierCredit: SupplierCreditReducer,
   sync: SyncReducer,
-  temperatureSync: TemperatureSyncReducer,
   user: UserReducer,
   wizard: WizardReducer,
   fridge: FridgeReducer,
@@ -55,6 +52,5 @@ export default combineReducers({
   rowDetail: RowDetailReducer,
   permission: PermissionReducer,
   vaccine: VaccineReducer,
-  sensorDetail: SensorDetailReducer,
   entities: EntitiesReducer,
 });

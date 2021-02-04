@@ -53,10 +53,8 @@ export const openModal = (state, action) => {
     case MODAL_KEYS.REQUISITION_REASON:
     case MODAL_KEYS.SELECT_ITEM_BATCH_SUPPLIER:
     case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
-    case MODAL_KEYS.SELECT_SENSOR_LOCATION:
     case MODAL_KEYS.SELECT_LOCATION:
     case MODAL_KEYS.SELECT_VVM_STATUS:
-    case MODAL_KEYS.EDIT_LOCATION:
     case MODAL_KEYS.STOCKTAKE_REASON: {
       const { data, keyExtractor } = state;
       const { rowKey } = payload;

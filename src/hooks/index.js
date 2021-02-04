@@ -19,3 +19,4 @@ export { useOptimisticUpdating } from './useOptimisticUpdating';
 export { useLayoutDimensions } from './useLayoutDimensions';
 export { useLoadingIndicator } from './useLoadingIndicator';
 export { useToggle } from './useToggle';
+export { useIntervalReRender } from './useIntervalReRender';
