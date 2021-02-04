@@ -16,7 +16,7 @@ import {
   SensorStatus,
 } from '../widgets';
 import { VaccineChart } from '../widgets/VaccineChart';
-import { NoBreachMan } from '../widgets/NoBreachMan';
+import { BreachManHappy } from '../widgets/BreachManHappy';
 import { FridgeActions } from '../actions/FridgeActions';
 import { AfterInteractions } from '../widgets/AfterInteractions';
 
@@ -51,7 +51,7 @@ import { FridgeHeader } from '../widgets/FridgeHeader';
 
 const NoBreachMessage = () => (
   <>
-    <NoBreachMan />
+    <BreachManHappy />
     <Text style={localStyles.noBreachText}>{vaccineStrings.no_breaches}</Text>
   </>
 );
