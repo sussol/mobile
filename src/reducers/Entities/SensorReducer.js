@@ -1,3 +1,4 @@
+import { DOWNLOAD_ACTIONS } from '../../actions/Bluetooth/SensorDownloadActions';
 import { SENSOR_ACTIONS } from '../../actions/Entities/SensorActions';
 import { UIDatabase } from '../../database';
 import { ROUTES } from '../../navigation/index';
@@ -43,6 +44,19 @@ export const SensorReducer = (state = initialState(), action) => {
       const { id } = sensor;
 
       return { ...state, editingId: id };
+    }
+
+    case DOWNLOAD_ACTIONS.SENSOR_DOWNLOAD_SUCCESS: {
+      const { payload } = action;
+      const { sensor } = payload;
+      const { id, currentTemperature } = sensor;
+      const { byId } = state;
+      const oldSensor = byId[id];
+
+      const newSensor = { ...oldSensor, currentTemperature };
+      const newById = { ...byId, [id]: newSensor };
+
+      return { ...state, byId: newById };
     }
 
     case SENSOR_ACTIONS.CREATE: {
