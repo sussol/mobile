@@ -62,8 +62,7 @@ const FridgeDisplay = ({ fridge, toFridgeDetail, toEditSensorPage }) => {
       Header={header}
       contentContainerStyle={localStyles.fridgePaperContentContainer}
     >
-      {sensors.map(({ id, macAddress, batteryLevel, logs, breaches }) => {
-        const mostRecentLog = logs.sorted('timestamp', true)[0];
+      {sensors.map(({ id, macAddress, batteryLevel, breaches, mostRecentLog }) => {
         const lastSyncMessage = mostRecentLog ? formatDate(mostRecentLog.timestamp) : 'No logs yet';
         const temperature = mostRecentLog ? formatTemperature(mostRecentLog.temperature) : 'N/A';
         const mostRecentBreach = breaches?.sorted('endTimestamp', true)[0];
