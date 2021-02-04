@@ -227,12 +227,12 @@ const writeReport = async content => {
 // TODO: LOCALIZE
 const getSubject = sensor => `Temperature log report for ${sensor.name ?? sensor.macAddress}`;
 
-export const emailVaccineReport = async (sensor, user, comment, recipients) => {
+export const emailVaccineReport = async (sensor, user, email, comment) => {
   const content = await vaccineReport(sensor, user, comment);
   const path = await writeReport(content);
   const subject = getSubject(sensor);
   const attachments = [{ path, type: 'csv' }];
-  const email = { recipients, subject, attachments };
+  const emailOptions = { recipients: [email], subject, attachments };
 
-  Mailer.mail(email, () => {});
+  Mailer.mail(emailOptions, () => {});
 };
