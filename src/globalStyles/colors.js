@@ -23,4 +23,4 @@ export const WHITE = '#FFFFFF';
 export const COLD_BREACH_BLUE = '#70b4f0';
 export const DANGER_RED = '#FA6400';
 export const BLACK = '#000000';
-export const TRANSPARENT_GREY = 'rgba(0,0,0,0.5)';
+export const TRANSPARENT_GREY = 'rgba(51, 51, 51, 0.2)';
