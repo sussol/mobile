@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { StyleSheet, Text } from 'react-native';
 import { TextWithIcon } from './Typography/index';
-import { BatteryIcon, CogIcon, DownloadIcon } from './icons';
+import { BatteryIcon, CogIcon } from './icons';
 import { APP_FONT_FAMILY, BLACK, DARKER_GREY, MISTY_CHARCOAL } from '../globalStyles/index';
 import { IconButton } from './IconButton';
 import { FlexView } from './FlexView';
@@ -12,6 +12,7 @@ import { selectSensorState } from '../selectors/Entities/sensor';
 import { gotoEditSensorPage } from '../navigation/actions';
 import { LastSensorDownload } from './LastSensorDownload';
 import { BlinkSensorButton } from './BlinkSensorButton';
+import { ExportTemperatureDataButton } from './ExportTemperatureDataButton';
 
 const formatBatteryLevel = batteryLevel => `${batteryLevel}%`;
 
@@ -29,11 +30,7 @@ export const FridgeHeaderComponent = ({ batteryLevel, name, macAddress, editSens
     </TextWithIcon>
 
     <LastSensorDownload macAddress={macAddress} />
-
-    <IconButton
-      Icon={<DownloadIcon color={DARKER_GREY} />}
-      containerStyle={{ width: 50, justifyContent: 'center' }}
-    />
+    <ExportTemperatureDataButton macAddress={macAddress} />
     <BlinkSensorButton macAddress={macAddress} />
     {showCog && (
       <IconButton

@@ -45,7 +45,7 @@ const FridgeDisplay = ({ fridge, toFridgeDetail, toEditSensorPage }) => {
       >
         {description}
       </TextWithIcon>
-      <ExportTemperatureDataButton sensor={sensor} />
+      <ExportTemperatureDataButton macAddress={sensor?.macAddress} />
       <BlinkSensorButton macAddress={sensor?.macAddress} />
       <IconButton
         Icon={<CogIcon color={BLACK} />}

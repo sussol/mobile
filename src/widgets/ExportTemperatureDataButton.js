@@ -20,12 +20,11 @@ import { generalStrings } from '../localization/index';
 
 const toastReportGenerationFailed = () =>
   ToastAndroid.show(generalStrings.report_generation_failed, ToastAndroid.LONG);
-const toastNoData = () => ToastAndroid.show(generalStrings.no_data_for_sensor, ToastAndroid.LONG);
 const toastNoPermission = () =>
   ToastAndroid.show(generalStrings.require_permission_to_send_data, ToastAndroid.LONG);
 
 export const ExportTemperatureDataButtonComponent = ({
-  sensor,
+  macAddress,
   requestStorageWritePermission,
   currentUser,
 }) => {
@@ -60,7 +59,7 @@ export const ExportTemperatureDataButtonComponent = ({
       .then(({ success, emailValue, commentValue }) => {
         if (success) {
           withLoadingIndicator(() =>
-            emailVaccineReport(sensor, currentUser, emailValue, commentValue)
+            emailVaccineReport(macAddress, currentUser, emailValue, commentValue)
           );
         }
       })
@@ -69,10 +68,7 @@ export const ExportTemperatureDataButtonComponent = ({
   return (
     <>
       <IconButton
-        onPress={() => {
-          if (sensor.logs?.length > 0) toggle();
-          else toastNoData();
-        }}
+        onPress={toggle}
         Icon={<DownloadIcon color={BLACK} />}
         containerStyle={localStyles.iconButton}
       />
@@ -133,7 +129,7 @@ const localStyles = StyleSheet.create({
 });
 
 ExportTemperatureDataButtonComponent.propTypes = {
-  sensor: PropTypes.object.isRequired,
+  macAddress: PropTypes.string.isRequired,
   requestStorageWritePermission: PropTypes.func.isRequired,
   currentUser: PropTypes.object.isRequired,
 };

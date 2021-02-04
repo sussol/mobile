@@ -6,6 +6,7 @@ import TimeZone from 'react-native-timezone';
 import DeviceInfo from 'react-native-device-info';
 import temperature from './temperature';
 import { SECONDS } from './constants';
+import { UIDatabase } from '../database/index';
 
 // TODO: LOTS OF LOCALIZATION
 const SECTION_TITLES = {
@@ -227,7 +228,12 @@ const writeReport = async content => {
 // TODO: LOCALIZE
 const getSubject = sensor => `Temperature log report for ${sensor.name ?? sensor.macAddress}`;
 
-export const emailVaccineReport = async (sensor, user, email, comment) => {
+export const emailVaccineReport = async (macAddress, user, email, comment) => {
+  const sensor = UIDatabase.get('Sensor', macAddress, 'macAddress');
+
+  if (!sensor) throw new Error('Cannot find sensor');
+  if (sensor?.logs <= 0) throw new Error('No temperature logs');
+
   const content = await vaccineReport(sensor, user, comment);
   const path = await writeReport(content);
   const subject = getSubject(sensor);
