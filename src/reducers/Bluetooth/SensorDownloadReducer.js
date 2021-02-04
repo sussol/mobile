@@ -1,4 +1,4 @@
-import { VACCINE_ACTIONS } from '../actions/VaccineActions';
+import { DOWNLOAD_ACTIONS } from '../../actions/Bluetooth/SensorDownloadActions';
 
 const LAST_DOWNLOAD_STATUS = {
   OK: 'OK',
@@ -13,11 +13,11 @@ const initialState = () => ({
   error: null,
 });
 
-export const VaccineReducer = (state = initialState(), action) => {
+export const SensorDownloadReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
-    case VACCINE_ACTIONS.SENSOR_DOWNLOAD_START: {
+    case DOWNLOAD_ACTIONS.SENSOR_DOWNLOAD_START: {
       const { payload } = action;
       const { sensor } = payload;
       const { macAddress } = sensor;
@@ -25,7 +25,7 @@ export const VaccineReducer = (state = initialState(), action) => {
       return { ...state, downloadingLogsFrom: macAddress };
     }
 
-    case VACCINE_ACTIONS.SENSOR_DOWNLOAD_SUCCESS: {
+    case DOWNLOAD_ACTIONS.SENSOR_DOWNLOAD_SUCCESS: {
       const { lastDownloadStatus, lastDownloadTime } = state;
       const { payload } = action;
       const { sensor } = payload;
@@ -49,7 +49,7 @@ export const VaccineReducer = (state = initialState(), action) => {
       };
     }
 
-    case VACCINE_ACTIONS.SENSOR_DOWNLOAD_ERROR: {
+    case DOWNLOAD_ACTIONS.SENSOR_DOWNLOAD_ERROR: {
       const { lastDownloadStatus, lastDownloadTime } = state;
       const { payload } = action;
       const { sensor } = payload;
@@ -73,17 +73,17 @@ export const VaccineReducer = (state = initialState(), action) => {
       };
     }
 
-    case VACCINE_ACTIONS.DOWNLOAD_LOGS_START: {
+    case DOWNLOAD_ACTIONS.DOWNLOAD_LOGS_START: {
       return { ...state, isSyncingTemps: true, error: null };
     }
 
-    case VACCINE_ACTIONS.DOWNLOAD_LOGS_ERROR: {
+    case DOWNLOAD_ACTIONS.DOWNLOAD_LOGS_ERROR: {
       const { payload } = action;
       const { error } = payload;
       return { ...state, isSyncingTemps: false, error };
     }
 
-    case VACCINE_ACTIONS.DOWNLOAD_LOGS_COMPLETE: {
+    case DOWNLOAD_ACTIONS.DOWNLOAD_LOGS_COMPLETE: {
       return { ...state, isSyncingTemps: false, error: null };
     }
 

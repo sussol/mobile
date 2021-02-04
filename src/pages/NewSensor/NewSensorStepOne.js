@@ -14,7 +14,7 @@ import { TextWithIcon } from '../../widgets/Typography';
 import { vaccineStrings } from '../../localization';
 import { SUSSOL_ORANGE } from '../../globalStyles';
 import { SensorScanActions } from '../../actions/Bluetooth/SensorScanActions';
-import { selectScannedSensors } from '../../selectors/Bluetooth/bluetooth';
+import { selectScannedSensors } from '../../selectors/Bluetooth/sensorScan';
 
 const Spinner = () => (
   <TextWithIcon
