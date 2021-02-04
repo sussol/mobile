@@ -1,6 +1,6 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
-import { ToastAndroid, View } from 'react-native';
+import { ToastAndroid, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -13,7 +13,6 @@ import {
   FlexRow,
   PageButton,
   Spacer,
-  WithSpace,
   TextWithIcon,
   TextEditor,
   EditorRow,
@@ -46,28 +45,34 @@ export const NewSensorStepThreeComponent = ({
   macAddress,
 }) => {
   const withLoadingIndicator = useLoadingIndicator();
-  const sensor = { logInterval, loggingDelay, name, code, macAddress };
 
   return (
     <TabContainer>
-      <WithSpace space={10} horizontal={false} vertical>
-        <Paper height={200} headerText={vaccineStrings.new_sensor_step_three_title}>
-          <EditorRow label={vaccineStrings.sensor_name} Icon={<InfoIcon color={DARKER_GREY} />}>
-            <TextEditor size="large" value={name} onChangeText={updateName} />
-            <TextEditor label={vaccineStrings.sensor_code} value={code} onChangeText={updateCode} />
-          </EditorRow>
+      <Paper height={200} headerText={vaccineStrings.new_sensor_step_three_title}>
+        <EditorRow
+          containerStyle={localStyles.paperContentRow}
+          label={vaccineStrings.sensor_name}
+          Icon={<InfoIcon color={DARKER_GREY} />}
+        >
+          <TextEditor size="large" value={name} onChangeText={updateName} />
+          <TextEditor label={vaccineStrings.sensor_code} value={code} onChangeText={updateCode} />
+        </EditorRow>
 
-          <EditorRow
-            label={vaccineStrings.logging_interval}
-            Icon={<InfoIcon color={DARKER_GREY} />}
-          >
-            <DurationEditor value={logInterval} label="" onChange={updateLogInterval} />
-          </EditorRow>
-        </Paper>
-      </WithSpace>
+        <EditorRow
+          containerStyle={localStyles.paperContentRow}
+          label={vaccineStrings.logging_interval}
+          Icon={<InfoIcon color={DARKER_GREY} />}
+        >
+          <DurationEditor value={logInterval} label="" onChange={updateLogInterval} />
+        </EditorRow>
+      </Paper>
 
-      <Paper height={130} contentContainerStyle={{ flex: 1 }}>
-        <EditorRow label={vaccineStrings.start_logging} Icon={<CalendarIcon color={DARKER_GREY} />}>
+      <Paper>
+        <EditorRow
+          containerStyle={localStyles.paperContentRow}
+          label={vaccineStrings.start_logging}
+          Icon={<CalendarIcon color={DARKER_GREY} />}
+        >
           <DateEditor onPress={updateLoggingDelay} date={loggingDelay} />
           <TimeEditor onPress={updateLoggingDelay} time={loggingDelay} />
         </EditorRow>
@@ -78,9 +83,11 @@ export const NewSensorStepThreeComponent = ({
       </TextWithIcon>
 
       <FlexRow flex={1} justifyContent="flex-end" alignItems="flex-end">
-        <View style={{ marginRight: 'auto' }}>
-          <PageButton text={buttonStrings.back} onPress={previousTab} />
-        </View>
+        <PageButton
+          text={buttonStrings.back}
+          onPress={previousTab}
+          style={{ marginRight: 'auto' }}
+        />
 
         <PageButton text={buttonStrings.cancel} onPress={exit} />
 
@@ -90,7 +97,7 @@ export const NewSensorStepThreeComponent = ({
           text={vaccineStrings.connect}
           style={{ backgroundColor: SUSSOL_ORANGE }}
           textStyle={{ color: WHITE, textTransform: 'capitalize' }}
-          onPress={() => withLoadingIndicator(connectToSensor(sensor))}
+          onPress={() => withLoadingIndicator(connectToSensor({ macAddress, logInterval }))}
         />
       </FlexRow>
     </TabContainer>
@@ -126,6 +133,12 @@ const dispatchToProps = dispatch => {
     updateLogInterval,
   };
 };
+
+const localStyles = StyleSheet.create({
+  paperContentRow: {
+    padding: 8,
+  },
+});
 
 const stateToProps = state => {
   const newSensor = selectNewSensor(state);

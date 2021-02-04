@@ -7,95 +7,143 @@ import moment from 'moment';
 import { PermissionActions } from '../PermissionActions';
 import BleService from '../../bluetooth/BleService';
 import TemperatureLogManager from '../../bluetooth/TemperatureLogManager';
+import SensorManager from '../../bluetooth/SensorManager';
+import { UIDatabase } from '../../database';
 import { VACCINE_CONSTANTS } from '../../utilities/modules/vaccines/index';
-import { UIDatabase } from '../../database/index';
 import { VACCINE_ENTITIES } from '../../utilities/modules/vaccines/constants';
-import { selectIsDownloadingLogs } from '../../selectors/Bluetooth/bluetooth';
+import { syncStrings } from '../../localization';
+import { selectIsSyncingTemps } from '../../selectors/vaccine';
 
 export const DOWNLOAD_ACTIONS = {
-  DOWNLOAD_LOGS_START: 'Vaccine/downloadLogsStart',
-  DOWNLOAD_LOGS_ERROR: 'Vaccine/downloadLogsError',
-  DOWNLOAD_LOGS_COMPLETE: 'Vaccine/downloadLogsComplete',
+  DOWNLOAD_LOGS_START: 'Bluetooth/downloadLogsStart',
+  DOWNLOAD_LOGS_ERROR: 'Bluetooth/downloadLogsError',
+  DOWNLOAD_LOGS_COMPLETE: 'Bluetooth/downloadLogsComplete',
+  SENSOR_DOWNLOAD_START: 'Bluetooth/sensorDownloadStart',
+  SENSOR_DOWNLOAD_SUCCESS: 'Bluetooth/sensorDownloadSuccess',
+  SENSOR_DOWNLOAD_ERROR: 'Bluetooth/sensorDownloadError',
 };
 
-const downloadLogsStart = () => ({
-  type: DOWNLOAD_ACTIONS.DOWNLOAD_LOGS_START,
-});
-const downloadLogsError = () => ({
+const downloadLogsStart = () => ({ type: DOWNLOAD_ACTIONS.DOWNLOAD_LOGS_START });
+const downloadLogsComplete = () => ({ type: DOWNLOAD_ACTIONS.DOWNLOAD_LOGS_COMPLETE });
+const downloadLogsError = error => ({
   type: DOWNLOAD_ACTIONS.DOWNLOAD_LOGS_ERROR,
-});
-const downloadLogsComplete = () => ({
-  type: DOWNLOAD_ACTIONS.DOWNLOAD_LOGS_COMPLETE,
+  payload: { error },
 });
 
-const downloadAllLogs = () => async dispatch => {
+const sensorDownloadStart = sensor => ({
+  type: DOWNLOAD_ACTIONS.SENSOR_DOWNLOAD_START,
+  payload: { sensor },
+});
+
+const sensorDownloadError = (sensor, error) => ({
+  type: DOWNLOAD_ACTIONS.SENSOR_DOWNLOAD_ERROR,
+  payload: { sensor, error },
+});
+
+const sensorDownloadSuccess = sensor => ({
+  type: DOWNLOAD_ACTIONS.SENSOR_DOWNLOAD_SUCCESS,
+  payload: { sensor },
+});
+
+const downloadAll = () => async dispatch => {
   dispatch(downloadLogsStart());
   // Ensure there are some sensors which have been assigned a location before syncing.
   const sensors = UIDatabase.objects('Sensor').filtered('location != null && isActive == true');
 
   if (!sensors.length) {
-    // TODO: Should we do something if there are errors?
-    dispatch(downloadLogsError());
+    dispatch(downloadLogsError(syncStrings.no_sensors));
     return null;
   }
 
   for (let i = 0; i < sensors.length; i++) {
     // Intentionally sequential
-    // eslint-disable-next-line no-await-in-loop
-    await dispatch(downloadLogsFromSensor(sensors[i]));
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      await dispatch(downloadLogsFromSensor(sensors[i]));
+      // eslint-disable-next-line no-await-in-loop
+      await dispatch(downloadInfoFromSensor(sensors[i]));
+    } catch (exception) {
+      dispatch(downloadLogsError(exception.message));
+    }
   }
+  // this will now overwrite the error message
   dispatch(downloadLogsComplete());
   return null;
 };
 
-const downloadLogsFromSensor = sensor => async () => {
-  const { macAddress, logInterval } = sensor;
+const downloadLogsFromSensor = sensor => async dispatch => {
+  dispatch(sensorDownloadStart(sensor));
 
-  const downloadedLogsResult =
-    (await BleService().downloadLogsWithRetries(
+  try {
+    const { macAddress, logInterval } = sensor;
+
+    const downloadedLogsResult =
+      (await BleService().downloadLogsWithRetries(
+        macAddress,
+        VACCINE_CONSTANTS.MAX_BLUETOOTH_COMMAND_ATTEMPTS
+      )) ?? {};
+
+    if (downloadedLogsResult) {
+      const savedTemperatureLogs = UIDatabase.objects(VACCINE_ENTITIES.TEMPERATURE_LOG)
+        .filtered('sensor.macAddress == $0', macAddress)
+        .sorted('timestamp', true);
+
+      const [mostRecentLog] = savedTemperatureLogs;
+      const mostRecentLogTime = mostRecentLog ? mostRecentLog.timestamp : null;
+      const nextPossibleLogTime = mostRecentLogTime
+        ? moment(mostRecentLogTime).add(logInterval, 's')
+        : 0;
+
+      const numberOfLogsToSave = await TemperatureLogManager().calculateNumberOfLogsToSave(
+        logInterval,
+        nextPossibleLogTime
+      );
+
+      const temperatureLogs = await TemperatureLogManager().createLogs(
+        downloadedLogsResult,
+        sensor,
+        numberOfLogsToSave,
+        mostRecentLogTime
+      );
+
+      await TemperatureLogManager().saveLogs(temperatureLogs);
+      dispatch(sensorDownloadSuccess(sensor));
+    }
+  } catch (error) {
+    dispatch(sensorDownloadError(sensor, error));
+  }
+};
+
+const downloadInfoFromSensor = sensor => async () => {
+  const { macAddress } = sensor;
+  const sensorInfo =
+    (await BleService().getInfoWithRetries(
       macAddress,
       VACCINE_CONSTANTS.MAX_BLUETOOTH_COMMAND_ATTEMPTS
     )) ?? {};
 
-  if (downloadedLogsResult) {
-    const savedTemperatureLogs = UIDatabase.objects(VACCINE_ENTITIES.TEMPERATURE_LOG)
-      .filtered('sensor.macAddress == $0', macAddress)
-      .sorted('timestamp', true);
+  if (sensorInfo) {
+    // creating a new object to allow mutating.
+    // cannot use spread operator down here
+    const updatedSensor = SensorManager().sensorCreator(sensor);
+    updatedSensor.batteryLevel = parseInt(sensorInfo.batteryLevel, 10);
 
-    const [mostRecentLog] = savedTemperatureLogs;
-    const mostRecentLogTime = mostRecentLog ? mostRecentLog.timestamp : null;
-    const nextPossibleLogTime = mostRecentLogTime
-      ? moment(mostRecentLogTime).add(logInterval, 's')
-      : 0;
-
-    const numberOfLogsToSave = await TemperatureLogManager().calculateNumberOfLogsToSave(
-      logInterval,
-      nextPossibleLogTime
-    );
-
-    const temperatureLogs = await TemperatureLogManager().createLogs(
-      downloadedLogsResult,
-      sensor,
-      numberOfLogsToSave,
-      mostRecentLogTime
-    );
-
-    await TemperatureLogManager().saveLogs(temperatureLogs);
+    await SensorManager().saveSensor(updatedSensor);
   }
 
   return null;
 };
 
-const startDownloadAllLogs = () => async (dispatch, getState) => {
+const startDownloadAll = () => async (dispatch, getState) => {
   // Ensure there isn't already a download in progress before starting a new one
   const state = getState();
-  const isDownloadingLogs = selectIsDownloadingLogs(state);
-  if (isDownloadingLogs) return null;
+  const isSyncingTemps = selectIsSyncingTemps(state);
+  if (isSyncingTemps) return null;
 
-  await PermissionActions.withLocationAndBluetooth(dispatch, getState, downloadAllLogs());
+  await PermissionActions.withLocationAndBluetooth(dispatch, getState, downloadAll());
   return null;
 };
 
 export const SensorDownloadActions = {
-  startDownloadAllLogs,
+  startDownloadAll,
 };

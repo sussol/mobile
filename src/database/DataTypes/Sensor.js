@@ -51,11 +51,34 @@ export class Sensor extends Realm.Object {
     return this.location?.description ?? '';
   }
 
+  get mostRecentLog() {
+    return this.logs.sorted('timestamp', true)[0];
+  }
+
   get lastSyncDate() {
-    const mostRecentLog = this.logs.sorted('timestamp', false)[0] ?? {};
-    const { timestamp = new Date(0) } = mostRecentLog;
+    const { timestamp = new Date(0) } = this.mostRecentLog ?? {};
 
     return timestamp;
+  }
+
+  get maxTemperature() {
+    return this.logs.max('temperature');
+  }
+
+  get minTemperature() {
+    return this.logs.min('temperature');
+  }
+
+  get numberOfBreaches() {
+    return this.breaches.length;
+  }
+
+  get breachConfigs() {
+    return this.location?.breachConfigs;
+  }
+
+  get firstLog() {
+    return this.logs.sorted('timestamp', false)[0];
   }
 }
 

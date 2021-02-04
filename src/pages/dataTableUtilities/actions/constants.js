@@ -11,8 +11,6 @@ export const ACTIONS = {
   REFRESH_CASH_REGISTER: 'refreshCashRegister',
   ADD_ITEM: 'addItem',
   ADD_RECORD: 'addRecord',
-  TOGGLE_FRIDGES: 'toggleFridges',
-  TOGGLE_SENSORS: 'toggleSensors',
   TOGGLE_INDICATORS: 'toggleIndicators',
   SELECT_INDICATOR: 'selectIndicator',
   HIDE_OVER_STOCKED: 'hideOverStocked',

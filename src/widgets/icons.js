@@ -185,6 +185,16 @@ export const ArrowIcon = ({ color, size, style }) => (
 ArrowIcon.defaultProps = { color: DARK_GREY, size: 16, style: { marginLeft: 10 } };
 ArrowIcon.propTypes = { color: PropTypes.string, size: PropTypes.number, style: PropTypes.object };
 
+export const WifiOffIcon = ({ color, size, style }) => (
+  <MaterialCommunityIcon name="rss-off" size={size} style={style} color={color} />
+);
+WifiOffIcon.defaultProps = { color: DARK_GREY, size: 22, style: { marginLeft: 10 } };
+WifiOffIcon.propTypes = {
+  color: PropTypes.string,
+  size: PropTypes.number,
+  style: PropTypes.object,
+};
+
 export const WifiIcon = ({ color, size, style }) => (
   <IonIcon name="logo-rss" size={size} style={style} color={color} />
 );

@@ -47,7 +47,6 @@ const FORM_INPUT_KEYS = {
   ADDRESS_ONE: 'addressOne',
   ADDRESS_TWO: 'addressTwo',
   REGISTRATION_CODE: 'registrationCode',
-  LOCATION_TYPE: 'locationType',
   POLICY_NUMBER_FAMILY: 'policyNumberFamily',
   POLICY_NUMBER_PERSON: 'policyNumberPerson',
   POLICY_PROVIDER: 'insuranceProvider',
@@ -212,17 +211,6 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     optionKey: 'name',
     isEditable: !seedObject,
   },
-  [FORM_INPUT_KEYS.LOCATION_TYPE]: {
-    type: FORM_INPUT_TYPES.DROPDOWN,
-    initialValue: UIDatabase.objects('LocationType')[0],
-    key: 'locationType',
-    label: formInputStrings.location_type,
-    options: UIDatabase.objects('LocationType'),
-    optionKey: 'description',
-    isEditable: true,
-    validator: input => !!input,
-    isRequired: true,
-  },
   [FORM_INPUT_KEYS.IS_ACTIVE]: {
     type: FORM_INPUT_TYPES.TOGGLE,
     initialValue: true,
@@ -350,7 +338,6 @@ const FORM_CONFIGS = {
     FORM_INPUT_KEYS.SEARCH_FIRST_NAME,
     FORM_INPUT_KEYS.SEARCH_REGISTRATION_CODE,
   ],
-  location: [FORM_INPUT_KEYS.CODE, FORM_INPUT_KEYS.DESCRIPTION, FORM_INPUT_KEYS.LOCATION_TYPE],
 };
 
 export const getFormInputConfig = (formName, seedObject) => {

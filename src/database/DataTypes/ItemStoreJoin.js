@@ -45,7 +45,6 @@ ItemStoreJoin.schema = {
     id: 'string',
     itemId: 'string',
     joinsThisStore: 'bool',
-    restrictedLocationType: { type: 'LocationType', optional: true },
   },
 };
 

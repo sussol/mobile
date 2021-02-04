@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-curly-newline */
 /* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
@@ -14,7 +15,7 @@ import { Button } from 'react-native-ui-components';
 
 import { UIDatabase } from '../database';
 import { SETTINGS_KEYS } from '../settings';
-import { MODAL_KEYS } from '../utilities';
+import { MILLISECONDS, MODAL_KEYS } from '../utilities';
 
 import {
   gotoEditSensorPage,
@@ -29,12 +30,13 @@ import { DataTablePageModal } from '../widgets/modals';
 
 import globalStyles from '../globalStyles';
 import { generalStrings, buttonStrings } from '../localization';
-import { selectCurrentUserPasswordHash } from '../selectors/user';
+import { selectCurrentUser, selectCurrentUserPasswordHash } from '../selectors/user';
 import { PermissionActions } from '../actions/PermissionActions';
 import { createRecord } from '../database/utilities/index';
 import { BreachManager } from '../bluetooth/BreachManager';
 import { VaccineDataAccess } from '../bluetooth/VaccineDataAccess';
 import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
+import { emailVaccineReport } from '../utilities/vaccineReport';
 
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
@@ -45,7 +47,12 @@ const exportData = async () => {
   ToastAndroid.show(toastMessage, ToastAndroid.SHORT);
 };
 
-const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWritePermission }) => {
+const Settings = ({
+  currentUser,
+  toRealmExplorer,
+  currentUserPasswordHash,
+  requestStorageWritePermission,
+}) => {
   const [state, setState] = useState({
     syncURL: UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL),
     modalKey: '',
@@ -146,16 +153,36 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
       UIDatabase.delete('TemperatureBreach', oldUIDatabaseBreaches);
 
       // create locations
-      const fridge1 = createRecord(UIDatabase, 'Location', null, 'Fridge 1', 'f1');
-      const fridge2 = createRecord(UIDatabase, 'Location', null, 'Fridge 2', 'f2');
-      const fridge3 = createRecord(UIDatabase, 'Location', null, 'Fridge 3', 'f3');
-      const fridge4 = createRecord(UIDatabase, 'Location', null, 'Fridge 4', 'f4');
+      const fridge1 = createRecord(UIDatabase, 'Location', { description: 'Fridge 1', code: 'f1' });
+      const fridge2 = createRecord(UIDatabase, 'Location', { description: 'Fridge 2', code: 'f2' });
+      const fridge3 = createRecord(UIDatabase, 'Location', { description: 'Fridge 3', code: 'f3' });
+      const fridge4 = createRecord(UIDatabase, 'Location', { description: 'Fridge 4', code: 'f4' });
 
       // create sensors
-      createRecord(UIDatabase, 'Sensor', 'sensor 1', 10, fridge1);
-      createRecord(UIDatabase, 'Sensor', 'sensor 2', 20, fridge2);
-      createRecord(UIDatabase, 'Sensor', 'sensor 3', 30, fridge3);
-      createRecord(UIDatabase, 'Sensor', 'sensor 4', 40, fridge4);
+      createRecord(UIDatabase, 'Sensor', {
+        name: 'sensor 1',
+        macAddress: 'sen1',
+        batteryLevel: 10,
+        location: fridge1,
+      });
+      createRecord(UIDatabase, 'Sensor', {
+        name: 'sensor 2',
+        macAddress: 'sen2',
+        batteryLevel: 20,
+        location: fridge2,
+      });
+      createRecord(UIDatabase, 'Sensor', {
+        name: 'sensor 3',
+        macAddress: 'sen2',
+        batteryLevel: 30,
+        location: fridge3,
+      });
+      createRecord(UIDatabase, 'Sensor', {
+        name: 'sensor 4',
+        macAddress: 'sen3',
+        batteryLevel: 40,
+        location: fridge4,
+      });
 
       // create some configs
       UIDatabase.objects('Location').forEach((location, i) => {
@@ -164,7 +191,7 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
           id: `${locationID}${i + 1}`,
           minimumTemperature: 8,
           maximumTemperature: 999,
-          duration: 60 * 20,
+          duration: 20 * MILLISECONDS.ONE_MINUTE,
           description: 'Config 1, 8 to 999 consecutive for 20 minutes',
           type: 'HOT_CONSECUTIVE',
           location,
@@ -174,7 +201,7 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
           id: `${locationID}${i + 2}`,
           minimumTemperature: -999,
           maximumTemperature: 0,
-          duration: 60 * 20,
+          duration: 20 * MILLISECONDS.ONE_MINUTE,
           description: 'Config 1, 0 to -999 consecutive for 20 minutes',
           type: 'COLD_CONSECUTIVE',
           location,
@@ -184,7 +211,7 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
           id: `${locationID}${i + 3}`,
           minimumTemperature: 8,
           maximumTemperature: 999,
-          duration: 60 * 60,
+          duration: 60 * MILLISECONDS.ONE_MINUTE,
           description: 'Config 1, 8 to 999 cumulative for 1 hour',
           type: 'HOT_CUMULATIVE',
           location,
@@ -194,7 +221,7 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
           id: `${locationID}${i + 4}`,
           minimumTemperature: -999,
           maximumTemperature: 0,
-          duration: 60 * 60,
+          duration: 60 * MILLISECONDS.ONE_MINUTE,
           description: 'Config 1, 0 to -999 cumulative',
           type: 'COLD_CUMULATIVE',
           location,
@@ -282,6 +309,15 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
         <View>
           <MenuButton text={buttonStrings.realm_explorer} onPress={toRealmExplorer} />
           <MenuButton text={buttonStrings.export_data} onPress={requestStorageWritePermission} />
+          {UIDatabase.objects('Sensor').map(sensor => (
+            <MenuButton
+              text="Email report"
+              onPress={() =>
+                emailVaccineReport(sensor, currentUser, 'Comment!', ['griffinjoshua5@gmail.com'])
+              }
+            />
+          ))}
+
           <MenuButton
             text="Generate vaccine data"
             onPress={() => withLoadingIndicator(createVaccineData)}
@@ -310,6 +346,7 @@ const mapStateToDispatch = dispatch => ({
 });
 
 const mapStateToProps = state => ({
+  currentUser: selectCurrentUser(state),
   currentUserPasswordHash: selectCurrentUserPasswordHash(state),
 });
 
@@ -323,6 +360,7 @@ const styles = {
 export const SettingsPage = connect(mapStateToProps, mapStateToDispatch)(Settings);
 
 Settings.propTypes = {
+  currentUser: PropTypes.object.isRequired,
   toRealmExplorer: PropTypes.func.isRequired,
   currentUserPasswordHash: PropTypes.string.isRequired,
   requestStorageWritePermission: PropTypes.func.isRequired,
