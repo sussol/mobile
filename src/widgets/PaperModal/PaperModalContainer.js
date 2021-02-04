@@ -1,6 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useWindowDimensions, Modal, KeyboardAvoidingView, View, Pressable } from 'react-native';
+import {
+  TouchableWithoutFeedback,
+  useWindowDimensions,
+  Modal,
+  KeyboardAvoidingView,
+  View,
+  Pressable,
+} from 'react-native';
 
 import { FlexView } from '../FlexView';
 import { Paper } from '../Paper';
@@ -12,10 +19,10 @@ export const PaperModalContainer = ({ isVisible, onClose, children }) => {
   return (
     <Modal
       visible={isVisible}
-      presentationStyle="fullScreen"
-      animationType="slide"
+      animationType="fades"
       hardwareAccelerated
       onRequestClose={onClose}
+      transparent
     >
       <Pressable style={{ flex: 1 }} onPress={onClose}>
         <FlexView
@@ -26,9 +33,16 @@ export const PaperModalContainer = ({ isVisible, onClose, children }) => {
         >
           <Paper paddingHorizontal={0}>
             <View style={{ height: height / 2, width: width / 2 }}>
-              <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
-                {children}
-              </KeyboardAvoidingView>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  /* This Touchable is capturing gestures such that only the transparent overlay
+                     closes the modal.  */
+                }}
+              >
+                <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+                  {children}
+                </KeyboardAvoidingView>
+              </TouchableWithoutFeedback>
             </View>
           </Paper>
         </FlexView>
@@ -39,6 +53,6 @@ export const PaperModalContainer = ({ isVisible, onClose, children }) => {
 
 PaperModalContainer.propTypes = {
   isVisible: PropTypes.bool.isRequired,
-  children: PropTypes.oneOf([PropTypes.node, PropTypes.arrayOf(PropTypes.node)]).isRequired,
+  children: PropTypes.oneOfType([PropTypes.node, PropTypes.arrayOf(PropTypes.node)]).isRequired,
   onClose: PropTypes.func.isRequired,
 };
