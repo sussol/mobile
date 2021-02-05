@@ -328,3 +328,23 @@ AlarmClockIcon.propTypes = {
   style: PropTypes.object,
   color: PropTypes.string,
 };
+
+export const BarChartIcon = ({ size, style, color }) => (
+  <FAIcon size={size} style={style} color={color} name="bar-chart" />
+);
+BarChartIcon.defaultProps = { size: 20, style: {}, color: DARKER_GREY };
+BarChartIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
+
+export const LineChartIcon = ({ size, style, color }) => (
+  <FAIcon size={size} style={style} color={color} name="line-chart" />
+);
+LineChartIcon.defaultProps = { size: 20, style: {}, color: DARKER_GREY };
+LineChartIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
