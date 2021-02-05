@@ -49,7 +49,7 @@ export const ExportTemperatureDataButtonComponent = ({
       // the current state - primarily to close the modal, making room for the full-screen spinner.
       // or so the modal is closed and a toast will provide feedback.
       .then(success => {
-        const cached = { email, comment, success };
+        const cached = { emailValue: email, commentValue: comment, success };
         if (!success) toastNoPermission();
         reset();
         return cached;
