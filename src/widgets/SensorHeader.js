@@ -22,7 +22,7 @@ import { FlexRow } from './FlexRow';
 
 const formatBatteryLevel = batteryLevel => `${batteryLevel}%`;
 
-export const FridgeHeaderComponent = ({
+export const SensorHeaderComponent = ({
   batteryLevel,
   name,
   macAddress,
@@ -71,7 +71,7 @@ export const FridgeHeaderComponent = ({
   </>
 );
 
-FridgeHeaderComponent.defaultProps = {
+SensorHeaderComponent.defaultProps = {
   macAddress: 'AA:BB:CC:DD:EE:FF',
   batteryLevel: 99,
   name: '',
@@ -79,7 +79,7 @@ FridgeHeaderComponent.defaultProps = {
   showTitle: false,
 };
 
-FridgeHeaderComponent.propTypes = {
+SensorHeaderComponent.propTypes = {
   name: PropTypes.string,
   macAddress: PropTypes.string,
   batteryLevel: PropTypes.number,
@@ -120,4 +120,4 @@ const dispatchToProps = (dispatch, props) => {
   return { editSensor };
 };
 
-export const FridgeHeader = connect(stateToProps, dispatchToProps)(FridgeHeaderComponent);
+export const SensorHeader = connect(stateToProps, dispatchToProps)(SensorHeaderComponent);
