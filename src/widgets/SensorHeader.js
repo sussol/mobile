@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { StyleSheet } from 'react-native';
 import { TextWithIcon } from './Typography/index';
-import { BatteryIcon, CogIcon, DownloadIcon } from './icons';
+import { BatteryIcon, CogIcon } from './icons';
 import {
   APP_FONT_FAMILY,
   BLACK,
@@ -19,6 +19,7 @@ import { LastSensorDownload } from './LastSensorDownload';
 import { BlinkSensorButton } from './BlinkSensorButton';
 import { Circle } from './Circle';
 import { FlexRow } from './FlexRow';
+import { ExportTemperatureDataButton } from './ExportTemperatureDataButton';
 
 const formatBatteryLevel = batteryLevel => `${batteryLevel}%`;
 
@@ -55,10 +56,7 @@ export const SensorHeaderComponent = ({
       {formatBatteryLevel(batteryLevel)}
     </TextWithIcon>
 
-    <IconButton
-      Icon={<DownloadIcon color={DARKER_GREY} />}
-      containerStyle={{ width: 50, justifyContent: 'center' }}
-    />
+    <ExportTemperatureDataButton macAddress={macAddress} />
     <BlinkSensorButton macAddress={macAddress} />
     {showCog && (
       <IconButton

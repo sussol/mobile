@@ -41,8 +41,12 @@ const requestWriteStorage = () => async (dispatch, getState) => {
 
   if (!writeStoragePermission) {
     const result = await request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
+    const success = result === RESULTS.GRANTED;
     dispatch(setWriteStorage(result === RESULTS.GRANTED));
+    return success;
   }
+
+  return writeStoragePermission;
 };
 
 const requestLocation = () => async (dispatch, getState) => {
