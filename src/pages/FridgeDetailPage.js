@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-wrap-multilines */
 /* eslint-disable react/forbid-prop-types */
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Text, View, StyleSheet } from 'react-native';
@@ -15,10 +15,13 @@ import {
   Paper,
   SensorStatus,
 } from '../widgets';
-import { VaccineChart } from '../widgets/VaccineChart';
+import { VaccineBarChart } from '../widgets/VaccineBarChart';
+import { VaccineLineChart } from '../widgets/VaccineLineChart';
 import { NoBreachMan } from '../widgets/NoBreachMan';
 import { FridgeActions } from '../actions/FridgeActions';
 import { AfterInteractions } from '../widgets/AfterInteractions';
+import { IconButton } from '../widgets/IconButton';
+import { BarChartIcon, LineChartIcon } from '../widgets/icons';
 
 import {
   selectAverageTemperature,
@@ -46,6 +49,7 @@ import {
   BLUE_WHITE,
   COLD_BREACH_BLUE,
   DANGER_RED,
+  WARMER_GREY,
 } from '../globalStyles';
 import { vaccineStrings } from '../localization/index';
 import { FridgeHeader } from '../widgets/FridgeHeader';
@@ -88,102 +92,136 @@ export const FridgeDetailPageComponent = ({
   currentTemperature,
   sensor,
   breachBoundaries,
-}) => (
-  <DataTablePageView>
-    <AfterInteractions>
-      <View style={localStyles.container}>
-        <DateRangeSelector
-          containerStyle={localStyles.datePickerContainer}
-          initialStartDate={fromDate}
-          initialEndDate={toDate}
-          onChangeToDate={onChangeToDate}
-          onChangeFromDate={onChangeFromDate}
-          minimumDate={minimumDate}
-          maximumDate={maximumDate}
-        />
+}) => {
+  const [chartType, setChartType] = useState('bar');
+  const getIconButton = type => {
+    const iconStyle = { color: chartType === type ? WARMER_GREY : DARKER_GREY };
+    return (
+      <IconButton
+        onPress={() => setChartType(type)}
+        Icon={
+          type === 'line' ? <LineChartIcon style={iconStyle} /> : <BarChartIcon style={iconStyle} />
+        }
+        containerStyle={{ padding: 8 }}
+      />
+    );
+  };
 
-        <Paper
-          height={300}
-          contentContainerStyle={{ flex: 1, marginTop: 20 }}
-          Header={<FridgeHeader showCog sensor={sensor} />}
-        >
-          <AfterInteractions>
-            <FlexRow alignItems="center">
-              <VaccineChart
-                breaches={breaches}
-                minLine={minLine}
-                maxLine={maxLine}
-                minDomain={minDomain}
-                maxDomain={maxDomain}
-                breachBoundaries={breachBoundaries}
-              />
-              <SensorStatus
-                isInHotBreach={isInHotBreach}
-                isInColdBreach={isInColdBreach}
-                isLowBattery={isLowBattery}
-                currentTemp={currentTemperature}
-              />
+  return (
+    <DataTablePageView>
+      <AfterInteractions>
+        <View style={localStyles.container}>
+          <View style={localStyles.topRow}>
+            <DateRangeSelector
+              containerStyle={localStyles.datePickerContainer}
+              initialStartDate={fromDate}
+              initialEndDate={toDate}
+              onChangeToDate={onChangeToDate}
+              onChangeFromDate={onChangeFromDate}
+              minimumDate={minimumDate}
+              maximumDate={maximumDate}
+            />
+            <View style={localStyles.buttonContainer}>
+              {getIconButton('line')}
+              {getIconButton('bar')}
+            </View>
+          </View>
+
+          <Paper
+            height={300}
+            contentContainerStyle={{ flex: 1, marginTop: 20 }}
+            Header={<FridgeHeader showCog sensor={sensor} />}
+          >
+            <AfterInteractions>
+              <FlexRow alignItems="center">
+                {chartType === 'line' && (
+                  <VaccineLineChart
+                    breaches={breaches}
+                    minLine={minLine}
+                    maxLine={maxLine}
+                    minDomain={minDomain}
+                    maxDomain={maxDomain}
+                    breachBoundaries={breachBoundaries}
+                  />
+                )}
+                {chartType === 'bar' && (
+                  <VaccineBarChart
+                    breaches={breaches}
+                    minLine={minLine}
+                    maxLine={maxLine}
+                    minDomain={minDomain}
+                    maxDomain={maxDomain}
+                    breachBoundaries={breachBoundaries}
+                  />
+                )}
+                <SensorStatus
+                  isInHotBreach={isInHotBreach}
+                  isInColdBreach={isInColdBreach}
+                  isLowBattery={isLowBattery}
+                  currentTemp={currentTemperature}
+                />
+              </FlexRow>
+            </AfterInteractions>
+          </Paper>
+
+          <Animatable.View animation="fadeIn" duration={3000} useNativeDriver>
+            <FlexRow>
+              <BreachCard headerText={vaccineStrings.cumulative_breach}>
+                {coldCumulativeBreach ? (
+                  <>
+                    <Text style={localStyles.coldText}>{coldCumulativeBreach}</Text>
+                    <ColdBreachIcon color={COLD_BREACH_BLUE} />
+                  </>
+                ) : (
+                  <NoBreachMessage />
+                )}
+              </BreachCard>
+
+              <BreachCard headerText={vaccineStrings.consecutive_breach}>
+                {numberOfColdBreaches ? (
+                  <>
+                    <Text style={localStyles.coldText}>{numberOfColdBreaches}</Text>
+                    <ColdBreachIcon color={COLD_BREACH_BLUE} />
+                  </>
+                ) : (
+                  <NoBreachMessage />
+                )}
+              </BreachCard>
+
+              <BreachCard headerText={vaccineStrings.average_temperature}>
+                <Text style={[localStyles.hotText, { color: DARKER_GREY }]}>
+                  {averageTemperature}
+                </Text>
+              </BreachCard>
+
+              <BreachCard headerText={vaccineStrings.cumulative_breach}>
+                {hotCumulativeBreach ? (
+                  <>
+                    <Text style={localStyles.hotText}>{hotCumulativeBreach}</Text>
+                    <HotBreachIcon color={DANGER_RED} />
+                  </>
+                ) : (
+                  <NoBreachMessage />
+                )}
+              </BreachCard>
+
+              <BreachCard headerText={vaccineStrings.consecutive_breach}>
+                {numberOfHotBreaches ? (
+                  <>
+                    <Text style={localStyles.hotText}>{numberOfHotBreaches}</Text>
+                    <HotBreachIcon color={DANGER_RED} />
+                  </>
+                ) : (
+                  <NoBreachMessage />
+                )}
+              </BreachCard>
             </FlexRow>
-          </AfterInteractions>
-        </Paper>
-
-        <Animatable.View animation="fadeIn" duration={3000} useNativeDriver>
-          <FlexRow>
-            <BreachCard headerText={vaccineStrings.cumulative_breach}>
-              {coldCumulativeBreach ? (
-                <>
-                  <Text style={localStyles.coldText}>{coldCumulativeBreach}</Text>
-                  <ColdBreachIcon color={COLD_BREACH_BLUE} />
-                </>
-              ) : (
-                <NoBreachMessage />
-              )}
-            </BreachCard>
-
-            <BreachCard headerText={vaccineStrings.consecutive_breach}>
-              {numberOfColdBreaches ? (
-                <>
-                  <Text style={localStyles.coldText}>{numberOfColdBreaches}</Text>
-                  <ColdBreachIcon color={COLD_BREACH_BLUE} />
-                </>
-              ) : (
-                <NoBreachMessage />
-              )}
-            </BreachCard>
-
-            <BreachCard headerText={vaccineStrings.average_temperature}>
-              <Text style={[localStyles.hotText, { color: DARKER_GREY }]}>
-                {averageTemperature}
-              </Text>
-            </BreachCard>
-
-            <BreachCard headerText={vaccineStrings.cumulative_breach}>
-              {hotCumulativeBreach ? (
-                <>
-                  <Text style={localStyles.hotText}>{hotCumulativeBreach}</Text>
-                  <HotBreachIcon color={DANGER_RED} />
-                </>
-              ) : (
-                <NoBreachMessage />
-              )}
-            </BreachCard>
-
-            <BreachCard headerText={vaccineStrings.consecutive_breach}>
-              {numberOfHotBreaches ? (
-                <>
-                  <Text style={localStyles.hotText}>{numberOfHotBreaches}</Text>
-                  <HotBreachIcon color={DANGER_RED} />
-                </>
-              ) : (
-                <NoBreachMessage />
-              )}
-            </BreachCard>
-          </FlexRow>
-        </Animatable.View>
-      </View>
-    </AfterInteractions>
-  </DataTablePageView>
-);
+          </Animatable.View>
+        </View>
+      </AfterInteractions>
+    </DataTablePageView>
+  );
+};
 
 const stateToProps = (state, props) => {
   const { route } = props;
@@ -291,6 +329,12 @@ const localStyles = StyleSheet.create({
     color: DARKER_GREY,
     fontFamily: APP_FONT_FAMILY,
   },
+  buttonContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  topRow: { flexDirection: 'row' },
 });
 
 export const FridgeDetailPage = connect(stateToProps, dispatchToProps)(FridgeDetailPageComponent);

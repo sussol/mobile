@@ -1,13 +1,13 @@
 /* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2020
+ * Sustainable Solutions (NZ) Ltd. 2021
  */
 
 import React from 'react';
 import { Svg } from 'react-native-svg';
-import { VictoryAxis, VictoryChart, VictoryLine, VictoryScatter, VictoryBar } from 'victory-native';
 import moment from 'moment';
+import { VictoryAxis, VictoryChart, VictoryLine, VictoryBar } from 'victory-native';
 import PropTypes from 'prop-types';
 
 import { useLayoutDimensions } from '../hooks/useLayoutDimensions';
@@ -18,20 +18,16 @@ import {
   APP_FONT_FAMILY,
   GREY,
 } from '../globalStyles';
-import { HazardPoint } from './HazardPoint';
 import { FlexView } from './FlexView';
 import { CHART_CONSTANTS } from '../utilities/modules/vaccines';
 
-export const VaccineChart = ({
+export const VaccineBarChart = ({
   minLine,
   maxLine,
   minDomain,
   maxDomain,
-  x,
-  y,
   xTickFormat,
   yTickFormat,
-  breaches,
   onPressBreach,
   breachBoundaries,
 }) => {
@@ -121,6 +117,7 @@ export const VaccineChart = ({
             style={chartStyles.hotBars}
             barWidth={30}
             alignment="start"
+            onPress={onPressBreach}
           />
           <VictoryBar data={barData} style={chartStyles.midBars} barWidth={30} alignment="start" />
           <VictoryBar
@@ -131,31 +128,19 @@ export const VaccineChart = ({
             barWidth={30}
             alignment="start"
           />
-
-          <VictoryScatter
-            data={breaches.slice()}
-            y={y}
-            x={x}
-            dataComponent={<HazardPoint onPress={onPressBreach} />}
-          />
         </VictoryChart>
       </Svg>
     </FlexView>
   );
 };
 
-VaccineChart.defaultProps = {
-  x: 'timestamp',
-  y: 'temperature',
+VaccineBarChart.defaultProps = {
   xTickFormat: tick => moment(new Date(tick)).format('DD/MM'),
   yTickFormat: tick => `${tick}\u2103`,
   onPressBreach: null,
-  breaches: null,
 };
 
-VaccineChart.propTypes = {
-  x: PropTypes.string,
-  y: PropTypes.string,
+VaccineBarChart.propTypes = {
   minDomain: PropTypes.number.isRequired,
   maxDomain: PropTypes.number.isRequired,
   minLine: PropTypes.array.isRequired,
@@ -163,7 +148,6 @@ VaccineChart.propTypes = {
   xTickFormat: PropTypes.func,
   yTickFormat: PropTypes.func,
   onPressBreach: PropTypes.func,
-  breaches: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
   breachBoundaries: PropTypes.object.isRequired,
 };
 
