@@ -17,6 +17,7 @@ import {
   SUSSOL_ORANGE,
   APP_FONT_FAMILY,
   GREY,
+  WARMER_GREY,
 } from '../globalStyles';
 import { FlexView } from './FlexView';
 import { CHART_CONSTANTS } from '../utilities/modules/vaccines';
@@ -99,13 +100,13 @@ export const VaccineBarChart = ({
           <VictoryAxis
             offsetX={CHART_CONSTANTS.AXIS_OFFSET}
             dependentAxis
-            style={chartStyles.axis}
+            style={chartStyles.axisY}
             tickFormat={yTickFormat}
           />
           <VictoryAxis
             offsetY={CHART_CONSTANTS.AXIS_OFFSET}
             tickFormat={xTickFormat}
-            style={chartStyles.axis}
+            style={chartStyles.axisX}
           />
 
           <VictoryLine data={upperBoundData} style={chartStyles.maxBoundaryLine} />
@@ -156,7 +157,13 @@ const chartStyles = {
   minBoundaryLine: { data: { stroke: COLD_BREACH_BLUE, opacity: 0.75 } },
   maxLine: { data: { stroke: SUSSOL_ORANGE } },
   minLine: { data: { stroke: COLD_BREACH_BLUE } },
-  axis: { fontSize: 15, fontFamily: APP_FONT_FAMILY, fill: GREY },
+  axisX: { fontSize: 15, fontFamily: APP_FONT_FAMILY, fill: GREY },
+  axisY: {
+    fontSize: 15,
+    fontFamily: APP_FONT_FAMILY,
+    fill: GREY,
+    grid: { stroke: WARMER_GREY, strokeWidth: 0.5 },
+  },
   coldBars: { data: { fill: COLD_BREACH_BLUE, opacity: 0.9 } },
   hotBars: { data: { fill: SUSSOL_ORANGE, opacity: 0.9 } },
   midBars: { data: { fill: WEARY_TARMAC, opacity: 0.9 } },
