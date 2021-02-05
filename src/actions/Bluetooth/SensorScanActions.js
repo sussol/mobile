@@ -7,7 +7,7 @@ import throttle from 'lodash.throttle';
 import { PermissionActions } from '../PermissionActions';
 import BleService from '../../bluetooth/BleService';
 import { UIDatabase } from '../../database/index';
-import { selectScannedSensors } from '../../selectors/Bluetooth/bluetooth';
+import { selectScannedSensors } from '../../selectors/Bluetooth/sensorScan';
 
 export const SCAN_ACTIONS = {
   SCAN_START: 'Bluetooth/sensorScanStart',

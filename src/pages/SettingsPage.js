@@ -167,13 +167,13 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
       });
       createRecord(UIDatabase, 'Sensor', {
         name: 'sensor 3',
-        macAddress: 'sen2',
+        macAddress: 'sen3',
         batteryLevel: 30,
         location: fridge3,
       });
       createRecord(UIDatabase, 'Sensor', {
         name: 'sensor 4',
-        macAddress: 'sen3',
+        macAddress: 'sen4',
         batteryLevel: 40,
         location: fridge4,
       });

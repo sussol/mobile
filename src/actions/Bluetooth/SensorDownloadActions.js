@@ -4,44 +4,44 @@
  */
 
 import moment from 'moment';
-import { selectIsSyncingTemps } from '../selectors/vaccine';
-import { PermissionActions } from './PermissionActions';
-import BleService from '../bluetooth/BleService';
-import TemperatureLogManager from '../bluetooth/TemperatureLogManager';
-import SensorManager from '../bluetooth/SensorManager';
-import { UIDatabase } from '../database';
-import { VACCINE_CONSTANTS } from '../utilities/modules/vaccines/index';
-import { VACCINE_ENTITIES } from '../utilities/modules/vaccines/constants';
-import { syncStrings } from '../localization';
+import { PermissionActions } from '../PermissionActions';
+import BleService from '../../bluetooth/BleService';
+import TemperatureLogManager from '../../bluetooth/TemperatureLogManager';
+import SensorManager from '../../bluetooth/SensorManager';
+import { UIDatabase } from '../../database';
+import { VACCINE_CONSTANTS } from '../../utilities/modules/vaccines/index';
+import { VACCINE_ENTITIES } from '../../utilities/modules/vaccines/constants';
+import { syncStrings } from '../../localization';
+import { selectIsSyncingTemps } from '../../selectors/Bluetooth/sensorDownload';
 
-export const VACCINE_ACTIONS = {
-  DOWNLOAD_LOGS_START: 'Vaccine/downloadLogsStart',
-  DOWNLOAD_LOGS_ERROR: 'Vaccine/downloadLogsError',
-  DOWNLOAD_LOGS_COMPLETE: 'Vaccine/downloadLogsComplete',
-  SENSOR_DOWNLOAD_START: 'Vaccine/sensorDownloadStart',
-  SENSOR_DOWNLOAD_SUCCESS: 'Vaccine/sensorDownloadSuccess',
-  SENSOR_DOWNLOAD_ERROR: 'Vaccine/sensorDownloadError',
+export const DOWNLOAD_ACTIONS = {
+  DOWNLOAD_LOGS_START: 'Bluetooth/downloadLogsStart',
+  DOWNLOAD_LOGS_ERROR: 'Bluetooth/downloadLogsError',
+  DOWNLOAD_LOGS_COMPLETE: 'Bluetooth/downloadLogsComplete',
+  SENSOR_DOWNLOAD_START: 'Bluetooth/sensorDownloadStart',
+  SENSOR_DOWNLOAD_SUCCESS: 'Bluetooth/sensorDownloadSuccess',
+  SENSOR_DOWNLOAD_ERROR: 'Bluetooth/sensorDownloadError',
 };
 
-const downloadLogsStart = () => ({ type: VACCINE_ACTIONS.DOWNLOAD_LOGS_START });
-const downloadLogsComplete = () => ({ type: VACCINE_ACTIONS.DOWNLOAD_LOGS_COMPLETE });
+const downloadLogsStart = () => ({ type: DOWNLOAD_ACTIONS.DOWNLOAD_LOGS_START });
+const downloadLogsComplete = () => ({ type: DOWNLOAD_ACTIONS.DOWNLOAD_LOGS_COMPLETE });
 const downloadLogsError = error => ({
-  type: VACCINE_ACTIONS.DOWNLOAD_LOGS_ERROR,
+  type: DOWNLOAD_ACTIONS.DOWNLOAD_LOGS_ERROR,
   payload: { error },
 });
 
 const sensorDownloadStart = sensor => ({
-  type: VACCINE_ACTIONS.SENSOR_DOWNLOAD_START,
+  type: DOWNLOAD_ACTIONS.SENSOR_DOWNLOAD_START,
   payload: { sensor },
 });
 
 const sensorDownloadError = (sensor, error) => ({
-  type: VACCINE_ACTIONS.SENSOR_DOWNLOAD_ERROR,
+  type: DOWNLOAD_ACTIONS.SENSOR_DOWNLOAD_ERROR,
   payload: { sensor, error },
 });
 
 const sensorDownloadSuccess = sensor => ({
-  type: VACCINE_ACTIONS.SENSOR_DOWNLOAD_SUCCESS,
+  type: DOWNLOAD_ACTIONS.SENSOR_DOWNLOAD_SUCCESS,
   payload: { sensor },
 });
 
@@ -144,6 +144,6 @@ const startDownloadAll = () => async (dispatch, getState) => {
   return null;
 };
 
-export const VaccineActions = {
+export const SensorDownloadActions = {
   startDownloadAll,
 };

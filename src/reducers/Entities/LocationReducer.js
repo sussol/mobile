@@ -30,10 +30,9 @@ export const LocationReducer = (state = initialState(), action) => {
 
       if (routeName !== ROUTES.SENSOR_EDIT) return state;
       const { sensor } = params;
-      const { location } = sensor;
-      const { id } = location;
+      const { locationID } = sensor;
 
-      return { ...state, editingId: id };
+      return { ...state, editingId: locationID };
     }
 
     case LOCATION_ACTIONS.CREATE: {

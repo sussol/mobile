@@ -52,7 +52,7 @@ import { DevBleManager } from './bluetooth/DevBleManager';
 import SensorManager from './bluetooth/SensorManager';
 import { VaccineDataAccess } from './bluetooth/VaccineDataAccess';
 import { UtilService } from './database/utilities/utilService';
-import { VaccineActions } from './actions/VaccineActions';
+import { SensorDownloadActions } from './actions/Bluetooth/SensorDownloadActions';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -271,7 +271,7 @@ const mapDispatchToProps = dispatch => {
   const closeSupplierCreditModal = () => dispatch(SupplierCreditActions.close());
   const onOpenSyncModal = () => dispatch(openSyncModal());
   const closeBreachModal = () => dispatch(BreachActions.close());
-  const syncTemperatures = () => dispatch(VaccineActions.startDownloadAll());
+  const syncTemperatures = () => dispatch(SensorDownloadActions.startDownloadAll());
   const requestBluetooth = newStatus => dispatch(PermissionActions.requestBluetooth(newStatus));
 
   return {

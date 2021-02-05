@@ -80,6 +80,18 @@ export class Sensor extends Realm.Object {
   get firstLog() {
     return this.logs.sorted('timestamp', false)[0];
   }
+
+  get mostRecentBreach() {
+    return this.breaches.sorted('startTimestamp', true)[0];
+  }
+
+  get mostRecentBreachTime() {
+    return this.mostRecentBreach?.startTimestamp;
+  }
+
+  get currentTemperature() {
+    return this.mostRecentLog?.temperature;
+  }
 }
 
 Sensor.schema = {

@@ -14,7 +14,7 @@ import { Spacer } from '../../widgets/Spacer';
 
 import { SensorActions, WizardActions } from '../../actions';
 import { SensorBlinkActions } from '../../actions/Bluetooth/SensorBlinkActions';
-import { selectSendingBlinkTo } from '../../selectors/Bluetooth/bluetooth';
+import { selectSendingBlinkTo } from '../../selectors/Bluetooth/sensorBlink';
 
 export const RectangleButton = ({ isDisabled, onPress, isSpinning }) =>
   isSpinning ? (
