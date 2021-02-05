@@ -46,6 +46,7 @@ export const SensorHeaderComponent = ({
       )}
     </FlexRow>
 
+    <LastSensorDownload macAddress={macAddress} />
     <TextWithIcon
       containerStyle={localStyles.headerTextWithIcon}
       size="s"
@@ -53,8 +54,6 @@ export const SensorHeaderComponent = ({
     >
       {formatBatteryLevel(batteryLevel)}
     </TextWithIcon>
-
-    <LastSensorDownload macAddress={macAddress} />
 
     <IconButton
       Icon={<DownloadIcon color={DARKER_GREY} />}
