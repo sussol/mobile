@@ -2,24 +2,51 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { TextWithIcon } from './Typography/index';
 import { BatteryIcon, CogIcon, DownloadIcon } from './icons';
-import { APP_FONT_FAMILY, BLACK, DARKER_GREY, MISTY_CHARCOAL } from '../globalStyles/index';
+import {
+  APP_FONT_FAMILY,
+  BLACK,
+  DARKER_GREY,
+  FINALISE_GREEN,
+  MISTY_CHARCOAL,
+} from '../globalStyles/index';
 import { IconButton } from './IconButton';
-import { FlexView } from './FlexView';
 import { selectSensorState } from '../selectors/Entities/sensor';
 import { gotoEditSensorPage } from '../navigation/actions';
 import { LastSensorDownload } from './LastSensorDownload';
 import { BlinkSensorButton } from './BlinkSensorButton';
+import { Circle } from './Circle';
+import { FlexRow } from './FlexRow';
 
 const formatBatteryLevel = batteryLevel => `${batteryLevel}%`;
 
-export const FridgeHeaderComponent = ({ batteryLevel, name, macAddress, editSensor, showCog }) => (
+export const SensorHeaderComponent = ({
+  batteryLevel,
+  name,
+  macAddress,
+  editSensor,
+  showCog,
+  showTitle,
+}) => (
   <>
-    <FlexView justifyContent="center">
-      <Text style={localStyles.paperTitleText}>{name}</Text>
-    </FlexView>
+    <FlexRow flex={1} alignItems="center">
+      {showTitle && (
+        <TextWithIcon
+          left
+          text={name}
+          size="ms"
+          textStyle={localStyles.paperTitleText}
+          containerStyle={{}}
+          Icon={<Circle size={20} backgroundColor={FINALISE_GREEN} />}
+        >
+          {name}
+        </TextWithIcon>
+      )}
+    </FlexRow>
+
+    <LastSensorDownload macAddress={macAddress} />
     <TextWithIcon
       containerStyle={localStyles.headerTextWithIcon}
       size="s"
@@ -27,8 +54,6 @@ export const FridgeHeaderComponent = ({ batteryLevel, name, macAddress, editSens
     >
       {formatBatteryLevel(batteryLevel)}
     </TextWithIcon>
-
-    <LastSensorDownload macAddress={macAddress} />
 
     <IconButton
       Icon={<DownloadIcon color={DARKER_GREY} />}
@@ -45,19 +70,21 @@ export const FridgeHeaderComponent = ({ batteryLevel, name, macAddress, editSens
   </>
 );
 
-FridgeHeaderComponent.defaultProps = {
+SensorHeaderComponent.defaultProps = {
   macAddress: 'AA:BB:CC:DD:EE:FF',
   batteryLevel: 99,
   name: '',
   showCog: false,
+  showTitle: false,
 };
 
-FridgeHeaderComponent.propTypes = {
+SensorHeaderComponent.propTypes = {
   name: PropTypes.string,
   macAddress: PropTypes.string,
   batteryLevel: PropTypes.number,
   editSensor: PropTypes.func.isRequired,
   showCog: PropTypes.bool,
+  showTitle: PropTypes.bool,
 };
 
 const localStyles = StyleSheet.create({
@@ -92,4 +119,4 @@ const dispatchToProps = (dispatch, props) => {
   return { editSensor };
 };
 
-export const FridgeHeader = connect(stateToProps, dispatchToProps)(FridgeHeaderComponent);
+export const SensorHeader = connect(stateToProps, dispatchToProps)(SensorHeaderComponent);
