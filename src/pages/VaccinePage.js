@@ -109,7 +109,7 @@ const localStyles = StyleSheet.create({
     flex: 0,
     height: 60,
     paddingHorizontal: 10,
-    width: 120,
+    width: 140,
   },
   fridgePaperContentContainer: {
     flex: 2,
