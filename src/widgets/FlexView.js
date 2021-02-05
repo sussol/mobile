@@ -16,15 +16,13 @@ import PropTypes from 'prop-types';
  * @param {Object}     style          An additional styles object.
  */
 export const FlexView = ({ children, flex, style, onLayout, alignItems, justifyContent }) => {
-  const internalStyle = React.useMemo(
-    () => ({
-      flex,
-      ...style,
-      [alignItems ? 'alignItems' : undefined]: alignItems,
-      [justifyContent ? 'justifyContent' : undefined]: justifyContent,
-    }),
-    [style, flex]
-  );
+  const internalStyle = {
+    flex,
+    ...style,
+    [alignItems ? 'alignItems' : undefined]: alignItems,
+    [justifyContent ? 'justifyContent' : undefined]: justifyContent,
+  };
+
   return (
     <View onLayout={onLayout} style={internalStyle}>
       {children}
