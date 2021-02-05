@@ -37,6 +37,7 @@ import {
   selectSelectFridgeCurrentTemperature,
   selectTemperatureLogsFromDate,
   selectTemperatureLogsToDate,
+  selectBreachBoundaries,
 } from '../selectors/fridge';
 
 import {
@@ -86,6 +87,7 @@ export const FridgeDetailPageComponent = ({
   isLowBattery,
   currentTemperature,
   sensor,
+  breachBoundaries,
 }) => (
   <DataTablePageView>
     <AfterInteractions>
@@ -113,6 +115,7 @@ export const FridgeDetailPageComponent = ({
                 maxLine={maxLine}
                 minDomain={minDomain}
                 maxDomain={maxDomain}
+                breachBoundaries={breachBoundaries}
               />
               <SensorStatus
                 isInHotBreach={isInHotBreach}
@@ -206,6 +209,7 @@ const stateToProps = (state, props) => {
   const isInColdBreach = selectSelectedFridgeIsInColdBreach(state);
   const isLowBattery = selectSelectedFridgeSensorIsLowBattery(state);
   const currentTemperature = selectSelectFridgeCurrentTemperature(state);
+  const breachBoundaries = selectBreachBoundaries(state);
 
   return {
     sensor,
@@ -229,6 +233,7 @@ const stateToProps = (state, props) => {
     isInColdBreach,
     isLowBattery,
     currentTemperature,
+    breachBoundaries,
   };
 };
 
@@ -237,7 +242,10 @@ const dispatchToProps = dispatch => ({
   onChangeFromDate: date => dispatch(FridgeActions.changeFromDate(date)),
 });
 
-FridgeDetailPageComponent.defaultProps = {};
+FridgeDetailPageComponent.defaultProps = {
+  hotCumulativeBreach: null,
+  coldCumulativeBreach: null,
+};
 
 FridgeDetailPageComponent.propTypes = {
   breaches: PropTypes.object.isRequired,
@@ -253,14 +261,15 @@ FridgeDetailPageComponent.propTypes = {
   maximumDate: PropTypes.instanceOf(Date).isRequired,
   numberOfHotBreaches: PropTypes.number.isRequired,
   numberOfColdBreaches: PropTypes.number.isRequired,
-  hotCumulativeBreach: PropTypes.string.isRequired,
-  coldCumulativeBreach: PropTypes.string.isRequired,
+  hotCumulativeBreach: PropTypes.string,
+  coldCumulativeBreach: PropTypes.string,
   averageTemperature: PropTypes.string.isRequired,
   isInHotBreach: PropTypes.bool.isRequired,
   isInColdBreach: PropTypes.bool.isRequired,
   isLowBattery: PropTypes.bool.isRequired,
   currentTemperature: PropTypes.number.isRequired,
   sensor: PropTypes.object.isRequired,
+  breachBoundaries: PropTypes.object.isRequired,
 };
 
 const localStyles = StyleSheet.create({

@@ -6,12 +6,18 @@
 
 import React from 'react';
 import { Svg } from 'react-native-svg';
-import { VictoryAxis, VictoryChart, VictoryLine, VictoryScatter } from 'victory-native';
+import { VictoryAxis, VictoryChart, VictoryLine, VictoryScatter, VictoryBar } from 'victory-native';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 
 import { useLayoutDimensions } from '../hooks/useLayoutDimensions';
-import { WHITE, COLD_BREACH_BLUE, SUSSOL_ORANGE, APP_FONT_FAMILY, GREY } from '../globalStyles';
+import {
+  WEARY_TARMAC,
+  COLD_BREACH_BLUE,
+  SUSSOL_ORANGE,
+  APP_FONT_FAMILY,
+  GREY,
+} from '../globalStyles';
 import { HazardPoint } from './HazardPoint';
 import { FlexView } from './FlexView';
 import { CHART_CONSTANTS } from '../utilities/modules/vaccines';
@@ -27,18 +33,62 @@ export const VaccineChart = ({
   yTickFormat,
   breaches,
   onPressBreach,
+  breachBoundaries,
 }) => {
   const [width, height, setDimensions] = useLayoutDimensions();
-
-  const maxBoundary = React.useCallback(() => maxDomain, []);
-  const minBoundary = React.useCallback(() => minDomain, []);
-
   const chartMinDomain = React.useMemo(() => ({ y: minDomain - CHART_CONSTANTS.DOMAIN_OFFSET }), [
     minDomain,
   ]);
   const chartMaxDomain = React.useMemo(() => ({ y: maxDomain + CHART_CONSTANTS.DOMAIN_OFFSET }), [
     maxDomain,
   ]);
+
+  const upperBoundData = maxLine.map(point => ({ x: point.timestamp, y: breachBoundaries.upper }));
+  const lowerBoundData = minLine.map(point => ({ x: point.timestamp, y: breachBoundaries.lower }));
+  const barData = minLine.map(minPoint => {
+    const maxPoint = maxLine.find(max => max.timestamp === minPoint.timestamp);
+
+    const dataPoint = {
+      x: minPoint.timestamp,
+      hotY: 0,
+      hotY0: 0,
+      y: 0,
+      y0: 0,
+      coldY: 0,
+      coldY0: 0,
+    };
+
+    if (maxPoint && maxPoint.temperature > breachBoundaries.upper) {
+      dataPoint.hotY = maxPoint.temperature;
+      dataPoint.hotY0 = Math.max(minPoint.temperature, breachBoundaries.upper);
+    }
+
+    if (minPoint.temperature < breachBoundaries.lower) {
+      dataPoint.coldY = Math.min(breachBoundaries.lower, maxPoint.temperature);
+      dataPoint.coldY0 = minPoint.temperature;
+    }
+
+    if (
+      maxPoint.temperature > breachBoundaries.upper &&
+      minPoint.temperature > breachBoundaries.upper
+    ) {
+      // no mid section to display
+      return dataPoint;
+    }
+
+    if (
+      maxPoint.temperature < breachBoundaries.lower &&
+      minPoint.temperature < breachBoundaries.lower
+    ) {
+      // no mid section to display
+      return dataPoint;
+    }
+
+    dataPoint.y = Math.min(breachBoundaries.upper, maxPoint.temperature);
+    dataPoint.y0 = Math.max(breachBoundaries.lower, minPoint.temperature);
+
+    return dataPoint;
+  });
 
   return (
     <FlexView onLayout={setDimensions}>
@@ -62,25 +112,26 @@ export const VaccineChart = ({
             style={chartStyles.axis}
           />
 
-          <VictoryLine
-            interpolation={CHART_CONSTANTS.INTERPOLATION}
-            data={minLine}
-            y={y}
-            x={x}
-            style={chartStyles.minLine}
+          <VictoryLine data={upperBoundData} style={chartStyles.maxBoundaryLine} />
+          <VictoryLine data={lowerBoundData} style={chartStyles.minBoundaryLine} />
+          <VictoryBar
+            data={barData}
+            y="hotY"
+            y0="hotY0"
+            style={chartStyles.hotBars}
+            barWidth={30}
+            alignment="start"
           />
-          <VictoryLine
-            interpolation={CHART_CONSTANTS.INTERPOLATION}
-            data={maxLine}
-            y={y}
-            x={x}
-            style={chartStyles.maxLine}
+          <VictoryBar data={barData} style={chartStyles.midBars} barWidth={30} alignment="start" />
+          <VictoryBar
+            data={barData}
+            y="coldY"
+            y0="coldY0"
+            style={chartStyles.coldBars}
+            barWidth={30}
+            alignment="start"
           />
-          <VictoryLine data={maxLine} y={maxBoundary} x={x} style={chartStyles.maxBoundaryLine} />
-          <VictoryLine data={minLine} y={minBoundary} x={x} style={chartStyles.minBoundaryLine} />
 
-          <VictoryScatter data={maxLine} y={y} x={x} style={chartStyles.maxScatterPlot} />
-          <VictoryScatter data={minLine} y={y} x={x} style={chartStyles.minScatterPlot} />
           <VictoryScatter
             data={breaches.slice()}
             y={y}
@@ -113,28 +164,16 @@ VaccineChart.propTypes = {
   yTickFormat: PropTypes.func,
   onPressBreach: PropTypes.func,
   breaches: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
+  breachBoundaries: PropTypes.object.isRequired,
 };
 
 const chartStyles = {
-  maxBoundaryLine: { data: { stroke: SUSSOL_ORANGE, opacity: 0.3 } },
-  minBoundaryLine: { data: { stroke: COLD_BREACH_BLUE, opacity: 0.3 } },
-  minScatterPlot: {
-    data: {
-      fill: WHITE,
-      stroke: COLD_BREACH_BLUE,
-      strokeWidth: CHART_CONSTANTS.STROKE_WIDTH,
-      size: CHART_CONSTANTS.STROKE_SIZE,
-    },
-  },
-  maxScatterPlot: {
-    data: {
-      fill: WHITE,
-      stroke: SUSSOL_ORANGE,
-      strokeWidth: CHART_CONSTANTS.STROKE_WIDTH,
-      size: CHART_CONSTANTS.STROKE_SIZE,
-    },
-  },
+  maxBoundaryLine: { data: { stroke: SUSSOL_ORANGE, opacity: 0.75 } },
+  minBoundaryLine: { data: { stroke: COLD_BREACH_BLUE, opacity: 0.75 } },
   maxLine: { data: { stroke: SUSSOL_ORANGE } },
   minLine: { data: { stroke: COLD_BREACH_BLUE } },
   axis: { fontSize: 15, fontFamily: APP_FONT_FAMILY, fill: GREY },
+  coldBars: { data: { fill: COLD_BREACH_BLUE, opacity: 0.9 } },
+  hotBars: { data: { fill: SUSSOL_ORANGE, opacity: 0.9 } },
+  midBars: { data: { fill: WEARY_TARMAC, opacity: 0.9 } },
 };

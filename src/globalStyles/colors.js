@@ -23,3 +23,4 @@ export const WHITE = '#FFFFFF';
 export const COLD_BREACH_BLUE = '#70b4f0';
 export const DANGER_RED = '#FA6400';
 export const BLACK = '#000000';
+export const WEARY_TARMAC = '#858585';

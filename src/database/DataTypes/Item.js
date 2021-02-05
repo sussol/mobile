@@ -241,7 +241,7 @@ export class Item extends Realm.Object {
    * A vaccine item can have multiple doses per 'unit' or 'pack'. For example, you can have
    * a single vaccine which has two doses. Once a vaccine has been opened, the doses must be
    * given quickly. When recording outgoing stock, the doses and quantity (or number of packs)
-   * are recorded seperately. The amount of open vial wastage (that is, the amount of doses
+   * are recorded separately. The amount of open vial wastage (that is, the amount of doses
    * which are left in a vial and wasted) is the difference between the total number of 'packs'
    * that are outgoing, multiplied by the amount of doses in each pack and the total number of
    * doses actually given.
