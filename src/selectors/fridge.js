@@ -228,8 +228,8 @@ export const selectBreachBoundaries = createSelector([selectSelectedFridge], fri
   const { minimumTemperature } = hotConsecutiveBreachConfig;
 
   return {
-    lower: minimumTemperature,
-    upper: maximumTemperature,
+    lower: maximumTemperature,
+    upper: minimumTemperature,
   };
 });
 
