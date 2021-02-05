@@ -52,7 +52,7 @@ import {
   WARMER_GREY,
 } from '../globalStyles';
 import { vaccineStrings } from '../localization/index';
-import { FridgeHeader } from '../widgets/FridgeHeader';
+import { SensorHeader } from '../widgets/SensorHeader';
 
 const NoBreachMessage = () => (
   <>
@@ -130,7 +130,7 @@ export const FridgeDetailPageComponent = ({
           <Paper
             height={300}
             contentContainerStyle={{ flex: 1, marginTop: 20 }}
-            Header={<FridgeHeader showCog sensor={sensor} />}
+            Header={<SensorHeader showTitle showCog sensor={sensor} />}
           >
             <AfterInteractions>
               <FlexRow alignItems="center">

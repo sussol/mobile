@@ -545,8 +545,10 @@ export const updateStocktake = (stocktake, itemIds, name = '') => dispatch => {
   dispatch(gotoStocktakeEditPage(stocktake));
 };
 
-export const gotoFridgeDetailPage = fridge =>
-  NavigationActions.navigate({ routeName: ROUTES.FRIDGE_DETAIL, params: { fridge } });
+export const gotoFridgeDetailPage = locationID => async dispatch => {
+  const fridge = UIDatabase.get('Location', locationID);
+  dispatch(NavigationActions.navigate({ routeName: ROUTES.FRIDGE_DETAIL, params: { fridge } }));
+};
 
 export const gotoNewSensorPage = () => NavigationActions.navigate({ routeName: ROUTES.SENSOR_NEW });
 

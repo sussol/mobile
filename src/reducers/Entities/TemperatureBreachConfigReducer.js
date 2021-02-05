@@ -37,11 +37,9 @@ export const TemperatureBreachConfigReducer = (state = initialState(), action) =
 
       if (routeName !== ROUTES.SENSOR_EDIT) return state;
       const { sensor } = params;
-      const { breachConfigs } = sensor;
+      const { breachConfigIDs } = sensor;
 
-      const editingIds = breachConfigs.map(({ id }) => id);
-
-      return { ...state, editingIds };
+      return { ...state, editingIds: breachConfigIDs };
     }
 
     case TEMPERATURE_BREACH_CONFIG_ACTIONS.CREATE_GROUP: {

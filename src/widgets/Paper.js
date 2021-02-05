@@ -17,8 +17,9 @@ export const Paper = ({
   children,
 }) => {
   let internalContainerStyle = [localStyles.container, style];
+
   if (width) internalContainerStyle = [localStyles.container, { width }];
-  if (height) internalContainerStyle = [localStyles.container, { height }];
+  if (height) internalContainerStyle = [internalContainerStyle, localStyles.container, { height }];
 
   const InternalHeader =
     Header || (headerText && <Text style={localStyles.headerText}>{headerText}</Text>);

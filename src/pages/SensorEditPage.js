@@ -36,7 +36,7 @@ import {
 import { LocationActions, TemperatureBreachConfigActions } from '../actions/Entities/index';
 import { selectEditingLocation } from '../selectors/Entities/location';
 import { goBack } from '../navigation/actions';
-import { FridgeHeader } from '../widgets/FridgeHeader';
+import { SensorHeader } from '../widgets/SensorHeader';
 import { MILLISECONDS } from '../utilities/index';
 
 export const SensorEditPageComponent = ({
@@ -64,7 +64,7 @@ export const SensorEditPageComponent = ({
   return (
     <DataTablePageView style={{ paddingHorizontal: 20, paddingVertical: 30 }}>
       <AfterInteractions>
-        <Paper Header={<FridgeHeader sensor={sensor} />}>
+        <Paper Header={<SensorHeader sensor={sensor} />}>
           <EditorRow
             label={vaccineStrings.sensor_name}
             Icon={<InfoIcon color={DARKER_GREY} />}
@@ -201,9 +201,7 @@ const dispatchToProps = (dispatch, ownProps) => {
   const { route } = ownProps;
   const { params } = route;
   const { sensor } = params;
-  const { id: sensorID } = sensor;
-  const { location } = sensor;
-  const { id: locationID } = location;
+  const { id: sensorID, locationID } = sensor;
 
   const blink = macAddress => dispatch(SensorBlinkActions.startSensorBlink(macAddress));
   const updateName = name => dispatch(SensorActions.update(sensorID, 'name', name));
