@@ -182,3 +182,14 @@ export class BreachManager {
     this.db.getBreachConfigs();
   };
 }
+
+let BreachManagerInstance;
+
+export const getBreachManagerInstance = (dbService, utils) => {
+  if (!BreachManagerInstance) {
+    BreachManagerInstance = new BreachManager(dbService, utils);
+  }
+  return BreachManagerInstance;
+};
+
+export default getBreachManagerInstance;

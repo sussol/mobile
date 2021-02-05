@@ -129,6 +129,7 @@ class MSupplyMobileAppContainer extends React.Component {
     }
     SensorManager(new VaccineDataAccess(UIDatabase), new UtilService());
     TemperatureLogManager(new VaccineDataAccess(UIDatabase), new UtilService());
+    BreachManager(new VaccineDataAccess(UIDatabase), new UtilService());
   };
 
   onAppStateChange = nextAppState => {
