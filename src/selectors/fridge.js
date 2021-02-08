@@ -222,6 +222,17 @@ export const selectColdCumulativeBreach = createSelector(
   }
 );
 
+export const selectBreachBoundaries = createSelector([selectSelectedFridge], fridge => {
+  const { coldConsecutiveBreachConfig, hotConsecutiveBreachConfig } = fridge;
+  const { maximumTemperature } = coldConsecutiveBreachConfig;
+  const { minimumTemperature } = hotConsecutiveBreachConfig;
+
+  return {
+    lower: maximumTemperature,
+    upper: minimumTemperature,
+  };
+});
+
 export const selectAverageTemperature = createSelector(
   [selectFridgeTemperatureLogsFromDate],
   logs => {
