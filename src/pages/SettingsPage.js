@@ -151,31 +151,43 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
       const fridge2 = createRecord(UIDatabase, 'Location', { description: 'Fridge 2', code: 'f2' });
       const fridge3 = createRecord(UIDatabase, 'Location', { description: 'Fridge 3', code: 'f3' });
       const fridge4 = createRecord(UIDatabase, 'Location', { description: 'Fridge 4', code: 'f4' });
+      const fridge5 = createRecord(UIDatabase, 'Location', { description: 'Fridge 5', code: 'f5' });
 
       // create sensors
       createRecord(UIDatabase, 'Sensor', {
         name: 'sensor 1',
-        macAddress: 'sen1',
+        macAddress: '00:00:00:00:00:01',
         batteryLevel: 10,
         location: fridge1,
+        isActive: false,
       });
       createRecord(UIDatabase, 'Sensor', {
         name: 'sensor 2',
-        macAddress: 'sen2',
+        macAddress: '00:00:00:00:00:02',
         batteryLevel: 20,
         location: fridge2,
+        isActive: false,
       });
       createRecord(UIDatabase, 'Sensor', {
         name: 'sensor 3',
-        macAddress: 'sen3',
+        macAddress: '00:00:00:00:00:03',
         batteryLevel: 30,
         location: fridge3,
+        isActive: false,
       });
       createRecord(UIDatabase, 'Sensor', {
         name: 'sensor 4',
-        macAddress: 'sen4',
+        macAddress: '00:00:00:00:00:04',
         batteryLevel: 40,
         location: fridge4,
+        isActive: false,
+      });
+      createRecord(UIDatabase, 'Sensor', {
+        name: 'sensor 5',
+        macAddress: '00:00:00:00:00:05',
+        batteryLevel: 40,
+        location: fridge5,
+        isActive: false,
       });
 
       // create some configs
@@ -257,7 +269,7 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
 
       count = 0;
       for (let i = -50; i < 50; i++) {
-        const { logInterval } = sensors[1];
+        const { logInterval } = sensors[2];
         count += 1;
         UIDatabase.create('TemperatureLog', {
           id: `${i}c`,
