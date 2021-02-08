@@ -11,18 +11,16 @@ import { vaccineStrings } from '../localization/index';
 export const BreachCard = ({ type, breachCount, headerText, message }) => {
   let icon = null;
   let textStyle = {};
-  let text = '';
+  let text = breachCount?.toString();
 
   switch (type) {
     case 'cold':
       icon = <ColdBreachIcon color={COLD_BREACH_BLUE} />;
-      text = breachCount?.toString();
       textStyle = localStyles.coldText;
       break;
     case 'hot':
       icon = <HotBreachIcon color={DANGER_RED} />;
       textStyle = localStyles.hotText;
-      text = breachCount?.toString();
       break;
     case 'text':
       textStyle = [localStyles.hotText, { color: DARKER_GREY }];
