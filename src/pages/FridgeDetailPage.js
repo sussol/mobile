@@ -3,24 +3,17 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Text, View, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 
 import { DateRangeSelector } from '../widgets/DateRangeSelector';
-import {
-  ColdBreachIcon,
-  DataTablePageView,
-  FlexRow,
-  HotBreachIcon,
-  Paper,
-  SensorStatus,
-} from '../widgets';
+import { DataTablePageView, FlexRow, Paper, SensorStatus } from '../widgets';
 import { VaccineBarChart } from '../widgets/VaccineBarChart';
 import { VaccineLineChart } from '../widgets/VaccineLineChart';
-import { NoBreachMan } from '../widgets/NoBreachMan';
 import { FridgeActions } from '../actions/FridgeActions';
 import { AfterInteractions } from '../widgets/AfterInteractions';
 import { IconButton } from '../widgets/IconButton';
+import { BreachCard } from '../widgets/BreachCard';
 import { BarChartIcon, LineChartIcon } from '../widgets/icons';
 
 import {
@@ -43,31 +36,9 @@ import {
   selectBreachBoundaries,
 } from '../selectors/fridge';
 
-import {
-  DARKER_GREY,
-  APP_FONT_FAMILY,
-  BLUE_WHITE,
-  COLD_BREACH_BLUE,
-  DANGER_RED,
-  WARMER_GREY,
-} from '../globalStyles';
+import { DARKER_GREY, BLUE_WHITE, WARMER_GREY } from '../globalStyles';
 import { vaccineStrings } from '../localization/index';
 import { SensorHeader } from '../widgets/SensorHeader';
-
-const NoBreachMessage = () => (
-  <>
-    <NoBreachMan />
-    <Text style={localStyles.noBreachText}>{vaccineStrings.no_breaches}</Text>
-  </>
-);
-
-const BreachCard = props => (
-  <Paper
-    {...props}
-    style={localStyles.card}
-    contentContainerStyle={{ alignItems: 'center', paddingBottom: 10 }}
-  />
-);
 
 export const FridgeDetailPageComponent = ({
   breaches,
@@ -166,55 +137,31 @@ export const FridgeDetailPageComponent = ({
 
           <Animatable.View animation="fadeIn" duration={3000} useNativeDriver>
             <FlexRow>
-              <BreachCard headerText={vaccineStrings.cumulative_breach}>
-                {coldCumulativeBreach ? (
-                  <>
-                    <Text style={localStyles.coldText}>{coldCumulativeBreach}</Text>
-                    <ColdBreachIcon color={COLD_BREACH_BLUE} />
-                  </>
-                ) : (
-                  <NoBreachMessage />
-                )}
-              </BreachCard>
-
-              <BreachCard headerText={vaccineStrings.consecutive_breach}>
-                {numberOfColdBreaches ? (
-                  <>
-                    <Text style={localStyles.coldText}>{numberOfColdBreaches}</Text>
-                    <ColdBreachIcon color={COLD_BREACH_BLUE} />
-                  </>
-                ) : (
-                  <NoBreachMessage />
-                )}
-              </BreachCard>
-
-              <BreachCard headerText={vaccineStrings.average_temperature}>
-                <Text style={[localStyles.hotText, { color: DARKER_GREY }]}>
-                  {averageTemperature}
-                </Text>
-              </BreachCard>
-
-              <BreachCard headerText={vaccineStrings.cumulative_breach}>
-                {hotCumulativeBreach ? (
-                  <>
-                    <Text style={localStyles.hotText}>{hotCumulativeBreach}</Text>
-                    <HotBreachIcon color={DANGER_RED} />
-                  </>
-                ) : (
-                  <NoBreachMessage />
-                )}
-              </BreachCard>
-
-              <BreachCard headerText={vaccineStrings.consecutive_breach}>
-                {numberOfHotBreaches ? (
-                  <>
-                    <Text style={localStyles.hotText}>{numberOfHotBreaches}</Text>
-                    <HotBreachIcon color={DANGER_RED} />
-                  </>
-                ) : (
-                  <NoBreachMessage />
-                )}
-              </BreachCard>
+              <BreachCard
+                headerText={vaccineStrings.cumulative_breach}
+                breachCount={coldCumulativeBreach}
+                type="cold"
+              />
+              <BreachCard
+                headerText={vaccineStrings.consecutive_breach}
+                breachCount={numberOfColdBreaches}
+                type="cold"
+              />
+              <BreachCard
+                headerText={vaccineStrings.average_temperature}
+                type="text"
+                message={averageTemperature}
+              />
+              <BreachCard
+                headerText={vaccineStrings.cumulative_breach}
+                breachCount={hotCumulativeBreach}
+                type="hot"
+              />
+              <BreachCard
+                headerText={vaccineStrings.consecutive_breach}
+                breachCount={numberOfHotBreaches}
+                type="hot"
+              />
             </FlexRow>
           </Animatable.View>
         </View>
@@ -314,21 +261,6 @@ const localStyles = StyleSheet.create({
   container: { padding: 20, flex: 1, backgroundColor: BLUE_WHITE },
   datePickerContainer: { width: 250, borderRadius: 50, height: 50 },
   card: { flex: 1 },
-  hotText: {
-    color: DANGER_RED,
-    fontSize: 50,
-    fontFamily: APP_FONT_FAMILY,
-  },
-  coldText: {
-    color: COLD_BREACH_BLUE,
-    fontSize: 50,
-    fontFamily: APP_FONT_FAMILY,
-  },
-  noBreachText: {
-    fontSize: 12,
-    color: DARKER_GREY,
-    fontFamily: APP_FONT_FAMILY,
-  },
   buttonContainer: {
     flex: 1,
     flexDirection: 'row',
