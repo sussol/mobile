@@ -15,16 +15,23 @@ import {
   selectLastDownloadFailed,
   selectLastDownloadTime,
 } from '../../selectors/Bluetooth/sensorDownload';
-import { generalStrings } from '../../localization';
+import { vaccineStrings, generalStrings } from '../../localization';
+import { selectSensorByMac } from '../../selectors/Entities/sensor';
 
 const formatLastSyncDate = date => (date ? moment(date).fromNow() : generalStrings.not_available);
+const formatLogDelay = delay =>
+  `${vaccineStrings.logging_delayed_until}: ${moment(delay).format('DD/MM/YYYY @ HH:mm:ss')}`;
 
 export const LastSensorDownloadComponent = ({
   isDownloading,
   lastDownloadFailed,
   lastDownloadTime,
+  logDelay,
 }) => {
   useIntervalReRender(MILLISECONDS.TEN_SECONDS);
+
+  const timeNow = new Date().getTime();
+  const isDelayed = logDelay > timeNow;
 
   const wifiRef = useRef();
 
@@ -46,14 +53,14 @@ export const LastSensorDownloadComponent = ({
         margin={0}
         size="s"
         Icon={
-          lastDownloadFailed ? (
+          lastDownloadFailed || isDelayed ? (
             <WifiOffIcon size={20} color={MISTY_CHARCOAL} />
           ) : (
             <WifiIcon size={20} color={MISTY_CHARCOAL} />
           )
         }
       >
-        {formatLastSyncDate(lastDownloadTime)}
+        {isDelayed ? formatLogDelay(logDelay) : formatLastSyncDate(lastDownloadTime)}
       </TextWithIcon>
     </Animatable.View>
   );
@@ -61,12 +68,14 @@ export const LastSensorDownloadComponent = ({
 
 LastSensorDownloadComponent.defaultProps = {
   lastDownloadTime: null,
+  logDelay: 0,
 };
 
 LastSensorDownloadComponent.propTypes = {
   isDownloading: PropTypes.bool.isRequired,
   lastDownloadFailed: PropTypes.bool.isRequired,
   lastDownloadTime: PropTypes.instanceOf(Date),
+  logDelay: PropTypes.number,
 };
 
 const localStyles = StyleSheet.create({
@@ -85,7 +94,10 @@ const stateToProps = (state, props) => {
   const lastDownloadFailed = selectLastDownloadFailed(state, macAddress);
   const isDownloading = selectIsDownloading(state, macAddress);
 
-  return { lastDownloadTime, lastDownloadFailed, isDownloading };
+  const sensor = selectSensorByMac(state, macAddress);
+  const { logDelay } = sensor;
+
+  return { lastDownloadTime, lastDownloadFailed, isDownloading, logDelay };
 };
 
 export const LastSensorDownload = connect(stateToProps)(LastSensorDownloadComponent);

@@ -1,3 +1,4 @@
+import { REHYDRATE } from 'redux-persist';
 import { DOWNLOAD_ACTIONS } from '../../actions/Bluetooth/SensorDownloadActions';
 
 const LAST_DOWNLOAD_STATUS = {
@@ -17,6 +18,18 @@ export const SensorDownloadReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
+    case REHYDRATE: {
+      const { payload } = action;
+      const { bluetooth } = payload;
+      const { download: persistedState } = bluetooth;
+      const { error, lastDownloadTime, lastDownloadStatus } = persistedState;
+
+      const defaultState = initialState();
+      const mergedState = { ...defaultState, error, lastDownloadTime, lastDownloadStatus };
+
+      return mergedState;
+    }
+
     case DOWNLOAD_ACTIONS.SENSOR_DOWNLOAD_START: {
       const { payload } = action;
       const { sensor } = payload;

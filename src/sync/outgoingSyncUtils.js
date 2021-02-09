@@ -388,6 +388,10 @@ const generateSyncData = (settings, recordType, record) => {
         storeID: settings.get(THIS_STORE_ID),
         locationID: record.location?.id,
         is_active: String(record.isActive ?? true),
+        log_delay_time: getTimeString(record.logDelay),
+        log_delay_date: getDateString(record.logDelay),
+        programmed_time: getTimeString(record.programmedDate),
+        programmed_date: getDateString(record.programmedDate),
       };
     }
     case 'Location': {
