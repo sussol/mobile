@@ -37,7 +37,13 @@ const update = (id, field, value) => ({
 });
 
 const create = macAddress => async dispatch => {
-  const defaultSensor = { location: {}, logInterval: 300, macAddress, name: '' };
+  const defaultSensor = {
+    location: {},
+    logInterval: 300,
+    logDelay: new Date().getTime(),
+    macAddress,
+    name: '',
+  };
   const payload = await SensorManager().createSensor(defaultSensor);
   dispatch({ type: SENSOR_ACTIONS.CREATE, payload });
 };
@@ -93,7 +99,11 @@ const createNew = () => (dispatch, getState) => {
   let newSensor;
   UIDatabase.write(() => {
     newLocation = createRecord(UIDatabase, 'Location', location);
-    newSensor = createRecord(UIDatabase, 'Sensor', { ...sensor, location });
+    newSensor = createRecord(UIDatabase, 'Sensor', {
+      ...sensor,
+      location,
+      logDelay: new Date(sensor?.logDelay ?? 0),
+    });
     newConfigs = configs.map(config =>
       createRecord(UIDatabase, 'TemperatureBreachConfiguration', { ...config, location })
     );

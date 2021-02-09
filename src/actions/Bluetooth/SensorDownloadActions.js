@@ -75,38 +75,43 @@ const downloadLogsFromSensor = sensor => async dispatch => {
   dispatch(sensorDownloadStart(sensor));
 
   try {
-    const { macAddress, logInterval } = sensor;
+    const { macAddress, logInterval, logDelay } = sensor;
 
-    const downloadedLogsResult =
-      (await BleService().downloadLogsWithRetries(
-        macAddress,
-        VACCINE_CONSTANTS.MAX_BLUETOOTH_COMMAND_ATTEMPTS
-      )) ?? {};
+    const timeNow = moment();
 
-    if (downloadedLogsResult) {
-      const savedTemperatureLogs = UIDatabase.objects(VACCINE_ENTITIES.TEMPERATURE_LOG)
-        .filtered('sensor.macAddress == $0', macAddress)
-        .sorted('timestamp', true);
+    if (timeNow.isAfter(moment(logDelay))) {
+      const downloadedLogsResult =
+        (await BleService().downloadLogsWithRetries(
+          macAddress,
+          VACCINE_CONSTANTS.MAX_BLUETOOTH_COMMAND_ATTEMPTS
+        )) ?? {};
 
-      const [mostRecentLog] = savedTemperatureLogs;
-      const mostRecentLogTime = mostRecentLog ? mostRecentLog.timestamp : null;
-      const nextPossibleLogTime = mostRecentLogTime
-        ? moment(mostRecentLogTime).add(logInterval, 's')
-        : 0;
+      if (downloadedLogsResult) {
+        const savedTemperatureLogs = UIDatabase.objects(VACCINE_ENTITIES.TEMPERATURE_LOG)
+          .filtered('sensor.macAddress == $0', macAddress)
+          .sorted('timestamp', true);
 
-      const numberOfLogsToSave = await TemperatureLogManager().calculateNumberOfLogsToSave(
-        logInterval,
-        nextPossibleLogTime
-      );
+        const [mostRecentLog] = savedTemperatureLogs;
+        const mostRecentLogTime = mostRecentLog ? mostRecentLog.timestamp : null;
+        const nextPossibleLogTime = mostRecentLogTime
+          ? moment(mostRecentLogTime).add(logInterval, 's')
+          : 0;
 
-      const temperatureLogs = await TemperatureLogManager().createLogs(
-        downloadedLogsResult,
-        sensor,
-        numberOfLogsToSave,
-        mostRecentLogTime
-      );
+        const numberOfLogsToSave = await TemperatureLogManager().calculateNumberOfLogsToSave(
+          logInterval,
+          nextPossibleLogTime
+        );
 
-      await TemperatureLogManager().saveLogs(temperatureLogs);
+        const temperatureLogs = await TemperatureLogManager().createLogs(
+          downloadedLogsResult,
+          sensor,
+          numberOfLogsToSave,
+          mostRecentLogTime
+        );
+
+        await TemperatureLogManager().saveLogs(temperatureLogs);
+      }
+
       dispatch(sensorDownloadSuccess(sensor));
     }
   } catch (error) {
