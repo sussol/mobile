@@ -49,12 +49,16 @@ export const SensorPickerComponent = ({
   );
 };
 
+SensorPickerComponent.defaultProps = {
+  text: vaccineStrings.connect,
+};
+
 SensorPickerComponent.propTypes = {
   macAddresses: PropTypes.array.isRequired,
   startScan: PropTypes.func.isRequired,
   stopScan: PropTypes.func.isRequired,
   selectSensor: PropTypes.func.isRequired,
-  text: PropTypes.string.isRequired,
+  text: PropTypes.string,
 };
 
 const dispatchToProps = dispatch => {
