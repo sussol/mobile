@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2020
  */
 
-import BreachManager from '../bluetooth/BreachManager';
+import { BreachManagerSingleton } from '../bluetooth/BreachManager';
 import { UIDatabase } from '../database';
 
 export const BREACH_ACTIONS = {
@@ -26,16 +26,16 @@ const createConsecutiveBreaches = sensor => async dispatch => {
   const { id } = sensor;
 
   try {
-    const logs = await BreachManager().getLogsToCheck(id);
+    const logs = await BreachManagerSingleton().getLogsToCheck(id);
     const configs = sensor.breachConfigs;
-    const mostRecentBreach = await BreachManager().getMostRecentBreach(id);
-    const [breaches, temperatureLogs] = await BreachManager().createBreaches(
+    const mostRecentBreach = await BreachManagerSingleton().getMostRecentBreach(id);
+    const [breaches, temperatureLogs] = await BreachManagerSingleton().createBreaches(
       sensor,
       logs,
       configs,
       mostRecentBreach
     );
-    const [updatedBreaches, updatedLogs] = await BreachManager().updateBreaches(
+    const [updatedBreaches, updatedLogs] = await BreachManagerSingleton().updateBreaches(
       breaches,
       temperatureLogs
     );

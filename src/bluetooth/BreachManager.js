@@ -32,21 +32,13 @@ const createBreachRecord = (
   };
 };
 
-class BreachManager {
+export class BreachManager {
   constructor(dbWrapper, utils) {
     this.db = dbWrapper;
     this.utils = utils;
 
     this.createBreachFunc = createBreachRecord;
   }
-
-  setDb = db => {
-    this.db = db;
-  };
-
-  setUtils = utils => {
-    this.utils = utils;
-  };
 
   set createBreach(createBreachFunc) {
     this.createBreachFunc = createBreachFunc;
@@ -193,11 +185,9 @@ class BreachManager {
 
 let BreachManagerInstance;
 
-export const getBreachManagerInstance = (dbService, utils) => {
+export const BreachManagerSingleton = (dbService, utils) => {
   if (!BreachManagerInstance) {
     BreachManagerInstance = new BreachManager(dbService, utils);
   }
   return BreachManagerInstance;
 };
-
-export default getBreachManagerInstance;

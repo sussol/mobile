@@ -33,7 +33,7 @@ import { generalStrings, buttonStrings } from '../localization';
 import { selectCurrentUserPasswordHash } from '../selectors/user';
 import { PermissionActions } from '../actions/PermissionActions';
 import { createRecord } from '../database/utilities/index';
-import BreachManager from '../bluetooth/BreachManager';
+import { BreachManager } from '../bluetooth/BreachManager';
 import { VaccineDataAccess } from '../bluetooth/VaccineDataAccess';
 import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
@@ -274,7 +274,7 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
     const utils = {};
     utils.createUuid = () => String(Math.random());
     const vaccineDB = new VaccineDataAccess(UIDatabase);
-    const breachManager = BreachManager(vaccineDB, utils);
+    const breachManager = new BreachManager(vaccineDB, utils);
     const sensors = UIDatabase.objects('Sensor');
     const configs = vaccineDB.getBreachConfigs();
 
