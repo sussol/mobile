@@ -2,7 +2,7 @@
 /* eslint-disable arrow-body-style */
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
-import { FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -16,18 +16,28 @@ import {
   Circle,
   FlexRow,
   AlarmClockIcon,
+  FlexView,
 } from '../widgets/index';
 import { TextWithIcon } from '../widgets/Typography';
-
 import { generalStrings, buttonStrings } from '../localization';
-import { DARKER_GREY, BLACK } from '../globalStyles';
+import { APP_FONT_FAMILY, DARKER_GREY, BLACK } from '../globalStyles';
 import { gotoFridgeDetailPage, gotoNewSensorPage } from '../navigation/actions';
 import { AfterInteractions } from '../widgets/AfterInteractions';
 import { SensorHeader } from '../widgets/SensorHeader';
 import { selectSensors } from '../selectors/Entities/sensor';
 import temperature from '../utilities/temperature';
+import { BreachManUnhappy } from '../widgets/BreachManUnhappy';
 
 const formatDate = date => (date ? moment(date).fromNow() : generalStrings.not_available);
+
+const BREACH_MAN_UNHAPPY_SIZE = 400;
+
+const EmptyComponent = () => (
+  <FlexView justifyContent="center" alignItems="center" flex={1}>
+    <BreachManUnhappy size={BREACH_MAN_UNHAPPY_SIZE} />
+    <Text style={localStyles.emptyText}>Add sensors to start logging temperatures</Text>
+  </FlexView>
+);
 
 const FridgeDisplay = ({ sensor, toFridgeDetail }) => {
   const { id, macAddress, currentTemperature, mostRecentBreachTime, locationID } = sensor;
@@ -80,8 +90,9 @@ export const VaccinePageComponent = ({ sensors, toNewSensorPage, toFridgeDetail 
       <PageButton text={buttonStrings.add_sensor} onPress={toNewSensorPage} />
     </FlexRow>
     <AfterInteractions placeholder={null}>
-      <Animatable.View animation="fadeIn" duration={500} useNativeDriver>
+      <Animatable.View style={{ flex: 1 }} animation="fadeIn" duration={500} useNativeDriver>
         <FlatList
+          ListEmptyComponent={<EmptyComponent />}
           renderItem={({ item }) => <FridgeDisplay sensor={item} toFridgeDetail={toFridgeDetail} />}
           data={sensors}
         />
@@ -114,6 +125,12 @@ const localStyles = StyleSheet.create({
   fridgePaperContentContainer: {
     flex: 2,
     flexDirection: 'column',
+  },
+  emptyText: {
+    fontSize: 28,
+    color: DARKER_GREY,
+    fontFamily: APP_FONT_FAMILY,
+    fontWeight: 'bold',
   },
 });
 

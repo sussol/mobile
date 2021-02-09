@@ -16,9 +16,11 @@ import {
   Paper,
   SensorStatus,
 } from '../widgets';
+
+import { BreachManHappy } from '../widgets/BreachManHappy';
 import { VaccineBarChart } from '../widgets/VaccineBarChart';
 import { VaccineLineChart } from '../widgets/VaccineLineChart';
-import { NoBreachMan } from '../widgets/NoBreachMan';
+
 import { FridgeActions } from '../actions/FridgeActions';
 import { AfterInteractions } from '../widgets/AfterInteractions';
 import { IconButton } from '../widgets/IconButton';
@@ -54,11 +56,12 @@ import {
 } from '../globalStyles';
 import { vaccineStrings } from '../localization/index';
 import { SensorHeader } from '../widgets/SensorHeader';
+import { BreachManUnhappy } from '../widgets/BreachManUnhappy';
 
 const BREACH_MAN_UNHAPPY_SIZE = 400;
 const NoBreachMessage = () => (
   <>
-    <NoBreachMan />
+    <BreachManHappy />
     <Text style={localStyles.noBreachText}>{vaccineStrings.no_breaches}</Text>
   </>
 );
@@ -73,7 +76,7 @@ const BreachCard = props => (
 
 const EmptyComponent = ({ sensorName }) => (
   <FlexView justifyContent="center" alignItems="center" flex={1}>
-    <NoBreachMan size={BREACH_MAN_UNHAPPY_SIZE} />
+    <BreachManUnhappy size={BREACH_MAN_UNHAPPY_SIZE} />
     <Text style={localStyles.emptyText}>
       No temperatures logged for {sensorName} within the given date range
     </Text>
