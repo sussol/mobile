@@ -1,4 +1,4 @@
-import { BreachManager } from './BreachManager';
+import BreachManager from './BreachManager';
 
 describe('BreachManager: closeBreach', () => {
   it('Returns a closed breach', () => {
@@ -37,6 +37,7 @@ describe('BreachManager: createBreach', () => {
     );
     const closedBreachShouldBe = {
       id: '1',
+      acknowledged: false,
       endTimestamp: undefined,
       location: dummyLocation,
       sensor,
@@ -306,6 +307,7 @@ describe('BreachManager: createBreaches', () => {
     const breachesShouldBe = [
       {
         id: '1',
+        acknowledged: false,
         sensor,
         thresholdMaxTemperature: 999,
         thresholdMinTemperature: 8,
@@ -338,6 +340,7 @@ describe('BreachManager: createBreaches', () => {
     const configs = [
       {
         id: 'a',
+        acknowledged: false,
         duration: 1000,
         minimumTemperature: 8,
         maximumTemperature: 999,
@@ -351,6 +354,7 @@ describe('BreachManager: createBreaches', () => {
     const breachesShouldBe = [
       {
         id: '1',
+        acknowledged: false,
         sensor,
         thresholdMinTemperature: 8,
         thresholdMaxTemperature: 999,
@@ -399,6 +403,7 @@ describe('BreachManager: createBreaches', () => {
     const breachesShouldBe = [
       {
         id: '1',
+        acknowledged: false,
         sensor,
         startTimestamp: 0,
         thresholdMinTemperature: 8,
@@ -410,6 +415,7 @@ describe('BreachManager: createBreaches', () => {
       },
       {
         id: '1',
+        acknowledged: false,
         sensor,
         startTimestamp: 3,
         thresholdMinTemperature: 8,
