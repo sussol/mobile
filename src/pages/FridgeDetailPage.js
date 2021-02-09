@@ -36,10 +36,6 @@ import {
   selectMostRecentTemperatureLogDate,
   selectNumberOfColdConsecutiveBreaches,
   selectNumberOfHotConsecutiveBreaches,
-  selectSelectedFridgeIsInColdBreach,
-  selectSelectedFridgeIsInHotBreach,
-  selectSelectedFridgeSensorIsLowBattery,
-  selectSelectFridgeCurrentTemperature,
   selectTemperatureLogsFromDate,
   selectTemperatureLogsToDate,
   selectBreachBoundaries,
@@ -88,10 +84,6 @@ export const FridgeDetailPageComponent = ({
   hotCumulativeBreach,
   coldCumulativeBreach,
   averageTemperature,
-  isInHotBreach,
-  isInColdBreach,
-  isLowBattery,
-  currentTemperature,
   sensor,
   breachBoundaries,
 }) => {
@@ -156,12 +148,7 @@ export const FridgeDetailPageComponent = ({
                     breachBoundaries={breachBoundaries}
                   />
                 )}
-                <SensorStatus
-                  isInHotBreach={isInHotBreach}
-                  isInColdBreach={isInColdBreach}
-                  isLowBattery={isLowBattery}
-                  currentTemp={currentTemperature}
-                />
+                <SensorStatus macAddress={sensor.macAddress} />
               </FlexRow>
             </AfterInteractions>
           </Paper>
@@ -245,10 +232,6 @@ const stateToProps = (state, props) => {
   const averageTemperature = selectAverageTemperature(state);
   const hotCumulativeBreach = selectHotCumulativeBreach(state);
   const coldCumulativeBreach = selectColdCumulativeBreach(state);
-  const isInHotBreach = selectSelectedFridgeIsInHotBreach(state);
-  const isInColdBreach = selectSelectedFridgeIsInColdBreach(state);
-  const isLowBattery = selectSelectedFridgeSensorIsLowBattery(state);
-  const currentTemperature = selectSelectFridgeCurrentTemperature(state);
   const breachBoundaries = selectBreachBoundaries(state);
 
   return {
@@ -269,10 +252,6 @@ const stateToProps = (state, props) => {
     toDate,
     minimumDate,
     maximumDate,
-    isInHotBreach,
-    isInColdBreach,
-    isLowBattery,
-    currentTemperature,
     breachBoundaries,
   };
 };
@@ -304,10 +283,6 @@ FridgeDetailPageComponent.propTypes = {
   hotCumulativeBreach: PropTypes.string,
   coldCumulativeBreach: PropTypes.string,
   averageTemperature: PropTypes.string.isRequired,
-  isInHotBreach: PropTypes.bool.isRequired,
-  isInColdBreach: PropTypes.bool.isRequired,
-  isLowBattery: PropTypes.bool.isRequired,
-  currentTemperature: PropTypes.number.isRequired,
   sensor: PropTypes.object.isRequired,
   breachBoundaries: PropTypes.object.isRequired,
 };

@@ -68,3 +68,9 @@ export const selectIsInDangerByMac = (state, mac) => {
   const isInBreach = selectIsInBreachByMac(state, mac);
   return isLowBattery || isInBreach;
 };
+
+export const selectCurrentTemperatureByMac = (state, mac) => {
+  const sensor = selectSensorByMac(state, mac);
+  const { currentTemperature } = sensor;
+  return currentTemperature;
+};

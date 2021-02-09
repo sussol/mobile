@@ -11,7 +11,6 @@ import { selectSensorState } from '../../selectors/Entities/sensor';
 import { gotoEditSensorPage } from '../../navigation/actions';
 import { LastSensorDownload } from './LastSensorDownload';
 import { BlinkSensorButton } from './BlinkSensorButton';
-
 import { FlexRow } from '../FlexRow';
 import { ExportTemperatureDataButton } from './ExportTemperatureDataButton';
 import { SensorIsInDangerCircle } from './SensorIsInDangerCircle';
