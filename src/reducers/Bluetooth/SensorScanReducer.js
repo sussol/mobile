@@ -1,3 +1,4 @@
+import { REHYDRATE } from 'redux-persist';
 import { SCAN_ACTIONS } from '../../actions/Bluetooth/SensorScanActions';
 
 const initialState = () => ({
@@ -9,6 +10,9 @@ export const SensorScanReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
+    case REHYDRATE: {
+      return initialState();
+    }
     case SCAN_ACTIONS.SCAN_START: {
       return {
         ...state,

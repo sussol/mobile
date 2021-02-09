@@ -1,3 +1,4 @@
+import { REHYDRATE } from 'redux-persist';
 import { UPDATE_ACTIONS } from '../../actions/Bluetooth/SensorUpdateActions';
 
 const initialState = () => ({
@@ -9,6 +10,9 @@ export const SensorUpdateReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
+    case REHYDRATE: {
+      return initialState();
+    }
     case UPDATE_ACTIONS.SET_LOG_INTERVAL_START: {
       const { payload } = action;
       const { macAddress } = payload;
