@@ -95,7 +95,7 @@ export class Sensor extends Realm.Object {
 
   get isInHotBreach() {
     const breach = this.mostRecentBreach;
-    const isOngoing = !!breach?.endTimestamp;
+    const isOngoing = !breach?.endTimestamp;
     const isHot = breach?.type === 'HOT_CONSECUTIVE';
 
     return isOngoing && isHot;
@@ -103,7 +103,7 @@ export class Sensor extends Realm.Object {
 
   get isInColdBreach() {
     const breach = this.mostRecentBreach;
-    const isOngoing = !!breach?.endTimestamp;
+    const isOngoing = !breach?.endTimestamp;
     const isHot = breach?.type === 'COLD_CONSECUTIVE';
 
     return isOngoing && isHot;
