@@ -1,5 +1,5 @@
 /* eslint-disable react/forbid-prop-types */
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { ActivityIndicator, FlatList } from 'react-native';
 import { connect } from 'react-redux';
@@ -29,12 +29,18 @@ export const SensorPickerComponent = ({
   text,
 }) => {
   const isFocused = useIsFocused();
+  const isScanning = useRef();
 
   useEffect(() => {
-    if (isFocused) startScan();
-    else stopScan();
-    return stopScan;
-  }, [startScan]);
+    if (isFocused) {
+      isScanning.current = true;
+      startScan();
+    } else {
+      isScanning.current = false;
+      stopScan();
+    }
+    return () => (isScanning.current ? stopScan() : null);
+  }, [startScan, isFocused]);
 
   return (
     <FlatList
