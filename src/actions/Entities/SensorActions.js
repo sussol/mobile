@@ -20,6 +20,7 @@ import { TemperatureBreachConfigActions } from './TemperatureBreachConfigActions
 export const SENSOR_ACTIONS = {
   CREATE: 'SENSOR/create',
   UPDATE: 'SENSOR/update',
+  REMOVE: 'SENSOR/remove',
   RESET: 'SENSOR/reset',
   SAVE_NEW: 'SENSOR/saveNew',
   SAVE_EDITING: 'SENSOR/saveEditing',
@@ -111,6 +112,24 @@ const replace = macAddress => ({
   payload: { macAddress, id: generateUUID() },
 });
 
+const remove = id => ({
+  type: SENSOR_ACTIONS.REMOVE,
+  payload: { id },
+});
+
+const removeSensor = sensorId => dispatch => {
+  const sensor = UIDatabase.get('Sensor', sensorId);
+
+  UIDatabase.write(() => {
+    UIDatabase.update('Sensor', {
+      id: sensor.id,
+      isActive: false,
+    });
+  });
+
+  dispatch(remove());
+};
+
 const createNew = () => (dispatch, getState) => {
   const fullState = getState();
   const location = selectNewLocation(fullState);
@@ -152,4 +171,5 @@ export const SensorActions = {
   save,
   saveEditing,
   replace,
+  removeSensor,
 };

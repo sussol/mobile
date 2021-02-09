@@ -108,6 +108,18 @@ export const SensorReducer = (state = initialState(), action) => {
       return { ...state, byId: newById, editingId: '', replacedId: '' };
     }
 
+    case SENSOR_ACTIONS.REMOVE: {
+      const { payload } = action;
+      const { id } = payload;
+      const { byId } = state;
+      const oldSensor = byId[id];
+
+      const newSensor = { ...oldSensor, isActive: false };
+      const newById = { ...byId, [id]: newSensor };
+
+      return { ...state, byId: newById };
+    }
+
     case SENSOR_ACTIONS.UPDATE: {
       const { byId } = state;
       const { payload } = action;

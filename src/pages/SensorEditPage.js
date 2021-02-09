@@ -22,7 +22,7 @@ import { TextWithIcon } from '../widgets/Typography';
 
 import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
-import { generalStrings, vaccineStrings } from '../localization';
+import { generalStrings, vaccineStrings, modalStrings, navStrings } from '../localization';
 import { APP_FONT_FAMILY, DARKER_GREY, LIGHT_GREY, SUSSOL_ORANGE, WHITE } from '../globalStyles';
 import { SensorActions } from '../actions';
 import { SensorBlinkActions } from '../actions/Bluetooth/SensorBlinkActions';
@@ -41,6 +41,7 @@ import { MILLISECONDS } from '../utilities/index';
 import { useToggle } from '../hooks/index';
 import { PaperModalContainer } from '../widgets/PaperModal/PaperModalContainer';
 import { SensorPicker } from '../widgets/SensorPicker';
+import { PaperConfirmModal } from '../widgets/PaperModal/PaperConfirmModal';
 
 export const SensorEditPageComponent = ({
   logInterval,
@@ -63,9 +64,11 @@ export const SensorEditPageComponent = ({
   hotCumulativeThreshold,
   sensor,
   replaceSensor,
+  remove,
 }) => {
   const withLoadingIndicator = useLoadingIndicator();
-  const [open, toggleOpen] = useToggle();
+  const [replaceModalOpen, toggleReplaceModal] = useToggle();
+  const [removeModalOpen, toggleRemoveModal] = useToggle();
 
   return (
     <>
@@ -131,9 +134,9 @@ export const SensorEditPageComponent = ({
 
           <Paper>
             <FlexRow justifyContent="flex-end" alignItems="center">
-              <PageButton text={generalStrings.remove} onPress={toggleOpen} />
+              <PageButton text={generalStrings.remove} onPress={toggleRemoveModal} />
               <View style={{ marginLeft: 10, marginRight: 'auto' }}>
-                <PageButton text={generalStrings.replace} onPress={toggleOpen} />
+                <PageButton text={generalStrings.replace} onPress={toggleReplaceModal} />
               </View>
               <DurationEditor
                 containerStyle={localStyles.paperContentRow}
@@ -158,16 +161,27 @@ export const SensorEditPageComponent = ({
           </FlexRow>
         </AfterInteractions>
       </DataTablePageView>
-      <PaperModalContainer isVisible={open} onClose={toggleOpen}>
+
+      <PaperModalContainer isVisible={replaceModalOpen} onClose={toggleReplaceModal}>
         <View style={{ padding: 20 }}>
           <SensorPicker
             text={generalStrings.select}
             selectSensor={mac => {
               replaceSensor(mac);
-              toggleOpen();
+              toggleReplaceModal();
             }}
           />
         </View>
+      </PaperModalContainer>
+
+      <PaperModalContainer isVisible={removeModalOpen} onClose={toggleRemoveModal}>
+        <PaperConfirmModal
+          questionText={modalStrings.are_you_sure_delete_sensor}
+          confirmText={generalStrings.remove}
+          cancelText={navStrings.go_back}
+          onConfirm={remove}
+          onCancel={toggleRemoveModal}
+        />
       </PaperModalContainer>
     </>
   );
@@ -230,6 +244,10 @@ const dispatchToProps = (dispatch, ownProps) => {
   const { sensor } = params;
   const { id: sensorID, locationID } = sensor;
 
+  const remove = () => {
+    dispatch(SensorActions.removeSensor(sensorID));
+    dispatch(goBack());
+  };
   const blink = macAddress => dispatch(SensorBlinkActions.startSensorBlink(macAddress));
   const updateName = name => dispatch(SensorActions.update(sensorID, 'name', name));
   const updateCode = code => dispatch(LocationActions.update(locationID, 'code', code));
@@ -261,6 +279,7 @@ const dispatchToProps = (dispatch, ownProps) => {
     updateDuration,
     updateTemperature,
     saveSensor,
+    remove,
   };
 };
 
@@ -279,6 +298,7 @@ SensorEditPageComponent.defaultProps = {
 };
 
 SensorEditPageComponent.propTypes = {
+  remove: PropTypes.func.isRequired,
   sensor: PropTypes.object,
   lastSyncDate: PropTypes.instanceOf(Date),
   batteryLevel: PropTypes.number,
