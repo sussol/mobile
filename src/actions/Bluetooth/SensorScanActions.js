@@ -19,6 +19,19 @@ const scanStart = () => ({ type: SCAN_ACTIONS.SCAN_START });
 const scanStop = () => ({ type: SCAN_ACTIONS.SCAN_STOP });
 const sensorFound = macAddress => ({ type: SCAN_ACTIONS.SENSOR_FOUND, payload: { macAddress } });
 
+const isNewlyFoundSensor = (macAddress, alreadyScannedMacAddresses) => {
+  // The sensors has already been picked up in the current scan.
+  const alreadyFound = alreadyScannedMacAddresses?.includes(macAddress);
+  // The sensor is already in the database
+  const alreadySaved = UIDatabase.get('Sensor', macAddress, 'macAddress');
+  // The sensor is an active sensor in the database
+  const isActive = alreadySaved?.isActive;
+  const isAlreadySavedAndActive = alreadySaved && isActive;
+
+  // A newly found sensor are sensors which are not active in the database, and not found already
+  return !alreadyFound && !isAlreadySavedAndActive;
+};
+
 const scanForSensors = (dispatch, getState) => {
   dispatch(scanStart());
 
@@ -27,9 +40,8 @@ const scanForSensors = (dispatch, getState) => {
       const { id: macAddress } = device;
       if (macAddress) {
         const alreadyScanned = selectScannedSensors(getState());
-        const alreadySaved = UIDatabase.get('Sensor', macAddress, 'macAddress');
 
-        if (!alreadyScanned?.includes(macAddress) && !alreadySaved) {
+        if (isNewlyFoundSensor(macAddress, alreadyScanned)) {
           dispatch(sensorFound(macAddress));
         }
       }
