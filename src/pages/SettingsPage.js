@@ -263,11 +263,11 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
         const r = Math.random();
         const realTemp = 2 + 4 * r;
 
-        if (r > 0.975) {
+        if (r > 0.985) {
           return twoDPInt(realTemp + 20 * Math.random());
         }
 
-        if (r < 0.025) {
+        if (r < 0.015) {
           return twoDPInt(realTemp - 20 * Math.random());
         }
 
