@@ -1075,8 +1075,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         batteryLevel: parseNumber(record.batteryLevel),
         name: record.name,
         isActive: parseBoolean(record.is_active),
-        logDelay: parseDate(record.log_delay_date, record.log_delay_time),
-        programmedDate: parseDate(record.programmed_date, record.programmed_time),
+        logDelay: parseDate(record.log_delay_date, record.log_delay_time) ?? new Date(0),
+        programmedDate: parseDate(record.programmed_date, record.programmed_time) ?? new Date(),
       });
       break;
     }
