@@ -20,9 +20,9 @@ export const SensorDownloadReducer = (state = initialState(), action) => {
   switch (type) {
     case REHYDRATE: {
       const { payload } = action;
-      const { bluetooth } = payload;
-      const { download: persistedState } = bluetooth;
-      const { error, lastDownloadTime, lastDownloadStatus } = persistedState;
+      const { bluetooth } = payload || {};
+      const { download: persistedState } = bluetooth || {};
+      const { error, lastDownloadTime, lastDownloadStatus } = persistedState || initialState();
 
       const defaultState = initialState();
       const mergedState = { ...defaultState, error, lastDownloadTime, lastDownloadStatus };
