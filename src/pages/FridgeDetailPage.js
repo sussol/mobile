@@ -75,11 +75,10 @@ const BreachCard = props => (
 );
 
 const EmptyComponent = ({ sensorName }) => (
-  <FlexView justifyContent="center" alignItems="center" flex={1}>
+  <FlexView style={localStyles.emptyComponent}>
     <BreachManUnhappy size={BREACH_MAN_UNHAPPY_SIZE} />
-    <Text style={localStyles.emptyText}>
-      No temperatures logged for {sensorName} within the given date range
-    </Text>
+    <Text>{sensorName}</Text>
+    <Text style={localStyles.emptyText}>{vaccineStrings.oops_no_temperatures}</Text>
   </FlexView>
 );
 
@@ -368,9 +367,14 @@ const localStyles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 28,
+  },
+  emptyComponent: {
+    alignItems: 'center',
     color: DARKER_GREY,
+    flex: 1,
     fontFamily: APP_FONT_FAMILY,
     fontWeight: 'bold',
+    justifyContent: 'center',
   },
   noBreachText: {
     fontSize: 12,
