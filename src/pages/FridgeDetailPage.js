@@ -3,11 +3,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 
 import { DateRangeSelector } from '../widgets/DateRangeSelector';
-import { DataTablePageView, FlexRow, Paper, SensorStatus } from '../widgets';
+import { DataTablePageView, FlexRow, FlexView, Paper, SensorStatus } from '../widgets';
 import { BreachCard } from '../widgets/BreachCard';
 import { VaccineBarChart } from '../widgets/VaccineBarChart';
 import { VaccineLineChart } from '../widgets/VaccineLineChart';
@@ -27,8 +27,23 @@ import {
   selectBreachBoundaries,
 } from '../selectors/fridge';
 
-import { DARKER_GREY, BLUE_WHITE, WARMER_GREY } from '../globalStyles';
+import { APP_FONT_FAMILY, DARKER_GREY, BLUE_WHITE, WARMER_GREY } from '../globalStyles';
+import { vaccineStrings } from '../localization/index';
 import { SensorHeader } from '../widgets/SensorHeader/SensorHeader';
+import { BreachManUnhappy } from '../widgets/BreachManUnhappy';
+
+const BREACH_MAN_UNHAPPY_SIZE = 400;
+const EmptyComponent = ({ sensorName }) => (
+  <FlexView style={localStyles.emptyComponent}>
+    <BreachManUnhappy size={BREACH_MAN_UNHAPPY_SIZE} />
+    <Text>{sensorName}</Text>
+    <Text style={localStyles.emptyText}>{vaccineStrings.oops_no_temperatures}</Text>
+  </FlexView>
+);
+
+EmptyComponent.propTypes = {
+  sensorName: PropTypes.string.isRequired,
+};
 
 export const FridgeDetailPageComponent = ({
   breaches,
@@ -58,6 +73,27 @@ export const FridgeDetailPageComponent = ({
       />
     );
   };
+
+  if (!minLine.length || !maxLine.length) {
+    return (
+      <AfterInteractions>
+        <View style={localStyles.container}>
+          <View style={localStyles.topRow}>
+            <DateRangeSelector
+              containerStyle={localStyles.datePickerContainer}
+              initialStartDate={fromDate}
+              initialEndDate={toDate}
+              onChangeToDate={onChangeToDate}
+              onChangeFromDate={onChangeFromDate}
+              minimumDate={minimumDate}
+              maximumDate={maximumDate}
+            />
+          </View>
+          <EmptyComponent sensorName={sensor.name} />
+        </View>
+      </AfterInteractions>
+    );
+  }
 
   return (
     <DataTablePageView>
@@ -189,6 +225,17 @@ const localStyles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'flex-end',
+  },
+  emptyText: {
+    fontSize: 28,
+  },
+  emptyComponent: {
+    alignItems: 'center',
+    color: DARKER_GREY,
+    flex: 1,
+    fontFamily: APP_FONT_FAMILY,
+    fontWeight: 'bold',
+    justifyContent: 'center',
   },
   topRow: { flexDirection: 'row' },
   breachCardRow: { justifyContent: 'space-around' },

@@ -5,7 +5,7 @@
 
 import { PermissionActions } from '../PermissionActions';
 import BleService from '../../bluetooth/BleService';
-import { VACCINE_CONSTANTS } from '../../utilities/modules/vaccines/index';
+import { isValidMacAddress, VACCINE_CONSTANTS } from '../../utilities/modules/vaccines/index';
 
 export const UPDATE_ACTIONS = {
   SET_LOG_INTERVAL_ERROR: 'Bluetooth/setLogIntervalError',
@@ -91,8 +91,6 @@ const startSetLogInterval = ({ macAddress, interval = 300 }) => async (dispatch,
   );
   return result;
 };
-
-const isValidMacAddress = macAddress => /^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$/.test(macAddress);
 
 const updateSensor = sensor => async dispatch => {
   if (!isValidMacAddress(sensor.macAddress)) {

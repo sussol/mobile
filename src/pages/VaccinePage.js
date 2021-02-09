@@ -134,12 +134,25 @@ const localStyles = StyleSheet.create({
   },
 });
 
+const sortSensors = (s1, s2) => {
+  const nameA = s1.name.toUpperCase();
+  const nameB = s2.name.toUpperCase();
+
+  if (nameA < nameB) {
+    return -1;
+  }
+  if (nameA > nameB) {
+    return 1;
+  }
+
+  return 0;
+};
+
 const stateToProps = state => {
   const { fridge } = state;
   const { fridges } = fridge;
 
-  const sensors = selectSensors(state);
-
+  const sensors = selectSensors(state).sort(sortSensors);
   return { fridges, sensors };
 };
 
