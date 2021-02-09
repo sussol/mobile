@@ -1,4 +1,5 @@
 import { DOWNLOAD_ACTIONS } from '../../actions/Bluetooth/SensorDownloadActions';
+import { BREACH_ACTIONS } from '../../actions/BreachActions';
 import { SENSOR_ACTIONS } from '../../actions/Entities/SensorActions';
 import { UIDatabase } from '../../database';
 import { ROUTES } from '../../navigation/index';
@@ -46,6 +47,19 @@ export const SensorReducer = (state = initialState(), action) => {
       return { ...state, editingId: id };
     }
 
+    case BREACH_ACTIONS.CREATE_CONSECUTIVE_SUCCESS: {
+      const { payload } = action;
+      const { sensor } = payload;
+      const { id, mostRecentBreachTime } = sensor;
+
+      const { byId } = state;
+      const oldSensor = byId[id];
+
+      const newSensor = { ...oldSensor, mostRecentBreachTime };
+      const newById = { ...byId, [id]: newSensor };
+
+      return { ...state, byId: newById };
+    }
     case DOWNLOAD_ACTIONS.SENSOR_DOWNLOAD_SUCCESS: {
       const { payload } = action;
       const { sensor } = payload;
