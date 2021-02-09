@@ -12,7 +12,7 @@ import Svg, {
   Ellipse,
 } from 'react-native-svg';
 
-export const NoBreachMan = ({ width = 100, height = 80 }) => (
+export const BreachManHappy = ({ width = 100, height = 80 }) => (
   <Svg
     width={width}
     height={height}
