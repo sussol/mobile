@@ -28,10 +28,11 @@ const createBreachRecord = (
     startTimestamp,
     endTimestamp,
     location,
+    acknowledged: false,
   };
 };
 
-export class BreachManager {
+class BreachManager {
   constructor(dbWrapper, utils) {
     this.db = dbWrapper;
     this.utils = utils;
@@ -156,7 +157,6 @@ export class BreachManager {
         }
       }
     });
-
     return [breaches, temperatureLogs];
   };
 

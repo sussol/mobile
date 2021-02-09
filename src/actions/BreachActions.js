@@ -3,13 +3,13 @@
  * Sustainable Solutions (NZ) Ltd. 2020
  */
 
-import { BreachManager } from '../bluetooth/BreachManager';
+import BreachManager from '../bluetooth/BreachManager';
 import { UIDatabase } from '../database';
 
 export const BREACH_ACTIONS = {
+  CLOSE_MODAL: 'breachActions/closeModal',
   CREATE_CONSECUTIVE_SUCCESS: 'breachActions/createConsecutiveSuccess',
   CREATE_CONSECUTIVE_FAIL: 'breachActions/createConsecutiveFail',
-  CLOSE_MODAL: 'breachActions/closeModal',
   VIEW_FRIDGE_BREACHES: 'breachActions/viewFridgeBreaches',
   VIEW_ITEM_BREACHES: 'breachActions/viewItemBreaches,',
 };
@@ -22,16 +22,23 @@ const createConsecutiveSuccess = (sensor, updatedBreaches, updatedLogs) => ({
   payload: { sensor, updatedBreaches, updatedLogs },
 });
 
-const createConsecutiveBreaches = sensor => dispatch => {
+const createConsecutiveBreaches = sensor => async dispatch => {
   const { id } = sensor;
 
   try {
-    const logs = BreachManager.getLogsToCheck(id);
-    const configs = BreachManager.getBreachConfigs();
-    const mostRecentBreach = BreachManager.getMostRecentBreach(id);
-
-    const breaches = BreachManager.createBreaches(sensor, logs, configs, mostRecentBreach);
-    const [updatedBreaches, updatedLogs] = BreachManager.updateBreaches(breaches, logs);
+    const logs = await BreachManager().getLogsToCheck(id);
+    const configs = sensor.breachConfigs;
+    const mostRecentBreach = await BreachManager().getMostRecentBreach(id);
+    const [breaches, temperatureLogs] = await BreachManager().createBreaches(
+      sensor,
+      logs,
+      configs,
+      mostRecentBreach
+    );
+    const [updatedBreaches, updatedLogs] = await BreachManager().updateBreaches(
+      breaches,
+      temperatureLogs
+    );
     dispatch(createConsecutiveSuccess(sensor, updatedBreaches, updatedLogs));
   } catch (error) {
     dispatch(createConsecutiveFail);
