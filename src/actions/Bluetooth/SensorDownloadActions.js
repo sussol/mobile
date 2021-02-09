@@ -9,9 +9,9 @@ import BleService from '../../bluetooth/BleService';
 import TemperatureLogManager from '../../bluetooth/TemperatureLogManager';
 import SensorManager from '../../bluetooth/SensorManager';
 import { UIDatabase } from '../../database';
-import { VACCINE_CONSTANTS } from '../../utilities/modules/vaccines/index';
+import { isValidMacAddress, VACCINE_CONSTANTS } from '../../utilities/modules/vaccines/index';
 import { VACCINE_ENTITIES } from '../../utilities/modules/vaccines/constants';
-import { syncStrings } from '../../localization';
+import { syncStrings, vaccineStrings } from '../../localization';
 import { selectIsSyncingTemps } from '../../selectors/Bluetooth/sensorDownload';
 
 export const DOWNLOAD_ACTIONS = {
@@ -56,14 +56,18 @@ const downloadAll = () => async dispatch => {
   }
 
   for (let i = 0; i < sensors.length; i++) {
-    // Intentionally sequential
-    try {
-      // eslint-disable-next-line no-await-in-loop
-      await dispatch(downloadLogsFromSensor(sensors[i]));
-      // eslint-disable-next-line no-await-in-loop
-      await dispatch(downloadInfoFromSensor(sensors[i]));
-    } catch (exception) {
-      dispatch(downloadLogsError(exception.message));
+    if (isValidMacAddress(sensors[i].macAddress)) {
+      // Intentionally sequential
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        await dispatch(downloadLogsFromSensor(sensors[i]));
+        // eslint-disable-next-line no-await-in-loop
+        await dispatch(downloadInfoFromSensor(sensors[i]));
+      } catch (exception) {
+        dispatch(downloadLogsError(exception.message));
+      }
+    } else {
+      dispatch(downloadLogsError(vaccineStrings.E_INVALID_MAC_FORMAT));
     }
   }
   // this will now overwrite the error message
