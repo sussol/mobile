@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { Text, StyleSheet } from 'react-native';
-import { DARKER_GREY, APP_FONT_FAMILY, COLD_BREACH_BLUE, DANGER_RED } from '../globalStyles';
+import { DARKER_GREY, APP_FONT_FAMILY, COLD_BREACH_BLUE, DANGER_RED } from '../../globalStyles';
 
-import { ColdBreachIcon, HotBreachIcon, Paper } from '.';
-import { NoBreachMan } from './NoBreachMan';
-import { vaccineStrings } from '../localization/index';
+import { ColdBreachIcon, HotBreachIcon, Paper } from '..';
+import { NoBreachMan } from '../NoBreachMan';
+import { vaccineStrings } from '../../localization/index';
 
 export const BreachCard = ({ type, breachCount, headerText, message }) => {
   let icon = null;

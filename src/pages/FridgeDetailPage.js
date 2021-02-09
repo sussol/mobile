@@ -13,20 +13,21 @@ import { VaccineLineChart } from '../widgets/VaccineLineChart';
 import { FridgeActions } from '../actions/FridgeActions';
 import { AfterInteractions } from '../widgets/AfterInteractions';
 import { IconButton } from '../widgets/IconButton';
-import { BreachCard } from '../widgets/BreachCard';
+import {
+  AverageTemperatureBreachCard,
+  ColdConsecutiveBreachCard,
+  ColdCumulativeBreachCard,
+  HotConsecutiveBreachCard,
+  HotCumulativeBreachCard,
+} from '../widgets/BreachCards';
 import { BarChartIcon, LineChartIcon } from '../widgets/icons';
 
 import {
-  selectAverageTemperature,
   selectBreaches,
-  selectColdCumulativeBreach,
-  selectHotCumulativeBreach,
   selectLeastRecentTemperatureLogDate,
   selectMinAndMaxDomains,
   selectMinAndMaxLogs,
   selectMostRecentTemperatureLogDate,
-  selectNumberOfColdConsecutiveBreaches,
-  selectNumberOfHotConsecutiveBreaches,
   selectSelectedFridgeIsInColdBreach,
   selectSelectedFridgeIsInHotBreach,
   selectSelectedFridgeSensorIsLowBattery,
@@ -37,7 +38,6 @@ import {
 } from '../selectors/fridge';
 
 import { DARKER_GREY, BLUE_WHITE, WARMER_GREY } from '../globalStyles';
-import { vaccineStrings } from '../localization/index';
 import { SensorHeader } from '../widgets/SensorHeader';
 
 export const FridgeDetailPageComponent = ({
@@ -52,11 +52,6 @@ export const FridgeDetailPageComponent = ({
   toDate,
   minimumDate,
   maximumDate,
-  numberOfHotBreaches,
-  numberOfColdBreaches,
-  hotCumulativeBreach,
-  coldCumulativeBreach,
-  averageTemperature,
   isInHotBreach,
   isInColdBreach,
   isLowBattery,
@@ -136,32 +131,12 @@ export const FridgeDetailPageComponent = ({
           </Paper>
 
           <Animatable.View animation="fadeIn" duration={3000} useNativeDriver>
-            <FlexRow>
-              <BreachCard
-                headerText={vaccineStrings.cumulative_breach}
-                breachCount={coldCumulativeBreach}
-                type="cold"
-              />
-              <BreachCard
-                headerText={vaccineStrings.consecutive_breach}
-                breachCount={numberOfColdBreaches}
-                type="cold"
-              />
-              <BreachCard
-                headerText={vaccineStrings.average_temperature}
-                type="text"
-                message={averageTemperature}
-              />
-              <BreachCard
-                headerText={vaccineStrings.cumulative_breach}
-                breachCount={hotCumulativeBreach}
-                type="hot"
-              />
-              <BreachCard
-                headerText={vaccineStrings.consecutive_breach}
-                breachCount={numberOfHotBreaches}
-                type="hot"
-              />
+            <FlexRow style={localStyles.breachCardRow}>
+              <ColdCumulativeBreachCard />
+              <ColdConsecutiveBreachCard />
+              <AverageTemperatureBreachCard />
+              <HotCumulativeBreachCard />
+              <HotConsecutiveBreachCard />
             </FlexRow>
           </Animatable.View>
         </View>
@@ -185,11 +160,6 @@ const stateToProps = (state, props) => {
   const toDate = selectTemperatureLogsToDate(state);
   const minimumDate = selectLeastRecentTemperatureLogDate(state);
   const maximumDate = selectMostRecentTemperatureLogDate(state);
-  const numberOfHotBreaches = selectNumberOfHotConsecutiveBreaches(state);
-  const numberOfColdBreaches = selectNumberOfColdConsecutiveBreaches(state);
-  const averageTemperature = selectAverageTemperature(state);
-  const hotCumulativeBreach = selectHotCumulativeBreach(state);
-  const coldCumulativeBreach = selectColdCumulativeBreach(state);
   const isInHotBreach = selectSelectedFridgeIsInHotBreach(state);
   const isInColdBreach = selectSelectedFridgeIsInColdBreach(state);
   const isLowBattery = selectSelectedFridgeSensorIsLowBattery(state);
@@ -199,11 +169,6 @@ const stateToProps = (state, props) => {
   return {
     sensor,
     fridge: fridgeProp,
-    averageTemperature,
-    coldCumulativeBreach,
-    hotCumulativeBreach,
-    numberOfColdBreaches,
-    numberOfHotBreaches,
     code,
     breaches,
     minLine,
@@ -227,11 +192,6 @@ const dispatchToProps = dispatch => ({
   onChangeFromDate: date => dispatch(FridgeActions.changeFromDate(date)),
 });
 
-FridgeDetailPageComponent.defaultProps = {
-  hotCumulativeBreach: null,
-  coldCumulativeBreach: null,
-};
-
 FridgeDetailPageComponent.propTypes = {
   breaches: PropTypes.object.isRequired,
   minLine: PropTypes.array.isRequired,
@@ -244,11 +204,6 @@ FridgeDetailPageComponent.propTypes = {
   toDate: PropTypes.instanceOf(Date).isRequired,
   minimumDate: PropTypes.instanceOf(Date).isRequired,
   maximumDate: PropTypes.instanceOf(Date).isRequired,
-  numberOfHotBreaches: PropTypes.number.isRequired,
-  numberOfColdBreaches: PropTypes.number.isRequired,
-  hotCumulativeBreach: PropTypes.string,
-  coldCumulativeBreach: PropTypes.string,
-  averageTemperature: PropTypes.string.isRequired,
   isInHotBreach: PropTypes.bool.isRequired,
   isInColdBreach: PropTypes.bool.isRequired,
   isLowBattery: PropTypes.bool.isRequired,
@@ -267,6 +222,7 @@ const localStyles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   topRow: { flexDirection: 'row' },
+  breachCardRow: { justifyContent: 'space-around' },
 });
 
 export const FridgeDetailPage = connect(stateToProps, dispatchToProps)(FridgeDetailPageComponent);
