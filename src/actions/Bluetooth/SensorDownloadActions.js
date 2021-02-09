@@ -108,8 +108,8 @@ const downloadLogsFromSensor = sensor => async dispatch => {
       );
 
       await TemperatureLogManager().saveLogs(temperatureLogs);
+      await dispatch(BreachActions.createConsecutiveBreaches(sensor));
       dispatch(sensorDownloadSuccess(sensor));
-      dispatch(BreachActions.createConsecutiveBreaches(sensor));
     }
   } catch (error) {
     dispatch(sensorDownloadError(sensor, error));
