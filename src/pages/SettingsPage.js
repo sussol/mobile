@@ -133,6 +133,25 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
     [syncURL]
   );
 
+  const createTemperatureLogs = (sensor, idSuffix, logCount, generateTemperature) => {
+    const { location, logInterval } = sensor;
+    const currentDate = new Date();
+    let count = 0;
+
+    for (let i = -1 * logCount; i < logCount; i++) {
+      const temperature = generateTemperature(i);
+      count += 1;
+      UIDatabase.create('TemperatureLog', {
+        id: `${i}${idSuffix}`,
+        temperature,
+        logInterval,
+        timestamp: new Date(currentDate - logInterval * 1000 * count),
+        location,
+        sensor,
+      });
+    }
+  };
+
   const createVaccineData = () => {
     UIDatabase.write(() => {
       const oldLocations = UIDatabase.objects('Location');
@@ -151,31 +170,38 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
       const fridge2 = createRecord(UIDatabase, 'Location', { description: 'Fridge 2', code: 'f2' });
       const fridge3 = createRecord(UIDatabase, 'Location', { description: 'Fridge 3', code: 'f3' });
       const fridge4 = createRecord(UIDatabase, 'Location', { description: 'Fridge 4', code: 'f4' });
+      const fridge5 = createRecord(UIDatabase, 'Location', { description: 'Fridge 5', code: 'f5' });
 
       // create sensors
       createRecord(UIDatabase, 'Sensor', {
         name: 'sensor 1',
-        macAddress: 'sen1',
+        macAddress: '00:00:00:00:01',
         batteryLevel: 10,
         location: fridge1,
       });
       createRecord(UIDatabase, 'Sensor', {
         name: 'sensor 2',
-        macAddress: 'sen2',
+        macAddress: '00:00:00:00:02',
         batteryLevel: 20,
         location: fridge2,
       });
       createRecord(UIDatabase, 'Sensor', {
         name: 'sensor 3',
-        macAddress: 'sen3',
+        macAddress: '00:00:00:00:03',
         batteryLevel: 30,
         location: fridge3,
       });
       createRecord(UIDatabase, 'Sensor', {
         name: 'sensor 4',
-        macAddress: 'sen4',
+        macAddress: '00:00:00:00:04',
         batteryLevel: 40,
         location: fridge4,
+      });
+      createRecord(UIDatabase, 'Sensor', {
+        name: 'sensor 5',
+        macAddress: '00:00:00:00:05',
+        batteryLevel: 50,
+        location: fridge5,
       });
 
       // create some configs
@@ -223,51 +249,33 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
       });
 
       // create some logs. Leaving one location with no logs for handling that situation
+      // sorting the sensors, so that the log generation methods align with the sensors
+      const sensors = UIDatabase.objects('Sensor').sorted('name');
+      const twoDPInt = x => Math.floor(100 * x) / 100;
+      const buildGenerator = (base, factor) => () => twoDPInt(base + factor * Math.random());
+      const generatorA = () => {
+        // fluctuates between 2-6 degrees with some big spikes
+        const r = Math.random();
+        const realTemp = 2 + 4 * r;
 
-      const sensors = UIDatabase.objects('Sensor');
-      const currentDate = new Date();
-      let count = 0;
+        if (r > 0.985) {
+          return twoDPInt(realTemp + 20 * Math.random());
+        }
 
-      for (let i = -250; i < 250; i++) {
-        const { logInterval } = sensors[0];
-        count += 1;
-        UIDatabase.create('TemperatureLog', {
-          id: `${i}a`,
-          temperature: Math.floor((Math.random() * 20 + 5) * 100) / 100,
-          logInterval,
-          timestamp: new Date(currentDate - logInterval * 1000 * count),
-          location: sensors[0].location,
-          sensor: sensors[0],
-        });
-      }
+        if (r < 0.015) {
+          return twoDPInt(realTemp - 20 * Math.random());
+        }
 
-      count = 0;
-      for (let i = -100; i < 100; i++) {
-        const { logInterval } = sensors[1];
-        count += 1;
-        UIDatabase.create('TemperatureLog', {
-          id: `${i}b`,
-          temperature: Math.random() * 40 - 20 - i,
-          logInterval,
-          timestamp: new Date(currentDate - logInterval * 1000 * count),
-          location: sensors[1].location,
-          sensor: sensors[1],
-        });
-      }
+        return twoDPInt(realTemp);
+      };
 
-      count = 0;
-      for (let i = -50; i < 50; i++) {
-        const { logInterval } = sensors[1];
-        count += 1;
-        UIDatabase.create('TemperatureLog', {
-          id: `${i}c`,
-          temperature: Math.random() * 40 - 10 + i,
-          logInterval,
-          timestamp: new Date(currentDate - logInterval * 1000 * count),
-          location: sensors[2].location,
-          sensor: sensors[2],
-        });
-      }
+      createTemperatureLogs(sensors[0], 'a', 250, generatorA);
+      // fluctuates between 20 & 30 degrees
+      createTemperatureLogs(sensors[1], 'b', 100, buildGenerator(20, 10));
+      // fluctuates between -15 & -25 degrees
+      createTemperatureLogs(sensors[2], 'c', 50, buildGenerator(-15, -10));
+      // fluctuates between 2 & 6 degrees
+      createTemperatureLogs(sensors[3], 'd', 200, buildGenerator(2, 4));
     });
 
     // create breaches
