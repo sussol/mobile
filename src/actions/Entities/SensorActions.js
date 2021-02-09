@@ -29,8 +29,8 @@ export const SENSOR_ACTIONS = {
 
 const createFromScanner = macAddress => dispatch => {
   dispatch(LocationActions.create());
-  dispatch(TemperatureBreachConfigActions.createGroup());
   dispatch(SensorActions.create(macAddress));
+  dispatch(TemperatureBreachConfigActions.createGroup());
 };
 
 const reset = () => ({ type: SENSOR_ACTIONS.RESET });
@@ -141,22 +141,59 @@ const createNew = () => (dispatch, getState) => {
   let newSensor;
 
   location.description = sensor.name;
-  UIDatabase.write(() => {
-    newLocation = createRecord(UIDatabase, 'Location', location);
-    newSensor = createRecord(UIDatabase, 'Sensor', {
-      ...sensor,
-      location,
-      logDelay: new Date(sensor?.logDelay ?? 0),
-    });
-    newConfigs = configs.map(config =>
-      createRecord(UIDatabase, 'TemperatureBreachConfiguration', { ...config, location })
-    );
-  });
 
-  batch(() => {
-    dispatch(saveNew(newSensor));
-    dispatch(TemperatureBreachConfigActions.saveNewGroup(newConfigs));
-    dispatch(LocationActions.saveNew(newLocation));
+  UIDatabase.write(() => {
+    const existingSensor = UIDatabase.get('Sensor', sensor.macAddress, 'macAddress');
+    const existingLocation = existingSensor?.location;
+    const existingConfigs = existingLocation?.breachConfigs;
+
+    if (existingLocation) {
+      newLocation = UIDatabase.update('Location', {
+        id: existingLocation.id,
+        description: sensor.name,
+      });
+    } else {
+      newLocation = createRecord(UIDatabase, 'Location', { ...location, description: sensor.name });
+    }
+
+    if (existingSensor) {
+      newSensor = UIDatabase.update('Sensor', {
+        ...sensor,
+        id: existingSensor.id,
+        location: newLocation,
+        logDelay: new Date(sensor?.logDelay ?? 0),
+      });
+    } else {
+      newSensor = createRecord(UIDatabase, 'Sensor', {
+        ...sensor,
+        location,
+        logDelay: new Date(sensor?.logDelay ?? 0),
+      });
+    }
+
+    if (existingConfigs) {
+      newConfigs = configs.map(config => {
+        const matchingConfig = existingConfigs?.find(
+          existingConfig => existingConfig.type === config.type
+        );
+
+        return UIDatabase.update('TemperatureBreachConfiguration', {
+          ...config,
+          location: newLocation,
+          id: matchingConfig?.id,
+        });
+      });
+    } else {
+      newConfigs = configs.map(config =>
+        createRecord(UIDatabase, 'TemperatureBreachConfiguration', { ...config, location })
+      );
+    }
+
+    batch(() => {
+      dispatch(saveNew(newSensor));
+      dispatch(TemperatureBreachConfigActions.saveNewGroup(newConfigs));
+      dispatch(LocationActions.saveNew(newLocation));
+    });
   });
 };
 
