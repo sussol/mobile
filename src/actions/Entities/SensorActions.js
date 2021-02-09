@@ -67,6 +67,8 @@ const save = () => (dispatch, getState) => {
   let updatedLocation;
   let updatedSensor;
   const updatedConfigs = [];
+
+  location.description = sensor.name;
   UIDatabase.write(() => {
     updatedLocation = UIDatabase.update('Location', location);
     updatedSensor = UIDatabase.update('Sensor', sensor);
@@ -91,6 +93,8 @@ const createNew = () => (dispatch, getState) => {
   let newLocation;
   let newConfigs;
   let newSensor;
+
+  location.description = sensor.name;
   UIDatabase.write(() => {
     newLocation = createRecord(UIDatabase, 'Location', location);
     newSensor = createRecord(UIDatabase, 'Sensor', { ...sensor, location });

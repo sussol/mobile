@@ -5,7 +5,7 @@ import { Text, StyleSheet } from 'react-native';
 import { DARKER_GREY, APP_FONT_FAMILY, COLD_BREACH_BLUE, DANGER_RED } from '../../globalStyles';
 
 import { ColdBreachIcon, HotBreachIcon, Paper } from '..';
-import { NoBreachMan } from '../NoBreachMan';
+import { BreachManHappy } from '../BreachManHappy';
 import { vaccineStrings } from '../../localization/index';
 
 export const BreachCard = ({ type, breachCount, headerText, message }) => {
@@ -31,7 +31,7 @@ export const BreachCard = ({ type, breachCount, headerText, message }) => {
   }
 
   if (!breachCount && type !== 'text') {
-    icon = <NoBreachMan />;
+    icon = <BreachManHappy />;
     text = vaccineStrings.no_breaches;
     textStyle = localStyles.noBreachText;
   }
