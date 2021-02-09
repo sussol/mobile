@@ -24,7 +24,7 @@ import { APP_FONT_FAMILY, DARKER_GREY, BLACK } from '../globalStyles';
 import { gotoFridgeDetailPage, gotoNewSensorPage } from '../navigation/actions';
 import { AfterInteractions } from '../widgets/AfterInteractions';
 import { SensorHeader } from '../widgets/SensorHeader/SensorHeader';
-import { selectSensors } from '../selectors/Entities/sensor';
+import { selectActiveSensors } from '../selectors/Entities/sensor';
 import temperature from '../utilities/temperature';
 import { BreachManUnhappy } from '../widgets/BreachManUnhappy';
 
@@ -135,12 +135,9 @@ const localStyles = StyleSheet.create({
 });
 
 const stateToProps = state => {
-  const { fridge } = state;
-  const { fridges } = fridge;
+  const sensors = selectActiveSensors(state);
 
-  const sensors = selectSensors(state);
-
-  return { fridges, sensors };
+  return { sensors };
 };
 
 const dispatchToProps = dispatch => ({
