@@ -37,12 +37,3 @@ export const selectSensors = state => {
   const sensorsById = selectSensorsById(state);
   return Object.values(sensorsById);
 };
-
-export const selectSensorIsDelayed = (state, mac) => {
-  const sensor = selectSensorByMac(state, mac);
-  const { logDelay } = sensor;
-  const timeNow = new Date().getTime();
-  const isDelayed = logDelay > timeNow;
-
-  return isDelayed;
-};
