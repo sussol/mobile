@@ -134,8 +134,22 @@ const localStyles = StyleSheet.create({
   },
 });
 
+const sortSensors = (s1, s2) => {
+  const nameA = s1.name.toUpperCase();
+  const nameB = s2.name.toUpperCase();
+
+  if (nameA < nameB) {
+    return -1;
+  }
+  if (nameA > nameB) {
+    return 1;
+  }
+
+  return 0;
+};
+
 const stateToProps = state => {
-  const sensors = selectActiveSensors(state);
+  const sensors = selectActiveSensors(state).sort(sortSensors);
 
   return { sensors };
 };
