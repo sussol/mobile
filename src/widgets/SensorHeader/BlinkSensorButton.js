@@ -2,11 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { ActivityIndicator } from 'react-native';
-import { DARKER_GREY, LIGHT_GREY } from '../globalStyles/index';
-import { IconButton } from './IconButton';
-import { LightbulbIcon } from './icons';
-import { SensorBlinkActions } from '../actions/Bluetooth/SensorBlinkActions';
-import { selectSendingBlinkTo } from '../selectors/Bluetooth/sensorBlink';
+import { DARKER_GREY, LIGHT_GREY } from '../../globalStyles/index';
+import { IconButton } from '../IconButton';
+import { LightbulbIcon } from '../icons';
+import { SensorBlinkActions } from '../../actions/Bluetooth/SensorBlinkActions';
+import { selectSendingBlinkTo } from '../../selectors/Bluetooth/sensorBlink';
 
 export const BlinkSensorButtonComponent = ({ isBlinking, blink, isBlinkDisabled }) =>
   isBlinking ? (

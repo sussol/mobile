@@ -54,7 +54,7 @@ import {
   WARMER_GREY,
 } from '../globalStyles';
 import { vaccineStrings } from '../localization/index';
-import { SensorHeader } from '../widgets/SensorHeader';
+import { SensorHeader } from '../widgets/SensorHeader/SensorHeader';
 
 const NoBreachMessage = () => (
   <>
