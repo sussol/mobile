@@ -2,7 +2,7 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/jsx-wrap-multilines */
 import React from 'react';
-import { StyleSheet, ToastAndroid } from 'react-native';
+import { StyleSheet, ToastAndroid, View } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -38,6 +38,9 @@ import { selectEditingLocation } from '../selectors/Entities/location';
 import { goBack } from '../navigation/actions';
 import { SensorHeader } from '../widgets/SensorHeader/SensorHeader';
 import { MILLISECONDS } from '../utilities/index';
+import { useToggle } from '../hooks/index';
+import { PaperModalContainer } from '../widgets/PaperModal/PaperModalContainer';
+import { SensorPicker } from '../widgets/SensorPicker';
 
 export const SensorEditPageComponent = ({
   logInterval,
@@ -59,90 +62,114 @@ export const SensorEditPageComponent = ({
   coldConsecutiveThreshold,
   hotCumulativeThreshold,
   sensor,
+  replaceSensor,
 }) => {
   const withLoadingIndicator = useLoadingIndicator();
+  const [open, toggleOpen] = useToggle();
+
   return (
-    <DataTablePageView style={{ paddingHorizontal: 20, paddingVertical: 30 }}>
-      <AfterInteractions>
-        <Paper Header={<SensorHeader sensor={sensor} />}>
-          <EditorRow
-            label={vaccineStrings.sensor_name}
-            Icon={<InfoIcon color={DARKER_GREY} />}
-            containerStyle={localStyles.paperContentRow}
-          >
-            <TextEditor size="large" value={name} onChangeText={updateName} />
-            <TextEditor label={vaccineStrings.sensor_code} value={code} onChangeText={updateCode} />
-          </EditorRow>
-        </Paper>
-
-        <Paper>
-          <BreachConfigRow
-            threshold={hotConsecutiveThreshold}
-            containerStyle={localStyles.paperContentRow}
-            type="HOT_CONSECUTIVE"
-            {...hotConsecutiveConfig}
-            updateDuration={(_, value) => updateDuration(hotConsecutiveConfig.id, value)}
-            updateTemperature={(type, value) =>
-              updateTemperature(type, hotConsecutiveConfig.id, value)
-            }
-          />
-          <BreachConfigRow
-            threshold={coldConsecutiveThreshold}
-            containerStyle={localStyles.paperContentRow}
-            type="COLD_CONSECUTIVE"
-            {...coldConsecutiveConfig}
-            updateDuration={(_, value) => updateDuration(coldConsecutiveConfig.id, value)}
-            updateTemperature={(type, value) =>
-              updateTemperature(type, coldConsecutiveConfig.id, value)
-            }
-          />
-          <BreachConfigRow
-            threshold={hotCumulativeThreshold}
-            containerStyle={localStyles.paperContentRow}
-            type="HOT_CUMULATIVE"
-            {...hotCumulativeConfig}
-            updateDuration={(_, value) => updateDuration(hotCumulativeConfig.id, value)}
-            updateTemperature={(type, value) =>
-              updateTemperature(type, hotCumulativeConfig.id, value)
-            }
-          />
-          <BreachConfigRow
-            threshold={coldCumulativeThreshold}
-            containerStyle={localStyles.paperContentRow}
-            type="COLD_CUMULATIVE"
-            {...coldCumulativeConfig}
-            updateDuration={(_, value) => updateDuration(coldCumulativeConfig.id, value)}
-            updateTemperature={(type, value) =>
-              updateTemperature(type, coldCumulativeConfig.id, value)
-            }
-          />
-        </Paper>
-
-        <Paper>
-          <FlexRow justifyContent="flex-end">
-            <DurationEditor
+    <>
+      <DataTablePageView style={{ paddingHorizontal: 20, paddingVertical: 30 }}>
+        <AfterInteractions>
+          <Paper Header={<SensorHeader sensor={sensor} />}>
+            <EditorRow
+              label={vaccineStrings.sensor_name}
+              Icon={<InfoIcon color={DARKER_GREY} />}
               containerStyle={localStyles.paperContentRow}
-              value={logInterval}
-              onChange={updateLogInterval}
-              label={vaccineStrings.logging_interval}
+            >
+              <TextEditor size="large" value={name} onChangeText={updateName} />
+              <TextEditor
+                label={vaccineStrings.sensor_code}
+                value={code}
+                onChangeText={updateCode}
+              />
+            </EditorRow>
+          </Paper>
+
+          <Paper>
+            <BreachConfigRow
+              threshold={hotConsecutiveThreshold}
+              containerStyle={localStyles.paperContentRow}
+              type="HOT_CONSECUTIVE"
+              {...hotConsecutiveConfig}
+              updateDuration={(_, value) => updateDuration(hotConsecutiveConfig.id, value)}
+              updateTemperature={(type, value) =>
+                updateTemperature(type, hotConsecutiveConfig.id, value)
+              }
+            />
+            <BreachConfigRow
+              threshold={coldConsecutiveThreshold}
+              containerStyle={localStyles.paperContentRow}
+              type="COLD_CONSECUTIVE"
+              {...coldConsecutiveConfig}
+              updateDuration={(_, value) => updateDuration(coldConsecutiveConfig.id, value)}
+              updateTemperature={(type, value) =>
+                updateTemperature(type, coldConsecutiveConfig.id, value)
+              }
+            />
+            <BreachConfigRow
+              threshold={hotCumulativeThreshold}
+              containerStyle={localStyles.paperContentRow}
+              type="HOT_CUMULATIVE"
+              {...hotCumulativeConfig}
+              updateDuration={(_, value) => updateDuration(hotCumulativeConfig.id, value)}
+              updateTemperature={(type, value) =>
+                updateTemperature(type, hotCumulativeConfig.id, value)
+              }
+            />
+            <BreachConfigRow
+              threshold={coldCumulativeThreshold}
+              containerStyle={localStyles.paperContentRow}
+              type="COLD_CUMULATIVE"
+              {...coldCumulativeConfig}
+              updateDuration={(_, value) => updateDuration(coldCumulativeConfig.id, value)}
+              updateTemperature={(type, value) =>
+                updateTemperature(type, coldCumulativeConfig.id, value)
+              }
+            />
+          </Paper>
+
+          <Paper>
+            <FlexRow justifyContent="flex-end" alignItems="center">
+              <PageButton text={generalStrings.remove} onPress={toggleOpen} />
+              <View style={{ marginLeft: 10, marginRight: 'auto' }}>
+                <PageButton text={generalStrings.replace} onPress={toggleOpen} />
+              </View>
+              <DurationEditor
+                containerStyle={localStyles.paperContentRow}
+                value={logInterval}
+                onChange={updateLogInterval}
+                label={vaccineStrings.logging_interval}
+              />
+            </FlexRow>
+          </Paper>
+
+          <FlexRow flex={1} alignItems="flex-end">
+            <TextWithIcon left Icon={<HazardIcon color={LIGHT_GREY} />} size="ms">
+              {vaccineStrings.bluetooth_changes_can_take_time}
+            </TextWithIcon>
+
+            <PageButton
+              onPress={() => withLoadingIndicator(() => saveSensor({ macAddress, logInterval }))}
+              text={generalStrings.save}
+              textStyle={localStyles.pageButtonText}
+              style={{ backgroundColor: SUSSOL_ORANGE }}
             />
           </FlexRow>
-        </Paper>
-
-        <FlexRow flex={1} alignItems="flex-end">
-          <TextWithIcon left Icon={<HazardIcon color={LIGHT_GREY} />} size="ms">
-            {vaccineStrings.bluetooth_changes_can_take_time}
-          </TextWithIcon>
-
-          <PageButton
-            onPress={() => withLoadingIndicator(() => saveSensor({ macAddress, logInterval }))}
-            text={generalStrings.save}
-            textStyle={localStyles.pageButtonText}
-            style={{ backgroundColor: SUSSOL_ORANGE }}
+        </AfterInteractions>
+      </DataTablePageView>
+      <PaperModalContainer isVisible={open} onClose={toggleOpen}>
+        <View style={{ padding: 20 }}>
+          <SensorPicker
+            text={generalStrings.select}
+            selectSensor={mac => {
+              replaceSensor(mac);
+              toggleOpen();
+            }}
           />
-        </FlexRow>
-      </AfterInteractions>
-    </DataTablePageView>
+        </View>
+      </PaperModalContainer>
+    </>
   );
 };
 
@@ -223,7 +250,10 @@ const dispatchToProps = (dispatch, ownProps) => {
       .then(() => dispatch(goBack()))
       .catch(e => ToastAndroid.show(e.toString(), ToastAndroid.LONG));
 
+  const replaceSensor = macAddress => dispatch(SensorActions.replace(macAddress));
+
   return {
+    replaceSensor,
     blink,
     updateName,
     updateCode,
@@ -271,6 +301,7 @@ SensorEditPageComponent.propTypes = {
   coldCumulativeThreshold: PropTypes.number.isRequired,
   coldConsecutiveThreshold: PropTypes.number.isRequired,
   hotCumulativeThreshold: PropTypes.number.isRequired,
+  replaceSensor: PropTypes.func.isRequired,
 };
 
 export const SensorEditPage = connect(stateToProps, dispatchToProps)(SensorEditPageComponent);

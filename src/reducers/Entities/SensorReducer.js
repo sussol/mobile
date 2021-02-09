@@ -31,6 +31,7 @@ const initialState = () => ({
   ),
   newId: '',
   editingId: '',
+  replacedId: '',
 });
 
 export const SensorReducer = (state = initialState(), action) => {
@@ -72,6 +73,18 @@ export const SensorReducer = (state = initialState(), action) => {
       return initialState();
     }
 
+    case SENSOR_ACTIONS.REPLACE: {
+      const { payload } = action;
+      const { macAddress, id } = payload;
+      const { byId, editingId } = state;
+
+      const oldSensor = byId[editingId];
+      const newSensor = { ...oldSensor, macAddress, id };
+      const newById = { ...byId, [id]: newSensor };
+
+      return { ...state, byId: newById, replacedId: editingId, editingId: id };
+    }
+
     case SENSOR_ACTIONS.SAVE_NEW: {
       const { byId } = state;
       const { payload } = action;
@@ -92,7 +105,7 @@ export const SensorReducer = (state = initialState(), action) => {
       // Only use plain objects.
       const newById = { ...byId, [id]: getPlainSensor(sensor) };
 
-      return { ...state, byId: newById, editingId: '' };
+      return { ...state, byId: newById, editingId: '', replacedId: '' };
     }
 
     case SENSOR_ACTIONS.UPDATE: {

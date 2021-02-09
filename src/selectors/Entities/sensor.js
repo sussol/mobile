@@ -9,10 +9,21 @@ export const selectSensorsById = state => {
   return byId;
 };
 
-export const selectSensorByMac = (state, mac) => {
+export const selectSensors = state => {
   const sensorsById = selectSensorsById(state);
-  const foundSensor = Object.values(sensorsById).find(({ macAddress }) => macAddress === mac);
+  return Object.values(sensorsById);
+};
+
+export const selectSensorByMac = (state, mac) => {
+  const sensors = selectSensors(state);
+  const foundSensor = sensors.find(({ macAddress }) => macAddress === mac);
   return foundSensor;
+};
+
+export const selectActiveSensors = state => {
+  const sensors = selectSensors(state);
+  const filtered = sensors.filter(({ isActive }) => isActive);
+  return filtered;
 };
 
 export const selectNewSensor = state => {
@@ -27,16 +38,17 @@ export const selectEditingSensor = state => {
   return byId[editingId];
 };
 
+export const selectReplacedSensor = state => {
+  const sensorState = selectSensorState(state);
+  const { replacedId, byId } = sensorState;
+  return byId[replacedId];
+};
+
 export const selectNewSensorId = state => {
   const sensorState = selectSensorState(state);
   const { newId } = sensorState;
 
   return newId;
-};
-
-export const selectSensors = state => {
-  const sensorsById = selectSensorsById(state);
-  return Object.values(sensorsById);
 };
 
 export const selectIsLowBatteryByMac = (state, mac) => {

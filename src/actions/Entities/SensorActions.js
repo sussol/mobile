@@ -1,4 +1,5 @@
 import { batch } from 'react-redux';
+import { generateUUID } from 'react-native-database';
 import { SensorManager } from '../../bluetooth';
 import { UIDatabase } from '../../database';
 import { createRecord } from '../../database/utilities';
@@ -7,6 +8,7 @@ import {
   selectEditingSensor,
   selectNewSensor,
   selectNewSensorId,
+  selectReplacedSensor,
 } from '../../selectors/Entities/sensor';
 import {
   selectEditingConfigs,
@@ -21,6 +23,7 @@ export const SENSOR_ACTIONS = {
   RESET: 'SENSOR/reset',
   SAVE_NEW: 'SENSOR/saveNew',
   SAVE_EDITING: 'SENSOR/saveEditing',
+  REPLACE: 'SENSOR/replace',
 };
 
 const createFromScanner = macAddress => dispatch => {
@@ -69,18 +72,31 @@ const save = () => (dispatch, getState) => {
   const location = selectEditingLocation(fullState);
   const sensor = selectEditingSensor(fullState);
   const configs = selectEditingConfigs(fullState);
+  const replacedSensor = selectReplacedSensor(fullState);
 
   let updatedLocation;
   let updatedSensor;
   const updatedConfigs = [];
 
   location.description = sensor.name;
+
   UIDatabase.write(() => {
     updatedLocation = UIDatabase.update('Location', location);
-    updatedSensor = UIDatabase.update('Sensor', sensor);
+    updatedSensor = UIDatabase.update('Sensor', {
+      ...sensor,
+      logDelay: new Date(sensor.logDelay),
+      location: updatedLocation,
+    });
     configs.forEach(config =>
       updatedConfigs.push(UIDatabase.update('TemperatureBreachConfiguration', config))
     );
+
+    if (replacedSensor) {
+      replacedSensor.location = null;
+      replacedSensor.isActive = false;
+      replacedSensor.logDelay = new Date(replacedSensor.logDelay);
+      updatedSensor = UIDatabase.update('Sensor', replacedSensor);
+    }
   });
 
   batch(() => {
@@ -89,6 +105,11 @@ const save = () => (dispatch, getState) => {
     dispatch(TemperatureBreachConfigActions.saveEditingGroup(updatedConfigs));
   });
 };
+
+const replace = macAddress => ({
+  type: SENSOR_ACTIONS.REPLACE,
+  payload: { macAddress, id: generateUUID() },
+});
 
 const createNew = () => (dispatch, getState) => {
   const fullState = getState();
@@ -130,4 +151,5 @@ export const SensorActions = {
   saveNew,
   save,
   saveEditing,
+  replace,
 };
