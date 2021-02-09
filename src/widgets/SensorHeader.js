@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { StyleSheet } from 'react-native';
 import { TextWithIcon } from './Typography/index';
-import { BatteryIcon, CogIcon, DownloadIcon } from './icons';
+import { BatteryIcon, CogIcon } from './icons';
 import {
   APP_FONT_FAMILY,
   BLACK,
@@ -19,10 +19,11 @@ import { LastSensorDownload } from './LastSensorDownload';
 import { BlinkSensorButton } from './BlinkSensorButton';
 import { Circle } from './Circle';
 import { FlexRow } from './FlexRow';
+import { ExportTemperatureDataButton } from './ExportTemperatureDataButton';
 
 const formatBatteryLevel = batteryLevel => `${batteryLevel}%`;
 
-export const FridgeHeaderComponent = ({
+export const SensorHeaderComponent = ({
   batteryLevel,
   name,
   macAddress,
@@ -46,6 +47,7 @@ export const FridgeHeaderComponent = ({
       )}
     </FlexRow>
 
+    <LastSensorDownload macAddress={macAddress} />
     <TextWithIcon
       containerStyle={localStyles.headerTextWithIcon}
       size="s"
@@ -54,12 +56,7 @@ export const FridgeHeaderComponent = ({
       {formatBatteryLevel(batteryLevel)}
     </TextWithIcon>
 
-    <LastSensorDownload macAddress={macAddress} />
-
-    <IconButton
-      Icon={<DownloadIcon color={DARKER_GREY} />}
-      containerStyle={{ width: 50, justifyContent: 'center' }}
-    />
+    <ExportTemperatureDataButton macAddress={macAddress} />
     <BlinkSensorButton macAddress={macAddress} />
     {showCog && (
       <IconButton
@@ -71,7 +68,7 @@ export const FridgeHeaderComponent = ({
   </>
 );
 
-FridgeHeaderComponent.defaultProps = {
+SensorHeaderComponent.defaultProps = {
   macAddress: 'AA:BB:CC:DD:EE:FF',
   batteryLevel: 99,
   name: '',
@@ -79,7 +76,7 @@ FridgeHeaderComponent.defaultProps = {
   showTitle: false,
 };
 
-FridgeHeaderComponent.propTypes = {
+SensorHeaderComponent.propTypes = {
   name: PropTypes.string,
   macAddress: PropTypes.string,
   batteryLevel: PropTypes.number,
@@ -120,4 +117,4 @@ const dispatchToProps = (dispatch, props) => {
   return { editSensor };
 };
 
-export const FridgeHeader = connect(stateToProps, dispatchToProps)(FridgeHeaderComponent);
+export const SensorHeader = connect(stateToProps, dispatchToProps)(SensorHeaderComponent);

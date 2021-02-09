@@ -16,7 +16,7 @@ import { HazardPoint } from './HazardPoint';
 import { FlexView } from './FlexView';
 import { CHART_CONSTANTS } from '../utilities/modules/vaccines';
 
-export const VaccineChart = ({
+export const VaccineLineChart = ({
   minLine,
   maxLine,
   minDomain,
@@ -48,7 +48,6 @@ export const VaccineChart = ({
           height={height}
           minDomain={chartMinDomain}
           maxDomain={chartMaxDomain}
-          padding={{ top: 0, bottom: 50, right: 10, left: 50 }}
         >
           <VictoryAxis
             offsetX={CHART_CONSTANTS.AXIS_OFFSET}
@@ -93,7 +92,7 @@ export const VaccineChart = ({
   );
 };
 
-VaccineChart.defaultProps = {
+VaccineLineChart.defaultProps = {
   x: 'timestamp',
   y: 'temperature',
   xTickFormat: tick => moment(new Date(tick)).format('DD/MM'),
@@ -102,7 +101,7 @@ VaccineChart.defaultProps = {
   breaches: null,
 };
 
-VaccineChart.propTypes = {
+VaccineLineChart.propTypes = {
   x: PropTypes.string,
   y: PropTypes.string,
   minDomain: PropTypes.number.isRequired,

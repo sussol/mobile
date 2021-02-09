@@ -1,0 +1,29 @@
+{
+  "gb": {
+    "title_logging": "LOGGING",
+    "title_sensor_stats": "STATISTICS",
+    "title_breach_config": "BREACH CONFIGURATIONS",
+    "title_breaches": "BREACHES",
+    "title_logs": "LOGS",
+    "field_timezone": "Timezone",
+    "field_device": "Device",
+    "field_sensor_name": "Sensor name",
+    "field_exported_by": "Exported by",
+    "field_job_description": "Job description",
+    "field_logging_start": "Logging start",
+    "field_logging_interval": "Logging start",
+    "field_max_temperature": "Maximum temperature",
+    "field_min_temperature": "Minimum temperature",
+    "field_number_breaches": "Number of consecutive breaches",
+    "field_breach_type": "Breach type",
+    "field_duration_threshold": "Duration threshold",
+    "field_temperature_threshold": "Temperature threshold",
+    "field_starting_timestamp": "Starting timestamp",
+    "field_ending_timestamp": "Ending timestamp",
+    "field_exposure_duration": "Exposure duration (minutes)",
+    "field_timestamp": "Timestamp",
+    "field_temperature": "Temperature",
+    "field_log_interval_minutes": "Log interval (minutes)",
+    "email_vaccine_report_subject": "Temperature log report for"
+  }
+}

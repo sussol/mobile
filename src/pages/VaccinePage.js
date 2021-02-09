@@ -23,7 +23,7 @@ import { generalStrings, buttonStrings } from '../localization';
 import { APP_FONT_FAMILY, DARKER_GREY, BLACK } from '../globalStyles';
 import { gotoFridgeDetailPage, gotoNewSensorPage } from '../navigation/actions';
 import { AfterInteractions } from '../widgets/AfterInteractions';
-import { FridgeHeader } from '../widgets/FridgeHeader';
+import { SensorHeader } from '../widgets/SensorHeader';
 import { selectSensors } from '../selectors/Entities/sensor';
 import temperature from '../utilities/temperature';
 import { BreachManUnhappy } from '../widgets/BreachManUnhappy';
@@ -44,7 +44,7 @@ const FridgeDisplay = ({ sensor, toFridgeDetail }) => {
 
   return (
     <Paper
-      Header={<FridgeHeader showTitle showCog sensor={sensor} />}
+      Header={<SensorHeader showTitle showCog sensor={sensor} />}
       contentContainerStyle={localStyles.fridgePaperContentContainer}
     >
       <TouchableOpacity onPress={() => toFridgeDetail(locationID)}>
@@ -120,7 +120,7 @@ const localStyles = StyleSheet.create({
     flex: 0,
     height: 60,
     paddingHorizontal: 10,
-    width: 120,
+    width: 140,
   },
   fridgePaperContentContainer: {
     flex: 2,
