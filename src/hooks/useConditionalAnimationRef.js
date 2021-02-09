@@ -1,11 +1,12 @@
 import { useRef, useEffect } from 'react';
 
 /**
+ * Hook used to return a ref which should be applied to an animatable view created by
+ * animatable that will trigger an animation to start/stop based on the condition passed.
  *
- *
- * @param {*} condition
- * @param {*} animation
- * @param {*} duration
+ * @param {boolean} condition a condition that when true will cause the animation to begin.
+ * @param {string} animation the animation type see: react-native-animatable.
+ * @param {number} duration the number of milliseconds per animation.
  */
 export const useConditionalAnimationRef = (condition, animation = 'flash', duration = 1000) => {
   const ref = useRef();
@@ -23,7 +24,6 @@ export const useConditionalAnimationRef = (condition, animation = 'flash', durat
   useEffect(() => {
     if (condition) start();
     else stop();
-
     return stop;
   }, [condition]);
 
