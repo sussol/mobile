@@ -3,7 +3,7 @@ import { useRef, useEffect } from 'react';
 // Most animations are considered 'interactions' - if there is no break
 // in the interaction, then InteractionManager.runAfterInteractions() is
 // never fired.
-const DURATION_OFFSET = 50;
+const DURATION_OFFSET = 100;
 
 /**
  * Hook used to return a ref which should be applied to an animatable view created by
