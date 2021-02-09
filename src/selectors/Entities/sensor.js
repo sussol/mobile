@@ -8,6 +8,12 @@ export const selectSensorsById = state => {
   return byId;
 };
 
+export const selectSensorByMac = (state, mac) => {
+  const sensorsById = selectSensorsById(state);
+  const foundSensor = Object.values(sensorsById).find(({ macAddress }) => macAddress === mac);
+  return foundSensor;
+};
+
 export const selectNewSensor = state => {
   const sensorState = selectSensorState(state);
   const { newId, byId } = sensorState;

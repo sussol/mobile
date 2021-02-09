@@ -39,7 +39,7 @@ export const NewSensorStepThreeComponent = ({
   connectToSensor,
   updateCode,
   updateLogInterval,
-  updateLoggingDelay,
+  updateLogDelay,
   exit,
   previousTab,
   macAddress,
@@ -73,8 +73,8 @@ export const NewSensorStepThreeComponent = ({
           label={vaccineStrings.start_logging}
           Icon={<CalendarIcon color={DARKER_GREY} />}
         >
-          <DateEditor onPress={updateLoggingDelay} date={loggingDelay} />
-          <TimeEditor onPress={updateLoggingDelay} time={loggingDelay} />
+          <DateEditor onPress={updateLogDelay} date={loggingDelay} />
+          <TimeEditor onPress={updateLogDelay} time={loggingDelay} />
         </EditorRow>
       </Paper>
 
@@ -107,8 +107,8 @@ export const NewSensorStepThreeComponent = ({
 const dispatchToProps = dispatch => {
   const updateName = value => dispatch(SensorActions.updateNewSensor(value, 'name'));
   const updateCode = value => dispatch(LocationActions.updateNew(value, 'code'));
-  const updateLoggingDelay = value =>
-    dispatch(SensorActions.updateNewSensor(value, 'loggingDelay'));
+  const updateLogDelay = value =>
+    dispatch(SensorActions.updateNewSensor(new Date(value).getTime(), 'logDelay'));
   const updateLogInterval = value => dispatch(SensorActions.updateNewSensor(value, 'logInterval'));
   const previousTab = () => dispatch(WizardActions.previousTab());
   const exit = () => dispatch(goBack());
@@ -129,7 +129,7 @@ const dispatchToProps = dispatch => {
     exit,
     updateName,
     updateCode,
-    updateLoggingDelay,
+    updateLogDelay,
     updateLogInterval,
   };
 };
@@ -144,10 +144,10 @@ const stateToProps = state => {
   const newSensor = selectNewSensor(state);
   const location = selectNewLocation(state);
 
-  const { logInterval, loggingDelay, name, macAddress } = newSensor ?? {};
+  const { logInterval, logDelay, name, macAddress } = newSensor ?? {};
   const { code } = location ?? {};
 
-  return { logInterval, loggingDelay, name, code, macAddress };
+  return { logInterval, logDelay: new Date(logDelay), name, code, macAddress };
 };
 
 NewSensorStepThreeComponent.defaultProps = {
@@ -166,7 +166,7 @@ NewSensorStepThreeComponent.propTypes = {
   macAddress: PropTypes.string,
   updateName: PropTypes.func.isRequired,
   updateCode: PropTypes.func.isRequired,
-  updateLoggingDelay: PropTypes.func.isRequired,
+  updateLogDelay: PropTypes.func.isRequired,
   updateLogInterval: PropTypes.func.isRequired,
   exit: PropTypes.func.isRequired,
   previousTab: PropTypes.func.isRequired,

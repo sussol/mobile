@@ -92,7 +92,14 @@ const startSetLogInterval = ({ macAddress, interval = 300 }) => async (dispatch,
   return result;
 };
 
+const isValidMacAddress = macAddress => /^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$/.test(macAddress);
+
 const updateSensor = sensor => async dispatch => {
+  if (!isValidMacAddress(sensor.macAddress)) {
+    // prevent errors if the sensor is not able to be contacted
+    return;
+  }
+
   await dispatch(SensorUpdateActions.startSetLogInterval(sensor));
   await dispatch(SensorUpdateActions.startSensorDisableButton(sensor.macAddress));
 };
