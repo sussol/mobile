@@ -11,6 +11,7 @@ import {
   ColdBreachIcon,
   DataTablePageView,
   FlexRow,
+  FlexView,
   HotBreachIcon,
   Paper,
   SensorStatus,
@@ -54,6 +55,7 @@ import {
 import { vaccineStrings } from '../localization/index';
 import { SensorHeader } from '../widgets/SensorHeader';
 
+const BREACH_MAN_UNHAPPY_SIZE = 400;
 const NoBreachMessage = () => (
   <>
     <NoBreachMan />
@@ -68,6 +70,19 @@ const BreachCard = props => (
     contentContainerStyle={{ alignItems: 'center', paddingBottom: 10 }}
   />
 );
+
+const EmptyComponent = ({ sensorName }) => (
+  <FlexView justifyContent="center" alignItems="center" flex={1}>
+    <NoBreachMan size={BREACH_MAN_UNHAPPY_SIZE} />
+    <Text style={localStyles.emptyText}>
+      No temperatures logged for {sensorName} within the given date range
+    </Text>
+  </FlexView>
+);
+
+EmptyComponent.propTypes = {
+  sensorName: PropTypes.string.isRequired,
+};
 
 export const FridgeDetailPageComponent = ({
   breaches,
@@ -106,6 +121,27 @@ export const FridgeDetailPageComponent = ({
       />
     );
   };
+
+  if (!minLine.length || !maxLine.length) {
+    return (
+      <AfterInteractions>
+        <View style={localStyles.container}>
+          <View style={localStyles.topRow}>
+            <DateRangeSelector
+              containerStyle={localStyles.datePickerContainer}
+              initialStartDate={fromDate}
+              initialEndDate={toDate}
+              onChangeToDate={onChangeToDate}
+              onChangeFromDate={onChangeFromDate}
+              minimumDate={minimumDate}
+              maximumDate={maximumDate}
+            />
+          </View>
+          <EmptyComponent sensorName={sensor.name} />
+        </View>
+      </AfterInteractions>
+    );
+  }
 
   return (
     <DataTablePageView>
@@ -281,8 +317,11 @@ const dispatchToProps = dispatch => ({
 });
 
 FridgeDetailPageComponent.defaultProps = {
-  hotCumulativeBreach: null,
   coldCumulativeBreach: null,
+  currentTemperature: null,
+  hotCumulativeBreach: null,
+  maximumDate: null,
+  minimumDate: null,
 };
 
 FridgeDetailPageComponent.propTypes = {
@@ -295,8 +334,8 @@ FridgeDetailPageComponent.propTypes = {
   onChangeFromDate: PropTypes.func.isRequired,
   fromDate: PropTypes.instanceOf(Date).isRequired,
   toDate: PropTypes.instanceOf(Date).isRequired,
-  minimumDate: PropTypes.instanceOf(Date).isRequired,
-  maximumDate: PropTypes.instanceOf(Date).isRequired,
+  minimumDate: PropTypes.instanceOf(Date),
+  maximumDate: PropTypes.instanceOf(Date),
   numberOfHotBreaches: PropTypes.number.isRequired,
   numberOfColdBreaches: PropTypes.number.isRequired,
   hotCumulativeBreach: PropTypes.string,
@@ -305,7 +344,7 @@ FridgeDetailPageComponent.propTypes = {
   isInHotBreach: PropTypes.bool.isRequired,
   isInColdBreach: PropTypes.bool.isRequired,
   isLowBattery: PropTypes.bool.isRequired,
-  currentTemperature: PropTypes.number.isRequired,
+  currentTemperature: PropTypes.number,
   sensor: PropTypes.object.isRequired,
   breachBoundaries: PropTypes.object.isRequired,
 };
@@ -323,6 +362,12 @@ const localStyles = StyleSheet.create({
     color: COLD_BREACH_BLUE,
     fontSize: 50,
     fontFamily: APP_FONT_FAMILY,
+  },
+  emptyText: {
+    fontSize: 28,
+    color: DARKER_GREY,
+    fontFamily: APP_FONT_FAMILY,
+    fontWeight: 'bold',
   },
   noBreachText: {
     fontSize: 12,

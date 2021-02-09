@@ -134,18 +134,19 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
   );
 
   const createTemperatureLogs = (sensor, idSuffix, logCount, generateTemperature) => {
+    const { location, logInterval } = sensor;
     const currentDate = new Date();
     let count = 0;
 
     for (let i = -1 * logCount; i < logCount; i++) {
-      const { logInterval } = sensor;
+      const temperature = generateTemperature(i);
       count += 1;
       UIDatabase.create('TemperatureLog', {
         id: `${i}${idSuffix}`,
-        temperature: generateTemperature(i),
+        temperature,
         logInterval,
         timestamp: new Date(currentDate - logInterval * 1000 * count),
-        location: sensor.location,
+        location,
         sensor,
       });
     }
@@ -253,18 +254,33 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
       });
 
       // create some logs. Leaving one location with no logs for handling that situation
+      // sorting the sensors, so that the log generation methods align with the sensors
+      const sensors = UIDatabase.objects('Sensor').sorted('name');
+      const twoDPInt = x => Math.floor(100 * x) / 100;
+      const buildGenerator = (base, factor) => () => twoDPInt(base + factor * Math.random());
+      const generatorA = () => {
+        // fluctuates between 2-6 degrees with some big spikes
+        const r = Math.random();
+        const realTemp = 2 + 4 * r;
 
-      const sensors = UIDatabase.objects('Sensor');
+        if (r > 0.975) {
+          return twoDPInt(realTemp + 20 * Math.random());
+        }
 
-      createTemperatureLogs(
-        sensors[0],
-        'a',
-        250,
-        () => Math.floor((Math.random() * 20 + 5) * 100) / 100
-      );
+        if (r < 0.025) {
+          return twoDPInt(realTemp - 20 * Math.random());
+        }
 
-      createTemperatureLogs(sensors[1], 'b', 100, n => Math.random() * 40 - 20 - n);
-      createTemperatureLogs(sensors[2], 'c', 50, n => Math.random() * 40 - 10 + n);
+        return twoDPInt(realTemp);
+      };
+
+      createTemperatureLogs(sensors[0], 'a', 250, generatorA);
+      // fluctuates between 20 & 30 degrees
+      createTemperatureLogs(sensors[1], 'b', 100, buildGenerator(20, 10));
+      // fluctuates between -15 & -25 degrees
+      createTemperatureLogs(sensors[2], 'c', 50, buildGenerator(-15, -10));
+      // fluctuates between 2 & 6 degrees
+      createTemperatureLogs(sensors[3], 'd', 200, buildGenerator(2, 4));
     });
 
     // create breaches
