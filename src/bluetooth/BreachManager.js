@@ -40,6 +40,14 @@ class BreachManager {
     this.createBreachFunc = createBreachRecord;
   }
 
+  setDb = db => {
+    this.db = db;
+  };
+
+  setUtils = utils => {
+    this.utils = utils;
+  };
+
   set createBreach(createBreachFunc) {
     this.createBreachFunc = createBreachFunc;
   }
