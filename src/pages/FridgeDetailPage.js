@@ -8,18 +8,12 @@ import * as Animatable from 'react-native-animatable';
 
 import { DateRangeSelector } from '../widgets/DateRangeSelector';
 import { DataTablePageView, FlexRow, Paper, SensorStatus } from '../widgets';
+import { BreachCard } from '../widgets/BreachCard';
 import { VaccineBarChart } from '../widgets/VaccineBarChart';
 import { VaccineLineChart } from '../widgets/VaccineLineChart';
 import { FridgeActions } from '../actions/FridgeActions';
 import { AfterInteractions } from '../widgets/AfterInteractions';
 import { IconButton } from '../widgets/IconButton';
-import {
-  AverageTemperatureBreachCard,
-  ColdConsecutiveBreachCard,
-  ColdCumulativeBreachCard,
-  HotConsecutiveBreachCard,
-  HotCumulativeBreachCard,
-} from '../widgets/BreachCards';
 import { BarChartIcon, LineChartIcon } from '../widgets/icons';
 
 import {
@@ -132,11 +126,11 @@ export const FridgeDetailPageComponent = ({
 
           <Animatable.View animation="fadeIn" duration={3000} useNativeDriver>
             <FlexRow style={localStyles.breachCardRow}>
-              <ColdCumulativeBreachCard />
-              <ColdConsecutiveBreachCard />
-              <AverageTemperatureBreachCard />
-              <HotCumulativeBreachCard />
-              <HotConsecutiveBreachCard />
+              <BreachCard type="COLD_CUMULATIVE" />
+              <BreachCard type="COLD_CONSECUTIVE" />
+              <BreachCard type="AVERAGE_TEMPERATURE" />
+              <BreachCard type="HOT_CUMULATIVE" />
+              <BreachCard type="HOT_CONSECUTIVE" />
             </FlexRow>
           </Animatable.View>
         </View>
