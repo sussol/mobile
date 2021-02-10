@@ -22,8 +22,19 @@ const formatLastSyncDate = date => (date ? moment(date).fromNow() : generalStrin
 const formatLogDelay = delay =>
   `${vaccineStrings.logging_delayed_until}: ${moment(delay).format('DD/MM/YYYY @ HH:mm:ss')}`;
 
+const getText = (isPaused, isDelayed, logDelay, lastDownloadTime) => {
+  if (isPaused) {
+    return vaccineStrings.is_paused;
+  }
+  if (isDelayed) {
+    return formatLogDelay(logDelay);
+  }
+  return formatLastSyncDate(lastDownloadTime);
+};
+
 export const LastSensorDownloadComponent = ({
   isDownloading,
+  isPaused,
   lastDownloadFailed,
   lastDownloadTime,
   logDelay,
@@ -53,14 +64,14 @@ export const LastSensorDownloadComponent = ({
         margin={0}
         size="s"
         Icon={
-          lastDownloadFailed || isDelayed ? (
+          lastDownloadFailed || isDelayed || isPaused ? (
             <WifiOffIcon size={20} color={MISTY_CHARCOAL} />
           ) : (
             <WifiIcon size={20} color={MISTY_CHARCOAL} />
           )
         }
       >
-        {isDelayed ? formatLogDelay(logDelay) : formatLastSyncDate(lastDownloadTime)}
+        {getText(isPaused, isDelayed, logDelay, lastDownloadTime)}
       </TextWithIcon>
     </Animatable.View>
   );
@@ -73,6 +84,7 @@ LastSensorDownloadComponent.defaultProps = {
 
 LastSensorDownloadComponent.propTypes = {
   isDownloading: PropTypes.bool.isRequired,
+  isPaused: PropTypes.bool.isRequired,
   lastDownloadFailed: PropTypes.bool.isRequired,
   lastDownloadTime: PropTypes.instanceOf(Date),
   logDelay: PropTypes.number,
@@ -95,9 +107,9 @@ const stateToProps = (state, props) => {
   const isDownloading = selectIsDownloading(state, macAddress);
 
   const sensor = selectSensorByMac(state, macAddress);
-  const { logDelay } = sensor;
+  const { isPaused = false, logDelay } = sensor;
 
-  return { lastDownloadTime, lastDownloadFailed, isDownloading, logDelay };
+  return { lastDownloadTime, lastDownloadFailed, isDownloading, logDelay, isPaused };
 };
 
 export const LastSensorDownload = connect(stateToProps)(LastSensorDownloadComponent);
