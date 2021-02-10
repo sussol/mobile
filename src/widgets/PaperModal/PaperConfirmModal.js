@@ -24,12 +24,12 @@ export const PaperConfirmModal = ({
       <Text style={localStyles.questionText}>{questionText}</Text>
     </FlexView>
     <FlexRow justifyContent="space-evenly" alignItems="center" style={{ width: '100%' }} flex={1}>
-      <PageButton onPress={onCancel} text={cancelText} textStyle={{ textTransform: 'uppercase' }} />
+      <PageButton onPress={onCancel} text={cancelText} textStyle={localStyles.cancelText} />
       <PageButton
         onPress={onConfirm}
         text={confirmText}
-        textStyle={{ textTransform: 'uppercase', color: WHITE }}
-        style={{ backgroundColor: SUSSOL_ORANGE }}
+        textStyle={localStyles.confirmText}
+        style={localStyles.confirmButton}
       />
     </FlexRow>
   </FlexColumn>
@@ -37,6 +37,9 @@ export const PaperConfirmModal = ({
 
 const localStyles = StyleSheet.create({
   questionText: { fontSize: 16, color: DARKER_GREY, fontWeight: '700' },
+  cancelText: { textTransform: 'uppercase' },
+  confirmText: { textTransform: 'uppercase', color: WHITE },
+  confirmButton: { backgroundColor: SUSSOL_ORANGE },
 });
 
 PaperConfirmModal.defaultProps = {
