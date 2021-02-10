@@ -107,7 +107,7 @@ const stateToProps = (state, props) => {
   const isDownloading = selectIsDownloading(state, macAddress);
 
   const sensor = selectSensorByMac(state, macAddress);
-  const { isPaused = false, logDelay } = sensor;
+  const { isPaused = false, logDelay } = sensor || {};
 
   return { lastDownloadTime, lastDownloadFailed, isDownloading, logDelay, isPaused };
 };

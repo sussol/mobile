@@ -78,7 +78,10 @@ const save = () => (dispatch, getState) => {
   location.description = sensor.name;
   UIDatabase.write(() => {
     updatedLocation = UIDatabase.update('Location', location);
-    updatedSensor = UIDatabase.update('Sensor', sensor);
+    updatedSensor = UIDatabase.update('Sensor', {
+      ...sensor,
+      logDelay: new Date(sensor?.logDelay ?? 0),
+    });
     configs.forEach(config =>
       updatedConfigs.push(UIDatabase.update('TemperatureBreachConfiguration', config))
     );
