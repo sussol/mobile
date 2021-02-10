@@ -106,6 +106,7 @@ Sensor.schema = {
     logs: { type: 'linkingObjects', objectType: 'TemperatureLog', property: 'sensor' },
     breaches: { type: 'linkingObjects', objectType: 'TemperatureBreach', property: 'sensor' },
     isActive: { type: 'bool', default: true },
+    isPaused: { type: 'bool', default: false },
     logInterval: { type: 'int', default: 300 },
     logDelay: { type: 'date', default: new Date(0) },
     programmedDate: { type: 'date', default: new Date() },

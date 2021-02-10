@@ -38,9 +38,10 @@ const update = (id, field, value) => ({
 
 const create = macAddress => async dispatch => {
   const defaultSensor = {
+    isPaused: false,
     location: {},
-    logInterval: 300,
     logDelay: new Date().getTime(),
+    logInterval: 300,
     macAddress,
     name: '',
   };
