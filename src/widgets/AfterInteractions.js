@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { ActivityIndicator, InteractionManager } from 'react-native';
 
@@ -7,14 +7,11 @@ import { SUSSOL_ORANGE } from '../globalStyles/index';
 
 export const AfterInteractions = ({ children, placeholder }) => {
   const [ready, setReady] = useState(false);
-  const handler = useRef();
 
   useEffect(() => {
-    handler.current = InteractionManager.runAfterInteractions(() => {
+    InteractionManager.runAfterInteractions(() => {
       setReady(true);
-      handler.current = null;
     });
-    return () => handler.current?.cancel();
   }, []);
 
   return ready ? (
