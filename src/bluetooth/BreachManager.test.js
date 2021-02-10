@@ -1,10 +1,14 @@
-import { BreachManager } from './BreachManager';
+import BreachManager, { destroyBreachManagerInstance } from './BreachManager';
+
+beforeEach(() => {
+  destroyBreachManagerInstance();
+});
 
 describe('BreachManager: closeBreach', () => {
   it('Returns a closed breach', () => {
     const dbService = {};
     const utils = { createUuid: () => '1' };
-    const breachManager = new BreachManager(dbService, utils);
+    const breachManager = BreachManager(dbService, utils);
 
     const breach = { id: 'a' };
     const closedBreach = breachManager.closeBreach(breach, 0);
@@ -17,7 +21,7 @@ describe('BreachManager: createBreach', () => {
   it('Returns a newly created breach', () => {
     const dbService = {};
     const utils = { createUuid: () => '1' };
-    const breachManager = new BreachManager(dbService, utils);
+    const breachManager = BreachManager(dbService, utils);
 
     const dummyLocation = { id: 'ABC', description: 'DEF' };
     const sensor = { id: 'a', location: dummyLocation };
@@ -57,7 +61,7 @@ describe('BreachManager: willCreateBreach', () => {
     const dbService = {};
     const utils = { createUuid: () => '1' };
 
-    const breachManager = new BreachManager(dbService, utils);
+    const breachManager = BreachManager(dbService, utils);
 
     const logs = [
       { timestamp: 0, temperature: 10 },
@@ -74,7 +78,7 @@ describe('BreachManager: willCreateBreach', () => {
     const dbService = {};
     const utils = { createUuid: () => '1' };
 
-    const breachManager = new BreachManager(dbService, utils);
+    const breachManager = BreachManager(dbService, utils);
 
     const logs = [
       { timestamp: 0, temperature: 10 },
@@ -91,7 +95,7 @@ describe('BreachManager: willCreateBreach', () => {
     const dbService = {};
     const utils = { createUuid: () => '1' };
 
-    const breachManager = new BreachManager(dbService, utils);
+    const breachManager = BreachManager(dbService, utils);
 
     const logs = [
       { timestamp: 0, temperature: 10 },
@@ -110,7 +114,7 @@ describe('BreachManager: willCreateBreachFromConfigs', () => {
     const dbService = {};
     const utils = { createUuid: () => '1' };
 
-    const breachManager = new BreachManager(dbService, utils);
+    const breachManager = BreachManager(dbService, utils);
 
     const logs = [
       { timestamp: 0, temperature: 10 },
@@ -133,7 +137,7 @@ describe('BreachManager: willCreateBreachFromConfigs', () => {
     const dbService = {};
     const utils = { createUuid: () => '1' };
 
-    const breachManager = new BreachManager(dbService, utils);
+    const breachManager = BreachManager(dbService, utils);
 
     const logs = [
       { timestamp: 0, temperature: 10 },
@@ -155,7 +159,7 @@ describe('BreachManager: addLogToBreach', () => {
     const dbService = {};
     const utils = { createUuid: () => '1' };
 
-    const breachManager = new BreachManager(dbService, utils);
+    const breachManager = BreachManager(dbService, utils);
 
     const log = { id: 'a', timestamp: 0, temperature: 10 };
     const breach = { id: 'breach' };
@@ -171,7 +175,7 @@ describe('BreachManager: willContinueBreach', () => {
     const dbService = {};
     const utils = { createUuid: () => '1' };
 
-    const breachManager = new BreachManager(dbService, utils);
+    const breachManager = BreachManager(dbService, utils);
 
     const breach = {
       thresholdMinTemperature: 8,
@@ -185,7 +189,7 @@ describe('BreachManager: willContinueBreach', () => {
     const dbService = {};
     const utils = { createUuid: () => '1' };
 
-    const breachManager = new BreachManager(dbService, utils);
+    const breachManager = BreachManager(dbService, utils);
 
     const breach = { thresholdMinTemperature: 8, thresholdMaxTemperature: 999 };
     const log = { temperature: 2 };
@@ -199,7 +203,7 @@ describe('BreachManager: willCloseBreach ', () => {
     const dbService = {};
     const utils = { createUuid: () => '1' };
 
-    const breachManager = new BreachManager(dbService, utils);
+    const breachManager = BreachManager(dbService, utils);
 
     const breach = { thresholdMinTemperature: 8, thresholdMaxTemperature: 999 };
     const log = { temperature: 2 };
@@ -207,7 +211,7 @@ describe('BreachManager: willCloseBreach ', () => {
     expect(breachManager.willCloseBreach(breach, log)).toEqual(true);
   });
   it('Correctly determines that a breach should be continued by a log', () => {
-    const breachManager = new BreachManager();
+    const breachManager = BreachManager();
 
     const breach = { thresholdMinTemperature: 8, thresholdMaxTemperature: 999 };
     const log = { temperature: 10 };
@@ -221,7 +225,7 @@ describe('BreachManager: couldBeInBreach', () => {
     const dbService = {};
     const utils = { createUuid: () => '1' };
 
-    const breachManager = new BreachManager(dbService, utils);
+    const breachManager = BreachManager(dbService, utils);
 
     const configs = [{ minimumTemperature: 8, maximumTemperature: 999 }];
     const log = { temperature: 10 };
@@ -232,7 +236,7 @@ describe('BreachManager: couldBeInBreach', () => {
     const dbService = {};
     const utils = { createUuid: () => '1' };
 
-    const breachManager = new BreachManager(dbService, utils);
+    const breachManager = BreachManager(dbService, utils);
 
     const configs = [
       { minimumTemperature: 8, maximumTemperature: 999 },
@@ -246,7 +250,7 @@ describe('BreachManager: couldBeInBreach', () => {
     const dbService = {};
     const utils = { createUuid: () => '1' };
 
-    const breachManager = new BreachManager(dbService, utils);
+    const breachManager = BreachManager(dbService, utils);
 
     const configs = [
       { minimumTemperature: 8, maximumTemperature: 999 },
@@ -260,7 +264,7 @@ describe('BreachManager: couldBeInBreach', () => {
     const dbService = {};
     const utils = { createUuid: () => '1' };
 
-    const breachManager = new BreachManager(dbService, utils);
+    const breachManager = BreachManager(dbService, utils);
 
     const configs = [{ minimumTemperature: 8, maximumTemperature: 999 }];
     const log = { temperature: 4 };
@@ -274,7 +278,7 @@ describe('BreachManager: updateBreaches', () => {
     const upsertMock = jest.fn(entities => entities);
     const mockDbService = { upsertBreaches: upsertMock, upsertTemperatureLog: upsertMock };
 
-    const breachManager = new BreachManager(mockDbService);
+    const breachManager = BreachManager(mockDbService);
 
     const breaches = [{ id: 'a' }, { id: 'b' }];
     const logs = [{ id: 'a', timestamp: 0, temperature: 0 }];
@@ -290,7 +294,7 @@ describe('BreachManager: createBreachesFrom', () => {
     const mockGetMostRecentBreachLog = jest.fn(async () => ({ timestamp: 1 }));
     const mockDbService = { getMostRecentBreachLog: mockGetMostRecentBreachLog };
 
-    const breachManager = new BreachManager(mockDbService);
+    const breachManager = BreachManager(mockDbService);
 
     await expect(breachManager.createBreachesFrom('a')).resolves.toEqual(1);
   });
@@ -298,7 +302,7 @@ describe('BreachManager: createBreachesFrom', () => {
     const mockGetMostRecentBreachLog = jest.fn(async () => ({}));
     const mockDbService = { getMostRecentBreachLog: mockGetMostRecentBreachLog };
 
-    const breachManager = new BreachManager(mockDbService);
+    const breachManager = BreachManager(mockDbService);
 
     await expect(breachManager.createBreachesFrom('a')).resolves.toEqual(0);
   });
@@ -316,7 +320,7 @@ describe('BreachManager: createBreaches', () => {
     const utils = { createUuid: () => '1' };
     const dbService = {};
 
-    const breachManager = new BreachManager(dbService, utils);
+    const breachManager = BreachManager(dbService, utils);
 
     const breachesShouldBe = [
       {
@@ -364,7 +368,7 @@ describe('BreachManager: createBreaches', () => {
 
     const utils = { createUuid: () => '1' };
     const dbService = {};
-    const breachManager = new BreachManager(dbService, utils);
+    const breachManager = BreachManager(dbService, utils);
 
     const breachesShouldBe = [
       {
@@ -414,7 +418,7 @@ describe('BreachManager: createBreaches', () => {
     const mockDbService = {};
     const utils = { createUuid: () => '1' };
 
-    const breachManager = new BreachManager(mockDbService, utils);
+    const breachManager = BreachManager(mockDbService, utils);
 
     const breachesShouldBe = [
       {
@@ -467,7 +471,7 @@ describe('BreachManager: createBreaches', () => {
 
     const dbService = {};
     const utils = { createUuid: () => '1' };
-    const breachManager = new BreachManager(dbService, utils);
+    const breachManager = BreachManager(dbService, utils);
 
     const breachesShouldBe = [];
     const logsShouldBe = [];
