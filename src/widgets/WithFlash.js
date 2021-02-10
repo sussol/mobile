@@ -9,7 +9,7 @@ export const WithFlash = ({ children, condition, style }) => {
   const ref = useConditionalAnimationRef(condition, 'flash', MILLISECONDS.ONE_SECOND);
 
   return (
-    <Animatable.View style={style} ref={ref}>
+    <Animatable.View iterationCount="infinite" animation="flash" style={style} ref={ref}>
       {children}
     </Animatable.View>
   );
