@@ -1,7 +1,6 @@
 import React from 'react';
 import { ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
-import { useNavigation } from '@react-navigation/native';
 import PropTypes from 'prop-types';
 import * as Animatable from 'react-native-animatable';
 
@@ -11,8 +10,6 @@ import { TextWithIcon } from '../../widgets/Typography';
 import { vaccineStrings } from '../../localization';
 import { WithFixedDimensions } from '../../widgets/WithFixedDimensions';
 import { Spacer } from '../../widgets/Spacer';
-
-import { SensorActions, WizardActions } from '../../actions';
 import { SensorBlinkActions } from '../../actions/Bluetooth/SensorBlinkActions';
 import { selectSendingBlinkTo } from '../../selectors/Bluetooth/sensorBlink';
 
@@ -41,48 +38,44 @@ RectangleButton.propTypes = {
   isSpinning: PropTypes.bool.isRequired,
 };
 
-export const ScanRowComponent = ({ macAddress, blink, isBlinking, isDisabled, selectSensor }) => {
-  const navigation = useNavigation();
-  return (
-    <Animatable.View animation="fadeIn" duration={1000} useNativeDriver>
-      <WithFixedDimensions height={60}>
-        <FlexRow flex={0} alignItems="center" justifyContent="flex-end">
-          <RectangleButton
-            isSpinning={isBlinking}
-            isDisabled={isDisabled}
-            onPress={() => blink(macAddress)}
-          />
-          <Spacer space={20} />
-          <TextWithIcon left size="ms" Icon={<WifiIcon />}>
-            {macAddress}
-          </TextWithIcon>
+export const ScanRowComponent = ({
+  macAddress,
+  blink,
+  isBlinking,
+  isDisabled,
+  selectSensor,
+  text,
+}) => (
+  <Animatable.View animation="fadeIn" duration={1000} useNativeDriver>
+    <WithFixedDimensions height={60}>
+      <FlexRow flex={0} alignItems="center" justifyContent="flex-end">
+        <RectangleButton
+          isSpinning={isBlinking}
+          isDisabled={isDisabled}
+          onPress={() => blink(macAddress)}
+        />
+        <Spacer space={20} />
+        <TextWithIcon left size="ms" Icon={<WifiIcon />}>
+          {macAddress}
+        </TextWithIcon>
 
-          <IconButton
-            onPress={() => {
-              // Navigating to the next tab whose name is '1'
-              navigation.navigate('1');
-              selectSensor(macAddress);
-            }}
-            right
-            labelStyle={localStyles.connectText}
-            label={vaccineStrings.connect}
-            size="ms"
-            Icon={<ChevronRightIcon color={DARKER_GREY} />}
-          />
-        </FlexRow>
-      </WithFixedDimensions>
-    </Animatable.View>
-  );
-};
+        <IconButton
+          onPress={() => selectSensor(macAddress)}
+          right
+          labelStyle={localStyles.connectText}
+          label={text}
+          size="ms"
+          Icon={<ChevronRightIcon color={DARKER_GREY} />}
+        />
+      </FlexRow>
+    </WithFixedDimensions>
+  </Animatable.View>
+);
 
 const dispatchToProps = dispatch => {
   const blink = macAddress => dispatch(SensorBlinkActions.startSensorBlink(macAddress));
-  const selectSensor = macAddress => {
-    dispatch(SensorActions.createFromScanner(macAddress));
-    dispatch(WizardActions.nextTab());
-  };
 
-  return { blink, selectSensor };
+  return { blink };
 };
 
 const stateToProps = (state, ownProps) => {
@@ -111,10 +104,15 @@ const localStyles = {
   },
 };
 
+ScanRowComponent.defaultProps = {
+  text: vaccineStrings.connect,
+};
+
 ScanRowComponent.propTypes = {
   selectSensor: PropTypes.func.isRequired,
   isBlinking: PropTypes.bool.isRequired,
   isDisabled: PropTypes.bool.isRequired,
   macAddress: PropTypes.string.isRequired,
   blink: PropTypes.func.isRequired,
+  text: PropTypes.string,
 };

@@ -1,4 +1,5 @@
 import { batch } from 'react-redux';
+import { generateUUID } from 'react-native-database';
 import { SensorManager } from '../../bluetooth';
 import { UIDatabase } from '../../database';
 import { createRecord } from '../../database/utilities';
@@ -7,6 +8,7 @@ import {
   selectEditingSensor,
   selectNewSensor,
   selectNewSensorId,
+  selectReplacedSensor,
 } from '../../selectors/Entities/sensor';
 import {
   selectEditingConfigs,
@@ -18,15 +20,17 @@ import { TemperatureBreachConfigActions } from './TemperatureBreachConfigActions
 export const SENSOR_ACTIONS = {
   CREATE: 'SENSOR/create',
   UPDATE: 'SENSOR/update',
+  REMOVE: 'SENSOR/remove',
   RESET: 'SENSOR/reset',
   SAVE_NEW: 'SENSOR/saveNew',
   SAVE_EDITING: 'SENSOR/saveEditing',
+  REPLACE: 'SENSOR/replace',
 };
 
 const createFromScanner = macAddress => dispatch => {
   dispatch(LocationActions.create());
-  dispatch(TemperatureBreachConfigActions.createGroup());
   dispatch(SensorActions.create(macAddress));
+  dispatch(TemperatureBreachConfigActions.createGroup());
 };
 
 const reset = () => ({ type: SENSOR_ACTIONS.RESET });
@@ -69,18 +73,31 @@ const save = () => (dispatch, getState) => {
   const location = selectEditingLocation(fullState);
   const sensor = selectEditingSensor(fullState);
   const configs = selectEditingConfigs(fullState);
+  const replacedSensor = selectReplacedSensor(fullState);
 
   let updatedLocation;
   let updatedSensor;
   const updatedConfigs = [];
 
   location.description = sensor.name;
+
   UIDatabase.write(() => {
     updatedLocation = UIDatabase.update('Location', location);
-    updatedSensor = UIDatabase.update('Sensor', sensor);
+    updatedSensor = UIDatabase.update('Sensor', {
+      ...sensor,
+      logDelay: new Date(sensor.logDelay),
+      location: updatedLocation,
+    });
     configs.forEach(config =>
       updatedConfigs.push(UIDatabase.update('TemperatureBreachConfiguration', config))
     );
+
+    if (replacedSensor) {
+      replacedSensor.location = null;
+      replacedSensor.isActive = false;
+      replacedSensor.logDelay = new Date(replacedSensor.logDelay);
+      updatedSensor = UIDatabase.update('Sensor', replacedSensor);
+    }
   });
 
   batch(() => {
@@ -88,6 +105,29 @@ const save = () => (dispatch, getState) => {
     dispatch(LocationActions.saveEditing(updatedLocation));
     dispatch(TemperatureBreachConfigActions.saveEditingGroup(updatedConfigs));
   });
+};
+
+const replace = macAddress => ({
+  type: SENSOR_ACTIONS.REPLACE,
+  payload: { macAddress, id: generateUUID() },
+});
+
+const remove = id => ({
+  type: SENSOR_ACTIONS.REMOVE,
+  payload: { id },
+});
+
+const removeSensor = sensorId => dispatch => {
+  const sensor = UIDatabase.get('Sensor', sensorId);
+
+  UIDatabase.write(() => {
+    UIDatabase.update('Sensor', {
+      id: sensor.id,
+      isActive: false,
+    });
+  });
+
+  dispatch(remove());
 };
 
 const createNew = () => (dispatch, getState) => {
@@ -101,22 +141,59 @@ const createNew = () => (dispatch, getState) => {
   let newSensor;
 
   location.description = sensor.name;
-  UIDatabase.write(() => {
-    newLocation = createRecord(UIDatabase, 'Location', location);
-    newSensor = createRecord(UIDatabase, 'Sensor', {
-      ...sensor,
-      location,
-      logDelay: new Date(sensor?.logDelay ?? 0),
-    });
-    newConfigs = configs.map(config =>
-      createRecord(UIDatabase, 'TemperatureBreachConfiguration', { ...config, location })
-    );
-  });
 
-  batch(() => {
-    dispatch(saveNew(newSensor));
-    dispatch(TemperatureBreachConfigActions.saveNewGroup(newConfigs));
-    dispatch(LocationActions.saveNew(newLocation));
+  UIDatabase.write(() => {
+    const existingSensor = UIDatabase.get('Sensor', sensor.macAddress, 'macAddress');
+    const existingLocation = existingSensor?.location;
+    const existingConfigs = existingLocation?.breachConfigs;
+
+    if (existingLocation) {
+      newLocation = UIDatabase.update('Location', {
+        id: existingLocation.id,
+        description: sensor.name,
+      });
+    } else {
+      newLocation = createRecord(UIDatabase, 'Location', { ...location, description: sensor.name });
+    }
+
+    if (existingSensor) {
+      newSensor = UIDatabase.update('Sensor', {
+        ...sensor,
+        id: existingSensor.id,
+        location: newLocation,
+        logDelay: new Date(sensor?.logDelay ?? 0),
+      });
+    } else {
+      newSensor = createRecord(UIDatabase, 'Sensor', {
+        ...sensor,
+        location,
+        logDelay: new Date(sensor?.logDelay ?? 0),
+      });
+    }
+
+    if (existingConfigs) {
+      newConfigs = configs.map(config => {
+        const matchingConfig = existingConfigs?.find(
+          existingConfig => existingConfig.type === config.type
+        );
+
+        return UIDatabase.update('TemperatureBreachConfiguration', {
+          ...config,
+          location: newLocation,
+          id: matchingConfig?.id,
+        });
+      });
+    } else {
+      newConfigs = configs.map(config =>
+        createRecord(UIDatabase, 'TemperatureBreachConfiguration', { ...config, location })
+      );
+    }
+
+    batch(() => {
+      dispatch(saveNew(newSensor));
+      dispatch(TemperatureBreachConfigActions.saveNewGroup(newConfigs));
+      dispatch(LocationActions.saveNew(newLocation));
+    });
   });
 };
 
@@ -130,4 +207,6 @@ export const SensorActions = {
   saveNew,
   save,
   saveEditing,
+  replace,
+  removeSensor,
 };
