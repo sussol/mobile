@@ -56,7 +56,7 @@
     "E_INVALID_MAC_FORMAT": "Invalid mac address format",
     "is_paused": "PAUSED",
     "pause": "Pause",
-    "enable": "Enable"
+    "resume": "Resume"
   },
   "fr": {},
   "gil": {},

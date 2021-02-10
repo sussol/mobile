@@ -128,7 +128,7 @@ export const SensorEditPageComponent = ({
             <View style={localStyles.pauseButtonRow}>
               <IconButton
                 Icon={isPaused ? <PlayIcon /> : <PauseIcon />}
-                label={isPaused ? vaccineStrings.enable : vaccineStrings.pause}
+                label={isPaused ? vaccineStrings.resume : vaccineStrings.pause}
                 labelStyle={localStyles.pauseButtonLabel}
                 onPress={() => updateIsPaused(!isPaused)}
               />
