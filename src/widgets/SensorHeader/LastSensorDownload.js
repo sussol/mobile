@@ -5,18 +5,18 @@ import { StyleSheet } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import moment from 'moment';
 
-import { useIntervalReRender } from '../hooks';
-import { TextWithIcon } from './Typography/index';
-import { MILLISECONDS } from '../utilities/index';
-import { WifiIcon, WifiOffIcon } from './icons';
-import { MISTY_CHARCOAL } from '../globalStyles/index';
+import { useIntervalReRender } from '../../hooks';
+import { TextWithIcon } from '../Typography/index';
+import { MILLISECONDS } from '../../utilities/index';
+import { WifiIcon, WifiOffIcon } from '../icons';
+import { MISTY_CHARCOAL } from '../../globalStyles/index';
 import {
   selectIsDownloading,
   selectLastDownloadFailed,
   selectLastDownloadTime,
-} from '../selectors/Bluetooth/sensorDownload';
-import { vaccineStrings, generalStrings } from '../localization';
-import { selectSensorByMac } from '../selectors/Entities/sensor';
+} from '../../selectors/Bluetooth/sensorDownload';
+import { vaccineStrings, generalStrings } from '../../localization';
+import { selectSensorByMac } from '../../selectors/Entities/sensor';
 
 const formatLastSyncDate = date => (date ? moment(date).fromNow() : generalStrings.not_available);
 const formatLogDelay = delay =>
@@ -95,7 +95,7 @@ const stateToProps = (state, props) => {
   const isDownloading = selectIsDownloading(state, macAddress);
 
   const sensor = selectSensorByMac(state, macAddress);
-  const { logDelay } = sensor;
+  const { logDelay } = sensor ?? {};
 
   return { lastDownloadTime, lastDownloadFailed, isDownloading, logDelay };
 };

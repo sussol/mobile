@@ -2,7 +2,7 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/jsx-wrap-multilines */
 import React from 'react';
-import { StyleSheet, ToastAndroid } from 'react-native';
+import { StyleSheet, ToastAndroid, View } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -22,7 +22,7 @@ import { TextWithIcon } from '../widgets/Typography';
 
 import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
-import { generalStrings, vaccineStrings } from '../localization';
+import { generalStrings, vaccineStrings, modalStrings, navStrings } from '../localization';
 import { APP_FONT_FAMILY, DARKER_GREY, LIGHT_GREY, SUSSOL_ORANGE, WHITE } from '../globalStyles';
 import { SensorActions } from '../actions';
 import { SensorBlinkActions } from '../actions/Bluetooth/SensorBlinkActions';
@@ -36,8 +36,12 @@ import {
 import { LocationActions, TemperatureBreachConfigActions } from '../actions/Entities/index';
 import { selectEditingLocation } from '../selectors/Entities/location';
 import { goBack } from '../navigation/actions';
-import { SensorHeader } from '../widgets/SensorHeader';
+import { SensorHeader } from '../widgets/SensorHeader/SensorHeader';
 import { MILLISECONDS } from '../utilities/index';
+import { useToggle } from '../hooks/index';
+import { PaperModalContainer } from '../widgets/PaperModal/PaperModalContainer';
+import { SensorPicker } from '../widgets/SensorPicker';
+import { PaperConfirmModal } from '../widgets/PaperModal/PaperConfirmModal';
 
 export const SensorEditPageComponent = ({
   logInterval,
@@ -59,90 +63,127 @@ export const SensorEditPageComponent = ({
   coldConsecutiveThreshold,
   hotCumulativeThreshold,
   sensor,
+  replaceSensor,
+  remove,
 }) => {
   const withLoadingIndicator = useLoadingIndicator();
+  const [replaceModalOpen, toggleReplaceModal] = useToggle();
+  const [removeModalOpen, toggleRemoveModal] = useToggle();
+
   return (
-    <DataTablePageView style={{ paddingHorizontal: 20, paddingVertical: 30 }}>
-      <AfterInteractions>
-        <Paper Header={<SensorHeader sensor={sensor} />}>
-          <EditorRow
-            label={vaccineStrings.sensor_name}
-            Icon={<InfoIcon color={DARKER_GREY} />}
-            containerStyle={localStyles.paperContentRow}
-          >
-            <TextEditor size="large" value={name} onChangeText={updateName} />
-            <TextEditor label={vaccineStrings.sensor_code} value={code} onChangeText={updateCode} />
-          </EditorRow>
-        </Paper>
-
-        <Paper>
-          <BreachConfigRow
-            threshold={hotConsecutiveThreshold}
-            containerStyle={localStyles.paperContentRow}
-            type="HOT_CONSECUTIVE"
-            {...hotConsecutiveConfig}
-            updateDuration={(_, value) => updateDuration(hotConsecutiveConfig.id, value)}
-            updateTemperature={(type, value) =>
-              updateTemperature(type, hotConsecutiveConfig.id, value)
-            }
-          />
-          <BreachConfigRow
-            threshold={coldConsecutiveThreshold}
-            containerStyle={localStyles.paperContentRow}
-            type="COLD_CONSECUTIVE"
-            {...coldConsecutiveConfig}
-            updateDuration={(_, value) => updateDuration(coldConsecutiveConfig.id, value)}
-            updateTemperature={(type, value) =>
-              updateTemperature(type, coldConsecutiveConfig.id, value)
-            }
-          />
-          <BreachConfigRow
-            threshold={hotCumulativeThreshold}
-            containerStyle={localStyles.paperContentRow}
-            type="HOT_CUMULATIVE"
-            {...hotCumulativeConfig}
-            updateDuration={(_, value) => updateDuration(hotCumulativeConfig.id, value)}
-            updateTemperature={(type, value) =>
-              updateTemperature(type, hotCumulativeConfig.id, value)
-            }
-          />
-          <BreachConfigRow
-            threshold={coldCumulativeThreshold}
-            containerStyle={localStyles.paperContentRow}
-            type="COLD_CUMULATIVE"
-            {...coldCumulativeConfig}
-            updateDuration={(_, value) => updateDuration(coldCumulativeConfig.id, value)}
-            updateTemperature={(type, value) =>
-              updateTemperature(type, coldCumulativeConfig.id, value)
-            }
-          />
-        </Paper>
-
-        <Paper>
-          <FlexRow justifyContent="flex-end">
-            <DurationEditor
+    <>
+      <DataTablePageView style={{ paddingHorizontal: 20, paddingVertical: 30 }}>
+        <AfterInteractions>
+          <Paper Header={<SensorHeader sensor={sensor} />}>
+            <EditorRow
+              label={vaccineStrings.sensor_name}
+              Icon={<InfoIcon color={DARKER_GREY} />}
               containerStyle={localStyles.paperContentRow}
-              value={logInterval}
-              onChange={updateLogInterval}
-              label={vaccineStrings.logging_interval}
+            >
+              <TextEditor size="large" value={name} onChangeText={updateName} />
+              <TextEditor
+                label={vaccineStrings.sensor_code}
+                value={code}
+                onChangeText={updateCode}
+              />
+            </EditorRow>
+          </Paper>
+
+          <Paper>
+            <BreachConfigRow
+              threshold={hotConsecutiveThreshold}
+              containerStyle={localStyles.paperContentRow}
+              type="HOT_CONSECUTIVE"
+              {...hotConsecutiveConfig}
+              updateDuration={(_, value) => updateDuration(hotConsecutiveConfig.id, value)}
+              updateTemperature={(type, value) =>
+                updateTemperature(type, hotConsecutiveConfig.id, value)
+              }
+            />
+            <BreachConfigRow
+              threshold={coldConsecutiveThreshold}
+              containerStyle={localStyles.paperContentRow}
+              type="COLD_CONSECUTIVE"
+              {...coldConsecutiveConfig}
+              updateDuration={(_, value) => updateDuration(coldConsecutiveConfig.id, value)}
+              updateTemperature={(type, value) =>
+                updateTemperature(type, coldConsecutiveConfig.id, value)
+              }
+            />
+            <BreachConfigRow
+              threshold={hotCumulativeThreshold}
+              containerStyle={localStyles.paperContentRow}
+              type="HOT_CUMULATIVE"
+              {...hotCumulativeConfig}
+              updateDuration={(_, value) => updateDuration(hotCumulativeConfig.id, value)}
+              updateTemperature={(type, value) =>
+                updateTemperature(type, hotCumulativeConfig.id, value)
+              }
+            />
+            <BreachConfigRow
+              threshold={coldCumulativeThreshold}
+              containerStyle={localStyles.paperContentRow}
+              type="COLD_CUMULATIVE"
+              {...coldCumulativeConfig}
+              updateDuration={(_, value) => updateDuration(coldCumulativeConfig.id, value)}
+              updateTemperature={(type, value) =>
+                updateTemperature(type, coldCumulativeConfig.id, value)
+              }
+            />
+          </Paper>
+
+          <Paper>
+            <FlexRow justifyContent="flex-end" alignItems="center">
+              <PageButton text={generalStrings.remove} onPress={toggleRemoveModal} />
+              <View style={{ marginLeft: 10, marginRight: 'auto' }}>
+                <PageButton text={generalStrings.replace} onPress={toggleReplaceModal} />
+              </View>
+              <DurationEditor
+                containerStyle={localStyles.paperContentRow}
+                value={logInterval}
+                onChange={updateLogInterval}
+                label={vaccineStrings.logging_interval}
+              />
+            </FlexRow>
+          </Paper>
+
+          <FlexRow flex={1} alignItems="flex-end">
+            <TextWithIcon left Icon={<HazardIcon color={LIGHT_GREY} />} size="ms">
+              {vaccineStrings.bluetooth_changes_can_take_time}
+            </TextWithIcon>
+
+            <PageButton
+              onPress={() => withLoadingIndicator(() => saveSensor({ macAddress, logInterval }))}
+              text={generalStrings.save}
+              textStyle={localStyles.pageButtonText}
+              style={{ backgroundColor: SUSSOL_ORANGE }}
             />
           </FlexRow>
-        </Paper>
+        </AfterInteractions>
+      </DataTablePageView>
 
-        <FlexRow flex={1} alignItems="flex-end">
-          <TextWithIcon left Icon={<HazardIcon color={LIGHT_GREY} />} size="ms">
-            {vaccineStrings.bluetooth_changes_can_take_time}
-          </TextWithIcon>
-
-          <PageButton
-            onPress={() => withLoadingIndicator(() => saveSensor({ macAddress, logInterval }))}
-            text={generalStrings.save}
-            textStyle={localStyles.pageButtonText}
-            style={{ backgroundColor: SUSSOL_ORANGE }}
+      <PaperModalContainer isVisible={replaceModalOpen} onClose={toggleReplaceModal}>
+        <View style={{ padding: 20 }}>
+          <SensorPicker
+            text={generalStrings.select}
+            selectSensor={mac => {
+              replaceSensor(mac);
+              toggleReplaceModal();
+            }}
           />
-        </FlexRow>
-      </AfterInteractions>
-    </DataTablePageView>
+        </View>
+      </PaperModalContainer>
+
+      <PaperModalContainer isVisible={removeModalOpen} onClose={toggleRemoveModal}>
+        <PaperConfirmModal
+          questionText={modalStrings.are_you_sure_delete_sensor}
+          confirmText={generalStrings.remove}
+          cancelText={navStrings.go_back}
+          onConfirm={remove}
+          onCancel={toggleRemoveModal}
+        />
+      </PaperModalContainer>
+    </>
   );
 };
 
@@ -203,6 +244,10 @@ const dispatchToProps = (dispatch, ownProps) => {
   const { sensor } = params;
   const { id: sensorID, locationID } = sensor;
 
+  const remove = () => {
+    dispatch(SensorActions.removeSensor(sensorID));
+    dispatch(goBack());
+  };
   const blink = macAddress => dispatch(SensorBlinkActions.startSensorBlink(macAddress));
   const updateName = name => dispatch(SensorActions.update(sensorID, 'name', name));
   const updateCode = code => dispatch(LocationActions.update(locationID, 'code', code));
@@ -223,7 +268,10 @@ const dispatchToProps = (dispatch, ownProps) => {
       .then(() => dispatch(goBack()))
       .catch(e => ToastAndroid.show(e.toString(), ToastAndroid.LONG));
 
+  const replaceSensor = macAddress => dispatch(SensorActions.replace(macAddress));
+
   return {
+    replaceSensor,
     blink,
     updateName,
     updateCode,
@@ -231,6 +279,7 @@ const dispatchToProps = (dispatch, ownProps) => {
     updateDuration,
     updateTemperature,
     saveSensor,
+    remove,
   };
 };
 
@@ -249,6 +298,7 @@ SensorEditPageComponent.defaultProps = {
 };
 
 SensorEditPageComponent.propTypes = {
+  remove: PropTypes.func.isRequired,
   sensor: PropTypes.object,
   lastSyncDate: PropTypes.instanceOf(Date),
   batteryLevel: PropTypes.number,
@@ -271,6 +321,7 @@ SensorEditPageComponent.propTypes = {
   coldCumulativeThreshold: PropTypes.number.isRequired,
   coldConsecutiveThreshold: PropTypes.number.isRequired,
   hotCumulativeThreshold: PropTypes.number.isRequired,
+  replaceSensor: PropTypes.func.isRequired,
 };
 
 export const SensorEditPage = connect(stateToProps, dispatchToProps)(SensorEditPageComponent);

@@ -23,8 +23,8 @@ import { generalStrings, buttonStrings } from '../localization';
 import { APP_FONT_FAMILY, DARKER_GREY, BLACK } from '../globalStyles';
 import { gotoFridgeDetailPage, gotoNewSensorPage } from '../navigation/actions';
 import { AfterInteractions } from '../widgets/AfterInteractions';
-import { SensorHeader } from '../widgets/SensorHeader';
-import { selectSensors } from '../selectors/Entities/sensor';
+import { SensorHeader } from '../widgets/SensorHeader/SensorHeader';
+import { selectActiveSensors } from '../selectors/Entities/sensor';
 import temperature from '../utilities/temperature';
 import { BreachManUnhappy } from '../widgets/BreachManUnhappy';
 
@@ -149,11 +149,9 @@ const sortSensors = (s1, s2) => {
 };
 
 const stateToProps = state => {
-  const { fridge } = state;
-  const { fridges } = fridge;
+  const sensors = selectActiveSensors(state).sort(sortSensors);
 
-  const sensors = selectSensors(state).sort(sortSensors);
-  return { fridges, sensors };
+  return { sensors };
 };
 
 const dispatchToProps = dispatch => ({

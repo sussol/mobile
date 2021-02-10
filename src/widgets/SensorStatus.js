@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import { Animated, Text } from 'react-native';
 import PropTypes from 'prop-types';
 
@@ -13,6 +14,13 @@ import { MILLISECONDS } from '../utilities';
 import { Rectangle } from './Rectangle';
 import temperature from '../utilities/temperature';
 
+import {
+  selectCurrentTemperatureByMac,
+  selectIsInColdBreachByMac,
+  selectIsInHotBreachByMac,
+  selectIsLowBatteryByMac,
+} from '../selectors/Entities/sensor';
+
 const BigText = ({ children, colour }) => (
   <Text style={{ ...styles.bigText, color: colour }}>{children}</Text>
 );
@@ -20,7 +28,12 @@ const BigText = ({ children, colour }) => (
 BigText.defaultProps = { colour: WHITE };
 BigText.propTypes = { children: PropTypes.node.isRequired, colour: PropTypes.string };
 
-export const SensorStatus = ({ isInHotBreach, isInColdBreach, isLowBattery, currentTemp }) => {
+export const SensorStatusComponent = ({
+  isInHotBreach,
+  isInColdBreach,
+  isLowBattery,
+  currentTemperature,
+}) => {
   const fadeAnim1 = React.useRef(new Animated.Value(0)).current;
   const fadeAnim2 = React.useRef(new Animated.Value(0)).current;
   const fadeAnim3 = React.useRef(new Animated.Value(0)).current;
@@ -76,7 +89,7 @@ export const SensorStatus = ({ isInHotBreach, isInColdBreach, isLowBattery, curr
   return !isInDanger ? (
     <Rectangle colour={WHITE}>
       <FlexRow alignItems="center">
-        <BigText colour={DARKER_GREY}>{temperature(currentTemp).format()}</BigText>
+        <BigText colour={DARKER_GREY}>{temperature(currentTemperature).format()}</BigText>
         <TemperatureIcon />
       </FlexRow>
     </Rectangle>
@@ -84,7 +97,7 @@ export const SensorStatus = ({ isInHotBreach, isInColdBreach, isLowBattery, curr
     <Rectangle colour={isInColdBreach ? COLD_BREACH_BLUE : DANGER_RED}>
       <FlexRow flex={1}>
         <FlexView flex={2} alignItems="center" justifyContent="center">
-          <BigText>{temperature(currentTemp).format()}</BigText>
+          <BigText>{temperature(currentTemperature).format()}</BigText>
         </FlexView>
 
         <FlexView alignItems="center" justifyContent="center">
@@ -110,16 +123,29 @@ const styles = {
   bigText: { fontSize: 24, fontFamily: APP_FONT_FAMILY },
 };
 
-SensorStatus.defaultProps = {
+SensorStatusComponent.defaultProps = {
   isInHotBreach: false,
   isInColdBreach: false,
   isLowBattery: false,
-  currentTemp: 0,
+  currentTemperature: 0,
 };
 
-SensorStatus.propTypes = {
+SensorStatusComponent.propTypes = {
   isInHotBreach: PropTypes.bool,
   isInColdBreach: PropTypes.bool,
   isLowBattery: PropTypes.bool,
-  currentTemp: PropTypes.number,
+  currentTemperature: PropTypes.number,
 };
+
+const stateToProps = (state, props) => {
+  const { macAddress } = props;
+
+  const isInHotBreach = selectIsInHotBreachByMac(state, macAddress);
+  const isInColdBreach = selectIsInColdBreachByMac(state, macAddress);
+  const isLowBattery = selectIsLowBatteryByMac(state, macAddress);
+  const currentTemperature = selectCurrentTemperatureByMac(state, macAddress);
+
+  return { isInHotBreach, isInColdBreach, isLowBattery, currentTemperature };
+};
+
+export const SensorStatus = connect(stateToProps)(SensorStatusComponent);

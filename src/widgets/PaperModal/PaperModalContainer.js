@@ -19,7 +19,7 @@ export const PaperModalContainer = ({ isVisible, onClose, children }) => {
   return (
     <Modal
       visible={isVisible}
-      animationType="fades"
+      animationType="fade"
       hardwareAccelerated
       onRequestClose={onClose}
       transparent
