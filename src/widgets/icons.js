@@ -348,3 +348,23 @@ LineChartIcon.propTypes = {
   style: PropTypes.object,
   color: PropTypes.string,
 };
+
+export const PauseIcon = ({ size, style, color }) => (
+  <FAIcon size={size} style={style} color={color} name="pause" />
+);
+PauseIcon.defaultProps = { size: 20, style: {}, color: DARKER_GREY };
+PauseIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
+
+export const PlayIcon = ({ size, style, color }) => (
+  <FAIcon size={size} style={style} color={color} name="play" />
+);
+PlayIcon.defaultProps = { size: 20, style: {}, color: DARKER_GREY };
+PlayIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};

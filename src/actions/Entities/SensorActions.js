@@ -42,9 +42,10 @@ const update = (id, field, value) => ({
 
 const create = macAddress => async dispatch => {
   const defaultSensor = {
+    isPaused: false,
     location: {},
-    logInterval: 300,
     logDelay: new Date().getTime(),
+    logInterval: 300,
     macAddress,
     name: '',
   };
@@ -85,7 +86,7 @@ const save = () => (dispatch, getState) => {
     updatedLocation = UIDatabase.update('Location', location);
     updatedSensor = UIDatabase.update('Sensor', {
       ...sensor,
-      logDelay: new Date(sensor.logDelay),
+      logDelay: new Date(sensor?.logDelay ?? 0),
       location: updatedLocation,
     });
     configs.forEach(config =>

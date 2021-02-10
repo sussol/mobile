@@ -14,6 +14,7 @@ const getPlainSensor = sensor => ({
   locationID: sensor.location?.id,
   breachConfigIDs: sensor?.breachConfigs?.map(({ id }) => id),
   isActive: sensor.isActive,
+  isPaused: sensor.isPaused,
   logInterval: sensor.logInterval,
   logDelay: new Date(sensor.logDelay).getTime(),
   currentTemperature: sensor?.currentTemperature ?? null,
