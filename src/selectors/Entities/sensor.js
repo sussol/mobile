@@ -52,25 +52,25 @@ export const selectNewSensorId = state => {
 };
 
 export const selectIsLowBatteryByMac = (state, mac) => {
-  const sensor = selectSensorByMac(state, mac);
+  const sensor = selectSensorByMac(state, mac) ?? {};
   const { batteryLevel } = sensor;
   return batteryLevel <= VACCINE_CONSTANTS.LOW_BATTERY_PERCENTAGE;
 };
 
 export const selectIsInHotBreachByMac = (state, mac) => {
-  const sensor = selectSensorByMac(state, mac);
+  const sensor = selectSensorByMac(state, mac) ?? {};
   const { isInHotBreach } = sensor;
   return isInHotBreach;
 };
 
 export const selectIsInColdBreachByMac = (state, mac) => {
-  const sensor = selectSensorByMac(state, mac);
+  const sensor = selectSensorByMac(state, mac) ?? {};
   const { isInColdBreach } = sensor;
   return isInColdBreach;
 };
 
 export const selectIsInBreachByMac = (state, mac) => {
-  const sensor = selectSensorByMac(state, mac);
+  const sensor = selectSensorByMac(state, mac) ?? {};
   const { isInHotBreach, isInColdBreach } = sensor;
   return isInHotBreach || isInColdBreach;
 };
