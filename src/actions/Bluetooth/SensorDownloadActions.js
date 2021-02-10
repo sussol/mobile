@@ -13,6 +13,7 @@ import { isValidMacAddress, VACCINE_CONSTANTS } from '../../utilities/modules/va
 import { VACCINE_ENTITIES } from '../../utilities/modules/vaccines/constants';
 import { syncStrings, vaccineStrings } from '../../localization';
 import { selectIsSyncingTemps } from '../../selectors/Bluetooth/sensorDownload';
+import { BreachActions } from '../BreachActions';
 
 export const DOWNLOAD_ACTIONS = {
   DOWNLOAD_LOGS_START: 'Bluetooth/downloadLogsStart',
@@ -114,6 +115,7 @@ const downloadLogsFromSensor = sensor => async dispatch => {
         );
 
         await TemperatureLogManager().saveLogs(temperatureLogs);
+        await dispatch(BreachActions.createConsecutiveBreaches(sensor));
       }
 
       dispatch(sensorDownloadSuccess(sensor));

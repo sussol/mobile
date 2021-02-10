@@ -3,15 +3,49 @@
  * Sustainable Solutions (NZ) Ltd. 2020
  */
 
+import BreachManager from '../bluetooth/BreachManager';
 import { UIDatabase } from '../database';
 
 export const BREACH_ACTIONS = {
   CLOSE_MODAL: 'breachActions/closeModal',
+  CREATE_CONSECUTIVE_SUCCESS: 'breachActions/createConsecutiveSuccess',
+  CREATE_CONSECUTIVE_FAIL: 'breachActions/createConsecutiveFail',
   VIEW_FRIDGE_BREACHES: 'breachActions/viewFridgeBreaches',
   VIEW_ITEM_BREACHES: 'breachActions/viewItemBreaches,',
 };
 
 const close = () => ({ type: BREACH_ACTIONS.CLOSE_MODAL });
+const createConsecutiveFail = () => ({ type: BREACH_ACTIONS.CREATE_CONSECUTIVE_FAIL });
+
+const createConsecutiveSuccess = (sensor, updatedBreaches, updatedLogs) => ({
+  type: BREACH_ACTIONS.CREATE_CONSECUTIVE_SUCCESS,
+  payload: { sensor, updatedBreaches, updatedLogs },
+});
+
+const createConsecutiveBreaches = sensor => async dispatch => {
+  const { id } = sensor;
+
+  try {
+    const logs = await BreachManager().getLogsToCheck(id);
+    const configs = sensor.breachConfigs;
+    const mostRecentBreach = await BreachManager().getMostRecentBreach(id);
+    const [breaches, temperatureLogs] = await BreachManager().createBreaches(
+      sensor,
+      logs,
+      configs,
+      mostRecentBreach
+    );
+    const [updatedBreaches, updatedLogs] = await BreachManager().updateBreaches(
+      breaches,
+      temperatureLogs
+    );
+    dispatch(createConsecutiveSuccess(sensor, updatedBreaches, updatedLogs));
+  } catch (error) {
+    dispatch(createConsecutiveFail);
+  }
+
+  return null;
+};
 
 const viewStocktakeBatchBreaches = stocktakeBatchId => {
   const stocktakeBatch = UIDatabase.get('StocktakeBatch', stocktakeBatchId);
@@ -35,6 +69,7 @@ const viewFridgeBreach = breachId => {
 };
 
 export const BreachActions = {
+  createConsecutiveBreaches,
   close,
   viewFridgeBreach,
   viewStocktakeBatchBreaches,

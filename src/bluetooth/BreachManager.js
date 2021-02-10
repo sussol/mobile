@@ -28,10 +28,11 @@ const createBreachRecord = (
     startTimestamp,
     endTimestamp,
     location,
+    acknowledged: false,
   };
 };
 
-export class BreachManager {
+class BreachManager {
   constructor(dbWrapper, utils) {
     this.db = dbWrapper;
     this.utils = utils;
@@ -156,7 +157,6 @@ export class BreachManager {
         }
       }
     });
-
     return [breaches, temperatureLogs];
   };
 
@@ -182,3 +182,18 @@ export class BreachManager {
     this.db.getBreachConfigs();
   };
 }
+
+let BreachManagerInstance;
+
+export const getBreachManagerInstance = (dbService, utils) => {
+  if (!BreachManagerInstance) {
+    BreachManagerInstance = new BreachManager(dbService, utils);
+  }
+  return BreachManagerInstance;
+};
+
+export const destroyBreachManagerInstance = () => {
+  BreachManagerInstance = null;
+};
+
+export default getBreachManagerInstance;
