@@ -25,7 +25,7 @@ const isNewlyFoundSensor = (macAddress, alreadyScannedMacAddresses) => {
   const isActive = alreadySaved?.isActive;
   const isAlreadySavedAndActive = alreadySaved && isActive;
 
-  // A newly found sensor are sensors which are not active in the database, and not found already
+  // Newly found sensor are sensors which are not active in the database, and not found already
   return !alreadyFound && !isAlreadySavedAndActive;
 };
 
