@@ -5,18 +5,18 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { TextInput, ToastAndroid, StyleSheet } from 'react-native';
 
-import { IconButton } from './IconButton';
-import { DownloadIcon } from './icons';
-import { PaperModalContainer } from './PaperModal/PaperModalContainer';
-import { PaperInputModal } from './PaperModal/PaperInputModal';
+import { IconButton } from '../IconButton';
+import { DownloadIcon } from '../icons';
+import { PaperModalContainer } from '../PaperModal/PaperModalContainer';
+import { PaperInputModal } from '../PaperModal/PaperInputModal';
 
-import { useToggle } from '../hooks/useToggle';
-import { PermissionActions } from '../actions/PermissionActions';
-import { emailVaccineReport } from '../utilities/vaccineReport';
-import { selectCurrentUser } from '../selectors/user';
-import { useLoadingIndicator } from '../hooks/index';
-import { BLACK, SUSSOL_ORANGE } from '../globalStyles/index';
-import { generalStrings } from '../localization/index';
+import { useToggle } from '../../hooks/useToggle';
+import { PermissionActions } from '../../actions/PermissionActions';
+import { emailVaccineReport } from '../../utilities/vaccineReport';
+import { selectCurrentUser } from '../../selectors/user';
+import { useLoadingIndicator } from '../../hooks/index';
+import { BLACK, SUSSOL_ORANGE } from '../../globalStyles/index';
+import { generalStrings } from '../../localization/index';
 
 const toastReportGenerationFailed = () =>
   ToastAndroid.show(generalStrings.report_generation_failed, ToastAndroid.LONG);

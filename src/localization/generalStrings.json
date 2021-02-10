@@ -1,5 +1,8 @@
 {
   "gb": {
+    "remove": "Remove",
+    "replace": "Replace",
+    "select": "Select",
     "no": "No",
     "yes": "Yes",
     "ongoing": "ongoing",

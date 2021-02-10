@@ -38,10 +38,7 @@ export const AutocompleteSelector = ({
    * by two query strings. And concat A to B - A.
    */
   const filterResultData = () => {
-    let data = options
-      .filtered(queryString, queryText)
-      .sorted(sortKeyString)
-      .slice();
+    let data = options.filtered(queryString, queryText).sorted(sortKeyString).slice();
 
     if (queryStringSecondary) {
       data = data.concat(
@@ -57,15 +54,12 @@ export const AutocompleteSelector = ({
    * Ignores case. Querying a realm result with filtered is more performant,
    * so have two cases for each.
    */
-  const filterArrayData = () => {
-    const regexFilter = RegExp(queryText, 'i');
-
-    return options.filter(
+  const filterArrayData = () =>
+    options.filter(
       optionItem =>
-        regexFilter.test(optionItem[primaryFilterProperty]) ||
-        regexFilter.test(optionItem[secondaryFilterProperty])
+        optionItem[primaryFilterProperty]?.toLowerCase()?.includes(queryText) ||
+        optionItem[secondaryFilterProperty]?.toLowerCase()?.includes(queryText)
     );
-  };
 
   /**
    * Delegator of filtering process. Check if the object is a realm

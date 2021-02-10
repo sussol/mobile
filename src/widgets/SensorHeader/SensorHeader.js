@@ -3,23 +3,17 @@ import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
 import { StyleSheet } from 'react-native';
-import { TextWithIcon } from './Typography/index';
-import { BatteryIcon, CogIcon } from './icons';
-import {
-  APP_FONT_FAMILY,
-  BLACK,
-  DARKER_GREY,
-  FINALISE_GREEN,
-  MISTY_CHARCOAL,
-} from '../globalStyles/index';
-import { IconButton } from './IconButton';
-import { selectSensorState } from '../selectors/Entities/sensor';
-import { gotoEditSensorPage } from '../navigation/actions';
+import { TextWithIcon } from '../Typography/index';
+import { BatteryIcon, CogIcon } from '../icons';
+import { APP_FONT_FAMILY, BLACK, DARKER_GREY, MISTY_CHARCOAL } from '../../globalStyles/index';
+import { IconButton } from '../IconButton';
+import { selectSensorState } from '../../selectors/Entities/sensor';
+import { gotoEditSensorPage } from '../../navigation/actions';
 import { LastSensorDownload } from './LastSensorDownload';
 import { BlinkSensorButton } from './BlinkSensorButton';
-import { Circle } from './Circle';
-import { FlexRow } from './FlexRow';
+import { FlexRow } from '../FlexRow';
 import { ExportTemperatureDataButton } from './ExportTemperatureDataButton';
+import { SensorIsInDangerCircle } from './SensorIsInDangerCircle';
 
 const formatBatteryLevel = batteryLevel => `${batteryLevel}%`;
 
@@ -40,7 +34,7 @@ export const SensorHeaderComponent = ({
           size="ms"
           textStyle={localStyles.paperTitleText}
           containerStyle={{}}
-          Icon={<Circle size={20} backgroundColor={FINALISE_GREEN} />}
+          Icon={<SensorIsInDangerCircle macAddress={macAddress} />}
         >
           {name}
         </TextWithIcon>

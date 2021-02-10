@@ -1,66 +1,51 @@
 /* eslint-disable react/forbid-prop-types */
 
-import React, { useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
-import { ActivityIndicator, FlatList } from 'react-native';
 import PropTypes from 'prop-types';
-import { useIsFocused } from '@react-navigation/native';
-
+import { useNavigation } from '@react-navigation/native';
 import { TabContainer } from './TabContainer';
-import { ScanRow } from './ScanRow';
 import { Paper } from '../../widgets';
-import { TextWithIcon } from '../../widgets/Typography';
-
 import { vaccineStrings } from '../../localization';
-import { SUSSOL_ORANGE } from '../../globalStyles';
 import { SensorScanActions } from '../../actions/Bluetooth/SensorScanActions';
 import { selectScannedSensors } from '../../selectors/Bluetooth/sensorScan';
+import { SensorPicker } from '../../widgets/SensorPicker';
+import { SensorActions } from '../../actions/Entities/index';
+import { WizardActions } from '../../actions/index';
 
-const Spinner = () => (
-  <TextWithIcon
-    left
-    Icon={<ActivityIndicator color={SUSSOL_ORANGE} />}
-    containerStyle={{ justifyContent: 'center' }}
-  >
-    {vaccineStrings.scanning}
-  </TextWithIcon>
-);
+export const NewSensorStepOneComponent = ({ selectSensor }) => {
+  const navigation = useNavigation();
 
-export const NewSensorStepOneComponent = ({ startScan, stopScan, macAddresses }) => {
-  const isFocused = useIsFocused();
-
-  useEffect(() => {
-    if (isFocused) startScan();
-    else stopScan();
-    return stopScan;
-  }, [startScan, isFocused]);
+  const onSelectSensor = useCallback(
+    macAddress => {
+      selectSensor(macAddress);
+      navigation.navigate('1');
+    },
+    [selectSensor]
+  );
 
   return (
     <TabContainer>
       <Paper height={420} headerText={vaccineStrings.new_sensor_step_one_title}>
-        <FlatList
-          data={macAddresses}
-          renderItem={({ item }) => <ScanRow macAddress={item} />}
-          keyExtractor={item => item}
-          style={{ height: 360 }}
-          ListFooterComponent={<Spinner />}
-        />
+        <SensorPicker selectSensor={onSelectSensor} />
       </Paper>
     </TabContainer>
   );
 };
 
 NewSensorStepOneComponent.propTypes = {
-  macAddresses: PropTypes.array.isRequired,
-  startScan: PropTypes.func.isRequired,
-  stopScan: PropTypes.func.isRequired,
+  selectSensor: PropTypes.func.isRequired,
 };
 
 const dispatchToProps = dispatch => {
   const startScan = () => dispatch(SensorScanActions.startSensorScan());
   const stopScan = () => dispatch(SensorScanActions.stopSensorScan());
+  const selectSensor = macAddress => {
+    dispatch(SensorActions.createFromScanner(macAddress));
+    dispatch(WizardActions.nextTab());
+  };
 
-  return { startScan, stopScan };
+  return { startScan, stopScan, selectSensor };
 };
 
 const stateToProps = state => {

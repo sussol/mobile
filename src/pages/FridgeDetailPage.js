@@ -22,10 +22,6 @@ import {
   selectMinAndMaxDomains,
   selectMinAndMaxLogs,
   selectMostRecentTemperatureLogDate,
-  selectSelectedFridgeIsInColdBreach,
-  selectSelectedFridgeIsInHotBreach,
-  selectSelectedFridgeSensorIsLowBattery,
-  selectSelectFridgeCurrentTemperature,
   selectTemperatureLogsFromDate,
   selectTemperatureLogsToDate,
   selectBreachBoundaries,
@@ -33,7 +29,7 @@ import {
 
 import { APP_FONT_FAMILY, DARKER_GREY, BLUE_WHITE, WARMER_GREY } from '../globalStyles';
 import { vaccineStrings } from '../localization/index';
-import { SensorHeader } from '../widgets/SensorHeader';
+import { SensorHeader } from '../widgets/SensorHeader/SensorHeader';
 import { BreachManUnhappy } from '../widgets/BreachManUnhappy';
 
 const BREACH_MAN_UNHAPPY_SIZE = 400;
@@ -61,10 +57,6 @@ export const FridgeDetailPageComponent = ({
   toDate,
   minimumDate,
   maximumDate,
-  isInHotBreach,
-  isInColdBreach,
-  isLowBattery,
-  currentTemperature,
   sensor,
   breachBoundaries,
 }) => {
@@ -150,12 +142,7 @@ export const FridgeDetailPageComponent = ({
                     breachBoundaries={breachBoundaries}
                   />
                 )}
-                <SensorStatus
-                  isInHotBreach={isInHotBreach}
-                  isInColdBreach={isInColdBreach}
-                  isLowBattery={isLowBattery}
-                  currentTemp={currentTemperature}
-                />
+                <SensorStatus macAddress={sensor.macAddress} />
               </FlexRow>
             </AfterInteractions>
           </Paper>
@@ -190,10 +177,6 @@ const stateToProps = (state, props) => {
   const toDate = selectTemperatureLogsToDate(state);
   const minimumDate = selectLeastRecentTemperatureLogDate(state);
   const maximumDate = selectMostRecentTemperatureLogDate(state);
-  const isInHotBreach = selectSelectedFridgeIsInHotBreach(state);
-  const isInColdBreach = selectSelectedFridgeIsInColdBreach(state);
-  const isLowBattery = selectSelectedFridgeSensorIsLowBattery(state);
-  const currentTemperature = selectSelectFridgeCurrentTemperature(state);
   const breachBoundaries = selectBreachBoundaries(state);
 
   return {
@@ -209,10 +192,6 @@ const stateToProps = (state, props) => {
     toDate,
     minimumDate,
     maximumDate,
-    isInHotBreach,
-    isInColdBreach,
-    isLowBattery,
-    currentTemperature,
     breachBoundaries,
   };
 };
@@ -221,10 +200,6 @@ const dispatchToProps = dispatch => ({
   onChangeToDate: date => dispatch(FridgeActions.changeToDate(date)),
   onChangeFromDate: date => dispatch(FridgeActions.changeFromDate(date)),
 });
-
-FridgeDetailPageComponent.defaultProps = {
-  currentTemperature: null,
-};
 
 FridgeDetailPageComponent.propTypes = {
   breaches: PropTypes.object.isRequired,
@@ -238,10 +213,6 @@ FridgeDetailPageComponent.propTypes = {
   toDate: PropTypes.instanceOf(Date).isRequired,
   minimumDate: PropTypes.instanceOf(Date).isRequired,
   maximumDate: PropTypes.instanceOf(Date).isRequired,
-  isInHotBreach: PropTypes.bool.isRequired,
-  isInColdBreach: PropTypes.bool.isRequired,
-  isLowBattery: PropTypes.bool.isRequired,
-  currentTemperature: PropTypes.number,
   sensor: PropTypes.object.isRequired,
   breachBoundaries: PropTypes.object.isRequired,
 };

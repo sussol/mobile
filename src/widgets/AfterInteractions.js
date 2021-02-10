@@ -9,7 +9,9 @@ export const AfterInteractions = ({ children, placeholder }) => {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    InteractionManager.runAfterInteractions(() => setReady(true));
+    InteractionManager.runAfterInteractions(() => {
+      setReady(true);
+    });
   }, []);
 
   return ready ? (

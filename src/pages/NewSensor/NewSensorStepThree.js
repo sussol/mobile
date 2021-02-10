@@ -29,6 +29,7 @@ import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 import { DARKER_GREY, LIGHT_GREY, SUSSOL_ORANGE, WHITE } from '../../globalStyles';
 import { buttonStrings, vaccineStrings } from '../../localization';
 import { selectNewLocation } from '../../selectors/Entities/location';
+import { SECONDS } from '../../utilities/constants';
 
 export const NewSensorStepThreeComponent = ({
   logInterval,
@@ -63,7 +64,11 @@ export const NewSensorStepThreeComponent = ({
           label={vaccineStrings.logging_interval}
           Icon={<InfoIcon color={DARKER_GREY} />}
         >
-          <DurationEditor value={logInterval} label="" onChange={updateLogInterval} />
+          <DurationEditor
+            value={logInterval / SECONDS.ONE_MINUTE}
+            label=""
+            onChange={updateLogInterval}
+          />
         </EditorRow>
       </Paper>
 
@@ -109,7 +114,8 @@ const dispatchToProps = dispatch => {
   const updateCode = value => dispatch(LocationActions.updateNew(value, 'code'));
   const updateLogDelay = value =>
     dispatch(SensorActions.updateNewSensor(new Date(value).getTime(), 'logDelay'));
-  const updateLogInterval = value => dispatch(SensorActions.updateNewSensor(value, 'logInterval'));
+  const updateLogInterval = value =>
+    dispatch(SensorActions.updateNewSensor(value * SECONDS.ONE_MINUTE, 'logInterval'));
   const previousTab = () => dispatch(WizardActions.previousTab());
   const exit = () => dispatch(goBack());
   const connectToSensor = sensor => () =>

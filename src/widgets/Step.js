@@ -89,7 +89,7 @@ export const Step = memo(props => {
     const icons = {
       ERROR: <Ionicons name="ios-close" color="red" size={30} />,
       COMPLETE: <Ionicons name="md-checkmark" color="green" size={30} />,
-      CURRENT: <Ionicons name="md-arrow-round-forward" color={SUSSOL_ORANGE} size={30} />,
+      CURRENT: <Ionicons name="arrow-forward" color={SUSSOL_ORANGE} size={30} />,
       INCOMPLETE: null,
     };
 
