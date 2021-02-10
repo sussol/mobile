@@ -175,33 +175,43 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
       // create sensors
       createRecord(UIDatabase, 'Sensor', {
         name: 'sensor 1',
-        macAddress: '00:00:00:00:01',
         batteryLevel: 10,
         location: fridge1,
+        logDelay: new Date(0),
+        macAddress: '00:00:00:00:01',
+        programmedDate: new Date(),
       });
       createRecord(UIDatabase, 'Sensor', {
         name: 'sensor 2',
-        macAddress: '00:00:00:00:02',
         batteryLevel: 20,
         location: fridge2,
+        macAddress: '00:00:00:00:02',
+        logDelay: new Date(0),
+        programmedDate: new Date(),
       });
       createRecord(UIDatabase, 'Sensor', {
         name: 'sensor 3',
-        macAddress: '00:00:00:00:03',
         batteryLevel: 30,
         location: fridge3,
+        macAddress: '00:00:00:00:03',
+        logDelay: new Date(0),
+        programmedDate: new Date(),
       });
       createRecord(UIDatabase, 'Sensor', {
         name: 'sensor 4',
-        macAddress: '00:00:00:00:04',
         batteryLevel: 40,
         location: fridge4,
+        macAddress: '00:00:00:00:04',
+        logDelay: new Date(0),
+        programmedDate: new Date(),
       });
       createRecord(UIDatabase, 'Sensor', {
         name: 'sensor 5',
-        macAddress: '00:00:00:00:05',
         batteryLevel: 50,
         location: fridge5,
+        macAddress: '00:00:00:00:05',
+        logDelay: new Date(0),
+        programmedDate: new Date(),
       });
 
       // create some configs

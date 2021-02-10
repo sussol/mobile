@@ -54,7 +54,9 @@
     "log_interval_set": "Log interval updated to {0}s",
     "E_SENSOR_SAVE": "Problem saving sensor details",
     "E_INVALID_MAC_FORMAT": "Invalid mac address format",
-    "is_paused": "PAUSED"
+    "is_paused": "PAUSED",
+    "pause": "Pause",
+    "enable": "Enable"
   },
   "fr": {},
   "gil": {},

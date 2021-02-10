@@ -2,7 +2,7 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/jsx-wrap-multilines */
 import React from 'react';
-import { StyleSheet, ToastAndroid } from 'react-native';
+import { StyleSheet, ToastAndroid, View } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -15,6 +15,9 @@ import {
   PageButton,
   Paper,
   TextEditor,
+  PauseIcon,
+  PlayIcon,
+  IconButton,
 } from '../widgets';
 import { BreachConfigRow } from './NewSensor/BreachConfigRow';
 import { DurationEditor } from '../widgets/StepperInputs';
@@ -59,6 +62,8 @@ export const SensorEditPageComponent = ({
   coldConsecutiveThreshold,
   hotCumulativeThreshold,
   sensor,
+  isPaused,
+  updateIsPaused,
 }) => {
   const withLoadingIndicator = useLoadingIndicator();
   return (
@@ -119,7 +124,15 @@ export const SensorEditPageComponent = ({
         </Paper>
 
         <Paper>
-          <FlexRow justifyContent="flex-end">
+          <FlexRow justifyContent="flex-end" alignItems="center">
+            <View style={localStyles.pauseButtonRow}>
+              <IconButton
+                Icon={isPaused ? <PlayIcon /> : <PauseIcon />}
+                label={isPaused ? vaccineStrings.enable : vaccineStrings.pause}
+                labelStyle={localStyles.pauseButtonLabel}
+                onPress={() => updateIsPaused(!isPaused)}
+              />
+            </View>
             <DurationEditor
               containerStyle={localStyles.paperContentRow}
               value={logInterval}
@@ -156,6 +169,8 @@ const localStyles = StyleSheet.create({
     textTransform: 'uppercase',
     color: WHITE,
   },
+  pauseButtonLabel: { color: DARKER_GREY, marginLeft: 10 },
+  pauseButtonRow: { marginRight: 100 },
 });
 
 const stateToProps = state => {
@@ -163,7 +178,8 @@ const stateToProps = state => {
   const location = selectEditingLocation(state);
 
   const { code } = location ?? {};
-  const { name, logInterval, macAddress, batteryLevel, lastSyncDate } = sensor ?? {};
+  const { name, logInterval, macAddress, batteryLevel, lastSyncDate, isPaused = false } =
+    sensor ?? {};
   const {
     HOT_CONSECUTIVE: hotConsecutiveConfig = {},
     COLD_CONSECUTIVE: coldConsecutiveConfig = {},
@@ -194,6 +210,7 @@ const stateToProps = state => {
     coldConsecutiveThreshold,
     hotCumulativeThreshold,
     batteryLevel,
+    isPaused,
   };
 };
 
@@ -217,6 +234,7 @@ const dispatchToProps = (dispatch, ownProps) => {
     const field = isHot ? 'minimumTemperature' : 'maximumTemperature';
     dispatch(TemperatureBreachConfigActions.update(id, field, value));
   };
+  const updateIsPaused = isPaused => dispatch(SensorActions.update(sensorID, 'isPaused', isPaused));
   const saveSensor = sensorToUpdate =>
     dispatch(SensorUpdateActions.updateSensor(sensorToUpdate))
       .then(() => dispatch(SensorActions.save()))
@@ -225,6 +243,7 @@ const dispatchToProps = (dispatch, ownProps) => {
 
   return {
     blink,
+    updateIsPaused,
     updateName,
     updateCode,
     updateLogInterval,
@@ -271,6 +290,8 @@ SensorEditPageComponent.propTypes = {
   coldCumulativeThreshold: PropTypes.number.isRequired,
   coldConsecutiveThreshold: PropTypes.number.isRequired,
   hotCumulativeThreshold: PropTypes.number.isRequired,
+  isPaused: PropTypes.bool.isRequired,
+  updateIsPaused: PropTypes.func.isRequired,
 };
 
 export const SensorEditPage = connect(stateToProps, dispatchToProps)(SensorEditPageComponent);
