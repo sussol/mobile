@@ -42,6 +42,7 @@ import { useToggle } from '../hooks/index';
 import { PaperModalContainer } from '../widgets/PaperModal/PaperModalContainer';
 import { SensorPicker } from '../widgets/SensorPicker';
 import { PaperConfirmModal } from '../widgets/PaperModal/PaperConfirmModal';
+import { SECONDS } from '../utilities/constants';
 
 export const SensorEditPageComponent = ({
   logInterval,
@@ -140,7 +141,7 @@ export const SensorEditPageComponent = ({
               </View>
               <DurationEditor
                 containerStyle={localStyles.paperContentRow}
-                value={logInterval}
+                value={logInterval / SECONDS.ONE_MINUTE}
                 onChange={updateLogInterval}
                 label={vaccineStrings.logging_interval}
               />
@@ -252,7 +253,7 @@ const dispatchToProps = (dispatch, ownProps) => {
   const updateName = name => dispatch(SensorActions.update(sensorID, 'name', name));
   const updateCode = code => dispatch(LocationActions.update(locationID, 'code', code));
   const updateLogInterval = logInterval =>
-    dispatch(SensorActions.update(sensorID, 'logInterval', logInterval));
+    dispatch(SensorActions.update(sensorID, 'logInterval', logInterval * SECONDS.ONE_MINUTE));
   const updateDuration = (id, value) =>
     dispatch(
       TemperatureBreachConfigActions.update(id, 'duration', value * MILLISECONDS.ONE_MINUTE)
