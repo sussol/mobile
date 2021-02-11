@@ -18,7 +18,7 @@ import { PaperModalContainer } from './PaperModal/PaperModalContainer';
 import { IconButton } from './IconButton';
 import { FlexRow } from './FlexRow';
 
-import { DARK_GREY } from '../globalStyles';
+import { SUSSOL_ORANGE } from '../globalStyles';
 import { modalStrings } from '../localization';
 
 const PermissionRow = ({ comment, enabled, onPress, label }) => (
@@ -61,9 +61,9 @@ const SettingsIconComponent = ({
 
   const icon =
     location && bluetooth && writeStorage ? (
-      <CogIcon color={DARK_GREY} />
+      <CogIcon />
     ) : (
-      <HazardIcon color={DARK_GREY} size={20} />
+      <HazardIcon color={SUSSOL_ORANGE} size={20} />
     );
 
   return (
@@ -81,6 +81,8 @@ const SettingsIconComponent = ({
             <IconButton onPress={toggleSettingsModal} Icon={<CancelIcon />} />
           </FlexRow>
 
+          <Text>{modalStrings.permissions_intro_1}</Text>
+          <Text style={localStyles.intro}>{modalStrings.permissions_intro_2}</Text>
           <Text style={localStyles.heading}>{modalStrings.permissions}</Text>
           <PermissionRow
             onPress={requestWriteStorage}
@@ -115,10 +117,11 @@ const localStyles = StyleSheet.create({
     flexDirection: 'column',
     paddingLeft: 20,
   },
-  heading: { fontSize: 28, fontWeight: 'bold', marginBottom: 20 },
+  heading: { fontSize: 24, fontWeight: 'bold', marginBottom: 15 },
+  intro: { marginBottom: 15 },
   permissionRowComment: {},
   permissionRowContainer: { marginBottom: 15, marginLeft: 30 },
-  permissionRowText: { fontSize: 18 },
+  permissionRowText: { fontSize: 16, fontWeight: 'bold' },
 });
 
 const stateToProps = state => {
