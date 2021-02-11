@@ -53,10 +53,10 @@ const requestLocation = () => async (dispatch, getState) => {
   const locationPermission = PermissionSelectors.location(getState());
 
   const result = !locationPermission
-    ? await request(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION)
+    ? (await request(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION)) === RESULTS.GRANTED
     : true;
 
-  dispatch(setLocation(result === RESULTS.GRANTED));
+  dispatch(setLocation(result));
 
   return result;
 };
