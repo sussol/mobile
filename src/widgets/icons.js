@@ -59,9 +59,11 @@ export const CloseIcon = ({ size, color }) => <IonIcon name="md-close" size={siz
 CloseIcon.defaultProps = { color: WHITE, size: 36 };
 CloseIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
 
-export const CogIcon = ({ size, color }) => <FAIcon name="cog" size={size} color={color} />;
-CogIcon.defaultProps = { color: GREY, size: 20 };
-CogIcon.propTypes = { color: PropTypes.string, size: PropTypes.number };
+export const CogIcon = ({ size, color, style }) => (
+  <FAIcon name="cog" size={size} color={color} style={style} />
+);
+CogIcon.defaultProps = { color: GREY, size: 20, style: {} };
+CogIcon.propTypes = { color: PropTypes.string, size: PropTypes.number, style: PropTypes.object };
 
 export const ExpandIcon = React.memo(({ style, color, size }) => (
   <FAIcon name="external-link" style={style} size={size} color={color} />
@@ -367,4 +369,14 @@ PlayIcon.propTypes = {
   size: PropTypes.number,
   style: PropTypes.object,
   color: PropTypes.string,
+};
+
+export const DisabledIcon = React.memo(({ style, color, size }) => (
+  <FAIcon name="times-circle" style={style} color={color} size={size} />
+));
+DisabledIcon.defaultProps = { color: FINALISED_RED, size: 40, style: {} };
+DisabledIcon.propTypes = {
+  style: PropTypes.object,
+  color: PropTypes.string,
+  size: PropTypes.number,
 };
