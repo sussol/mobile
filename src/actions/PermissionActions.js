@@ -5,6 +5,7 @@
 
 import { batch } from 'react-redux';
 import { BluetoothStatus } from 'react-native-bluetooth-status';
+import SystemSetting from 'react-native-system-setting';
 import { request, check, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import DeviceInfo from 'react-native-device-info';
 
@@ -14,12 +15,17 @@ import { syncStrings } from '../localization/index';
 
 export const PERMISSION_ACTIONS = {
   SET_LOCATION: 'permissionActions/setLocation',
+  SET_LOCATION_SERVICE: 'permissionActions/setLocationService',
   SET_WRITE_STORAGE: 'permissionActions/setWriteStorage',
   SET_BLUETOOTH: 'permissionActions/setBluetooth',
 };
 
 const setBluetooth = status => ({ type: PERMISSION_ACTIONS.SET_BLUETOOTH, payload: { status } });
 const setLocation = status => ({ type: PERMISSION_ACTIONS.SET_LOCATION, payload: { status } });
+const setLocationService = status => ({
+  type: PERMISSION_ACTIONS.SET_LOCATION_SERVICE,
+  payload: { status },
+});
 const setWriteStorage = status => ({
   type: PERMISSION_ACTIONS.SET_WRITE_STORAGE,
   payload: { status },
@@ -32,6 +38,17 @@ const requestBluetooth = () => async dispatch => {
   const result = isEmulator ? true : await BluetoothStatus.state();
 
   dispatch(setBluetooth(result));
+
+  return result;
+};
+
+const requestLocationService = () => async dispatch => {
+  const isEmulator = await DeviceInfo.isEmulator();
+  await SystemSetting.switchLocation();
+
+  const result = isEmulator ? true : await SystemSetting.isLocationEnabled();
+
+  dispatch(setLocationService(result));
 
   return result;
 };
@@ -66,14 +83,21 @@ const checkPermissions = () => async dispatch => {
     check(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION),
     check(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE),
     BluetoothStatus.state(),
+    SystemSetting.isLocationEnabled(),
   ];
 
-  const [locationPermission, writeStoragePermission, bluetoothState] = await Promise.all(promises);
+  const [
+    locationPermission,
+    writeStoragePermission,
+    bluetoothState,
+    locationState,
+  ] = await Promise.all(promises);
 
   batch(() => {
     dispatch(setLocation(locationPermission === RESULTS.GRANTED));
     dispatch(setWriteStorage(writeStoragePermission === RESULTS.GRANTED));
     dispatch(setBluetooth(bluetoothState));
+    dispatch(setLocationService(locationState));
   });
 };
 
@@ -118,6 +142,7 @@ const withLocationAndBluetooth = async (dispatch, getState, action) => {
 
 export const PermissionActions = {
   requestLocation,
+  requestLocationService,
   requestWriteStorage,
   requestBluetooth,
   setLocation,

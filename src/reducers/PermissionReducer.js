@@ -5,7 +5,12 @@
 
 import { PERMISSION_ACTIONS } from '../actions/PermissionActions';
 
-const initialState = () => ({ location: false, writeStorage: false, bluetooth: false });
+const initialState = () => ({
+  location: false,
+  writeStorage: false,
+  bluetooth: false,
+  locationService: false,
+});
 
 export const PermissionReducer = (state = initialState(), action) => {
   const { type, payload } = action;
@@ -25,6 +30,11 @@ export const PermissionReducer = (state = initialState(), action) => {
       const { status } = payload;
 
       return { ...state, bluetooth: status };
+    }
+    case PERMISSION_ACTIONS.SET_LOCATION_SERVICE: {
+      const { status } = payload;
+
+      return { ...state, locationService: status };
     }
     default:
       return state;

@@ -8,7 +8,7 @@ import React from 'react';
 import { SyncState } from './SyncState';
 import { FlexRow } from './FlexRow';
 
-import { SettingsIcon } from './SettingsIcon';
+import { SettingsIcon } from './PermissionSettingsIcon';
 
 export const HeaderRight = () => (
   <FlexRow style={{ alignItems: 'center' }}>

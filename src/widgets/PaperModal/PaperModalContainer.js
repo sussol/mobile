@@ -13,7 +13,7 @@ import { FlexView } from '../FlexView';
 import { Paper } from '../Paper';
 import { TRANSPARENT_GREY } from '../../globalStyles/index';
 
-export const PaperModalContainer = ({ isVisible, onClose, children }) => {
+export const PaperModalContainer = ({ isVisible, onClose, children, heightFactor }) => {
   const { width, height } = useWindowDimensions();
 
   return (
@@ -32,7 +32,7 @@ export const PaperModalContainer = ({ isVisible, onClose, children }) => {
           style={{ backgroundColor: TRANSPARENT_GREY }}
         >
           <Paper paddingHorizontal={0}>
-            <View style={{ height: height / 2, width: width / 2 }}>
+            <View style={{ height: heightFactor * height, width: width / 2 }}>
               <TouchableWithoutFeedback
                 onPress={() => {
                   /* This Touchable is capturing gestures such that only the transparent overlay
@@ -51,7 +51,12 @@ export const PaperModalContainer = ({ isVisible, onClose, children }) => {
   );
 };
 
+PaperModalContainer.defaultProps = {
+  heightFactor: 0.5,
+};
+
 PaperModalContainer.propTypes = {
+  heightFactor: PropTypes.number,
   isVisible: PropTypes.bool.isRequired,
   children: PropTypes.oneOfType([PropTypes.node, PropTypes.arrayOf(PropTypes.node)]).isRequired,
   onClose: PropTypes.func.isRequired,

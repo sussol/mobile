@@ -61,6 +61,8 @@
     "storage_permission_comment": "Required when emailing vaccine logs",
     "location_permission": "Location",
     "location_permission_comment": "Required to connect to bluetooth sensors",
+    "location_service": "Location Services",
+    "location_service_comment": "Required to connect to bluetooth sensors",
     "bluetooth_permission": "Bluetooth",
     "bluetooth_permission_comment": "Required to connect to bluetooth sensors",
     "permissions_intro_1": "The following permissions services are required by various features of the cold chain functionality.",

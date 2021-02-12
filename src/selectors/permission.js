@@ -9,6 +9,12 @@ const selectLocationPermission = ({ permission }) => {
   return location;
 };
 
+const selectLocationService = ({ permission }) => {
+  const { locationService } = permission;
+
+  return locationService;
+};
+
 const selectWriteStoragePermission = ({ permission }) => {
   const { writeStorage } = permission;
 
@@ -23,6 +29,7 @@ const selectBluetoothEnabled = ({ permission }) => {
 
 export const PermissionSelectors = {
   location: selectLocationPermission,
+  locationService: selectLocationService,
   writeStorage: selectWriteStoragePermission,
   bluetooth: selectBluetoothEnabled,
 };

@@ -47,8 +47,10 @@ PermissionRow.propTypes = {
 const SettingsIconComponent = ({
   bluetooth,
   location,
+  locationService,
   requestBluetooth,
   requestLocation,
+  requestLocationService,
   requestWriteStorage,
   usingVaccines,
   writeStorage,
@@ -70,7 +72,11 @@ const SettingsIconComponent = ({
     <>
       <IconButton Icon={icon} containerStyle={{ marginLeft: 8 }} onPress={toggleSettingsModal} />
 
-      <PaperModalContainer isVisible={settingsModalOpen} onClose={toggleSettingsModal}>
+      <PaperModalContainer
+        isVisible={settingsModalOpen}
+        onClose={toggleSettingsModal}
+        heightFactor={0.6}
+      >
         <View style={localStyles.container}>
           <FlexRow
             alignItems="flex-start"
@@ -103,6 +109,12 @@ const SettingsIconComponent = ({
             comment={modalStrings.bluetooth_permission_comment}
             enabled={bluetooth}
           />
+          <PermissionRow
+            onPress={requestLocationService}
+            label={modalStrings.location_service}
+            comment={modalStrings.location_service_comment}
+            enabled={locationService}
+          />
         </View>
       </PaperModalContainer>
     </>
@@ -129,17 +141,20 @@ const stateToProps = state => {
   const bluetooth = PermissionSelectors.bluetooth(state);
   const writeStorage = PermissionSelectors.writeStorage(state);
   const location = PermissionSelectors.location(state);
-  return { bluetooth, location, usingVaccines, writeStorage };
+  const locationService = PermissionSelectors.locationService(state);
+  return { bluetooth, location, locationService, usingVaccines, writeStorage };
 };
 
 const dispatchToProps = dispatch => {
   const requestWriteStorage = () => dispatch(PermissionActions.requestWriteStorage());
   const requestLocation = () => dispatch(PermissionActions.requestLocation());
+  const requestLocationService = () => dispatch(PermissionActions.requestLocationService());
   const requestBluetooth = () => dispatch(PermissionActions.requestBluetooth());
 
   return {
     requestBluetooth,
     requestLocation,
+    requestLocationService,
     requestWriteStorage,
   };
 };
@@ -147,8 +162,10 @@ const dispatchToProps = dispatch => {
 SettingsIconComponent.propTypes = {
   bluetooth: PropTypes.bool.isRequired,
   location: PropTypes.bool.isRequired,
+  locationService: PropTypes.bool.isRequired,
   requestBluetooth: PropTypes.func.isRequired,
   requestLocation: PropTypes.func.isRequired,
+  requestLocationService: PropTypes.func.isRequired,
   requestWriteStorage: PropTypes.func.isRequired,
   usingVaccines: PropTypes.bool.isRequired,
   writeStorage: PropTypes.bool.isRequired,
