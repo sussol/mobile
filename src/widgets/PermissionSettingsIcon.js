@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2021
  */
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import PropTypes from 'prop-types';
@@ -44,8 +44,28 @@ PermissionRow.propTypes = {
   onPress: PropTypes.func.isRequired,
 };
 
+const PermissionChecker = ({ enabled, checkPermissions }) => {
+  const handler = useRef();
+
+  useEffect(() => {
+    if (enabled && handler.current) {
+      clearInterval(handler.current);
+    }
+    if (!enabled) {
+      handler.current = setInterval(() => checkPermissions(), 500);
+    }
+    return () => clearInterval(handler.current);
+  }, [enabled]);
+  return <></>;
+};
+PermissionChecker.propTypes = {
+  enabled: PropTypes.bool.isRequired,
+  checkPermissions: PropTypes.func.isRequired,
+};
+
 const SettingsIconComponent = ({
   bluetooth,
+  checkPermissions,
   location,
   locationService,
   requestBluetooth,
@@ -62,7 +82,7 @@ const SettingsIconComponent = ({
   }
 
   const icon =
-    location && bluetooth && writeStorage ? (
+    location && bluetooth && writeStorage && locationService ? (
       <CogIcon />
     ) : (
       <HazardIcon color={SUSSOL_ORANGE} size={20} />
@@ -116,6 +136,7 @@ const SettingsIconComponent = ({
             enabled={locationService}
           />
         </View>
+        <PermissionChecker checkPermissions={checkPermissions} enabled={locationService} />
       </PaperModalContainer>
     </>
   );
@@ -146,12 +167,14 @@ const stateToProps = state => {
 };
 
 const dispatchToProps = dispatch => {
+  const checkPermissions = () => dispatch(PermissionActions.checkPermissions());
   const requestWriteStorage = () => dispatch(PermissionActions.requestWriteStorage());
   const requestLocation = () => dispatch(PermissionActions.requestLocation());
   const requestLocationService = () => dispatch(PermissionActions.requestLocationService());
   const requestBluetooth = () => dispatch(PermissionActions.requestBluetooth());
 
   return {
+    checkPermissions,
     requestBluetooth,
     requestLocation,
     requestLocationService,
@@ -161,6 +184,7 @@ const dispatchToProps = dispatch => {
 
 SettingsIconComponent.propTypes = {
   bluetooth: PropTypes.bool.isRequired,
+  checkPermissions: PropTypes.func.isRequired,
   location: PropTypes.bool.isRequired,
   locationService: PropTypes.bool.isRequired,
   requestBluetooth: PropTypes.func.isRequired,
