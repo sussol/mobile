@@ -8215,11 +8215,6 @@ react-native-text-input-mask@^2.0.0:
   resolved "https://registry.yarnpkg.com/react-native-text-input-mask/-/react-native-text-input-mask-2.0.0.tgz#9cb793e764355d9282d92ea5231d8030a7ca5692"
   integrity sha512-kP8gURb1+6iR6CxfUx802f4ja9Jzer76hY1w0cjaCVsfbbzyykYIAANTnlxbmFFv/8pQl4NTm1CbQqkg0Cp/gA==
 
-react-native-timezone@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/react-native-timezone/-/react-native-timezone-1.0.3.tgz#437f8b5a7f5e0b874b7c3b6366994182155b527a"
-  integrity sha512-01Wzq4RyuBrIRBZh/hqalaYWQ7g9bvmS9UFDjgxkPCvBFoiSSyOVVw+j9KUtljbuJF4X6R3/0VwuhvaP8b8qQw==
-
 react-native-ui-components@^0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/react-native-ui-components/-/react-native-ui-components-0.5.0.tgz#d76908f50f390691185c7ab33e944dc20f65e6d9"

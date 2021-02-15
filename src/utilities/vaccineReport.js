@@ -2,7 +2,6 @@ import Mailer from 'react-native-mail';
 import { Parser } from 'json2csv';
 import RNFS from 'react-native-fs';
 import moment from 'moment';
-import TimeZone from 'react-native-timezone';
 import DeviceInfo from 'react-native-device-info';
 import temperature from './temperature';
 import { SECONDS } from './constants';
@@ -25,7 +24,6 @@ const CONFIG_TYPE_TO_NAME = {
 };
 
 const GENERAL_SECTION_FIELDS = {
-  TIMEZONE: reportStrings.field_timezone,
   DEVICE: reportStrings.field_device,
   NAME: reportStrings.field_sensor_name,
   EXPORTER: reportStrings.field_exported_by,
@@ -70,10 +68,8 @@ const getParser = fields => new Parser({ fields: Object.values(fields) });
 const createGeneralSection = async (sensor, user, comment) => {
   const parser = getParser(GENERAL_SECTION_FIELDS);
 
-  const timeZone = await TimeZone.getTimeZone();
   const device = await DeviceInfo.getModel();
   const data = {
-    [GENERAL_SECTION_FIELDS.TIMEZONE]: timeZone,
     [GENERAL_SECTION_FIELDS.DEVICE]: device,
     [GENERAL_SECTION_FIELDS.NAME]: sensor.name ?? sensor.macAddress,
     [GENERAL_SECTION_FIELDS.EXPORTER]: `${user.firstName ?? ''} ${user.lastName ?? ''}`,
