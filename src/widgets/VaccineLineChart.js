@@ -84,7 +84,7 @@ export const VaccineLineChart = ({
             data={breaches.slice()}
             y={y}
             x={x}
-            dataComponent={<HazardPoint onPress={onPressBreach} />}
+            dataComponent={<HazardPoint dataSet={breaches.slice()} onPress={onPressBreach} />}
           />
         </VictoryChart>
       </Svg>
