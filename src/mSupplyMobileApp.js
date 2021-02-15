@@ -58,6 +58,20 @@ import BreachManager from './bluetooth/BreachManager';
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 
+SensorManager(new VaccineDataAccess(UIDatabase), new UtilService());
+TemperatureLogManager(new VaccineDataAccess(UIDatabase), new UtilService());
+BreachManager(new VaccineDataAccess(UIDatabase), new UtilService());
+
+(async () => {
+  const isEmulator = await DeviceInfo.isEmulator();
+  if (isEmulator) {
+    console.log('Emulator detected - Init Dev BleManager');
+    BleService(new DevBleManager());
+  } else {
+    BleService();
+  }
+})();
+
 class MSupplyMobileAppContainer extends React.Component {
   constructor(props, ...otherArgs) {
     super(props, ...otherArgs);
@@ -87,50 +101,33 @@ class MSupplyMobileAppContainer extends React.Component {
       isInitialised,
       isLoading: false,
       appState: null,
+      isDownloadingTemperatures: false,
     };
   }
 
-  componentDidMount = () => {
+  componentDidUpdate() {
     const { dispatch, usingVaccines, syncTemperatures, requestBluetooth } = this.props;
 
     if (usingVaccines) {
-      this.scheduler.schedule(syncTemperatures, SYNC_INTERVAL);
+      const { isDownloadingTemperatures } = this.state;
+      if (!isDownloadingTemperatures) this.scheduler.schedule(syncTemperatures, SYNC_INTERVAL);
+
       BluetoothStatus.addListener(requestBluetooth);
       dispatch(PermissionActions.checkPermissions());
-
-      this.initialiseBtServices();
     }
+  }
 
-    if (!__DEV__) {
-      AppState.addEventListener('change', this.onAppStateChange);
-    }
+  componentDidMount = () => {
+    if (!__DEV__) AppState.addEventListener('change', this.onAppStateChange);
   };
 
   componentWillUnmount = () => {
     const { usingVaccines } = this.props;
 
-    if (usingVaccines) {
-      BluetoothStatus.removeListener();
-    }
-
-    if (!__DEV__) {
-      AppState.removeEventListener('change', this.onAppStateChange);
-    }
+    if (usingVaccines) BluetoothStatus.removeListener();
+    if (!__DEV__) AppState.removeEventListener('change', this.onAppStateChange);
 
     this.scheduler.clearAll();
-  };
-
-  initialiseBtServices = async () => {
-    const isEmulator = await DeviceInfo.isEmulator();
-    if (isEmulator) {
-      console.log('Emulator detected - Init Dev BleManager');
-      BleService(new DevBleManager());
-    } else {
-      BleService();
-    }
-    SensorManager(new VaccineDataAccess(UIDatabase), new UtilService());
-    TemperatureLogManager(new VaccineDataAccess(UIDatabase), new UtilService());
-    BreachManager(new VaccineDataAccess(UIDatabase), new UtilService());
   };
 
   onAppStateChange = nextAppState => {
