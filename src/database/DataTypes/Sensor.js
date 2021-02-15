@@ -118,7 +118,7 @@ Sensor.schema = {
     macAddress: { type: 'string', optional: true },
     name: { type: 'string', default: '' },
     location: { type: 'Location', optional: true },
-    batteryLevel: { type: 'double', default: 0 },
+    batteryLevel: { type: 'double', default: 100 },
     logs: { type: 'linkingObjects', objectType: 'TemperatureLog', property: 'sensor' },
     breaches: { type: 'linkingObjects', objectType: 'TemperatureBreach', property: 'sensor' },
     isActive: { type: 'bool', default: true },
