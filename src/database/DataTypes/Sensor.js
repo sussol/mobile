@@ -73,6 +73,10 @@ export class Sensor extends Realm.Object {
     return this.breaches.length;
   }
 
+  get breachConfigIDs() {
+    return this.breachConfigs?.map(({ id }) => id);
+  }
+
   get breachConfigs() {
     return this.location?.breachConfigs;
   }
