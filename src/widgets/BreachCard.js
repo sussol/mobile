@@ -63,7 +63,7 @@ BreachCardComponent.defaultProps = {
   message: '',
 };
 BreachCardComponent.propTypes = {
-  breachCount: PropTypes.number,
+  breachCount: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   config: PropTypes.shape({
     type: PropTypes.string.isRequired,
     breachCount: PropTypes.number,
