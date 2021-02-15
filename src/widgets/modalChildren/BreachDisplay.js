@@ -6,54 +6,27 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { View, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, FlatList, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 
 import { getPageInfoColumns } from '../../pages/dataTableUtilities';
-import { chunk } from '../../utilities/chunk';
 
 import { BreachChart } from '../BreachChart';
 import { PageInfo } from '../PageInfo/PageInfo';
 
-import { WHITE, SUSSOL_ORANGE } from '../../globalStyles';
+import { WHITE } from '../../globalStyles';
+import { AfterInteractions } from '../AfterInteractions';
 
 const Breach = ({ breach, getInfoColumns }) => {
   const { temperatureLogs } = breach;
 
-  const [chartData, setChartData] = React.useState({ lineData: [], render: false });
-  const { render, lineData } = chartData;
-
-  React.useEffect(() => {
-    const { length: numberOfLogs } = temperatureLogs;
-    setTimeout(() => {
-      const chunkSize = Math.ceil(numberOfLogs / Math.min(numberOfLogs, 30));
-      const chunkedLogs = chunk(temperatureLogs, chunkSize);
-      const mappedLineData = chunkedLogs.map(chunkOfLogs => ({
-        temperature: Math.max(...chunkOfLogs.map(({ temperature }) => temperature)),
-        timestamp: Math.max(...chunkOfLogs.map(({ timestamp }) => timestamp)),
-      }));
-
-      setChartData({ lineData: mappedLineData, render: true });
-    }, 500);
-  }, []);
-
-  const pageInfoColumns = React.useMemo(() => getInfoColumns(breach), [breach]);
-
-  const Display = React.useCallback(
-    () =>
-      render ? (
-        <BreachChart breach={breach} lineData={lineData} />
-      ) : (
-        <ActivityIndicator color={SUSSOL_ORANGE} size="small" />
-      ),
-    [render]
-  );
-
   return (
-    <View style={localStyles.container}>
-      <PageInfo columns={pageInfoColumns} />
-      <Display />
-    </View>
+    <AfterInteractions>
+      <View style={localStyles.container}>
+        <PageInfo columns={getInfoColumns(breach)} />
+        <BreachChart breach={breach} lineData={temperatureLogs.slice()} />
+      </View>
+    </AfterInteractions>
   );
 };
 
@@ -77,7 +50,11 @@ const BreachDisplayComponent = ({ breaches }) => {
     [breaches]
   );
 
-  return <FlatList data={breaches} renderItem={renderItem} />;
+  return (
+    <AfterInteractions>
+      <FlatList data={breaches} renderItem={renderItem} />
+    </AfterInteractions>
+  );
 };
 
 BreachDisplayComponent.propTypes = {
