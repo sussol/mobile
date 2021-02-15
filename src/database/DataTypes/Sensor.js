@@ -35,10 +35,6 @@ export class Sensor extends Realm.Object {
     return this.sendCommand('*logall');
   }
 
-  get breachConfigIDs() {
-    return this.breachConfigs?.map(({ id }) => id);
-  }
-
   get hasBreached() {
     return this.location?.hasBreached ?? false;
   }
