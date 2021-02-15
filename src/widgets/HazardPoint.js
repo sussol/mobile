@@ -28,6 +28,7 @@ export const HazardPoint = props => {
   return (
     <Svg>
       <G>
+        <Path x={x + xOffset} y={y + yOffset} scale={scale} d={hazardPath} fill={fill} />
         <Rect
           x={x + xOffset}
           y={y + yOffset}
@@ -36,7 +37,6 @@ export const HazardPoint = props => {
           fill={TRANSPARENT}
           onPress={onPressWrapper}
         />
-        <Path x={x + xOffset} y={y + yOffset} scale={scale} d={hazardPath} fill={fill} />
       </G>
     </Svg>
   );
