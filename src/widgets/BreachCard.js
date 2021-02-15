@@ -59,6 +59,7 @@ const BreachCardComponent = ({ config }) => {
 
 BreachCardComponent.defaultProps = {
   breachCount: 0,
+  headerText: '',
   message: '',
 };
 BreachCardComponent.propTypes = {
@@ -69,7 +70,7 @@ BreachCardComponent.propTypes = {
     headerText: PropTypes.string,
     message: PropTypes.string,
   }).isRequired,
-  headerText: PropTypes.string.isRequired,
+  headerText: PropTypes.string,
   message: PropTypes.string,
   type: PropTypes.string.isRequired,
 };
