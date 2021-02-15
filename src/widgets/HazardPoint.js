@@ -49,6 +49,7 @@ const hazardPointStyles = {
   yOffset: -33,
   scale: 0.05,
   fill: SUSSOL_ORANGE,
+  index: 0,
 };
 
 // Bug in Victory charts causes required props to be undefined on first render,
@@ -57,6 +58,6 @@ HazardPoint.propTypes = {
   x: PropTypes.number,
   y: PropTypes.number,
   onPress: PropTypes.func,
-  index: PropTypes.number.isRequired,
+  index: PropTypes.number,
   dataSet: PropTypes.array.isRequired,
 };
