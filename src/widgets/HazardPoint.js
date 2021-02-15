@@ -7,9 +7,9 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import Svg, { Path, G } from 'react-native-svg';
+import Svg, { Rect, Path, G } from 'react-native-svg';
 
-import { SUSSOL_ORANGE } from '../globalStyles/colors';
+import { SUSSOL_ORANGE, TRANSPARENT } from '../globalStyles/colors';
 
 const hazardPath = `M569.517 440.013C587.975 472.007 564.806 512 527.94 512H48.054c-36.937 0-59.999-40.055-41.577-71.987L246.423
  23.985c18.467-32.009 64.72-31.951 83.154 0l239.94 416.028zM288 354c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595
@@ -20,15 +20,23 @@ const hazardPath = `M569.517 440.013C587.975 472.007 564.806 512 527.94 512H48.0
  * Custom component for rendering clickable hazard icons.
  */
 export const HazardPoint = props => {
-  const { x, y, onPress, datum } = props;
+  const { x, y, onPress, dataSet, index } = props;
   const { xOffset, yOffset, scale, fill } = hazardPointStyles;
 
-  const onPressWrapper = React.useCallback(() => onPress?.(datum?.id), []);
+  const onPressWrapper = React.useCallback(() => onPress?.(dataSet[index]?.id), []);
 
   return (
     <Svg>
-      <G onPressIn={onPressWrapper} delayPressIn={0}>
+      <G>
         <Path x={x + xOffset} y={y + yOffset} scale={scale} d={hazardPath} fill={fill} />
+        <Rect
+          x={x + xOffset}
+          y={y + yOffset}
+          width="50"
+          height="50"
+          fill={TRANSPARENT}
+          onPress={onPressWrapper}
+        />
       </G>
     </Svg>
   );
@@ -41,6 +49,7 @@ const hazardPointStyles = {
   yOffset: -33,
   scale: 0.05,
   fill: SUSSOL_ORANGE,
+  index: 0,
 };
 
 // Bug in Victory charts causes required props to be undefined on first render,
@@ -49,5 +58,6 @@ HazardPoint.propTypes = {
   x: PropTypes.number,
   y: PropTypes.number,
   onPress: PropTypes.func,
-  datum: PropTypes.object,
+  index: PropTypes.number,
+  dataSet: PropTypes.array.isRequired,
 };

@@ -31,6 +31,7 @@ import { APP_FONT_FAMILY, DARKER_GREY, BLUE_WHITE, WARMER_GREY } from '../global
 import { vaccineStrings } from '../localization/index';
 import { SensorHeader } from '../widgets/SensorHeader/SensorHeader';
 import { BreachManUnhappy } from '../widgets/BreachManUnhappy';
+import { BreachActions } from '../actions/BreachActions';
 
 const BREACH_MAN_UNHAPPY_SIZE = 400;
 const EmptyComponent = ({ sensorName }) => (
@@ -59,6 +60,7 @@ export const FridgeDetailPageComponent = ({
   maximumDate,
   sensor,
   breachBoundaries,
+  onPressBreach,
 }) => {
   const [chartType, setChartType] = useState('bar');
   const getIconButton = type => {
@@ -130,6 +132,7 @@ export const FridgeDetailPageComponent = ({
                     minDomain={minDomain}
                     maxDomain={maxDomain}
                     breachBoundaries={breachBoundaries}
+                    onPressBreach={onPressBreach}
                   />
                 )}
                 {chartType === 'bar' && (
@@ -199,9 +202,11 @@ const stateToProps = (state, props) => {
 const dispatchToProps = dispatch => ({
   onChangeToDate: date => dispatch(FridgeActions.changeToDate(date)),
   onChangeFromDate: date => dispatch(FridgeActions.changeFromDate(date)),
+  onPressBreach: breachId => dispatch(BreachActions.viewFridgeBreach(breachId)),
 });
 
 FridgeDetailPageComponent.propTypes = {
+  onPressBreach: PropTypes.func.isRequired,
   breaches: PropTypes.object.isRequired,
   minLine: PropTypes.array.isRequired,
   maxLine: PropTypes.array.isRequired,
