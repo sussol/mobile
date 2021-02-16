@@ -72,7 +72,7 @@ export const selectIsInColdBreachByMac = (state, mac) => {
 export const selectIsInBreachByMac = (state, mac) => {
   const sensor = selectSensorByMac(state, mac) ?? {};
   const { isInHotBreach, isInColdBreach } = sensor;
-  return isInHotBreach || isInColdBreach;
+  return !!isInHotBreach || !!isInColdBreach;
 };
 
 export const selectIsInDangerByMac = (state, mac) => {
