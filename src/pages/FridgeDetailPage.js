@@ -207,6 +207,11 @@ const dispatchToProps = dispatch => ({
   onPressBreach: breachId => dispatch(BreachActions.viewFridgeBreach(breachId)),
 });
 
+FridgeDetailPageComponent.defaultProps = {
+  minimumDate: null,
+  maximumDate: null,
+};
+
 FridgeDetailPageComponent.propTypes = {
   onPressBreach: PropTypes.func.isRequired,
   breaches: PropTypes.object.isRequired,
@@ -218,8 +223,8 @@ FridgeDetailPageComponent.propTypes = {
   onChangeFromDate: PropTypes.func.isRequired,
   fromDate: PropTypes.instanceOf(Date).isRequired,
   toDate: PropTypes.instanceOf(Date).isRequired,
-  minimumDate: PropTypes.instanceOf(Date).isRequired,
-  maximumDate: PropTypes.instanceOf(Date).isRequired,
+  minimumDate: PropTypes.instanceOf(Date),
+  maximumDate: PropTypes.instanceOf(Date),
   sensor: PropTypes.object.isRequired,
   breachBoundaries: PropTypes.object.isRequired,
 };
