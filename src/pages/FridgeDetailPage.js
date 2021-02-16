@@ -32,6 +32,7 @@ import { vaccineStrings } from '../localization/index';
 import { SensorHeader } from '../widgets/SensorHeader/SensorHeader';
 import { BreachManUnhappy } from '../widgets/BreachManUnhappy';
 import { BreachActions } from '../actions/BreachActions';
+import { Spacer } from '../widgets/Spacer';
 
 const BREACH_MAN_UNHAPPY_SIZE = 400;
 const EmptyComponent = ({ sensorName }) => (
@@ -119,7 +120,7 @@ export const FridgeDetailPageComponent = ({
 
           <Paper
             height={300}
-            contentContainerStyle={{ flex: 1, marginTop: 20 }}
+            contentContainerStyle={{ flex: 1 }}
             Header={<SensorHeader showTitle showCog sensor={sensor} />}
           >
             <AfterInteractions>
@@ -145,6 +146,7 @@ export const FridgeDetailPageComponent = ({
                     breachBoundaries={breachBoundaries}
                   />
                 )}
+                <Spacer space={20} />
                 <SensorStatus macAddress={sensor.macAddress} />
               </FlexRow>
             </AfterInteractions>
