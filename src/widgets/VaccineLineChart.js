@@ -7,7 +7,6 @@
 import React from 'react';
 import { Svg } from 'react-native-svg';
 import { VictoryAxis, VictoryChart, VictoryLine, VictoryScatter } from 'victory-native';
-import moment from 'moment';
 import PropTypes from 'prop-types';
 
 import { useLayoutDimensions } from '../hooks/useLayoutDimensions';
@@ -15,6 +14,9 @@ import { WHITE, COLD_BREACH_BLUE, SUSSOL_ORANGE, APP_FONT_FAMILY, GREY } from '.
 import { HazardPoint } from './HazardPoint';
 import { FlexView } from './FlexView';
 import { CHART_CONSTANTS } from '../utilities/modules/vaccines';
+import { getTickFormatter } from '../utilities/formatters';
+import { VACCINE_CONSTANTS } from '../utilities/modules/vaccines/constants';
+import { WARMER_GREY } from '../globalStyles/colors';
 
 export const VaccineLineChart = ({
   minLine,
@@ -23,8 +25,6 @@ export const VaccineLineChart = ({
   maxDomain,
   x,
   y,
-  xTickFormat,
-  yTickFormat,
   breaches,
   onPressBreach,
 }) => {
@@ -48,17 +48,19 @@ export const VaccineLineChart = ({
           height={height}
           minDomain={chartMinDomain}
           maxDomain={chartMaxDomain}
+          padding={{ top: 0, bottom: 50, right: 10, left: 50 }}
         >
           <VictoryAxis
             offsetX={CHART_CONSTANTS.AXIS_OFFSET}
             dependentAxis
-            style={chartStyles.axis}
-            tickFormat={yTickFormat}
+            style={chartStyles.axisY}
+            tickFormat={tick => `${tick}\u2103`}
           />
           <VictoryAxis
             offsetY={CHART_CONSTANTS.AXIS_OFFSET}
-            tickFormat={xTickFormat}
-            style={chartStyles.axis}
+            tickFormat={getTickFormatter()}
+            style={chartStyles.axisX}
+            tickCount={VACCINE_CONSTANTS.MAX_TICK_COUNTS}
           />
 
           <VictoryLine
@@ -95,8 +97,6 @@ export const VaccineLineChart = ({
 VaccineLineChart.defaultProps = {
   x: 'timestamp',
   y: 'temperature',
-  xTickFormat: tick => moment(new Date(tick)).format('DD/MM'),
-  yTickFormat: tick => `${tick}\u2103`,
   onPressBreach: null,
   breaches: null,
 };
@@ -108,8 +108,6 @@ VaccineLineChart.propTypes = {
   maxDomain: PropTypes.number.isRequired,
   minLine: PropTypes.array.isRequired,
   maxLine: PropTypes.array.isRequired,
-  xTickFormat: PropTypes.func,
-  yTickFormat: PropTypes.func,
   onPressBreach: PropTypes.func,
   breaches: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
 };
@@ -135,5 +133,9 @@ const chartStyles = {
   },
   maxLine: { data: { stroke: SUSSOL_ORANGE } },
   minLine: { data: { stroke: COLD_BREACH_BLUE } },
-  axis: { fontSize: 15, fontFamily: APP_FONT_FAMILY, fill: GREY },
+  axisX: { tickLabels: { fontSize: 10, fontFamily: APP_FONT_FAMILY, fill: GREY } },
+  axisY: {
+    tickLabels: { fontSize: 10, fontFamily: APP_FONT_FAMILY, fill: GREY },
+    grid: { stroke: WARMER_GREY, strokeWidth: 0.5 },
+  },
 };

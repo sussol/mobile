@@ -6,7 +6,6 @@
 
 import React from 'react';
 import { Svg } from 'react-native-svg';
-import moment from 'moment';
 import { VictoryAxis, VictoryChart, VictoryLine, VictoryBar } from 'victory-native';
 import PropTypes from 'prop-types';
 
@@ -21,18 +20,19 @@ import {
 } from '../globalStyles';
 import { FlexView } from './FlexView';
 import { CHART_CONSTANTS } from '../utilities/modules/vaccines';
+import { getTickFormatter } from '../utilities/formatters';
+import { VACCINE_CONSTANTS } from '../utilities/modules/vaccines/constants';
 
 export const VaccineBarChart = ({
   minLine,
   maxLine,
   minDomain,
   maxDomain,
-  xTickFormat,
-  yTickFormat,
   onPressBreach,
   breachBoundaries,
 }) => {
   const [width, height, setDimensions] = useLayoutDimensions();
+
   const chartMinDomain = React.useMemo(() => ({ y: minDomain - CHART_CONSTANTS.DOMAIN_OFFSET }), [
     minDomain,
   ]);
@@ -101,12 +101,13 @@ export const VaccineBarChart = ({
             offsetX={CHART_CONSTANTS.AXIS_OFFSET}
             dependentAxis
             style={chartStyles.axisY}
-            tickFormat={yTickFormat}
+            tickFormat={tick => `${tick}\u2103`}
           />
           <VictoryAxis
             offsetY={CHART_CONSTANTS.AXIS_OFFSET}
-            tickFormat={xTickFormat}
+            tickFormat={getTickFormatter()}
             style={chartStyles.axisX}
+            tickCount={VACCINE_CONSTANTS.MAX_TICK_COUNTS}
           />
 
           <VictoryLine data={upperBoundData} style={chartStyles.maxBoundaryLine} />
@@ -116,17 +117,17 @@ export const VaccineBarChart = ({
             y="hotY"
             y0="hotY0"
             style={chartStyles.hotBars}
-            barWidth={30}
+            barRatio={0.9}
             alignment="start"
             onPress={onPressBreach}
           />
-          <VictoryBar data={barData} style={chartStyles.midBars} barWidth={30} alignment="start" />
+          <VictoryBar data={barData} style={chartStyles.midBars} barRatio={0.9} alignment="start" />
           <VictoryBar
             data={barData}
             y="coldY"
             y0="coldY0"
             style={chartStyles.coldBars}
-            barWidth={30}
+            barRatio={0.9}
             alignment="start"
           />
         </VictoryChart>
@@ -136,8 +137,6 @@ export const VaccineBarChart = ({
 };
 
 VaccineBarChart.defaultProps = {
-  xTickFormat: tick => moment(new Date(tick)).format('DD/MM'),
-  yTickFormat: tick => `${tick}\u2103`,
   onPressBreach: null,
 };
 
@@ -146,8 +145,6 @@ VaccineBarChart.propTypes = {
   maxDomain: PropTypes.number.isRequired,
   minLine: PropTypes.array.isRequired,
   maxLine: PropTypes.array.isRequired,
-  xTickFormat: PropTypes.func,
-  yTickFormat: PropTypes.func,
   onPressBreach: PropTypes.func,
   breachBoundaries: PropTypes.object.isRequired,
 };
@@ -157,11 +154,9 @@ const chartStyles = {
   minBoundaryLine: { data: { stroke: COLD_BREACH_BLUE, opacity: 0.75 } },
   maxLine: { data: { stroke: SUSSOL_ORANGE } },
   minLine: { data: { stroke: COLD_BREACH_BLUE } },
-  axisX: { fontSize: 15, fontFamily: APP_FONT_FAMILY, fill: GREY },
+  axisX: { tickLabels: { fontSize: 10, fontFamily: APP_FONT_FAMILY, fill: GREY } },
   axisY: {
-    fontSize: 15,
-    fontFamily: APP_FONT_FAMILY,
-    fill: GREY,
+    tickLabels: { fontSize: 10, fontFamily: APP_FONT_FAMILY, fill: GREY },
     grid: { stroke: WARMER_GREY, strokeWidth: 0.5 },
   },
   coldBars: { data: { fill: COLD_BREACH_BLUE, opacity: 0.9 } },
