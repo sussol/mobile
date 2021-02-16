@@ -95,7 +95,7 @@ export const VaccineBarChart = ({
           height={height}
           minDomain={chartMinDomain}
           maxDomain={chartMaxDomain}
-          padding={{ top: 0, bottom: 50, right: 10, left: 50 }}
+          padding={{ top: 20, bottom: 50, right: 10, left: 50 }}
         >
           <VictoryAxis
             offsetX={CHART_CONSTANTS.AXIS_OFFSET}
