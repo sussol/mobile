@@ -29,6 +29,7 @@ import { DARKER_GREY, LIGHT_GREY, SUSSOL_ORANGE, WHITE } from '../../globalStyle
 import { buttonStrings, vaccineStrings } from '../../localization';
 import { selectNewLocation } from '../../selectors/Entities/location';
 import { SECONDS } from '../../utilities/constants';
+import { VACCINE_CONSTANTS } from '../../utilities/modules/vaccines/constants';
 
 export const NewSensorStepThreeComponent = ({
   logInterval,
@@ -81,7 +82,7 @@ export const NewSensorStepThreeComponent = ({
           Icon={<CalendarIcon color={DARKER_GREY} />}
         >
           <DurationEditor
-            maxValue={30}
+            maxValue={VACCINE_CONSTANTS.MAX_LOGGING_DELAY_MINUTES}
             value={logDelayAsMinutes}
             label=""
             onChange={duration => {
