@@ -1,5 +1,5 @@
 // Default sensor generator.
-const createSensor = ({ id, macAddress, name, location, batteryLevel, isActive, logInterval }) => ({
+const createSensor = ({
   id,
   macAddress,
   name,
@@ -7,6 +7,16 @@ const createSensor = ({ id, macAddress, name, location, batteryLevel, isActive, 
   batteryLevel,
   isActive,
   logInterval,
+  logDelay,
+}) => ({
+  id,
+  macAddress,
+  name,
+  location,
+  batteryLevel,
+  isActive,
+  logInterval,
+  logDelay,
 });
 
 class SensorManager {
