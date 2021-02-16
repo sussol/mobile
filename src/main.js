@@ -35,6 +35,10 @@ const App = () => {
   );
 };
 
-LogBox.ignoreLogs(['Setting a timer', 'componentWillMount']);
+LogBox.ignoreLogs([
+  'Setting a timer',
+  'componentWillMount',
+  'Non-serializable values were found in the navigation state',
+]);
 
 AppRegistry.registerComponent(appName, () => App);
