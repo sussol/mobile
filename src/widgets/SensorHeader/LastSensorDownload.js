@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { StyleSheet } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import moment from 'moment';
 
@@ -20,7 +19,7 @@ import { selectSensorByMac } from '../../selectors/Entities/sensor';
 
 const formatLastSyncDate = date => (date ? moment(date).fromNow() : generalStrings.not_available);
 const formatLogDelay = delay =>
-  `${vaccineStrings.logging_delayed_until}: ${moment(delay).format('DD/MM/YYYY @ HH:mm:ss')}`;
+  `${vaccineStrings.logging_delayed_until}: ${moment(delay).format('HH:mm:ss')}`;
 
 const getText = (isPaused, isDelayed, logDelay, lastDownloadTime) => {
   if (isPaused) {
@@ -60,7 +59,7 @@ export const LastSensorDownloadComponent = ({
       style={{ justifyContent: 'center' }}
     >
       <TextWithIcon
-        containerStyle={localStyles.headerTextWithIcon}
+        containerStyle={{ paddingHorizontal: 8 }}
         margin={0}
         size="s"
         Icon={
@@ -89,15 +88,6 @@ LastSensorDownloadComponent.propTypes = {
   lastDownloadTime: PropTypes.instanceOf(Date),
   logDelay: PropTypes.number,
 };
-
-const localStyles = StyleSheet.create({
-  headerTextWithIcon: {
-    flex: 0,
-    paddingHorizontal: 8,
-    width: 150,
-    justifyContent: 'flex-end',
-  },
-});
 
 const stateToProps = (state, props) => {
   const { macAddress } = props;
