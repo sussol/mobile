@@ -47,7 +47,9 @@ export const NewSensorStepThreeComponent = ({
 }) => {
   const withLoadingIndicator = useLoadingIndicator();
 
-  const startingTime = useRef(moment());
+  const startingTime = useRef(
+    moment(logDelay).subtract(VACCINE_CONSTANTS.DEFAULT_LOGGING_DELAY_MINUTES, 'm')
+  );
   const logDelayAsMinutes = moment.duration(moment(logDelay).diff(startingTime.current)).minutes();
 
   return (
