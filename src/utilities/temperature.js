@@ -22,7 +22,7 @@
  * }
  */
 class Temperature {
-  constructor(value = 0, options = {}) {
+  constructor(value, options = {}) {
     this.options = { ...DEFAULT_OPTIONS, ...options };
     this.value = value;
   }
@@ -33,6 +33,8 @@ class Temperature {
 
     const metricToUse = asMetric || metric;
 
+    // == null captures both null and undefined
+    if (value == null) return this.options.invalidPattern;
     if (metricToUse === metric) return Number(value).toFixed(precision);
     if (metricToUse === CELSIUS) return Number(celsiusFromFahrenheit(value)).toFixed(precision);
 

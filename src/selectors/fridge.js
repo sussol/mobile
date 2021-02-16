@@ -5,7 +5,8 @@
 import moment from 'moment';
 import { createSelector } from 'reselect';
 import { UIDatabase } from '../database';
-import { chunk } from '../utilities';
+import { chunk, MILLISECONDS } from '../utilities';
+
 import { CHART_CONSTANTS, VACCINE_CONSTANTS } from '../utilities/modules/vaccines/constants';
 
 export const selectSelectedFridgeID = ({ fridge }) => {
@@ -200,10 +201,10 @@ export const selectHotCumulativeBreach = createSelector(
     const { minimumTemperature, duration } = hotCumulativeBreachConfig;
 
     const logsOverThreshold = logs.filtered('temperature >= $0', minimumTemperature);
-    const sum = logsOverThreshold.sum('logInterval') ?? 0;
+    const sum = logsOverThreshold.sum('logInterval') * MILLISECONDS.ONE_SECOND ?? 0;
     const hasCumulativeBreach = sum >= duration && duration;
 
-    return hasCumulativeBreach ? formatTime(sum * 1000) : null;
+    return hasCumulativeBreach ? formatTime(sum) : null;
   }
 );
 
@@ -215,10 +216,10 @@ export const selectColdCumulativeBreach = createSelector(
     const { maximumTemperature, duration } = coldCumulativeBreachConfig;
 
     const logsOverThreshold = logs.filtered('temperature <= $0', maximumTemperature);
-    const sum = logsOverThreshold.sum('logInterval') ?? 0;
+    const sum = logsOverThreshold.sum('logInterval') * MILLISECONDS.ONE_SECOND ?? 0;
     const hasCumulativeBreach = sum >= duration && duration;
 
-    return hasCumulativeBreach ? formatTime(sum * 1000) : null;
+    return hasCumulativeBreach ? formatTime(sum) : null;
   }
 );
 

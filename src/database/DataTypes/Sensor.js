@@ -73,6 +73,10 @@ export class Sensor extends Realm.Object {
     return this.breaches.length;
   }
 
+  get breachConfigIDs() {
+    return this.breachConfigs?.map(({ id }) => id);
+  }
+
   get breachConfigs() {
     return this.location?.breachConfigs;
   }
@@ -118,7 +122,7 @@ Sensor.schema = {
     macAddress: { type: 'string', optional: true },
     name: { type: 'string', default: '' },
     location: { type: 'Location', optional: true },
-    batteryLevel: { type: 'double', default: 0 },
+    batteryLevel: { type: 'double', default: 100 },
     logs: { type: 'linkingObjects', objectType: 'TemperatureLog', property: 'sensor' },
     breaches: { type: 'linkingObjects', objectType: 'TemperatureBreach', property: 'sensor' },
     isActive: { type: 'bool', default: true },
