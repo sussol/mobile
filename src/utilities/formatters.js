@@ -3,7 +3,7 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
-
+import moment from 'moment';
 import { truncateString } from 'sussol-utilities';
 import temperature from './temperature';
 import { generalStrings, modalStrings, vaccineStrings } from '../localization';
@@ -59,4 +59,20 @@ export const formatTimeDifference = duration => {
         : acc,
     ''
   );
+};
+
+export const getTickFormatter = () => {
+  let currentDay = null;
+  return tick => {
+    let formatted = '';
+    const nextCurrentDay = moment(tick).day();
+    if (currentDay !== nextCurrentDay) {
+      currentDay = moment(tick).day();
+      formatted = moment(tick).format('h:mma[\n](D/M)');
+    } else {
+      formatted = moment(tick).format('h:mma');
+    }
+
+    return formatted;
+  };
 };
