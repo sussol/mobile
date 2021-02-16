@@ -60,13 +60,13 @@ export const selectIsLowBatteryByMac = (state, mac) => {
 export const selectIsInHotBreachByMac = (state, mac) => {
   const sensor = selectSensorByMac(state, mac) ?? {};
   const { isInHotBreach } = sensor;
-  return isInHotBreach;
+  return !!isInHotBreach;
 };
 
 export const selectIsInColdBreachByMac = (state, mac) => {
   const sensor = selectSensorByMac(state, mac) ?? {};
   const { isInColdBreach } = sensor;
-  return isInColdBreach;
+  return !!isInColdBreach;
 };
 
 export const selectIsInBreachByMac = (state, mac) => {

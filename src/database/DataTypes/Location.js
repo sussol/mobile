@@ -109,7 +109,6 @@ Location.schema = {
       type: 'linkingObjects',
       objectType: 'LocationMovement',
       property: 'location',
-      default: [],
     },
     sensors: {
       type: 'linkingObjects',
