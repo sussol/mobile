@@ -57,21 +57,13 @@ const BreachCardComponent = ({ config }) => {
   );
 };
 
-BreachCardComponent.defaultProps = {
-  breachCount: 0,
-  message: '',
-};
 BreachCardComponent.propTypes = {
-  breachCount: PropTypes.number,
   config: PropTypes.shape({
     type: PropTypes.string.isRequired,
-    breachCount: PropTypes.number,
+    breachCount: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     headerText: PropTypes.string,
     message: PropTypes.string,
   }).isRequired,
-  headerText: PropTypes.string.isRequired,
-  message: PropTypes.string,
-  type: PropTypes.string.isRequired,
 };
 
 const localStyles = StyleSheet.create({

@@ -165,7 +165,7 @@ const stateToProps = state => {
   const { logInterval, logDelay, name, macAddress } = newSensor ?? {};
   const { code } = location ?? {};
 
-  return { logInterval, logDelay: new Date(logDelay), name, code, macAddress };
+  return { logInterval, logDelay: new Date(logDelay).getTime(), name, code, macAddress };
 };
 
 NewSensorStepThreeComponent.defaultProps = {
