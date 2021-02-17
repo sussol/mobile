@@ -1,5 +1,6 @@
 /* eslint-disable react/forbid-prop-types */
-import React from 'react';
+import React, { useRef } from 'react';
+import moment from 'moment';
 import { ToastAndroid, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -16,9 +17,7 @@ import {
   TextWithIcon,
   TextEditor,
   EditorRow,
-  DateEditor,
   DurationEditor,
-  TimeEditor,
 } from '../../widgets';
 
 import { goBack } from '../../navigation/actions';
@@ -30,10 +29,11 @@ import { DARKER_GREY, LIGHT_GREY, SUSSOL_ORANGE, WHITE } from '../../globalStyle
 import { buttonStrings, vaccineStrings } from '../../localization';
 import { selectNewLocation } from '../../selectors/Entities/location';
 import { SECONDS } from '../../utilities/constants';
+import { VACCINE_CONSTANTS } from '../../utilities/modules/vaccines/constants';
 
 export const NewSensorStepThreeComponent = ({
   logInterval,
-  loggingDelay,
+  logDelay,
   name,
   code,
   updateName,
@@ -46,6 +46,11 @@ export const NewSensorStepThreeComponent = ({
   macAddress,
 }) => {
   const withLoadingIndicator = useLoadingIndicator();
+
+  const startingTime = useRef(
+    moment(logDelay).subtract(VACCINE_CONSTANTS.DEFAULT_LOGGING_DELAY_MINUTES, 'm')
+  );
+  const logDelayAsMinutes = moment.duration(moment(logDelay).diff(startingTime.current)).minutes();
 
   return (
     <TabContainer>
@@ -78,8 +83,15 @@ export const NewSensorStepThreeComponent = ({
           label={vaccineStrings.start_logging}
           Icon={<CalendarIcon color={DARKER_GREY} />}
         >
-          <DateEditor onPress={updateLogDelay} date={loggingDelay} />
-          <TimeEditor onPress={updateLogDelay} time={loggingDelay} />
+          <DurationEditor
+            maxValue={VACCINE_CONSTANTS.MAX_LOGGING_DELAY_MINUTES}
+            value={logDelayAsMinutes}
+            label=""
+            onChange={duration => {
+              const newDate = moment(startingTime.current).add(duration, 'm');
+              updateLogDelay(newDate.toDate());
+            }}
+          />
         </EditorRow>
       </Paper>
 
@@ -153,12 +165,12 @@ const stateToProps = state => {
   const { logInterval, logDelay, name, macAddress } = newSensor ?? {};
   const { code } = location ?? {};
 
-  return { logInterval, logDelay: new Date(logDelay).getTime(), name, code, macAddress };
+  return { logInterval, logDelay: new Date(logDelay), name, code, macAddress };
 };
 
 NewSensorStepThreeComponent.defaultProps = {
   macAddress: '',
-  loggingDelay: new Date(),
+  logDelay: new Date(),
   logInterval: 300,
   name: '',
   code: '',
@@ -166,7 +178,7 @@ NewSensorStepThreeComponent.defaultProps = {
 
 NewSensorStepThreeComponent.propTypes = {
   logInterval: PropTypes.number,
-  loggingDelay: PropTypes.object,
+  logDelay: PropTypes.object,
   name: PropTypes.string,
   code: PropTypes.string,
   macAddress: PropTypes.string,
