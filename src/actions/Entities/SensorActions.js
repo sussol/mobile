@@ -127,6 +127,7 @@ const removeSensor = sensorId => dispatch => {
     UIDatabase.update('Sensor', {
       id: sensor.id,
       isActive: false,
+      isPaused: false,
     });
   });
 
@@ -164,6 +165,8 @@ const createNew = () => (dispatch, getState) => {
         ...sensor,
         id: existingSensor.id,
         location: newLocation,
+        isActive: true,
+        isPaused: false,
         logDelay: new Date(sensor?.logDelay ?? 0),
       });
     } else {
