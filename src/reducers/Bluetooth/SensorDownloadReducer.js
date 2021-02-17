@@ -1,10 +1,6 @@
 import { REHYDRATE } from 'redux-persist';
 import { DOWNLOAD_ACTIONS } from '../../actions/Bluetooth/SensorDownloadActions';
-
-const LAST_DOWNLOAD_STATUS = {
-  OK: 'OK',
-  ERROR: 'ERROR',
-};
+import { LAST_DOWNLOAD_STATUS } from '../../utilities/modules/vaccines/constants';
 
 const initialState = () => ({
   isSyncingTemps: false,
@@ -65,12 +61,12 @@ export const SensorDownloadReducer = (state = initialState(), action) => {
     case DOWNLOAD_ACTIONS.SENSOR_DOWNLOAD_ERROR: {
       const { lastDownloadStatus, lastDownloadTime } = state;
       const { payload } = action;
-      const { sensor } = payload;
+      const { sensor, error } = payload;
       const { macAddress } = sensor;
 
       const newLastDownloadStatus = {
         ...lastDownloadStatus,
-        [macAddress]: LAST_DOWNLOAD_STATUS.ERROR,
+        [macAddress]: error,
       };
 
       const newLastDownloadTime = {
