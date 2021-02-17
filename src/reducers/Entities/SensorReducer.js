@@ -3,6 +3,7 @@ import { BREACH_ACTIONS } from '../../actions/BreachActions';
 import { SENSOR_ACTIONS } from '../../actions/Entities/SensorActions';
 import { UIDatabase } from '../../database';
 import { ROUTES } from '../../navigation/index';
+import { SYNC_TRANSACTION_COMPLETE } from '../../sync/constants';
 
 // Extracts the required fields of a realm instance into a plain JS object
 // which is more suitable to store in redux as immutable updates are simpler.
@@ -23,14 +24,17 @@ const getPlainSensor = sensor => ({
   isInColdBreach: sensor?.isInColdBreach,
 });
 
-const initialState = () => ({
-  byId: UIDatabase.objects('Sensor').reduce(
+const getById = () =>
+  UIDatabase.objects('Sensor').reduce(
     (acc, sensor) => ({
       ...acc,
       [sensor.id]: getPlainSensor(sensor),
     }),
     {}
-  ),
+  );
+
+const initialState = () => ({
+  byId: getById(),
   newId: '',
   editingId: '',
   replacedId: '',
@@ -40,6 +44,11 @@ export const SensorReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
+    case SYNC_TRANSACTION_COMPLETE: {
+      const newById = getById();
+      return { ...state, byId: newById };
+    }
+
     case 'Navigation/NAVIGATE': {
       const { params, routeName } = action;
 
