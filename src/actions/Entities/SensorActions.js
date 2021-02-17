@@ -1,4 +1,5 @@
 import { batch } from 'react-redux';
+import moment from 'moment';
 import { generateUUID } from 'react-native-database';
 import { SensorManager } from '../../bluetooth';
 import { UIDatabase } from '../../database';
@@ -42,14 +43,15 @@ const update = (id, field, value) => ({
 
 const create = macAddress => async dispatch => {
   const defaultSensor = {
+    id: SensorManager().utils.createUuid(),
     isPaused: false,
     location: {},
-    logDelay: new Date().getTime(),
+    logDelay: moment().add(5, 'm').valueOf(),
     logInterval: 300,
     macAddress,
     name: '',
   };
-  const payload = await SensorManager().createSensor(defaultSensor);
+  const payload = await SensorManager().sensorCreator(defaultSensor);
   dispatch({ type: SENSOR_ACTIONS.CREATE, payload });
 };
 
