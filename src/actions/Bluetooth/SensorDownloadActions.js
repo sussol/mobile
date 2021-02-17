@@ -77,14 +77,13 @@ const downloadAll = () => async dispatch => {
 };
 
 const downloadLogsFromSensor = sensor => async dispatch => {
-  dispatch(sensorDownloadStart(sensor));
-
   try {
     const { macAddress, logInterval, logDelay, isPaused } = sensor;
 
     const timeNow = moment();
 
     if (timeNow.isAfter(moment(logDelay)) && !isPaused) {
+      dispatch(sensorDownloadStart(sensor));
       const downloadedLogsResult =
         (await BleService().downloadLogsWithRetries(
           macAddress,
