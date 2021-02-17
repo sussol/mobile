@@ -36,3 +36,13 @@ export const selectIsDownloading = (state, macAddress) => {
 
   return isDownloading;
 };
+
+export const selectLastDownloadStatus = (state, macAddress) => {
+  const bluetooth = selectBluetoothState(state);
+  const { download } = bluetooth || {};
+
+  const { lastDownloadStatus } = download;
+  const status = lastDownloadStatus[macAddress];
+
+  return status;
+};
