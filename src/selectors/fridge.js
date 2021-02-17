@@ -251,7 +251,7 @@ export const selectSelectedFridgeIsInColdBreach = state => {
 export const selectSelectedFridgeSensorIsLowBattery = state => {
   const fridge = selectSelectedFridge(state);
   const { batteryLevel } = fridge;
-  return batteryLevel <= VACCINE_CONSTANTS.LOW_BATTERY_PERCENTAGE;
+  return batteryLevel && batteryLevel <= VACCINE_CONSTANTS.LOW_BATTERY_PERCENTAGE;
 };
 
 export const selectSelectFridgeCurrentTemperature = state => {

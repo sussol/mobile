@@ -14,8 +14,10 @@ import { BlinkSensorButton } from './BlinkSensorButton';
 import { FlexRow } from '../FlexRow';
 import { ExportTemperatureDataButton } from './ExportTemperatureDataButton';
 import { SensorIsInDangerCircle } from './SensorIsInDangerCircle';
+import { generalStrings } from '../../localization';
 
-const formatBatteryLevel = batteryLevel => `${batteryLevel}%`;
+const formatBatteryLevel = batteryLevel =>
+  batteryLevel ? `${batteryLevel}%` : generalStrings.not_available;
 
 export const SensorHeaderComponent = ({
   batteryLevel,

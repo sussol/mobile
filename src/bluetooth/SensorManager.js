@@ -50,7 +50,7 @@ class SensorManager {
       name,
       location,
       logInterval,
-      batteryLevel: 100,
+      batteryLevel: undefined,
       isActive: true,
     });
   };

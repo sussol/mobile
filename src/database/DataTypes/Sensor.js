@@ -4,6 +4,7 @@
  */
 
 import Realm from 'realm';
+import { generalStrings } from '../../localization';
 
 export class Sensor extends Realm.Object {
   get hasBreached() {
@@ -15,7 +16,7 @@ export class Sensor extends Realm.Object {
   }
 
   get batteryLevelString() {
-    return `${this.batteryLevel}%`;
+    return `${this.batteryLevel ?? generalStrings.not_available}%`;
   }
 
   get currentLocationName() {
@@ -93,7 +94,7 @@ Sensor.schema = {
     macAddress: { type: 'string', optional: true },
     name: { type: 'string', default: '' },
     location: { type: 'Location', optional: true },
-    batteryLevel: { type: 'double', default: 100 },
+    batteryLevel: { type: 'double', optional: true },
     logs: { type: 'linkingObjects', objectType: 'TemperatureLog', property: 'sensor' },
     breaches: { type: 'linkingObjects', objectType: 'TemperatureBreach', property: 'sensor' },
     isActive: { type: 'bool', default: true },

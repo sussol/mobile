@@ -162,7 +162,9 @@ const createNew = () => (dispatch, getState) => {
     if (existingSensor) {
       newSensor = UIDatabase.update('Sensor', {
         ...sensor,
+        batteryLevel: undefined,
         id: existingSensor.id,
+        isActive: true,
         location: newLocation,
         logDelay: new Date(sensor?.logDelay ?? 0),
       });
