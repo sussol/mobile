@@ -11,20 +11,19 @@ import { DataTablePageView, FlexRow, FlexView, Paper, SensorStatus } from '../wi
 import { BreachCard } from '../widgets/BreachCard';
 import { VaccineBarChart } from '../widgets/VaccineBarChart';
 import { VaccineLineChart } from '../widgets/VaccineLineChart';
-import { FridgeActions } from '../actions/FridgeActions';
+import { FridgeDetailActions } from '../actions/FridgeDetailActions';
 import { AfterInteractions } from '../widgets/AfterInteractions';
 import { IconButton } from '../widgets/IconButton';
 import { BarChartIcon, LineChartIcon } from '../widgets/icons';
 
 import {
-  selectBreaches,
-  selectLeastRecentTemperatureLogDate,
-  selectMinAndMaxDomains,
   selectMinAndMaxLogs,
-  selectMostRecentTemperatureLogDate,
-  selectTemperatureLogsFromDate,
-  selectTemperatureLogsToDate,
   selectBreachBoundaries,
+  selectSelectedFridgeSensor,
+  selectFromDate,
+  selectToDate,
+  selectMaximumToDate,
+  selectMinimumFromDate,
 } from '../selectors/fridge';
 
 import { APP_FONT_FAMILY, DARKER_GREY, BLUE_WHITE, WARMER_GREY } from '../globalStyles';
@@ -48,22 +47,28 @@ EmptyComponent.propTypes = {
 };
 
 export const FridgeDetailPageComponent = ({
+  sensor,
   breaches,
   minLine,
   maxLine,
   minDomain,
   maxDomain,
-  onChangeToDate,
-  onChangeFromDate,
   fromDate,
   toDate,
   minimumDate,
   maximumDate,
-  sensor,
   breachBoundaries,
   onPressBreach,
+  onChangeToDate,
+  onChangeFromDate,
 }) => {
   const [chartType, setChartType] = useState('bar');
+
+  const minDate = new Date(minimumDate);
+  const maxDate = new Date(maximumDate);
+  const from = new Date(fromDate);
+  const to = new Date(toDate);
+
   const getIconButton = type => {
     const iconStyle = { color: chartType === type ? WARMER_GREY : DARKER_GREY };
     return (
@@ -84,12 +89,12 @@ export const FridgeDetailPageComponent = ({
           <View style={localStyles.topRow}>
             <DateRangeSelector
               containerStyle={localStyles.datePickerContainer}
-              initialStartDate={fromDate}
-              initialEndDate={toDate}
+              initialStartDate={from}
+              initialEndDate={to}
               onChangeToDate={onChangeToDate}
               onChangeFromDate={onChangeFromDate}
-              minimumDate={minimumDate}
-              maximumDate={maximumDate}
+              minimumDate={minDate}
+              maximumDate={maxDate}
             />
           </View>
           <EmptyComponent sensorName={sensor.name} />
@@ -105,12 +110,12 @@ export const FridgeDetailPageComponent = ({
           <View style={localStyles.topRow}>
             <DateRangeSelector
               containerStyle={localStyles.datePickerContainer}
-              initialStartDate={fromDate}
-              initialEndDate={toDate}
+              initialStartDate={from}
+              initialEndDate={to}
               onChangeToDate={onChangeToDate}
               onChangeFromDate={onChangeFromDate}
-              minimumDate={minimumDate}
-              maximumDate={maximumDate}
+              minimumDate={minDate}
+              maximumDate={maxDate}
             />
             <View style={localStyles.buttonContainer}>
               {getIconButton('line')}
@@ -167,27 +172,17 @@ export const FridgeDetailPageComponent = ({
   );
 };
 
-const stateToProps = (state, props) => {
-  const { route } = props;
-  const { params } = route;
-  const { fridge: fridgeProp } = params;
-  const { sensor } = fridgeProp;
-  const { fridge } = state;
-  const { code } = fridge;
-
-  const breaches = selectBreaches(state);
-  const { minLine, maxLine } = selectMinAndMaxLogs(state);
-  const { minDomain, maxDomain } = selectMinAndMaxDomains(state);
-  const fromDate = selectTemperatureLogsFromDate(state);
-  const toDate = selectTemperatureLogsToDate(state);
-  const minimumDate = selectLeastRecentTemperatureLogDate(state);
-  const maximumDate = selectMostRecentTemperatureLogDate(state);
+const stateToProps = state => {
+  const { minLine, maxLine, breaches, minDomain, maxDomain } = selectMinAndMaxLogs(state);
+  const sensor = selectSelectedFridgeSensor(state);
+  const fromDate = selectFromDate(state);
+  const toDate = selectToDate(state);
+  const minimumDate = selectMinimumFromDate(state);
+  const maximumDate = selectMaximumToDate(state);
   const breachBoundaries = selectBreachBoundaries(state);
 
   return {
     sensor,
-    fridge: fridgeProp,
-    code,
     breaches,
     minLine,
     maxLine,
@@ -202,8 +197,8 @@ const stateToProps = (state, props) => {
 };
 
 const dispatchToProps = dispatch => ({
-  onChangeToDate: date => dispatch(FridgeActions.changeToDate(date)),
-  onChangeFromDate: date => dispatch(FridgeActions.changeFromDate(date)),
+  onChangeToDate: date => dispatch(FridgeDetailActions.changeToDate(date)),
+  onChangeFromDate: date => dispatch(FridgeDetailActions.changeFromDate(date)),
   onPressBreach: breachId => dispatch(BreachActions.viewFridgeBreach(breachId)),
 });
 
@@ -221,10 +216,10 @@ FridgeDetailPageComponent.propTypes = {
   maxDomain: PropTypes.number.isRequired,
   onChangeToDate: PropTypes.func.isRequired,
   onChangeFromDate: PropTypes.func.isRequired,
-  fromDate: PropTypes.instanceOf(Date).isRequired,
-  toDate: PropTypes.instanceOf(Date).isRequired,
-  minimumDate: PropTypes.instanceOf(Date),
-  maximumDate: PropTypes.instanceOf(Date),
+  fromDate: PropTypes.number.isRequired,
+  toDate: PropTypes.number.isRequired,
+  minimumDate: PropTypes.number,
+  maximumDate: PropTypes.number,
   sensor: PropTypes.object.isRequired,
   breachBoundaries: PropTypes.object.isRequired,
 };

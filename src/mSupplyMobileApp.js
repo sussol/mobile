@@ -55,7 +55,8 @@ import { UtilService } from './database/utilities/utilService';
 import { SensorDownloadActions } from './actions/Bluetooth/SensorDownloadActions';
 import BreachManager from './bluetooth/BreachManager';
 
-const SYNC_INTERVAL = 60 * 1000; // 1 minutes in milliseconds.
+const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
+const BLUETOOTH_SYNC_INTERVAL = 60 * 1000; // 1 minute in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 
 SensorManager(new VaccineDataAccess(UIDatabase), new UtilService());
@@ -110,7 +111,9 @@ class MSupplyMobileAppContainer extends React.Component {
 
     if (usingVaccines) {
       const { isDownloadingTemperatures } = this.state;
-      if (!isDownloadingTemperatures) this.scheduler.schedule(syncTemperatures, SYNC_INTERVAL);
+      if (!isDownloadingTemperatures) {
+        this.scheduler.schedule(syncTemperatures, BLUETOOTH_SYNC_INTERVAL);
+      }
 
       BluetoothStatus.addListener(requestBluetooth);
       dispatch(PermissionActions.checkPermissions());
