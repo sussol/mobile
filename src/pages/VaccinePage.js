@@ -3,7 +3,6 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import { Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-import moment from 'moment';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as Animatable from 'react-native-animatable';
@@ -19,7 +18,7 @@ import {
   FlexView,
 } from '../widgets/index';
 import { TextWithIcon } from '../widgets/Typography';
-import { generalStrings, buttonStrings } from '../localization';
+import { buttonStrings } from '../localization';
 import { APP_FONT_FAMILY, DARKER_GREY, BLACK } from '../globalStyles';
 import { gotoFridgeDetailPage, gotoNewSensorPage } from '../navigation/actions';
 import { AfterInteractions } from '../widgets/AfterInteractions';
@@ -27,8 +26,7 @@ import { SensorHeader } from '../widgets/SensorHeader/SensorHeader';
 import { selectActiveSensors } from '../selectors/Entities/sensor';
 import temperature from '../utilities/temperature';
 import { BreachManUnhappy } from '../widgets/BreachManUnhappy';
-
-const formatDate = date => (date ? moment(date).fromNow() : generalStrings.not_available);
+import { formatDate } from '../utilities/formatters';
 
 const BREACH_MAN_UNHAPPY_SIZE = 400;
 

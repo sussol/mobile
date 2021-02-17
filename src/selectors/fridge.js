@@ -6,6 +6,7 @@ import moment from 'moment';
 import { createSelector } from 'reselect';
 import { UIDatabase } from '../database';
 import { MILLISECONDS } from '../utilities';
+import { formatTime } from '../utilities/formatters';
 
 import { VACCINE_CONSTANTS } from '../utilities/modules/vaccines/constants';
 
@@ -151,24 +152,6 @@ export const selectNumberOfColdConsecutiveBreaches = createSelector([selectBreac
   const coldBreaches = breaches?.filtered("type == 'COLD_CONSECUTIVE'");
   return coldBreaches.length;
 });
-
-const formatTime = sum => {
-  const asMoment = moment.duration(sum);
-
-  const asDays = Math.floor(asMoment.asDays());
-  const asHours = Math.floor(asMoment.asHours());
-  const asMinutes = Math.floor(asMoment.asMinutes());
-
-  const lengthOfHours = String(asHours).length;
-  const lengthOfMinutes = String(asMinutes).length;
-
-  const addSuffix = (amount, suffix) => `${amount} ${suffix}`;
-
-  if (lengthOfMinutes < 3) return addSuffix(asMinutes, 'm');
-  if (lengthOfHours < 3) return addSuffix(asHours, 'h');
-
-  return addSuffix(asDays, 'd');
-};
 
 const selectFridgeTemperatureLogsInPeriod = createSelector(
   [selectFromDate, selectToDate, selectSelectedFridge],

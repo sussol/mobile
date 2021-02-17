@@ -76,3 +76,28 @@ export const getTickFormatter = () => {
     return formatted;
   };
 };
+
+export const formatDate = date => (date ? moment(date).fromNow() : generalStrings.not_available);
+
+export const formatTime = sum => {
+  const asMoment = moment.duration(sum);
+
+  const asDays = Math.floor(asMoment.asDays());
+  const asHours = Math.floor(asMoment.asHours());
+  const asMinutes = Math.floor(asMoment.asMinutes());
+
+  const lengthOfHours = String(asHours).length;
+  const lengthOfMinutes = String(asMinutes).length;
+
+  const addSuffix = (amount, suffix) => `${amount} ${suffix}`;
+
+  if (lengthOfMinutes < 3) return addSuffix(asMinutes, 'm');
+  if (lengthOfHours < 3) return addSuffix(asHours, 'h');
+
+  return addSuffix(asDays, 'd');
+};
+
+export const formatLogDelay = delay =>
+  `${vaccineStrings.logging_delayed_until}: ${moment(delay).format('HH:mm:ss')}`;
+
+export const formatBatteryLevel = batteryLevel => `${batteryLevel}%`;

@@ -2,11 +2,11 @@ import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as Animatable from 'react-native-animatable';
-import moment from 'moment';
 
 import { useIntervalReRender } from '../../hooks';
 import { TextWithIcon } from '../Typography/index';
 import { MILLISECONDS } from '../../utilities/index';
+import { formatDate, formatLogDelay } from '../../utilities/formatters';
 import { WifiIcon, WifiOffIcon } from '../icons';
 import { MISTY_CHARCOAL } from '../../globalStyles/index';
 import {
@@ -14,12 +14,8 @@ import {
   selectLastDownloadFailed,
   selectLastDownloadTime,
 } from '../../selectors/Bluetooth/sensorDownload';
-import { vaccineStrings, generalStrings } from '../../localization';
+import { vaccineStrings } from '../../localization';
 import { selectSensorByMac } from '../../selectors/Entities/sensor';
-
-const formatLastSyncDate = date => (date ? moment(date).fromNow() : generalStrings.not_available);
-const formatLogDelay = delay =>
-  `${vaccineStrings.logging_delayed_until}: ${moment(delay).format('HH:mm:ss')}`;
 
 const getText = (isPaused, isDelayed, logDelay, lastDownloadTime) => {
   if (isPaused) {
@@ -28,7 +24,7 @@ const getText = (isPaused, isDelayed, logDelay, lastDownloadTime) => {
   if (isDelayed) {
     return formatLogDelay(logDelay);
   }
-  return formatLastSyncDate(lastDownloadTime);
+  return formatDate(lastDownloadTime);
 };
 
 export const LastSensorDownloadComponent = ({
