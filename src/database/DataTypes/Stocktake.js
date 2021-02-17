@@ -257,7 +257,7 @@ export class Stocktake extends Realm.Object {
 
     if (!this.hasSomeCountedItems) {
       finaliseStatus.success = false;
-      finaliseStatus.errorMessage = modalStrings.stocktake_no_counted_items;
+      finaliseStatus.message = modalStrings.stocktake_no_counted_items;
     }
 
     return finaliseStatus;

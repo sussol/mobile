@@ -70,7 +70,7 @@ DurationEditor.defaultProps = {
   containerStyle: {},
   stepAmount: 1,
   value: 0,
-  maxValue: VACCINE_CONSTANTS.MAX_LOGGING_INTERVAL_MINUTES, // 99
+  maxValue: VACCINE_CONSTANTS.MAX_LOGGING_INTERVAL_MINUTES, // 10
   minValue: VACCINE_CONSTANTS.MIN_LOGGING_INTERVAL_MINUTES, // 1
 };
 
