@@ -120,7 +120,7 @@ export const SensorStatusComponent = ({
 
 const styles = {
   icon: { position: 'absolute', alignSelf: 'flex-end' },
-  bigText: { fontSize: 24, fontFamily: APP_FONT_FAMILY },
+  bigText: { fontSize: 20, fontFamily: APP_FONT_FAMILY },
 };
 
 SensorStatusComponent.defaultProps = {
