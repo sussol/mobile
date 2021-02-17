@@ -21,7 +21,7 @@ import { PrescriptionReducer } from './PrescriptionReducer';
 import { SupplierCreditReducer } from './SupplierCreditReducer';
 import { UserReducer } from './UserReducer';
 import { WizardReducer } from './WizardReducer';
-import { FridgeReducer } from './FridgeReducer';
+import { FridgeDetailReducer } from './FridgeDetailReducer';
 import { BreachReducer } from './BreachReducer';
 import { RowDetailReducer } from './RowDetailReducer';
 import { PermissionReducer } from './PermissionReducer';
@@ -37,7 +37,7 @@ export default combineReducers({
   entities: EntitiesReducer,
   finalise: FinaliseReducer,
   form: FormReducer,
-  fridge: FridgeReducer,
+  fridgeDetail: FridgeDetailReducer,
   insurance: InsuranceReducer,
   modules: ModulesReducer,
   pages: PagesReducer,
