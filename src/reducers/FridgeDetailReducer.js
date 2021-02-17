@@ -10,6 +10,14 @@ const initialState = () => ({
   locationID: '',
   fromDate: moment(new Date()).subtract(30, 'd').startOf('day').valueOf(),
   toDate: moment(new Date()).endOf('day').valueOf(),
+
+  // Saving the time 'now' in state gives a reference to when the page was first navigated to
+  // which can be used to change the `toDate` back to 'this' moment in time. For example,
+  // if a user is to navigate to the fridge detail page and change the `toDate` to any day before
+  // 'now', then the user won't be able to re-select 'now' in the date picker unless there is a
+  // temperature log on this day, unless we re-calculate the date 'now' each time, which will cause
+  // the reference to 'now' to be unstable, causing un-needed re-renders.
+  now: moment().valueOf(),
 });
 
 export const FridgeDetailReducer = (state = initialState(), action) => {
@@ -34,14 +42,13 @@ export const FridgeDetailReducer = (state = initialState(), action) => {
       return { ...state, toDate };
     }
 
-    case 'Navigation/BACK':
     case 'Navigation/NAVIGATE': {
       const { routeName, params } = action;
       const { locationID } = params ?? {};
 
       if (routeName === ROUTES.FRIDGE_DETAIL) {
         const newState = initialState();
-        return { ...newState, locationID };
+        return { ...newState, now: moment().valueOf(), locationID };
       }
 
       return state;

@@ -34,18 +34,19 @@ export const selectSelectedFridgeSensor = createSelector([selectSelectedFridgeSe
 
 export const selectMinimumFromDate = state => {
   const { leastRecentTemperatureLog = {} } = selectSelectedFridge(state);
+  const { now } = selectFridgeDetailState(state);
   const { timestamp } = leastRecentTemperatureLog;
-  return timestamp?.getTime() ?? 0;
+  return timestamp?.getTime() ?? now;
 };
 
 export const selectMaximumToDate = state => {
   const { mostRecentTemperatureLog = {} } = selectSelectedFridge(state);
   const { timestamp } = mostRecentTemperatureLog;
 
-  const now = new Date().getTime();
-  const asMilliseconds = timestamp?.getTime() ?? 0;
+  const { now } = selectFridgeDetailState(state);
+  const asMilliseconds = timestamp?.getTime() ?? now;
 
-  return now > timestamp?.getTime() ? now : asMilliseconds;
+  return now >= asMilliseconds ? now : asMilliseconds;
 };
 
 export const selectFromDate = state => {
@@ -104,37 +105,40 @@ export const selectMinAndMaxLogs = createSelector(
       return { id, temperature, timestamp };
     });
 
-    const minAndMax = Array.from({ length: 30 }).reduce(
-      (acc, _, i) => {
-        const periodStart = new Date(new Date(fromDate).getTime() + periodDuration * i);
-        const periodEnd = new Date(new Date(fromDate).getTime() + periodDuration * (i + 1));
-        const logsInPeriod = logs.filtered(
-          'timestamp >= $0 && timestamp <= $1',
-          periodStart,
-          periodEnd
-        );
+    const defaultReturn = {
+      minLine: [],
+      maxLine: [],
+      minDomain: Infinity,
+      maxDomain: -Infinity,
+      breaches: adjustedBreaches,
+    };
 
-        const maxTemperature = logsInPeriod.max('temperature') ?? null;
-        const minTemperature = logsInPeriod.min('temperature') ?? null;
+    if (!logs.length) return defaultReturn;
 
-        const { minLine, maxLine, minDomain, maxDomain } = acc;
+    const minAndMax = Array.from({ length: 30 }).reduce((acc, _, i) => {
+      const periodStart = new Date(new Date(fromDate).getTime() + periodDuration * i);
+      const periodEnd = new Date(new Date(fromDate).getTime() + periodDuration * (i + 1));
+      const logsInPeriod = logs.filtered(
+        'timestamp >= $0 && timestamp <= $1',
+        periodStart,
+        periodEnd
+      );
 
-        return {
-          minLine: [...minLine, { temperature: minTemperature, timestamp: periodStart }],
-          maxLine: [...maxLine, { temperature: maxTemperature, timestamp: periodStart }],
-          minDomain: Math.min(minDomain, minTemperature),
-          maxDomain: Math.max(maxDomain, maxTemperature),
-        };
-      },
-      {
-        minLine: [],
-        maxLine: [],
-        minDomain: Infinity,
-        maxDomain: -Infinity,
-      }
-    );
+      const maxTemperature = logsInPeriod.max('temperature') ?? null;
+      const minTemperature = logsInPeriod.min('temperature') ?? null;
 
-    return { ...minAndMax, breaches: adjustedBreaches };
+      const { minLine, maxLine, minDomain, maxDomain } = acc;
+
+      return {
+        ...acc,
+        minLine: [...minLine, { temperature: minTemperature, timestamp: periodStart }],
+        maxLine: [...maxLine, { temperature: maxTemperature, timestamp: periodStart }],
+        minDomain: Math.min(minDomain, minTemperature),
+        maxDomain: Math.max(maxDomain, maxTemperature),
+      };
+    }, defaultReturn);
+
+    return { ...minAndMax };
   }
 );
 

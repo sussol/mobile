@@ -209,7 +209,7 @@ FridgeDetailPageComponent.defaultProps = {
 
 FridgeDetailPageComponent.propTypes = {
   onPressBreach: PropTypes.func.isRequired,
-  breaches: PropTypes.object.isRequired,
+  breaches: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   minLine: PropTypes.array.isRequired,
   maxLine: PropTypes.array.isRequired,
   minDomain: PropTypes.number.isRequired,
