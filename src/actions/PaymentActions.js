@@ -22,12 +22,10 @@ const creditOverflow = () => ({ type: PAYMENT_ACTIONS.CREDIT_OVERFLOW });
 const choosePaymentType = paymentType => (dispatch, getState) => {
   const { payment } = getState();
   const { transaction } = payment;
+  const { id } = transaction;
 
   UIDatabase.write(() => {
-    UIDatabase.update('Transaction', {
-      ...transaction,
-      paymentType,
-    });
+    UIDatabase.update('Transaction', { id, paymentType });
   });
 
   dispatch({ type: PAYMENT_ACTIONS.CHOOSE_PAYMENT_TYPE, payload: { paymentType } });

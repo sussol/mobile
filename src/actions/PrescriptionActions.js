@@ -63,14 +63,11 @@ const editPatientType = newValue => (dispatch, getState) => {
 const editComment = newValue => (dispatch, getState) => {
   const { prescription } = getState();
   const { transaction } = prescription;
-  const { comment } = transaction;
+  const { id, comment } = transaction;
 
   if (newValue !== comment) {
     UIDatabase.write(() => {
-      UIDatabase.update('Transaction', {
-        ...transaction,
-        comment: newValue,
-      });
+      UIDatabase.update('Transaction', { id, comment: newValue });
     });
 
     dispatch(closeCommentModal());
