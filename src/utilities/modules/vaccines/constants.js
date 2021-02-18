@@ -47,3 +47,15 @@ export const VACCINE_ENTITIES = {
   TEMPERATURE_BREACH_CONFIGURATION: 'TemperatureBreachConfiguration',
   SENSOR_LOG: 'SensorLog',
 };
+
+export const DOWNLOADING_ERROR_CODES = {
+  E_INVALID_MAC_FORMAT: 'E_INVALID_MAC_FORMAT',
+  E_CANT_CONNECT: 'E_CANT_CONNECT',
+  E_CANT_SAVE: 'E_CANT_SAVE',
+  E_UNKNOWN: 'E_UNKNOWN',
+};
+
+export const LAST_DOWNLOAD_STATUS = {
+  OK: 'OK',
+  ERROR: 'ERROR',
+};
