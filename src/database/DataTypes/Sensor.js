@@ -84,6 +84,10 @@ export class Sensor extends Realm.Object {
 
     return isOngoing && isHot;
   }
+
+  get locationID() {
+    return this.location?.id;
+  }
 }
 
 Sensor.schema = {
