@@ -215,10 +215,10 @@ const mapStateToProps = state => {
 
   const { pageObject } = supplierInvoice ?? {};
 
-  const { isSupplierInvoice } = pageObject ?? {};
+  const { isSupplierInvoice, hasVaccine } = pageObject ?? {};
 
   const columnsKey =
-    usingPayments || usingVaccines
+    usingPayments || (usingVaccines && hasVaccine)
       ? (usingPayments && ROUTES.SUPPLIER_INVOICE_WITH_PRICES) ||
         ROUTES.SUPPLIER_INVOICE_WITH_VACCINES
       : ROUTES.SUPPLIER_INVOICE;
