@@ -22,12 +22,13 @@ describe('SensorManager: saveSensor', () => {
 
     const shouldBe = {
       id: '1',
-      batteryLevel: 0,
+      batteryLevel: undefined,
       isActive: true,
       location: dummyLocation,
       logInterval: 300,
       macAddress: '00:AA:BB:CC:DD:EE:FF',
       name: 'A sensor',
+      logDelay: undefined,
     };
     const newSensor = await sensorManager.createSensor(sensor);
     expect(newSensor).toEqual(shouldBe);
