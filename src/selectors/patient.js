@@ -34,12 +34,15 @@ export const selectCurrentPatient = ({ patient }) => {
 export const selectAvailableCredit = ({ patient }) =>
   currency(patient?.currentPatient?.availableCredit);
 
+// TODO
 export const selectPatientInsurancePolicies = ({ patient }) => {
   const { currentPatient } = patient;
   const { policies } = currentPatient;
   return policies.map(policy => {
-    const { isActive, policyNumber } = policy;
-    return isActive ? policy : { ...policy, policyNumber: `${policyNumber} (inactive)` };
+    const { isActive, policyNumber, id, discountRate } = policy;
+    return isActive
+      ? policy
+      : { isActive, id, discountRate, policyNumber: `${policyNumber} (inactive)` };
   });
 };
 export const selectPatientModalOpen = ({ patient }) => {

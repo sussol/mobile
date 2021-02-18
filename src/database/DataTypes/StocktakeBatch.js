@@ -264,7 +264,7 @@ export class StocktakeBatch extends Realm.Object {
 
     database.write(() => {
       database.update('StocktakeBatch', {
-        ...this,
+        id: this.id,
         option: isValidPositiveAdjustment || isValidNegativeAdjustment ? newOption : null,
       });
     });

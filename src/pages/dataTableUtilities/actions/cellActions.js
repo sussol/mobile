@@ -50,9 +50,10 @@ export const editSensorName = (newValue, rowKey, route) => (dispatch, getState) 
   const { data, keyExtractor } = selectPageState(getState());
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+  const { id } = objectToEdit;
 
   if (objectToEdit) {
-    UIDatabase.write(() => UIDatabase.update('Sensor', { ...objectToEdit, name: newValue }));
+    UIDatabase.write(() => UIDatabase.update('Sensor', { id, name: newValue }));
     dispatch(refreshRow(rowKey, route));
   }
 };
@@ -61,11 +62,10 @@ export const editLocationDescription = (newValue, rowKey, route) => (dispatch, g
   const { data, keyExtractor } = selectPageState(getState());
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+  const { id } = objectToEdit;
 
   if (objectToEdit) {
-    UIDatabase.write(() =>
-      UIDatabase.update('Location', { ...objectToEdit, description: newValue })
-    );
+    UIDatabase.write(() => UIDatabase.update('Location', { id, description: newValue }));
     dispatch(refreshRow(rowKey, route));
   }
 };
@@ -74,9 +74,10 @@ export const editLocationCode = (newValue, rowKey, route) => (dispatch, getState
   const { data, keyExtractor } = selectPageState(getState());
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+  const { id } = objectToEdit;
 
   if (objectToEdit) {
-    UIDatabase.write(() => UIDatabase.update('Location', { ...objectToEdit, code: newValue }));
+    UIDatabase.write(() => UIDatabase.update('Location', { id, code: newValue }));
     dispatch(refreshRow(rowKey, route));
   }
 };
@@ -94,9 +95,10 @@ export const editBatchDoses = (newValue, rowKey, route) => (dispatch, getState) 
 
 export const editBatchVvmStatus = (vvmStatus, objectType, route) => (dispatch, getState) => {
   const { modalValue, keyExtractor } = selectPageState(getState());
+  const { id = '' } = modalValue ?? {};
 
   UIDatabase.write(() =>
-    UIDatabase.update(objectType, { ...modalValue, vaccineVialMonitorStatus: vvmStatus })
+    UIDatabase.update(objectType, { id, vaccineVialMonitorStatus: vvmStatus })
   );
 
   reduxBatch(() => {
@@ -241,10 +243,12 @@ export const editNegativeAdjustments = (value, rowKey, route) => (dispatch, getS
 export const editBatchName = (value, rowKey, objectType, route) => (dispatch, getState) => {
   const { data, keyExtractor } = selectPageState(getState());
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+  const { id = '' } = objectToEdit ?? {};
+
   if (objectToEdit) {
     const { batch } = objectToEdit;
     if (value !== batch) {
-      UIDatabase.write(() => UIDatabase.update(objectType, { ...objectToEdit, batch: value }));
+      UIDatabase.write(() => UIDatabase.update(objectType, { id, batch: value }));
       dispatch(refreshRow(rowKey, route));
     }
   }
@@ -254,23 +258,21 @@ export const editSellPrice = (value, rowKey, route) => (dispatch, getState) => {
   const { data, keyExtractor } = selectPageState(getState());
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
   const objectDataType = objectToEdit.stocktake ? 'StocktakeBatch' : 'TransactionBatch';
-  const { sellPrice } = objectToEdit;
+  const { sellPrice, id } = objectToEdit;
   const valueAsCurrency = currency(value);
   const { value: currencyValue } = valueAsCurrency;
   if (currencyValue !== sellPrice) {
     UIDatabase.write(() => {
-      UIDatabase.update(objectDataType, { ...objectToEdit, sellPrice: currencyValue });
+      UIDatabase.update(objectDataType, { id, sellPrice: currencyValue });
       dispatch(refreshRow(rowKey, route));
     });
   }
 };
 
 export const editBatchSupplier = (supplier, batch, route) => dispatch => {
+  const { id } = batch;
   UIDatabase.write(() => {
-    UIDatabase.update('StocktakeBatch', {
-      ...batch,
-      supplier,
-    });
+    UIDatabase.update('StocktakeBatch', { id, supplier });
   });
 
   reduxBatch(() => {

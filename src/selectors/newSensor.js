@@ -1,5 +1,5 @@
 export const selectNewSensor = ({ newSensor }) => newSensor;
-
+// TODO
 export const selectHotConsecutiveConfig = ({ newSensor }) => newSensor.HOT_CONSECUTIVE;
 export const selectColdConsecutiveConfig = ({ newSensor }) => newSensor.COLD_CONSECUTIVE;
 export const selectHotCumulativeConfig = ({ newSensor }) => newSensor.HOT_CUMULATIVE;
