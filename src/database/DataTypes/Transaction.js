@@ -589,6 +589,10 @@ export class Transaction extends Realm.Object {
     // not synced before linked items.
     database.save('Transaction', this);
   }
+
+  get hasVaccine() {
+    return this.items.some(({ isVaccine }) => isVaccine);
+  }
 }
 
 Transaction.schema = {

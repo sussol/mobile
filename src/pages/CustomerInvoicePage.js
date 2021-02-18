@@ -230,7 +230,7 @@ const mapStateToProps = state => {
   const { pageObject } = customerInvoice ?? {};
   const { isCredit = false } = pageObject ?? {};
   if (isCredit) return { ...customerInvoice, columns: getColumns(ROUTES.CUSTOMER_CREDIT) };
-  if (usingVaccines) {
+  if (usingVaccines && pageObject?.hasVaccine) {
     return { ...customerInvoice, columns: getColumns(ROUTES.CUSTOMER_INVOICE_WITH_VACCINES) };
   }
   return { ...customerInvoice, columns: getColumns(ROUTES.CUSTOMER_INVOICE) };
