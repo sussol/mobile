@@ -12,12 +12,19 @@ import { MISTY_CHARCOAL } from '../../globalStyles/index';
 import {
   selectIsDownloading,
   selectLastDownloadFailed,
+  selectLastDownloadStatus,
   selectLastDownloadTime,
 } from '../../selectors/Bluetooth/sensorDownload';
 import { vaccineStrings } from '../../localization';
 import { selectSensorByMac } from '../../selectors/Entities/sensor';
 
-const getText = (isPaused, isDelayed, logDelay, lastDownloadTime) => {
+const formatErrorMessage = status => vaccineStrings[status] ?? '';
+
+const getText = (isPaused, isDelayed, logDelay, lastDownloadTime, lastDownloadStatus) => {
+  if (lastDownloadStatus && lastDownloadStatus !== 'OK') {
+    return formatErrorMessage(lastDownloadStatus);
+  }
+
   if (isPaused) {
     return vaccineStrings.is_paused;
   }
@@ -33,6 +40,7 @@ export const LastSensorDownloadComponent = ({
   lastDownloadFailed,
   lastDownloadTime,
   logDelay,
+  lastDownloadStatus,
 }) => {
   useIntervalReRender(MILLISECONDS.TEN_SECONDS);
 
@@ -66,7 +74,7 @@ export const LastSensorDownloadComponent = ({
           )
         }
       >
-        {getText(isPaused, isDelayed, logDelay, lastDownloadTime)}
+        {getText(isPaused, isDelayed, logDelay, lastDownloadTime, lastDownloadStatus)}
       </TextWithIcon>
     </Animatable.View>
   );
@@ -75,6 +83,7 @@ export const LastSensorDownloadComponent = ({
 LastSensorDownloadComponent.defaultProps = {
   lastDownloadTime: null,
   logDelay: 0,
+  lastDownloadStatus: '',
 };
 
 LastSensorDownloadComponent.propTypes = {
@@ -83,6 +92,7 @@ LastSensorDownloadComponent.propTypes = {
   lastDownloadFailed: PropTypes.bool.isRequired,
   lastDownloadTime: PropTypes.instanceOf(Date),
   logDelay: PropTypes.number,
+  lastDownloadStatus: PropTypes.string,
 };
 
 const stateToProps = (state, props) => {
@@ -95,7 +105,16 @@ const stateToProps = (state, props) => {
   const sensor = selectSensorByMac(state, macAddress);
   const { isPaused = false, logDelay } = sensor ?? {};
 
-  return { lastDownloadTime, lastDownloadFailed, isDownloading, logDelay, isPaused };
+  const lastDownloadStatus = selectLastDownloadStatus(state, macAddress);
+
+  return {
+    lastDownloadTime,
+    lastDownloadFailed,
+    lastDownloadStatus,
+    isDownloading,
+    logDelay,
+    isPaused,
+  };
 };
 
 export const LastSensorDownload = connect(stateToProps)(LastSensorDownloadComponent);

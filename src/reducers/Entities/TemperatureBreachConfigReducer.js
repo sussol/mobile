@@ -2,6 +2,7 @@
 import { TEMPERATURE_BREACH_CONFIG_ACTIONS } from '../../actions/Entities/TemperatureBreachConfigActions';
 import { UIDatabase } from '../../database';
 import { ROUTES } from '../../navigation/index';
+import { SYNC_TRANSACTION_COMPLETE } from '../../sync/constants';
 
 // Extracts the required fields of a realm instance into a plain JS object
 // which is more suitable to store in redux as immutable updates are simpler.
@@ -16,14 +17,17 @@ const getPlainTemperatureBreachConfiguration = config => ({
   type: config.type,
 });
 
-const initialState = () => ({
-  byId: UIDatabase.objects('TemperatureBreachConfiguration').reduce(
+const getById = () =>
+  UIDatabase.objects('TemperatureBreachConfiguration').reduce(
     (acc, config) => ({
       ...acc,
       [config.id]: getPlainTemperatureBreachConfiguration(config),
     }),
     {}
-  ),
+  );
+
+const initialState = () => ({
+  byId: getById(),
   newIds: [],
   editingIds: [],
 });
@@ -32,6 +36,11 @@ export const TemperatureBreachConfigReducer = (state = initialState(), action) =
   const { type } = action;
 
   switch (type) {
+    case SYNC_TRANSACTION_COMPLETE: {
+      const newById = getById();
+      return { ...state, byId: newById };
+    }
+
     case 'Navigation/NAVIGATE': {
       const { params, routeName } = action;
 
