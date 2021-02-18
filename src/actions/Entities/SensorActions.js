@@ -163,6 +163,7 @@ const createNew = () => (dispatch, getState) => {
     if (existingSensor) {
       newSensor = UIDatabase.update('Sensor', {
         ...sensor,
+        batteryLevel: undefined,
         id: existingSensor.id,
         location: newLocation,
         isActive: true,
