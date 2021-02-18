@@ -18,7 +18,7 @@ import {
 import { vaccineStrings, generalStrings } from '../../localization';
 import { selectSensorByMac } from '../../selectors/Entities/sensor';
 
-const formatErrorMessage = status => vaccineStrings[status];
+const formatErrorMessage = status => vaccineStrings[status] ?? '';
 const formatLastSyncDate = date => (date ? moment(date).fromNow() : generalStrings.not_available);
 const formatLogDelay = delay =>
   `${vaccineStrings.logging_delayed_until}: ${moment(delay).format('HH:mm:ss')}`;
