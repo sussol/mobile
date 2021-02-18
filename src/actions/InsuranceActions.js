@@ -96,9 +96,10 @@ const update = policyDetails => (dispatch, getState) => {
 const select = insurancePolicy => (dispatch, getState) => {
   const { prescription } = getState();
   const { transaction } = prescription;
+  const { id } = transaction;
 
   UIDatabase.write(() => {
-    UIDatabase.update('Transaction', { ...transaction, insurancePolicy });
+    UIDatabase.update('Transaction', { id, insurancePolicy });
   });
 
   dispatch(selectPolicy(insurancePolicy));
