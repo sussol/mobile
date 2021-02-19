@@ -103,12 +103,10 @@ export const closeDatePicker = route => ({
 
 export const editCreatedDate = (value, route) => (dispatch, getState) => {
   const pageObject = selectPageObject(getState());
+  const { id } = pageObject;
 
   UIDatabase.write(() => {
-    UIDatabase.update('Requisition', {
-      ...pageObject,
-      createdDate: value,
-    });
+    UIDatabase.update('Requisition', { id, createdDate: value });
   });
 
   dispatch(closeDatePicker(route));
@@ -116,12 +114,10 @@ export const editCreatedDate = (value, route) => (dispatch, getState) => {
 
 export const editPrescriber = (value, route) => (dispatch, getState) => {
   const pageObject = selectPageObject(getState());
+  const { id } = pageObject;
 
   UIDatabase.write(() => {
-    UIDatabase.update('Transaction', {
-      ...pageObject,
-      prescriber: value,
-    });
+    UIDatabase.update('Transaction', { id, prescriber: value });
   });
 
   dispatch(closeModal(route));
@@ -136,14 +132,11 @@ export const editPrescriber = (value, route) => (dispatch, getState) => {
 export const editPageObjectName = (value, pageObjectType, route) => (dispatch, getState) => {
   const pageObject = selectPageObject(getState());
 
-  const { name } = pageObject;
+  const { id, name } = pageObject;
 
   if (name !== value) {
     UIDatabase.write(() => {
-      UIDatabase.update(pageObjectType, {
-        ...pageObject,
-        name: value,
-      });
+      UIDatabase.update(pageObjectType, { id, name: value });
     });
   }
 
@@ -159,11 +152,11 @@ export const editPageObjectName = (value, pageObjectType, route) => (dispatch, g
 export const editTheirRef = (value, pageObjectType, route) => (dispatch, getState) => {
   const pageObject = selectPageObject(getState());
 
-  const { theirRef } = pageObject;
+  const { theirRef, id } = pageObject;
 
   if (theirRef !== value) {
     UIDatabase.write(() => {
-      UIDatabase.update(pageObjectType, { ...pageObject, theirRef: value });
+      UIDatabase.update(pageObjectType, { id, theirRef: value });
     });
   }
 
@@ -179,11 +172,11 @@ export const editTheirRef = (value, pageObjectType, route) => (dispatch, getStat
 export const editComment = (value, pageObjectType, route) => (dispatch, getState) => {
   const pageObject = selectPageObject(getState());
 
-  const { comment } = pageObject;
+  const { comment, id } = pageObject;
 
   if (comment !== value) {
     UIDatabase.write(() => {
-      UIDatabase.update(pageObjectType, { ...pageObject, comment: value });
+      UIDatabase.update(pageObjectType, { id, comment: value });
     });
   }
 

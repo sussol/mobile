@@ -155,9 +155,7 @@ export class RequisitionItem extends Realm.Object {
       .join(' OR ')}) AND item = $0`;
 
     // Return the maximum price of all MasterListItems.
-    return UIDatabase.objects('MasterListItem')
-      .filtered(queryString, this.item)
-      .max('price');
+    return UIDatabase.objects('MasterListItem').filtered(queryString, this.item).max('price');
   }
 
   /**
@@ -207,10 +205,7 @@ export class RequisitionItem extends Realm.Object {
   applyReason(database, newOption) {
     if (this.hasVariance) {
       database.write(() => {
-        database.update('RequisitionItem', {
-          ...this,
-          option: newOption,
-        });
+        database.update('RequisitionItem', { id: this.id, option: newOption });
       });
     }
   }

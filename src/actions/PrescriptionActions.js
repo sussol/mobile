@@ -39,12 +39,10 @@ const cancelPrescription = () => (dispatch, getState) => {
 const editTransactionCategory = newValue => (dispatch, getState) => {
   const { prescription } = getState();
   const { transaction } = prescription;
+  const { id } = transaction;
 
   UIDatabase.write(() => {
-    UIDatabase.update('Transaction', {
-      ...transaction,
-      category: newValue,
-    });
+    UIDatabase.update('Transaction', { id, category: newValue });
   });
 
   dispatch(refresh());
@@ -53,12 +51,10 @@ const editTransactionCategory = newValue => (dispatch, getState) => {
 const editPatientType = newValue => (dispatch, getState) => {
   const { prescription } = getState();
   const { transaction } = prescription;
+  const { id } = transaction;
 
   UIDatabase.write(() => {
-    UIDatabase.update('Transaction', {
-      ...transaction,
-      user1: newValue,
-    });
+    UIDatabase.update('Transaction', { id, user1: newValue });
   });
 
   dispatch(refresh());
@@ -67,14 +63,11 @@ const editPatientType = newValue => (dispatch, getState) => {
 const editComment = newValue => (dispatch, getState) => {
   const { prescription } = getState();
   const { transaction } = prescription;
-  const { comment } = transaction;
+  const { id, comment } = transaction;
 
   if (newValue !== comment) {
     UIDatabase.write(() => {
-      UIDatabase.update('Transaction', {
-        ...transaction,
-        comment: newValue,
-      });
+      UIDatabase.update('Transaction', { id, comment: newValue });
     });
 
     dispatch(closeCommentModal());
@@ -173,12 +166,10 @@ const editQuantity = (id, quantity) => (dispatch, getState) => {
 const assignPrescriber = prescriber => (dispatch, getState) => {
   const { prescription } = getState();
   const { transaction } = prescription;
+  const { id } = transaction;
+
   UIDatabase.write(() => {
-    UIDatabase.update('Transaction', {
-      // Previously used spread, but Realm.Objects don't like being spread it turns out. Issue#3323
-      id: transaction.id,
-      prescriber,
-    });
+    UIDatabase.update('Transaction', { id, prescriber });
   });
 
   batch(() => {
