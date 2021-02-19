@@ -19,12 +19,16 @@ import { AfterInteractions } from '../AfterInteractions';
 
 const Breach = ({ breach, getInfoColumns }) => {
   const { temperatureLogs } = breach;
+  const lineData = temperatureLogs.map(log => {
+    const { timestamp, temperature } = log;
+    return { timestamp, temperature };
+  });
 
   return (
     <AfterInteractions>
       <View style={localStyles.container}>
         <PageInfo columns={getInfoColumns(breach)} />
-        <BreachChart breach={breach} lineData={temperatureLogs.slice()} />
+        <BreachChart breach={breach} lineData={lineData} />
       </View>
     </AfterInteractions>
   );
@@ -71,5 +75,6 @@ const localStyles = StyleSheet.create({
     marginHorizontal: 20,
     marginVertical: 20,
     backgroundColor: WHITE,
+    padding: 10,
   },
 });

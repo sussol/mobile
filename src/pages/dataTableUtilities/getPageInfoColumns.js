@@ -82,8 +82,7 @@ const PER_PAGE_INFO_COLUMNS = {
   ],
   supplierRequisitionItemDetail: [['lastRequisitionDate', 'openVialWastage', 'closedVialWastage']],
   breach: [
-    ['breachTemperatureRange'],
-    ['breachDuration', 'location'],
+    ['breachTemperatureRange', 'breachDuration', 'location'],
     ['numberOfAffectedBatches', 'affectedQuantity'],
   ],
 
