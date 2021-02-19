@@ -108,9 +108,11 @@ const downloadLogsFromSensor = sensor => async dispatch => {
               ])
               .unix();
 
-            const nextTimestamp = mostRecentLog
-              ? moment.max([mostRecentLogTime, moment(logDelay)])
-              : null;
+            // If the logDelay is after the most recent log (which, if there aren't any logs is 0)
+            // then the nextTimestamp should be the logDelay. Else, use the most recent log time.
+            const nextTimestamp = moment(logDelay).isAfter(mostRecentLogTime)
+              ? mostRecentLogTime
+              : moment(logDelay);
 
             const numberOfLogsToSave = await TemperatureLogManager().calculateNumberOfLogsToSave(
               logInterval,
@@ -121,7 +123,7 @@ const downloadLogsFromSensor = sensor => async dispatch => {
               downloadedLogsResult,
               sensor,
               numberOfLogsToSave,
-              mostRecentLog ? nextTimestamp.unix() : null
+              nextTimestamp.unix()
             );
 
             await TemperatureLogManager().saveLogs(temperatureLogs);
