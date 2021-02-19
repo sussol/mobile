@@ -5,6 +5,7 @@
 
 import currency from '../localization/currency';
 import { UIDatabase } from '../database';
+import { selectInsurancePolicyDiscountRate } from './insurance';
 
 export const selectPrescriptionSubTotal = ({ payment }) => {
   const { transaction } = payment;
@@ -19,8 +20,10 @@ export const selectDiscountRate = ({ payment }) => {
 };
 
 export const selectDiscountAmount = ({ payment }) => {
+  const { transaction } = payment;
+  const { insurancePolicy } = transaction || {};
   const subtotal = selectPrescriptionSubTotal({ payment });
-  const insuranceDiscountRate = selectDiscountRate({ payment });
+  const insuranceDiscountRate = selectInsurancePolicyDiscountRate({ insurancePolicy });
   const insuranceDiscountMultiplier = insuranceDiscountRate ? insuranceDiscountRate / 100 : 0;
   const discountAmount = currency(subtotal).multiply(insuranceDiscountMultiplier);
   return discountAmount;
