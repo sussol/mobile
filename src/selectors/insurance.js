@@ -15,8 +15,8 @@ export const selectInsurancePolicyDiscountRate = ({ insurancePolicy }) => {
 };
 
 export const selectInsuranceDiscountRate = ({ insurance }) => {
-  const { insurancePolicy } = insurance;
-  selectInsurancePolicyDiscountRate({ insurancePolicy });
+  const { selectedInsurancePolicy } = insurance;
+  selectInsurancePolicyDiscountRate({ insurancePolicy: selectedInsurancePolicy });
 };
 
 export const selectCanEditInsurancePolicy = ({ insurance }) => {
