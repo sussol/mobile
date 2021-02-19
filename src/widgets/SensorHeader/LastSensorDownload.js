@@ -91,7 +91,7 @@ LastSensorDownloadComponent.propTypes = {
   isPaused: PropTypes.bool.isRequired,
   lastDownloadFailed: PropTypes.bool.isRequired,
   lastDownloadTime: PropTypes.instanceOf(Date),
-  logDelay: PropTypes.number,
+  logDelay: PropTypes.oneOfType([PropTypes.number, PropTypes.instanceOf(Date)]),
   lastDownloadStatus: PropTypes.string,
 };
 

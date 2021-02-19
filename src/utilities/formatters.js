@@ -101,4 +101,4 @@ export const formatLogDelay = delay =>
   `${vaccineStrings.logging_delayed_until}: ${moment(delay).format('HH:mm:ss')}`;
 
 export const formatBatteryLevel = batteryLevel =>
-  batteryLevel === undefined ? generalStrings.not_available : `${batteryLevel}%`;
+  batteryLevel == null ? generalStrings.not_available : `${batteryLevel}%`;
