@@ -10,10 +10,7 @@ import TemperatureLogManager from '../../bluetooth/TemperatureLogManager';
 import SensorManager from '../../bluetooth/SensorManager';
 import { UIDatabase } from '../../database';
 import { isValidMacAddress, VACCINE_CONSTANTS } from '../../utilities/modules/vaccines/index';
-import {
-  DOWNLOADING_ERROR_CODES,
-  VACCINE_ENTITIES,
-} from '../../utilities/modules/vaccines/constants';
+import { DOWNLOADING_ERROR_CODES } from '../../utilities/modules/vaccines/constants';
 import { syncStrings } from '../../localization';
 import { selectIsSyncingTemps } from '../../selectors/Bluetooth/sensorDownload';
 import { BreachActions } from '../BreachActions';
@@ -82,7 +79,7 @@ const downloadAll = () => async dispatch => {
 
 const downloadLogsFromSensor = sensor => async dispatch => {
   try {
-    const { macAddress, logInterval, logDelay, isPaused } = sensor;
+    const { macAddress, logInterval, logDelay, isPaused, programmedDate, mostRecentLog } = sensor;
 
     const timeNow = moment();
 
@@ -98,26 +95,35 @@ const downloadLogsFromSensor = sensor => async dispatch => {
 
         if (downloadedLogsResult) {
           try {
-            const savedTemperatureLogs = UIDatabase.objects(VACCINE_ENTITIES.TEMPERATURE_LOG)
-              .filtered('sensor.macAddress == $0', macAddress)
-              .sorted('timestamp', true);
+            const mostRecentLogTime = moment(mostRecentLog ? mostRecentLog.timestamp : 0);
+            // This is the time which must have passed before downloading a new log.
+            // Either the time has passed the programmed date (ensuring no time travel),
+            // the logging delay must be in the past and the most recent log + the logging interval
+            // must be in the past.
+            const downloadBoundary = moment
+              .max([
+                moment(programmedDate),
+                moment(logDelay),
+                moment(mostRecentLogTime).add(logInterval, 's'),
+              ])
+              .unix();
 
-            const [mostRecentLog] = savedTemperatureLogs;
-            const mostRecentLogTime = mostRecentLog ? mostRecentLog.timestamp : null;
-            const nextPossibleLogTime = mostRecentLogTime
-              ? moment(mostRecentLogTime).add(logInterval, 's')
-              : 0;
+            // If the logDelay is after the most recent log (which, if there aren't any logs is 0)
+            // then the nextTimestamp should be the logDelay. Else, use the most recent log time.
+            const nextTimestamp = moment(logDelay).isAfter(mostRecentLogTime)
+              ? moment(logDelay)
+              : mostRecentLogTime;
 
             const numberOfLogsToSave = await TemperatureLogManager().calculateNumberOfLogsToSave(
               logInterval,
-              nextPossibleLogTime
+              downloadBoundary
             );
 
             const temperatureLogs = await TemperatureLogManager().createLogs(
               downloadedLogsResult,
               sensor,
               numberOfLogsToSave,
-              mostRecentLogTime
+              nextTimestamp.unix()
             );
 
             await TemperatureLogManager().saveLogs(temperatureLogs);
