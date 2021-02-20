@@ -83,11 +83,11 @@ const startSensorDisableButton = macAddress => async (dispatch, getState) => {
   return result;
 };
 
-const startSetLogInterval = ({ macAddress, interval = 300 }) => async (dispatch, getState) => {
+const startSetLogInterval = ({ macAddress, logInterval = 300 }) => async (dispatch, getState) => {
   const result = await PermissionActions.withLocationAndBluetooth(
     dispatch,
     getState,
-    setLogInterval(macAddress, interval)
+    setLogInterval(macAddress, logInterval)
   );
   return result;
 };
