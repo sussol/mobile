@@ -2,7 +2,7 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2020
  */
-
+import moment from 'moment';
 import BreachManager from '../bluetooth/BreachManager';
 import { UIDatabase } from '../database';
 
@@ -23,18 +23,24 @@ const createConsecutiveSuccess = (sensor, updatedBreaches, updatedLogs) => ({
 });
 
 const createConsecutiveBreaches = sensor => async dispatch => {
-  const { id } = sensor;
+  const { id: sensorID } = sensor;
 
   try {
-    const logs = await BreachManager().getLogsToCheck(id);
+    const logs = await BreachManager().getLogsToCheck(sensorID);
+    const mappedToPlainObjects = logs.map(({ id, temperature, timestamp }) => ({
+      id,
+      temperature,
+      timestamp: moment(timestamp).unix(),
+    }));
     const configs = sensor.breachConfigs;
-    const mostRecentBreach = await BreachManager().getMostRecentBreach(id);
+    const mostRecentBreach = await BreachManager().getMostRecentBreach(sensorID);
     const [breaches, temperatureLogs] = await BreachManager().createBreaches(
       sensor,
-      logs,
+      mappedToPlainObjects,
       configs,
-      mostRecentBreach
+      mostRecentBreach?.toJSON()
     );
+
     const [updatedBreaches, updatedLogs] = await BreachManager().updateBreaches(
       breaches,
       temperatureLogs
