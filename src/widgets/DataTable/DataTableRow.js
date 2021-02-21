@@ -117,7 +117,10 @@ const DataTableRow = React.memo(
             rowIsDisabled ||
             rowIsFinalised ||
             isLinkedToTransaction ||
-            !isRemoteOrder;
+            // If the field `isRemoteOrder is a part of the model for the row
+            // (Transaction/Requisition) then disable all rows which are not
+            // remote orders.
+            (isRemoteOrder != null && !isRemoteOrder);
 
           // Alignment of this particular column. Default to left hand ide.
           const cellAlignment = alignText || 'left';
