@@ -55,7 +55,7 @@ export const RowDetailComponent = ({
       return () => Keyboard.removeListener('keyboardDidShow', onClose);
     }
     return null;
-  }, []);
+  }, [dismissOnKeyboardOpen]);
 
   const getDetailComponent = () => {
     switch (detailKey) {
@@ -71,24 +71,24 @@ export const RowDetailComponent = ({
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      swipeToClose={swipeToClose}
-      backdropPressToClose={backdropPressToClose}
-      position={position}
-      backdrop={backdrop}
-      style={modalStyle}
-    >
-      {!keyboardIsOpen && (
+    !keyboardIsOpen && (
+      <Modal
+        isOpen={isOpen}
+        swipeToClose={swipeToClose}
+        backdropPressToClose={backdropPressToClose}
+        position={position}
+        backdrop={backdrop}
+        style={modalStyle}
+      >
         <View style={headerRowStyle}>
           <TouchableOpacity onPress={onClose}>
             <CloseIcon />
           </TouchableOpacity>
         </View>
-      )}
 
-      <View style={containerStyle}>{getDetailComponent()}</View>
-    </Modal>
+        <View style={containerStyle}>{getDetailComponent()}</View>
+      </Modal>
+    )
   );
 };
 
