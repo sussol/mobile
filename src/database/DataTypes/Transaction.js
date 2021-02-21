@@ -593,6 +593,10 @@ export class Transaction extends Realm.Object {
   get hasVaccine() {
     return this.items.some(({ isVaccine }) => isVaccine);
   }
+
+  get isRemoteOrder() {
+    return !this.linkedRequisition;
+  }
 }
 
 Transaction.schema = {
