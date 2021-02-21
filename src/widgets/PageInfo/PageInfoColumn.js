@@ -13,11 +13,12 @@ export const PageInfoColumn = ({
   titleTextAlign,
 }) => (
   <FlexColumn flex={1}>
-    {columnData.map(({ onPress, editableType, title, info }) => (
+    {columnData.map(({ onPress, editableType, title, info }, idx) => (
       <PageInfoRow
         titleTextAlign={titleTextAlign}
         numberOfLines={numberOfLines}
-        key={`${title}${info}`}
+        // eslint-disable-next-line react/no-array-index-key
+        key={`${title}${info}${idx}`}
         isEditingDisabled={isEditingDisabled}
         titleColor={titleColor}
         infoColor={infoColor}
