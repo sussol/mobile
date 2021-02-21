@@ -4,24 +4,11 @@ import { UIDatabase } from '../../database';
 import { ROUTES } from '../../navigation/index';
 import { SYNC_TRANSACTION_COMPLETE } from '../../sync/constants';
 
-// Extracts the required fields of a realm instance into a plain JS object
-// which is more suitable to store in redux as immutable updates are simpler.
-const getPlainTemperatureBreachConfiguration = config => ({
-  id: config.id,
-  minimumTemperature: config.minimumTemperature,
-  maximumTemperature: config.maximumTemperature,
-  duration: config.duration,
-  description: config.description,
-  colour: config.colour,
-  locationID: config.location?.id,
-  type: config.type,
-});
-
 const getById = () =>
   UIDatabase.objects('TemperatureBreachConfiguration').reduce(
     (acc, config) => ({
       ...acc,
-      [config.id]: getPlainTemperatureBreachConfiguration(config),
+      [config.id]: config.toJSON(),
     }),
     {}
   );
@@ -59,7 +46,7 @@ export const TemperatureBreachConfigReducer = (state = initialState(), action) =
       const newByIds = payload.reduce(
         (acc, newConfig) => ({
           ...acc,
-          [newConfig.id]: getPlainTemperatureBreachConfiguration(newConfig),
+          [newConfig.id]: newConfig.toJSON(),
         }),
         byId
       );
@@ -78,7 +65,7 @@ export const TemperatureBreachConfigReducer = (state = initialState(), action) =
       const newById = configs.reduce(
         (acc, config) => ({
           ...acc,
-          [config.id]: config,
+          [config.id]: config.toJSON(),
         }),
         byId
       );
@@ -94,7 +81,7 @@ export const TemperatureBreachConfigReducer = (state = initialState(), action) =
       const newById = configs.reduce(
         (acc, config) => ({
           ...acc,
-          [config.id]: getPlainTemperatureBreachConfiguration(config),
+          [config.id]: config.toJSON(),
         }),
         byId
       );

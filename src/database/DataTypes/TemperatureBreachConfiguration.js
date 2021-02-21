@@ -64,6 +64,19 @@ export class TemperatureBreachConfiguration extends Realm.Object {
 
     return willCreateBreach;
   }
+
+  toJSON() {
+    return {
+      id: this.id,
+      minimumTemperature: this.minimumTemperature,
+      maximumTemperature: this.maximumTemperature,
+      duration: this.duration,
+      description: this.description,
+      colour: this.colour,
+      locationID: this.location?.id ?? '',
+      type: this.type,
+    };
+  }
 }
 
 TemperatureBreachConfiguration.schema = {
