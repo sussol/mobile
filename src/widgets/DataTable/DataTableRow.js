@@ -117,7 +117,7 @@ const DataTableRow = React.memo(
             rowIsDisabled ||
             rowIsFinalised ||
             isLinkedToTransaction ||
-            isRemoteOrder;
+            !isRemoteOrder;
 
           // Alignment of this particular column. Default to left hand ide.
           const cellAlignment = alignText || 'left';
