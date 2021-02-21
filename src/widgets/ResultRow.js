@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { APP_FONT_FAMILY, SUSSOL_ORANGE, BACKGROUND_COLOR, GREY } from '../globalStyles';
+import { DARKER_GREY } from '../globalStyles/colors';
 
 export const ResultRow = React.memo(
   ({ data, renderLeftText, renderRightText, onPress, isSelected, showCheckIcon }) => {
@@ -85,6 +86,7 @@ const localStyles = StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: 10,
     marginVertical: 10,
+    color: DARKER_GREY,
   },
   resultRow: {
     flexDirection: 'row',
