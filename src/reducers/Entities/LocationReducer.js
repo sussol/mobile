@@ -3,19 +3,11 @@ import { UIDatabase } from '../../database';
 import { ROUTES } from '../../navigation/index';
 import { SYNC_TRANSACTION_COMPLETE } from '../../sync/constants';
 
-// Extracts the required fields of a realm instance into a plain JS object
-// which is more suitable to store in redux as immutable updates are simpler.
-const getPlainLocation = (location = {}) => ({
-  id: location.id,
-  description: location.description,
-  code: location.code,
-});
-
 const getById = () =>
   UIDatabase.objects('Location').reduce(
     (acc, location) => ({
       ...acc,
-      [location.id]: getPlainLocation(location),
+      [location.id]: location.toJSON(),
     }),
     {}
   );
@@ -50,7 +42,7 @@ export const LocationReducer = (state = initialState(), action) => {
       const { location } = payload;
       const { id } = location;
 
-      return { ...state, byId: { ...byId, [id]: getPlainLocation(location) }, newId: id };
+      return { ...state, byId: { ...byId, [id]: location.toJSON() }, newId: id };
     }
 
     case LOCATION_ACTIONS.SAVE_NEW: {
@@ -59,7 +51,7 @@ export const LocationReducer = (state = initialState(), action) => {
       const { location } = payload;
       const { id } = location;
 
-      const newById = { ...byId, [id]: getPlainLocation(location) };
+      const newById = { ...byId, [id]: location.toJSON() };
 
       return { ...state, byId: newById, newId: '' };
     }
@@ -75,7 +67,7 @@ export const LocationReducer = (state = initialState(), action) => {
       const { id } = location;
 
       // Only use plain objects.
-      const newById = { ...byId, [id]: getPlainLocation(location) };
+      const newById = { ...byId, [id]: location.toJSON() };
 
       return { ...state, byId: newById, editingId: '' };
     }

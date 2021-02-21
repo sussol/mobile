@@ -95,6 +95,14 @@ export class Location extends Realm.Object {
   get batteryLevel() {
     return this.sensor?.batteryLevel ?? 0;
   }
+
+  toJSON() {
+    return {
+      id: this.id,
+      description: this.description,
+      code: this.code,
+    };
+  }
 }
 
 Location.schema = {
