@@ -22,8 +22,12 @@ export const LocationReducer = (state = initialState(), action) => {
 
   switch (type) {
     case SYNC_TRANSACTION_COMPLETE: {
+      const { byId } = state;
+
       const newById = getById();
-      return { ...state, byId: newById };
+      const mergedById = { ...byId, ...newById };
+
+      return { ...state, byId: mergedById };
     }
 
     case 'Navigation/NAVIGATE': {
