@@ -52,11 +52,12 @@ export const MultiSelectList = ({
   };
 
   const filterArrayData = () => {
-    const regexFilter = RegExp(queryText, 'i');
+    const containsFilterString = string => string?.toLowerCase().includes(queryText);
+
     return options.filter(
       optionItem =>
-        regexFilter.test(optionItem[primaryFilterProperty]) ||
-        regexFilter.test(optionItem[secondaryFilterProperty])
+        containsFilterString(optionItem[primaryFilterProperty]) ||
+        containsFilterString(optionItem[secondaryFilterProperty])
     );
   };
 
