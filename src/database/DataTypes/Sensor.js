@@ -66,7 +66,7 @@ export class Sensor extends Realm.Object {
   }
 
   get currentTemperature() {
-    return this.mostRecentLog?.temperature;
+    return this.mostRecentLog?.temperature ?? null;
   }
 
   get isInHotBreach() {
@@ -87,6 +87,27 @@ export class Sensor extends Realm.Object {
 
   get locationID() {
     return this.location?.id;
+  }
+
+  toJSON() {
+    return {
+      id: this.id,
+      macAddress: this.macAddress,
+      name: this.name,
+      batteryLevel: this.batteryLevel,
+      isActive: this.isActive,
+      isPaused: this.isPaused,
+      logInterval: this.logInterval,
+      logDelay: this.logDelay?.getTime(),
+      programmedDate: this.programmedDate?.getTime(),
+      currentTemperature: this.currentTemperature,
+      mostRecentBreachTime: this.mostRecentBreachTime?.getTime(),
+      isInHotBreach: this.isInHotBreach,
+      isInColdBreach: this.isInColdBreach,
+
+      breachConfigIDs: this.breachConfigIDs,
+      locationID: this.locationID,
+    };
   }
 }
 
