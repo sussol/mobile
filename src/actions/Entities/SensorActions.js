@@ -83,6 +83,7 @@ const save = () => (dispatch, getState) => {
   const updatedConfigs = [];
 
   location.description = sensor.name;
+  location.code = location.code || sensor.name;
 
   UIDatabase.write(() => {
     updatedLocation = UIDatabase.update('Location', location);

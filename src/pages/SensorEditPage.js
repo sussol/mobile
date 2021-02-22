@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-curly-newline */
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/jsx-wrap-multilines */
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, ToastAndroid, View } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -25,7 +25,13 @@ import { TextWithIcon } from '../widgets/Typography';
 
 import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 
-import { generalStrings, vaccineStrings, modalStrings, navStrings } from '../localization';
+import {
+  generalStrings,
+  vaccineStrings,
+  modalStrings,
+  navStrings,
+  formInputStrings,
+} from '../localization';
 import { APP_FONT_FAMILY, DARKER_GREY, LIGHT_GREY, SUSSOL_ORANGE, WHITE } from '../globalStyles';
 import { SensorActions } from '../actions';
 import { SensorBlinkActions } from '../actions/Bluetooth/SensorBlinkActions';
@@ -46,6 +52,7 @@ import { PaperModalContainer } from '../widgets/PaperModal/PaperModalContainer';
 import { SensorPicker } from '../widgets/SensorPicker';
 import { PaperConfirmModal } from '../widgets/PaperModal/PaperConfirmModal';
 import { SECONDS } from '../utilities/constants';
+import { FormInvalidMessage } from '../widgets/FormInputs/FormInvalidMessage';
 
 export const SensorEditPageComponent = ({
   logInterval,
@@ -75,6 +82,12 @@ export const SensorEditPageComponent = ({
   const withLoadingIndicator = useLoadingIndicator();
   const [replaceModalOpen, toggleReplaceModal] = useToggle();
   const [removeModalOpen, toggleRemoveModal] = useToggle();
+  const [isFormValid, setIsFormValid] = useState(!!name);
+
+  const handleUpdateName = newName => {
+    setIsFormValid(!!newName);
+    updateName(newName);
+  };
 
   return (
     <>
@@ -86,7 +99,10 @@ export const SensorEditPageComponent = ({
               Icon={<InfoIcon color={DARKER_GREY} />}
               containerStyle={localStyles.paperContentRow}
             >
-              <TextEditor size="large" value={name} onChangeText={updateName} />
+              <FlexRow style={{ flexDirection: 'column' }}>
+                <TextEditor size="large" value={name} onChangeText={handleUpdateName} />
+                <FormInvalidMessage isValid={!!name} message={formInputStrings.is_required} />
+              </FlexRow>
               <TextEditor
                 label={vaccineStrings.sensor_code}
                 value={code}
@@ -171,6 +187,7 @@ export const SensorEditPageComponent = ({
               text={generalStrings.save}
               textStyle={localStyles.pageButtonText}
               style={{ backgroundColor: SUSSOL_ORANGE }}
+              isDisabled={!isFormValid}
             />
           </FlexRow>
         </AfterInteractions>
