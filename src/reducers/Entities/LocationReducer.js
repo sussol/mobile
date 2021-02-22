@@ -42,7 +42,7 @@ export const LocationReducer = (state = initialState(), action) => {
       const { location } = payload;
       const { id } = location;
 
-      return { ...state, byId: { ...byId, [id]: location.toJSON() }, newId: id };
+      return { ...state, byId: { ...byId, [id]: location }, newId: id };
     }
 
     case LOCATION_ACTIONS.SAVE_NEW: {
