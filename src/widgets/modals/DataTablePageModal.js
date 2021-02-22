@@ -238,12 +238,14 @@ const DataTablePageModalComponent = ({ isOpen, onClose, modalKey, onSelect, curr
       }
       case MODAL_KEYS.SELECT_VVM_STATUS: {
         const { currentVvmStatusName } = currentValue;
+
         return (
           <GenericChoiceList
-            data={UIDatabase.objects('VaccineVialMonitorStatus')}
+            data={UIDatabase.objects('VaccineVialMonitorStatus').filtered('isActive == True')}
             highlightValue={currentVvmStatusName}
             onPress={onSelect}
             keyToDisplay="description"
+            placeholderText={generalStrings.no_vvm_status}
           />
         );
       }

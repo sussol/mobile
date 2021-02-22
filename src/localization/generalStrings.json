@@ -71,7 +71,8 @@
     "from": "from",
     "no_locations_for_batch": "This item is restricted to locations of type {0} and none are available. Contact your administrator.",
     "no_locations": "You don't have any locations to assign! Contact your administrator.",
-    "no_options": "No options available. Please contact your administrator!"
+    "no_options": "No options available. Please contact your administrator!",
+    "no_vvm_status": "No vaccine vial monitor statuses available. Please contact your administrator!"
   },
   "fr": {
     "must_be_a_number_between": "Doit être un nombre entre",

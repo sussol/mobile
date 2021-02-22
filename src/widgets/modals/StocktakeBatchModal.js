@@ -25,7 +25,7 @@ import globalStyles from '../../globalStyles';
 
 import { UIDatabase } from '../../database';
 import { ModalContainer } from './ModalContainer';
-import { buttonStrings } from '../../localization';
+import { buttonStrings, generalStrings } from '../../localization';
 
 import { selectUsingPayments, selectUsingHideSnapshotColumn } from '../../selectors/modules';
 import { AutocompleteSelector } from '../modalChildren';
@@ -229,10 +229,11 @@ export const StocktakeBatchModalComponent = ({
       case MODAL_KEYS.SELECT_VVM_STATUS:
         return (
           <GenericChoiceList
-            data={UIDatabase.objects('VaccineVialMonitorStatus')}
+            data={UIDatabase.objects('VaccineVialMonitorStatus').filtered('isActive == True')}
             highlightValue={currentVvmStatusName}
             onPress={onApplyStocktakeBatchVvmStatus}
             keyToDisplay="description"
+            placeholderText={generalStrings.no_vvm_status}
           />
         );
       default:
