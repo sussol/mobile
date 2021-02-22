@@ -33,7 +33,7 @@ export const ItemDetailsComponent = ({ item }) => {
   const getRow = (title, info) => ({ info, title });
 
   const getBatchColumn = field =>
-    item.batchesWithStock.map(itemBatch => {
+    item.batchesWithStock.sorted('expiryDate').map(itemBatch => {
       const title = headers[field];
 
       const data = itemBatch[field];
