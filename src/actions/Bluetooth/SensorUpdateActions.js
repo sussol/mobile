@@ -6,6 +6,7 @@
 import { PermissionActions } from '../PermissionActions';
 import BleService from '../../bluetooth/BleService';
 import { isValidMacAddress, VACCINE_CONSTANTS } from '../../utilities/modules/vaccines/index';
+import { UIDatabase } from '../../database/index';
 
 export const UPDATE_ACTIONS = {
   SET_LOG_INTERVAL_ERROR: 'Bluetooth/setLogIntervalError',
@@ -95,6 +96,12 @@ const startSetLogInterval = ({ macAddress, logInterval = 300 }) => async (dispat
 const updateSensor = sensor => async dispatch => {
   if (!isValidMacAddress(sensor.macAddress)) {
     // prevent errors if the sensor is not able to be contacted
+    return;
+  }
+
+  const oldLogInterval = UIDatabase.get('Sensor', sensor.macAddress, 'macAddress')?.logInterval;
+  if (oldLogInterval && sensor.logInterval === oldLogInterval) {
+    // No updates required if no change
     return;
   }
 
