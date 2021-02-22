@@ -46,7 +46,7 @@ export const TemperatureBreachConfigReducer = (state = initialState(), action) =
       const newByIds = payload.reduce(
         (acc, newConfig) => ({
           ...acc,
-          [newConfig.id]: newConfig.toJSON(),
+          [newConfig.id]: newConfig,
         }),
         byId
       );
