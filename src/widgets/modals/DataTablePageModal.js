@@ -182,7 +182,9 @@ const DataTablePageModalComponent = ({ isOpen, onClose, modalKey, onSelect, curr
         );
       case MODAL_KEYS.REQUISITION_REASON: {
         const { reasonTitle } = currentValue;
-        const reasonsSelection = UIDatabase.objects('RequisitionReason');
+        const reasonsSelection = UIDatabase.objects('RequisitionReason').filtered(
+          'isActive == true'
+        );
 
         return (
           <GenericChoiceList
@@ -190,6 +192,7 @@ const DataTablePageModalComponent = ({ isOpen, onClose, modalKey, onSelect, curr
             highlightValue={reasonTitle}
             keyToDisplay="title"
             onPress={onSelect}
+            placeholderText={generalStrings.no_reasons}
           />
         );
       }
@@ -238,12 +241,14 @@ const DataTablePageModalComponent = ({ isOpen, onClose, modalKey, onSelect, curr
       }
       case MODAL_KEYS.SELECT_VVM_STATUS: {
         const { currentVvmStatusName } = currentValue;
+
         return (
           <GenericChoiceList
-            data={UIDatabase.objects('VaccineVialMonitorStatus')}
+            data={UIDatabase.objects('VaccineVialMonitorStatus').filtered('isActive == True')}
             highlightValue={currentVvmStatusName}
             onPress={onSelect}
             keyToDisplay="description"
+            placeholderText={generalStrings.no_vvm_status}
           />
         );
       }
