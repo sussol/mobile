@@ -48,12 +48,18 @@ export class VaccineDataAccess {
 
   getSensors = () => this.db.objects(VACCINE_ENTITIES.SENSOR);
 
-  upsertBreaches = breaches =>
+  upsertBreaches = breaches => {
     this.db.write(() => {
       breaches.forEach(breach => {
-        this.db.update(VACCINE_ENTITIES.TEMPERATURE_BREACH, breach);
+        this.db.update(VACCINE_ENTITIES.TEMPERATURE_BREACH, {
+          ...breach,
+          id: breach.id,
+          startTimestamp: new Date(breach.startTimestamp),
+          endTimestamp: breach.endTimestamp ? new Date(breach.endTimestamp) : breach.endTimestamp,
+        });
       });
     });
+  };
 
   upsertSensor = sensor =>
     this.db.write(() => {
@@ -63,7 +69,10 @@ export class VaccineDataAccess {
   upsertTemperatureLog = temperatureLogs =>
     this.db.write(() => {
       temperatureLogs.forEach(log => {
-        this.db.update(VACCINE_ENTITIES.TEMPERATURE_LOG, log);
+        this.db.update(VACCINE_ENTITIES.TEMPERATURE_LOG, {
+          ...log,
+          breach: log.breach ? { id: log.breach.id } : null,
+        });
       });
     });
 }

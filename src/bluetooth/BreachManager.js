@@ -25,8 +25,8 @@ const createBreachRecord = (
     thresholdMaxTemperature,
     thresholdDuration,
     type,
-    startTimestamp,
-    endTimestamp,
+    startTimestamp: new Date(startTimestamp * MILLISECONDS.ONE_SECOND),
+    endTimestamp: endTimestamp ? new Date(endTimestamp * MILLISECONDS.ONE_SECOND) : endTimestamp,
     location,
     acknowledged: false,
   };
@@ -50,7 +50,7 @@ class BreachManager {
 
   closeBreach = (temperatureBreach, time) => {
     // eslint-disable-next-line no-param-reassign
-    temperatureBreach.endTimestamp = time;
+    temperatureBreach.endTimestamp = new Date(time * MILLISECONDS.ONE_SECOND);
     return temperatureBreach;
   };
 
@@ -69,6 +69,7 @@ class BreachManager {
     const { minimumTemperature, maximumTemperature, duration } = config;
     const { timestamp: endTimestamp } = logs[logs.length - 1];
     const { timestamp: startTimestamp } = logs[0];
+
     // logsDuration will be in seconds as it is based on unixtime
     // we are storing duration as milliseconds, so will have to scale to compare
     const logsDuration = MILLISECONDS.ONE_SECOND * (endTimestamp - startTimestamp);
@@ -78,6 +79,7 @@ class BreachManager {
       const { temperature } = log;
       return temperature <= maximumTemperature && temperature >= minimumTemperature;
     });
+
     return temperaturesWithinBounds;
   };
 
@@ -143,6 +145,7 @@ class BreachManager {
           configs,
           potentialBreach
         );
+
         if (willCreateBreach) {
           const newBreach = this.createBreach(
             this.utils.createUuid(),
@@ -150,6 +153,7 @@ class BreachManager {
             config,
             potentialBreach[0].timestamp
           );
+
           currentBreach = newBreach;
           breaches.push(newBreach);
           const updatedLogs = potentialBreach.map(l => this.addLogToBreach(newBreach, l));
@@ -170,17 +174,11 @@ class BreachManager {
   getTemperatureLogsFrom = async (sensorId, timeToCheckFrom) =>
     this.db.getTemperatureLogsFrom(sensorId, timeToCheckFrom);
 
-  getMostRecentBreachLog = async sensorId => {
-    this.db.getMostRecentBreachLog(sensorId);
-  };
+  getMostRecentBreachLog = async sensorId => this.db.getMostRecentBreachLog(sensorId);
 
-  getMostRecentBreach = async sensorId => {
-    this.db.getMostRecentBreach(sensorId);
-  };
+  getMostRecentBreach = async sensorId => this.db.getMostRecentBreach(sensorId);
 
-  getBreachConfigs = async () => {
-    this.db.getBreachConfigs();
-  };
+  getBreachConfigs = async () => this.db.getBreachConfigs();
 }
 
 let BreachManagerInstance;
