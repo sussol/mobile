@@ -82,6 +82,21 @@ export class TemperatureBreach extends Realm.Object {
 
     return temperature >= minimumTemperature && temperature <= maximumTemperature;
   }
+
+  toJSON() {
+    return {
+      id: this.id,
+      startTimestamp: this.startTimestamp.getTime(),
+      endTimestamp: this.endTimestamp?.getTime(),
+      locationID: this.location.id,
+      thresholdMaxTemperature: this.thresholdMaxTemperature,
+      thresholdMinTemperature: this.thresholdMinTemperature,
+      thresholdDuration: this.thresholdDuration,
+      acknowledged: this.acknowledged,
+      type: this.type,
+      sensorID: this.sensor.id,
+    };
+  }
 }
 
 TemperatureBreach.schema = {

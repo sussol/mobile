@@ -5,30 +5,11 @@ import { UIDatabase } from '../../database';
 import { ROUTES } from '../../navigation/index';
 import { SYNC_TRANSACTION_COMPLETE } from '../../sync/constants';
 
-// Extracts the required fields of a realm instance into a plain JS object
-// which is more suitable to store in redux as immutable updates are simpler.
-const getPlainSensor = sensor => ({
-  id: sensor.id,
-  macAddress: sensor.macAddress,
-  name: sensor.name,
-  batteryLevel: sensor.batteryLevel,
-  locationID: sensor.location?.id,
-  breachConfigIDs: sensor?.breachConfigs?.map(({ id }) => id),
-  isActive: sensor.isActive,
-  isPaused: sensor.isPaused,
-  logInterval: sensor.logInterval,
-  logDelay: new Date(sensor.logDelay).getTime(),
-  currentTemperature: sensor?.currentTemperature ?? null,
-  mostRecentBreachTime: sensor?.mostRecentBreachTime?.getTime(),
-  isInHotBreach: sensor?.isInHotBreach,
-  isInColdBreach: sensor?.isInColdBreach,
-});
-
 const getById = () =>
   UIDatabase.objects('Sensor').reduce(
     (acc, sensor) => ({
       ...acc,
-      [sensor.id]: getPlainSensor(sensor),
+      [sensor.id]: sensor.toJSON(),
     }),
     {}
   );
@@ -45,8 +26,12 @@ export const SensorReducer = (state = initialState(), action) => {
 
   switch (type) {
     case SYNC_TRANSACTION_COMPLETE: {
+      const { byId } = state;
+
       const newById = getById();
-      return { ...state, byId: newById };
+      const mergedById = { ...byId, ...newById };
+
+      return { ...state, byId: mergedById };
     }
 
     case 'Navigation/NAVIGATE': {
@@ -62,12 +47,11 @@ export const SensorReducer = (state = initialState(), action) => {
     case BREACH_ACTIONS.CREATE_CONSECUTIVE_SUCCESS: {
       const { payload } = action;
       const { sensor } = payload;
-      const { id, mostRecentBreachTime } = sensor;
+      const { id } = sensor;
 
       const { byId } = state;
-      const oldSensor = byId[id];
 
-      const newSensor = { ...oldSensor, mostRecentBreachTime };
+      const newSensor = sensor.toJSON();
       const newById = { ...byId, [id]: newSensor };
 
       return { ...state, byId: newById };
@@ -75,11 +59,10 @@ export const SensorReducer = (state = initialState(), action) => {
     case DOWNLOAD_ACTIONS.SENSOR_DOWNLOAD_SUCCESS: {
       const { payload } = action;
       const { sensor } = payload;
-      const { id, currentTemperature } = sensor;
+      const { id } = sensor;
       const { byId } = state;
-      const oldSensor = byId[id];
 
-      const newSensor = { ...oldSensor, currentTemperature };
+      const newSensor = sensor.toJSON();
       const newById = { ...byId, [id]: newSensor };
 
       return { ...state, byId: newById };
@@ -115,7 +98,7 @@ export const SensorReducer = (state = initialState(), action) => {
       const { sensor } = payload;
       const { id } = sensor;
 
-      const newById = { ...byId, [id]: sensor };
+      const newById = { ...byId, [id]: sensor.toJSON() };
 
       return { ...state, byId: newById, newId: '' };
     }
@@ -126,8 +109,7 @@ export const SensorReducer = (state = initialState(), action) => {
       const { sensor } = payload;
       const { id } = sensor;
 
-      // Only use plain objects.
-      const newById = { ...byId, [id]: getPlainSensor(sensor) };
+      const newById = { ...byId, [id]: sensor.toJSON() };
 
       return { ...state, byId: newById, editingId: '', replacedId: '' };
     }

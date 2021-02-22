@@ -38,7 +38,11 @@ export const BreachConfigRow = React.memo(
         Icon={<Icon color={color} size={20} />}
         label={TYPE_TO_LABEL[type]}
       >
-        <DurationEditor value={durationInMinutes} onChange={value => updateDuration(type, value)} />
+        <DurationEditor
+          value={durationInMinutes}
+          onChange={value => updateDuration(type, value)}
+          maxValue={999}
+        />
         <TemperatureEditor
           above={isHotBreach}
           value={isHotBreach ? minimumTemperature : maximumTemperature}
