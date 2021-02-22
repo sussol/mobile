@@ -7,6 +7,7 @@ import { IconButton } from '../IconButton';
 import { LightbulbIcon } from '../icons';
 import { SensorBlinkActions } from '../../actions/Bluetooth/SensorBlinkActions';
 import { selectSendingBlinkTo } from '../../selectors/Bluetooth/sensorBlink';
+import { selectIsDownloading } from '../../selectors/Bluetooth/sensorDownload';
 
 export const BlinkSensorButtonComponent = ({ isBlinking, blink, isBlinkDisabled }) =>
   isBlinking ? (
@@ -31,7 +32,8 @@ const stateToProps = (state, props) => {
 
   const sendingBlinkTo = selectSendingBlinkTo(state);
   const isBlinking = sendingBlinkTo === macAddress;
-  const isBlinkDisabled = !isBlinking && !!sendingBlinkTo;
+  const isDownloading = selectIsDownloading(state, macAddress);
+  const isBlinkDisabled = !!sendingBlinkTo || isDownloading;
 
   return { isBlinking, isBlinkDisabled };
 };
