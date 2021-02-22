@@ -55,7 +55,7 @@
     "E_CANT_SAVE": "Error: couldn't save temperature logs",
     "E_UNKNOWN": "Error: unknown error occurred",
     "log_interval_set": "Log interval updated to {0}s",
-    "E_SENSOR_SAVE": "Problem saving sensor details",
+    "E_SENSOR_SAVE": "Problem saving sensor details, please try again soon",
     "E_INVALID_MAC_FORMAT": "Error: invalid mac address format",
     "is_paused": "PAUSED",
     "pause": "Pause",
