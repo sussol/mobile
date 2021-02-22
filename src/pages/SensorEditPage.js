@@ -307,7 +307,7 @@ const dispatchToProps = (dispatch, ownProps) => {
     dispatch(SensorUpdateActions.updateSensor(sensorToUpdate))
       .then(() => dispatch(SensorActions.save()))
       .then(() => dispatch(goBack()))
-      .catch(() => ToastAndroid.show(vaccineStrings.E_SENSOR_SAVE, ToastAndroid.LONG));
+      .catch(e => ToastAndroid.show(e.toString(), ToastAndroid.LONG));
 
   const replaceSensor = macAddress => dispatch(SensorActions.replace(macAddress));
 
