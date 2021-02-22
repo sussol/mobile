@@ -180,7 +180,7 @@ export const SupplierRequisitions = ({
       />
       <BottomConfirmModal
         isOpen={hasSelection}
-        questionText={modalStrings.remove_these_items}
+        questionText={modalStrings.delete_these_requisitions}
         onCancel={onDeselectAll}
         onConfirm={onDeleteRecords}
         confirmText={modalStrings.remove}
