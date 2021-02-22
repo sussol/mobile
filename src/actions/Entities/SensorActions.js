@@ -88,6 +88,7 @@ const save = () => (dispatch, getState) => {
     updatedLocation = UIDatabase.update('Location', location);
     updatedSensor = UIDatabase.update('Sensor', {
       ...sensor,
+      programmedDate: new Date(sensor?.programmedDate ?? 0),
       logDelay: new Date(sensor?.logDelay ?? 0),
       location: updatedLocation,
     });
