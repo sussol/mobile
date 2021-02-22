@@ -280,7 +280,12 @@ const dispatchToProps = (dispatch, ownProps) => {
     const field = isHot ? 'minimumTemperature' : 'maximumTemperature';
     dispatch(TemperatureBreachConfigActions.update(id, field, value));
   };
-  const updateIsPaused = isPaused => dispatch(SensorActions.update(sensorID, 'isPaused', isPaused));
+  const updateIsPaused = isPaused => {
+    dispatch(SensorActions.update(sensorID, 'isPaused', isPaused));
+
+    // If resuming, also set the logDelay to now.
+    if (!isPaused) dispatch(SensorActions.update(sensorID, 'logDelay', new Date().getTime()));
+  };
   const saveSensor = sensorToUpdate =>
     dispatch(SensorUpdateActions.updateSensor(sensorToUpdate))
       .then(() => dispatch(SensorActions.save()))
