@@ -18,6 +18,7 @@ import { SupplierRequisitionItemDetails } from './SupplierRequisitionItemDetail'
 import { DARKER_GREY } from '../globalStyles';
 import { selectRowDetailIsOpen } from '../selectors/rowDetail';
 import { CustomerRequisitionItemDetails } from './CustomerRequisitionItemDetail';
+import { useKeyboardIsOpen } from '../hooks/useKeyboardIsOpen';
 
 /**
  * Container component for a presentation component that will display
@@ -38,6 +39,8 @@ export const RowDetailComponent = ({
   dismissKeyboardOnOpen,
   dismissOnKeyboardOpen,
 }) => {
+  const keyboardIsOpen = useKeyboardIsOpen();
+
   // This component renders at the bottom of the screen. Dismiss the keyboard when rendering
   // so the full screen isn't covered by keyboard and this modal.
   React.useEffect(() => {
@@ -52,7 +55,7 @@ export const RowDetailComponent = ({
       return () => Keyboard.removeListener('keyboardDidShow', onClose);
     }
     return null;
-  }, []);
+  }, [dismissOnKeyboardOpen]);
 
   const getDetailComponent = () => {
     switch (detailKey) {
@@ -68,22 +71,24 @@ export const RowDetailComponent = ({
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      swipeToClose={swipeToClose}
-      backdropPressToClose={backdropPressToClose}
-      position={position}
-      backdrop={backdrop}
-      style={modalStyle}
-    >
-      <View style={headerRowStyle}>
-        <TouchableOpacity onPress={onClose}>
-          <CloseIcon />
-        </TouchableOpacity>
-      </View>
+    !keyboardIsOpen && (
+      <Modal
+        isOpen={isOpen}
+        swipeToClose={swipeToClose}
+        backdropPressToClose={backdropPressToClose}
+        position={position}
+        backdrop={backdrop}
+        style={modalStyle}
+      >
+        <View style={headerRowStyle}>
+          <TouchableOpacity onPress={onClose}>
+            <CloseIcon />
+          </TouchableOpacity>
+        </View>
 
-      <View style={containerStyle}>{getDetailComponent()}</View>
-    </Modal>
+        <View style={containerStyle}>{getDetailComponent()}</View>
+      </Modal>
+    )
   );
 };
 
