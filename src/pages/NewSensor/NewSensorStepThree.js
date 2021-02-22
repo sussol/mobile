@@ -1,5 +1,5 @@
 /* eslint-disable react/forbid-prop-types */
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import moment from 'moment';
 import { ToastAndroid, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
@@ -26,10 +26,11 @@ import { WizardActions, LocationActions, SensorActions } from '../../actions';
 import { SensorUpdateActions } from '../../actions/Bluetooth/SensorUpdateActions';
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 import { DARKER_GREY, LIGHT_GREY, SUSSOL_ORANGE, WHITE } from '../../globalStyles';
-import { buttonStrings, vaccineStrings } from '../../localization';
+import { buttonStrings, vaccineStrings, formInputStrings } from '../../localization';
 import { selectNewLocation } from '../../selectors/Entities/location';
 import { SECONDS } from '../../utilities/constants';
 import { VACCINE_CONSTANTS } from '../../utilities/modules/vaccines/constants';
+import { FormInvalidMessage } from '../../widgets/FormInputs/FormInvalidMessage';
 
 export const NewSensorStepThreeComponent = ({
   logInterval,
@@ -51,6 +52,11 @@ export const NewSensorStepThreeComponent = ({
     moment(logDelay).subtract(VACCINE_CONSTANTS.DEFAULT_LOGGING_DELAY_MINUTES, 'm')
   );
   const logDelayAsMinutes = moment.duration(moment(logDelay).diff(startingTime.current)).minutes();
+  const [isFormValid, setIsFormValid] = useState(!!name);
+  const handleUpdateName = newName => {
+    setIsFormValid(!!newName);
+    updateName(newName);
+  };
 
   return (
     <TabContainer>
@@ -60,7 +66,10 @@ export const NewSensorStepThreeComponent = ({
           label={vaccineStrings.sensor_name}
           Icon={<InfoIcon color={DARKER_GREY} />}
         >
-          <TextEditor size="large" value={name} onChangeText={updateName} />
+          <FlexRow style={{ flexDirection: 'column' }}>
+            <TextEditor size="large" value={name} onChangeText={handleUpdateName} />
+            <FormInvalidMessage isValid={!!name} message={formInputStrings.is_required} />
+          </FlexRow>
           <TextEditor label={vaccineStrings.sensor_code} value={code} onChangeText={updateCode} />
         </EditorRow>
 
@@ -115,6 +124,7 @@ export const NewSensorStepThreeComponent = ({
           style={{ backgroundColor: SUSSOL_ORANGE }}
           textStyle={{ color: WHITE, textTransform: 'capitalize' }}
           onPress={() => withLoadingIndicator(connectToSensor({ macAddress, logInterval }))}
+          isDisabled={!isFormValid}
         />
       </FlexRow>
     </TabContainer>
