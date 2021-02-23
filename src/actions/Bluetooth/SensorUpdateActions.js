@@ -95,6 +95,11 @@ const startSetLogInterval = ({ macAddress, logInterval = 300 }) => async (dispat
   return result;
 };
 
+const updateNewSensor = sensor => async (dispatch, getState) => {
+  await dispatch(updateSensor(sensor, getState));
+  await dispatch(SensorUpdateActions.startSensorDisableButton(sensor.macAddress));
+};
+
 const updateSensor = sensor => async (dispatch, getState) => {
   const { macAddress } = sensor;
 
@@ -116,15 +121,10 @@ const updateSensor = sensor => async (dispatch, getState) => {
   await dispatch(SensorUpdateActions.startSetLogInterval(sensor));
 };
 
-const updateNewSensor = sensor => async (dispatch, getState) => {
-  await dispatch(updateSensor(sensor, getState));
-  await dispatch(SensorUpdateActions.startSensorDisableButton(sensor.macAddress));
-};
-
 export const SensorUpdateActions = {
   startSensorDisableButton,
   startSetLogInterval,
   setLogInterval,
-  updateSensor,
   updateNewSensor,
+  updateSensor,
 };
