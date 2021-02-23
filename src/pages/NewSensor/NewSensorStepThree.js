@@ -141,7 +141,7 @@ const dispatchToProps = dispatch => {
   const previousTab = () => dispatch(WizardActions.previousTab());
   const exit = () => dispatch(goBack());
   const connectToSensor = sensor => () =>
-    dispatch(SensorUpdateActions.updateSensor(sensor))
+    dispatch(SensorUpdateActions.updateNewSensor(sensor))
       .then(() => dispatch(SensorActions.createNew()))
       .then(() => {
         ToastAndroid.show(vaccineStrings.sensor_save_success, ToastAndroid.LONG);
