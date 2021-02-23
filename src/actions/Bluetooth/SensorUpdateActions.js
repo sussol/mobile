@@ -96,8 +96,6 @@ const startSetLogInterval = ({ macAddress, logInterval = 300 }) => async (dispat
 };
 
 const updateSensor = sensor => async (dispatch, getState) => {
-  const state = getState();
-
   if (!isValidMacAddress(sensor.macAddress)) {
     // prevent errors if the sensor is not able to be contacted
     return;
@@ -109,7 +107,7 @@ const updateSensor = sensor => async (dispatch, getState) => {
     return;
   }
 
-  if (selectIsSyncingTemps(state)) {
+  if (selectIsSyncingTemps(getState())) {
     throw new Error(vaccineStrings.E_DOWNLOAD_IN_PROGRESS);
   }
 
