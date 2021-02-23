@@ -96,12 +96,14 @@ const startSetLogInterval = ({ macAddress, logInterval = 300 }) => async (dispat
 };
 
 const updateSensor = sensor => async (dispatch, getState) => {
-  if (!isValidMacAddress(sensor.macAddress)) {
+  const { macAddress } = sensor;
+
+  if (!isValidMacAddress(macAddress)) {
     // prevent errors if the sensor is not able to be contacted
     return;
   }
 
-  const oldLogInterval = UIDatabase.get('Sensor', sensor.macAddress, 'macAddress')?.logInterval;
+  const oldLogInterval = UIDatabase.get('Sensor', macAddress, 'macAddress')?.logInterval;
   if (oldLogInterval && sensor.logInterval === oldLogInterval) {
     // No updates required if no change
     return;
@@ -112,7 +114,7 @@ const updateSensor = sensor => async (dispatch, getState) => {
   }
 
   await dispatch(SensorUpdateActions.startSetLogInterval(sensor));
-  await dispatch(SensorUpdateActions.startSensorDisableButton(sensor.macAddress));
+  await dispatch(SensorUpdateActions.startSensorDisableButton(macAddress));
 };
 
 export const SensorUpdateActions = {
