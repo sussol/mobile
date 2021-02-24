@@ -10,8 +10,6 @@ import { formatTime } from '../utilities/formatters';
 
 import { CHART_CONSTANTS, VACCINE_CONSTANTS } from '../utilities/modules/vaccines/constants';
 
-// const update =
-
 export const selectFridgeDetailState = ({ fridgeDetail }) => fridgeDetail;
 
 export const selectSelectedFridgeID = ({ fridgeDetail }) => {
@@ -89,13 +87,14 @@ export const selectMinAndMaxLogs = createSelector(
   [selectFromDate, selectToDate, selectSelectedFridge, selectBreaches],
   (fromDate, toDate, fridge, breaches) => {
     const diff = new Date(toDate).getTime() - new Date(fromDate).getTime();
-    const periodDuration = diff / CHART_CONSTANTS.MAX_DATA_POINTS;
-
     const logs = fridge.temperatureLogs.filtered(
       'timestamp >= $0 && timestamp <= $1',
       new Date(fromDate),
       new Date(toDate)
     );
+
+    const numOfDataPoints = Math.min(CHART_CONSTANTS.MAX_DATA_POINTS, logs.length);
+    const periodDuration = diff / numOfDataPoints;
 
     // Adjust breaches such that the timestamp is within the date range being displayed.
     const adjustedBreaches = breaches.map(({ startTimestamp, id, temperature }) => {
@@ -116,31 +115,30 @@ export const selectMinAndMaxLogs = createSelector(
 
     if (!logs.length) return defaultReturn;
 
-    const minAndMax = Array.from({ length: CHART_CONSTANTS.MAX_DATA_POINTS }).reduce(
-      (acc, _, i) => {
-        const periodStart = new Date(new Date(fromDate).getTime() + periodDuration * i);
-        const periodEnd = new Date(new Date(fromDate).getTime() + periodDuration * (i + 1));
-        const logsInPeriod = logs.filtered(
-          'timestamp >= $0 && timestamp <= $1',
-          periodStart,
-          periodEnd
-        );
+    const minAndMax = Array.from({
+      length: numOfDataPoints,
+    }).reduce((acc, _, i) => {
+      const periodStart = new Date(new Date(fromDate).getTime() + periodDuration * i);
+      const periodEnd = new Date(new Date(fromDate).getTime() + periodDuration * (i + 1));
+      const logsInPeriod = logs.filtered(
+        'timestamp >= $0 && timestamp <= $1',
+        periodStart,
+        periodEnd
+      );
 
-        const maxTemperature = logsInPeriod.max('temperature') ?? null;
-        const minTemperature = logsInPeriod.min('temperature') ?? null;
+      const maxTemperature = logsInPeriod.max('temperature') ?? null;
+      const minTemperature = logsInPeriod.min('temperature') ?? null;
 
-        const { minLine, maxLine, minDomain, maxDomain } = acc;
+      const { minLine, maxLine, minDomain, maxDomain } = acc;
 
-        return {
-          ...acc,
-          minLine: [...minLine, { temperature: minTemperature, timestamp: periodStart }],
-          maxLine: [...maxLine, { temperature: maxTemperature, timestamp: periodStart }],
-          minDomain: Math.min(minDomain, minTemperature),
-          maxDomain: Math.max(maxDomain, maxTemperature),
-        };
-      },
-      defaultReturn
-    );
+      return {
+        ...acc,
+        minLine: [...minLine, { temperature: minTemperature, timestamp: periodStart }],
+        maxLine: [...maxLine, { temperature: maxTemperature, timestamp: periodStart }],
+        minDomain: Math.min(minDomain, minTemperature),
+        maxDomain: Math.max(maxDomain, maxTemperature),
+      };
+    }, defaultReturn);
 
     return { ...minAndMax };
   }
