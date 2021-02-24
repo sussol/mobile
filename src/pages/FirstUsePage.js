@@ -137,10 +137,11 @@ export class FirstUsePageComponent extends React.Component {
               autoCorrect={false}
               onChangeText={this.onChangeServerUrl}
               onSubmitEditing={() => {
+                if (this.siteNameInputRef) this.siteNameInputRef.focus();
+              }}
+              onBlur={() => {
                 // Trim URLS. Any leading/trailing spaces lead to invalid URLs.
                 this.setState({ serverURL: serverURL.trim() });
-
-                if (this.siteNameInputRef) this.siteNameInputRef.focus();
               }}
             />
           </View>
@@ -160,10 +161,11 @@ export class FirstUsePageComponent extends React.Component {
               selectTextOnFocus
               onChangeText={this.onChangeSiteName}
               onSubmitEditing={() => {
+                if (this.passwordInputRef) this.passwordInputRef.focus();
+              }}
+              onBlur={() => {
                 // Trim site names. Most users don't intentionally put leading/trailing spaces in!
                 this.setState({ syncSiteName: syncSiteName.trim() });
-
-                if (this.passwordInputRef) this.passwordInputRef.focus();
               }}
             />
           </View>

@@ -39,6 +39,7 @@ export class LoginModal extends React.Component {
     this.setAppVersion();
     this.passwordInputRef = null;
     this.errorTimeoutId = null;
+    this.onLogin();
   }
 
   // eslint-disable-next-line camelcase, react/sort-comp
@@ -173,9 +174,11 @@ export class LoginModal extends React.Component {
                   });
                 }}
                 onSubmitEditing={() => {
+                  if (this.passwordInputRef) this.passwordInputRef.focus();
+                }}
+                onBlur={() => {
                   // Trim usernames. Most users don't intentionally put leading/trailing spaces in!
                   this.setState({ username: username.trim() });
-                  if (this.passwordInputRef) this.passwordInputRef.focus();
                 }}
               />
             </View>
