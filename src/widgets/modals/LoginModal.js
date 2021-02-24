@@ -158,6 +158,7 @@ export class LoginModal extends React.Component {
             <View style={globalStyles.horizontalContainer}>
               <TextInput
                 style={globalStyles.authFormTextInputStyle}
+                autoCompleteType="username"
                 placeholder={authStrings.user_name}
                 placeholderTextColor={SUSSOL_ORANGE}
                 underlineColorAndroid={SUSSOL_ORANGE}
@@ -172,6 +173,8 @@ export class LoginModal extends React.Component {
                   });
                 }}
                 onSubmitEditing={() => {
+                  // Trim usernames. Most users don't intentionally put leading/trailing spaces in!
+                  this.setState({ username: username.trim() });
                   if (this.passwordInputRef) this.passwordInputRef.focus();
                 }}
               />
@@ -182,6 +185,7 @@ export class LoginModal extends React.Component {
                   this.passwordInputRef = reference;
                 }}
                 style={globalStyles.authFormTextInputStyle}
+                autoCompleteType="password"
                 placeholder={authStrings.password}
                 placeholderTextColor={SUSSOL_ORANGE}
                 underlineColorAndroid={SUSSOL_ORANGE}
