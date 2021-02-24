@@ -54,6 +54,11 @@ const COMMAND_TO_RESULT_LOOKUP = {
   },
   // *lint300
   'KmxpbnQzMDA=': callback => {
+    callback(null, { value: 'SW50ZXJ2YWw6IDMwMHM=' });
+    callback(null, null);
+  },
+  // *lint60
+  'KmxpbnQ2MA==': callback => {
     callback(null, { value: 'SW50ZXJ2YWw6IDYwcwAAAAAAAAA=' });
     callback(null, null);
   },
