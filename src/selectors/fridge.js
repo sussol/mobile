@@ -5,6 +5,7 @@
 import moment from 'moment';
 import { createSelector } from 'reselect';
 import { UIDatabase } from '../database';
+import { MILLISECONDS_PER_DAY } from '../database/utilities/index';
 import { MILLISECONDS } from '../utilities';
 import { formatTime } from '../utilities/formatters';
 
@@ -93,7 +94,12 @@ export const selectMinAndMaxLogs = createSelector(
       new Date(toDate)
     );
 
-    const numOfDataPoints = Math.min(CHART_CONSTANTS.MAX_DATA_POINTS, logs.length);
+    // If time period is less than a day, reduce datapoint count slightly
+    const days = diff / MILLISECONDS_PER_DAY;
+    const maxDataPoints =
+      days <= 1 ? CHART_CONSTANTS.MAX_DATA_POINTS_PER_DAY : CHART_CONSTANTS.MAX_DATA_POINTS;
+
+    const numOfDataPoints = Math.min(maxDataPoints, logs.length);
     const periodDuration = diff / numOfDataPoints;
 
     // Adjust breaches such that the timestamp is within the date range being displayed.
