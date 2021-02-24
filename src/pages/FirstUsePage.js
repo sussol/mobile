@@ -83,7 +83,19 @@ export class FirstUsePageComponent extends React.Component {
     }
   }
 
-  onChangeText = text =>
+  onChangeServerUrl = text =>
+    this.setState({
+      serverURL: text,
+      status: 'uninitialised',
+    });
+
+  onChangeSiteName = text =>
+    this.setState({
+      syncSiteName: text,
+      status: 'uninitialised',
+    });
+
+  onChangePassword = text =>
     this.setState({
       syncSitePassword: text,
       status: 'uninitialised',
@@ -123,8 +135,11 @@ export class FirstUsePageComponent extends React.Component {
               selectTextOnFocus
               autoCapitalize="none"
               autoCorrect={false}
-              onChangeText={text => this.setState({ serverURL: text, status: 'uninitialised' })}
+              onChangeText={this.onChangeServerUrl}
               onSubmitEditing={() => {
+                // Trim URLS. Any leading/trailing spaces lead to invalid URLs.
+                this.setState({ serverURL: serverURL.trim() });
+
                 if (this.siteNameInputRef) this.siteNameInputRef.focus();
               }}
             />
@@ -135,6 +150,7 @@ export class FirstUsePageComponent extends React.Component {
                 this.siteNameInputRef = reference;
               }}
               style={globalStyles.authFormTextInputStyle}
+              autoCompleteType="username"
               placeholderTextColor={SUSSOL_ORANGE}
               underlineColorAndroid={SUSSOL_ORANGE}
               placeholder="Sync Site Name"
@@ -142,8 +158,11 @@ export class FirstUsePageComponent extends React.Component {
               editable={status !== 'initialising'}
               returnKeyType="next"
               selectTextOnFocus
-              onChangeText={text => this.setState({ syncSiteName: text, status: 'uninitialised' })}
+              onChangeText={this.onChangeSiteName}
               onSubmitEditing={() => {
+                // Trim site names. Most users don't intentionally put leading/trailing spaces in!
+                this.setState({ syncSiteName: syncSiteName.trim() });
+
                 if (this.passwordInputRef) this.passwordInputRef.focus();
               }}
             />
@@ -154,6 +173,7 @@ export class FirstUsePageComponent extends React.Component {
                 this.passwordInputRef = reference;
               }}
               style={globalStyles.authFormTextInputStyle}
+              autoCompleteType="password"
               placeholder="Sync Site Password"
               placeholderTextColor={SUSSOL_ORANGE}
               underlineColorAndroid={SUSSOL_ORANGE}
@@ -162,7 +182,7 @@ export class FirstUsePageComponent extends React.Component {
               editable={status !== 'initialising'}
               returnKeyType="done"
               selectTextOnFocus
-              onChangeText={this.onChangeText}
+              onChangeText={this.onChangePassword}
               onSubmitEditing={() => {
                 if (this.passwordInputRef) this.passwordInputRef.blur();
                 if (this.canAttemptLogin) this.onPressConnect();
