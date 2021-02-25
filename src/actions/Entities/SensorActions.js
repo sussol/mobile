@@ -101,6 +101,7 @@ const save = () => (dispatch, getState) => {
       replacedSensor.location = null;
       replacedSensor.isActive = false;
       replacedSensor.logDelay = new Date(replacedSensor.logDelay);
+      replacedSensor.programmedDate = new Date(replacedSensor.programmedDate);
       updatedSensor = UIDatabase.update('Sensor', replacedSensor);
     }
   });
