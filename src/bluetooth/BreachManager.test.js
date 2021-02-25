@@ -13,7 +13,7 @@ describe('BreachManager: closeBreach', () => {
     const breach = { id: 'a' };
     const closedBreach = breachManager.closeBreach(breach, 0);
 
-    expect(closedBreach).toEqual({ ...breach, endTimestamp: 0 });
+    expect(closedBreach).toEqual({ ...breach, endTimestamp: new Date(0) });
   });
 });
 
@@ -45,7 +45,7 @@ describe('BreachManager: createBreach', () => {
       endTimestamp: undefined,
       location: dummyLocation,
       sensor,
-      startTimestamp: 0,
+      startTimestamp: new Date(0),
       thresholdDuration: '1',
       thresholdMaxTemperature: '100',
       thresholdMinTemperature: '0',
@@ -281,7 +281,7 @@ describe('BreachManager: updateBreaches', () => {
     const breachManager = BreachManager(mockDbService);
 
     const breaches = [{ id: 'a' }, { id: 'b' }];
-    const logs = [{ id: 'a', timestamp: 0, temperature: 0 }];
+    const logs = [{ id: 'a', timestamp: new Date(0), temperature: 0 }];
 
     const result = breachManager.updateBreaches(breaches, logs);
 
@@ -330,7 +330,7 @@ describe('BreachManager: createBreaches', () => {
         thresholdMaxTemperature: 999,
         thresholdMinTemperature: 8,
         thresholdDuration: 1000,
-        startTimestamp: 0,
+        startTimestamp: new Date(0),
         endTimestamp: undefined,
         location: dummyLocation,
       },
@@ -378,8 +378,8 @@ describe('BreachManager: createBreaches', () => {
         thresholdMinTemperature: 8,
         thresholdMaxTemperature: 999,
         thresholdDuration: 1000,
-        startTimestamp: 0,
-        endTimestamp: 2,
+        startTimestamp: new Date(0),
+        endTimestamp: new Date(2),
         location: dummyLocation,
         type: 'HOT_CONSECUTIVE',
       },
@@ -425,11 +425,11 @@ describe('BreachManager: createBreaches', () => {
         id: '1',
         acknowledged: false,
         sensor,
-        startTimestamp: 0,
+        startTimestamp: new Date(0),
         thresholdMinTemperature: 8,
         thresholdMaxTemperature: 999,
         thresholdDuration: 1000,
-        endTimestamp: 2,
+        endTimestamp: new Date(2),
         location: dummyLocation,
         type: 'HOT_CONSECUTIVE',
       },
@@ -437,7 +437,7 @@ describe('BreachManager: createBreaches', () => {
         id: '1',
         acknowledged: false,
         sensor,
-        startTimestamp: 3,
+        startTimestamp: new Date(3),
         thresholdMinTemperature: 8,
         thresholdMaxTemperature: 999,
         thresholdDuration: 1000,
