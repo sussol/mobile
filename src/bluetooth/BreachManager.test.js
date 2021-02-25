@@ -1,3 +1,4 @@
+import { MILLISECONDS } from '../utilities/constants';
 import BreachManager, { destroyBreachManagerInstance } from './BreachManager';
 
 beforeEach(() => {
@@ -379,7 +380,7 @@ describe('BreachManager: createBreaches', () => {
         thresholdMaxTemperature: 999,
         thresholdDuration: 1000,
         startTimestamp: new Date(0),
-        endTimestamp: new Date(2),
+        endTimestamp: new Date(2 * MILLISECONDS.ONE_SECOND),
         location: dummyLocation,
         type: 'HOT_CONSECUTIVE',
       },
@@ -429,7 +430,7 @@ describe('BreachManager: createBreaches', () => {
         thresholdMinTemperature: 8,
         thresholdMaxTemperature: 999,
         thresholdDuration: 1000,
-        endTimestamp: new Date(2),
+        endTimestamp: new Date(2 * MILLISECONDS.ONE_SECOND),
         location: dummyLocation,
         type: 'HOT_CONSECUTIVE',
       },
@@ -437,7 +438,7 @@ describe('BreachManager: createBreaches', () => {
         id: '1',
         acknowledged: false,
         sensor,
-        startTimestamp: new Date(3),
+        startTimestamp: new Date(3 * MILLISECONDS.ONE_SECOND),
         thresholdMinTemperature: 8,
         thresholdMaxTemperature: 999,
         thresholdDuration: 1000,
