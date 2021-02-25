@@ -58,11 +58,19 @@ export const VaccineBarChart = ({
     if (maxPoint && maxPoint.temperature > breachBoundaries.upper) {
       dataPoint.hotY = maxPoint.temperature;
       dataPoint.hotY0 = Math.max(minPoint.temperature, breachBoundaries.upper);
+
+      if (dataPoint.hotY === dataPoint.hotY0) {
+        dataPoint.hotY += CHART_CONSTANTS.MIN_BAR_HEIGHT;
+      }
     }
 
     if (minPoint.temperature < breachBoundaries.lower) {
       dataPoint.coldY = Math.min(breachBoundaries.lower, maxPoint.temperature);
       dataPoint.coldY0 = minPoint.temperature;
+
+      if (dataPoint.coldY === dataPoint.coldY0) {
+        dataPoint.coldY0 -= CHART_CONSTANTS.MIN_BAR_HEIGHT;
+      }
     }
 
     if (
@@ -75,6 +83,9 @@ export const VaccineBarChart = ({
 
     dataPoint.y = Math.min(breachBoundaries.upper, maxPoint.temperature);
     dataPoint.y0 = Math.max(breachBoundaries.lower, minPoint.temperature);
+    if (dataPoint.y === dataPoint.y0) {
+      dataPoint.y += CHART_CONSTANTS.MIN_BAR_HEIGHT;
+    }
 
     return dataPoint;
   });
