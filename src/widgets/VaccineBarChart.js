@@ -66,16 +66,8 @@ export const VaccineBarChart = ({
     }
 
     if (
-      maxPoint.temperature > breachBoundaries.upper &&
-      minPoint.temperature > breachBoundaries.upper
-    ) {
-      // no mid section to display
-      return dataPoint;
-    }
-
-    if (
-      maxPoint.temperature < breachBoundaries.lower &&
-      minPoint.temperature < breachBoundaries.lower
+      minPoint.temperature > breachBoundaries.upper ||
+      maxPoint.temperature < breachBoundaries.lower
     ) {
       // no mid section to display
       return dataPoint;
