@@ -5,12 +5,11 @@
 import moment from 'moment';
 import { createSelector } from 'reselect';
 import { UIDatabase } from '../database';
+import { MILLISECONDS_PER_DAY } from '../database/utilities/index';
 import { MILLISECONDS } from '../utilities';
 import { formatTime } from '../utilities/formatters';
 
-import { VACCINE_CONSTANTS } from '../utilities/modules/vaccines/constants';
-
-// const update =
+import { CHART_CONSTANTS, VACCINE_CONSTANTS } from '../utilities/modules/vaccines/constants';
 
 export const selectFridgeDetailState = ({ fridgeDetail }) => fridgeDetail;
 
@@ -89,13 +88,19 @@ export const selectMinAndMaxLogs = createSelector(
   [selectFromDate, selectToDate, selectSelectedFridge, selectBreaches],
   (fromDate, toDate, fridge, breaches) => {
     const diff = new Date(toDate).getTime() - new Date(fromDate).getTime();
-    const periodDuration = diff / 30;
-
     const logs = fridge.temperatureLogs.filtered(
       'timestamp >= $0 && timestamp <= $1',
       new Date(fromDate),
       new Date(toDate)
     );
+
+    // If time period is less than a day, reduce datapoint count slightly
+    const days = diff / MILLISECONDS_PER_DAY;
+    const maxDataPoints =
+      days <= 1 ? CHART_CONSTANTS.MAX_DATA_POINTS_PER_DAY : CHART_CONSTANTS.MAX_DATA_POINTS;
+
+    const numOfDataPoints = Math.min(maxDataPoints, logs.length);
+    const periodDuration = diff / numOfDataPoints;
 
     // Adjust breaches such that the timestamp is within the date range being displayed.
     const adjustedBreaches = breaches.map(({ startTimestamp, id, temperature }) => {
@@ -116,7 +121,9 @@ export const selectMinAndMaxLogs = createSelector(
 
     if (!logs.length) return defaultReturn;
 
-    const minAndMax = Array.from({ length: 30 }).reduce((acc, _, i) => {
+    const minAndMax = Array.from({
+      length: numOfDataPoints,
+    }).reduce((acc, _, i) => {
       const periodStart = new Date(new Date(fromDate).getTime() + periodDuration * i);
       const periodEnd = new Date(new Date(fromDate).getTime() + periodDuration * (i + 1));
       const logsInPeriod = logs.filtered(
