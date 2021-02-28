@@ -9,9 +9,14 @@ export const Field = props => {
   console.log('FieldTemplate - props', props);
   console.log('-------------------------------------------');
 
+  const { title, fields } = props;
+  const { TitleField } = fields;
+
   return (
     <View style={{ borderWidth: 1 }}>
       <Text>FieldTemplate</Text>
+      <TitleField title={title} />
+      {props.description}
       {props.children}
     </View>
   );

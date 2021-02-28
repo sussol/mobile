@@ -2,7 +2,9 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/prop-types */
 import React, { useImperativeHandle, useMemo, useRef } from 'react';
+import { ScrollView } from 'react-native';
 import { withTheme } from '@rjsf/core';
+
 import { JSONFormContainer } from './JSONFormContainer';
 import { JSONFormField } from './fields/index';
 import { JSONFormTemplate } from './templates/index';
@@ -80,6 +82,10 @@ const exampleSchema = {
   description: 'Description',
   type: 'object',
   properties: {
+    age4: {
+      type: 'integer',
+      title: 'Age',
+    },
     multipleChoicesList: {
       type: 'array',
       title: 'A multiple choices list',
@@ -92,7 +98,7 @@ const exampleSchema = {
     stringEnum: {
       type: 'string',
       description: 'string enum',
-      title: 'string enum',
+      title: 'string enum title',
       enum: ['a', 'b', 'c'],
     },
     numberEnum: {
@@ -129,6 +135,22 @@ const exampleSchema = {
       type: 'string',
       format: 'date',
     },
+    age2: {
+      type: 'integer',
+      title: 'Age',
+    },
+    date2: {
+      type: 'string',
+      format: 'date',
+    },
+    age3: {
+      type: 'integer',
+      title: 'Age',
+    },
+    date3: {
+      type: 'string',
+      format: 'date',
+    },
     items: {
       type: 'array',
       items: {
@@ -144,6 +166,8 @@ const exampleSchema = {
           {
             properties: {
               bar: {
+                title: 'bar title',
+                description: 'bar desc',
                 type: 'string',
               },
             },
@@ -170,24 +194,26 @@ export const JSONForm = React.forwardRef(
 
     return (
       <JSONFormContext.Provider value={options}>
-        <Form
-          onError={() => {
-            // placeholder to prevent console.errors when validation fails.
-          }}
-          // eslint-disable-next-line no-console
-          onSubmit={form => console.log('onSubmit:', form)}
-          ref={formRef}
-          schema={exampleSchema}
-        >
-          {children ?? (
-            <PageButton
-              onPress={e => {
-                // eslint-disable-next-line no-console
-                formRef.current?.onSubmit(e);
-              }}
-            />
-          )}
-        </Form>
+        <ScrollView>
+          <Form
+            onError={() => {
+              // placeholder to prevent console.errors when validation fails.
+            }}
+            // eslint-disable-next-line no-console
+            onSubmit={form => console.log('onSubmit:', form)}
+            ref={formRef}
+            schema={exampleSchema}
+          >
+            {children ?? (
+              <PageButton
+                onPress={e => {
+                  // eslint-disable-next-line no-console
+                  formRef.current?.onSubmit(e);
+                }}
+              />
+            )}
+          </Form>
+        </ScrollView>
       </JSONFormContext.Provider>
     );
   }
