@@ -3,7 +3,6 @@
 /* eslint-disable react/prop-types */
 import React, { useImperativeHandle, useMemo, useRef } from 'react';
 import { withTheme } from '@rjsf/core';
-
 import { JSONFormContainer } from './JSONFormContainer';
 import { JSONFormField } from './fields/index';
 import { JSONFormTemplate } from './templates/index';
@@ -46,11 +45,14 @@ const defaultTheme = {
   // https://github.com/rjsf-team/react-jsonschema-form/blob/b78d9ef280eddf5bda0f97e5a3445c6a1fd35c99/packages/core/src/components/fields/SchemaField.js#L29-L36
   fields: {
     TitleField: JSONFormField.Title,
+    DescriptionField: JSONFormField.Description,
+
     AnyOfField: JSONFormField.AnyOf,
     OneOfField: JSONFormField.OneOf,
 
-    // Example
+    // Examples of type override
     // StringField: JSONFormField.String,
+    // BooleanField: JSONFormField.Boolean,
   },
 
   // Templates define the layout of each row and are passed components for users to
@@ -74,11 +76,58 @@ const defaultTheme = {
 };
 
 const exampleSchema = {
+  title: 'Object',
+  description: 'Description',
   type: 'object',
   properties: {
+    multipleChoicesList: {
+      type: 'array',
+      title: 'A multiple choices list',
+      items: {
+        type: 'string',
+        enum: ['foo', 'bar', 'fuzz', 'qux'],
+      },
+      uniqueItems: true,
+    },
+    stringEnum: {
+      type: 'string',
+      description: 'string enum',
+      title: 'string enum',
+      enum: ['a', 'b', 'c'],
+    },
+    numberEnum: {
+      type: 'number',
+      description: 'number enum',
+      title: 'Number enum',
+      enum: [1, 2, 3],
+    },
+    Toggle: {
+      title: 'Toggle',
+      description: 'toggle description',
+      type: 'boolean',
+      oneOf: [
+        {
+          title: 'Enable',
+          const: true,
+        },
+        {
+          title: 'Disable',
+          const: false,
+        },
+      ],
+    },
+    firstName: {
+      type: 'string',
+      title: 'First name',
+      default: 'Chuck',
+    },
     age: {
       type: 'integer',
       title: 'Age',
+    },
+    date: {
+      type: 'string',
+      format: 'date',
     },
     items: {
       type: 'array',
@@ -103,31 +152,6 @@ const exampleSchema = {
       },
     },
   },
-  anyOf: [
-    {
-      title: 'First method of identification',
-      properties: {
-        firstName: {
-          type: 'string',
-          title: 'First name',
-          default: 'Chuck',
-        },
-        lastName: {
-          type: 'string',
-          title: 'Last name',
-        },
-      },
-    },
-    {
-      title: 'Second method of identification',
-      properties: {
-        idCode: {
-          type: 'string',
-          title: 'ID code',
-        },
-      },
-    },
-  ],
 };
 
 export const JSONForm = React.forwardRef(

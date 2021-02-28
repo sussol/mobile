@@ -1,5 +1,6 @@
+/* eslint-disable no-console */
 import React from 'react';
-import { TextInput } from 'react-native';
+import { Text as RNText, View, TextInput } from 'react-native';
 
 export const Text = props => {
   console.log('-------------------------------------------');
@@ -7,11 +8,14 @@ export const Text = props => {
   console.log('-------------------------------------------');
 
   return (
-    <TextInput
-      onChangeText={text => {
-        // eslint-disable-next-line react/prop-types
-        props.onChange(text);
-      }}
-    />
+    <View style={{ borderWidth: 1, marginLeft: 10 }}>
+      <RNText>Text Widget</RNText>
+      <TextInput
+        onChangeText={text => {
+          // eslint-disable-next-line react/prop-types
+          props.onChange(text);
+        }}
+      />
+    </View>
   );
 };
