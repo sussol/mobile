@@ -207,7 +207,6 @@ export const JSONForm = React.forwardRef(
             {children ?? (
               <PageButton
                 onPress={e => {
-                  // eslint-disable-next-line no-console
                   formRef.current?.onSubmit(e);
                 }}
               />
