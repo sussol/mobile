@@ -56,6 +56,10 @@ export const ROUTES = {
   SENSOR_EDIT: 'sensorEdit',
   SENSOR_NEW: 'sensorNew',
   FRIDGE_DETAIL: 'fridgeDetail',
+
+  NAME_EDIT: 'nameEdit',
+  NAME_NOTE_EDIT: 'nameNoteEdit',
+  VACCINE_PRESCRIPTION: 'vaccinePrescription',
 };
 
 export const FINALISABLE_PAGES = [

@@ -124,6 +124,32 @@ export class Name extends Realm.Object {
   toString() {
     return this.name;
   }
+
+  toJSON() {
+    return {
+      id: this.id,
+      name: this.name,
+      code: this.code,
+      dateOfBirth: this.dateOfBirth?.getTime(),
+      phoneNumber: this.phoneNumber,
+      country: this.country,
+      billingAddress: this.billingAddress.toJSON(),
+      emailAddress: this.emailAddress,
+      type: this.type,
+      masterLists: this.masterLists,
+      isVisible: this.isVisible,
+      supplyingStoreId: this.supplyingStoreId,
+      firstName: this.firstName,
+      lastName: this.lastName,
+      isActive: this.isActive,
+      isCustomer: this.isCustomer,
+      isSupplier: this.isSupplier,
+      isManufacturer: this.isManufacturer,
+      isPatient: this.isPatient,
+      female: this.female,
+      thisStoresPatient: this.thisStoresPatient,
+    };
+  }
 }
 
 Name.schema = {
