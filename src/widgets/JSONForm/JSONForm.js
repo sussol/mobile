@@ -1,7 +1,7 @@
+/* eslint-disable react/forbid-prop-types */
 /* eslint-disable max-len */
-/* eslint-disable react/destructuring-assignment */
-/* eslint-disable react/prop-types */
 import React, { useImperativeHandle, useMemo, useRef } from 'react';
+import PropTypes from 'prop-types';
 import { ScrollView } from 'react-native';
 import { withTheme } from '@rjsf/core';
 
@@ -104,45 +104,78 @@ class FocusController {
   };
 }
 
-export const JSONForm = React.forwardRef(
-  (
-    { theme = defaultTheme, children, options = { focusController: new FocusController() } },
-    ref
-  ) => {
-    const formRef = useRef(null);
+export const JSONForm = React.forwardRef(({ theme = defaultTheme, children, options }, ref) => {
+  const formRef = useRef(null);
 
-    const Form = useMemo(() => withTheme(theme), []);
+  const Form = useMemo(() => withTheme(theme), []);
 
-    // Attach to the ref passed a method `submit` which will allow a caller
-    // to programmatically call submit
-    useImperativeHandle(ref, () => ({
-      submit: e => {
-        formRef.current?.onSubmit(e);
-      },
-    }));
+  // Attach to the ref passed a method `submit` which will allow a caller
+  // to programmatically call submit
+  useImperativeHandle(ref, () => ({
+    submit: e => {
+      formRef.current?.onSubmit(e);
+    },
+  }));
 
-    return (
-      <JSONFormContext.Provider value={options}>
-        <ScrollView keyboardDismissMode="none" keyboardShouldPersistTaps="always">
-          <Form
-            onError={() => {
-              // placeholder to prevent console.errors when validation fails.
-            }}
-            // eslint-disable-next-line no-console
-            onSubmit={form => console.log('onSubmit:', form)}
-            ref={formRef}
-            schema={booleanSchema}
-          >
-            {children ?? (
-              <PageButton
-                onPress={e => {
-                  formRef.current?.onSubmit(e);
-                }}
-              />
-            )}
-          </Form>
-        </ScrollView>
-      </JSONFormContext.Provider>
-    );
-  }
-);
+  return (
+    <JSONFormContext.Provider value={options}>
+      <ScrollView keyboardDismissMode="none" keyboardShouldPersistTaps="always">
+        <Form
+          onError={() => {
+            // placeholder to prevent console.errors when validation fails.
+          }}
+          // eslint-disable-next-line no-console
+          onSubmit={form => console.log('onSubmit:', form)}
+          ref={formRef}
+          schema={booleanSchema}
+        >
+          {children ?? (
+            <PageButton
+              onPress={e => {
+                formRef.current?.onSubmit(e);
+              }}
+            />
+          )}
+        </Form>
+      </ScrollView>
+    </JSONFormContext.Provider>
+  );
+});
+
+JSONForm.defaultProps = {
+  theme: defaultTheme,
+  children: null,
+  options: { focusController: new FocusController() },
+};
+
+JSONForm.propTypes = {
+  children: PropTypes.node,
+  options: PropTypes.object,
+  theme: PropTypes.shape({
+    widgets: PropTypes.shape({
+      TextWidget: PropTypes.func,
+      URLWidget: PropTypes.func,
+      EmailWidget: PropTypes.func,
+      TextareaWidget: PropTypes.func,
+      CheckboxWidget: PropTypes.func,
+      CheckboxesWidget: PropTypes.func,
+      PasswordWidget: PropTypes.func,
+      RadioWidget: PropTypes.func,
+      SelectWidget: PropTypes.func,
+      RangeWidget: PropTypes.func,
+      DateWidget: PropTypes.func,
+    }),
+    fields: PropTypes.shape({
+      TitleField: PropTypes.func,
+      DescriptionField: PropTypes.func,
+      AnyOfField: PropTypes.func,
+      OneOfField: PropTypes.func,
+    }),
+    FieldTemplate: PropTypes.func,
+    ObjectFieldTemplate: PropTypes.func,
+    ArrayFieldTemplate: PropTypes.func,
+    ErrorList: PropTypes.func,
+    formContext: PropTypes.object,
+    tagName: PropTypes.func,
+  }),
+};
