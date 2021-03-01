@@ -3,6 +3,8 @@ import { NAME_NOTE_ACTIONS } from '../../actions/Entities';
 const initialState = () => ({
   creatingById: {},
   editingById: {},
+  creatingId: '',
+  editingId: '',
 });
 
 export const NameNoteReducer = (state = initialState(), action) => {
@@ -15,7 +17,7 @@ export const NameNoteReducer = (state = initialState(), action) => {
       const { nameNote } = payload;
       const { id } = nameNote;
 
-      return { ...state, creatingById: { ...creatingById, [id]: payload } };
+      return { ...state, creatingById: { ...creatingById, [id]: payload }, creatingId: id };
     }
 
     case NAME_NOTE_ACTIONS.EDIT: {
@@ -28,6 +30,7 @@ export const NameNoteReducer = (state = initialState(), action) => {
         ...state,
         editingById: { ...editingById, [id]: payload },
         creatingById: { ...creatingById, [id]: payload },
+        editingId: id,
       };
     }
 
@@ -39,7 +42,7 @@ export const NameNoteReducer = (state = initialState(), action) => {
 
       const newEditingById = { ...editingById, [id]: nameNote.toJSON() };
 
-      return { ...state, editingById: newEditingById };
+      return { ...state, editingById: newEditingById, editingId: '' };
     }
 
     case NAME_NOTE_ACTIONS.SAVE_NEW: {
@@ -48,7 +51,7 @@ export const NameNoteReducer = (state = initialState(), action) => {
       const { nameNote } = payload;
       const { id } = nameNote;
 
-      const newCreatingById = { ...creatingById, [id]: nameNote.toJSON() };
+      const newCreatingById = { ...creatingById, [id]: nameNote.toJSON(), creatingId: '' };
 
       return { ...state, creatingById: newCreatingById };
     }

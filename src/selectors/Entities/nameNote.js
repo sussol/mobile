@@ -2,18 +2,18 @@ import { selectSpecificEntityState } from './index';
 
 export const selectNewNameNote = state => {
   const NameNoteState = selectSpecificEntityState(state, 'nameNote');
-  const { newId, byId } = NameNoteState;
-  return byId[newId];
+  const { creatingId, creatingById } = NameNoteState;
+  return creatingById[creatingId];
 };
 
 export const selectNewNameNoteId = state => {
   const NameNoteState = selectSpecificEntityState(state, 'nameNote');
-  const { newId } = NameNoteState;
-  return newId;
+  const { creatingId } = NameNoteState;
+  return creatingId;
 };
 
 export const selectEditingNameNote = state => {
   const NameNoteState = selectSpecificEntityState(state, 'nameNote');
-  const { editingId, byId } = NameNoteState;
-  return byId[editingId];
+  const { editingId, editingById } = NameNoteState;
+  return editingById[editingId];
 };

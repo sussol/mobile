@@ -1,19 +1,14 @@
 import { selectSpecificEntityState } from './index';
 
-export const selectNewVaccinePrescription = state => {
+export const selectEditingVaccinePrescriptionId = state => {
   const VaccinePrescriptionState = selectSpecificEntityState(state, 'vaccinePrescription');
-  const { newId, byId } = VaccinePrescriptionState;
-  return byId[newId];
-};
-
-export const selectNewVaccinePrescriptionId = state => {
-  const VaccinePrescriptionState = selectSpecificEntityState(state, 'vaccinePrescription');
-  const { newId } = VaccinePrescriptionState;
-  return newId;
+  const { creating } = VaccinePrescriptionState;
+  const { id } = creating;
+  return id;
 };
 
 export const selectEditingVaccinePrescription = state => {
   const VaccinePrescriptionState = selectSpecificEntityState(state, 'vaccinePrescription');
-  const { editingId, byId } = VaccinePrescriptionState;
-  return byId[editingId];
+  const { creating } = VaccinePrescriptionState;
+  return creating;
 };

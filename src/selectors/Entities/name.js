@@ -1,19 +1,14 @@
 import { selectSpecificEntityState } from './index';
 
-export const selectNewName = state => {
+export const selectEditingNameId = state => {
   const NameState = selectSpecificEntityState(state, 'name');
-  const { newId, byId } = NameState;
-  return byId[newId];
-};
-
-export const selectNewNameId = state => {
-  const NameState = selectSpecificEntityState(state, 'name');
-  const { newId } = NameState;
-  return newId;
+  const { editing } = NameState;
+  const { id } = editing;
+  return id;
 };
 
 export const selectEditingName = state => {
   const NameState = selectSpecificEntityState(state, 'name');
-  const { editingId, byId } = NameState;
-  return byId[editingId];
+  const { editing } = NameState;
+  return editing;
 };
