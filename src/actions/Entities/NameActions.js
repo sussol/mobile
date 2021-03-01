@@ -1,5 +1,5 @@
 import { generateUUID } from 'react-native-database';
-import { selectNewNameId } from '../../selectors/Entities/name';
+import { selectEditingNameId } from '../../selectors/Entities/name';
 
 export const NAME_ACTIONS = {
   CREATE: 'NAME/create',
@@ -39,15 +39,15 @@ const save = name => ({
   payload: { name },
 });
 
-const updateNew = (value, field) => (dispatch, getState) => {
-  const newNameId = selectNewNameId(getState());
+const updateEditing = (value, field) => (dispatch, getState) => {
+  const newNameId = selectEditingNameId(getState());
   dispatch(update(newNameId, field, value));
 };
 
 export const NameActions = {
   create,
   update,
-  updateNew,
+  updateEditing,
   save,
   reset,
 };

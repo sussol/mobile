@@ -1,5 +1,5 @@
 import { generateUUID } from 'react-native-database';
-import { selectNewVaccinePrescriptionId } from '../../selectors/Entities/vaccinePrescription';
+import { selectEditingVaccinePrescriptionId } from '../../selectors/Entities/vaccinePrescription';
 
 export const VACCINE_PRESCRIPTION_ACTIONS = {
   CREATE: 'VACCINE_PRESCRIPTION/create',
@@ -44,15 +44,15 @@ const saveEditing = prescription => ({
   payload: { prescription },
 });
 
-const updateNew = (value, field) => (dispatch, getState) => {
-  const newVaccinePrescriptionId = selectNewVaccinePrescriptionId(getState());
+const updateEditing = (value, field) => (dispatch, getState) => {
+  const newVaccinePrescriptionId = selectEditingVaccinePrescriptionId(getState());
   dispatch(update(newVaccinePrescriptionId, field, value));
 };
 
 export const VaccinePrescriptionActions = {
   create,
   update,
-  updateNew,
+  updateEditing,
   saveNew,
   saveEditing,
   reset,
