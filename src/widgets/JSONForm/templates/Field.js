@@ -1,15 +1,14 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-console */
-/* eslint-disable react/destructuring-assignment */
+/* eslint-disable react/forbid-prop-types */
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import { StyleSheet } from 'react-native';
 import { FINALISED_RED } from '../../../globalStyles/colors';
 import { APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from '../../../globalStyles/fonts';
 import { FormInvalidMessage } from '../../FormInputs/FormInvalidMessage';
 import { Spacer } from '../../Spacer';
 
-export const Field = props => {
-  const { label, fields, required, rawErrors } = props;
+export const Field = ({ label, fields, required, rawErrors, description, children }) => {
   const { TitleField } = fields;
 
   const hasError = rawErrors?.length > 0;
@@ -29,8 +28,8 @@ export const Field = props => {
   return (
     <>
       <TitleField title={label} isRequired={required} />
-      {props.description}
-      {props.children}
+      {description}
+      {children}
       {InvalidMessage}
       <Spacer space={20} vertical />
     </>
@@ -44,3 +43,16 @@ const styles = StyleSheet.create({
     fontSize: APP_GENERAL_FONT_SIZE,
   },
 });
+
+Field.defaultProps = {
+  rawErrors: [],
+};
+
+Field.propTypes = {
+  label: PropTypes.string.isRequired,
+  fields: PropTypes.object.isRequired,
+  required: PropTypes.bool.isRequired,
+  rawErrors: PropTypes.array,
+  description: PropTypes.object.isRequired,
+  children: PropTypes.node.isRequired,
+};
