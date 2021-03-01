@@ -597,6 +597,28 @@ export class Transaction extends Realm.Object {
   get isRemoteOrder() {
     return !this.linkedRequisition;
   }
+
+  toJSON() {
+    return {
+      id: this.id,
+      serialNumber: this.serialNumber,
+      comment: this.comment,
+      entryDate: this.entryDate?.getTime(),
+      type: this.type,
+      status: this.status,
+      confirmDate: this.confirmDate?.getTime(),
+      enteredBy: this.enteredBy?.id,
+      theirRef: this.theirRef,
+      items: this.items,
+      mode: this.mode,
+      subtotal: this.subtotal,
+      outstanding: this.outstanding,
+      user1: this.user1,
+      insuranceDiscountRate: this.insuranceDiscountRate,
+      insuranceDiscountAmount: this.insuranceDiscountAmount,
+      isCancellation: this.isCancellation,
+    };
+  }
 }
 
 Transaction.schema = {
