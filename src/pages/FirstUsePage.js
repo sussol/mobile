@@ -18,15 +18,22 @@ import { DemoUserModal } from '../widgets/modals';
 
 import globalStyles, { SUSSOL_ORANGE, WARM_GREY } from '../globalStyles';
 
+const STATUSES = {
+  UNINITIALISED: 'uninitialised',
+  INITIALISING: 'initialising',
+  INITIALISED: 'initialised',
+  ERROR: 'error',
+};
+
 export class FirstUsePageComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       appVersion: '',
-      status: 'uninitialised', // uninitialised, initialising, initialised, error.
       serverURL: '',
       syncSiteName: '',
       syncSitePassword: '',
+      status: STATUSES.UNINITIALISED,
       isDemoUserModalOpen: false,
     };
     this.setAppVersion();
@@ -40,13 +47,13 @@ export class FirstUsePageComponent extends React.Component {
     const { serverURL, syncSiteName, syncSitePassword } = this.state;
 
     try {
-      this.setState({ status: 'initialising' });
+      this.setState({ status: STATUSES.INITIALISING });
       await synchroniser.initialise(serverURL, syncSiteName, syncSitePassword);
-      this.setState({ status: 'initialised' });
+      this.setState({ status: STATUSES.INITIALISED });
 
       onInitialised();
     } catch (error) {
-      this.setState({ status: 'error' });
+      this.setState({ status: STATUSES.ERROR });
     }
   }
 
@@ -59,7 +66,7 @@ export class FirstUsePageComponent extends React.Component {
     const { status, serverURL, syncSiteName, syncSitePassword } = this.state;
 
     return (
-      (status === 'uninitialised' || status === 'error') &&
+      (status === STATUSES.UNINITIALISED || status === STATUSES.ERROR) &&
       serverURL.length > 0 &&
       syncSiteName.length > 0 &&
       syncSitePassword.length > 0
@@ -72,11 +79,11 @@ export class FirstUsePageComponent extends React.Component {
     const { progressMessage, errorMessage, progress, total } = this.props;
 
     switch (status) {
-      case 'initialising':
+      case STATUSES.INITIALISING:
         return `${progressMessage}${total > 0 ? `\n${progress}/${total}` : ''}`;
-      case 'error':
+      case STATUSES.ERROR:
         return `${errorMessage}\nTap to retry.`;
-      case 'initialised':
+      case STATUSES.INITIALISED:
         return 'Success!';
       default:
         return 'Connect';
@@ -86,19 +93,19 @@ export class FirstUsePageComponent extends React.Component {
   onChangeServerUrl = text =>
     this.setState({
       serverURL: text,
-      status: 'uninitialised',
+      status: STATUSES.UNINITIALISED,
     });
 
   onChangeSiteName = text =>
     this.setState({
       syncSiteName: text,
-      status: 'uninitialised',
+      status: STATUSES.UNINITIALISED,
     });
 
   onChangePassword = text =>
     this.setState({
       syncSitePassword: text,
-      status: 'uninitialised',
+      status: STATUSES.UNINITIALISED,
     });
 
   handleDemoModalOpen = () => this.setState({ isDemoUserModalOpen: true });
@@ -130,7 +137,7 @@ export class FirstUsePageComponent extends React.Component {
               underlineColorAndroid={SUSSOL_ORANGE}
               placeholder="Primary Server URL"
               value={serverURL}
-              editable={status !== 'initialising'}
+              editable={status !== STATUSES.INITIALISING}
               returnKeyType="next"
               selectTextOnFocus
               autoCapitalize="none"
@@ -156,7 +163,7 @@ export class FirstUsePageComponent extends React.Component {
               underlineColorAndroid={SUSSOL_ORANGE}
               placeholder="Sync Site Name"
               value={syncSiteName}
-              editable={status !== 'initialising'}
+              editable={status !== STATUSES.INITIALISING}
               returnKeyType="next"
               selectTextOnFocus
               onChangeText={this.onChangeSiteName}
@@ -181,7 +188,7 @@ export class FirstUsePageComponent extends React.Component {
               underlineColorAndroid={SUSSOL_ORANGE}
               value={syncSitePassword}
               secureTextEntry
-              editable={status !== 'initialising'}
+              editable={status !== STATUSES.INITIALISING}
               returnKeyType="done"
               selectTextOnFocus
               onChangeText={this.onChangePassword}
@@ -211,7 +218,7 @@ export class FirstUsePageComponent extends React.Component {
               text="Request a Demo Store"
               onPress={this.handleDemoModalOpen}
               disabledColor={WARM_GREY}
-              isDisabled={status !== 'uninitialised' && status !== 'error'}
+              isDisabled={status !== STATUSES.UNINITIALISED && status !== STATUSES.ERROR}
             />
           </View>
         </View>
