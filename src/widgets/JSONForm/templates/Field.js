@@ -46,12 +46,13 @@ const styles = StyleSheet.create({
 
 Field.defaultProps = {
   rawErrors: [],
+  required: false,
 };
 
 Field.propTypes = {
   label: PropTypes.string.isRequired,
   fields: PropTypes.object.isRequired,
-  required: PropTypes.bool.isRequired,
+  required: PropTypes.bool,
   rawErrors: PropTypes.array,
   description: PropTypes.object.isRequired,
   children: PropTypes.node.isRequired,
