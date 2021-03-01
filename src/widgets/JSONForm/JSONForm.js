@@ -12,6 +12,7 @@ import { JSONFormWidget } from './widgets/index';
 import { JSONFormErrorList } from './JSONFormErrorList';
 import { PageButton } from '../PageButton';
 import { JSONFormContext } from './JSONFormContext';
+import { lotsOfStringInputsSchema } from './testJSON';
 
 const defaultTheme = {
   // Widgets are the lowest level input components. TextInput, Checkbox
@@ -67,7 +68,7 @@ const defaultTheme = {
 
   // ErrorList is a component which is rendered at the top of the form when validation errors
   // occur
-  JSONFormErrorList,
+  ErrorList: JSONFormErrorList,
 
   formContext: JSONFormContext,
 
@@ -77,109 +78,37 @@ const defaultTheme = {
   tagName: JSONFormContainer,
 };
 
-const exampleSchema = {
-  title: 'Object',
-  description: 'Description',
-  type: 'object',
-  properties: {
-    age4: {
-      type: 'integer',
-      title: 'Age',
-    },
-    multipleChoicesList: {
-      type: 'array',
-      title: 'A multiple choices list',
-      items: {
-        type: 'string',
-        enum: ['foo', 'bar', 'fuzz', 'qux'],
-      },
-      uniqueItems: true,
-    },
-    stringEnum: {
-      type: 'string',
-      description: 'string enum',
-      title: 'string enum title',
-      enum: ['a', 'b', 'c'],
-    },
-    numberEnum: {
-      type: 'number',
-      description: 'number enum',
-      title: 'Number enum',
-      enum: [1, 2, 3],
-    },
-    Toggle: {
-      title: 'Toggle',
-      description: 'toggle description',
-      type: 'boolean',
-      oneOf: [
-        {
-          title: 'Enable',
-          const: true,
-        },
-        {
-          title: 'Disable',
-          const: false,
-        },
-      ],
-    },
-    firstName: {
-      type: 'string',
-      title: 'First name',
-      default: 'Chuck',
-    },
-    age: {
-      type: 'integer',
-      title: 'Age',
-    },
-    date: {
-      type: 'string',
-      format: 'date',
-    },
-    age2: {
-      type: 'integer',
-      title: 'Age',
-    },
-    date2: {
-      type: 'string',
-      format: 'date',
-    },
-    age3: {
-      type: 'integer',
-      title: 'Age',
-    },
-    date3: {
-      type: 'string',
-      format: 'date',
-    },
-    items: {
-      type: 'array',
-      items: {
-        type: 'object',
-        anyOf: [
-          {
-            properties: {
-              foo: {
-                type: 'string',
-              },
-            },
-          },
-          {
-            properties: {
-              bar: {
-                title: 'bar title',
-                description: 'bar desc',
-                type: 'string',
-              },
-            },
-          },
-        ],
-      },
-    },
-  },
-};
+class FocusController {
+  registered = [];
+
+  registeredScrollView = null;
+
+  registerScrolllView = ref => {
+    this.registeredScrollView = ref;
+  };
+
+  register = ref => {
+    this.registered.push(ref);
+  };
+
+  next = ref => {
+    const currIdx = this.registered.findIndex(registeredRef => registeredRef === ref);
+
+    const nextIdx = (currIdx + 1) % this.registered.length;
+    const nextRef = this.registered[nextIdx];
+
+    nextRef?.current?.focus?.();
+    this.registeredScrollView?.current?.scrollTo?.({ x: 0, y: 0, animated: true });
+
+    this.currentIdx = nextIdx;
+  };
+}
 
 export const JSONForm = React.forwardRef(
-  ({ theme = defaultTheme, children, options = {} }, ref) => {
+  (
+    { theme = defaultTheme, children, options = { focusController: new FocusController() } },
+    ref
+  ) => {
     const formRef = useRef(null);
 
     const Form = useMemo(() => withTheme(theme), []);
@@ -194,7 +123,7 @@ export const JSONForm = React.forwardRef(
 
     return (
       <JSONFormContext.Provider value={options}>
-        <ScrollView>
+        <ScrollView keyboardDismissMode="none" keyboardShouldPersistTaps="always">
           <Form
             onError={() => {
               // placeholder to prevent console.errors when validation fails.
@@ -202,7 +131,7 @@ export const JSONForm = React.forwardRef(
             // eslint-disable-next-line no-console
             onSubmit={form => console.log('onSubmit:', form)}
             ref={formRef}
-            schema={exampleSchema}
+            schema={lotsOfStringInputsSchema}
           >
             {children ?? (
               <PageButton
