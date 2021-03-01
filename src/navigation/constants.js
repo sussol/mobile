@@ -57,8 +57,6 @@ export const ROUTES = {
   SENSOR_NEW: 'sensorNew',
   FRIDGE_DETAIL: 'fridgeDetail',
 
-  NAME_EDIT: 'nameEdit',
-  NAME_NOTE_EDIT: 'nameNoteEdit',
   VACCINE_PRESCRIPTION: 'vaccinePrescription',
 };
 
