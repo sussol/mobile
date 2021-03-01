@@ -158,3 +158,23 @@ export const lotsOfStringInputsSchema = {
     },
   },
 };
+
+export const booleanSchema = {
+  title: 'Boolean',
+  properties: {
+    boolean: { type: 'boolean', title: 'Test boolean', default: true },
+    enum1: {
+      type: 'boolean',
+      title: 'Test Enum - enumNames is not in JSON spec but works.. but doesnt validate',
+      enum: [1, 'some other value'],
+      enumNames: ['AAA', 'BBB'],
+    },
+    enum2: {
+      type: 'boolean',
+      title: 'Testing with enumNames - still not part of the JSON spec, but does validate',
+      enum: [true, false],
+      enumNames: ['Josh', 'Mark'],
+      default: false,
+    },
+  },
+};
