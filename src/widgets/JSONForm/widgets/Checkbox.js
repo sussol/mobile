@@ -19,23 +19,37 @@ export const Checkbox = ({ options: { enumOptions }, value, onChange, disabled, 
       toggleOffStyle={styles.toggleOffStyle}
       toggleOnDisabledStyle={styles.toggleOnDisabledStyle}
       toggles={toggles}
+      style={styles.container}
     />
   );
 };
 
 const styles = StyleSheet.create({
+  container: { borderWidth: 0, width: 150 },
   toggleOnStyle: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: SUSSOL_ORANGE,
+    borderRadius: 20,
+    margin: 5,
   },
-  toggleOffStyle: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  toggleOffStyle: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 20,
+    borderColor: SUSSOL_ORANGE,
+    borderWidth: 1,
+    margin: 5,
+  },
   toggleOnDisabledStyle: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: WARMER_GREY,
+    borderRadius: 20,
+    margin: 5,
   },
 });
 

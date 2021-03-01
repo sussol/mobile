@@ -123,7 +123,11 @@ export const JSONForm = React.forwardRef(
 
     return (
       <JSONFormContext.Provider value={options}>
-        <ScrollView keyboardDismissMode="none" keyboardShouldPersistTaps="always">
+        <ScrollView
+          keyboardDismissMode="none"
+          keyboardShouldPersistTaps="always"
+          style={{ padding: 20 }}
+        >
           <Form
             onError={() => {
               // placeholder to prevent console.errors when validation fails.
