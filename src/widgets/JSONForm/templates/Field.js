@@ -17,7 +17,12 @@ export const Field = props => {
   let InvalidMessage = null;
   if (hasError) {
     InvalidMessage = rawErrors?.map(error => (
-      <FormInvalidMessage isValid={!hasError} message={error} textStyle={styles.invalidStyle} />
+      <FormInvalidMessage
+        key={error}
+        isValid={!hasError}
+        message={error}
+        textStyle={styles.invalidStyle}
+      />
     ));
   }
 
