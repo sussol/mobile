@@ -178,3 +178,28 @@ export const booleanSchema = {
     },
   },
 };
+
+export const selectSchema = {
+  title: 'Select',
+  type: 'object',
+  properties: {
+    josh: {
+      type: 'string',
+      title: 'String enum',
+      enum: Array.from({ length: 30 }).map((_, i) => String(i)),
+      default: '1',
+    },
+    test2: {
+      type: 'number',
+      title: 'Number enum',
+      enum: [1, 2, 3],
+    },
+  },
+  required: ['test2'],
+};
+
+export const selectUiSchema = {
+  test2: {
+    'ui:placeholder': 'Select an option',
+  },
+};
