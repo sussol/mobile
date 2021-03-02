@@ -180,6 +180,9 @@ Name.schema = {
     female: { type: 'bool', default: false },
     thisStoresPatient: { type: 'bool', default: false },
     nameTagJoins: { type: 'linkingObjects', objectType: 'NameTagJoin', property: 'name' },
+    nationality: { type: 'Nationality', optional: true },
+    occupation: { type: 'Occupation', optional: true },
+    ethnicity: { type: 'Ethnicity', optional: true },
   },
 };
 

@@ -561,6 +561,9 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         firstName: record.first,
         lastName: record.last,
         dateOfBirth: parseDate(record.date_of_birth),
+        nationality: database.getOrCreate('Nationality', record.nationality_ID),
+        occupation: database.getOrCreate('Occupation', record.occupation_ID),
+        ethnicity: database.getOrCreate('Ethnicity', record.ethnicity_ID),
       };
 
       if (isPatient) internalRecord.isVisible = true;
@@ -1077,6 +1080,27 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         isActive: parseBoolean(record.is_active),
         logDelay: parseDate(record.log_delay_date, record.log_delay_time) ?? new Date(0),
         programmedDate: parseDate(record.programmed_date, record.programmed_time) ?? new Date(),
+      });
+      break;
+    }
+    case 'Nationality': {
+      database.update('Nationality', {
+        id: record.ID,
+        description: record.description,
+      });
+      break;
+    }
+    case 'Occupation': {
+      database.update('Occupation', {
+        id: record.ID,
+        name: record.name,
+      });
+      break;
+    }
+    case 'Ethnicity': {
+      database.update('Ethnicity', {
+        id: record.ID,
+        name: record.name,
       });
       break;
     }
