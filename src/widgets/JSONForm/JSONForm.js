@@ -12,7 +12,7 @@ import { JSONFormWidget } from './widgets/index';
 import { JSONFormErrorList } from './JSONFormErrorList';
 import { PageButton } from '../PageButton';
 import { JSONFormContext } from './JSONFormContext';
-import { selectSchema, selectUiSchema } from './testJSON';
+import { dateSchema, dateUiSchema } from './testJSON';
 
 const defaultTheme = {
   // Widgets are the lowest level input components. TextInput, Checkbox
@@ -34,7 +34,7 @@ const defaultTheme = {
     RadioWidget: () => null,
     SelectWidget: JSONFormWidget.Select,
     RangeWidget: () => null,
-    DateWidget: JSONFormWidget.Date,
+    DateWidget: JSONFormWidget.DatePicker,
   },
 
   // Fields are like containers for a row in the form.
@@ -121,14 +121,14 @@ export const JSONForm = React.forwardRef(({ theme = defaultTheme, children, opti
     <JSONFormContext.Provider value={options}>
       <ScrollView keyboardDismissMode="none" keyboardShouldPersistTaps="always">
         <Form
-          uiSchema={selectUiSchema}
+          uiSchema={dateUiSchema}
           onError={() => {
             // placeholder to prevent console.errors when validation fails.
           }}
           // eslint-disable-next-line no-console
           onSubmit={form => console.log('onSubmit:', form)}
           ref={formRef}
-          schema={selectSchema}
+          schema={dateSchema}
         >
           {children ?? (
             <PageButton
