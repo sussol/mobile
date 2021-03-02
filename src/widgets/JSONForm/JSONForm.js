@@ -12,7 +12,7 @@ import { JSONFormWidget } from './widgets/index';
 import { JSONFormErrorList } from './JSONFormErrorList';
 import { PageButton } from '../PageButton';
 import { JSONFormContext } from './JSONFormContext';
-import { lotsOfStringInputsSchema } from './testJSON';
+import { booleanSchema } from './testJSON';
 
 const defaultTheme = {
   // Widgets are the lowest level input components. TextInput, Checkbox
@@ -119,7 +119,11 @@ export const JSONForm = React.forwardRef(({ theme = defaultTheme, children, opti
 
   return (
     <JSONFormContext.Provider value={options}>
-      <ScrollView keyboardDismissMode="none" keyboardShouldPersistTaps="always">
+      <ScrollView
+        keyboardDismissMode="none"
+        keyboardShouldPersistTaps="always"
+        style={{ padding: 20 }}
+      >
         <Form
           onError={() => {
             // placeholder to prevent console.errors when validation fails.
@@ -127,7 +131,7 @@ export const JSONForm = React.forwardRef(({ theme = defaultTheme, children, opti
           // eslint-disable-next-line no-console
           onSubmit={form => console.log('onSubmit:', form)}
           ref={formRef}
-          schema={lotsOfStringInputsSchema}
+          schema={booleanSchema}
         >
           {children ?? (
             <PageButton
