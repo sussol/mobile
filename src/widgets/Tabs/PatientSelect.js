@@ -57,7 +57,6 @@ const PatientSelectComponent = ({
   const columns = React.useMemo(() => getColumns(MODALS.PATIENT_LOOKUP), []);
   const { pageTopViewContainer } = globalStyles;
 
-  // withCallback () => selectPatient(item)
   const renderRow = React.useCallback(
     listItem => {
       const { item, index } = listItem;
