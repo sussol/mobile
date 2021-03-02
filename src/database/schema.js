@@ -64,7 +64,7 @@ import {
 } from './DataTypes';
 
 Nationality.schema = {
-  name: '',
+  name: 'Nationality',
   primaryKey: 'id',
   properties: {
     id: 'string',
@@ -73,7 +73,7 @@ Nationality.schema = {
 };
 
 Occupation.schema = {
-  name: '',
+  name: 'Occupation',
   primaryKey: 'id',
   properties: {
     id: 'string',
@@ -82,7 +82,7 @@ Occupation.schema = {
 };
 
 Ethnicity.schema = {
-  name: '',
+  name: 'Ethnicity',
   primaryKey: 'id',
   properties: {
     id: 'string',
