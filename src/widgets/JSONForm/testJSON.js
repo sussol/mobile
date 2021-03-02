@@ -203,3 +203,27 @@ export const selectUiSchema = {
     'ui:placeholder': 'Select an option',
   },
 };
+
+export const dateSchema = {
+  title: 'Select',
+  type: 'object',
+  properties: {
+    josh: {
+      type: 'string',
+      title: 'date enum',
+      format: 'date',
+      default: 'Default',
+    },
+    josh2: {
+      type: 'string',
+      title: 'some string',
+      default: 'Default',
+    },
+  },
+};
+
+export const dateUiSchema = {
+  josh: {
+    'ui:placeholder': 'placeholder',
+  },
+};
