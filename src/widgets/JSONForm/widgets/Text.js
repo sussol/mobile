@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { TextInput, StyleSheet } from 'react-native';
 import { LIGHT_GREY, SUSSOL_ORANGE } from '../../../globalStyles/colors';
@@ -6,17 +6,13 @@ import { APP_FONT_FAMILY } from '../../../globalStyles/fonts';
 import { useJSONFormOptions } from '../JSONFormContext';
 
 export const Text = ({ autofocus, disabled, placeholder, value, onChange }) => {
-  const textInputRef = useRef();
-
   const { focusController } = useJSONFormOptions();
 
-  useEffect(() => {
-    focusController.register(textInputRef);
-  }, []);
+  const ref = focusController.useRegisteredRef();
 
   return (
     <TextInput
-      ref={textInputRef}
+      ref={ref}
       style={styles.textInputStyle}
       value={value}
       placeholderTextColor={LIGHT_GREY}
@@ -27,7 +23,7 @@ export const Text = ({ autofocus, disabled, placeholder, value, onChange }) => {
       autoCapitalize="none"
       autoCorrect={false}
       onChangeText={onChange}
-      onSubmitEditing={() => focusController.next(textInputRef)}
+      onSubmitEditing={() => focusController.next(ref)}
       editable={!disabled}
       blurOnSubmit={false}
       autoFocus={autofocus}

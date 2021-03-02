@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { TextInput } from 'react-native';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -11,11 +11,7 @@ import { LIGHT_GREY, SUSSOL_ORANGE } from '../../../globalStyles/colors';
 
 export const DatePicker = ({ disabled, value, onChange, placeholder, readonly }) => {
   const { focusController } = useJSONFormOptions();
-  const ref = useRef();
-
-  useEffect(() => {
-    focusController.register(ref);
-  }, []);
+  const ref = focusController.useRegisteredRef();
 
   return (
     <FlexRow>

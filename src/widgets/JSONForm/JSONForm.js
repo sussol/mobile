@@ -1,6 +1,6 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable max-len */
-import React, { useImperativeHandle, useMemo, useRef } from 'react';
+import React, { useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { ScrollView } from 'react-native';
 import { withTheme } from '@rjsf/core';
@@ -85,6 +85,22 @@ class FocusController {
 
   registerScrolllView = ref => {
     this.registeredScrollView = ref;
+  };
+
+  useRegisteredRef = () => {
+    const ref = useRef();
+    this.useRegister(ref);
+    return ref;
+  };
+
+  useRegister = ref => {
+    useEffect(() => {
+      this.register(ref);
+      return () => {
+        // Remove this ref from registered refs when unmounted.
+        this.registered = this.registered.filter(registeredRef => registeredRef !== ref);
+      };
+    }, []);
   };
 
   register = ref => {
