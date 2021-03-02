@@ -18,7 +18,7 @@ import { VaccinePrescriptionInfo } from '../VaccinePrescriptionInfo';
 import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 
 import { selectSpecificEntityState } from '../../selectors/Entities';
-import { selectEditingName, selectSortedPatients } from '../../selectors/Entities/name';
+import { selectSortedPatients } from '../../selectors/Entities/name';
 import { NameActions } from '../../actions/Entities/NameActions';
 import { WizardActions } from '../../actions/WizardActions';
 import { VaccinePrescriptionActions } from '../../actions/Entities/VaccinePrescriptionActions';
@@ -32,22 +32,21 @@ import globalStyles, { DARK_GREY } from '../../globalStyles';
 /**
  * Layout component used for a tab within the vaccine prescription wizard.
  *
- * @prop {Func}   choosePatient    Callback for selecting a patient.
- * @prop {Func}   patients         Current set of patient data.
- * @prop {Func}   onFilterData     Callback for filtering patients.
- * @prop {Func}   onSortData       Callback for sorting patients by column.
- * @prop {Func}   searchTerm       The current filtering search term.
- * @prop {Func}   createPatient    Callback for creating a patient.
- * @prop {Func}   isComplete       Indicator for this prescription being complete.
- * @prop {String} sortKey          Current key the list of patients is sorted by.
- * @prop {Bool}   isAscending      Indicator if the list of patient is sorted ascending.
+ * @prop {Func}   createPatient         Callback for creating a patient.
+ * @prop {object} formConfig            Configuration of the search form
+ * @prop {Bool}   isAscending           Indicator if the list of patient is sorted ascending.
+ * @prop {Func}   onCancelPrescription  Cancels the prescription and returns to the vaccine page
+ * @prop {Func}   onFilterData          Callback for filtering patients.
+ * @prop {Func}   onSortData            Callback for sorting patients by column.
+ * @prop {Func}   patients              Current set of patient data.
+ * @prop {Func}   selectPatient         Callback for selecting a patient.
+ * @prop {String} sortKey               Current key the list of patients is sorted by.
+ *
  */
 const PatientSelectComponent = ({
   createPatient,
-  currentPatient,
   formConfig,
   isAscending,
-  isComplete,
   onCancelPrescription,
   onFilterData,
   onSortData,
@@ -58,6 +57,7 @@ const PatientSelectComponent = ({
   const columns = React.useMemo(() => getColumns(MODALS.PATIENT_LOOKUP), []);
   const { pageTopViewContainer } = globalStyles;
 
+  // withCallback () => selectPatient(item)
   const renderRow = React.useCallback(
     listItem => {
       const { item, index } = listItem;
@@ -66,10 +66,10 @@ const PatientSelectComponent = ({
         <DataTableRow
           rowData={patients[index]}
           rowKey={rowKey}
-          getCallback={() => (isComplete ? null : () => selectPatient(item))}
+          getCallback={() => selectPatient(item)}
           columns={columns}
           rowIndex={index}
-          onPress={isComplete ? null : selectPatient(item)}
+          onPress={() => selectPatient(item)}
         />
       );
     },
@@ -92,11 +92,6 @@ const PatientSelectComponent = ({
     <FlexView style={pageTopViewContainer}>
       <FlexRow style={{ marginBottom: 7 }} justifyContent="flex-end">
         <VaccinePrescriptionInfo />
-        <PageButton
-          text={`${dispensingStrings.new} ${dispensingStrings.patient}`}
-          onPress={createPatient}
-          style={{ marginLeft: 5 }}
-        />
       </FlexRow>
 
       <View style={localStyles.container}>
@@ -128,10 +123,9 @@ const PatientSelectComponent = ({
           style={{ marginRight: 7 }}
         />
         <PageButton
-          text={buttonStrings.next}
-          debounceTimer={1000}
-          onPress={() => selectPatient()}
-          isDisabled={!currentPatient}
+          text={`${dispensingStrings.new} ${dispensingStrings.patient}`}
+          onPress={createPatient}
+          style={{ marginLeft: 5 }}
         />
       </FlexRow>
     </FlexView>
@@ -161,29 +155,19 @@ const mapDispatchToProps = dispatch => {
 };
 
 const mapStateToProps = state => {
-  const { wizard } = state;
   const patientState = selectSpecificEntityState(state, 'name');
   const { searchTerm, sortKey, isAscending } = patientState;
-  const { isComplete } = wizard;
 
-  const currentPatient = selectEditingName(state);
   const formConfig = selectPatientSearchFormConfig();
   const patients = selectSortedPatients(state);
 
   return {
     formConfig,
     searchTerm,
-    isComplete,
     sortKey,
     isAscending,
-    currentPatient,
     patients,
   };
-};
-
-PatientSelectComponent.defaultProps = {
-  isComplete: false,
-  currentPatient: null,
 };
 
 PatientSelectComponent.propTypes = {
@@ -192,12 +176,10 @@ PatientSelectComponent.propTypes = {
   patients: PropTypes.object.isRequired,
   onFilterData: PropTypes.func.isRequired,
   createPatient: PropTypes.func.isRequired,
-  isComplete: PropTypes.bool,
   onSortData: PropTypes.func.isRequired,
   sortKey: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   onCancelPrescription: PropTypes.func.isRequired,
-  currentPatient: PropTypes.object,
 };
 
 export const PatientSelect = connect(mapStateToProps, mapDispatchToProps)(PatientSelectComponent);
