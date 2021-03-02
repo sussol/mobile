@@ -135,7 +135,11 @@ export const JSONForm = React.forwardRef(({ theme = defaultTheme, children, opti
 
   return (
     <JSONFormContext.Provider value={options}>
-      <ScrollView keyboardDismissMode="none" keyboardShouldPersistTaps="always">
+      <ScrollView
+        keyboardDismissMode="none"
+        keyboardShouldPersistTaps="always"
+        style={{ padding: 20 }}
+      >
         <Form
           uiSchema={dateUiSchema}
           onError={() => {
