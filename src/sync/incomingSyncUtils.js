@@ -1104,6 +1104,26 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       });
       break;
     }
+    case 'NameNote': {
+      database.update('NameNote', {
+        id: record.ID,
+        patientEvent: database.getOrCreate('PatientEvent', record.patient_event_ID),
+        entryDate: parseDate(record.entry_date),
+        data: record._data,
+        name: database.getOrCreate('Name', record.name_ID),
+      });
+      break;
+    }
+    case 'PatientEvent': {
+      database.update('PatientEvent', {
+        id: record.ID,
+        code: record.code,
+        description: record.description,
+        eventType: record.event_type,
+        unit: record.unit,
+      });
+      break;
+    }
     default:
       break; // Silently ignore record types which are not used by mobile.
   }
