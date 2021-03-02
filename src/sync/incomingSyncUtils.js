@@ -286,6 +286,18 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: ['ID', 'name_ID', 'name_tag_ID'],
       canBeBlank: [],
     },
+    Occupation: {
+      cannotBeBlank: [],
+      canBeBlank: ['name'],
+    },
+    Ethnicity: {
+      cannotBeBlank: [],
+      canBeBlank: ['name'],
+    },
+    Nationality: {
+      cannotBeBlank: [],
+      canBeBlank: ['description'],
+    },
   };
 
   if (!requiredFields[recordType]) return false; // Unsupported record type
