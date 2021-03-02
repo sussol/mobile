@@ -6,9 +6,11 @@ export const NAME_ACTIONS = {
   UPDATE: 'NAME/update',
   SAVE: 'NAME/save',
   RESET: 'NAME/reset',
+  FILTER: 'NAME/filter',
+  SORT: 'NAME/sort',
 };
 
-const createDefaultName = () => ({
+const createDefaultName = (type = 'patient') => ({
   id: generateUUID(),
   code: '',
   isCustomer: false,
@@ -17,12 +19,12 @@ const createDefaultName = () => ({
   isSupplier: false,
   isVisible: true,
   name: '',
-  type: 'patient',
+  type,
 });
 
-const create = () => ({
+const create = type => ({
   type: NAME_ACTIONS.CREATE,
-  payload: { name: createDefaultName() },
+  payload: { name: createDefaultName(type) },
 });
 
 const reset = () => ({
@@ -39,6 +41,10 @@ const save = name => ({
   payload: { name },
 });
 
+const filter = searchParameters => ({ type: NAME_ACTIONS.FILTER, payload: { searchParameters } });
+
+const sort = sortKey => ({ type: NAME_ACTIONS.SORT, payload: { sortKey } });
+
 const updateEditing = (value, field) => (dispatch, getState) => {
   const newNameId = selectEditingNameId(getState());
   dispatch(update(newNameId, field, value));
@@ -46,8 +52,10 @@ const updateEditing = (value, field) => (dispatch, getState) => {
 
 export const NameActions = {
   create,
+  filter,
+  reset,
+  save,
+  sort,
   update,
   updateEditing,
-  save,
-  reset,
 };

@@ -1,4 +1,6 @@
 import { generateUUID } from 'react-native-database';
+import { batch } from 'react-redux';
+import { NavigationActions } from '@react-navigation/core';
 import { selectEditingVaccinePrescriptionId } from '../../selectors/Entities/vaccinePrescription';
 
 export const VACCINE_PRESCRIPTION_ACTIONS = {
@@ -49,11 +51,19 @@ const updateEditing = (value, field) => (dispatch, getState) => {
   dispatch(update(newVaccinePrescriptionId, field, value));
 };
 
+const cancel = () => dispatch => {
+  batch(() => {
+    dispatch(NavigationActions.back());
+    dispatch(reset());
+  });
+};
+
 export const VaccinePrescriptionActions = {
+  cancel,
   create,
+  reset,
+  saveEditing,
+  saveNew,
   update,
   updateEditing,
-  saveNew,
-  saveEditing,
-  reset,
 };

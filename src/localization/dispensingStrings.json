@@ -60,7 +60,8 @@
     "lookup_prescriber": "Lookup prescriber",
     "unable_to_create_withdrawl": "Unable to create a withdrawl for more than the current balance.",
     "inpatient": "Inpatient",
-    "outpatient": "Outpatient"
+    "outpatient": "Outpatient",
+    "select_the_patient": "Select the patient"
   },
   "fr": {
     "available_credit": "Crédit disponible",

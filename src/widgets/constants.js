@@ -25,4 +25,7 @@ export const FORMS = {
 export const TABS = {
   ITEM: 'itemSelect',
   PRESCRIBER: 'prescriberSelect',
+  PATIENT: 'patientSelect',
+  PATIENT_EDIT: 'patientEdit',
+  BATCH: 'batchSelect',
 };
