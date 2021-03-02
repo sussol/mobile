@@ -1,6 +1,6 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable max-len */
-import React, { useImperativeHandle, useMemo, useRef } from 'react';
+import React, { useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { ScrollView } from 'react-native';
 import { withTheme } from '@rjsf/core';
@@ -12,7 +12,7 @@ import { JSONFormWidget } from './widgets/index';
 import { JSONFormErrorList } from './JSONFormErrorList';
 import { PageButton } from '../PageButton';
 import { JSONFormContext } from './JSONFormContext';
-import { selectSchema, selectUiSchema } from './testJSON';
+import { dateSchema, dateUiSchema } from './testJSON';
 
 const defaultTheme = {
   // Widgets are the lowest level input components. TextInput, Checkbox
@@ -34,7 +34,7 @@ const defaultTheme = {
     RadioWidget: () => null,
     SelectWidget: JSONFormWidget.Select,
     RangeWidget: () => null,
-    DateWidget: JSONFormWidget.Date,
+    DateWidget: JSONFormWidget.DatePicker,
   },
 
   // Fields are like containers for a row in the form.
@@ -87,6 +87,22 @@ class FocusController {
     this.registeredScrollView = ref;
   };
 
+  useRegisteredRef = () => {
+    const ref = useRef();
+    this.useRegister(ref);
+    return ref;
+  };
+
+  useRegister = ref => {
+    useEffect(() => {
+      this.register(ref);
+      return () => {
+        // Remove this ref from registered refs when unmounted.
+        this.registered = this.registered.filter(registeredRef => registeredRef !== ref);
+      };
+    }, []);
+  };
+
   register = ref => {
     this.registered.push(ref);
   };
@@ -125,14 +141,14 @@ export const JSONForm = React.forwardRef(({ theme = defaultTheme, children, opti
         style={{ padding: 20 }}
       >
         <Form
-          uiSchema={selectUiSchema}
+          uiSchema={dateUiSchema}
           onError={() => {
             // placeholder to prevent console.errors when validation fails.
           }}
           // eslint-disable-next-line no-console
           onSubmit={form => console.log('onSubmit:', form)}
           ref={formRef}
-          schema={selectSchema}
+          schema={dateSchema}
         >
           {children ?? (
             <PageButton
