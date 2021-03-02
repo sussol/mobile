@@ -1,23 +1,59 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-console */
-/* eslint-disable react/destructuring-assignment */
+/* eslint-disable react/forbid-prop-types */
 import React from 'react';
-import { Text, View } from 'react-native';
+import PropTypes from 'prop-types';
 
-export const Field = props => {
-  console.log('-------------------------------------------');
-  console.log('FieldTemplate - props', props);
-  console.log('-------------------------------------------');
+import { StyleSheet } from 'react-native';
+import { FINALISED_RED } from '../../../globalStyles/colors';
+import { APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from '../../../globalStyles/fonts';
+import { FormInvalidMessage } from '../../FormInputs/FormInvalidMessage';
+import { Spacer } from '../../Spacer';
 
-  const { title, fields } = props;
+export const Field = ({ label, fields, required, rawErrors, description, children }) => {
   const { TitleField } = fields;
 
+  const hasError = rawErrors?.length > 0;
+
+  let InvalidMessage = null;
+  if (hasError) {
+    InvalidMessage = rawErrors?.map(error => (
+      <FormInvalidMessage
+        key={error}
+        isValid={!hasError}
+        message={error}
+        textStyle={styles.invalidStyle}
+      />
+    ));
+  }
+
   return (
-    <View style={{ borderWidth: 1 }}>
-      <Text>FieldTemplate</Text>
-      <TitleField title={title} />
-      {props.description}
-      {props.children}
-    </View>
+    <>
+      <TitleField title={label} isRequired={required} />
+      {description}
+      {children}
+      {InvalidMessage}
+      <Spacer space={20} vertical />
+    </>
   );
+};
+
+const styles = StyleSheet.create({
+  invalidStyle: {
+    color: FINALISED_RED,
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: APP_GENERAL_FONT_SIZE,
+  },
+});
+
+Field.defaultProps = {
+  rawErrors: [],
+  required: false,
+};
+
+Field.propTypes = {
+  label: PropTypes.string.isRequired,
+  fields: PropTypes.object.isRequired,
+  required: PropTypes.bool,
+  rawErrors: PropTypes.array,
+  description: PropTypes.object.isRequired,
+  children: PropTypes.node.isRequired,
 };

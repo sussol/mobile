@@ -1,7 +1,7 @@
+/* eslint-disable react/forbid-prop-types */
 /* eslint-disable max-len */
-/* eslint-disable react/destructuring-assignment */
-/* eslint-disable react/prop-types */
 import React, { useImperativeHandle, useMemo, useRef } from 'react';
+import PropTypes from 'prop-types';
 import { ScrollView } from 'react-native';
 import { withTheme } from '@rjsf/core';
 
@@ -12,6 +12,7 @@ import { JSONFormWidget } from './widgets/index';
 import { JSONFormErrorList } from './JSONFormErrorList';
 import { PageButton } from '../PageButton';
 import { JSONFormContext } from './JSONFormContext';
+import { lotsOfStringInputsSchema } from './testJSON';
 
 const defaultTheme = {
   // Widgets are the lowest level input components. TextInput, Checkbox
@@ -67,7 +68,7 @@ const defaultTheme = {
 
   // ErrorList is a component which is rendered at the top of the form when validation errors
   // occur
-  JSONFormErrorList,
+  ErrorList: JSONFormErrorList,
 
   formContext: JSONFormContext,
 
@@ -77,143 +78,104 @@ const defaultTheme = {
   tagName: JSONFormContainer,
 };
 
-const exampleSchema = {
-  title: 'Object',
-  description: 'Description',
-  type: 'object',
-  properties: {
-    age4: {
-      type: 'integer',
-      title: 'Age',
+class FocusController {
+  registered = [];
+
+  registeredScrollView = null;
+
+  registerScrolllView = ref => {
+    this.registeredScrollView = ref;
+  };
+
+  register = ref => {
+    this.registered.push(ref);
+  };
+
+  next = ref => {
+    const currIdx = this.registered.findIndex(registeredRef => registeredRef === ref);
+
+    const nextIdx = (currIdx + 1) % this.registered.length;
+    const nextRef = this.registered[nextIdx];
+
+    nextRef?.current?.focus?.();
+    this.registeredScrollView?.current?.scrollTo?.({ x: 0, y: 0, animated: true });
+
+    this.currentIdx = nextIdx;
+  };
+}
+
+export const JSONForm = React.forwardRef(({ theme = defaultTheme, children, options }, ref) => {
+  const formRef = useRef(null);
+
+  const Form = useMemo(() => withTheme(theme), []);
+
+  // Attach to the ref passed a method `submit` which will allow a caller
+  // to programmatically call submit
+  useImperativeHandle(ref, () => ({
+    submit: e => {
+      formRef.current?.onSubmit(e);
     },
-    multipleChoicesList: {
-      type: 'array',
-      title: 'A multiple choices list',
-      items: {
-        type: 'string',
-        enum: ['foo', 'bar', 'fuzz', 'qux'],
-      },
-      uniqueItems: true,
-    },
-    stringEnum: {
-      type: 'string',
-      description: 'string enum',
-      title: 'string enum title',
-      enum: ['a', 'b', 'c'],
-    },
-    numberEnum: {
-      type: 'number',
-      description: 'number enum',
-      title: 'Number enum',
-      enum: [1, 2, 3],
-    },
-    Toggle: {
-      title: 'Toggle',
-      description: 'toggle description',
-      type: 'boolean',
-      oneOf: [
-        {
-          title: 'Enable',
-          const: true,
-        },
-        {
-          title: 'Disable',
-          const: false,
-        },
-      ],
-    },
-    firstName: {
-      type: 'string',
-      title: 'First name',
-      default: 'Chuck',
-    },
-    age: {
-      type: 'integer',
-      title: 'Age',
-    },
-    date: {
-      type: 'string',
-      format: 'date',
-    },
-    age2: {
-      type: 'integer',
-      title: 'Age',
-    },
-    date2: {
-      type: 'string',
-      format: 'date',
-    },
-    age3: {
-      type: 'integer',
-      title: 'Age',
-    },
-    date3: {
-      type: 'string',
-      format: 'date',
-    },
-    items: {
-      type: 'array',
-      items: {
-        type: 'object',
-        anyOf: [
-          {
-            properties: {
-              foo: {
-                type: 'string',
-              },
-            },
-          },
-          {
-            properties: {
-              bar: {
-                title: 'bar title',
-                description: 'bar desc',
-                type: 'string',
-              },
-            },
-          },
-        ],
-      },
-    },
-  },
+  }));
+
+  return (
+    <JSONFormContext.Provider value={options}>
+      <ScrollView keyboardDismissMode="none" keyboardShouldPersistTaps="always">
+        <Form
+          onError={() => {
+            // placeholder to prevent console.errors when validation fails.
+          }}
+          // eslint-disable-next-line no-console
+          onSubmit={form => console.log('onSubmit:', form)}
+          ref={formRef}
+          schema={lotsOfStringInputsSchema}
+        >
+          {children ?? (
+            <PageButton
+              onPress={e => {
+                formRef.current?.onSubmit(e);
+              }}
+            />
+          )}
+        </Form>
+      </ScrollView>
+    </JSONFormContext.Provider>
+  );
+});
+
+JSONForm.defaultProps = {
+  theme: defaultTheme,
+  children: null,
+  options: { focusController: new FocusController() },
 };
 
-export const JSONForm = React.forwardRef(
-  ({ theme = defaultTheme, children, options = {} }, ref) => {
-    const formRef = useRef(null);
-
-    const Form = useMemo(() => withTheme(theme), []);
-
-    // Attach to the ref passed a method `submit` which will allow a caller
-    // to programmatically call submit
-    useImperativeHandle(ref, () => ({
-      submit: e => {
-        formRef.current?.onSubmit(e);
-      },
-    }));
-
-    return (
-      <JSONFormContext.Provider value={options}>
-        <ScrollView>
-          <Form
-            onError={() => {
-              // placeholder to prevent console.errors when validation fails.
-            }}
-            // eslint-disable-next-line no-console
-            onSubmit={form => console.log('onSubmit:', form)}
-            ref={formRef}
-            schema={exampleSchema}
-          >
-            {children ?? (
-              <PageButton
-                onPress={e => {
-                  formRef.current?.onSubmit(e);
-                }}
-              />
-            )}
-          </Form>
-        </ScrollView>
-      </JSONFormContext.Provider>
-    );
-  }
-);
+JSONForm.propTypes = {
+  children: PropTypes.node,
+  options: PropTypes.object,
+  theme: PropTypes.shape({
+    widgets: PropTypes.shape({
+      TextWidget: PropTypes.func,
+      URLWidget: PropTypes.func,
+      EmailWidget: PropTypes.func,
+      TextareaWidget: PropTypes.func,
+      CheckboxWidget: PropTypes.func,
+      CheckboxesWidget: PropTypes.func,
+      PasswordWidget: PropTypes.func,
+      RadioWidget: PropTypes.func,
+      SelectWidget: PropTypes.func,
+      RangeWidget: PropTypes.func,
+      DateWidget: PropTypes.func,
+    }),
+    fields: PropTypes.shape({
+      TitleField: PropTypes.func,
+      DescriptionField: PropTypes.func,
+      AnyOfField: PropTypes.func,
+      OneOfField: PropTypes.func,
+    }),
+    FieldTemplate: PropTypes.func,
+    ObjectFieldTemplate: PropTypes.func,
+    ArrayFieldTemplate: PropTypes.func,
+    ErrorList: PropTypes.func,
+    formContext: PropTypes.object,
+    tagName: PropTypes.func,
+  }),
+};

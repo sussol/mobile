@@ -1,17 +1,27 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react/destructuring-assignment */
-/* eslint-disable no-console */
 import React from 'react';
-import { Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import PropTypes from 'prop-types';
+import { APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from '../../../globalStyles/fonts';
+
+import { FormLabel } from '../../FormInputs/FormLabel';
 
 export const Description = props => {
-  console.log('-------------------------------------------');
-  console.log('Description - props', props);
-  console.log('-------------------------------------------');
-  return (
-    <View style={{ borderWidth: 1, marginLeft: 10 }}>
-      <Text>DescriptionField</Text>
-      <Text>{props.description}</Text>
-    </View>
-  );
+  const { description } = props;
+
+  return description ? <FormLabel textStyle={styles.textStyle} value={description} /> : null;
+};
+
+const styles = StyleSheet.create({
+  textStyle: {
+    fontSize: APP_GENERAL_FONT_SIZE,
+    fontFamily: APP_FONT_FAMILY,
+  },
+});
+
+Description.defaultProps = {
+  description: '',
+};
+
+Description.propTypes = {
+  description: PropTypes.string,
 };
