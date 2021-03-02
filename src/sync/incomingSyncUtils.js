@@ -298,6 +298,14 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: [],
       canBeBlank: ['description'],
     },
+    NameNote: {
+      cannotBeBlank: [],
+      canBeBlank: ['entry_date', 'data', 'name'],
+    },
+    PatientEvent: {
+      cannotBeBlank: [],
+      canBeBlank: ['code', 'description', 'event_type', 'unit'],
+    },
   };
 
   if (!requiredFields[recordType]) return false; // Unsupported record type
