@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 import React, { useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { ScrollView } from 'react-native';
+import { Alert } from 'react-native';
 import { withTheme } from '@rjsf/core';
 
 import { JSONFormContainer } from './JSONFormContainer';
@@ -12,7 +12,7 @@ import { JSONFormWidget } from './widgets/index';
 import { JSONFormErrorList } from './JSONFormErrorList';
 import { PageButton } from '../PageButton';
 import { JSONFormContext } from './JSONFormContext';
-import { dateSchema, dateUiSchema } from './testJSON';
+import { testTongaSurvey, testTongaUiSchema } from './testJSON';
 
 const defaultTheme = {
   // Widgets are the lowest level input components. TextInput, Checkbox
@@ -81,12 +81,6 @@ const defaultTheme = {
 class FocusController {
   registered = [];
 
-  registeredScrollView = null;
-
-  registerScrolllView = ref => {
-    this.registeredScrollView = ref;
-  };
-
   useRegisteredRef = () => {
     const ref = useRef();
     this.useRegister(ref);
@@ -114,7 +108,6 @@ class FocusController {
     const nextRef = this.registered[nextIdx];
 
     nextRef?.current?.focus?.();
-    this.registeredScrollView?.current?.scrollTo?.({ x: 0, y: 0, animated: true });
 
     this.currentIdx = nextIdx;
   };
@@ -135,30 +128,25 @@ export const JSONForm = React.forwardRef(({ theme = defaultTheme, children, opti
 
   return (
     <JSONFormContext.Provider value={options}>
-      <ScrollView
-        keyboardDismissMode="none"
-        keyboardShouldPersistTaps="always"
-        style={{ padding: 20 }}
+      <Form
+        uiSchema={testTongaUiSchema}
+        onError={() => {
+          // placeholder to prevent console.errors when validation fails.
+        }}
+        onSubmit={form => {
+          Alert.alert('Form Data', JSON.stringify(form.formData), null, '\n');
+        }}
+        ref={formRef}
+        schema={testTongaSurvey}
       >
-        <Form
-          uiSchema={dateUiSchema}
-          onError={() => {
-            // placeholder to prevent console.errors when validation fails.
-          }}
-          // eslint-disable-next-line no-console
-          onSubmit={form => console.log('onSubmit:', form)}
-          ref={formRef}
-          schema={dateSchema}
-        >
-          {children ?? (
-            <PageButton
-              onPress={e => {
-                formRef.current?.onSubmit(e);
-              }}
-            />
-          )}
-        </Form>
-      </ScrollView>
+        {children ?? (
+          <PageButton
+            onPress={e => {
+              formRef.current?.onSubmit(e);
+            }}
+          />
+        )}
+      </Form>
     </JSONFormContext.Provider>
   );
 });

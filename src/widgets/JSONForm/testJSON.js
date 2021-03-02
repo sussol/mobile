@@ -227,3 +227,160 @@ export const dateUiSchema = {
     'ui:placeholder': 'placeholder',
   },
 };
+
+export const testTongaUiSchema = {
+  respondentContactData: {
+    relationshipToPatient: {
+      'ui:placeholder': 'Select a relationship',
+    },
+  },
+  patientClinicalData: {
+    comorbiditiesImmunocompromised: {
+      'ui:placeholder': 'Please select, if applicable.',
+    },
+  },
+};
+
+export const testTongaSurvey = {
+  type: 'object',
+  title: 'Extra information',
+  properties: {
+    respondentContactData: {
+      title: 'Respondent Contact Data',
+      description: 'Contact data of the respondent if the respondent is not the patient.',
+      type: 'object',
+      properties: {
+        firstName: {
+          title: 'First Name',
+          description: 'The first name of the respondent',
+          type: 'string',
+          maxLength: 50,
+        },
+        lastName: {
+          title: 'Last Name',
+          description: 'The last name of the respondent',
+          type: 'string',
+          maxLength: 50,
+        },
+        relationshipToPatient: {
+          title: 'Relationship to patient',
+          description: 'The relationship between the respondent and patient',
+          type: 'string',
+          enum: [
+            'Mother',
+            'Father',
+            'Sister',
+            'Brother',
+            'Aunty',
+            'Uncle',
+            'Grandmother',
+            'Grandfather',
+            'Friend/Neighbour',
+            'Other',
+          ],
+        },
+      },
+    },
+    patientClinicalData: {
+      title: 'Patient Clinical Data',
+      description: 'The patients clinical data',
+      type: 'object',
+      properties: {
+        comorbiditiesImmunocompromised: {
+          title: 'Comorbidities / Immunocompromised',
+          description: 'The patients comorbidities',
+          type: 'string',
+          enum: [
+            'Diabetes',
+            'Hypertension',
+            'Asthma',
+            'Cancer (all types)',
+            'Cerebral Vascular Accident',
+            'Chronic Kidney Disease',
+            'Chronic Obstructive Airway Disease',
+            'Immunocompromised',
+            'Rheumatic Heart Disease',
+            'Ischemic Heart Disease',
+            'Other',
+          ],
+        },
+        previousSeriousAllergicReactions: {
+          title: 'Previous serious allergic reactions',
+          description: 'Has the patient had any serious allergic reactions in the past?',
+          type: 'boolean',
+          default: false,
+        },
+        previousAdverseEventsFollowingImmunisation: {
+          title: 'Previous adverse events following immunisation',
+          description:
+            'Has the patient had any adverse effects following an immunisation in the past?',
+          type: 'boolean',
+          default: false,
+        },
+        currentlyPregnant: {
+          title: 'Currently Pregnant',
+          description: 'Is the patient currently pregnant?',
+          type: 'boolean',
+          default: false,
+        },
+        currentlyLactating: {
+          title: 'currentlyLactating',
+          description: 'Is the patient currently lactating?',
+          type: 'boolean',
+          default: false,
+        },
+      },
+    },
+    'Covid 19 Status': {
+      type: 'object',
+      properties: {
+        everTestedPositiveForCOVID19: {
+          type: 'boolean',
+          default: false,
+          description: "Has the patient ever tested positive for COVID-19'",
+          title: 'Ever tested positive for COVID-19',
+        },
+        'Date of diagnosis': {
+          title: 'Date of diagnosis',
+          format: 'date',
+          type: 'string',
+        },
+      },
+    },
+    'Covid 19 Vaccination Data': {
+      type: 'object',
+      properties: {
+        'Covid-19 Vaccine Type': {
+          type: 'string',
+          enum: ['Astra-zeneca', 'Pfizer', 'Moderna', 'Johnson & Johnson'],
+          title: 'COVID-19 Vaccine type',
+          description: 'The type of COVID-19 vaccine the patient is receiving',
+          default: 'Astra-zeneca',
+        },
+        'Date COVID-19 vaccine dose 1': {
+          type: 'string',
+          format: 'date',
+          title: 'Date COVID-19 vaccine dose 1',
+          description: 'The date of the patients first Covid-19 vaccine',
+        },
+        'Date COVID-19 vaccine dose 2': {
+          type: 'string',
+          format: 'date',
+          title: 'Date COVID-19 vaccine dose 2',
+          description: 'The date of the patients second Covid-19 vaccine',
+        },
+        'Any AEFI experienced': {
+          type: 'boolean',
+          default: false,
+          title: 'Any AEFI experienced',
+          description: 'Has the patient experienced any AEFI',
+        },
+        'Reporting form for AEFI if AEFI experienced': {
+          type: 'string',
+          title: 'Reporting form for AEFI if AEFI experienced',
+          description: 'I dunno what this is',
+        },
+      },
+    },
+  },
+};
