@@ -12,7 +12,7 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
       const { payload } = action;
       const { prescription } = payload;
 
-      return { ...state, byId: { creating: prescription } };
+      return { ...state, creating: prescription };
     }
 
     case VACCINE_PRESCRIPTION_ACTIONS.SAVE: {
