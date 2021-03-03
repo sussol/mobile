@@ -178,6 +178,7 @@ const createNew = () => (dispatch, getState) => {
       newLocation = UIDatabase.update('Location', {
         id: existingLocation.id,
         description: sensor.name,
+        code: location.code,
       });
     } else {
       newLocation = createRecord(UIDatabase, 'Location', { ...location, description: sensor.name });
