@@ -21,6 +21,7 @@ export class User extends Realm.Object {}
 
 export { Abbreviation } from './Abbreviation';
 export { Currency } from './Currency';
+export { FormSchema } from './FormSchema';
 export { IndicatorAttribute } from './IndicatorAttribute';
 export { IndicatorValue } from './IndicatorValue';
 export { InsurancePolicy } from './InsurancePolicy';

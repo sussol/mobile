@@ -306,6 +306,10 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: [],
       canBeBlank: ['code', 'description', 'event_type', 'unit'],
     },
+    FormSchema: {
+      cannotBeBlank: [],
+      canBeBlank: ['json_schema', 'ui_schema', 'type', 'version'],
+    },
   };
 
   if (!requiredFields[recordType]) return false; // Unsupported record type
@@ -343,6 +347,16 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
   let internalRecord;
 
   switch (recordType) {
+    case 'FormSchema': {
+      database.update('FormSchema', {
+        id: record.ID,
+        jsonSchema: record.json_schema,
+        uiSchema: record.ui_schema,
+        version: Number(record.version),
+        type: record.type,
+      });
+      break;
+    }
     case 'IndicatorAttribute': {
       const indicator = database.getOrCreate('ProgramIndicator', record.indicator_ID);
       const indicatorAttribute = database.update(recordType, {

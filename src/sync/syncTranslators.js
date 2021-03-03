@@ -39,6 +39,7 @@ export const RECORD_TYPES = new SyncTranslator({
   Abbreviation: 'abbreviation',
   Currency: 'currency',
   Ethnicity: 'Ethnicity',
+  FormSchema: 'form_schema',
   IndicatorAttribute: 'indicator_attribute',
   IndicatorValue: 'indicator_value',
   InsurancePolicy: 'nameInsuranceJoin',
