@@ -138,7 +138,7 @@ export const SupplierInvoice = ({
         sortKey={sortKey}
       />
     ),
-    [sortKey, isAscending]
+    [columns, sortKey, isAscending]
   );
 
   const {
