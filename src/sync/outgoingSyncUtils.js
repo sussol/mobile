@@ -406,6 +406,16 @@ const generateSyncData = (settings, recordType, record) => {
         store_ID: settings.get(THIS_STORE_ID),
       };
     }
+    case 'NameNote': {
+      return {
+        ID: record.id,
+        patient_event_ID: record.patientEvent?.id ?? '',
+        name_ID: record.name?.id ?? '',
+        entry_date: getDateString(record.entry_date),
+        data: record.data,
+      };
+    }
+
     default:
       throw new Error('Sync out record type not supported.');
   }
