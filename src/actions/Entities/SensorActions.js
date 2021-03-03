@@ -95,8 +95,26 @@ const save = () => (dispatch, getState) => {
     });
 
     configs.forEach(config => {
-      config.location = updatedLocation;
-      updatedConfigs.push(UIDatabase.update('TemperatureBreachConfiguration', config));
+      const {
+        id,
+        minimumTemperature,
+        maximumTemperature,
+        duration,
+        description,
+        colour,
+        type,
+      } = config;
+      updatedConfigs.push(
+        UIDatabase.update('TemperatureBreachConfiguration', {
+          id,
+          minimumTemperature,
+          maximumTemperature,
+          duration,
+          description,
+          colour,
+          type,
+        })
+      );
     });
 
     if (replacedSensor) {
