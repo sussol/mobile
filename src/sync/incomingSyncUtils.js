@@ -286,6 +286,30 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: ['ID', 'name_ID', 'name_tag_ID'],
       canBeBlank: [],
     },
+    Occupation: {
+      cannotBeBlank: [],
+      canBeBlank: ['name'],
+    },
+    Ethnicity: {
+      cannotBeBlank: [],
+      canBeBlank: ['name'],
+    },
+    Nationality: {
+      cannotBeBlank: [],
+      canBeBlank: ['description'],
+    },
+    NameNote: {
+      cannotBeBlank: [],
+      canBeBlank: ['entry_date', 'data', 'name'],
+    },
+    PatientEvent: {
+      cannotBeBlank: [],
+      canBeBlank: ['code', 'description', 'event_type', 'unit'],
+    },
+    FormSchema: {
+      cannotBeBlank: [],
+      canBeBlank: ['json_schema', 'ui_schema', 'type', 'version'],
+    },
   };
 
   if (!requiredFields[recordType]) return false; // Unsupported record type
@@ -323,6 +347,16 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
   let internalRecord;
 
   switch (recordType) {
+    case 'FormSchema': {
+      database.update('FormSchema', {
+        id: record.ID,
+        jsonSchema: record.json_schema,
+        uiSchema: record.ui_schema,
+        version: Number(record.version),
+        type: record.type,
+      });
+      break;
+    }
     case 'IndicatorAttribute': {
       const indicator = database.getOrCreate('ProgramIndicator', record.indicator_ID);
       const indicatorAttribute = database.update(recordType, {
@@ -561,6 +595,9 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         firstName: record.first,
         lastName: record.last,
         dateOfBirth: parseDate(record.date_of_birth),
+        nationality: database.getOrCreate('Nationality', record.nationality_ID),
+        occupation: database.getOrCreate('Occupation', record.occupation_ID),
+        ethnicity: database.getOrCreate('Ethnicity', record.ethnicity_ID),
       };
 
       if (isPatient) internalRecord.isVisible = true;
@@ -1077,6 +1114,47 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         isActive: parseBoolean(record.is_active),
         logDelay: parseDate(record.log_delay_date, record.log_delay_time) ?? new Date(0),
         programmedDate: parseDate(record.programmed_date, record.programmed_time) ?? new Date(),
+      });
+      break;
+    }
+    case 'Nationality': {
+      database.update('Nationality', {
+        id: record.ID,
+        description: record.description,
+      });
+      break;
+    }
+    case 'Occupation': {
+      database.update('Occupation', {
+        id: record.ID,
+        name: record.name,
+      });
+      break;
+    }
+    case 'Ethnicity': {
+      database.update('Ethnicity', {
+        id: record.ID,
+        name: record.name,
+      });
+      break;
+    }
+    case 'NameNote': {
+      database.update('NameNote', {
+        id: record.ID,
+        patientEvent: database.getOrCreate('PatientEvent', record.patient_event_ID),
+        entryDate: parseDate(record.entry_date),
+        data: record._data,
+        name: database.getOrCreate('Name', record.name_ID),
+      });
+      break;
+    }
+    case 'PatientEvent': {
+      database.update('PatientEvent', {
+        id: record.ID,
+        code: record.code,
+        description: record.description,
+        eventType: record.event_type,
+        unit: record.unit,
       });
       break;
     }

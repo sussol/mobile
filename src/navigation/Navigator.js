@@ -32,6 +32,7 @@ import {
   FridgeDetailPage,
   NewSensorPage,
   SensorEditPage,
+  VaccineDispensingPage,
 } from '../pages';
 
 export const DEFAULT_SCREEN_OPTIONS = {
@@ -75,6 +76,7 @@ const ROUTE_NAME_TO_PAGE = {
   [ROUTES.FRIDGE_DETAIL]: FridgeDetailPage,
   [ROUTES.SENSOR_NEW]: NewSensorPage,
   [ROUTES.SENSOR_EDIT]: SensorEditPage,
+  [ROUTES.VACCINE_PRESCRIPTION]: VaccineDispensingPage,
 };
 
 export const Pages = Object.values(ROUTES).reduce((acc, route) => {

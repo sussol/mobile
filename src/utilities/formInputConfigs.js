@@ -338,6 +338,11 @@ const FORM_CONFIGS = {
     FORM_INPUT_KEYS.SEARCH_FIRST_NAME,
     FORM_INPUT_KEYS.SEARCH_REGISTRATION_CODE,
   ],
+  searchVaccinePatient: [
+    FORM_INPUT_KEYS.SEARCH_LAST_NAME,
+    FORM_INPUT_KEYS.SEARCH_FIRST_NAME,
+    FORM_INPUT_KEYS.SEARCH_DATE_OF_BIRTH,
+  ],
 };
 
 export const getFormInputConfig = (formName, seedObject) => {
