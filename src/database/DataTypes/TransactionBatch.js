@@ -137,7 +137,9 @@ export class TransactionBatch extends Realm.Object {
       const inventoryDifference = this.transaction.isIncoming ? difference : -difference;
       const dosesAdjustment = this.transaction.isIncoming ? dosesDifference : -dosesDifference;
 
-      this.itemBatch.totalQuantity += inventoryDifference;
+      this.itemBatch.totalQuantity = Number(
+        (this.itemBatch.totalQuantity += inventoryDifference).toFixed(2)
+      );
       this.itemBatch.doses += dosesAdjustment;
 
       database.save('ItemBatch', this.itemBatch);
