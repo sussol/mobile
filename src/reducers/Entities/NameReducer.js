@@ -2,6 +2,13 @@ import { NAME_ACTIONS } from '../../actions/Entities';
 
 const initialState = () => ({
   editing: undefined,
+  isAscending: true,
+  searchParameters: {
+    firstName: '', // string
+    lastName: '', // string
+    dateOfBirth: undefined, // Date
+  },
+  sortKey: 'name',
 });
 
 export const NameReducer = (state = initialState(), action) => {
@@ -15,7 +22,7 @@ export const NameReducer = (state = initialState(), action) => {
       return { ...state, editing: name };
     }
 
-    case NAME_ACTIONS.SAVE: {
+    case NAME_ACTIONS.SELECT: {
       const { payload } = action;
       const { name } = payload;
 
@@ -34,6 +41,20 @@ export const NameReducer = (state = initialState(), action) => {
       const newName = { ...oldName, [field]: value };
 
       return { ...state, editing: newName };
+    }
+
+    case NAME_ACTIONS.FILTER: {
+      const { payload } = action;
+      const { searchParameters } = payload;
+
+      return { ...state, searchParameters };
+    }
+
+    case NAME_ACTIONS.SORT: {
+      const { payload } = action;
+      const { sortKey } = payload;
+
+      return { ...state, sortKey };
     }
     default: {
       return state;

@@ -4,11 +4,13 @@ import { selectEditingNameId } from '../../selectors/Entities/name';
 export const NAME_ACTIONS = {
   CREATE: 'NAME/create',
   UPDATE: 'NAME/update',
-  SAVE: 'NAME/save',
+  SELECT: 'NAME/select',
   RESET: 'NAME/reset',
+  FILTER: 'NAME/filter',
+  SORT: 'NAME/sort',
 };
 
-const createDefaultName = () => ({
+const createDefaultName = (type = 'patient') => ({
   id: generateUUID(),
   code: '',
   isCustomer: false,
@@ -17,12 +19,12 @@ const createDefaultName = () => ({
   isSupplier: false,
   isVisible: true,
   name: '',
-  type: 'patient',
+  type,
 });
 
-const create = () => ({
+const create = type => ({
   type: NAME_ACTIONS.CREATE,
-  payload: { name: createDefaultName() },
+  payload: { name: createDefaultName(type) },
 });
 
 const reset = () => ({
@@ -34,10 +36,14 @@ const update = (id, field, value) => ({
   payload: { id, field, value },
 });
 
-const save = name => ({
-  type: NAME_ACTIONS.SAVE,
+const select = name => ({
+  type: NAME_ACTIONS.SELECT,
   payload: { name },
 });
+
+const filter = searchParameters => ({ type: NAME_ACTIONS.FILTER, payload: { searchParameters } });
+
+const sort = sortKey => ({ type: NAME_ACTIONS.SORT, payload: { sortKey } });
 
 const updateEditing = (value, field) => (dispatch, getState) => {
   const newNameId = selectEditingNameId(getState());
@@ -46,8 +52,10 @@ const updateEditing = (value, field) => (dispatch, getState) => {
 
 export const NameActions = {
   create,
+  filter,
+  reset,
+  select,
+  sort,
   update,
   updateEditing,
-  save,
-  reset,
 };
