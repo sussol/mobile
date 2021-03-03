@@ -73,8 +73,8 @@ export const selectBreaches = createSelector(
   [selectFromDate, selectToDate, selectSelectedFridgeID],
   (fromDate, toDate, fridgeID) => {
     const breaches = UIDatabase.objects('TemperatureBreach').filtered(
-      '(startTimestamp <= $0 && (endTimestamp >= $0 || endTimestamp == null)) || ' +
-        '(startTimestamp >= $0 && startTimestamp <= $1) && location.id == $2',
+      '((startTimestamp <= $0 && (endTimestamp >= $0 || endTimestamp == null)) || ' +
+        '(startTimestamp >= $0 && startTimestamp <= $1)) && location.id == $2',
       new Date(fromDate),
       new Date(toDate),
       fridgeID
