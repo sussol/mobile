@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { DatePickerButton } from '../../DatePickerButton';
 import { FlexRow } from '../../FlexRow';
 import { useJSONFormOptions } from '../JSONFormContext';
-import { LIGHT_GREY, SUSSOL_ORANGE } from '../../../globalStyles/colors';
+import { DARKER_GREY, LIGHT_GREY } from '../../../globalStyles/colors';
 
 export const DatePicker = ({ disabled, value, onChange, placeholder, readonly }) => {
   const { focusController } = useJSONFormOptions();
@@ -18,7 +18,7 @@ export const DatePicker = ({ disabled, value, onChange, placeholder, readonly })
       <TextInput
         style={{ flex: 1 }}
         placeholderTextColor={LIGHT_GREY}
-        underlineColorAndroid={SUSSOL_ORANGE}
+        underlineColorAndroid={DARKER_GREY}
         placeholder={placeholder}
         editable={!(readonly || disabled)}
         value={value}
