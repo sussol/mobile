@@ -8,6 +8,11 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
+    case 'Navigation/BACK': {
+      // reset if heading back
+      return initialState();
+    }
+
     case VACCINE_PRESCRIPTION_ACTIONS.CREATE: {
       const { payload } = action;
       const { prescription } = payload;
