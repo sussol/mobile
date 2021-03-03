@@ -43,8 +43,9 @@ export const selectFilteredPatients = createSelector([selectSearchParameters], s
     return patients;
   }
 
-  const dayAfterDOB = moment(dateOfBirth).add(1, 'days').toDate();
-  return patients.filtered('dateOfBirth >= $0 AND dateOfBirth < $1', dateOfBirth, dayAfterDOB);
+  const dob = moment(dateOfBirth).startOf('day').toDate();
+  const dayAfterDOB = moment(dob).endOf('day').toDate();
+  return patients.filtered('dateOfBirth >= $0 AND dateOfBirth < $1', dob, dayAfterDOB);
 });
 
 export const selectSortedPatients = createSelector(
