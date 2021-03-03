@@ -143,7 +143,7 @@ export const CustomerInvoice = ({
         sortKey={sortKey}
       />
     ),
-    [sortKey, isAscending]
+    [columns, sortKey, isAscending]
   );
 
   const { verticalContainer, topButton } = globalStyles;
@@ -152,6 +152,7 @@ export const CustomerInvoice = ({
     pageTopLeftSectionContainer,
     pageTopRightSectionContainer,
   } = globalStyles;
+
   return (
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
