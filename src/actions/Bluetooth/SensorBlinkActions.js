@@ -18,8 +18,16 @@ const blinkStop = () => ({ type: BLINK_ACTIONS.BLINK_STOP });
 
 const blinkSensor = macAddress => async dispatch => {
   dispatch(blinkStart(macAddress));
-  await BleService().blinkWithRetries(macAddress, VACCINE_CONSTANTS.MAX_BLUETOOTH_COMMAND_ATTEMPTS);
-  dispatch(blinkStop(macAddress));
+  try {
+    await BleService().blinkWithRetries(
+      macAddress,
+      VACCINE_CONSTANTS.MAX_BLUETOOTH_COMMAND_ATTEMPTS
+    );
+  } catch (err) {
+    // Silently handle errors.
+  } finally {
+    dispatch(blinkStop(macAddress));
+  }
 };
 
 const startSensorBlink = macAddress => async (dispatch, getState) => {
