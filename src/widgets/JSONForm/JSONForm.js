@@ -120,57 +120,61 @@ class FocusController {
   };
 }
 
-export const JSONForm = React.forwardRef(({ theme = defaultTheme, children, options }, ref) => {
-  const formRef = useRef(null);
+export const JSONForm = React.forwardRef(
+  ({ theme = defaultTheme, children, options, onSubmit }, ref) => {
+    const formRef = useRef(null);
 
-  const Form = useMemo(() => withTheme(theme), []);
+    const Form = useMemo(() => withTheme(theme), []);
 
-  // Attach to the ref passed a method `submit` which will allow a caller
-  // to programmatically call submit
-  useImperativeHandle(ref, () => ({
-    submit: e => {
-      formRef.current?.onSubmit(e);
-    },
-  }));
+    // Attach to the ref passed a method `submit` which will allow a caller
+    // to programmatically call submit
+    useImperativeHandle(ref, () => ({
+      submit: e => {
+        formRef.current?.onSubmit(e);
+      },
+    }));
 
-  return (
-    <JSONFormContext.Provider value={options}>
-      <ScrollView
-        keyboardDismissMode="none"
-        keyboardShouldPersistTaps="always"
-        style={{ padding: 20 }}
-      >
-        <Form
-          uiSchema={dateUiSchema}
-          onError={() => {
-            // placeholder to prevent console.errors when validation fails.
-          }}
-          // eslint-disable-next-line no-console
-          onSubmit={form => console.log('onSubmit:', form)}
-          ref={formRef}
-          schema={dateSchema}
+    return (
+      <JSONFormContext.Provider value={options}>
+        <ScrollView
+          keyboardDismissMode="none"
+          keyboardShouldPersistTaps="always"
+          style={{ padding: 20 }}
         >
-          {children ?? (
-            <PageButton
-              onPress={e => {
-                formRef.current?.onSubmit(e);
-              }}
-            />
-          )}
-        </Form>
-      </ScrollView>
-    </JSONFormContext.Provider>
-  );
-});
+          <Form
+            uiSchema={dateUiSchema}
+            onError={() => {
+              // placeholder to prevent console.errors when validation fails.
+            }}
+            onSubmit={onSubmit}
+            ref={formRef}
+            schema={dateSchema}
+          >
+            {children ?? (
+              <PageButton
+                onPress={e => {
+                  formRef.current?.onSubmit(e);
+                }}
+              />
+            )}
+          </Form>
+        </ScrollView>
+      </JSONFormContext.Provider>
+    );
+  }
+);
 
 JSONForm.defaultProps = {
   theme: defaultTheme,
   children: null,
+  // eslint-disable-next-line no-console
+  onSubmit: form => console.log('onSubmit:', form),
   options: { focusController: new FocusController() },
 };
 
 JSONForm.propTypes = {
   children: PropTypes.node,
+  onSubmit: PropTypes.func,
   options: PropTypes.object,
   theme: PropTypes.shape({
     widgets: PropTypes.shape({

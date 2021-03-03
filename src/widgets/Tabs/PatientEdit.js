@@ -4,7 +4,7 @@
  * Sustainable Solutions (NZ) Ltd. 2021
  */
 
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
 import { batch, connect } from 'react-redux';
@@ -17,7 +17,7 @@ import { VaccinePrescriptionInfo } from '../VaccinePrescriptionInfo';
 import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 
 import { selectEditingName } from '../../selectors/Entities/name';
-// import { NameActions } from '../../actions/Entities/NameActions';
+import { NameActions } from '../../actions/Entities/NameActions';
 import { WizardActions } from '../../actions/WizardActions';
 import { VaccinePrescriptionActions } from '../../actions/Entities/VaccinePrescriptionActions';
 import { selectCanSaveForm, selectCompletedForm } from '../../selectors/form';
@@ -26,6 +26,7 @@ import { getFormInputConfig } from '../../utilities/formInputConfigs';
 import { buttonStrings } from '../../localization';
 import globalStyles, { DARK_GREY } from '../../globalStyles';
 import { JSONForm } from '../JSONForm/JSONForm';
+import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
 
 /**
  * Layout component used for a tab within the vaccine prescription wizard.
@@ -46,13 +47,18 @@ const PatientEditComponent = ({
   completedForm,
   currentPatient,
   onCancelPrescription,
+  onSubmitSurvey,
   updatePatientDetails,
 }) => {
   const { pageTopViewContainer } = globalStyles;
-  const savePatient = () => {
-    console.info('** saved **', canSaveForm, completedForm);
-    updatePatientDetails();
-  };
+  const formRef = useRef(null);
+  const savePatient = useCallback(
+    e => {
+      updatePatientDetails(completedForm);
+      formRef?.current.submit(e);
+    },
+    [completedForm]
+  );
 
   return (
     <FlexView style={pageTopViewContainer}>
@@ -70,7 +76,9 @@ const PatientEditComponent = ({
         </View>
         <View style={localStyles.verticalSeparator} />
         <View style={localStyles.formContainer}>
-          <JSONForm />
+          <JSONForm ref={formRef} onSubmit={onSubmitSurvey}>
+            <View />
+          </JSONForm>
         </View>
       </View>
 
@@ -92,14 +100,15 @@ const PatientEditComponent = ({
 };
 
 const mapDispatchToProps = dispatch => {
+  const onSubmitSurvey = formData => dispatch(NameNoteActions.saveNewSurvey(formData));
   const onCancelPrescription = () => dispatch(VaccinePrescriptionActions.cancel());
-  const updatePatientDetails = () =>
+  const updatePatientDetails = detailsEntered =>
     batch(() => {
-      // dispatch(NameActions.update());
+      dispatch(NameActions.updatePatient(detailsEntered));
       dispatch(WizardActions.nextTab());
     });
 
-  return { onCancelPrescription, updatePatientDetails };
+  return { onCancelPrescription, onSubmitSurvey, updatePatientDetails };
 };
 
 const mapStateToProps = state => {
@@ -115,6 +124,7 @@ PatientEditComponent.propTypes = {
   completedForm: PropTypes.object.isRequired,
   currentPatient: PropTypes.object.isRequired,
   onCancelPrescription: PropTypes.func.isRequired,
+  onSubmitSurvey: PropTypes.func.isRequired,
   updatePatientDetails: PropTypes.func.isRequired,
 };
 

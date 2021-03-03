@@ -11,6 +11,7 @@ export const NAME_NOTE_ACTIONS = {
 
 const createDefaultNameNote = () => ({
   id: generateUUID(),
+  entryDate: new Date(),
   name: '',
   code: '',
   type: 'patient',
@@ -44,6 +45,15 @@ const saveNew = nameNote => ({
   payload: { nameNote },
 });
 
+const saveNewSurvey = surveyData => dispatch => {
+  const nameNote = createDefaultNameNote();
+  nameNote.data = surveyData;
+  dispatch({
+    type: NAME_NOTE_ACTIONS.SAVE_NEW,
+    payload: { nameNote },
+  });
+};
+
 const saveEditing = nameNote => ({
   type: NAME_NOTE_ACTIONS.SAVE_EDITING,
   payload: { nameNote },
@@ -61,5 +71,6 @@ export const NameNoteActions = {
   updateNew,
   saveNew,
   saveEditing,
+  saveNewSurvey,
   reset,
 };
