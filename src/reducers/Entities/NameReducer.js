@@ -3,7 +3,11 @@ import { NAME_ACTIONS } from '../../actions/Entities';
 const initialState = () => ({
   editing: undefined,
   isAscending: true,
-  searchParameters: {},
+  searchParameters: {
+    firstName: '', // string
+    lastName: '', // string
+    dateOfBirth: undefined, // Date
+  },
   sortKey: 'name',
 });
 
