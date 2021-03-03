@@ -152,7 +152,6 @@ export const CustomerInvoice = ({
     pageTopLeftSectionContainer,
     pageTopRightSectionContainer,
   } = globalStyles;
-
   return (
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
