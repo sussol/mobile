@@ -99,6 +99,9 @@ const generateSyncData = (settings, recordType, record) => {
         'charge code': record.code,
         currency_id: defaultCurrency?.id ?? '',
         female: String(record.female),
+        nationality_ID: record.nationality?.id ?? '',
+        occupation_ID: record.occupation?.id ?? '',
+        ethnicity_ID: record.ethnicity?.id ?? '',
       };
     }
     case 'NumberSequence': {
