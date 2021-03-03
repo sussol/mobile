@@ -22,7 +22,7 @@ export const NameReducer = (state = initialState(), action) => {
       return { ...state, editing: name };
     }
 
-    case NAME_ACTIONS.SAVE: {
+    case NAME_ACTIONS.SELECT: {
       const { payload } = action;
       const { name } = payload;
 

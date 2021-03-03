@@ -4,7 +4,7 @@ import { selectEditingNameId } from '../../selectors/Entities/name';
 export const NAME_ACTIONS = {
   CREATE: 'NAME/create',
   UPDATE: 'NAME/update',
-  SAVE: 'NAME/save',
+  SELECT: 'NAME/select',
   RESET: 'NAME/reset',
   FILTER: 'NAME/filter',
   SORT: 'NAME/sort',
@@ -36,8 +36,8 @@ const update = (id, field, value) => ({
   payload: { id, field, value },
 });
 
-const save = name => ({
-  type: NAME_ACTIONS.SAVE,
+const select = name => ({
+  type: NAME_ACTIONS.SELECT,
   payload: { name },
 });
 
@@ -54,7 +54,7 @@ export const NameActions = {
   create,
   filter,
   reset,
-  save,
+  select,
   sort,
   update,
   updateEditing,
