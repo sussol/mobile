@@ -15,7 +15,6 @@ import { HazardPoint } from './HazardPoint';
 import { FlexView } from './FlexView';
 import { CHART_CONSTANTS } from '../utilities/modules/vaccines';
 import { getTickFormatter } from '../utilities/formatters';
-import { VACCINE_CONSTANTS } from '../utilities/modules/vaccines/constants';
 import { WARMER_GREY } from '../globalStyles/colors';
 
 export const VaccineLineChart = ({
@@ -60,7 +59,7 @@ export const VaccineLineChart = ({
             offsetY={CHART_CONSTANTS.AXIS_OFFSET}
             tickFormat={getTickFormatter()}
             style={chartStyles.axisX}
-            tickCount={VACCINE_CONSTANTS.MAX_TICK_COUNTS}
+            tickCount={CHART_CONSTANTS.MAX_TICK_COUNTS}
           />
 
           <VictoryLine
