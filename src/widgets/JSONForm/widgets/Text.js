@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { TextInput, StyleSheet } from 'react-native';
-import { LIGHT_GREY, SUSSOL_ORANGE } from '../../../globalStyles/colors';
+import { DARKER_GREY, LIGHT_GREY } from '../../../globalStyles/colors';
 import { APP_FONT_FAMILY } from '../../../globalStyles/fonts';
 import { useJSONFormOptions } from '../JSONFormContext';
 
@@ -16,7 +16,7 @@ export const Text = ({ autofocus, disabled, placeholder, value, onChange }) => {
       style={styles.textInputStyle}
       value={value}
       placeholderTextColor={LIGHT_GREY}
-      underlineColorAndroid={SUSSOL_ORANGE}
+      underlineColorAndroid={DARKER_GREY}
       placeholder={placeholder}
       selectTextOnFocus
       returnKeyType="next"
