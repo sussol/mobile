@@ -51,7 +51,7 @@ export const NameNoteReducer = (state = initialState(), action) => {
       const { nameNote } = payload;
       const { id } = nameNote;
 
-      const newCreatingById = { ...creatingById, [id]: nameNote, creatingId: '' };
+      const newCreatingById = { ...creatingById, [id]: nameNote };
 
       return { ...state, creatingById: newCreatingById };
     }
