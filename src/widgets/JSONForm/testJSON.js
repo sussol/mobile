@@ -239,6 +239,9 @@ export const testTongaUiSchema = {
       'ui:placeholder': 'Please select, if applicable.',
     },
   },
+  'Covid 19 Vaccination Data': {
+    'Date COVID-19 vaccine dose 1': { errorMessage: 'Error message' },
+  },
 };
 
 export const testTongaSurvey = {
@@ -254,13 +257,15 @@ export const testTongaSurvey = {
           title: 'First Name',
           description: 'The first name of the respondent',
           type: 'string',
-          maxLength: 50,
+          maxLength: 2,
+          errorMessage: 'Hey! that names way to long, buddy!',
         },
         lastName: {
           title: 'Last Name',
           description: 'The last name of the respondent',
           type: 'string',
-          maxLength: 50,
+          minLength: 50,
+          errorMessage: 'Hey! that names way to short, buddy!',
         },
         relationshipToPatient: {
           title: 'Relationship to patient',
@@ -362,6 +367,7 @@ export const testTongaSurvey = {
           format: 'date',
           title: 'Date COVID-19 vaccine dose 1',
           description: 'The date of the patients first Covid-19 vaccine',
+          errorMessage: 'Error message',
         },
         'Date COVID-19 vaccine dose 2': {
           type: 'string',
