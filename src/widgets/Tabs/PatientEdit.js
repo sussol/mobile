@@ -17,6 +17,7 @@ import { VaccinePrescriptionInfo } from '../VaccinePrescriptionInfo';
 import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 
 import { selectEditingName } from '../../selectors/Entities/name';
+import { selectSurveySchemas } from '../../selectors/formSchema';
 import { NameActions } from '../../actions/Entities/NameActions';
 import { WizardActions } from '../../actions/WizardActions';
 import { VaccinePrescriptionActions } from '../../actions/Entities/VaccinePrescriptionActions';
@@ -46,6 +47,7 @@ const PatientEditComponent = ({
   canSaveForm,
   completedForm,
   currentPatient,
+  surveySchema,
   onCancelPrescription,
   onSubmitSurvey,
   updatePatientDetails,
@@ -76,9 +78,11 @@ const PatientEditComponent = ({
         </View>
         <View style={localStyles.verticalSeparator} />
         <View style={localStyles.formContainer}>
-          <JSONForm ref={formRef} onSubmit={onSubmitSurvey}>
-            <View />
-          </JSONForm>
+          {surveySchema && (
+            <JSONForm ref={formRef} onSubmit={onSubmitSurvey} surveySchema={surveySchema}>
+              <View />
+            </JSONForm>
+          )}
         </View>
       </View>
 
@@ -115,14 +119,21 @@ const mapStateToProps = state => {
   const currentPatient = selectEditingName(state);
   const completedForm = selectCompletedForm(state);
   const canSaveForm = selectCanSaveForm(state);
+  const surveySchemas = selectSurveySchemas();
+  const [surveySchema] = surveySchemas;
 
-  return { canSaveForm, completedForm, currentPatient };
+  return { canSaveForm, completedForm, currentPatient, surveySchema };
+};
+
+PatientEditComponent.defaultProps = {
+  surveySchema: undefined,
 };
 
 PatientEditComponent.propTypes = {
   canSaveForm: PropTypes.bool.isRequired,
   completedForm: PropTypes.object.isRequired,
   currentPatient: PropTypes.object.isRequired,
+  surveySchema: PropTypes.object,
   onCancelPrescription: PropTypes.func.isRequired,
   onSubmitSurvey: PropTypes.func.isRequired,
   updatePatientDetails: PropTypes.func.isRequired,

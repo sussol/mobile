@@ -114,7 +114,7 @@ class FocusController {
 }
 
 export const JSONForm = React.forwardRef(
-  ({ theme = defaultTheme, children, options, onSubmit }, ref) => {
+  ({ theme = defaultTheme, children, options, onSubmit, schema, uiSchema }, ref) => {
     const formRef = useRef(null);
 
     const Form = useMemo(() => withTheme(theme), []);
@@ -130,13 +130,13 @@ export const JSONForm = React.forwardRef(
     return (
       <JSONFormContext.Provider value={options}>
         <Form
-          uiSchema={testTongaUiSchema}
+          uiSchema={uiSchema}
           onError={() => {
             // placeholder to prevent console.errors when validation fails.
           }}
           onSubmit={onSubmit}
           ref={formRef}
-          schema={testTongaSurvey}
+          schema={schema}
         >
           {children ?? (
             <PageButton
@@ -159,12 +159,15 @@ JSONForm.defaultProps = {
     Alert.alert('Form Data', JSON.stringify(form.formData), null, '\n');
   },
   options: { focusController: new FocusController() },
+  schema: testTongaSurvey,
+  uiSchema: testTongaUiSchema,
 };
 
 JSONForm.propTypes = {
   children: PropTypes.node,
   onSubmit: PropTypes.func,
   options: PropTypes.object,
+  schema: PropTypes.object,
   theme: PropTypes.shape({
     widgets: PropTypes.shape({
       TextWidget: PropTypes.func,
@@ -192,4 +195,5 @@ JSONForm.propTypes = {
     formContext: PropTypes.object,
     tagName: PropTypes.func,
   }),
+  uiSchema: PropTypes.object,
 };

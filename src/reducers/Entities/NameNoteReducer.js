@@ -40,7 +40,7 @@ export const NameNoteReducer = (state = initialState(), action) => {
       const { nameNote } = payload;
       const { id } = nameNote;
 
-      const newEditingById = { ...editingById, [id]: nameNote.toJSON() };
+      const newEditingById = { ...editingById, [id]: nameNote };
 
       return { ...state, editingById: newEditingById, editingId: '' };
     }
@@ -51,7 +51,7 @@ export const NameNoteReducer = (state = initialState(), action) => {
       const { nameNote } = payload;
       const { id } = nameNote;
 
-      const newCreatingById = { ...creatingById, [id]: nameNote.toJSON(), creatingId: '' };
+      const newCreatingById = { ...creatingById, [id]: nameNote, creatingId: '' };
 
       return { ...state, creatingById: newCreatingById };
     }
