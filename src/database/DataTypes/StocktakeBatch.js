@@ -226,8 +226,8 @@ export class StocktakeBatch extends Realm.Object {
   }
 
   setDoses(database, newValue) {
-    const maximumDosesPossible = this.dosesPerVial * this.countedTotalQuantity;
-    this.doses = Math.min(newValue, maximumDosesPossible);
+    const newCountedTotalQuantity = Number(newValue / this.dosesPerVial).toFixed(2);
+    this.countedTotalQuantity = newCountedTotalQuantity;
     database.save('StocktakeBatch', this);
   }
 

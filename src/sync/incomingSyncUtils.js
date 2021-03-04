@@ -350,8 +350,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
     case 'FormSchema': {
       database.update('FormSchema', {
         id: record.ID,
-        jsonSchema: record.json_schema,
-        uiSchema: record.ui_schema,
+        _jsonSchema: record.json_schema,
+        _uiSchema: record.ui_schema,
         version: Number(record.version),
         type: record.type,
       });

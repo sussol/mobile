@@ -149,7 +149,6 @@ export class TransactionItem extends Realm.Object {
     }
 
     const difference = cappedQuantity - this.totalQuantity; // Positive if new quantity is greater.
-
     // Apply the difference to make the new quantity.
     this.allocateDifferenceToBatches(database, difference);
 
@@ -241,7 +240,7 @@ export class TransactionItem extends Realm.Object {
   // eslint-disable-next-line class-methods-use-this
   allocateDifferenceToBatch(database, difference, batch) {
     const batchAddQuantity = batch.getAmountToAllocate(difference);
-    batch.setTotalQuantity(database, batch.totalQuantity + batchAddQuantity);
+    batch.setTotalQuantity(database, Number((batch.totalQuantity + batchAddQuantity).toFixed(2)));
     database.save('TransactionBatch', batch);
     return difference - batchAddQuantity;
   }
@@ -278,21 +277,13 @@ export class TransactionItem extends Realm.Object {
     });
   };
 
-  /**
-   * Sets the doses for all underlying transaction batches. Rather than applying
-   * all doses in FEFO, apply an even distribution of doses over the transaction
-   * batches.
-   * @param {Number} value The number of doses to set for this item
-   */
   setDoses(database, value) {
-    const dosesToSet = Math.min(value, this.totalQuantity * this.dosesPerVial);
-    const dosesToAssignToEachBatch = dosesToSet / this.totalQuantity;
+    const newTotalQuantity = Math.min(
+      Number(value / this.dosesPerVial).toFixed(2),
+      this.availableQuantity
+    );
 
-    this.resetAllDoses(database);
-    this.batches.sorted('expiryDate', false).forEach(batch => {
-      const { totalQuantity: thisBatchesQuantity } = batch;
-      batch.setDoses(database, Math.floor(dosesToAssignToEachBatch * thisBatchesQuantity));
-    });
+    this.setTotalQuantity(database, newTotalQuantity);
   }
 
   get dosesPerVial() {

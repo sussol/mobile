@@ -1,5 +1,5 @@
 import { generateUUID } from 'react-native-database';
-import { selectEditingNameId } from '../../selectors/Entities/name';
+import { selectEditingNameId, selectEditingName } from '../../selectors/Entities/name';
 
 export const NAME_ACTIONS = {
   CREATE: 'NAME/create',
@@ -36,6 +36,20 @@ const update = (id, field, value) => ({
   payload: { id, field, value },
 });
 
+const updatePatient = detailsEntered => (dispatch, getState) => {
+  const currentPatient = selectEditingName(getState());
+  const { id } = currentPatient || {};
+  const currentKeys = Object.keys(currentPatient);
+
+  if (!id) return;
+
+  Object.entries(detailsEntered).forEach(([key, value]) => {
+    if (currentKeys.includes(key) && currentPatient[key] !== value) {
+      dispatch(update(id, key, value));
+    }
+  });
+};
+
 const select = name => ({
   type: NAME_ACTIONS.SELECT,
   payload: { name },
@@ -58,4 +72,5 @@ export const NameActions = {
   sort,
   update,
   updateEditing,
+  updatePatient,
 };

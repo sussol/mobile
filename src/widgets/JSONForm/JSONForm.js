@@ -128,7 +128,7 @@ class FocusController {
 }
 
 export const JSONForm = React.forwardRef(
-  ({ theme, children, options, jsonSchema, uiSchema }, ref) => {
+  ({ theme, children, options, jsonSchema, uiSchema, onSubmit }, ref) => {
     const validator = useMemo(() => ajv.compile(jsonSchema), [jsonSchema]);
     const Form = useMemo(() => withTheme(theme), []);
 
@@ -187,9 +187,7 @@ export const JSONForm = React.forwardRef(
           onError={() => {
             // placeholder to prevent console.errors when validation fails.
           }}
-          onSubmit={form => {
-            Alert.alert('Form Data', JSON.stringify(form.formData), null, '\n');
-          }}
+          onSubmit={onSubmit}
           uiSchema={uiSchema}
           schema={jsonSchema}
           ref={formRef}
@@ -210,6 +208,10 @@ export const JSONForm = React.forwardRef(
 JSONForm.defaultProps = {
   theme: defaultTheme,
   children: null,
+  // eslint-disable-next-line no-console
+  onSubmit: form => {
+    Alert.alert('Form Data', JSON.stringify(form.formData), null, '\n');
+  },
   options: { focusController: new FocusController() },
   jsonSchema: testTongaSurvey,
   uiSchema: testTongaUiSchema,
@@ -217,9 +219,10 @@ JSONForm.defaultProps = {
 
 JSONForm.propTypes = {
   uiSchema: PropTypes.object,
-  jsonSchema: PropTypes.object,
   children: PropTypes.node,
+  onSubmit: PropTypes.func,
   options: PropTypes.object,
+  jsonSchema: PropTypes.object,
   theme: PropTypes.shape({
     widgets: PropTypes.shape({
       TextWidget: PropTypes.func,

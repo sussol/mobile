@@ -118,7 +118,7 @@ const PatientSelectComponent = ({
       <FlexRow justifyContent="flex-end" alignItems="flex-end">
         <PageButtonWithOnePress
           text={buttonStrings.cancel}
-          onPress={() => onCancelPrescription()}
+          onPress={onCancelPrescription}
           style={{ marginRight: 7 }}
         />
         <PageButton
