@@ -130,10 +130,6 @@ export const JSONForm = React.forwardRef(
   ({ theme, children, options, surveySchema, onSubmit }, ref) => {
     const { jsonSchema, uiSchema } = surveySchema;
 
-    console.log('-------------------------------------------');
-    console.log('uiSchema', uiSchema);
-    console.log('-------------------------------------------');
-
     const validator = useMemo(() => ajv.compile(jsonSchema), [jsonSchema]);
     const Form = useMemo(() => withTheme(theme), []);
 
