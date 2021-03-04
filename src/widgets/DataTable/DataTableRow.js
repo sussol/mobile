@@ -259,13 +259,19 @@ const DataTableRow = React.memo(
             }
 
             case COLUMN_TYPES.NUMERIC: {
-              // Special condition for stocktake difference cells.
-              // Use the placeholder 'Not counted' when a stocktake item or batch
-              // has not been counted yet.
-              const value =
-                columnKey === COLUMN_KEYS.DIFFERENCE && !rowData.hasBeenCounted
-                  ? generalStrings.not_available
-                  : Math.round(rowData[columnKey]);
+              // Default to simply displaying the row data column key
+              let value = rowData[columnKey];
+              if (columnKey === COLUMN_KEYS.DIFFERENCE && !rowData.hasBeenCounted) {
+                // Special condition for stocktake difference cells.
+                // Use the placeholder 'Not counted' when a stocktake item or batch
+                // has not been counted yet.
+                value = generalStrings.not_available;
+              }
+
+              // When cell values can be floats, cut them off at two DP
+              if (typeof value === 'number' && !Number.isInteger(value)) {
+                value = rowData[columnKey]?.toFixed?.(2);
+              }
 
               const cellErrors = getCellError?.(rowData, columnKey);
               const alternateCellStyleLookup = {
