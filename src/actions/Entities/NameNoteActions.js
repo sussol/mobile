@@ -2,7 +2,6 @@ import { generateUUID } from 'react-native-database';
 import { UIDatabase } from '../../database/index';
 import { selectNewNameNoteId } from '../../selectors/Entities/nameNote';
 
-export const PATIENT_CLINICAL_DATA_CODE = 'PCD';
 export const NAME_NOTE_ACTIONS = {
   CREATE: 'NAME_NOTE/create',
   UPDATE: 'NAME_NOTE/update',
@@ -44,10 +43,7 @@ const saveNew = nameNote => ({
 
 const saveNewSurvey = surveyData => dispatch => {
   const nameNote = createDefaultNameNote();
-  const patientEvents = UIDatabase.objects('PatientEvent').filtered(
-    'code == $0',
-    PATIENT_CLINICAL_DATA_CODE
-  );
+  const patientEvents = UIDatabase.objects('PCDEvents');
 
   if (patientEvents.length === 0) return;
   const [patientEvent] = patientEvents;
