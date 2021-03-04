@@ -13,7 +13,6 @@ import { JSONFormWidget } from './widgets/index';
 import { JSONFormErrorList } from './JSONFormErrorList';
 import { PageButton } from '../PageButton';
 import { JSONFormContext } from './JSONFormContext';
-import { testTongaSurvey, testTongaUiSchema } from './testJSON';
 
 const ajvErrors = require('ajv-errors');
 
@@ -128,7 +127,13 @@ class FocusController {
 }
 
 export const JSONForm = React.forwardRef(
-  ({ theme, children, options, jsonSchema, uiSchema, onSubmit }, ref) => {
+  ({ theme, children, options, surveySchema, onSubmit }, ref) => {
+    const { jsonSchema, uiSchema } = surveySchema;
+
+    console.log('-------------------------------------------');
+    console.log('uiSchema', uiSchema);
+    console.log('-------------------------------------------');
+
     const validator = useMemo(() => ajv.compile(jsonSchema), [jsonSchema]);
     const Form = useMemo(() => withTheme(theme), []);
 
@@ -188,7 +193,7 @@ export const JSONForm = React.forwardRef(
             // placeholder to prevent console.errors when validation fails.
           }}
           onSubmit={onSubmit}
-          uiSchema={uiSchema}
+          uiSchema={uiSchema ?? {}}
           schema={jsonSchema}
           ref={formRef}
         >
@@ -213,16 +218,13 @@ JSONForm.defaultProps = {
     Alert.alert('Form Data', JSON.stringify(form.formData), null, '\n');
   },
   options: { focusController: new FocusController() },
-  jsonSchema: testTongaSurvey,
-  uiSchema: testTongaUiSchema,
 };
 
 JSONForm.propTypes = {
-  uiSchema: PropTypes.object,
+  surveySchema: PropTypes.object.isRequired,
   children: PropTypes.node,
   onSubmit: PropTypes.func,
   options: PropTypes.object,
-  jsonSchema: PropTypes.object,
   theme: PropTypes.shape({
     widgets: PropTypes.shape({
       TextWidget: PropTypes.func,
