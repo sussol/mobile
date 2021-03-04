@@ -113,53 +113,61 @@ class FocusController {
   };
 }
 
-export const JSONForm = React.forwardRef(({ theme = defaultTheme, children, options }, ref) => {
-  const formRef = useRef(null);
+export const JSONForm = React.forwardRef(
+  ({ theme = defaultTheme, children, options, onSubmit, schema, uiSchema }, ref) => {
+    const formRef = useRef(null);
 
-  const Form = useMemo(() => withTheme(theme), []);
+    const Form = useMemo(() => withTheme(theme), []);
 
-  // Attach to the ref passed a method `submit` which will allow a caller
-  // to programmatically call submit
-  useImperativeHandle(ref, () => ({
-    submit: e => {
-      formRef.current?.onSubmit(e);
-    },
-  }));
+    // Attach to the ref passed a method `submit` which will allow a caller
+    // to programmatically call submit
+    useImperativeHandle(ref, () => ({
+      submit: e => {
+        formRef.current?.onSubmit(e);
+      },
+    }));
 
-  return (
-    <JSONFormContext.Provider value={options}>
-      <Form
-        uiSchema={testTongaUiSchema}
-        onError={() => {
-          // placeholder to prevent console.errors when validation fails.
-        }}
-        onSubmit={form => {
-          Alert.alert('Form Data', JSON.stringify(form.formData), null, '\n');
-        }}
-        ref={formRef}
-        schema={testTongaSurvey}
-      >
-        {children ?? (
-          <PageButton
-            onPress={e => {
-              formRef.current?.onSubmit(e);
-            }}
-          />
-        )}
-      </Form>
-    </JSONFormContext.Provider>
-  );
-});
+    return (
+      <JSONFormContext.Provider value={options}>
+        <Form
+          uiSchema={uiSchema}
+          onError={() => {
+            // placeholder to prevent console.errors when validation fails.
+          }}
+          onSubmit={onSubmit}
+          ref={formRef}
+          schema={schema}
+        >
+          {children ?? (
+            <PageButton
+              onPress={e => {
+                formRef.current?.onSubmit(e);
+              }}
+            />
+          )}
+        </Form>
+      </JSONFormContext.Provider>
+    );
+  }
+);
 
 JSONForm.defaultProps = {
   theme: defaultTheme,
   children: null,
+  // eslint-disable-next-line no-console
+  onSubmit: form => {
+    Alert.alert('Form Data', JSON.stringify(form.formData), null, '\n');
+  },
   options: { focusController: new FocusController() },
+  schema: testTongaSurvey,
+  uiSchema: testTongaUiSchema,
 };
 
 JSONForm.propTypes = {
   children: PropTypes.node,
+  onSubmit: PropTypes.func,
   options: PropTypes.object,
+  schema: PropTypes.object,
   theme: PropTypes.shape({
     widgets: PropTypes.shape({
       TextWidget: PropTypes.func,
@@ -187,4 +195,5 @@ JSONForm.propTypes = {
     formContext: PropTypes.object,
     tagName: PropTypes.func,
   }),
+  uiSchema: PropTypes.object,
 };

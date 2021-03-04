@@ -61,7 +61,8 @@
     "unable_to_create_withdrawl": "Unable to create a withdrawl for more than the current balance.",
     "inpatient": "Inpatient",
     "outpatient": "Outpatient",
-    "select_the_patient": "Select the patient"
+    "select_the_patient": "Select the patient",
+    "edit_the_patient": "Edit patient details"
   },
   "fr": {
     "available_credit": "Crédit disponible",

@@ -9,25 +9,15 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { FlexRow } from './FlexRow';
-import { FlexView } from './FlexView';
-import { FlexColumn } from './FlexColumn';
 import { SimpleLabel } from './SimpleLabel';
 import { selectFullName } from '../selectors/Entities/name';
 
-import { dispensingStrings } from '../localization';
-
-const VaccinePrescriptionInfoComponent = ({ patientName }) => (
-  <FlexRow style={{ marginRight: 'auto' }}>
-    <FlexColumn flex={1}>
-      <FlexRow alignItems="flex-start">
-        <FlexView flex={3}>
-          <SimpleLabel label={dispensingStrings.patient} size="small" />
-          <SimpleLabel text={patientName} size="medium" numberOfLines={1} />
-        </FlexView>
-      </FlexRow>
-    </FlexColumn>
-  </FlexRow>
-);
+const VaccinePrescriptionInfoComponent = ({ patientName }) =>
+  patientName ? (
+    <FlexRow style={{ marginRight: 'auto', marginVertical: 10 }} flex={1}>
+      <SimpleLabel text={patientName} size="medium" numberOfLines={1} />
+    </FlexRow>
+  ) : null;
 
 const mapStateToProps = state => {
   const patientName = selectFullName(state);

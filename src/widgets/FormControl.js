@@ -62,6 +62,7 @@ const FormControlComponent = ({
   confirmText,
   // Cancel button state
   showCancelButton,
+  showSaveButton,
   cancelButtonText,
   // Form callbacks
   onInitialiseForm,
@@ -191,15 +192,16 @@ const FormControlComponent = ({
     );
 
   const SaveButton = React.useCallback(
-    () => (
-      <PageButton
-        onPress={onSaveForm}
-        style={localStyles.saveButton}
-        isDisabled={!canSaveForm || isDisabled}
-        textStyle={localStyles.saveButtonTextStyle}
-        text={saveButtonText}
-      />
-    ),
+    () =>
+      showSaveButton ? (
+        <PageButton
+          onPress={onSaveForm}
+          style={localStyles.saveButton}
+          isDisabled={!canSaveForm || isDisabled}
+          textStyle={localStyles.saveButtonTextStyle}
+          text={saveButtonText}
+        />
+      ) : null,
     [isDisabled, showCancelButton, canSaveForm, saveButtonText, onSaveForm]
   );
 
@@ -260,6 +262,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     saveButtonText,
     onSave,
     showCancelButton,
+    showSaveButton,
     cancelButtonText,
     onCancel,
   } = ownProps;
@@ -279,6 +282,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     isConfirmFormOpen,
     confirmText,
     showCancelButton,
+    showSaveButton,
     cancelButtonText,
     onInitialiseForm,
     onUpdateForm,
@@ -311,6 +315,7 @@ FormControlComponent.defaultProps = {
   saveButtonText: generalStrings.save,
   confirmText: modalStrings.confirm,
   showCancelButton: true,
+  showSaveButton: true,
   cancelButtonText: modalStrings.cancel,
 };
 
@@ -324,6 +329,7 @@ FormControlComponent.propTypes = {
   isConfirmFormOpen: PropTypes.bool.isRequired,
   confirmText: PropTypes.string,
   showCancelButton: PropTypes.bool,
+  showSaveButton: PropTypes.bool,
   cancelButtonText: PropTypes.string,
   onInitialiseForm: PropTypes.func.isRequired,
   onUpdateForm: PropTypes.func.isRequired,
