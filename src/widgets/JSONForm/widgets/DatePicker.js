@@ -39,9 +39,13 @@ export const DatePicker = ({ disabled, value, onChange, placeholder, readonly })
   );
 };
 
+DatePicker.defaultProps = {
+  value: '',
+};
+
 DatePicker.propTypes = {
   disabled: PropTypes.bool.isRequired,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   placeholder: PropTypes.string.isRequired,
   readonly: PropTypes.bool.isRequired,
