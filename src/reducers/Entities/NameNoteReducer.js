@@ -5,7 +5,6 @@ const initialState = () => ({
   editingById: {},
   creatingId: '',
   editingId: '',
-  creatingNameNoteIsValid: true,
 });
 
 export const NameNoteReducer = (state = initialState(), action) => {
@@ -17,12 +16,12 @@ export const NameNoteReducer = (state = initialState(), action) => {
       const { data, errors } = payload;
       const { creatingId } = state;
 
-      const creatingNameNoteIsValid = !(errors?.length > 0);
+      const isValid = !(errors?.length > 0);
 
-      const newNameNote = { ...state.creatingById[creatingId], data };
+      const newNameNote = { ...state.creatingById[creatingId], data, isValid };
       const newById = { ...state.creatingById, [creatingId]: newNameNote };
 
-      return { ...state, creatingById: newById, creatingNameNoteIsValid };
+      return { ...state, creatingById: newById };
     }
 
     case NAME_NOTE_ACTIONS.CREATE: {

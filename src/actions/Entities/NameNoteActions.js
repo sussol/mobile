@@ -13,9 +13,9 @@ export const NAME_NOTE_ACTIONS = {
 
 const createDefaultNameNote = () => ({
   id: generateUUID(),
-  entryDate: new Date(),
-  name: '',
-  patientEvent: '',
+  entryDate: new Date().getTime(),
+  isValid: false,
+  data: {},
 });
 
 const createFromExisting = nameID => dispatch => {

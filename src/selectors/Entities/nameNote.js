@@ -20,6 +20,7 @@ export const selectEditingNameNote = state => {
 
 export const selectNameNoteIsValid = state => {
   const nameNoteState = selectSpecificEntityState(state, 'nameNote');
-  const { creatingNameNoteIsValid } = nameNoteState;
-  return creatingNameNoteIsValid;
+  const { creatingById, creatingId } = nameNoteState;
+  const { isValid = false } = creatingById[creatingId] ?? {};
+  return isValid;
 };
