@@ -35,7 +35,7 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
       const { payload } = action;
       const { vaccine } = payload;
 
-      return { ...state, selectedVaccines: [vaccine] };
+      return { ...state, selectedVaccines: [vaccine], selectedBatches: [] };
     }
 
     case VACCINE_PRESCRIPTION_ACTIONS.SELECT_BATCH: {
