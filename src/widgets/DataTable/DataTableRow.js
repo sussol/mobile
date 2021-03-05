@@ -341,6 +341,7 @@ const DataTableRow = React.memo(
               const { isVaccine = false, hasVariance = false } = rowData ?? {};
 
               const disabledConditions = {
+                [COLUMN_KEYS.CURRENT_LOCATION]: !isVaccine,
                 [COLUMN_KEYS.CURRENT_VVM_STATUS]: !isVaccine,
                 [COLUMN_KEYS.REASON_TITLE]: !hasVariance,
               };

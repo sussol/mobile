@@ -29,7 +29,7 @@ export const COLUMN_KEYS = {
   COST_PRICE: 'costPriceString',
   COUNTED_TOTAL_QUANTITY: 'countedTotalQuantity',
   CREATED_DATE: 'createdDate',
-  CURRENT_LOCATION: 'currentLocation',
+  CURRENT_LOCATION: 'currentLocationName',
   CURRENT_VVM_STATUS: 'currentVvmStatusName',
   DATE_OF_BIRTH: 'dateOfBirth',
   DESCRIPTION: 'description',
