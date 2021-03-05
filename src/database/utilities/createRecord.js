@@ -649,6 +649,7 @@ const createItemBatch = (database, item, batchString, supplier) => {
     // Find a VVM Status with the lowest level to auto assign to new item batches.
     const vaccineVialMonitorStatus = database
       .objects('VaccineVialMonitorStatus')
+      .filtered('isActive == true')
       .sorted('level')[0];
 
     if (itemBatch.shouldApplyVvmStatus(vaccineVialMonitorStatus)) {
