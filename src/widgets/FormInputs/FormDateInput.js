@@ -106,9 +106,12 @@ export const FormDateInput = React.forwardRef(
 
     const onChangeDates = ({ nativeEvent }) => {
       const { timestamp } = nativeEvent;
-      if (!timestamp) return;
-      const newDate = moment(new Date(timestamp)).format('DD/MM/YYYY');
-      onUpdate(newDate, true);
+      if (!timestamp) {
+        setInputState(state => ({ ...state, datePickerOpen: false }));
+      } else {
+        const newDate = moment(new Date(timestamp)).format('DD/MM/YYYY');
+        onUpdate(newDate, true);
+      }
     };
 
     const openDatePicker = () => setInputState(state => ({ ...state, datePickerOpen: true }));
