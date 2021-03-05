@@ -34,17 +34,6 @@ export const NameNoteReducer = (state = initialState(), action) => {
       };
     }
 
-    case NAME_NOTE_ACTIONS.SAVE_EDITING: {
-      const { editingById } = state;
-      const { payload } = action;
-      const { nameNote } = payload;
-      const { id } = nameNote;
-
-      const newEditingById = { ...editingById, [id]: nameNote };
-
-      return { ...state, editingById: newEditingById, editingId: '' };
-    }
-
     case NAME_NOTE_ACTIONS.SAVE_NEW: {
       const { creatingById } = state;
       const { payload } = action;

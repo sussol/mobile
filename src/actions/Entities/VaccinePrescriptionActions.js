@@ -9,7 +9,7 @@ import {
 } from '../../selectors/Entities/vaccinePrescription';
 import { selectEditingNameId } from '../../selectors/Entities/name';
 import { NameActions } from './NameActions';
-import { goToVaccines } from '../../navigation/actions';
+import { NameNoteActions } from './NameNoteActions';
 import { WizardActions } from '../WizardActions';
 
 export const VACCINE_PRESCRIPTION_ACTIONS = {
@@ -96,8 +96,9 @@ const confirm = () => (dispatch, getState) => {
   });
 
   batch(() => {
+    dispatch(NameNoteActions.saveEditing());
+    dispatch(NameActions.saveEditing());
     dispatch(WizardActions.complete());
-    dispatch(goToVaccines());
     dispatch(NameActions.reset());
     dispatch(reset());
   });

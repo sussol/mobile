@@ -7,7 +7,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
-import { connect } from 'react-redux';
+import { batch, connect } from 'react-redux';
 
 import { TABS } from '../constants';
 
@@ -19,9 +19,8 @@ import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 import { SimpleTable } from '../SimpleTable';
 import { SimpleLabel } from '../SimpleLabel';
 
-// import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
 import { VaccinePrescriptionActions } from '../../actions/Entities/VaccinePrescriptionActions';
-// import { WizardActions } from '../../actions/WizardActions';
+import { goToVaccines } from '../../navigation/actions';
 import {
   selectSelectedBatchRows,
   selectSelectedBatches,
@@ -135,7 +134,11 @@ const mapDispatchToProps = dispatch => {
   const onCancelPrescription = () => dispatch(VaccinePrescriptionActions.cancel());
   const onSelectBatch = itemBatch => dispatch(VaccinePrescriptionActions.selectBatch(itemBatch));
   const onSelectVaccine = vaccine => dispatch(VaccinePrescriptionActions.selectVaccine(vaccine));
-  const onConfirm = () => dispatch(VaccinePrescriptionActions.confirm());
+  const onConfirm = () =>
+    batch(() => {
+      dispatch(VaccinePrescriptionActions.confirm());
+      dispatch(goToVaccines());
+    });
 
   return { onCancelPrescription, onConfirm, onSelectBatch, onSelectVaccine };
 };

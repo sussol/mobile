@@ -1,6 +1,6 @@
 import { generateUUID } from 'react-native-database';
 import { UIDatabase } from '../../database/index';
-import { selectNewNameNoteId } from '../../selectors/Entities/nameNote';
+import { selectEditingNameNote, selectNewNameNoteId } from '../../selectors/Entities/nameNote';
 
 export const NAME_NOTE_ACTIONS = {
   CREATE: 'NAME_NOTE/create',
@@ -57,10 +57,10 @@ const saveNewSurvey = surveyData => dispatch => {
   });
 };
 
-const saveEditing = nameNote => ({
-  type: NAME_NOTE_ACTIONS.SAVE_EDITING,
-  payload: { nameNote },
-});
+const saveEditing = () => (_, getState) => {
+  const currentNameNote = selectEditingNameNote(getState());
+  UIDatabase.write(() => UIDatabase.update('NameNote', currentNameNote));
+};
 
 const updateNew = (value, field) => (dispatch, getState) => {
   const newNameId = selectNewNameNoteId(getState());
