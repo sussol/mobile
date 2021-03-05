@@ -49,12 +49,6 @@ const createSurveyNameNote = nameID => (dispatch, getState) => {
   const { jsonSchema } = surveySchema;
   const isValid = validateData(jsonSchema, seedPCD?.data);
 
-  console.log('-------------------------------------------');
-  console.log('jsonSchema', jsonSchema);
-  console.log('isValid', isValid);
-
-  console.log('-------------------------------------------');
-
   if (seedPCD.toObject) {
     dispatch(create(seedPCD?.toObject(), isValid));
   } else {
