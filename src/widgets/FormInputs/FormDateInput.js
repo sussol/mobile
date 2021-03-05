@@ -70,9 +70,15 @@ export const FormDateInput = React.forwardRef(
 
     const onUpdate = (newValue, validity = true, pickerVisibility = false) => {
       const newDate = moment(newValue, 'DD/MM/YYYY');
-      const newValidity = newDate.isValid();
+      const newValidity = onValidate(newValue);
       const updatedIsValid = validity && newValidity;
-      const updatedDate = updatedIsValid ? newDate.toDate() : new Date();
+
+      let updatedDate = null;
+      if (!newValue) {
+        updatedDate = null;
+      } else if (updatedIsValid) {
+        updatedDate = newDate.toDate();
+      }
 
       const updatedState = {
         isValid: updatedIsValid,
