@@ -37,19 +37,20 @@ import globalStyles from '../../globalStyles';
 /**
  * Layout component used for a tab within the vaccine prescription wizard.
  *
- * @prop {Func}   createPatient         Callback for creating a patient.
- * @prop {object} formConfig            Configuration of the search form
- * @prop {Bool}   isAscending           Indicator if the list of patient is sorted ascending.
- * @prop {Func}   onCancelPrescription  Cancels the prescription and returns to the vaccine page
- * @prop {Func}   onFilterData          Callback for filtering patients.
- * @prop {Func}   onSortData            Callback for sorting patients by column.
- * @prop {Func}   patients              Current set of patient data.
- * @prop {Func}   selectPatient         Callback for selecting a patient.
- * @prop {String} sortKey               Current key the list of patients is sorted by.
+ * @prop {Func}   onCancelPrescription  Callback for cancelling the prescription.
+ * @prop {Func}   onConfirm             Callback for confirming / creating transaction.
+ * @prop {Func}   onSelectBatch         Callback for selecting a batch.
+ * @prop {Func}   onSelectVaccine       Callback for selecting a vaccine.
+ * @prop {array}  selectedBatches       Returns the currently selected batches.
+ * @prop {object} selectedBatchRows     Selected batch row objects.
+ * @prop {object} selectedRows          Selected vaccine row objects.
+ * @prop {object} selectedVaccine       Currently selected vaccine.
+ * @prop {array}  vaccines              List of vaccine items.
  *
  */
 const VaccineSelectComponent = ({
   onCancelPrescription,
+  onConfirm,
   onSelectBatch,
   onSelectVaccine,
   selectedBatches,
@@ -123,6 +124,7 @@ const VaccineSelectComponent = ({
           text={buttonStrings.confirm}
           style={{ marginLeft: 5 }}
           isDisabled={selectedBatches.length === 0}
+          onPress={onConfirm}
         />
       </FlexRow>
     </FlexView>
@@ -133,8 +135,9 @@ const mapDispatchToProps = dispatch => {
   const onCancelPrescription = () => dispatch(VaccinePrescriptionActions.cancel());
   const onSelectBatch = itemBatch => dispatch(VaccinePrescriptionActions.selectBatch(itemBatch));
   const onSelectVaccine = vaccine => dispatch(VaccinePrescriptionActions.selectVaccine(vaccine));
+  const onConfirm = () => dispatch(VaccinePrescriptionActions.confirm());
 
-  return { onCancelPrescription, onSelectBatch, onSelectVaccine };
+  return { onCancelPrescription, onConfirm, onSelectBatch, onSelectVaccine };
 };
 
 const mapStateToProps = state => {
@@ -157,6 +160,7 @@ VaccineSelectComponent.defaultProps = {
 
 VaccineSelectComponent.propTypes = {
   onCancelPrescription: PropTypes.func.isRequired,
+  onConfirm: PropTypes.func.isRequired,
   onSelectBatch: PropTypes.func.isRequired,
   onSelectVaccine: PropTypes.func.isRequired,
   selectedBatchRows: PropTypes.object,

@@ -1,8 +1,16 @@
 import { generateUUID } from 'react-native-database';
 import { batch } from 'react-redux';
 import { NavigationActions } from '@react-navigation/core';
-import { selectEditingVaccinePrescriptionId } from '../../selectors/Entities/vaccinePrescription';
+
+import { UIDatabase, createRecord } from '../../database';
+import {
+  selectEditingVaccinePrescriptionId,
+  selectSelectedBatches,
+} from '../../selectors/Entities/vaccinePrescription';
+import { selectEditingNameId } from '../../selectors/Entities/name';
 import { NameActions } from './NameActions';
+import { goToVaccines } from '../../navigation/actions';
+import { WizardActions } from '../WizardActions';
 
 export const VACCINE_PRESCRIPTION_ACTIONS = {
   CREATE: 'VACCINE_PRESCRIPTION/create',
@@ -63,6 +71,38 @@ const updateEditing = (value, field) => (dispatch, getState) => {
   dispatch(update(newVaccinePrescriptionId, field, value));
 };
 
+const confirm = () => (dispatch, getState) => {
+  const { user } = getState();
+  const { currentUser } = user;
+  const patientID = selectEditingNameId(getState());
+  const patient = UIDatabase.get('Name', patientID);
+  const selectedBatches = selectSelectedBatches(getState());
+
+  UIDatabase.write(() => {
+    const prescription = createRecord(
+      UIDatabase,
+      'CustomerInvoice',
+      patient,
+      currentUser,
+      'dispensary'
+    );
+
+    selectedBatches.forEach(itemBatch => {
+      const { item } = itemBatch;
+      const transactionItem = createRecord(UIDatabase, 'TransactionItem', prescription, item);
+      transactionItem.setTotalQuantity(UIDatabase, 1 / item.doses);
+    });
+    prescription.finalise(UIDatabase);
+  });
+
+  batch(() => {
+    dispatch(WizardActions.complete());
+    dispatch(goToVaccines());
+    dispatch(NameActions.reset());
+    dispatch(reset());
+  });
+};
+
 const cancel = () => dispatch => {
   batch(() => {
     dispatch(NavigationActions.back());
@@ -73,6 +113,7 @@ const cancel = () => dispatch => {
 
 export const VaccinePrescriptionActions = {
   cancel,
+  confirm,
   create,
   reset,
   saveEditing,
