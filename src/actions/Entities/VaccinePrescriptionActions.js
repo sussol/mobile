@@ -99,7 +99,6 @@ const confirm = () => (dispatch, getState) => {
     dispatch(NameNoteActions.saveEditing());
     dispatch(NameActions.saveEditing());
     dispatch(WizardActions.complete());
-    dispatch(NameActions.reset());
     dispatch(reset());
   });
 };
@@ -108,6 +107,7 @@ const cancel = () => dispatch => {
   batch(() => {
     dispatch(NavigationActions.back());
     dispatch(NameActions.reset());
+    dispatch(NameNoteActions.reset());
     dispatch(reset());
   });
 };

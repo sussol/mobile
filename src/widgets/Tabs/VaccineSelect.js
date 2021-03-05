@@ -29,6 +29,7 @@ import {
   selectVaccines,
 } from '../../selectors/Entities/vaccinePrescription';
 import { getColumns } from '../../pages/dataTableUtilities';
+import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 
 import { buttonStrings, dispensingStrings } from '../../localization';
 import globalStyles from '../../globalStyles';
@@ -75,6 +76,10 @@ const VaccineSelectComponent = ({
         .reduce((acc, b) => ({ ...acc, [b.id]: true }), {}),
     [vaccines]
   );
+  const runWithLoadingIndicator = useLoadingIndicator();
+  const confirmPrescription = React.useCallback(() => runWithLoadingIndicator(onConfirm), [
+    onConfirm,
+  ]);
 
   return (
     <FlexView style={pageTopViewContainer}>
@@ -123,7 +128,7 @@ const VaccineSelectComponent = ({
           text={buttonStrings.confirm}
           style={{ marginLeft: 5 }}
           isDisabled={selectedBatches.length === 0}
-          onPress={onConfirm}
+          onPress={confirmPrescription}
         />
       </FlexRow>
     </FlexView>

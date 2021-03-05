@@ -74,13 +74,11 @@ const PatientEditComponent = ({
             inputConfig={getFormInputConfig('patient', currentPatient)}
           />
         </View>
-        <View style={localStyles.verticalSeparator} />
-        <View style={localStyles.formContainer}>
-          {surveySchema && (
-            <JSONForm ref={formRef} onSubmit={onSubmitSurvey} surveySchema={surveySchema}>
-              <View />
-            </JSONForm>
-          )}
+        <View style={surveySchema ? localStyles.verticalSeparator : localStyles.hidden} />
+        <View style={surveySchema ? localStyles.formContainer : localStyles.hidden}>
+          <JSONForm ref={formRef} onSubmit={onSubmitSurvey} surveySchema={surveySchema}>
+            <View />
+          </JSONForm>
         </View>
       </View>
 
@@ -152,6 +150,7 @@ const localStyles = StyleSheet.create({
     backgroundColor: 'white',
     alignItems: 'stretch',
   },
+  hidden: { display: 'none' },
   verticalSeparator: {
     width: 10,
     backgroundColor: DARK_GREY,

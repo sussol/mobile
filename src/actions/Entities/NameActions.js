@@ -66,11 +66,12 @@ const updateEditing = (value, field) => (dispatch, getState) => {
   dispatch(update(newNameId, field, value));
 };
 
-const saveEditing = () => (_, getState) => {
+const saveEditing = () => (dispatch, getState) => {
   const currentPatient = selectEditingName(getState());
   const patientRecord = { ...currentPatient, dateOfBirth: Date(currentPatient.dateOfBirth) };
 
   UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patientRecord));
+  dispatch(reset());
 };
 
 export const NameActions = {
