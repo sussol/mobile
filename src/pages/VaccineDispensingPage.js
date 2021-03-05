@@ -7,7 +7,7 @@ import React from 'react';
 import { Wizard } from '../widgets';
 import { PatientSelect } from '../widgets/Tabs/PatientSelect';
 import { PatientEdit } from '../widgets/Tabs/PatientEdit';
-import { PrescriptionConfirmation } from '../widgets/Tabs/PrescriptionConfirmation';
+import { VaccineSelect } from '../widgets/Tabs/VaccineSelect';
 
 import { dispensingStrings } from '../localization';
 
@@ -18,7 +18,7 @@ const tabs = [
     title: dispensingStrings.select_the_patient,
   },
   { component: PatientEdit, name: 'edit', title: dispensingStrings.edit_the_patient },
-  { component: PrescriptionConfirmation, name: 'prescription', title: dispensingStrings.finalise },
+  { component: VaccineSelect, name: 'prescription', title: dispensingStrings.finalise },
 ];
 
 export const VaccineDispensingPage = () => <Wizard tabs={tabs} />;

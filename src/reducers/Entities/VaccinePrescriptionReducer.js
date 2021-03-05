@@ -1,7 +1,10 @@
 import { VACCINE_PRESCRIPTION_ACTIONS } from '../../actions/Entities';
+import { UIDatabase } from '../../database';
 
 const initialState = () => ({
   creating: undefined,
+  selectedVaccines: [],
+  vaccines: UIDatabase.objects('Vaccine'),
 });
 
 export const VaccinePrescriptionReducer = (state = initialState(), action) => {
@@ -25,6 +28,13 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
       const { prescription } = payload;
 
       return { ...state, creating: prescription.toJSON() };
+    }
+
+    case VACCINE_PRESCRIPTION_ACTIONS.SELECT_VACCINE: {
+      const { payload } = action;
+      const { vaccine } = payload;
+
+      return { ...state, selectedVaccines: [vaccine] };
     }
 
     case VACCINE_PRESCRIPTION_ACTIONS.RESET: {

@@ -50,6 +50,7 @@ const PAGE_COLUMN_WIDTHS = {
   sensors: [3, 3, 1, 1],
   [TABS.ITEM]: [1, 3, 1],
   [TABS.PRESCRIBER]: [3, 3, 1],
+  [TABS.BATCH]: [1, 1, 1, 1],
   editableCustomerRequisitionFormEntry: [2, 1.5, 1, 1, 1, 1.5, 1, 1, 1, 1.5],
   customerRequisitionFormEntry: [2, 2, 1, 1, 1, 1, 2, 2, 2, 2],
 };
@@ -384,6 +385,12 @@ const PAGE_COLUMNS = {
   ],
   [TABS.ITEM]: [COLUMN_NAMES.CODE, COLUMN_NAMES.NAME, COLUMN_NAMES.TOTAL_QUANTITY],
   [TABS.PRESCRIBER]: [COLUMN_NAMES.FIRST_NAME, COLUMN_NAMES.LAST_NAME, COLUMN_NAMES.SELECT],
+  [TABS.BATCH]: [
+    COLUMN_NAMES.BATCH_NAME,
+    COLUMN_NAMES.NUMBER_OF_PACKS,
+    COLUMN_NAMES.DOSES,
+    COLUMN_NAMES.EXPIRY_DATE,
+  ],
 };
 
 const COLUMNS = () => ({
@@ -574,7 +581,7 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.BATCH,
     title: tableStrings.batch_name,
-    textAlign: 'left',
+    alignText: 'left',
     sortable: true,
     editable: false,
   },
@@ -583,7 +590,7 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.NAME,
     title: tableStrings.question,
-    textAlign: 'left',
+    alignText: 'left',
     sortable: false,
     editable: false,
   },
@@ -592,7 +599,7 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.PROGRAM,
     title: tableStrings.program,
-    textAlign: 'left',
+    alignText: 'left',
     sortable: true,
     editable: false,
   },
@@ -629,7 +636,7 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.EDITABLE_STRING,
     key: COLUMN_KEYS.COMMENT,
     title: tableStrings.comment,
-    textAlign: 'right',
+    alignText: 'right',
     sortable: false,
     editable: true,
   },
@@ -637,7 +644,7 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.EDITABLE_STRING,
     key: COLUMN_KEYS.NAME,
     title: tableStrings.name,
-    textAlign: 'left',
+    alignText: 'left',
     sortable: true,
     editable: true,
   },
@@ -645,7 +652,7 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.EDITABLE_STRING,
     key: COLUMN_KEYS.VALUE,
     title: tableStrings.value,
-    textAlign: 'right',
+    alignText: 'right',
     sortable: false,
     editable: true,
   },
@@ -827,6 +834,15 @@ const COLUMNS = () => ({
     alignText: 'right',
     sortable: true,
     editable: false,
+  },
+
+  [COLUMN_NAMES.NUMBER_OF_PACKS]: {
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
+    key: COLUMN_KEYS.NUMBER_OF_PACKS,
+    title: tableStrings.packs,
+    alignText: 'right',
+    sortable: true,
+    editable: true,
   },
 
   // EDITABLE NUMERIC COLUMNS
