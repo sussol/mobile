@@ -2,9 +2,10 @@
 /* eslint-disable max-len */
 import React, { useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
+import pointer from 'json-pointer';
 import { Alert } from 'react-native';
 import { withTheme } from '@rjsf/core';
-
+import Ajv from 'ajv';
 import { JSONFormContainer } from './JSONFormContainer';
 import { JSONFormField } from './fields/index';
 import { JSONFormTemplate } from './templates/index';
@@ -12,7 +13,19 @@ import { JSONFormWidget } from './widgets/index';
 import { JSONFormErrorList } from './JSONFormErrorList';
 import { PageButton } from '../PageButton';
 import { JSONFormContext } from './JSONFormContext';
-import { testTongaSurvey, testTongaUiSchema } from './testJSON';
+
+const ajvErrors = require('ajv-errors');
+
+const ajv = new Ajv({
+  errorDataPath: 'property',
+  allErrors: true,
+  multipleOfPrecision: 8,
+  schemaId: 'auto',
+  unknownFormats: 'ignore',
+  jsonPointers: true,
+});
+
+ajvErrors(ajv);
 
 const defaultTheme = {
   // Widgets are the lowest level input components. TextInput, Checkbox
@@ -115,20 +128,25 @@ class FocusController {
 
 export const JSONForm = React.forwardRef(
   (
-    { formData, onChange, theme = defaultTheme, children, options, onSubmit, schema, uiSchema },
+    { formData, onChange, theme = defaultTheme, children, options, onSubmit, surveySchema },
     ref
   ) => {
-    const formRef = useRef(null);
-
+    const { uiSchema, jsonSchema } = surveySchema;
+    const validator = useMemo(() => ajv.compile(jsonSchema), [jsonSchema]);
     const Form = useMemo(() => withTheme(theme), []);
 
     // Attach to the ref passed a method `submit` which will allow a caller
     // to programmatically call submit
-    useImperativeHandle(ref, () => ({
-      submit: e => {
-        formRef.current?.onSubmit(e);
-      },
-    }));
+    const formRef = useRef(null);
+    useImperativeHandle(
+      ref,
+      () => ({
+        submit: e => {
+          formRef.current?.onSubmit(e);
+        },
+      }),
+      []
+    );
 
     return (
       <JSONFormContext.Provider value={options}>
@@ -136,13 +154,49 @@ export const JSONForm = React.forwardRef(
           liveValidate
           onChange={onChange}
           formData={formData}
-          uiSchema={uiSchema}
+          validate={(newFormData, errorHandlers) => {
+            // Validate the form data, if there are any errors, an `errors` object is set on
+            // on the validator object.
+            validator(newFormData);
+            // If there are any errors, us the errorHandlers object which is a mirrored schema
+            // of the full JSON schema passed, where the value of each property is a function:
+            // addError, which will add a custom error message against the field.
+            validator.errors?.forEach(({ message, dataPath }) => {
+              // Each of these errors have the shape defined here:
+              // https://ajv.js.org/docs/api.html#validation-errors
+              // the data path is a JSON pointer to where the validation error occurred in the
+              // formData, since errorHandlers has the same shape as formData, use the
+              // same pointer.
+              const errorHandler = pointer.get(errorHandlers, dataPath);
+              // NOTE: This addError function uses `this` internally - do not destructor.
+              if (errorHandler?.addError) errorHandler.addError(message);
+            });
+
+            // The same ErrorHandlers object must be returned from this function, which should be
+            // mutated by the error handler `addError` functions. The result of this validation
+            // is then merged with the result of the internal validation of the component, rather
+            // than overriding it.
+            // https://github.com/rjsf-team/react-jsonschema-form/blob/64b167051d724df381b81dc2319e925266f99709/packages/core/src/validate.js#L254
+            return errorHandlers;
+          }}
+          // eslint-disable-next-line arrow-body-style
+          transformErrors={() => {
+            // This function is used to transform errors generated from the Form components internal
+            // validation, which occurs regardless of passing a custom validation function and merges
+            // those errors with any errors generated from the custom validation. Overriding this
+            // to return an empty array such that the merge results in only custom errors.
+            // Since we use the same validation as the component, we still generate the same errors,
+            // except when we override them with custom errors.
+            // https://github.com/rjsf-team/react-jsonschema-form/blob/64b167051d724df381b81dc2319e925266f99709/packages/core/src/validate.js#L231-L233
+            return [];
+          }}
           onError={() => {
             // placeholder to prevent console.errors when validation fails.
           }}
           onSubmit={onSubmit}
+          uiSchema={uiSchema ?? {}}
+          schema={jsonSchema}
           ref={formRef}
-          schema={schema}
         >
           {children ?? (
             <PageButton
@@ -165,8 +219,6 @@ JSONForm.defaultProps = {
     Alert.alert('Form Data', JSON.stringify(form.formData), null, '\n');
   },
   options: { focusController: new FocusController() },
-  schema: testTongaSurvey,
-  uiSchema: testTongaUiSchema,
   onChange: () => {},
   formData: {},
 };
@@ -174,10 +226,13 @@ JSONForm.defaultProps = {
 JSONForm.propTypes = {
   formData: PropTypes.object,
   onChange: PropTypes.func,
+};
+
+JSONForm.propTypes = {
+  surveySchema: PropTypes.object.isRequired,
   children: PropTypes.node,
   onSubmit: PropTypes.func,
   options: PropTypes.object,
-  schema: PropTypes.object,
   theme: PropTypes.shape({
     widgets: PropTypes.shape({
       TextWidget: PropTypes.func,
@@ -205,5 +260,4 @@ JSONForm.propTypes = {
     formContext: PropTypes.object,
     tagName: PropTypes.func,
   }),
-  uiSchema: PropTypes.object,
 };
