@@ -34,8 +34,18 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
     case VACCINE_PRESCRIPTION_ACTIONS.SELECT_VACCINE: {
       const { payload } = action;
       const { vaccine } = payload;
+      const { batches } = vaccine;
+      const selectedBatches = [];
+      // select the recommended batch
+      if (batches?.length) {
+        const batchesByExpiry = batches.sorted('expiryDate');
+        const openVials = batchesByExpiry.filter(b => !Number.isInteger(b.numberOfPacks));
 
-      return { ...state, selectedVaccines: [vaccine], selectedBatches: [] };
+        const selectedBatch = openVials.length ? openVials[0] : batchesByExpiry[0];
+        selectedBatches.push(selectedBatch);
+      }
+
+      return { ...state, selectedVaccines: [vaccine], selectedBatches };
     }
 
     case VACCINE_PRESCRIPTION_ACTIONS.SELECT_BATCH: {

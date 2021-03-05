@@ -104,7 +104,7 @@ const VaccineSelectComponent = ({
             />
             <SimpleTable
               columns={batchColumns}
-              data={selectedVaccine.batches}
+              data={selectedVaccine.batches.sorted('expiryDate')}
               disabledRows={disabledBatchRows}
               selectedRows={selectedBatchRows}
               selectRow={onSelectBatch}
