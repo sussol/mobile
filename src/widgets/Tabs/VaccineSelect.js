@@ -23,6 +23,8 @@ import { SimpleLabel } from '../SimpleLabel';
 import { VaccinePrescriptionActions } from '../../actions/Entities/VaccinePrescriptionActions';
 // import { WizardActions } from '../../actions/WizardActions';
 import {
+  selectSelectedBatchRows,
+  selectSelectedBatches,
   selectSelectedRows,
   selectSelectedVaccines,
   selectVaccines,
@@ -48,7 +50,10 @@ import globalStyles from '../../globalStyles';
  */
 const VaccineSelectComponent = ({
   onCancelPrescription,
+  onSelectBatch,
   onSelectVaccine,
+  selectedBatches,
+  selectedBatchRows,
   selectedRows,
   selectedVaccine,
   vaccines,
@@ -65,7 +70,7 @@ const VaccineSelectComponent = ({
   );
   const disabledBatchRows = React.useMemo(
     () =>
-      selectedVaccine.batches
+      selectedVaccine?.batches
         ?.filter(b => b.doses === 0)
         .reduce((acc, b) => ({ ...acc, [b.id]: true }), {}),
     [vaccines]
@@ -100,6 +105,8 @@ const VaccineSelectComponent = ({
               columns={batchColumns}
               data={selectedVaccine.batches}
               disabledRows={disabledBatchRows}
+              selectedRows={selectedBatchRows}
+              selectRow={onSelectBatch}
               style={{ marginTop: 3, height: '90%' }}
             />
           </View>
@@ -112,7 +119,11 @@ const VaccineSelectComponent = ({
           onPress={onCancelPrescription}
           style={{ marginRight: 7 }}
         />
-        <PageButton text={buttonStrings.confirm} style={{ marginLeft: 5 }} />
+        <PageButton
+          text={buttonStrings.confirm}
+          style={{ marginLeft: 5 }}
+          isDisabled={selectedBatches.length === 0}
+        />
       </FlexRow>
     </FlexView>
   );
@@ -120,29 +131,37 @@ const VaccineSelectComponent = ({
 
 const mapDispatchToProps = dispatch => {
   const onCancelPrescription = () => dispatch(VaccinePrescriptionActions.cancel());
+  const onSelectBatch = itemBatch => dispatch(VaccinePrescriptionActions.selectBatch(itemBatch));
   const onSelectVaccine = vaccine => dispatch(VaccinePrescriptionActions.selectVaccine(vaccine));
 
-  return { onCancelPrescription, onSelectVaccine };
+  return { onCancelPrescription, onSelectBatch, onSelectVaccine };
 };
 
 const mapStateToProps = state => {
   const selectedRows = selectSelectedRows(state);
+  const selectedBatchRows = selectSelectedBatchRows(state);
+  const selectedBatches = selectSelectedBatches(state);
   const selectedVaccines = selectSelectedVaccines(state);
   const vaccines = selectVaccines(state);
   const [selectedVaccine] = selectedVaccines;
 
-  return { selectedRows, selectedVaccine, vaccines };
+  return { selectedBatches, selectedBatchRows, selectedRows, selectedVaccine, vaccines };
 };
 
 VaccineSelectComponent.defaultProps = {
+  selectedBatchRows: {},
   selectedRows: {},
+  selectedBatches: [],
   selectedVaccine: undefined,
 };
 
 VaccineSelectComponent.propTypes = {
   onCancelPrescription: PropTypes.func.isRequired,
+  onSelectBatch: PropTypes.func.isRequired,
   onSelectVaccine: PropTypes.func.isRequired,
+  selectedBatchRows: PropTypes.object,
   selectedRows: PropTypes.object,
+  selectedBatches: PropTypes.array,
   selectedVaccine: PropTypes.object,
   vaccines: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
 };

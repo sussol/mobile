@@ -11,6 +11,7 @@ export const VACCINE_PRESCRIPTION_ACTIONS = {
   SAVE_EDITING: 'VACCINE_PRESCRIPTION/saveEditing',
   RESET: 'VACCINE_PRESCRIPTION/reset',
   SELECT_VACCINE: 'VACCINE_PRESCRIPTION/selectVaccine',
+  SELECT_BATCH: 'VACCINE_PRESCRIPTION/selectBatch',
 };
 
 const createDefaultVaccinePrescription = () => ({
@@ -52,6 +53,10 @@ const selectVaccine = vaccine => ({
   type: VACCINE_PRESCRIPTION_ACTIONS.SELECT_VACCINE,
   payload: { vaccine },
 });
+const selectBatch = itemBatch => ({
+  type: VACCINE_PRESCRIPTION_ACTIONS.SELECT_BATCH,
+  payload: { itemBatch },
+});
 
 const updateEditing = (value, field) => (dispatch, getState) => {
   const newVaccinePrescriptionId = selectEditingVaccinePrescriptionId(getState());
@@ -72,6 +77,7 @@ export const VaccinePrescriptionActions = {
   reset,
   saveEditing,
   saveNew,
+  selectBatch,
   selectVaccine,
   update,
   updateEditing,

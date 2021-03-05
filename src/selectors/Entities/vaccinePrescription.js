@@ -31,6 +31,13 @@ export const selectSelectedVaccines = state => {
   return selectedVaccines;
 };
 
+export const selectSelectedBatches = state => {
+  const VaccinePrescriptionState = selectSpecificEntityState(state, 'vaccinePrescription');
+  const { selectedBatches } = VaccinePrescriptionState;
+
+  return selectedBatches;
+};
+
 export const selectSortedVaccines = createSelector([selectVaccines], vaccines => {
   const sortedVaccines = vaccines.sorted('name');
 
@@ -43,4 +50,8 @@ export const selectSortedVaccines = createSelector([selectVaccines], vaccines =>
 
 export const selectSelectedRows = createSelector([selectSelectedVaccines], vaccines =>
   vaccines.reduce((acc, vaccine) => ({ ...acc, [vaccine.id]: true }), {})
+);
+
+export const selectSelectedBatchRows = createSelector([selectSelectedBatches], batches =>
+  batches.reduce((acc, itemBatch) => ({ ...acc, [itemBatch.id]: true }), {})
 );

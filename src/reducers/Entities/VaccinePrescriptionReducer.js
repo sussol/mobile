@@ -4,6 +4,7 @@ import { UIDatabase } from '../../database';
 const initialState = () => ({
   creating: undefined,
   selectedVaccines: [],
+  selectedBatches: [],
   vaccines: UIDatabase.objects('Vaccine'),
 });
 
@@ -35,6 +36,13 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
       const { vaccine } = payload;
 
       return { ...state, selectedVaccines: [vaccine] };
+    }
+
+    case VACCINE_PRESCRIPTION_ACTIONS.SELECT_BATCH: {
+      const { payload } = action;
+      const { itemBatch } = payload;
+
+      return { ...state, selectedBatches: [itemBatch] };
     }
 
     case VACCINE_PRESCRIPTION_ACTIONS.RESET: {
