@@ -412,7 +412,6 @@ const generateSyncData = (settings, recordType, record) => {
         patient_event_ID: record.patientEvent?.id ?? '',
         name_ID: record.name?.id ?? '',
         entry_date: getDateString(record.entry_date),
-        form_schema_ID: record?.formSchema?.id ?? '',
         data: record.data,
       };
     }

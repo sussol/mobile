@@ -143,7 +143,7 @@ const mapDispatchToProps = dispatch => {
   const selectPatient = patient =>
     batch(() => {
       dispatch(NameActions.select(patient));
-      dispatch(NameNoteActions.createFromExisting(patient?.id));
+      dispatch(NameNoteActions.createSurveyNameNote(patient?.id));
       dispatch(WizardActions.nextTab());
     });
   const createPatient = () =>

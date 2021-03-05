@@ -1,6 +1,17 @@
+import Ajv from 'ajv';
 import { generateUUID } from 'react-native-database';
 import { UIDatabase } from '../../database/index';
 import { selectNewNameNoteId } from '../../selectors/Entities/nameNote';
+import { selectSurveySchemas } from '../../selectors/formSchema';
+
+const ajvOptions = {
+  errorDataPath: 'property',
+  allErrors: true,
+  multipleOfPrecision: 8,
+  schemaId: 'auto',
+  unknownFormats: 'ignore',
+  jsonPointers: true,
+};
 
 export const NAME_NOTE_ACTIONS = {
   CREATE: 'NAME_NOTE/create',
@@ -11,6 +22,13 @@ export const NAME_NOTE_ACTIONS = {
   UPDATE_DATA: 'NAME_NOTE/updateData',
 };
 
+const validateData = (jsonSchema, data) => {
+  const ajv = new Ajv(ajvOptions);
+  const result = ajv.validate(jsonSchema, data);
+
+  return result;
+};
+
 const createDefaultNameNote = () => ({
   id: generateUUID(),
   entryDate: new Date().getTime(),
@@ -18,16 +36,35 @@ const createDefaultNameNote = () => ({
   data: {},
 });
 
-const createFromExisting = nameID => dispatch => {
+const createSurveyNameNote = nameID => (dispatch, getState) => {
   const name = UIDatabase.get('Name', nameID);
-  const pcd = name?.mostRecentPCD;
-  if (!(pcd || name)) dispatch(create());
-  else dispatch(create(pcd.toObject()));
+
+  // Create the seed PCD, which is either their most recently filled survey or
+  // and empty object.
+  const seedPCD = name?.mostRecentPCD ?? {};
+
+  // Get the survey schema as we need an initial validation to determine if
+  // the seed has any fields which are required to be filled.
+  const [surveySchema = {}] = selectSurveySchemas(getState);
+  const { jsonSchema } = surveySchema;
+  const isValid = validateData(jsonSchema, seedPCD?.data);
+
+  console.log('-------------------------------------------');
+  console.log('jsonSchema', jsonSchema);
+  console.log('isValid', isValid);
+
+  console.log('-------------------------------------------');
+
+  if (seedPCD.toObject) {
+    dispatch(create(seedPCD?.toObject(), isValid));
+  } else {
+    dispatch(create(seedPCD, isValid));
+  }
 };
 
-const create = (seed = createDefaultNameNote()) => ({
+const create = (seed = createDefaultNameNote(), isValid) => ({
   type: NAME_NOTE_ACTIONS.CREATE,
-  payload: { nameNote: seed },
+  payload: { nameNote: seed, isValid },
 });
 
 const updateForm = (data, errors) => ({
@@ -83,6 +120,6 @@ export const NameNoteActions = {
   saveEditing,
   saveNewSurvey,
   reset,
-  createFromExisting,
+  createSurveyNameNote,
   updateForm,
 };

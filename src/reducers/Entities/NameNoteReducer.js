@@ -27,10 +27,14 @@ export const NameNoteReducer = (state = initialState(), action) => {
     case NAME_NOTE_ACTIONS.CREATE: {
       const { creatingById } = state;
       const { payload } = action;
-      const { nameNote } = payload;
+      const { nameNote, isValid } = payload;
       const { id } = nameNote;
 
-      return { ...state, creatingById: { ...creatingById, [id]: nameNote }, creatingId: id };
+      return {
+        ...state,
+        creatingById: { ...creatingById, [id]: { ...nameNote, isValid } },
+        creatingId: id,
+      };
     }
 
     case NAME_NOTE_ACTIONS.EDIT: {
