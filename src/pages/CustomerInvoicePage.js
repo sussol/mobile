@@ -143,7 +143,7 @@ export const CustomerInvoice = ({
         sortKey={sortKey}
       />
     ),
-    [sortKey, isAscending]
+    [columns, sortKey, isAscending]
   );
 
   const { verticalContainer, topButton } = globalStyles;
