@@ -2,6 +2,7 @@ import { createSelector } from 'reselect';
 
 import { selectSpecificEntityState } from './index';
 import { getFormInputConfig } from '../../utilities/formInputConfigs';
+import { UIDatabase } from '../../database';
 
 export const selectEditingVaccinePrescriptionId = state => {
   const VaccinePrescriptionState = selectSpecificEntityState(state, 'vaccinePrescription');
@@ -55,3 +56,8 @@ export const selectSelectedRows = createSelector([selectSelectedVaccines], vacci
 export const selectSelectedBatchRows = createSelector([selectSelectedBatches], batches =>
   batches.reduce((acc, itemBatch) => ({ ...acc, [itemBatch.id]: true }), {})
 );
+
+export const selectHasVaccines = () => {
+  const vaccines = UIDatabase.objects('Vaccine');
+  return vaccines.length > 0;
+};
