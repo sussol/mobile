@@ -55,9 +55,12 @@ export const FormDateInput = React.forwardRef(
     },
     ref
   ) => {
-    const initialValue = onValidate(value)
-      ? moment(value, 'DD/MM/YYYY')
-      : moment(new Date(), 'DD/MM/YYYY');
+    let initialValue = moment(value);
+    if (onValidate(value)) {
+      initialValue = moment(value);
+    } else if (typeof value === 'number' && onValidate(value)) {
+      initialValue = moment(new Date(), 'DD/MM/YYYY');
+    }
 
     const [inputState, setInputState] = React.useState({
       isValid: true,
@@ -152,7 +155,7 @@ export const FormDateInput = React.forwardRef(
               onChange={onChangeDates}
               mode="date"
               display="spinner"
-              value={pickerSeedValue}
+              value={pickerSeedValue ?? new Date()}
               maximumDate={new Date()}
             />
           )}
