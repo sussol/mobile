@@ -8,6 +8,7 @@ export const NAME_NOTE_ACTIONS = {
   SAVE_NEW: 'NAME_NOTE/saveNew',
   SAVE_EDITING: 'NAME_NOTE/saveEditing',
   RESET: 'NAME_NOTE/reset',
+  UPDATE_DATA: 'NAME_NOTE/updateData',
 };
 
 const createDefaultNameNote = () => ({
@@ -17,14 +18,21 @@ const createDefaultNameNote = () => ({
   patientEvent: '',
 });
 
-const create = () => ({
+const createFromExisting = nameID => dispatch => {
+  const name = UIDatabase.get('Name', nameID);
+  const pcd = name?.mostRecentPCD;
+  if (!(pcd || name)) dispatch(create());
+  else dispatch(create(pcd.toObject()));
+};
+
+const create = (seed = createDefaultNameNote()) => ({
   type: NAME_NOTE_ACTIONS.CREATE,
-  payload: { nameNote: createDefaultNameNote() },
+  payload: { nameNote: seed },
 });
 
-const edit = nameNote => ({
-  type: NAME_NOTE_ACTIONS.EDIT,
-  payload: { nameNote },
+const updateForm = (data, errors) => ({
+  type: NAME_NOTE_ACTIONS.UPDATE_DATA,
+  payload: { data, errors },
 });
 
 const reset = () => ({
@@ -69,11 +77,12 @@ const updateNew = (value, field) => (dispatch, getState) => {
 
 export const NameNoteActions = {
   create,
-  edit,
   update,
   updateNew,
   saveNew,
   saveEditing,
   saveNewSurvey,
   reset,
+  createFromExisting,
+  updateForm,
 };

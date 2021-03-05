@@ -28,6 +28,7 @@ import { buttonStrings } from '../../localization';
 import globalStyles, { DARK_GREY } from '../../globalStyles';
 import { JSONForm } from '../JSONForm/JSONForm';
 import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
+import { selectNameNoteIsValid, selectNewNameNote } from '../../selectors/Entities/nameNote';
 
 /**
  * Layout component used for a tab within the vaccine prescription wizard.
@@ -51,6 +52,8 @@ const PatientEditComponent = ({
   onCancelPrescription,
   onSubmitSurvey,
   updatePatientDetails,
+  surveyFormData,
+  updateForm,
 }) => {
   const { pageTopViewContainer } = globalStyles;
   const formRef = useRef(null);
@@ -79,7 +82,15 @@ const PatientEditComponent = ({
         <View style={localStyles.verticalSeparator} />
         <View style={localStyles.formContainer}>
           {surveySchema && (
-            <JSONForm ref={formRef} onSubmit={onSubmitSurvey} surveySchema={surveySchema}>
+            <JSONForm
+              onChange={data => {
+                updateForm(data.formData, data.errors);
+              }}
+              formData={surveyFormData}
+              ref={formRef}
+              onSubmit={onSubmitSurvey}
+              surveySchema={surveySchema}
+            >
               <View />
             </JSONForm>
           )}
@@ -106,23 +117,32 @@ const PatientEditComponent = ({
 const mapDispatchToProps = dispatch => {
   const onSubmitSurvey = formData => dispatch(NameNoteActions.saveNewSurvey(formData));
   const onCancelPrescription = () => dispatch(VaccinePrescriptionActions.cancel());
+  const updateForm = (data, errors) => dispatch(NameNoteActions.updateForm(data, errors));
   const updatePatientDetails = detailsEntered =>
     batch(() => {
       dispatch(NameActions.updatePatient(detailsEntered));
       dispatch(WizardActions.nextTab());
     });
 
-  return { onCancelPrescription, onSubmitSurvey, updatePatientDetails };
+  return { onCancelPrescription, onSubmitSurvey, updatePatientDetails, updateForm };
 };
 
 const mapStateToProps = state => {
   const currentPatient = selectEditingName(state);
   const completedForm = selectCompletedForm(state);
-  const canSaveForm = selectCanSaveForm(state);
+  const canSaveForm = selectCanSaveForm(state) && selectNameNoteIsValid(state);
   const surveySchemas = selectSurveySchemas();
   const [surveySchema] = surveySchemas;
 
-  return { canSaveForm, completedForm, currentPatient, surveySchema };
+  const nameNote = selectNewNameNote(state);
+
+  return {
+    canSaveForm,
+    completedForm,
+    currentPatient,
+    surveySchema,
+    surveyFormData: nameNote.data,
+  };
 };
 
 PatientEditComponent.defaultProps = {
@@ -137,6 +157,8 @@ PatientEditComponent.propTypes = {
   onCancelPrescription: PropTypes.func.isRequired,
   onSubmitSurvey: PropTypes.func.isRequired,
   updatePatientDetails: PropTypes.func.isRequired,
+  surveyFormData: PropTypes.object.isRequired,
+  updateForm: PropTypes.func.isRequired,
 };
 
 export const PatientEdit = connect(mapStateToProps, mapDispatchToProps)(PatientEditComponent);
