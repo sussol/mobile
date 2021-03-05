@@ -1142,6 +1142,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       database.update('NameNote', {
         id: record.ID,
         patientEvent: database.getOrCreate('PatientEvent', record.patient_event_ID),
+        formSchema: database.getOrCreate('FormSchema', record.form_schema_ID),
         entryDate: parseDate(record.entry_date),
         data: record._data,
         name: database.getOrCreate('Name', record.name_ID),
