@@ -72,7 +72,7 @@ const updateForm = (data, errors) => ({
   payload: { data, errors },
 });
 
-const save = () => (dispatch, getState) => {
+const saveEditing = () => (dispatch, getState) => {
   const { nameID, patientEventID, ...nameNote } = selectCreatingNameNote(getState()) ?? {};
   UIDatabase.write(() => createRecord(UIDatabase, 'NameNote', nameNote, patientEventID, nameID));
   dispatch(reset());
@@ -86,5 +86,5 @@ export const NameNoteActions = {
   reset,
   createSurveyNameNote,
   updateForm,
-  save,
+  saveEditing,
 };
