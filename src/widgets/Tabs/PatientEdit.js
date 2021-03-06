@@ -55,7 +55,7 @@ const PatientEditComponent = ({
   const savePatient = useCallback(
     e => {
       updatePatientDetails(completedForm);
-      formRef?.current.submit(e);
+      formRef?.current?.submit(e);
     },
     [completedForm]
   );
@@ -74,12 +74,14 @@ const PatientEditComponent = ({
             inputConfig={getFormInputConfig('patient', currentPatient)}
           />
         </View>
-        <View style={surveySchema ? localStyles.verticalSeparator : localStyles.hidden} />
-        <View style={surveySchema ? localStyles.formContainer : localStyles.hidden}>
-          <JSONForm ref={formRef} onSubmit={onSubmitSurvey} surveySchema={surveySchema}>
-            <View />
-          </JSONForm>
-        </View>
+        {surveySchema && <View style={localStyles.verticalSeparator} />}
+        {surveySchema && (
+          <View style={localStyles.formContainer}>
+            <JSONForm ref={formRef} onSubmit={onSubmitSurvey} surveySchema={surveySchema}>
+              <View />
+            </JSONForm>
+          </View>
+        )}
       </View>
 
       <FlexRow justifyContent="flex-end" alignItems="flex-end">
@@ -150,7 +152,6 @@ const localStyles = StyleSheet.create({
     backgroundColor: 'white',
     alignItems: 'stretch',
   },
-  hidden: { display: 'none' },
   verticalSeparator: {
     width: 10,
     backgroundColor: DARK_GREY,
