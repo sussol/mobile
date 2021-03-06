@@ -127,9 +127,11 @@ class FocusController {
 }
 
 export const JSONForm = React.forwardRef(
-  ({ theme, children, options, surveySchema, onSubmit }, ref) => {
-    const { jsonSchema, uiSchema } = surveySchema;
-
+  (
+    { formData, onChange, theme = defaultTheme, children, options, onSubmit, surveySchema },
+    ref
+  ) => {
+    const { uiSchema, jsonSchema } = surveySchema;
     const validator = useMemo(() => ajv.compile(jsonSchema), [jsonSchema]);
     const Form = useMemo(() => withTheme(theme), []);
 
@@ -149,10 +151,13 @@ export const JSONForm = React.forwardRef(
     return (
       <JSONFormContext.Provider value={options}>
         <Form
-          validate={(formData, errorHandlers) => {
+          liveValidate
+          onChange={onChange}
+          formData={formData}
+          validate={(newFormData, errorHandlers) => {
             // Validate the form data, if there are any errors, an `errors` object is set on
             // on the validator object.
-            validator(formData);
+            validator(newFormData);
             // If there are any errors, us the errorHandlers object which is a mirrored schema
             // of the full JSON schema passed, where the value of each property is a function:
             // addError, which will add a custom error message against the field.
@@ -214,6 +219,13 @@ JSONForm.defaultProps = {
     Alert.alert('Form Data', JSON.stringify(form.formData), null, '\n');
   },
   options: { focusController: new FocusController() },
+  onChange: () => {},
+  formData: {},
+};
+
+JSONForm.propTypes = {
+  formData: PropTypes.object,
+  onChange: PropTypes.func,
 };
 
 JSONForm.propTypes = {

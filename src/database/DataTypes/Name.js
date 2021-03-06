@@ -108,6 +108,12 @@ export class Name extends Realm.Object {
     return this.nameTagJoins.map(({ nameTag }) => nameTag.description);
   }
 
+  get mostRecentPCD() {
+    return (
+      this.nameNotes.filtered("patientEvent.code == 'PCD'").sorted('entryDate', true)[0] ?? null
+    );
+  }
+
   /**
    * Add master list to name, if it has not already been added.
    *
@@ -183,6 +189,7 @@ Name.schema = {
     nationality: { type: 'Nationality', optional: true },
     occupation: { type: 'Occupation', optional: true },
     ethnicity: { type: 'Ethnicity', optional: true },
+    nameNotes: { type: 'linkingObjects', objectType: 'NameNote', property: 'name' },
   },
 };
 

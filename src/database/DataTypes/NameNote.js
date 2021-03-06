@@ -3,8 +3,7 @@ import Realm from 'realm';
 export class NameNote extends Realm.Object {
   get data() {
     try {
-      const { value } = JSON.parse(this._value);
-      return value;
+      return JSON.parse(this._data);
     } catch {
       // swallow error, return a default
       return null;
@@ -13,7 +12,17 @@ export class NameNote extends Realm.Object {
 
   // Will throw if newValue is unable to be stringified
   set data(newValue) {
-    this._data = JSON.stringify({ value: newValue });
+    this._data = JSON.stringify(newValue);
+  }
+
+  toObject() {
+    return {
+      id: this.id,
+      entryDate: this.entryDate.getTime(),
+      data: this.data,
+      nameID: this.name.id,
+      patientEventID: this.patientEvent.id,
+    };
   }
 }
 

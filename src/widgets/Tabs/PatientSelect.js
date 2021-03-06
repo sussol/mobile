@@ -28,6 +28,7 @@ import { getItemLayout, getColumns } from '../../pages/dataTableUtilities';
 import { MODALS } from '../constants';
 import { buttonStrings, dispensingStrings, generalStrings } from '../../localization';
 import globalStyles, { DARK_GREY } from '../../globalStyles';
+import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
 
 /**
  * Layout component used for a tab within the vaccine prescription wizard.
@@ -142,6 +143,7 @@ const mapDispatchToProps = dispatch => {
   const selectPatient = patient =>
     batch(() => {
       dispatch(NameActions.select(patient));
+      dispatch(NameNoteActions.createSurveyNameNote(patient?.id));
       dispatch(WizardActions.nextTab());
     });
   const createPatient = () =>

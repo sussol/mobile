@@ -1,7 +1,18 @@
+import Ajv from 'ajv';
 import { generateUUID } from 'react-native-database';
 import { UIDatabase } from '../../database/index';
 import { selectEditingNameNote, selectNewNameNoteId } from '../../selectors/Entities/nameNote';
 import { selectEditingNameId } from '../../selectors/Entities/name';
+import { selectSurveySchemas } from '../../selectors/formSchema';
+
+const ajvOptions = {
+  errorDataPath: 'property',
+  allErrors: true,
+  multipleOfPrecision: 8,
+  schemaId: 'auto',
+  unknownFormats: 'ignore',
+  jsonPointers: true,
+};
 
 export const NAME_NOTE_ACTIONS = {
   CREATE: 'NAME_NOTE/create',
@@ -9,23 +20,57 @@ export const NAME_NOTE_ACTIONS = {
   SAVE_NEW: 'NAME_NOTE/saveNew',
   SAVE_EDITING: 'NAME_NOTE/saveEditing',
   RESET: 'NAME_NOTE/reset',
+  UPDATE_DATA: 'NAME_NOTE/updateData',
 };
 
-const createDefaultNameNote = () => ({
-  id: generateUUID(),
-  entryDate: new Date(),
-  name: '',
-  patientEvent: '',
-});
+const validateData = (jsonSchema, data) => {
+  const ajv = new Ajv(ajvOptions);
+  const result = ajv.validate(jsonSchema, data);
 
-const create = () => ({
+  return result;
+};
+
+const createDefaultNameNote = (nameID = '') => {
+  const [pcd] = UIDatabase.objects('PCDEvents');
+
+  return {
+    id: generateUUID(),
+    entryDate: new Date(),
+    isValid: false,
+    data: {},
+    patientEventID: pcd?.id ?? '',
+    nameID,
+  };
+};
+
+const createSurveyNameNote = nameID => (dispatch, getState) => {
+  const name = UIDatabase.get('Name', nameID);
+
+  // Create the seed PCD, which is either their most recently filled survey or
+  // and empty object.
+  const seedPCD = name?.mostRecentPCD ?? createDefaultNameNote(nameID);
+
+  // Get the survey schema as we need an initial validation to determine if
+  // the seed has any fields which are required to be filled.
+  const [surveySchema = {}] = selectSurveySchemas(getState);
+  const { jsonSchema } = surveySchema;
+  const isValid = validateData(jsonSchema, seedPCD.data);
+
+  if (seedPCD.toObject) {
+    dispatch(create(seedPCD?.toObject(), isValid));
+  } else {
+    dispatch(create(seedPCD, isValid));
+  }
+};
+
+const create = (seed = createDefaultNameNote(), isValid) => ({
   type: NAME_NOTE_ACTIONS.CREATE,
-  payload: { nameNote: createDefaultNameNote() },
+  payload: { nameNote: seed, isValid },
 });
 
-const edit = nameNote => ({
-  type: NAME_NOTE_ACTIONS.EDIT,
-  payload: { nameNote },
+const updateForm = (data, errors) => ({
+  type: NAME_NOTE_ACTIONS.UPDATE_DATA,
+  payload: { data, errors },
 });
 
 const reset = () => ({
@@ -51,8 +96,8 @@ const saveNewSurvey = surveyData => (dispatch, getState) => {
   const [patientEvent] = patientEvents;
 
   nameNote.data = surveyData;
-  nameNote.patientEvent = patientEvent.id;
-  nameNote.name = nameId;
+  nameNote.patientEventID = patientEvent.id;
+  nameNote.nameID = nameId;
 
   dispatch({
     type: NAME_NOTE_ACTIONS.SAVE_NEW,
@@ -62,8 +107,8 @@ const saveNewSurvey = surveyData => (dispatch, getState) => {
 
 const saveEditing = () => (dispatch, getState) => {
   const currentNameNote = selectEditingNameNote(getState());
-  const name = UIDatabase.get('Name', currentNameNote.name);
-  const patientEvent = UIDatabase.get('PatientEvent', currentNameNote.patientEvent);
+  const name = UIDatabase.get('Name', currentNameNote.nameID);
+  const patientEvent = UIDatabase.get('PatientEvent', currentNameNote.patientEventID);
 
   if (name && patientEvent) {
     const newNameNote = { ...currentNameNote, patientEvent, name };
@@ -79,11 +124,12 @@ const updateNew = (value, field) => (dispatch, getState) => {
 
 export const NameNoteActions = {
   create,
-  edit,
   update,
   updateNew,
   saveNew,
   saveEditing,
   saveNewSurvey,
   reset,
+  createSurveyNameNote,
+  updateForm,
 };
