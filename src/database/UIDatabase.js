@@ -50,6 +50,8 @@ const translateToCoreDatabaseType = type => {
       return 'TransactionCategory';
     case 'PCDEvents':
       return 'PatientEvent';
+    case 'Vaccine':
+      return 'Item';
     default:
       return type;
   }
@@ -246,6 +248,8 @@ class UIDatabase {
         return results.filtered('type == $0 && isActive == true', 'requisitionLineVariance');
       case 'PCDEvents':
         return results.filtered('code == "PCD"');
+      case 'Vaccine':
+        return results.filtered('isVaccine == true');
       default:
         return results;
     }

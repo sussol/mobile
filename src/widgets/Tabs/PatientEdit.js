@@ -33,15 +33,13 @@ import { selectNameNoteIsValid, selectNewNameNote } from '../../selectors/Entiti
 /**
  * Layout component used for a tab within the vaccine prescription wizard.
  *
- * @prop {Func}   createPatient         Callback for creating a patient.
- * @prop {object} formConfig            Configuration of the search form
- * @prop {Bool}   isAscending           Indicator if the list of patient is sorted ascending.
- * @prop {Func}   onCancelPrescription  Cancels the prescription and returns to the vaccine page
- * @prop {Func}   onFilterData          Callback for filtering patients.
- * @prop {Func}   onSortData            Callback for sorting patients by column.
- * @prop {Func}   patients              Current set of patient data.
- * @prop {Func}   selectPatient         Callback for selecting a patient.
- * @prop {String} sortKey               Current key the list of patients is sorted by.
+ * @prop {Bool}   canSaveForm           Indicates if the patient edit form is valid and complete
+ * @prop {object} completedForm         Object containing the submitted survey form
+ * @prop {object} currentPatient        The current patient object - the toJSON version of [Patient]
+ * @prop {object} surveySchema          Object defining the survey form
+ * @prop {Func}   onCancelPrescription  Callback for cancelling
+ * @prop {Func}   onSubmitSurvey        Callback for saving survey data.
+ * @prop {Func}   updatePatientDetails  Callback for saving patient edit form.
  *
  */
 const PatientEditComponent = ({
@@ -60,7 +58,7 @@ const PatientEditComponent = ({
   const savePatient = useCallback(
     e => {
       updatePatientDetails(completedForm);
-      formRef?.current.submit(e);
+      formRef?.current?.submit(e);
     },
     [completedForm]
   );
@@ -79,20 +77,24 @@ const PatientEditComponent = ({
             inputConfig={getFormInputConfig('patient', currentPatient)}
           />
         </View>
+
         <View style={localStyles.verticalSeparator} />
         <View style={localStyles.formContainer}>
+          {surveySchema && <View style={localStyles.verticalSeparator} />}
           {surveySchema && (
-            <JSONForm
-              onChange={data => {
-                updateForm(data.formData, data.errors);
-              }}
-              formData={surveyFormData}
-              ref={formRef}
-              onSubmit={onSubmitSurvey}
-              surveySchema={surveySchema}
-            >
-              <View />
-            </JSONForm>
+            <View style={localStyles.formContainer}>
+              <JSONForm
+                ref={formRef}
+                onSubmit={onSubmitSurvey}
+                surveySchema={surveySchema}
+                formData={surveyFormData}
+                onChange={data => {
+                  updateForm(data.formData, data.errors);
+                }}
+              >
+                <View />
+              </JSONForm>
+            </View>
           )}
         </View>
       </View>
@@ -147,12 +149,13 @@ const mapStateToProps = state => {
 
 PatientEditComponent.defaultProps = {
   surveySchema: undefined,
+  currentPatient: null,
 };
 
 PatientEditComponent.propTypes = {
   canSaveForm: PropTypes.bool.isRequired,
   completedForm: PropTypes.object.isRequired,
-  currentPatient: PropTypes.object.isRequired,
+  currentPatient: PropTypes.object,
   surveySchema: PropTypes.object,
   onCancelPrescription: PropTypes.func.isRequired,
   onSubmitSurvey: PropTypes.func.isRequired,
@@ -162,6 +165,7 @@ PatientEditComponent.propTypes = {
 };
 
 export const PatientEdit = connect(mapStateToProps, mapDispatchToProps)(PatientEditComponent);
+
 const localStyles = StyleSheet.create({
   container: {
     height: '75%',

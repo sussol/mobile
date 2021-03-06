@@ -1,5 +1,6 @@
 import { generateUUID } from 'react-native-database';
 import { selectEditingNameId, selectEditingName } from '../../selectors/Entities/name';
+import { createRecord, UIDatabase } from '../../database';
 
 export const NAME_ACTIONS = {
   CREATE: 'NAME/create',
@@ -8,6 +9,7 @@ export const NAME_ACTIONS = {
   RESET: 'NAME/reset',
   FILTER: 'NAME/filter',
   SORT: 'NAME/sort',
+  SAVE: 'NAME/save',
 };
 
 const createDefaultName = (type = 'patient') => ({
@@ -64,10 +66,19 @@ const updateEditing = (value, field) => (dispatch, getState) => {
   dispatch(update(newNameId, field, value));
 };
 
+const saveEditing = () => (dispatch, getState) => {
+  const currentPatient = selectEditingName(getState());
+  const patientRecord = { ...currentPatient, dateOfBirth: Date(currentPatient.dateOfBirth) };
+
+  UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patientRecord));
+  dispatch(reset());
+};
+
 export const NameActions = {
   create,
   filter,
   reset,
+  saveEditing,
   select,
   sort,
   update,
