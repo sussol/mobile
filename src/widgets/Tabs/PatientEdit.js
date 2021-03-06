@@ -143,7 +143,7 @@ const mapStateToProps = state => {
     completedForm,
     currentPatient,
     surveySchema,
-    surveyFormData: nameNote.data,
+    surveyFormData: nameNote?.data ?? {},
   };
 };
 

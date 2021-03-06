@@ -30,25 +30,31 @@ const validateData = (jsonSchema, data) => {
   return result;
 };
 
-const createDefaultNameNote = () => ({
-  id: generateUUID(),
-  entryDate: new Date().getTime(),
-  isValid: false,
-  data: {},
-});
+const createDefaultNameNote = (nameID = '') => {
+  const [pcd] = UIDatabase.objects('PCDEvents');
+
+  return {
+    id: generateUUID(),
+    entryDate: new Date(),
+    isValid: false,
+    data: {},
+    patientEventID: pcd?.id ?? '',
+    nameID,
+  };
+};
 
 const createSurveyNameNote = nameID => (dispatch, getState) => {
   const name = UIDatabase.get('Name', nameID);
 
   // Create the seed PCD, which is either their most recently filled survey or
   // and empty object.
-  const seedPCD = name?.mostRecentPCD ?? {};
+  const seedPCD = name?.mostRecentPCD ?? createDefaultNameNote(nameID);
 
   // Get the survey schema as we need an initial validation to determine if
   // the seed has any fields which are required to be filled.
   const [surveySchema = {}] = selectSurveySchemas(getState);
   const { jsonSchema } = surveySchema;
-  const isValid = validateData(jsonSchema, seedPCD?.data);
+  const isValid = validateData(jsonSchema, seedPCD.data);
 
   if (seedPCD.toObject) {
     dispatch(create(seedPCD?.toObject(), isValid));
@@ -90,8 +96,8 @@ const saveNewSurvey = surveyData => (dispatch, getState) => {
   const [patientEvent] = patientEvents;
 
   nameNote.data = surveyData;
-  nameNote.patientEvent = patientEvent.id;
-  nameNote.name = nameId;
+  nameNote.patientEventID = patientEvent.id;
+  nameNote.nameID = nameId;
 
   dispatch({
     type: NAME_NOTE_ACTIONS.SAVE_NEW,
@@ -101,8 +107,8 @@ const saveNewSurvey = surveyData => (dispatch, getState) => {
 
 const saveEditing = () => (dispatch, getState) => {
   const currentNameNote = selectEditingNameNote(getState());
-  const name = UIDatabase.get('Name', currentNameNote.name);
-  const patientEvent = UIDatabase.get('PatientEvent', currentNameNote.patientEvent);
+  const name = UIDatabase.get('Name', currentNameNote.nameID);
+  const patientEvent = UIDatabase.get('PatientEvent', currentNameNote.patientEventID);
 
   if (name && patientEvent) {
     const newNameNote = { ...currentNameNote, patientEvent, name };
