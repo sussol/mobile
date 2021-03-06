@@ -20,7 +20,7 @@ import { SimpleTable } from '../SimpleTable';
 import { SimpleLabel } from '../SimpleLabel';
 
 import { VaccinePrescriptionActions } from '../../actions/Entities/VaccinePrescriptionActions';
-import { goToVaccines } from '../../navigation/actions';
+import { goBack } from '../../navigation/actions';
 import {
   selectSelectedBatchRows,
   selectSelectedBatches,
@@ -142,7 +142,7 @@ const mapDispatchToProps = dispatch => {
   const onConfirm = () =>
     batch(() => {
       dispatch(VaccinePrescriptionActions.confirm());
-      dispatch(goToVaccines());
+      dispatch(goBack());
     });
 
   return { onCancelPrescription, onConfirm, onSelectBatch, onSelectVaccine };

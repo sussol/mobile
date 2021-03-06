@@ -10,7 +10,6 @@ import {
 import { selectEditingNameId } from '../../selectors/Entities/name';
 import { NameActions } from './NameActions';
 import { NameNoteActions } from './NameNoteActions';
-import { WizardActions } from '../WizardActions';
 
 export const VACCINE_PRESCRIPTION_ACTIONS = {
   CREATE: 'VACCINE_PRESCRIPTION/create',
@@ -98,7 +97,6 @@ const confirm = () => (dispatch, getState) => {
   batch(() => {
     dispatch(NameNoteActions.saveEditing());
     dispatch(NameActions.saveEditing());
-    dispatch(WizardActions.complete());
     dispatch(reset());
   });
 };
