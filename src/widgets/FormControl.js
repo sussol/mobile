@@ -2,7 +2,7 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
-
+import { useIsFocused } from '@react-navigation/native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -74,10 +74,12 @@ const FormControlComponent = ({
 }) => {
   const [refs, setRefs] = React.useState([]);
 
+  const isFocused = useIsFocused();
+
   React.useEffect(() => {
     onInitialiseForm();
     setRefs({ length: inputConfig.length });
-  }, []);
+  }, [isFocused]);
 
   const nextFocus = (index, key) => value => {
     onUpdateForm(key, value);
