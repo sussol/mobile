@@ -13,7 +13,7 @@ export class NameNote extends Realm.Object {
 
   // Will throw if newValue is unable to be stringified
   set data(newValue) {
-    this._value = JSON.stringify({ value: newValue });
+    this._data = JSON.stringify({ value: newValue });
   }
 }
 

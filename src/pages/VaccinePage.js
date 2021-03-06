@@ -28,6 +28,7 @@ import {
 import { AfterInteractions } from '../widgets/AfterInteractions';
 import { SensorHeader } from '../widgets/SensorHeader/SensorHeader';
 import { selectActiveSensors } from '../selectors/Entities/sensor';
+import { selectHasVaccines } from '../selectors/Entities/vaccinePrescription';
 import temperature from '../utilities/temperature';
 import { BreachManUnhappy } from '../widgets/BreachManUnhappy';
 import { formatDate } from '../utilities/formatters';
@@ -84,6 +85,7 @@ FridgeDisplay.propTypes = {
 };
 
 export const VaccinePageComponent = ({
+  hasVaccines,
   sensors,
   toNewSensorPage,
   toFridgeDetail,
@@ -95,11 +97,13 @@ export const VaccinePageComponent = ({
   >
     <FlexRow style={{ justifyContent: 'flex-end', marginBottom: 10 }}>
       <PageButton text={buttonStrings.add_sensor} onPress={toNewSensorPage} />
-      <PageButton
-        text={navStrings.dispensary}
-        onPress={toDispensingPage}
-        style={{ marginLeft: 8 }}
-      />
+      {hasVaccines && (
+        <PageButton
+          text={navStrings.dispensary}
+          onPress={toDispensingPage}
+          style={{ marginLeft: 8 }}
+        />
+      )}
     </FlexRow>
     <AfterInteractions placeholder={null}>
       <Animatable.View style={{ flex: 1 }} animation="fadeIn" duration={500} useNativeDriver>
@@ -118,6 +122,7 @@ VaccinePageComponent.defaultProps = {
 };
 
 VaccinePageComponent.propTypes = {
+  hasVaccines: PropTypes.bool.isRequired,
   sensors: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   toFridgeDetail: PropTypes.func.isRequired,
   toNewSensorPage: PropTypes.func.isRequired,
@@ -163,8 +168,8 @@ const sortSensors = (s1, s2) => {
 
 const stateToProps = state => {
   const sensors = selectActiveSensors(state).sort(sortSensors);
-
-  return { sensors };
+  const hasVaccines = selectHasVaccines();
+  return { hasVaccines, sensors };
 };
 
 const dispatchToProps = dispatch => ({

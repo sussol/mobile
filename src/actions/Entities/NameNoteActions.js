@@ -1,6 +1,7 @@
 import { generateUUID } from 'react-native-database';
 import { UIDatabase } from '../../database/index';
-import { selectNewNameNoteId } from '../../selectors/Entities/nameNote';
+import { selectEditingNameNote, selectNewNameNoteId } from '../../selectors/Entities/nameNote';
+import { selectEditingNameId } from '../../selectors/Entities/name';
 
 export const NAME_NOTE_ACTIONS = {
   CREATE: 'NAME_NOTE/create',
@@ -41,8 +42,9 @@ const saveNew = nameNote => ({
   payload: { nameNote },
 });
 
-const saveNewSurvey = surveyData => dispatch => {
+const saveNewSurvey = surveyData => (dispatch, getState) => {
   const nameNote = createDefaultNameNote();
+  const nameId = selectEditingNameId(getState());
   const patientEvents = UIDatabase.objects('PCDEvents');
 
   if (patientEvents.length === 0) return;
@@ -50,6 +52,7 @@ const saveNewSurvey = surveyData => dispatch => {
 
   nameNote.data = surveyData;
   nameNote.patientEvent = patientEvent.id;
+  nameNote.name = nameId;
 
   dispatch({
     type: NAME_NOTE_ACTIONS.SAVE_NEW,
@@ -57,10 +60,17 @@ const saveNewSurvey = surveyData => dispatch => {
   });
 };
 
-const saveEditing = nameNote => ({
-  type: NAME_NOTE_ACTIONS.SAVE_EDITING,
-  payload: { nameNote },
-});
+const saveEditing = () => (dispatch, getState) => {
+  const currentNameNote = selectEditingNameNote(getState());
+  const name = UIDatabase.get('Name', currentNameNote.name);
+  const patientEvent = UIDatabase.get('PatientEvent', currentNameNote.patientEvent);
+
+  if (name && patientEvent) {
+    const newNameNote = { ...currentNameNote, patientEvent, name };
+    UIDatabase.write(() => UIDatabase.create('NameNote', newNameNote));
+    dispatch(reset());
+  }
+};
 
 const updateNew = (value, field) => (dispatch, getState) => {
   const newNameId = selectNewNameNoteId(getState());
