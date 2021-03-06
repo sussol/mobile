@@ -55,7 +55,7 @@ const createSurveyNameNote = nameID => (dispatch, getState) => {
   if (seedPCD.toObject) {
     // Only create name notes, never edit- ensure every new name note which is seeded has a new ID.
     const id = generateUUID();
-    const asObject = { ...seedPCD.toObject(), id };
+    const asObject = { ...seedPCD.toObject(), id, entryDate: new Date().getTime() };
     dispatch(select(asObject, isValid));
   } else {
     dispatch(select(seedPCD, isValid));

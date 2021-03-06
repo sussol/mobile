@@ -55,10 +55,6 @@ const PatientEditComponent = ({
   const { pageTopViewContainer } = globalStyles;
   const formRef = useRef(null);
 
-  console.log('-------------------------------------------');
-  console.log('patient edit render');
-  console.log('-------------------------------------------');
-
   const savePatient = useCallback(
     e => {
       updatePatientDetails(completedForm);
@@ -79,6 +75,7 @@ const PatientEditComponent = ({
             showCancelButton={false}
             showSaveButton={false}
             inputConfig={getFormInputConfig('patient', currentPatient)}
+            shouldAutoFocus={false}
           />
         </View>
 

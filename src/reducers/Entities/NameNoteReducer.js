@@ -15,6 +15,12 @@ export const NameNoteReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
+    case NAME_NOTE_ACTIONS.RESET:
+    case 'Navigation/BACK': {
+      // reset if heading back
+      return initialState();
+    }
+
     case NAME_NOTE_ACTIONS.SELECT: {
       const { payload } = action;
       const { nameNote, isValid } = payload;
@@ -37,10 +43,6 @@ export const NameNoteReducer = (state = initialState(), action) => {
       const newCreating = { ...creating, data: newData };
 
       return { ...state, creating: newCreating, isValid };
-    }
-
-    case NAME_NOTE_ACTIONS.RESET: {
-      return initialState();
     }
 
     default: {

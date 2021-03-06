@@ -142,6 +142,7 @@ const mapDispatchToProps = dispatch => {
     });
   const selectPatient = patient =>
     batch(() => {
+      Keyboard.dismiss();
       dispatch(NameActions.select(patient));
       dispatch(NameNoteActions.createSurveyNameNote(patient?.id));
       dispatch(WizardActions.nextTab());

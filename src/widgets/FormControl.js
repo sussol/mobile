@@ -71,9 +71,9 @@ const FormControlComponent = ({
   onSaveForm,
   // Cancel button callbacks
   onCancelForm,
+  shouldAutoFocus,
 }) => {
   const [refs, setRefs] = React.useState([]);
-
   const isFocused = useIsFocused();
 
   React.useEffect(() => {
@@ -119,7 +119,7 @@ const FormControlComponent = ({
                 label={label}
                 invalidMessage={invalidMessage}
                 isDisabled={!isEditable || isDisabled}
-                autoFocus={index === 0}
+                autoFocus={shouldAutoFocus && index === 0}
               />
             );
           }
@@ -275,6 +275,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   const onCancelForm = () =>
     confirmOnSave && isConfirmFormOpen ? hideConfirmForm() : onCancel() && resetForm();
   return {
+    ...ownProps,
     form,
     completedForm,
     inputConfig,
@@ -319,6 +320,7 @@ FormControlComponent.defaultProps = {
   showCancelButton: true,
   showSaveButton: true,
   cancelButtonText: modalStrings.cancel,
+  shouldAutoFocus: true,
 };
 
 FormControlComponent.propTypes = {
@@ -337,6 +339,7 @@ FormControlComponent.propTypes = {
   onUpdateForm: PropTypes.func.isRequired,
   onSaveForm: PropTypes.func.isRequired,
   onCancelForm: PropTypes.func.isRequired,
+  shouldAutoFocus: PropTypes.bool,
 };
 
 export const FormControl = connect(
