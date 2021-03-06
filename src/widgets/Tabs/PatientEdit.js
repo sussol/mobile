@@ -86,7 +86,6 @@ const PatientEditComponent = ({
             <View style={localStyles.formContainer}>
               <JSONForm
                 ref={formRef}
-                onSubmit={() => {}}
                 surveySchema={surveySchema}
                 formData={surveyFormData}
                 onChange={data => {
