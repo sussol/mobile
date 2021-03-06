@@ -109,7 +109,11 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     invalidMessage: formInputStrings.must_be_a_date,
     isRequired: true,
     validator: input => {
-      const inputDate = moment(input, 'DD/MM/YYYY', null, true);
+      let inputDate = moment(input, 'DD/MM/YYYY', null, true);
+      if (typeof input === 'number') {
+        inputDate = moment(input);
+      }
+
       const isValid = inputDate.isValid();
       const isDateOfBirth = inputDate.isSameOrBefore(new Date());
       return isValid && isDateOfBirth;
@@ -266,7 +270,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     invalidMessage: formInputStrings.must_be_a_date,
     isRequired: false,
     validator: input => {
-      if (input === '') return true;
+      if (!input) return true;
       const inputDate = moment(input, 'DD/MM/YYYY', null, true);
       const isValid = inputDate.isValid();
       const isDateOfBirth = inputDate.isSameOrBefore(new Date());
