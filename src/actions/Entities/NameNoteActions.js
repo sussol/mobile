@@ -62,17 +62,11 @@ const saveNewSurvey = surveyData => (dispatch, getState) => {
 
 const saveEditing = () => (dispatch, getState) => {
   const currentNameNote = selectEditingNameNote(getState());
-  const names = UIDatabase.objects('Patient').filtered('id = $0', currentNameNote.name);
-  const patientEvents = UIDatabase.objects('PCDEvents').filtered(
-    'id = $0',
-    currentNameNote.patientEvent
-  );
+  const name = UIDatabase.get('Name', currentNameNote.name);
+  const patientEvent = UIDatabase.get('PatientEvent', currentNameNote.patientEvent);
 
-  if (names.length && patientEvents.length) {
-    const name = names[0];
-    const patientEvent = patientEvents[0];
+  if (name && patientEvent) {
     const newNameNote = { ...currentNameNote, patientEvent, name };
-
     UIDatabase.write(() => UIDatabase.create('NameNote', newNameNote));
     dispatch(reset());
   }
