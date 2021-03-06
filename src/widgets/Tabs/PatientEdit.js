@@ -125,12 +125,13 @@ const mapStateToProps = state => {
 
 PatientEditComponent.defaultProps = {
   surveySchema: undefined,
+  currentPatient: null,
 };
 
 PatientEditComponent.propTypes = {
   canSaveForm: PropTypes.bool.isRequired,
   completedForm: PropTypes.object.isRequired,
-  currentPatient: PropTypes.object.isRequired,
+  currentPatient: PropTypes.object,
   surveySchema: PropTypes.object,
   onCancelPrescription: PropTypes.func.isRequired,
   onSubmitSurvey: PropTypes.func.isRequired,
