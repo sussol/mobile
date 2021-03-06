@@ -89,7 +89,8 @@ const confirm = () => (dispatch, getState) => {
     selectedBatches.forEach(itemBatch => {
       const { item } = itemBatch;
       const transactionItem = createRecord(UIDatabase, 'TransactionItem', prescription, item);
-      transactionItem.setTotalQuantity(UIDatabase, 1 / item.doses);
+      createRecord(UIDatabase, 'TransactionBatch', transactionItem, itemBatch);
+      transactionItem.setDoses(UIDatabase, 1);
     });
     prescription.finalise(UIDatabase);
   });
