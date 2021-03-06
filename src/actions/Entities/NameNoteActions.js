@@ -38,7 +38,6 @@ const createDefaultNameNote = (nameID = '') => {
   };
 };
 
-// YES
 const createSurveyNameNote = nameID => (dispatch, getState) => {
   const name = UIDatabase.get('Name', nameID);
 
