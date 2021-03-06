@@ -12,6 +12,7 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
+    case VACCINE_PRESCRIPTION_ACTIONS.RESET:
     case 'Navigation/BACK': {
       // reset if heading back
       return initialState();
@@ -22,13 +23,6 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
       const { prescription } = payload;
 
       return { ...state, creating: prescription };
-    }
-
-    case VACCINE_PRESCRIPTION_ACTIONS.SAVE: {
-      const { payload } = action;
-      const { prescription } = payload;
-
-      return { ...state, creating: prescription.toJSON() };
     }
 
     case VACCINE_PRESCRIPTION_ACTIONS.SELECT_VACCINE: {
@@ -53,20 +47,6 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
       const { itemBatch } = payload;
 
       return { ...state, selectedBatches: [itemBatch] };
-    }
-
-    case VACCINE_PRESCRIPTION_ACTIONS.RESET: {
-      return initialState();
-    }
-
-    case VACCINE_PRESCRIPTION_ACTIONS.UPDATE: {
-      const { creating: oldPrescription } = state;
-      const { payload } = action;
-      const { field, value } = payload;
-
-      const newPrescription = { ...oldPrescription, [field]: value };
-
-      return { ...state, creating: newPrescription };
     }
     default: {
       return state;
