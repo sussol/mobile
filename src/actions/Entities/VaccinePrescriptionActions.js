@@ -96,7 +96,7 @@ const confirm = () => (dispatch, getState) => {
   });
 
   batch(() => {
-    dispatch(NameNoteActions.saveEditing());
+    dispatch(NameNoteActions.save());
     dispatch(NameActions.saveEditing());
     dispatch(reset());
   });
