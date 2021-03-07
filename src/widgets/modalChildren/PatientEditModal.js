@@ -42,8 +42,8 @@ export const PatientEditModalComponent = ({
         onCancel={onCancel}
         inputConfig={inputConfig}
       />
-      <View style={styles.formContainer}>
-        {surveySchema && surveyForm && (
+      {!surveySchema && surveyForm && (
+        <View style={styles.formContainer}>
           <JSONForm
             surveySchema={surveySchema}
             formData={surveyForm}
@@ -53,8 +53,8 @@ export const PatientEditModalComponent = ({
           >
             <></>
           </JSONForm>
-        )}
-      </View>
+        </View>
+      )}
     </FlexRow>
   );
 };
