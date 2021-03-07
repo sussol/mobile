@@ -228,6 +228,8 @@ const createPatient = (database, patientDetails) => {
     female: patientFemale,
     supplyingStoreId: patientSupplyingStoreId,
     isActive: patientIsActive,
+    nationality,
+    ethnicity,
   } = patientDetails;
 
   const id = patientId ?? generateUUID();
@@ -285,6 +287,8 @@ const createPatient = (database, patientDetails) => {
     thisStoresPatient,
     isActive,
     isVisible,
+    nationality,
+    ethnicity,
   });
   return patient;
 };

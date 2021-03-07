@@ -1,5 +1,8 @@
 {
   "gb": {
+    "select_an_option": "Select an option",
+    "citizenship": "Citizenship",
+    "ethnicity": "Ethnicity",
     "address_one": "Address 1",
     "address_two": "Address 2",
     "and": "and",

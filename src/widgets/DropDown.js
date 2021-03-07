@@ -51,7 +51,7 @@ export const DropDown = React.memo(
 
     return (
       <Picker
-        selectedValue={selectedValue}
+        selectedValue={selectedValue ?? headerValue}
         mode="dropdown"
         onValueChange={onChange}
         style={{ ...globalStyles.picker, ...globalStyles.pickerText, ...style }}
