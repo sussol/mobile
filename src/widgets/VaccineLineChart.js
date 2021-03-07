@@ -14,7 +14,7 @@ import { WHITE, COLD_BREACH_BLUE, SUSSOL_ORANGE, APP_FONT_FAMILY, GREY } from '.
 import { HazardPoint } from './HazardPoint';
 import { FlexView } from './FlexView';
 import { CHART_CONSTANTS } from '../utilities/modules/vaccines';
-import { getTickFormatter } from '../utilities/formatters';
+import { timestampTickFormatter, temperatureTickFormatter } from '../utilities/formatters';
 import { WARMER_GREY } from '../globalStyles/colors';
 
 export const VaccineLineChart = ({
@@ -53,11 +53,11 @@ export const VaccineLineChart = ({
             offsetX={CHART_CONSTANTS.AXIS_OFFSET}
             dependentAxis
             style={chartStyles.axisY}
-            tickFormat={tick => `${tick}\u2103`}
+            tickFormat={temperatureTickFormatter}
           />
           <VictoryAxis
             offsetY={CHART_CONSTANTS.AXIS_OFFSET}
-            tickFormat={getTickFormatter()}
+            tickFormat={timestampTickFormatter}
             style={chartStyles.axisX}
             tickCount={CHART_CONSTANTS.MAX_TICK_COUNTS}
           />

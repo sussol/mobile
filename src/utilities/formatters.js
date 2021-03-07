@@ -61,7 +61,9 @@ export const formatTimeDifference = duration => {
   );
 };
 
-export const getTickFormatter = () => tick => moment(tick).format('h:mma[\n](D/M)');
+export const timestampTickFormatter = tick => moment(tick).format('h:mma[\n](D/M)');
+
+export const temperatureTickFormatter = tick => `${tick} \u2103`;
 
 export const formatDate = date => (date ? moment(date).fromNow() : generalStrings.not_available);
 

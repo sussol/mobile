@@ -20,7 +20,7 @@ import {
 } from '../globalStyles';
 import { FlexView } from './FlexView';
 import { CHART_CONSTANTS } from '../utilities/modules/vaccines';
-import { getTickFormatter } from '../utilities/formatters';
+import { timestampTickFormatter, temperatureTickFormatter } from '../utilities/formatters';
 
 export const VaccineBarChart = ({
   minLine,
@@ -103,11 +103,11 @@ export const VaccineBarChart = ({
             offsetX={CHART_CONSTANTS.AXIS_OFFSET}
             dependentAxis
             style={chartStyles.axisY}
-            tickFormat={tick => `${tick}\u2103`}
+            tickFormat={temperatureTickFormatter}
           />
           <VictoryAxis
             offsetY={CHART_CONSTANTS.AXIS_OFFSET}
-            tickFormat={getTickFormatter()}
+            tickFormat={timestampTickFormatter}
             style={chartStyles.axisX}
             tickCount={CHART_CONSTANTS.MAX_TICK_COUNTS}
           />

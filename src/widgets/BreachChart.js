@@ -5,7 +5,6 @@
  */
 
 import React from 'react';
-import moment from 'moment';
 import PropTypes from 'prop-types';
 
 import { VictoryAxis, VictoryChart, VictoryLine, VictoryScatter } from 'victory-native';
@@ -15,6 +14,7 @@ import { useLayoutDimensions } from '../hooks/useLayoutDimensions';
 
 import { COLD_BREACH_BLUE, WHITE, SUSSOL_ORANGE, APP_FONT_FAMILY, GREY } from '../globalStyles';
 import { CHART_CONSTANTS } from '../utilities/modules/vaccines';
+import { timestampTickFormatter, temperatureTickFormatter } from '../utilities/formatters';
 
 export const BreachChart = ({ lineData, x, y, xTickFormat, yTickFormat, breach }) => {
   const [width, height, setDimensions] = useLayoutDimensions();
@@ -76,8 +76,8 @@ export const BreachChart = ({ lineData, x, y, xTickFormat, yTickFormat, breach }
 BreachChart.defaultProps = {
   x: 'timestamp',
   y: 'temperature',
-  xTickFormat: tick => moment(new Date(tick)).format('DD/MM'),
-  yTickFormat: tick => `${tick} \u2103`,
+  xTickFormat: timestampTickFormatter,
+  yTickFormat: temperatureTickFormatter,
 };
 
 BreachChart.propTypes = {
