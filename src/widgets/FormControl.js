@@ -267,6 +267,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     showSaveButton,
     cancelButtonText,
     onCancel,
+    canSave,
   } = ownProps;
   const onInitialiseForm = () => initialiseForm(inputConfig);
   const onUpdateForm = (key, value) => !isDisabled && updateForm(key, value);
@@ -280,7 +281,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     completedForm,
     inputConfig,
     isDisabled,
-    canSaveForm,
+    canSaveForm: canSave && canSaveForm,
     saveButtonText,
     isConfirmFormOpen,
     confirmText,
@@ -321,9 +322,13 @@ FormControlComponent.defaultProps = {
   showSaveButton: true,
   cancelButtonText: modalStrings.cancel,
   shouldAutoFocus: true,
+  canSave: true,
 };
 
 FormControlComponent.propTypes = {
+  // Prop is used in merge props
+  // eslint-disable-next-line react/no-unused-prop-types
+  canSave: PropTypes.bool,
   form: PropTypes.object,
   completedForm: PropTypes.object,
   inputConfig: PropTypes.array.isRequired,
