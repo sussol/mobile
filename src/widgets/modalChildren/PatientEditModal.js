@@ -9,6 +9,7 @@ import { JSONForm } from '../JSONForm/JSONForm';
 import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
 import { selectNameNoteIsValid, selectCreatingNameNote } from '../../selectors/Entities/nameNote';
 import { PatientActions } from '../../actions/PatientActions';
+import { generateUUID } from '../../database/index';
 
 export const PatientEditModalComponent = ({
   isDisabled,
@@ -23,8 +24,10 @@ export const PatientEditModalComponent = ({
   nameNoteIsValid,
 }) => {
   const onSaveWithForm = completedForm => {
-    onSaveSurvey();
-    onSave(completedForm);
+    const id = generateUUID();
+
+    onSave({ id, ...completedForm });
+    onSaveSurvey(id);
   };
 
   useEffect(() => {
@@ -90,15 +93,15 @@ const stateToProps = state => {
   const nameNoteIsValid = selectNameNoteIsValid(state);
   const nameNote = selectCreatingNameNote(state);
 
-  return { nameNoteIsValid, surveyForm: nameNote?.data ?? {} };
+  return { nameNoteIsValid, surveyForm: nameNote?.data ?? null };
 };
 
 const dispatchToProps = (dispatch, ownProps) => {
   const { patient } = ownProps;
-  const { id } = patient;
+  const { id = '' } = patient ?? {};
   return {
     onOpen: () => dispatch(NameNoteActions.createSurveyNameNote(id)),
-    onSaveSurvey: () => dispatch(NameNoteActions.saveEditing()),
+    onSaveSurvey: optionalNameID => dispatch(NameNoteActions.saveEditing(optionalNameID)),
     onUpdateForm: form => dispatch(NameNoteActions.updateForm(form)),
     onSave: patientDetails => dispatch(PatientActions.patientUpdate(patientDetails)),
   };

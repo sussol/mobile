@@ -139,7 +139,7 @@ export class Name extends Realm.Object {
       dateOfBirth: this.dateOfBirth?.getTime(),
       phoneNumber: this.phoneNumber,
       country: this.country,
-      billingAddress: this.billingAddress.toJSON(),
+      billingAddress: this.billingAddress?.toJSON(),
       emailAddress: this.emailAddress,
       type: this.type,
       masterLists: this.masterLists,
