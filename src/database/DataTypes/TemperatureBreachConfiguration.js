@@ -5,7 +5,20 @@
 
 import Realm from 'realm';
 
-export class TemperatureBreachConfiguration extends Realm.Object {}
+export class TemperatureBreachConfiguration extends Realm.Object {
+  toJSON() {
+    return {
+      id: this.id,
+      minimumTemperature: this.minimumTemperature,
+      maximumTemperature: this.maximumTemperature,
+      duration: this.duration,
+      description: this.description,
+      colour: this.colour,
+      locationID: this.location?.id ?? '',
+      type: this.type,
+    };
+  }
+}
 
 TemperatureBreachConfiguration.schema = {
   name: 'TemperatureBreachConfiguration',
