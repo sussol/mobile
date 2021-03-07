@@ -80,23 +80,21 @@ const PatientEditComponent = ({
         </View>
 
         <View style={localStyles.verticalSeparator} />
-        <View style={localStyles.formContainer}>
-          {surveySchema && <View style={localStyles.verticalSeparator} />}
-          {surveySchema && (
-            <View style={localStyles.formContainer}>
-              <JSONForm
-                ref={formRef}
-                surveySchema={surveySchema}
-                formData={surveyFormData}
-                onChange={data => {
-                  updateForm(data.formData, data.errors);
-                }}
-              >
-                <View />
-              </JSONForm>
-            </View>
-          )}
-        </View>
+        {surveySchema && (
+          <View style={localStyles.formContainer}>
+            <View style={localStyles.verticalSeparator} />
+            <JSONForm
+              ref={formRef}
+              surveySchema={surveySchema}
+              formData={surveyFormData}
+              onChange={data => {
+                updateForm(data.formData, data.errors);
+              }}
+            >
+              <View />
+            </JSONForm>
+          </View>
+        )}
       </View>
 
       <FlexRow justifyContent="flex-end" alignItems="flex-end">
