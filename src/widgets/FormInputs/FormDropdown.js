@@ -66,13 +66,14 @@ export const FormDropdown = ({
 FormDropdown.defaultProps = {
   isRequired: false,
   isDisabled: false,
+  value: null,
 };
 
 FormDropdown.propTypes = {
   onValueChange: PropTypes.func.isRequired,
   options: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   optionKey: PropTypes.string.isRequired,
-  value: PropTypes.object.isRequired,
+  value: PropTypes.object,
   label: PropTypes.string.isRequired,
   isRequired: PropTypes.bool,
   isDisabled: PropTypes.bool,
