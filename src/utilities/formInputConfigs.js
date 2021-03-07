@@ -36,28 +36,30 @@ export const FORM_INPUT_TYPES = {
 };
 
 const FORM_INPUT_KEYS = {
-  FIRST_NAME: 'firstName',
-  LAST_NAME: 'lastName',
-  CODE: 'code',
-  DATE_OF_BIRTH: 'dateOfBirth',
-  DESCRIPTION: 'description',
-  EMAIL: 'emailAddress',
-  PHONE: 'phoneNumber',
-  COUNTRY: 'country',
   ADDRESS_ONE: 'addressOne',
   ADDRESS_TWO: 'addressTwo',
-  REGISTRATION_CODE: 'registrationCode',
+  CODE: 'code',
+  COUNTRY: 'country',
+  DATE_OF_BIRTH: 'dateOfBirth',
+  DESCRIPTION: 'description',
+  DISCOUNT_RATE: 'discountRate',
+  EMAIL: 'emailAddress',
+  ETHNICITY: 'ethnicity',
+  FIRST_NAME: 'firstName',
+  IS_ACTIVE: 'isActive',
+  LAST_NAME: 'lastName',
+  NATIONALITY: 'nationality',
+  PHONE: 'phoneNumber',
   POLICY_NUMBER_FAMILY: 'policyNumberFamily',
   POLICY_NUMBER_PERSON: 'policyNumberPerson',
   POLICY_PROVIDER: 'insuranceProvider',
   POLICY_TYPE: 'policyType',
-  IS_ACTIVE: 'isActive',
-  DISCOUNT_RATE: 'discountRate',
+  REGISTRATION_CODE: 'registrationCode',
+  SEARCH_DATE_OF_BIRTH: 'searchDateOfBirth',
   SEARCH_FIRST_NAME: 'searchFirstName',
   SEARCH_LAST_NAME: 'searchLastName',
-  SEARCH_DATE_OF_BIRTH: 'searchDateOfBirth',
-  SEARCH_REGISTRATION_CODE: 'searchRegistrationCode',
   SEARCH_POLICY_NUMBER: 'searchPolicyNumber',
+  SEARCH_REGISTRATION_CODE: 'searchRegistrationCode',
 };
 
 const FORM_INPUT_CONFIGS = seedObject => ({
@@ -206,6 +208,26 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     label: formInputStrings.family_policy_number,
     isEditable: !seedObject,
   },
+  [FORM_INPUT_KEYS.NATIONALITY]: {
+    type: FORM_INPUT_TYPES.DROPDOWN,
+    initialValue: seedObject?.nationality ?? null,
+    key: 'nationality',
+    label: formInputStrings.citizenship,
+    options: UIDatabase.objects('Nationality'),
+    optionKey: 'description',
+    isEditable: true,
+    shouldHideCondition: () => !UIDatabase.objects('Nationality').length,
+  },
+  [FORM_INPUT_KEYS.ETHNICITY]: {
+    type: FORM_INPUT_TYPES.DROPDOWN,
+    initialValue: seedObject?.ethnicity ?? null,
+    key: 'ethnicity',
+    label: formInputStrings.ethnicity,
+    options: UIDatabase.objects('Ethnicity'),
+    optionKey: 'name',
+    isEditable: true,
+    shouldHideCondition: () => !UIDatabase.objects('Ethnicity').length,
+  },
   [FORM_INPUT_KEYS.POLICY_PROVIDER]: {
     type: FORM_INPUT_TYPES.DROPDOWN,
     initialValue: UIDatabase.objects('InsuranceProvider')[0],
@@ -311,6 +333,8 @@ const FORM_CONFIGS = {
     FORM_INPUT_KEYS.ADDRESS_ONE,
     FORM_INPUT_KEYS.ADDRESS_TWO,
     FORM_INPUT_KEYS.COUNTRY,
+    FORM_INPUT_KEYS.NATIONALITY,
+    FORM_INPUT_KEYS.ETHNICITY,
     FORM_INPUT_KEYS.GENDER,
   ],
   prescriber: [
@@ -355,9 +379,11 @@ export const getFormInputConfig = (formName, seedObject) => {
 
   if (!seedObject) return formConfig;
 
-  return formConfig.map(({ key, initialValue, ...restOfConfig }) => ({
-    ...restOfConfig,
-    key,
-    initialValue: seedObject[key] ?? initialValue,
-  }));
+  return formConfig
+    .filter(({ shouldHideCondition }) => !shouldHideCondition?.())
+    .map(({ key, initialValue, ...restOfConfig }) => ({
+      ...restOfConfig,
+      key,
+      initialValue: seedObject[key] ?? initialValue,
+    }));
 };
