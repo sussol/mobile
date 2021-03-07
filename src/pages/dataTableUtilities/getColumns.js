@@ -1130,7 +1130,7 @@ const COLUMNS = () => ({
   },
   [COLUMN_NAMES.LOCATION]: {
     type: COLUMN_TYPES.DROP_DOWN,
-    key: 'currentLocationName',
+    key: COLUMN_KEYS.CURRENT_LOCATION,
     title: tableStrings.location,
     alignText: 'left',
     sortable: false,
