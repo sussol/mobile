@@ -42,7 +42,7 @@ export const PatientEditModalComponent = ({
         onCancel={onCancel}
         inputConfig={inputConfig}
       />
-      {!surveySchema && surveyForm && (
+      {surveySchema && surveyForm && (
         <View style={styles.formContainer}>
           <JSONForm
             surveySchema={surveySchema}
@@ -90,7 +90,7 @@ const stateToProps = state => {
   const nameNoteIsValid = selectNameNoteIsValid(state);
   const nameNote = selectCreatingNameNote(state);
 
-  return { nameNoteIsValid, surveyForm: nameNote?.data ?? null };
+  return { nameNoteIsValid, surveyForm: nameNote?.data ?? {} };
 };
 
 const dispatchToProps = (dispatch, ownProps) => {
