@@ -71,9 +71,12 @@ const updateForm = (data, errors) => ({
   payload: { data, errors },
 });
 
-const saveEditing = () => (dispatch, getState) => {
+const saveEditing = optionalNameID => (dispatch, getState) => {
   const { nameID, patientEventID, ...nameNote } = selectCreatingNameNote(getState()) ?? {};
-  UIDatabase.write(() => createRecord(UIDatabase, 'NameNote', nameNote, patientEventID, nameID));
+
+  UIDatabase.write(() =>
+    createRecord(UIDatabase, 'NameNote', nameNote, patientEventID, nameID || optionalNameID)
+  );
   dispatch(reset());
 };
 
