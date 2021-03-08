@@ -290,7 +290,7 @@ export class TransactionItem extends Realm.Object {
     this.batches.forEach(batch =>
       database.update('TransactionBatch', {
         id: batch.id,
-        vaccinator,
+        medicineAdministrator: vaccinator,
       })
     );
   }
