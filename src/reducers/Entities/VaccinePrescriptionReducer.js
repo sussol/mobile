@@ -3,6 +3,7 @@ import { UIDatabase } from '../../database';
 
 const initialState = () => ({
   creating: undefined,
+  hasRefused: false,
   selectedVaccines: [],
   selectedBatches: [],
   vaccines: UIDatabase.objects('Vaccine'),
@@ -68,6 +69,14 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
 
       return { ...state, creating: newPrescription };
     }
+
+    case VACCINE_PRESCRIPTION_ACTIONS.REFUSE_VACCINATION: {
+      const { payload } = action;
+      const { value } = payload;
+
+      return { ...state, hasRefused: value };
+    }
+
     default: {
       return state;
     }

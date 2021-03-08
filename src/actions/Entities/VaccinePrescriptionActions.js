@@ -16,6 +16,7 @@ export const VACCINE_PRESCRIPTION_ACTIONS = {
   UPDATE: 'VACCINE_PRESCRIPTION/update',
   SAVE_NEW: 'VACCINE_PRESCRIPTION/saveNew',
   SAVE_EDITING: 'VACCINE_PRESCRIPTION/saveEditing',
+  REFUSE_VACCINATION: 'VACCINE_PRESCRIPTION/refuse',
   RESET: 'VACCINE_PRESCRIPTION/reset',
   SELECT_VACCINE: 'VACCINE_PRESCRIPTION/selectVaccine',
   SELECT_BATCH: 'VACCINE_PRESCRIPTION/selectBatch',
@@ -70,6 +71,11 @@ const updateEditing = (value, field) => (dispatch, getState) => {
   dispatch(update(newVaccinePrescriptionId, field, value));
 };
 
+const refuse = value => ({
+  type: VACCINE_PRESCRIPTION_ACTIONS.REFUSE_VACCINATION,
+  payload: { value },
+});
+
 const confirm = () => (dispatch, getState) => {
   const { user } = getState();
   const { currentUser } = user;
@@ -115,6 +121,7 @@ export const VaccinePrescriptionActions = {
   cancel,
   confirm,
   create,
+  refuse,
   reset,
   saveEditing,
   saveNew,
