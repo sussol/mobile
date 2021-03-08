@@ -219,6 +219,8 @@ const mapStateToProps = state => {
   const [selectedVaccine] = selectedVaccines;
   const vaccinator = selectSelectedVaccinator(state);
 
+  const vaccinator = selectSelectedVaccinator(state);
+
   return {
     vaccinator,
     hasRefused,
