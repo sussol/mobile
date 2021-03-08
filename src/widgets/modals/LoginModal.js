@@ -24,12 +24,19 @@ import { setCurrencyLocalisation } from '../../localization/currency';
 import { setDateLocale } from '../../localization/utilities';
 import { UIDatabase } from '../../database';
 
+const AUTH_STATUSES = {
+  UNAUTHENTICATED: 'unauthenticated',
+  AUTHENTICATING: 'authenticating',
+  AUTHENTICATED: 'authenticated',
+  ERROR: 'error',
+};
+
 export class LoginModal extends React.Component {
   constructor(props) {
     super(props);
     const username = props.settings.get(SETTINGS_KEYS.MOST_RECENT_USERNAME);
     this.state = {
-      authStatus: 'unauthenticated', // unauthenticated, authenticating, authenticated, error
+      authStatus: AUTH_STATUSES.UNAUTHENTICATED,
       error: '',
       username: username || '',
       password: '',
@@ -39,15 +46,16 @@ export class LoginModal extends React.Component {
     this.setAppVersion();
     this.passwordInputRef = null;
     this.errorTimeoutId = null;
+    this.onLogin();
   }
 
   // eslint-disable-next-line camelcase, react/sort-comp
   UNSAFE_componentWillReceiveProps(nextProps) {
     const { authStatus } = this.state;
 
-    if (authStatus === 'authenticated' && !nextProps.isAuthenticated) {
+    if (authStatus === AUTH_STATUSES.AUTHENTICATED && !nextProps.isAuthenticated) {
       this.setState({
-        authStatus: 'unauthenticated',
+        authStatus: AUTH_STATUSES.UNAUTHENTICATED,
         password: '',
       });
     }
@@ -64,23 +72,23 @@ export class LoginModal extends React.Component {
 
     settings.set(SETTINGS_KEYS.MOST_RECENT_USERNAME, username);
 
-    this.setState({ authStatus: 'authenticating' });
+    this.setState({ authStatus: AUTH_STATUSES.AUTHENTICATING });
 
     try {
       const user = await authenticator.authenticate(username, password);
-      this.setState({ authStatus: 'authenticated' });
+      this.setState({ authStatus: AUTH_STATUSES.AUTHENTICATED });
       onAuthentication(user);
     } catch (error) {
       const message = error.message.startsWith('Invalid username or password')
         ? authStrings.invalid_username_or_password
         : error.message;
 
-      this.setState({ authStatus: 'error', error: message });
+      this.setState({ authStatus: AUTH_STATUSES.ERROR, error: message });
       onAuthentication(null);
       if (!error.message.startsWith('Invalid username or password')) {
         // After ten seconds of displaying the error, re-enable the button
         this.errorTimeoutId = setTimeout(() => {
-          this.setState({ authStatus: 'unauthenticated' });
+          this.setState({ authStatus: AUTH_STATUSES.UNAUTHENTICATED });
           this.errorTimeoutId = null;
         }, 10 * 1000);
       }
@@ -95,17 +103,19 @@ export class LoginModal extends React.Component {
   get canAttemptLogin() {
     const { authStatus, username, password } = this.state;
 
-    return authStatus === 'unauthenticated' && username.length > 0 && password.length > 0;
+    return (
+      authStatus === AUTH_STATUSES.UNAUTHENTICATED && username.length > 0 && password.length > 0
+    );
   }
 
   get buttonText() {
     const { authStatus, error } = this.state;
 
     switch (authStatus) {
-      case 'authenticating':
-      case 'authenticated':
+      case AUTH_STATUSES.AUTHENTICATING:
+      case AUTH_STATUSES.AUTHENTICATED:
         return authStrings.logging_in;
-      case 'error':
+      case AUTH_STATUSES.ERROR:
         return error;
       default:
         return authStrings.login;
@@ -158,21 +168,26 @@ export class LoginModal extends React.Component {
             <View style={globalStyles.horizontalContainer}>
               <TextInput
                 style={globalStyles.authFormTextInputStyle}
+                autoCompleteType="username"
                 placeholder={authStrings.user_name}
                 placeholderTextColor={SUSSOL_ORANGE}
                 underlineColorAndroid={SUSSOL_ORANGE}
                 value={username}
-                editable={authStatus !== 'authenticating'}
+                editable={authStatus !== AUTH_STATUSES.AUTHENTICATING}
                 returnKeyType="next"
                 selectTextOnFocus
                 onChangeText={text => {
                   this.setState({
                     username: text,
-                    authStatus: 'unauthenticated',
+                    authStatus: AUTH_STATUSES.UNAUTHENTICATED,
                   });
                 }}
                 onSubmitEditing={() => {
                   if (this.passwordInputRef) this.passwordInputRef.focus();
+                }}
+                onBlur={() => {
+                  // Trim usernames. Most users don't intentionally put leading/trailing spaces in!
+                  this.setState({ username: username.trim() });
                 }}
               />
             </View>
@@ -182,16 +197,17 @@ export class LoginModal extends React.Component {
                   this.passwordInputRef = reference;
                 }}
                 style={globalStyles.authFormTextInputStyle}
+                autoCompleteType="password"
                 placeholder={authStrings.password}
                 placeholderTextColor={SUSSOL_ORANGE}
                 underlineColorAndroid={SUSSOL_ORANGE}
                 value={password}
                 secureTextEntry
-                editable={authStatus !== 'authenticating'}
+                editable={authStatus !== AUTH_STATUSES.AUTHENTICATING}
                 returnKeyType="done"
                 selectTextOnFocus
                 onChangeText={text => {
-                  this.setState({ password: text, authStatus: 'unauthenticated' });
+                  this.setState({ password: text, authStatus: AUTH_STATUSES.UNAUTHENTICATED });
                 }}
                 onSubmitEditing={() => {
                   if (this.passwordInputRef) this.passwordInputRef.blur();
