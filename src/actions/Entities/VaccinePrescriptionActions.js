@@ -5,6 +5,7 @@ import { NavigationActions } from '@react-navigation/core';
 import { UIDatabase, createRecord } from '../../database';
 import {
   selectEditingVaccinePrescriptionId,
+  selectHasRefused,
   selectSelectedBatches,
 } from '../../selectors/Entities/vaccinePrescription';
 import { selectEditingNameId } from '../../selectors/Entities/name';
@@ -76,13 +77,7 @@ const refuse = value => ({
   payload: { value },
 });
 
-const confirm = () => (dispatch, getState) => {
-  const { user } = getState();
-  const { currentUser } = user;
-  const patientID = selectEditingNameId(getState());
-  const patient = UIDatabase.get('Name', patientID);
-  const selectedBatches = selectSelectedBatches(getState());
-
+const createPrescription = (patient, currentUser, selectedBatches) => {
   UIDatabase.write(() => {
     const prescription = createRecord(
       UIDatabase,
@@ -100,6 +95,30 @@ const confirm = () => (dispatch, getState) => {
     });
     prescription.finalise(UIDatabase);
   });
+};
+
+const createRefusalNameNote = name => {
+  const [patientEvent] = UIDatabase.objects('PatientEvent').filtered('code == "RV"');
+  const id = generateUUID();
+  const data = { refused: true, date: new Date() };
+  const newNameNote = { id, name, patientEvent, data, entryDate: new Date() };
+
+  UIDatabase.write(() => UIDatabase.create('NameNote', newNameNote));
+};
+
+const confirm = () => (dispatch, getState) => {
+  const { user } = getState();
+  const { currentUser } = user;
+  const hasRefused = selectHasRefused(getState());
+  const patientID = selectEditingNameId(getState());
+  const patient = UIDatabase.get('Name', patientID);
+  const selectedBatches = selectSelectedBatches(getState());
+
+  if (hasRefused) {
+    createRefusalNameNote(patient);
+  } else {
+    createPrescription(patient, currentUser, selectedBatches);
+  }
 
   batch(() => {
     dispatch(NameNoteActions.saveEditing());
