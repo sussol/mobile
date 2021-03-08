@@ -918,6 +918,10 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
           record.vaccine_vial_monitor_status_ID
         ),
         sentPackSize: parseNumber(record.sent_pack_size) || packSize,
+        medicineAdministrator: database.getOrCreate(
+          'MedicineAdministrator',
+          record.medicine_administrator_ID
+        ),
       };
       const transactionBatch = database.update(recordType, internalRecord);
       transaction.addBatchIfUnique(database, transactionBatch);

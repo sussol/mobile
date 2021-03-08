@@ -199,6 +199,11 @@ MedicineAdministrator.schema = {
     firstName: { type: 'string', optional: true },
     lastName: { type: 'string', optional: true },
     code: { type: 'string', optional: true },
+    transactionBatches: {
+      type: 'linkingObjects',
+      objectType: 'TransactionBatch',
+      property: 'medicineAdministrator',
+    },
   },
 };
 
