@@ -68,9 +68,8 @@ export const selectHasRefused = state => {
   return hasRefused;
 };
 
-export const selectVaccinator = state => {
+export const selectSelectedVaccinator = state => {
   const VaccinePrescriptionState = selectSpecificEntityState(state, 'vaccinePrescription');
   const { vaccinator } = VaccinePrescriptionState;
-
   return vaccinator;
 };

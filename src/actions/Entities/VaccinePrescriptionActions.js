@@ -5,6 +5,7 @@ import { UIDatabase, createRecord } from '../../database';
 import {
   selectHasRefused,
   selectSelectedBatches,
+  selectSelectedVaccinator,
 } from '../../selectors/Entities/vaccinePrescription';
 import { selectEditingNameId } from '../../selectors/Entities/name';
 import { NameActions } from './NameActions';
@@ -34,7 +35,7 @@ const createDefaultVaccinePrescription = () => ({
 const getDefaultVaccinator = () => {
   const [batches] = UIDatabase.objects('TransactionBatch')
     .filtered('medicineAdministrator != null && itemBatch.item.isVaccine == true')
-    .sorted('transaction.confirmDate');
+    .sorted('transaction.confirmDate', true);
 
   if (batches) {
     return batches.medicineAdministrator;
@@ -104,7 +105,7 @@ const confirm = () => (dispatch, getState) => {
   const patientID = selectEditingNameId(getState());
   const patient = UIDatabase.get('Name', patientID);
   const selectedBatches = selectSelectedBatches(getState());
-  const vaccinator = selectVaccinator(getState());
+  const vaccinator = selectSelectedVaccinator(getState());
 
   if (hasRefused) {
     createRefusalNameNote(patient);

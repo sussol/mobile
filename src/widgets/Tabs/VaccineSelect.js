@@ -29,7 +29,7 @@ import {
   selectSelectedRows,
   selectSelectedVaccines,
   selectVaccines,
-  selectVaccinator,
+  selectSelectedVaccinator,
 } from '../../selectors/Entities/vaccinePrescription';
 import { getColumns } from '../../pages/dataTableUtilities';
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
@@ -198,7 +198,6 @@ const mapStateToProps = state => {
   const selectedVaccines = selectSelectedVaccines(state);
   const vaccines = selectVaccines(state);
   const [selectedVaccine] = selectedVaccines;
-  const vaccinator = selectVaccinator(state);
 
   return {
     vaccinator,
