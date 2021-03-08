@@ -1,80 +1,50 @@
 import { NAME_NOTE_ACTIONS } from '../../actions/Entities';
 
 const initialState = () => ({
-  creatingById: {},
-  editingById: {},
-  creatingId: '',
-  editingId: '',
+  creating: {
+    id: '',
+    data: {},
+    patientEventID: '',
+    nameID: '',
+    entryDate: 0,
+  },
+  isValid: false,
 });
 
 export const NameNoteReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
-    case NAME_NOTE_ACTIONS.UPDATE_DATA: {
-      const { payload } = action;
-      const { data, errors } = payload;
-      const { creatingId } = state;
-
-      const isValid = !(errors?.length > 0);
-
-      const newNameNote = { ...state.creatingById[creatingId], data, isValid };
-      const newById = { ...state.creatingById, [creatingId]: newNameNote };
-
-      return { ...state, creatingById: newById };
-    }
-
-    case NAME_NOTE_ACTIONS.CREATE: {
-      const { creatingById } = state;
-      const { payload } = action;
-      const { nameNote, isValid } = payload;
-      const { id } = nameNote;
-
-      return {
-        ...state,
-        creatingById: { ...creatingById, [id]: { ...nameNote, isValid } },
-        creatingId: id,
-      };
-    }
-
-    case NAME_NOTE_ACTIONS.EDIT: {
-      const { creatingById, editingById } = state;
-      const { payload } = action;
-      const { nameNote } = payload;
-      const { id } = nameNote;
-
-      return {
-        ...state,
-        editingById: { ...editingById, [id]: nameNote },
-        creatingById: { ...creatingById, [id]: nameNote },
-        editingId: id,
-      };
-    }
-
-    case NAME_NOTE_ACTIONS.SAVE_NEW: {
-      const { editingById } = state;
-      const { payload } = action;
-      const { nameNote } = payload;
-      const { id } = nameNote;
-
-      const newEditingById = { ...editingById, [id]: nameNote };
-
-      return { ...state, editingById: newEditingById, editingId: id };
-    }
-
-    case NAME_NOTE_ACTIONS.RESET: {
+    case NAME_NOTE_ACTIONS.RESET:
+    case 'Navigation/BACK': {
+      // reset if heading back
       return initialState();
     }
 
-    case NAME_NOTE_ACTIONS.UPDATE: {
-      const { editing: oldName } = state;
+    case NAME_NOTE_ACTIONS.SELECT: {
       const { payload } = action;
-      const { field, value } = payload;
+      const { nameNote, isValid } = payload;
 
-      const newName = { ...oldName, [field]: value };
-
-      return { ...state, editing: newName };
+      return {
+        ...state,
+        creating: nameNote,
+        isValid,
+      };
     }
+
+    case NAME_NOTE_ACTIONS.UPDATE_DATA: {
+      const { payload } = action;
+      const { data, errors } = payload;
+      const { creating } = state;
+      const { data: currentData } = creating;
+
+      const isValid = !(errors?.length > 0);
+      const newData = { ...currentData, ...data };
+      const newCreating = { ...creating, data: newData };
+
+      return { ...state, creating: newCreating, isValid };
+    }
+
     default: {
       return state;
     }

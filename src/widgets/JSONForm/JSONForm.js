@@ -3,7 +3,6 @@
 import React, { useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import pointer from 'json-pointer';
-import { Alert } from 'react-native';
 import { withTheme } from '@rjsf/core';
 import Ajv from 'ajv';
 import { JSONFormContainer } from './JSONFormContainer';
@@ -214,10 +213,7 @@ export const JSONForm = React.forwardRef(
 JSONForm.defaultProps = {
   theme: defaultTheme,
   children: null,
-  // eslint-disable-next-line no-console
-  onSubmit: form => {
-    Alert.alert('Form Data', JSON.stringify(form.formData), null, '\n');
-  },
+  onSubmit: null,
   options: { focusController: new FocusController() },
   onChange: () => {},
   formData: {},
