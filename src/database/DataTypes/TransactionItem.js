@@ -286,6 +286,15 @@ export class TransactionItem extends Realm.Object {
     this.setTotalQuantity(database, newTotalQuantity);
   }
 
+  setVaccinator(database, vaccinator) {
+    this.batches.forEach(batch =>
+      database.update('TransactionBatch', {
+        id: batch.id,
+        vaccinator,
+      })
+    );
+  }
+
   get dosesPerVial() {
     return this.isVaccine ? this.item?.doses ?? 0 : 0;
   }
