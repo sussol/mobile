@@ -61,21 +61,9 @@ export const formatTimeDifference = duration => {
   );
 };
 
-export const getTickFormatter = () => {
-  let currentDay = null;
-  return tick => {
-    let formatted = '';
-    const nextCurrentDay = moment(tick).day();
-    if (currentDay !== nextCurrentDay) {
-      currentDay = moment(tick).day();
-      formatted = moment(tick).format('h:mma[\n](D/M)');
-    } else {
-      formatted = moment(tick).format('h:mma');
-    }
+export const timestampTickFormatter = tick => moment(tick).format('h:mma[\n](D/M)');
 
-    return formatted;
-  };
-};
+export const temperatureTickFormatter = tick => `${tick} \u2103`;
 
 export const formatDate = date => (date ? moment(date).fromNow() : generalStrings.not_available);
 
