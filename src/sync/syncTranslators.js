@@ -57,6 +57,7 @@ export const RECORD_TYPES = new SyncTranslator({
   MasterList: 'list_master',
   MasterListItem: 'list_master_line',
   MasterListNameJoin: 'list_master_name_join',
+  MedicineAdministrator: 'medicine_administrator',
   Message: 'message',
   Name: 'name',
   NameNote: 'name_note',

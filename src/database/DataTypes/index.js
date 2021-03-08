@@ -18,6 +18,7 @@ export class Setting extends Realm.Object {}
 export class SyncOut extends Realm.Object {}
 export class TransactionCategory extends Realm.Object {}
 export class User extends Realm.Object {}
+export class MedicineAdministrator extends Realm.Object {}
 
 export { Abbreviation } from './Abbreviation';
 export { Currency } from './Currency';

@@ -25,6 +25,7 @@ import {
   MasterList,
   MasterListItem,
   MasterListNameJoin,
+  MedicineAdministrator,
   Message,
   Name,
   NameNote,
@@ -190,6 +191,17 @@ User.schema = {
   },
 };
 
+MedicineAdministrator.schema = {
+  name: 'MedicineAdministrator',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    firstName: { type: 'string', optional: true },
+    lastName: { type: 'string', optional: true },
+    code: { type: 'string', optional: true },
+  },
+};
+
 export const schema = {
   schema: [
     Abbreviation,
@@ -213,6 +225,7 @@ export const schema = {
     MasterList,
     MasterListItem,
     MasterListNameJoin,
+    MedicineAdministrator,
     Message,
     Name,
     NameNote,
