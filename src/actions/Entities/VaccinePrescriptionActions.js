@@ -2,7 +2,10 @@ import { generateUUID } from 'react-native-database';
 import { batch } from 'react-redux';
 
 import { UIDatabase, createRecord } from '../../database';
-import { selectSelectedBatches } from '../../selectors/Entities/vaccinePrescription';
+import {
+  selectHasRefused,
+  selectSelectedBatches,
+} from '../../selectors/Entities/vaccinePrescription';
 import { selectEditingNameId } from '../../selectors/Entities/name';
 import { NameActions } from './NameActions';
 import { NameNoteActions } from './NameNoteActions';
@@ -13,6 +16,7 @@ export const VACCINE_PRESCRIPTION_ACTIONS = {
   RESET: 'VACCINE_PRESCRIPTION/reset',
   SELECT_VACCINE: 'VACCINE_PRESCRIPTION/selectVaccine',
   SELECT_BATCH: 'VACCINE_PRESCRIPTION/selectBatch',
+  REFUSE_VACCINATION: 'VACCINE_PRESCRIPTION/refuse',
 };
 
 const createDefaultVaccinePrescription = () => ({
@@ -45,13 +49,12 @@ const selectBatch = itemBatch => ({
   payload: { itemBatch },
 });
 
-const confirm = () => (dispatch, getState) => {
-  const { user } = getState();
-  const { currentUser } = user;
-  const patientID = selectEditingNameId(getState());
-  const patient = UIDatabase.get('Name', patientID);
-  const selectedBatches = selectSelectedBatches(getState());
+const refuse = value => ({
+  type: VACCINE_PRESCRIPTION_ACTIONS.REFUSE_VACCINATION,
+  payload: { value },
+});
 
+const createPrescription = (patient, currentUser, selectedBatches) => {
   UIDatabase.write(() => {
     const prescription = createRecord(
       UIDatabase,
@@ -69,6 +72,30 @@ const confirm = () => (dispatch, getState) => {
     });
     prescription.finalise(UIDatabase);
   });
+};
+
+const createRefusalNameNote = name => {
+  const [patientEvent] = UIDatabase.objects('PatientEvent').filtered('code == "RV"');
+  const id = generateUUID();
+  const _data = JSON.stringify({ refused: true, date: new Date() });
+  const newNameNote = { id, name, patientEvent, _data, entryDate: new Date() };
+
+  UIDatabase.write(() => UIDatabase.create('NameNote', newNameNote));
+};
+
+const confirm = () => (dispatch, getState) => {
+  const { user } = getState();
+  const { currentUser } = user;
+  const hasRefused = selectHasRefused(getState());
+  const patientID = selectEditingNameId(getState());
+  const patient = UIDatabase.get('Name', patientID);
+  const selectedBatches = selectSelectedBatches(getState());
+
+  if (hasRefused) {
+    createRefusalNameNote(patient);
+  } else {
+    createPrescription(patient, currentUser, selectedBatches);
+  }
 
   batch(() => {
     dispatch(NameNoteActions.saveEditing());
@@ -83,6 +110,7 @@ export const VaccinePrescriptionActions = {
   cancel,
   confirm,
   create,
+  refuse,
   reset,
   selectBatch,
   selectVaccine,

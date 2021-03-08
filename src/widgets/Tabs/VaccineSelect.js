@@ -18,12 +18,14 @@ import { VaccinePrescriptionInfo } from '../VaccinePrescriptionInfo';
 import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 import { SimpleTable } from '../SimpleTable';
 import { SimpleLabel } from '../SimpleLabel';
+import { Checkbox } from '../JSONForm/widgets/Checkbox';
 
 import { VaccinePrescriptionActions } from '../../actions/Entities/VaccinePrescriptionActions';
 import { goBack } from '../../navigation/actions';
 import {
   selectSelectedBatchRows,
   selectSelectedBatches,
+  selectHasRefused,
   selectSelectedRows,
   selectSelectedVaccines,
   selectVaccines,
@@ -51,8 +53,10 @@ import globalStyles from '../../globalStyles';
 const VaccineSelectComponent = ({
   onCancelPrescription,
   onConfirm,
+  onRefuse,
   onSelectBatch,
   onSelectVaccine,
+  hasRefused,
   selectedBatches,
   selectedBatchRows,
   selectedRows,
@@ -85,21 +89,37 @@ const VaccineSelectComponent = ({
     <FlexView style={pageTopViewContainer}>
       <FlexRow style={{ marginBottom: 7 }} justifyContent="flex-end">
         <VaccinePrescriptionInfo />
+        <Checkbox
+          options={{
+            enumOptions: [
+              { label: 'Refuse', value: true },
+              { label: 'Accept', value: false },
+            ],
+          }}
+          onChange={onRefuse}
+          disabled={false}
+          readonly={false}
+          value={hasRefused}
+        />
       </FlexRow>
 
       <View style={localStyles.container}>
         <View style={localStyles.listContainer}>
-          <SimpleLabel text={dispensingStrings.select_item} size="medium" numberOfLines={1} />
-          <SimpleTable
-            columns={vaccineColumns}
-            data={vaccines}
-            disabledRows={disabledVaccineRows}
-            selectedRows={selectedRows}
-            selectRow={onSelectVaccine}
-            style={{ marginTop: 3, height: '90%' }}
-          />
+          {!hasRefused && (
+            <>
+              <SimpleLabel text={dispensingStrings.select_item} size="medium" numberOfLines={1} />
+              <SimpleTable
+                columns={vaccineColumns}
+                data={vaccines}
+                disabledRows={disabledVaccineRows}
+                selectedRows={selectedRows}
+                selectRow={onSelectVaccine}
+                style={{ marginTop: 3, height: '90%' }}
+              />
+            </>
+          )}
         </View>
-        {selectedVaccine && (
+        {selectedVaccine && !hasRefused && (
           <View style={localStyles.listContainer}>
             <SimpleLabel
               text={dispensingStrings.available_batches}
@@ -127,7 +147,7 @@ const VaccineSelectComponent = ({
         <PageButton
           text={buttonStrings.confirm}
           style={{ marginLeft: 5 }}
-          isDisabled={selectedBatches.length === 0}
+          isDisabled={selectedBatches.length === 0 && !hasRefused}
           onPress={confirmPrescription}
         />
       </FlexRow>
@@ -136,6 +156,7 @@ const VaccineSelectComponent = ({
 };
 
 const mapDispatchToProps = dispatch => {
+  const onRefuse = value => dispatch(VaccinePrescriptionActions.refuse(value));
   const onCancelPrescription = () => dispatch(VaccinePrescriptionActions.cancel());
   const onSelectBatch = itemBatch => dispatch(VaccinePrescriptionActions.selectBatch(itemBatch));
   const onSelectVaccine = vaccine => dispatch(VaccinePrescriptionActions.selectVaccine(vaccine));
@@ -145,10 +166,11 @@ const mapDispatchToProps = dispatch => {
       dispatch(goBack());
     });
 
-  return { onCancelPrescription, onConfirm, onSelectBatch, onSelectVaccine };
+  return { onCancelPrescription, onConfirm, onRefuse, onSelectBatch, onSelectVaccine };
 };
 
 const mapStateToProps = state => {
+  const hasRefused = selectHasRefused(state);
   const selectedRows = selectSelectedRows(state);
   const selectedBatchRows = selectSelectedBatchRows(state);
   const selectedBatches = selectSelectedBatches(state);
@@ -156,7 +178,14 @@ const mapStateToProps = state => {
   const vaccines = selectVaccines(state);
   const [selectedVaccine] = selectedVaccines;
 
-  return { selectedBatches, selectedBatchRows, selectedRows, selectedVaccine, vaccines };
+  return {
+    hasRefused,
+    selectedBatches,
+    selectedBatchRows,
+    selectedRows,
+    selectedVaccine,
+    vaccines,
+  };
 };
 
 VaccineSelectComponent.defaultProps = {
@@ -169,8 +198,10 @@ VaccineSelectComponent.defaultProps = {
 VaccineSelectComponent.propTypes = {
   onCancelPrescription: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
+  onRefuse: PropTypes.func.isRequired,
   onSelectBatch: PropTypes.func.isRequired,
   onSelectVaccine: PropTypes.func.isRequired,
+  hasRefused: PropTypes.bool.isRequired,
   selectedBatchRows: PropTypes.object,
   selectedRows: PropTypes.object,
   selectedBatches: PropTypes.array,
