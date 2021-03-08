@@ -7,7 +7,7 @@ import Realm from 'realm';
 
 export class MedicineAdministrator extends Realm.Object {
   get displayString() {
-    return `${this.code ?? ''} ${this.firstName ?? ''}${this.lastName ?? ''}`.trim();
+    return `${this.code ?? ''} ${this.firstName ?? ''} ${this.lastName ?? ''}`.trim();
   }
 }
 
