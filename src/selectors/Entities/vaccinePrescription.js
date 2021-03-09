@@ -61,3 +61,9 @@ export const selectHasVaccines = () => {
   const vaccines = UIDatabase.objects('Vaccine');
   return vaccines.length > 0;
 };
+
+export const selectHasRefused = state => {
+  const VaccinePrescriptionState = selectSpecificEntityState(state, 'vaccinePrescription');
+  const { hasRefused } = VaccinePrescriptionState;
+  return hasRefused;
+};

@@ -7,6 +7,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
+// eslint-disable-next-line import/no-unresolved
+import CheckBox from '@react-native-community/checkbox';
 import { batch, connect } from 'react-redux';
 
 import { TABS } from '../constants';
@@ -24,6 +26,7 @@ import { goBack } from '../../navigation/actions';
 import {
   selectSelectedBatchRows,
   selectSelectedBatches,
+  selectHasRefused,
   selectSelectedRows,
   selectSelectedVaccines,
   selectVaccines,
@@ -33,6 +36,7 @@ import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 
 import { buttonStrings, dispensingStrings } from '../../localization';
 import globalStyles from '../../globalStyles';
+import { DARKER_GREY, SUSSOL_ORANGE } from '../../globalStyles/colors';
 
 /**
  * Layout component used for a tab within the vaccine prescription wizard.
@@ -51,8 +55,10 @@ import globalStyles from '../../globalStyles';
 const VaccineSelectComponent = ({
   onCancelPrescription,
   onConfirm,
+  onRefuse,
   onSelectBatch,
   onSelectVaccine,
+  hasRefused,
   selectedBatches,
   selectedBatchRows,
   selectedRows,
@@ -85,6 +91,19 @@ const VaccineSelectComponent = ({
     <FlexView style={pageTopViewContainer}>
       <FlexRow style={{ marginBottom: 7 }} justifyContent="flex-end">
         <VaccinePrescriptionInfo />
+        <FlexRow flex={1} alignItems="center">
+          <SimpleLabel
+            text={dispensingStrings.refused_vaccine}
+            size="medium"
+            numberofLines={1}
+            textAlign="right"
+          />
+          <CheckBox
+            onValueChange={onRefuse}
+            value={hasRefused}
+            tintColors={{ true: SUSSOL_ORANGE, false: DARKER_GREY }}
+          />
+        </FlexRow>
       </FlexRow>
 
       <View style={localStyles.container}>
@@ -127,7 +146,7 @@ const VaccineSelectComponent = ({
         <PageButton
           text={buttonStrings.confirm}
           style={{ marginLeft: 5 }}
-          isDisabled={selectedBatches.length === 0}
+          isDisabled={selectedBatches.length === 0 && !hasRefused}
           onPress={confirmPrescription}
         />
       </FlexRow>
@@ -136,6 +155,7 @@ const VaccineSelectComponent = ({
 };
 
 const mapDispatchToProps = dispatch => {
+  const onRefuse = value => dispatch(VaccinePrescriptionActions.setRefusal(value));
   const onCancelPrescription = () => dispatch(VaccinePrescriptionActions.cancel());
   const onSelectBatch = itemBatch => dispatch(VaccinePrescriptionActions.selectBatch(itemBatch));
   const onSelectVaccine = vaccine => dispatch(VaccinePrescriptionActions.selectVaccine(vaccine));
@@ -145,10 +165,11 @@ const mapDispatchToProps = dispatch => {
       dispatch(goBack());
     });
 
-  return { onCancelPrescription, onConfirm, onSelectBatch, onSelectVaccine };
+  return { onCancelPrescription, onConfirm, onRefuse, onSelectBatch, onSelectVaccine };
 };
 
 const mapStateToProps = state => {
+  const hasRefused = selectHasRefused(state);
   const selectedRows = selectSelectedRows(state);
   const selectedBatchRows = selectSelectedBatchRows(state);
   const selectedBatches = selectSelectedBatches(state);
@@ -156,7 +177,14 @@ const mapStateToProps = state => {
   const vaccines = selectVaccines(state);
   const [selectedVaccine] = selectedVaccines;
 
-  return { selectedBatches, selectedBatchRows, selectedRows, selectedVaccine, vaccines };
+  return {
+    hasRefused,
+    selectedBatches,
+    selectedBatchRows,
+    selectedRows,
+    selectedVaccine,
+    vaccines,
+  };
 };
 
 VaccineSelectComponent.defaultProps = {
@@ -169,8 +197,10 @@ VaccineSelectComponent.defaultProps = {
 VaccineSelectComponent.propTypes = {
   onCancelPrescription: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
+  onRefuse: PropTypes.func.isRequired,
   onSelectBatch: PropTypes.func.isRequired,
   onSelectVaccine: PropTypes.func.isRequired,
+  hasRefused: PropTypes.bool.isRequired,
   selectedBatchRows: PropTypes.object,
   selectedRows: PropTypes.object,
   selectedBatches: PropTypes.array,
