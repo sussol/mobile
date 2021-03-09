@@ -380,3 +380,33 @@ DisabledIcon.propTypes = {
   color: PropTypes.string,
   size: PropTypes.number,
 };
+
+export const SnowflakeIcon = ({ size, style, color }) => (
+  <FA5Icon size={size} style={style} color={color} name="snowflake" />
+);
+SnowflakeIcon.defaultProps = { size: 20, style: {}, color: SUSSOL_ORANGE };
+SnowflakeIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
+
+export const SyringeIcon = ({ size, style, color }) => (
+  <FA5Icon size={size} style={style} color={color} name="syringe" />
+);
+SyringeIcon.defaultProps = { size: 20, style: {}, color: SUSSOL_ORANGE };
+SyringeIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
+
+export const DollarIcon = ({ size, style, color }) => (
+  <FAIcon size={size} style={style} color={color} name="dollar" />
+);
+DollarIcon.defaultProps = { size: 20, style: {}, color: SUSSOL_ORANGE };
+DollarIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};
