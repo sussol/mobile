@@ -35,7 +35,12 @@ import {
 import { getColumns } from '../../pages/dataTableUtilities';
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 
-import { vaccineStrings, buttonStrings, dispensingStrings } from '../../localization';
+import {
+  vaccineStrings,
+  buttonStrings,
+  dispensingStrings,
+  generalStrings,
+} from '../../localization';
 import globalStyles from '../../globalStyles';
 import { FormDropdown } from '../FormInputs/FormDropdown';
 import { UIDatabase } from '../../database/index';
@@ -69,6 +74,7 @@ const VaccineSelectComponent = ({
   vaccines,
   vaccinator,
   onSelectVaccinator,
+  okAndRepeat,
 }) => {
   const { pageTopViewContainer } = globalStyles;
   const vaccineColumns = React.useMemo(() => getColumns(TABS.ITEM), []);
@@ -91,6 +97,11 @@ const VaccineSelectComponent = ({
   const confirmPrescription = React.useCallback(() => runWithLoadingIndicator(onConfirm), [
     onConfirm,
   ]);
+
+  const confirmAndRepeatPrescription = React.useCallback(
+    () => runWithLoadingIndicator(okAndRepeat),
+    [okAndRepeat]
+  );
 
   return (
     <FlexView style={pageTopViewContainer}>
@@ -161,6 +172,12 @@ const VaccineSelectComponent = ({
           isDisabled={selectedBatches.length === 0 && !hasRefused}
           onPress={confirmPrescription}
         />
+        <PageButton
+          text={generalStrings.ok_and_next}
+          style={{ marginLeft: 5 }}
+          isDisabled={selectedBatches.length === 0 && !hasRefused}
+          onPress={confirmAndRepeatPrescription}
+        />
       </FlexRow>
     </FlexView>
   );
@@ -178,8 +195,10 @@ const mapDispatchToProps = dispatch => {
       dispatch(VaccinePrescriptionActions.confirm());
       dispatch(goBack());
     });
+  const okAndRepeat = () => dispatch(VaccinePrescriptionActions.confirmAndRepeat());
 
   return {
+    okAndRepeat,
     onCancelPrescription,
     onConfirm,
     onRefuse,
@@ -197,7 +216,6 @@ const mapStateToProps = state => {
   const selectedVaccines = selectSelectedVaccines(state);
   const vaccines = selectVaccines(state);
   const [selectedVaccine] = selectedVaccines;
-
   const vaccinator = selectSelectedVaccinator(state);
 
   return {
@@ -220,6 +238,7 @@ VaccineSelectComponent.defaultProps = {
 };
 
 VaccineSelectComponent.propTypes = {
+  okAndRepeat: PropTypes.func.isRequired,
   onCancelPrescription: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
   onRefuse: PropTypes.func.isRequired,

@@ -10,7 +10,7 @@ import {
 import { selectEditingNameId } from '../../selectors/Entities/name';
 import { NameActions } from './NameActions';
 import { NameNoteActions } from './NameNoteActions';
-import { goBack } from '../../navigation/actions';
+import { goBack, gotoVaccineDispensingPage } from '../../navigation/actions';
 
 export const VACCINE_PRESCRIPTION_ACTIONS = {
   CREATE: 'VACCINE_PRESCRIPTION/create',
@@ -126,6 +126,13 @@ const selectVaccinator = vaccinator => ({
 
 const cancel = () => goBack();
 
+const confirmAndRepeat = () => dispatch =>
+  batch(() => {
+    dispatch(confirm());
+    dispatch(goBack());
+    dispatch(gotoVaccineDispensingPage());
+  });
+
 export const VaccinePrescriptionActions = {
   cancel,
   confirm,
@@ -135,4 +142,5 @@ export const VaccinePrescriptionActions = {
   selectVaccine,
   setRefusal,
   selectVaccinator,
+  confirmAndRepeat,
 };
