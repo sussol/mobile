@@ -10,15 +10,22 @@ import { useIsFocused } from '@react-navigation/native';
 
 import { Button } from 'react-native-ui-components';
 import {
+  ModulesImage,
   CustomerImage,
   IconButton,
   SupplierImage,
   StockImage,
-  ModulesImage,
   InfoBadge,
 } from '../widgets';
 
-import { PowerIcon, CogIcon } from '../widgets/icons';
+import {
+  PowerIcon,
+  CogIcon,
+  SyringeIcon,
+  SnowflakeIcon,
+  LineChartIcon,
+  DollarIcon,
+} from '../widgets/icons';
 import { ROUTES } from '../navigation/constants';
 import { buttonStrings, navStrings } from '../localization';
 
@@ -38,11 +45,14 @@ import {
   gotoSettings,
   gotoDashboard,
   goToVaccines,
+  gotoVaccineDispensingPage,
 } from '../navigation/actions';
 
 import globalStyles, { SHADOW_BORDER } from '../globalStyles';
 import { UserActions } from '../actions/index';
 import { selectCurrentUserIsAdmin } from '../selectors/user';
+import { selectHasVaccines } from '../selectors/Entities/vaccinePrescription';
+import { SUSSOL_ORANGE } from '../globalStyles/colors';
 
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
@@ -72,17 +82,28 @@ const Menu = ({
   usingModules,
   usingVaccines,
   isAdmin,
+  hasVaccines,
+  toVaccineDispensingPage,
 }) => {
   const { menuButton, menuButtonText: buttonText, appBackground } = globalStyles;
   const { image, originalContainer, moduleContainer, container, moduleRow } = styles;
-
+  const labelButtonText = {
+    ...buttonText,
+    width: 175,
+    textAlign: 'center',
+  };
   const containerStyle = { ...container, ...(usingModules ? moduleContainer : originalContainer) };
 
   const isFocused = useIsFocused();
 
   const MenuButton = useCallback(
     props => <Button style={menuButton} textStyle={buttonText} {...props} />,
-    [usingDashboard, usingDispensary, usingCashRegister, usingModules]
+    [usingDashboard, usingDispensary, usingCashRegister, usingModules, hasVaccines]
+  );
+
+  const IconMenuButton = useCallback(
+    props => <IconButton containerStyle={menuButton} labelStyle={labelButtonText} {...props} />,
+    [usingDashboard, usingDispensary, usingCashRegister, usingModules, hasVaccines]
   );
 
   const CustomerSection = useCallback(
@@ -96,6 +117,7 @@ const Menu = ({
           <InfoBadge routeName={ROUTES.CUSTOMER_REQUISITIONS}>
             <MenuButton text={navStrings.customer_requisitions} onPress={toCustomerRequisitions} />
           </InfoBadge>
+          {usingDispensary && <MenuButton text={navStrings.dispensary} onPress={toDispensary} />}
         </View>
       </View>
     ),
@@ -138,17 +160,40 @@ const Menu = ({
     () => (
       <View style={containerStyle}>
         <ModulesImage style={image} />
+
         <View>
-          {usingVaccines && <MenuButton text={navStrings.vaccines} onPress={toVaccines} />}
-          {usingDispensary && <MenuButton text={navStrings.dispensary} onPress={toDispensary} />}
-          {usingDashboard && <MenuButton text={navStrings.dashboard} onPress={toDashboard} />}
+          {usingVaccines && (
+            <IconMenuButton
+              label={navStrings.vaccines}
+              onPress={toVaccines}
+              Icon={<SnowflakeIcon />}
+            />
+          )}
+          {hasVaccines && usingDispensary && (
+            <IconMenuButton
+              label={navStrings.vaccine_dispensary}
+              onPress={toVaccineDispensingPage}
+              Icon={<SyringeIcon />}
+            />
+          )}
+          {usingDashboard && (
+            <IconMenuButton
+              label={navStrings.dashboard}
+              onPress={toDashboard}
+              Icon={<LineChartIcon color={SUSSOL_ORANGE} />}
+            />
+          )}
           {usingCashRegister && (
-            <MenuButton text={navStrings.cash_register} onPress={toCashRegister} />
+            <IconMenuButton
+              label={navStrings.cash_register}
+              onPress={toCashRegister}
+              Icon={<DollarIcon />}
+            />
           )}
         </View>
       </View>
     ),
-    [usingDashboard, usingDispensary, usingCashRegister, usingModules]
+    [usingDashboard, usingDispensary, usingCashRegister, usingModules, hasVaccines]
   );
 
   const AdminRow = useCallback(
@@ -236,6 +281,7 @@ const styles = {
 
 const mapDispatchToProps = dispatch => ({
   toVaccines: () => dispatch(goToVaccines()),
+  toVaccineDispensingPage: () => dispatch(gotoVaccineDispensingPage()),
   toCustomerInvoices: () => dispatch(gotoCustomerInvoices()),
   toCustomerRequisitions: () => dispatch(gotoCustomerRequisitions()),
   toStock: () => dispatch(gotoStock()),
@@ -262,6 +308,7 @@ const mapStateToProps = state => {
   } = modules;
 
   const isAdmin = selectCurrentUserIsAdmin(state);
+  const hasVaccines = selectHasVaccines(state);
 
   return {
     usingDashboard,
@@ -269,6 +316,7 @@ const mapStateToProps = state => {
     usingVaccines,
     usingCashRegister,
     usingModules,
+    hasVaccines,
     isAdmin,
   };
 };
@@ -281,9 +329,11 @@ Menu.defaultProps = {
 };
 
 Menu.propTypes = {
+  hasVaccines: PropTypes.bool.isRequired,
   isInAdminMode: PropTypes.bool,
   logout: PropTypes.func.isRequired,
   toVaccines: PropTypes.func.isRequired,
+  toVaccineDispensingPage: PropTypes.func.isRequired,
   toCustomerInvoices: PropTypes.func.isRequired,
   toCustomerRequisitions: PropTypes.func.isRequired,
   toStock: PropTypes.func.isRequired,

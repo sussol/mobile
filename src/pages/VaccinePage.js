@@ -18,17 +18,12 @@ import {
   FlexView,
 } from '../widgets/index';
 import { TextWithIcon } from '../widgets/Typography';
-import { buttonStrings, navStrings } from '../localization';
+import { buttonStrings } from '../localization';
 import { APP_FONT_FAMILY, DARKER_GREY, BLACK } from '../globalStyles';
-import {
-  gotoFridgeDetailPage,
-  gotoNewSensorPage,
-  gotoVaccineDispensingPage,
-} from '../navigation/actions';
+import { gotoFridgeDetailPage, gotoNewSensorPage } from '../navigation/actions';
 import { AfterInteractions } from '../widgets/AfterInteractions';
 import { SensorHeader } from '../widgets/SensorHeader/SensorHeader';
 import { selectActiveSensors } from '../selectors/Entities/sensor';
-import { selectHasVaccines } from '../selectors/Entities/vaccinePrescription';
 import temperature from '../utilities/temperature';
 import { BreachManUnhappy } from '../widgets/BreachManUnhappy';
 import { formatDate } from '../utilities/formatters';
@@ -84,26 +79,13 @@ FridgeDisplay.propTypes = {
   toFridgeDetail: PropTypes.func.isRequired,
 };
 
-export const VaccinePageComponent = ({
-  hasVaccines,
-  sensors,
-  toNewSensorPage,
-  toFridgeDetail,
-  toDispensingPage,
-}) => (
+export const VaccinePageComponent = ({ sensors, toNewSensorPage, toFridgeDetail }) => (
   <DataTablePageView
     captureUncaughtGestures={false}
     style={{ paddingHorizontal: 20, paddingVertical: 30 }}
   >
     <FlexRow style={{ justifyContent: 'flex-end', marginBottom: 10 }}>
       <PageButton text={buttonStrings.add_sensor} onPress={toNewSensorPage} />
-      {hasVaccines && (
-        <PageButton
-          text={navStrings.dispensary}
-          onPress={toDispensingPage}
-          style={{ marginLeft: 8 }}
-        />
-      )}
     </FlexRow>
     <AfterInteractions placeholder={null}>
       <Animatable.View style={{ flex: 1 }} animation="fadeIn" duration={500} useNativeDriver>
@@ -122,11 +104,9 @@ VaccinePageComponent.defaultProps = {
 };
 
 VaccinePageComponent.propTypes = {
-  hasVaccines: PropTypes.bool.isRequired,
   sensors: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   toFridgeDetail: PropTypes.func.isRequired,
   toNewSensorPage: PropTypes.func.isRequired,
-  toDispensingPage: PropTypes.func.isRequired,
 };
 
 const localStyles = StyleSheet.create({
@@ -168,14 +148,12 @@ const sortSensors = (s1, s2) => {
 
 const stateToProps = state => {
   const sensors = selectActiveSensors(state).sort(sortSensors);
-  const hasVaccines = selectHasVaccines();
-  return { hasVaccines, sensors };
+  return { sensors };
 };
 
 const dispatchToProps = dispatch => ({
   toFridgeDetail: fridge => dispatch(gotoFridgeDetailPage(fridge)),
   toNewSensorPage: () => dispatch(gotoNewSensorPage()),
-  toDispensingPage: () => dispatch(gotoVaccineDispensingPage()),
 });
 
 export const VaccinePage = connect(stateToProps, dispatchToProps)(VaccinePageComponent);
