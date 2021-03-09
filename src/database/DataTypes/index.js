@@ -18,7 +18,6 @@ export class Setting extends Realm.Object {}
 export class SyncOut extends Realm.Object {}
 export class TransactionCategory extends Realm.Object {}
 export class User extends Realm.Object {}
-export class MedicineAdministrator extends Realm.Object {}
 
 export { Abbreviation } from './Abbreviation';
 export { Currency } from './Currency';
@@ -37,6 +36,7 @@ export { LocationType } from './LocationType';
 export { MasterList } from './MasterList';
 export { MasterListItem } from './MasterListItem';
 export { MasterListNameJoin } from './MasterListNameJoin';
+export { MedicineAdministrator } from './MedicineAdministrator';
 export { Message } from './Message';
 export { Name } from './Name';
 export { NameNote } from './NameNote';

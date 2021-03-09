@@ -5,6 +5,7 @@ import { UIDatabase, createRecord } from '../../database';
 import {
   selectHasRefused,
   selectSelectedBatches,
+  selectSelectedVaccinator,
 } from '../../selectors/Entities/vaccinePrescription';
 import { selectEditingNameId } from '../../selectors/Entities/name';
 import { NameActions } from './NameActions';
@@ -17,6 +18,7 @@ export const VACCINE_PRESCRIPTION_ACTIONS = {
   RESET: 'VACCINE_PRESCRIPTION/reset',
   SELECT_VACCINE: 'VACCINE_PRESCRIPTION/selectVaccine',
   SELECT_BATCH: 'VACCINE_PRESCRIPTION/selectBatch',
+  SELECT_VACCINATOR: 'VACCINE_PRESCRIPTION/selectVaccinator',
 };
 
 const createDefaultVaccinePrescription = () => ({
@@ -30,9 +32,21 @@ const createDefaultVaccinePrescription = () => ({
   isVisible: true,
 });
 
+const getDefaultVaccinator = () => {
+  const [batches] = UIDatabase.objects('TransactionBatch')
+    .filtered('medicineAdministrator != null && itemBatch.item.isVaccine == true')
+    .sorted('transaction.confirmDate', true);
+
+  if (batches) {
+    return batches.medicineAdministrator;
+  }
+
+  return null;
+};
+
 const create = () => ({
   type: VACCINE_PRESCRIPTION_ACTIONS.CREATE,
-  payload: { prescription: createDefaultVaccinePrescription() },
+  payload: { prescription: createDefaultVaccinePrescription(), vaccinator: getDefaultVaccinator() },
 });
 
 const reset = () => ({
@@ -54,7 +68,7 @@ const setRefusal = hasRefused => ({
   payload: { hasRefused },
 });
 
-const createPrescription = (patient, currentUser, selectedBatches) => {
+const createPrescription = (patient, currentUser, selectedBatches, vaccinator) => {
   UIDatabase.write(() => {
     const prescription = createRecord(
       UIDatabase,
@@ -69,6 +83,7 @@ const createPrescription = (patient, currentUser, selectedBatches) => {
       const transactionItem = createRecord(UIDatabase, 'TransactionItem', prescription, item);
       createRecord(UIDatabase, 'TransactionBatch', transactionItem, itemBatch);
       transactionItem.setDoses(UIDatabase, 1);
+      transactionItem.setVaccinator(UIDatabase, vaccinator);
     });
     prescription.finalise(UIDatabase);
   });
@@ -89,11 +104,12 @@ const confirm = () => (dispatch, getState) => {
   const patientID = selectEditingNameId(getState());
   const patient = UIDatabase.get('Name', patientID);
   const selectedBatches = selectSelectedBatches(getState());
+  const vaccinator = selectSelectedVaccinator(getState());
 
   if (hasRefused) {
     createRefusalNameNote(patient);
   } else {
-    createPrescription(patient, currentUser, selectedBatches);
+    createPrescription(patient, currentUser, selectedBatches, vaccinator);
   }
 
   batch(() => {
@@ -102,6 +118,11 @@ const confirm = () => (dispatch, getState) => {
     dispatch(reset());
   });
 };
+
+const selectVaccinator = vaccinator => ({
+  type: VACCINE_PRESCRIPTION_ACTIONS.SELECT_VACCINATOR,
+  payload: { vaccinator },
+});
 
 const cancel = () => goBack();
 
@@ -113,4 +134,5 @@ export const VaccinePrescriptionActions = {
   selectBatch,
   selectVaccine,
   setRefusal,
+  selectVaccinator,
 };

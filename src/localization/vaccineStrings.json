@@ -1,5 +1,6 @@
 {
   "gb": {
+    "vaccinator": "Vaccinator",
     "logging_delayed_until": "Logging delayed until",
     "hot_consecutive_breach": "Hot consecutive breach",
     "cold_consecutive_breach": "Cold consecutive breach",

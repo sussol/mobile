@@ -30,12 +30,15 @@ import {
   selectSelectedRows,
   selectSelectedVaccines,
   selectVaccines,
+  selectSelectedVaccinator,
 } from '../../selectors/Entities/vaccinePrescription';
 import { getColumns } from '../../pages/dataTableUtilities';
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 
-import { buttonStrings, dispensingStrings } from '../../localization';
+import { vaccineStrings, buttonStrings, dispensingStrings } from '../../localization';
 import globalStyles from '../../globalStyles';
+import { FormDropdown } from '../FormInputs/FormDropdown';
+import { UIDatabase } from '../../database/index';
 import { DARKER_GREY, SUSSOL_ORANGE } from '../../globalStyles/colors';
 
 /**
@@ -64,6 +67,8 @@ const VaccineSelectComponent = ({
   selectedRows,
   selectedVaccine,
   vaccines,
+  vaccinator,
+  onSelectVaccinator,
 }) => {
   const { pageTopViewContainer } = globalStyles;
   const vaccineColumns = React.useMemo(() => getColumns(TABS.ITEM), []);
@@ -91,6 +96,13 @@ const VaccineSelectComponent = ({
     <FlexView style={pageTopViewContainer}>
       <FlexRow style={{ marginBottom: 7 }} justifyContent="flex-end">
         <VaccinePrescriptionInfo />
+        <FormDropdown
+          options={UIDatabase.objects('MedicineAdministrator')}
+          optionKey="displayString"
+          label={vaccineStrings.vaccinator}
+          onValueChange={onSelectVaccinator}
+          value={vaccinator}
+        />
         <FlexRow flex={1} alignItems="center">
           <SimpleLabel
             text={dispensingStrings.refused_vaccine}
@@ -159,13 +171,22 @@ const mapDispatchToProps = dispatch => {
   const onCancelPrescription = () => dispatch(VaccinePrescriptionActions.cancel());
   const onSelectBatch = itemBatch => dispatch(VaccinePrescriptionActions.selectBatch(itemBatch));
   const onSelectVaccine = vaccine => dispatch(VaccinePrescriptionActions.selectVaccine(vaccine));
+  const onSelectVaccinator = vaccinator =>
+    dispatch(VaccinePrescriptionActions.selectVaccinator(vaccinator));
   const onConfirm = () =>
     batch(() => {
       dispatch(VaccinePrescriptionActions.confirm());
       dispatch(goBack());
     });
 
-  return { onCancelPrescription, onConfirm, onRefuse, onSelectBatch, onSelectVaccine };
+  return {
+    onCancelPrescription,
+    onConfirm,
+    onRefuse,
+    onSelectBatch,
+    onSelectVaccine,
+    onSelectVaccinator,
+  };
 };
 
 const mapStateToProps = state => {
@@ -177,7 +198,10 @@ const mapStateToProps = state => {
   const vaccines = selectVaccines(state);
   const [selectedVaccine] = selectedVaccines;
 
+  const vaccinator = selectSelectedVaccinator(state);
+
   return {
+    vaccinator,
     hasRefused,
     selectedBatches,
     selectedBatchRows,
@@ -192,6 +216,7 @@ VaccineSelectComponent.defaultProps = {
   selectedRows: {},
   selectedBatches: [],
   selectedVaccine: undefined,
+  vaccinator: null,
 };
 
 VaccineSelectComponent.propTypes = {
@@ -206,6 +231,8 @@ VaccineSelectComponent.propTypes = {
   selectedBatches: PropTypes.array,
   selectedVaccine: PropTypes.object,
   vaccines: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
+  vaccinator: PropTypes.object,
+  onSelectVaccinator: PropTypes.func.isRequired,
 };
 
 export const VaccineSelect = connect(mapStateToProps, mapDispatchToProps)(VaccineSelectComponent);
