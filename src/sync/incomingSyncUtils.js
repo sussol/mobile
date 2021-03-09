@@ -310,6 +310,10 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: [],
       canBeBlank: ['json_schema', 'ui_schema', 'type', 'version'],
     },
+    MedicineAdministrator: {
+      cannotBeBlank: [],
+      canBeBlank: ['first_name', 'last_name', 'code'],
+    },
   };
 
   if (!requiredFields[recordType]) return false; // Unsupported record type
@@ -914,6 +918,10 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
           record.vaccine_vial_monitor_status_ID
         ),
         sentPackSize: parseNumber(record.sent_pack_size) || packSize,
+        medicineAdministrator: database.getOrCreate(
+          'MedicineAdministrator',
+          record.medicine_administrator_ID
+        ),
       };
       const transactionBatch = database.update(recordType, internalRecord);
       transaction.addBatchIfUnique(database, transactionBatch);
@@ -1155,6 +1163,15 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         description: record.description,
         eventType: record.event_type,
         unit: record.unit,
+      });
+      break;
+    }
+    case 'MedicineAdministrator': {
+      database.update('MedicineAdministrator', {
+        id: record.ID,
+        firstName: record.first_name,
+        lastName: record.last_name,
+        code: record.code,
       });
       break;
     }
