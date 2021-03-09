@@ -27,7 +27,7 @@ export const Paper = ({
   const internalHeaderContainerStyle = InternalHeader && [
     localStyles.headerContainer,
     { paddingHorizontal },
-    headerText && { alignItems: 'center', justifyContent: 'center' },
+    headerText && { alignItems: 'center' },
     headerContainerStyle,
   ];
 
