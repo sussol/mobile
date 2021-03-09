@@ -76,12 +76,9 @@ export const FormDateInput = React.forwardRef(
       const newValidity = onValidate(newValue);
       const updatedIsValid = validity && newValidity;
 
-      let updatedDate = null;
-      if (!newValue) {
-        updatedDate = null;
-      } else if (updatedIsValid) {
-        updatedDate = newDate.toDate();
-      }
+      const updatedDate = newValue && updatedIsValid ? newDate.toDate() : null;
+      // if invalid, return the raw value to allow the caller to validate correctly
+      const returnValue = updatedDate || newValue;
 
       const updatedState = {
         isValid: updatedIsValid,
@@ -91,7 +88,7 @@ export const FormDateInput = React.forwardRef(
       };
 
       setInputState(updatedState);
-      onChangeDate(updatedDate);
+      onChangeDate(returnValue);
     };
 
     // When changing the value of the input, check the new validity and set the new input.

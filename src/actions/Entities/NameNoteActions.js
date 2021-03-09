@@ -20,6 +20,8 @@ export const NAME_NOTE_ACTIONS = {
 };
 
 const validateData = (jsonSchema, data) => {
+  if (!jsonSchema) return true;
+
   const ajv = new Ajv(ajvOptions);
   const result = ajv.validate(jsonSchema, data);
 

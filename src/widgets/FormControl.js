@@ -267,7 +267,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     showSaveButton,
     cancelButtonText,
     onCancel,
-    canSave,
+    canSave = true, // if not specified by calling component, set default
   } = ownProps;
   const onInitialiseForm = () => initialiseForm(inputConfig);
   const onUpdateForm = (key, value) => !isDisabled && updateForm(key, value);
