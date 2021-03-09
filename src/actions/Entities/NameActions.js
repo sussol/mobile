@@ -13,8 +13,8 @@ export const NAME_ACTIONS = {
   SAVE: 'NAME/save',
 };
 
-const createDefaultName = (type = 'patient') => ({
-  id: generateUUID(),
+const createDefaultName = (type = 'patient', id) => ({
+  id: id ?? generateUUID(),
   code: '',
   isCustomer: false,
   isManufacturer: false,
@@ -25,9 +25,9 @@ const createDefaultName = (type = 'patient') => ({
   type,
 });
 
-const create = type => ({
+const create = (type, id) => ({
   type: NAME_ACTIONS.CREATE,
-  payload: { name: createDefaultName(type) },
+  payload: { name: createDefaultName(type, id) },
 });
 
 const reset = () => ({
