@@ -175,7 +175,7 @@ const VaccineSelectComponent = ({
         <PageButton
           text={generalStrings.ok_and_next}
           style={{ marginLeft: 5 }}
-          isDisabled={selectedBatches.length === 0}
+          isDisabled={selectedBatches.length === 0 && !hasRefused}
           onPress={confirmAndRepeatPrescription}
         />
       </FlexRow>
