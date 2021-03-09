@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { ActivityIndicator, InteractionManager } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 
 import { FlexView } from './FlexView';
 import { SUSSOL_ORANGE } from '../globalStyles/index';
@@ -8,13 +9,19 @@ import { SUSSOL_ORANGE } from '../globalStyles/index';
 export const AfterInteractions = ({ children, placeholder }) => {
   const [ready, setReady] = useState(false);
 
+  const focused = useIsFocused();
+
+  useEffect(() => {
+    setReady(focused);
+  }, [focused]);
+
   useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
-      setReady(true);
+      setReady(focused);
     });
-  }, []);
+  }, [focused]);
 
-  return ready ? (
+  return focused && ready ? (
     children
   ) : (
     <FlexView flex={1} justifyContent="center" alignItems="center">
