@@ -130,6 +130,8 @@ export const JSONForm = React.forwardRef(
     { formData, onChange, theme = defaultTheme, children, options, onSubmit, surveySchema },
     ref
   ) => {
+    if (!surveySchema) return null;
+
     const { uiSchema, jsonSchema } = surveySchema;
     const validator = useMemo(() => ajv.compile(jsonSchema), [jsonSchema]);
     const Form = useMemo(() => withTheme(theme), []);
@@ -217,6 +219,7 @@ JSONForm.defaultProps = {
   options: { focusController: new FocusController() },
   onChange: () => {},
   formData: {},
+  surveySchema: undefined,
 };
 
 JSONForm.propTypes = {
@@ -225,7 +228,7 @@ JSONForm.propTypes = {
 };
 
 JSONForm.propTypes = {
-  surveySchema: PropTypes.object.isRequired,
+  surveySchema: PropTypes.object,
   children: PropTypes.node,
   onSubmit: PropTypes.func,
   options: PropTypes.object,

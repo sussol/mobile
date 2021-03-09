@@ -78,8 +78,6 @@ const PatientEditComponent = ({
             shouldAutoFocus={false}
           />
         </View>
-
-        <View style={localStyles.verticalSeparator} />
         {surveySchema && (
           <View style={localStyles.formContainer}>
             <View style={localStyles.verticalSeparator} />
