@@ -2,7 +2,10 @@ import { generateUUID } from 'react-native-database';
 import { batch } from 'react-redux';
 
 import { UIDatabase, createRecord } from '../../database';
-import {selectHasRefused,  selectSelectedBatches } from '../../selectors/Entities/vaccinePrescription';
+import {
+  selectHasRefused,
+  selectSelectedBatches,
+} from '../../selectors/Entities/vaccinePrescription';
 import { selectEditingNameId } from '../../selectors/Entities/name';
 import { NameActions } from './NameActions';
 import { NameNoteActions } from './NameNoteActions';

@@ -50,7 +50,6 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
       return { ...state, selectedBatches: [itemBatch] };
     }
 
-
     case VACCINE_PRESCRIPTION_ACTIONS.SET_REFUSAL: {
       const { payload } = action;
       const { hasRefused } = payload;
