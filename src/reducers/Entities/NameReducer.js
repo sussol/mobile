@@ -1,4 +1,5 @@
 import { NAME_ACTIONS } from '../../actions/Entities';
+import { WIZARD_ACTIONS } from '../../actions/WizardActions';
 
 const initialState = () => ({
   editing: undefined,
@@ -15,6 +16,15 @@ export const NameReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
+    case WIZARD_ACTIONS.SWITCH_TAB: {
+      const { payload } = action;
+      const { tab } = payload;
+
+      if (tab === 0) return initialState();
+
+      return state;
+    }
+
     case NAME_ACTIONS.RESET:
     case 'Navigation/BACK': {
       // reset if heading back

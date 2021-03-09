@@ -1,4 +1,5 @@
 import { VACCINE_PRESCRIPTION_ACTIONS } from '../../actions/Entities';
+import { WIZARD_ACTIONS } from '../../actions/WizardActions';
 import { UIDatabase } from '../../database';
 
 const initialState = () => ({
@@ -14,6 +15,15 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
+    case WIZARD_ACTIONS.SWITCH_TAB: {
+      const { payload } = action;
+      const { tab } = payload;
+
+      if (tab === 0) return initialState();
+
+      return state;
+    }
+
     case VACCINE_PRESCRIPTION_ACTIONS.RESET:
     case 'Navigation/BACK': {
       // reset if heading back
