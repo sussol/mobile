@@ -102,7 +102,14 @@ const Menu = ({
   );
 
   const IconMenuButton = useCallback(
-    props => <IconButton containerStyle={menuButton} labelStyle={labelButtonText} {...props} />,
+    props => (
+      <IconButton
+        containerStyle={menuButton}
+        labelStyle={labelButtonText}
+        underlayColor="#B5B5B5"
+        {...props}
+      />
+    ),
     [usingDashboard, usingDispensary, usingCashRegister, usingModules, hasVaccines]
   );
 
