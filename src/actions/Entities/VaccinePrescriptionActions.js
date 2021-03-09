@@ -100,8 +100,7 @@ const createPrescription = (patient, currentUser, selectedBatches) => {
 const createRefusalNameNote = name => {
   const [patientEvent] = UIDatabase.objects('PatientEvent').filtered('code == "RV"');
   const id = generateUUID();
-  const _data = {};
-  const newNameNote = { id, name, patientEvent, _data, entryDate: new Date() };
+  const newNameNote = { id, name, patientEvent, entryDate: new Date() };
 
   UIDatabase.write(() => UIDatabase.create('NameNote', newNameNote));
 };
