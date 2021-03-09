@@ -154,6 +154,8 @@ export class Name extends Realm.Object {
       isPatient: this.isPatient,
       female: this.female,
       thisStoresPatient: this.thisStoresPatient,
+      nationality: this.nationality?.toJSON(),
+      ethnicity: this.ethnicity?.toJSON(),
     };
   }
 }

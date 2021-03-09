@@ -64,7 +64,8 @@
     "inpatient": "Inpatient",
     "outpatient": "Outpatient",
     "select_the_patient": "Select the patient",
-    "edit_the_patient": "Edit patient details"
+    "edit_the_patient": "Edit patient details",
+    "refused_vaccine": "Refused vaccine"
   },
   "fr": {
     "available_credit": "Crédit disponible",

@@ -41,7 +41,7 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
         selectedBatches.push(selectedBatch);
       }
 
-      return { ...state, selectedVaccines: [vaccine], selectedBatches };
+      return { ...state, selectedVaccines: [vaccine], selectedBatches, hasRefused: false };
     }
 
     case VACCINE_PRESCRIPTION_ACTIONS.SELECT_BATCH: {
@@ -58,11 +58,15 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
       return { ...state, vaccinator };
     }
 
-    case VACCINE_PRESCRIPTION_ACTIONS.REFUSE_VACCINATION: {
+    case VACCINE_PRESCRIPTION_ACTIONS.SET_REFUSAL: {
       const { payload } = action;
-      const { value } = payload;
+      const { hasRefused } = payload;
 
-      return { ...state, hasRefused: value };
+      if (hasRefused) {
+        return { ...state, hasRefused, selectedVaccines: [], selectedBatches: [] };
+      }
+
+      return { ...state, hasRefused };
     }
 
     default: {
