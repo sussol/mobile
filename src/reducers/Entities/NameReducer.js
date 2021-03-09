@@ -15,6 +15,12 @@ export const NameReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
+    case NAME_ACTIONS.RESET:
+    case 'Navigation/BACK': {
+      // reset if heading back
+      return initialState();
+    }
+
     case NAME_ACTIONS.CREATE: {
       const { payload } = action;
       const { name } = payload;
@@ -27,10 +33,6 @@ export const NameReducer = (state = initialState(), action) => {
       const { name } = payload;
 
       return { ...state, editing: name.toJSON() };
-    }
-
-    case NAME_ACTIONS.RESET: {
-      return initialState();
     }
 
     case NAME_ACTIONS.UPDATE: {

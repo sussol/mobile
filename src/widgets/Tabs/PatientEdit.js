@@ -28,7 +28,7 @@ import { buttonStrings } from '../../localization';
 import globalStyles, { DARK_GREY } from '../../globalStyles';
 import { JSONForm } from '../JSONForm/JSONForm';
 import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
-import { selectNameNoteIsValid, selectNewNameNote } from '../../selectors/Entities/nameNote';
+import { selectCreatingNameNote, selectNameNoteIsValid } from '../../selectors/Entities/nameNote';
 
 /**
  * Layout component used for a tab within the vaccine prescription wizard.
@@ -48,13 +48,13 @@ const PatientEditComponent = ({
   currentPatient,
   surveySchema,
   onCancelPrescription,
-  onSubmitSurvey,
   updatePatientDetails,
   surveyFormData,
   updateForm,
 }) => {
   const { pageTopViewContainer } = globalStyles;
   const formRef = useRef(null);
+
   const savePatient = useCallback(
     e => {
       updatePatientDetails(completedForm);
@@ -75,28 +75,26 @@ const PatientEditComponent = ({
             showCancelButton={false}
             showSaveButton={false}
             inputConfig={getFormInputConfig('patient', currentPatient)}
+            shouldAutoFocus={false}
           />
         </View>
 
         <View style={localStyles.verticalSeparator} />
-        <View style={localStyles.formContainer}>
-          {surveySchema && <View style={localStyles.verticalSeparator} />}
-          {surveySchema && (
-            <View style={localStyles.formContainer}>
-              <JSONForm
-                ref={formRef}
-                onSubmit={onSubmitSurvey}
-                surveySchema={surveySchema}
-                formData={surveyFormData}
-                onChange={data => {
-                  updateForm(data.formData, data.errors);
-                }}
-              >
-                <View />
-              </JSONForm>
-            </View>
-          )}
-        </View>
+        {surveySchema && (
+          <View style={localStyles.formContainer}>
+            <View style={localStyles.verticalSeparator} />
+            <JSONForm
+              ref={formRef}
+              surveySchema={surveySchema}
+              formData={surveyFormData}
+              onChange={data => {
+                updateForm(data.formData, data.errors);
+              }}
+            >
+              <View />
+            </JSONForm>
+          </View>
+        )}
       </View>
 
       <FlexRow justifyContent="flex-end" alignItems="flex-end">
@@ -136,7 +134,7 @@ const mapStateToProps = state => {
   const surveySchemas = selectSurveySchemas();
   const [surveySchema] = surveySchemas;
 
-  const nameNote = selectNewNameNote(state);
+  const nameNote = selectCreatingNameNote(state);
 
   return {
     canSaveForm,
@@ -158,7 +156,6 @@ PatientEditComponent.propTypes = {
   currentPatient: PropTypes.object,
   surveySchema: PropTypes.object,
   onCancelPrescription: PropTypes.func.isRequired,
-  onSubmitSurvey: PropTypes.func.isRequired,
   updatePatientDetails: PropTypes.func.isRequired,
   surveyFormData: PropTypes.object.isRequired,
   updateForm: PropTypes.func.isRequired,

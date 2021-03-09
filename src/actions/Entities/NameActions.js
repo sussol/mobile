@@ -1,5 +1,6 @@
 import { generateUUID } from 'react-native-database';
-import { selectEditingNameId, selectEditingName } from '../../selectors/Entities/name';
+import { batch } from 'react-redux';
+import { selectEditingName } from '../../selectors/Entities/name';
 import { createRecord, UIDatabase } from '../../database';
 
 export const NAME_ACTIONS = {
@@ -45,10 +46,12 @@ const updatePatient = detailsEntered => (dispatch, getState) => {
 
   if (!id) return;
 
-  Object.entries(detailsEntered).forEach(([key, value]) => {
-    if (currentKeys.includes(key) && currentPatient[key] !== value) {
-      dispatch(update(id, key, value));
-    }
+  batch(() => {
+    Object.entries(detailsEntered).forEach(([key, value]) => {
+      if (currentKeys.includes(key) && currentPatient[key] !== value) {
+        dispatch(update(id, key, value));
+      }
+    });
   });
 };
 
@@ -60,11 +63,6 @@ const select = name => ({
 const filter = searchParameters => ({ type: NAME_ACTIONS.FILTER, payload: { searchParameters } });
 
 const sort = sortKey => ({ type: NAME_ACTIONS.SORT, payload: { sortKey } });
-
-const updateEditing = (value, field) => (dispatch, getState) => {
-  const newNameId = selectEditingNameId(getState());
-  dispatch(update(newNameId, field, value));
-};
 
 const saveEditing = () => (dispatch, getState) => {
   const currentPatient = selectEditingName(getState());
@@ -82,6 +80,5 @@ export const NameActions = {
   select,
   sort,
   update,
-  updateEditing,
   updatePatient,
 };

@@ -45,6 +45,8 @@ const patientUpdate = patientDetails => (dispatch, getState) => {
     supplyingStoreId: currentSupplyingStoreId,
     isActive: currentIsActive,
     female: currentFemale,
+    ethnicity: currentEthnicity,
+    nationality: currentNationality,
   } = currentPatient ?? {};
 
   const {
@@ -69,6 +71,8 @@ const patientUpdate = patientDetails => (dispatch, getState) => {
     country: patientCountry,
     supplyingStoreId: patientSupplyingStoreId,
     female: patientFemale,
+    ethnicity: patientEthnicity,
+    nationality: patientNationality,
   } = patientDetails ?? {};
 
   const id = patientId ?? currentPatientId;
@@ -89,6 +93,8 @@ const patientUpdate = patientDetails => (dispatch, getState) => {
   const female = patientFemale ?? currentFemale;
   const supplyingStoreId = patientSupplyingStoreId ?? currentSupplyingStoreId;
   const isActive = currentIsActive;
+  const ethnicity = patientEthnicity ?? currentEthnicity;
+  const nationality = patientNationality ?? currentNationality;
 
   const patientRecord = {
     id,
@@ -109,6 +115,8 @@ const patientUpdate = patientDetails => (dispatch, getState) => {
     female,
     supplyingStoreId,
     isActive,
+    ethnicity,
+    nationality,
   };
 
   UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patientRecord));

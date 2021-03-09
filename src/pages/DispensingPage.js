@@ -38,6 +38,8 @@ import { selectPatientModalOpen, selectCanEditPatient } from '../selectors/patie
 
 import globalStyles from '../globalStyles';
 import { dispensingStrings } from '../localization';
+import { PatientEditModal } from '../widgets/modalChildren/PatientEditModal';
+import { selectSurveySchemas } from '../selectors/formSchema';
 
 const Dispensing = ({
   data,
@@ -73,7 +75,6 @@ const Dispensing = ({
   editPatient,
   createPatient,
   cancelPatientEdit,
-  savePatient,
   viewPatientHistory,
 
   // Prescriber variables
@@ -214,11 +215,12 @@ const Dispensing = ({
         noCancel
         isVisible={patientEditModalOpen}
       >
-        <FormControl
+        <PatientEditModal
+          patient={currentPatient}
           isDisabled={!canEditPatient}
-          onSave={savePatient}
           onCancel={cancelPatientEdit}
           inputConfig={getFormInputConfig('patient', currentPatient)}
+          surveySchema={selectSurveySchemas()[0]}
         />
       </ModalContainer>
       <ModalContainer
@@ -347,7 +349,6 @@ const mapDispatchToProps = dispatch => ({
   editPatient: patient => dispatch(PatientActions.editPatient(UIDatabase.get('Name', patient))),
   createPatient: () => dispatch(PatientActions.createPatient()),
   cancelPatientEdit: () => dispatch(PatientActions.closeModal()),
-  savePatient: patientDetails => dispatch(PatientActions.patientUpdate(patientDetails)),
   viewPatientHistory: rowKey =>
     dispatch(PatientActions.viewPatientHistory(UIDatabase.get('Name', rowKey))),
 
@@ -389,7 +390,6 @@ Dispensing.propTypes = {
   editPatient: PropTypes.func.isRequired,
   patientEditModalOpen: PropTypes.bool.isRequired,
   createPatient: PropTypes.func.isRequired,
-  savePatient: PropTypes.func.isRequired,
   cancelPatientEdit: PropTypes.func.isRequired,
   currentPatient: PropTypes.object,
   canEditPatient: PropTypes.bool.isRequired,

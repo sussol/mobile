@@ -71,9 +71,9 @@ const FormControlComponent = ({
   onSaveForm,
   // Cancel button callbacks
   onCancelForm,
+  shouldAutoFocus,
 }) => {
   const [refs, setRefs] = React.useState([]);
-
   const isFocused = useIsFocused();
 
   React.useEffect(() => {
@@ -119,7 +119,7 @@ const FormControlComponent = ({
                 label={label}
                 invalidMessage={invalidMessage}
                 isDisabled={!isEditable || isDisabled}
-                autoFocus={index === 0}
+                autoFocus={shouldAutoFocus && index === 0}
               />
             );
           }
@@ -267,6 +267,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     showSaveButton,
     cancelButtonText,
     onCancel,
+    canSave,
   } = ownProps;
   const onInitialiseForm = () => initialiseForm(inputConfig);
   const onUpdateForm = (key, value) => !isDisabled && updateForm(key, value);
@@ -275,11 +276,12 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   const onCancelForm = () =>
     confirmOnSave && isConfirmFormOpen ? hideConfirmForm() : onCancel() && resetForm();
   return {
+    ...ownProps,
     form,
     completedForm,
     inputConfig,
     isDisabled,
-    canSaveForm,
+    canSaveForm: canSave && canSaveForm,
     saveButtonText,
     isConfirmFormOpen,
     confirmText,
@@ -319,9 +321,14 @@ FormControlComponent.defaultProps = {
   showCancelButton: true,
   showSaveButton: true,
   cancelButtonText: modalStrings.cancel,
+  shouldAutoFocus: true,
+  canSave: true,
 };
 
 FormControlComponent.propTypes = {
+  // Prop is used in merge props
+  // eslint-disable-next-line react/no-unused-prop-types
+  canSave: PropTypes.bool,
   form: PropTypes.object,
   completedForm: PropTypes.object,
   inputConfig: PropTypes.array.isRequired,
@@ -337,6 +344,7 @@ FormControlComponent.propTypes = {
   onUpdateForm: PropTypes.func.isRequired,
   onSaveForm: PropTypes.func.isRequired,
   onCancelForm: PropTypes.func.isRequired,
+  shouldAutoFocus: PropTypes.bool,
 };
 
 export const FormControl = connect(
