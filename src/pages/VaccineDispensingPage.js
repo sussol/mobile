@@ -21,4 +21,6 @@ const tabs = [
   { component: VaccineSelect, name: 'prescription', title: dispensingStrings.finalise },
 ];
 
-export const VaccineDispensingPage = () => <Wizard captureUncaughtGestures={false} tabs={tabs} />;
+export const VaccineDispensingPage = () => (
+  <Wizard useNewStepper captureUncaughtGestures={false} tabs={tabs} />
+);
