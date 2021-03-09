@@ -24,7 +24,12 @@ import { selectPatientSearchFormConfig } from '../../selectors/Entities/vaccineP
 import { getColumns } from '../../pages/dataTableUtilities';
 
 import { MODALS } from '../constants';
-import { buttonStrings, dispensingStrings, generalStrings } from '../../localization';
+import {
+  buttonStrings,
+  dispensingStrings,
+  generalStrings,
+  vaccineStrings,
+} from '../../localization';
 import globalStyles, { DARK_GREY } from '../../globalStyles';
 import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
 import { AfterInteractions } from '../AfterInteractions';
@@ -64,7 +69,7 @@ const PatientSelectComponent = ({
       <Paper
         style={{ flex: 6 }}
         contentContainerStyle={{ flex: 1 }}
-        headerText="Step 1: Select a patient"
+        headerText={vaccineStrings.vaccine_dispense_step_one_title}
       >
         <AfterInteractions placeholder={null}>
           <View style={localStyles.container}>

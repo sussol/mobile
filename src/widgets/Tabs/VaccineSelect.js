@@ -139,7 +139,7 @@ const VaccineSelectComponent = ({
 
       <FlexRow flex={12}>
         <Paper
-          headerText={`Step three: ${dispensingStrings.select_item}`}
+          headerText={vaccineStrings.vaccine_dispense_step_three_title}
           contentContainerStyle={{ flex: 1 }}
           style={{ flex: 1 }}
         >

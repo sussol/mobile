@@ -23,7 +23,7 @@ import { VaccinePrescriptionActions } from '../../actions/Entities/VaccinePrescr
 import { selectCanSaveForm, selectCompletedForm } from '../../selectors/form';
 import { getFormInputConfig } from '../../utilities/formInputConfigs';
 
-import { buttonStrings } from '../../localization';
+import { buttonStrings, vaccineStrings } from '../../localization';
 import globalStyles from '../../globalStyles';
 import { JSONForm } from '../JSONForm/JSONForm';
 import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
@@ -69,7 +69,7 @@ const PatientEditComponent = ({
       <FlexRow flex={12}>
         <Paper
           style={{ flex: 1 }}
-          headerText="Step 2: Edit patient details"
+          headerText={vaccineStrings.vaccine_dispense_step_two_title}
           contentContainerStyle={{ flex: 1 }}
         >
           <AfterInteractions placeholder={null}>
