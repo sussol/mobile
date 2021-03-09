@@ -12,6 +12,7 @@ import { JSONFormWidget } from './widgets/index';
 import { JSONFormErrorList } from './JSONFormErrorList';
 import { PageButton } from '../PageButton';
 import { JSONFormContext } from './JSONFormContext';
+import { useDebounce } from '../../hooks/useDebounce';
 
 const ajvErrors = require('ajv-errors');
 
@@ -125,7 +126,12 @@ class FocusController {
   };
 }
 
-export const JSONForm = React.forwardRef(
+// The underlying Form component takes a prop formData which just seeds the component
+// but does not update the form after that point.
+// So, just never re-render this component.
+const propsAreEqual = () => true;
+
+export const JSONFormComponent = React.forwardRef(
   (
     { formData, onChange, theme = defaultTheme, children, options, onSubmit, surveySchema },
     ref
@@ -133,7 +139,6 @@ export const JSONForm = React.forwardRef(
     const { uiSchema, jsonSchema } = surveySchema;
     const validator = useMemo(() => ajv.compile(jsonSchema), [jsonSchema]);
     const Form = useMemo(() => withTheme(theme), []);
-
     // Attach to the ref passed a method `submit` which will allow a caller
     // to programmatically call submit
     const formRef = useRef(null);
@@ -147,11 +152,13 @@ export const JSONForm = React.forwardRef(
       []
     );
 
+    const debouncedOnChange = useDebounce(onChange, 500);
+
     return (
       <JSONFormContext.Provider value={options}>
         <Form
           liveValidate
-          onChange={onChange}
+          onChange={debouncedOnChange}
           formData={formData}
           validate={(newFormData, errorHandlers) => {
             // Validate the form data, if there are any errors, an `errors` object is set on
@@ -210,7 +217,9 @@ export const JSONForm = React.forwardRef(
   }
 );
 
-JSONForm.defaultProps = {
+export const JSONForm = React.memo(JSONFormComponent, propsAreEqual);
+
+JSONFormComponent.defaultProps = {
   theme: defaultTheme,
   children: null,
   onSubmit: null,
@@ -219,12 +228,9 @@ JSONForm.defaultProps = {
   formData: {},
 };
 
-JSONForm.propTypes = {
+JSONFormComponent.propTypes = {
   formData: PropTypes.object,
   onChange: PropTypes.func,
-};
-
-JSONForm.propTypes = {
   surveySchema: PropTypes.object.isRequired,
   children: PropTypes.node,
   onSubmit: PropTypes.func,
