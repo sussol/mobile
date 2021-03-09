@@ -101,6 +101,7 @@ const PatientSelectComponent = ({
             onSave={onFilterData}
             showCancelButton={false}
             saveButtonText={generalStrings.search}
+            canSave={true}
           />
         </View>
         <View style={localStyles.verticalSeparator} />
