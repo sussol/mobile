@@ -45,6 +45,7 @@ import globalStyles from '../../globalStyles';
 import { FormDropdown } from '../FormInputs/FormDropdown';
 import { UIDatabase } from '../../database/index';
 import { DARKER_GREY, SUSSOL_ORANGE } from '../../globalStyles/colors';
+import { AfterInteractions } from '../AfterInteractions';
 
 /**
  * Layout component used for a tab within the vaccine prescription wizard.
@@ -105,80 +106,82 @@ const VaccineSelectComponent = ({
 
   return (
     <FlexView style={pageTopViewContainer}>
-      <FlexRow style={{ marginBottom: 7 }} justifyContent="flex-end">
-        <VaccinePrescriptionInfo />
-        <FormDropdown
-          options={UIDatabase.objects('MedicineAdministrator')}
-          optionKey="displayString"
-          label={vaccineStrings.vaccinator}
-          onValueChange={onSelectVaccinator}
-          value={vaccinator}
-        />
-        <FlexRow flex={1} alignItems="center">
-          <SimpleLabel
-            text={dispensingStrings.refused_vaccine}
-            size="medium"
-            numberofLines={1}
-            textAlign="right"
+      <AfterInteractions placeholder={null}>
+        <FlexRow style={{ marginBottom: 7 }} justifyContent="flex-end">
+          <VaccinePrescriptionInfo />
+          <FormDropdown
+            options={UIDatabase.objects('MedicineAdministrator')}
+            optionKey="displayString"
+            label={vaccineStrings.vaccinator}
+            onValueChange={onSelectVaccinator}
+            value={vaccinator}
           />
-          <CheckBox
-            onValueChange={onRefuse}
-            value={hasRefused}
-            tintColors={{ true: SUSSOL_ORANGE, false: DARKER_GREY }}
-          />
-        </FlexRow>
-      </FlexRow>
-
-      <View style={localStyles.container}>
-        <View style={localStyles.listContainer}>
-          <SimpleLabel text={dispensingStrings.select_item} size="medium" numberOfLines={1} />
-          <SimpleTable
-            columns={vaccineColumns}
-            data={vaccines}
-            disabledRows={disabledVaccineRows}
-            selectedRows={selectedRows}
-            selectRow={onSelectVaccine}
-            style={{ marginTop: 3, height: '90%' }}
-          />
-        </View>
-        {selectedVaccine && (
-          <View style={localStyles.listContainer}>
+          <FlexRow flex={1} alignItems="center">
             <SimpleLabel
-              text={dispensingStrings.available_batches}
+              text={dispensingStrings.refused_vaccine}
               size="medium"
-              numberOfLines={1}
+              numberofLines={1}
+              textAlign="right"
             />
+            <CheckBox
+              onValueChange={onRefuse}
+              value={hasRefused}
+              tintColors={{ true: SUSSOL_ORANGE, false: DARKER_GREY }}
+            />
+          </FlexRow>
+        </FlexRow>
+
+        <View style={localStyles.container}>
+          <View style={localStyles.listContainer}>
+            <SimpleLabel text={dispensingStrings.select_item} size="medium" numberOfLines={1} />
             <SimpleTable
-              columns={batchColumns}
-              data={selectedVaccine.batches.sorted('expiryDate')}
-              disabledRows={disabledBatchRows}
-              selectedRows={selectedBatchRows}
-              selectRow={onSelectBatch}
+              columns={vaccineColumns}
+              data={vaccines}
+              disabledRows={disabledVaccineRows}
+              selectedRows={selectedRows}
+              selectRow={onSelectVaccine}
               style={{ marginTop: 3, height: '90%' }}
             />
           </View>
-        )}
-      </View>
+          {selectedVaccine && (
+            <View style={localStyles.listContainer}>
+              <SimpleLabel
+                text={dispensingStrings.available_batches}
+                size="medium"
+                numberOfLines={1}
+              />
+              <SimpleTable
+                columns={batchColumns}
+                data={selectedVaccine.batches.sorted('expiryDate')}
+                disabledRows={disabledBatchRows}
+                selectedRows={selectedBatchRows}
+                selectRow={onSelectBatch}
+                style={{ marginTop: 3, height: '90%' }}
+              />
+            </View>
+          )}
+        </View>
 
-      <FlexRow justifyContent="flex-end" alignItems="flex-end">
-        <PageButtonWithOnePress
-          text={buttonStrings.cancel}
-          onPress={onCancelPrescription}
-          style={{ marginRight: 7 }}
-        />
-        <PageButton
-          text={buttonStrings.confirm}
-          style={{ marginLeft: 5 }}
-          isDisabled={selectedBatches.length === 0 && !hasRefused}
-          onPress={confirmPrescription}
-        />
-        <PageButton
-          text={generalStrings.ok_and_next}
-          style={{ marginLeft: 5 }}
-          isDisabled={selectedBatches.length === 0 && !hasRefused}
-          onPress={confirmAndRepeatPrescription}
-        />
-      </FlexRow>
+        <FlexRow justifyContent="flex-end" alignItems="flex-end">
+          <PageButtonWithOnePress
+            text={buttonStrings.cancel}
+            onPress={onCancelPrescription}
+            style={{ marginRight: 7 }}
+          />
+          <PageButton
+            text={buttonStrings.confirm}
+            style={{ marginLeft: 5 }}
+            isDisabled={selectedBatches.length === 0 && !hasRefused}
+            onPress={confirmPrescription}
+          />
+          <PageButton
+            text={generalStrings.ok_and_next}
+            style={{ marginLeft: 5 }}
+            isDisabled={selectedBatches.length === 0 && !hasRefused}
+            onPress={confirmAndRepeatPrescription}
+          />
+        </FlexRow>
+      </AfterInteractions>
     </FlexView>
   );
 };

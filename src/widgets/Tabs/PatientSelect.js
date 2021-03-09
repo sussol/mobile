@@ -29,6 +29,8 @@ import { MODALS } from '../constants';
 import { buttonStrings, dispensingStrings, generalStrings } from '../../localization';
 import globalStyles, { DARK_GREY } from '../../globalStyles';
 import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
+import { AfterInteractions } from '../AfterInteractions';
+import { generateUUID } from '../../database/index';
 
 /**
  * Layout component used for a tab within the vaccine prescription wizard.
@@ -90,44 +92,46 @@ const PatientSelectComponent = ({
 
   return (
     <FlexView style={pageTopViewContainer}>
-      <FlexRow style={{ marginBottom: 7 }} justifyContent="flex-end">
-        <VaccinePrescriptionInfo />
-      </FlexRow>
+      <AfterInteractions placeholder={null}>
+        <FlexRow style={{ marginBottom: 7 }} justifyContent="flex-end">
+          <VaccinePrescriptionInfo />
+        </FlexRow>
 
-      <View style={localStyles.container}>
-        <View style={localStyles.formContainer}>
-          <FormControl
-            inputConfig={formConfig}
-            onSave={onFilterData}
-            showCancelButton={false}
-            saveButtonText={generalStrings.search}
-          />
+        <View style={localStyles.container}>
+          <View style={localStyles.formContainer}>
+            <FormControl
+              inputConfig={formConfig}
+              onSave={onFilterData}
+              showCancelButton={false}
+              saveButtonText={generalStrings.search}
+            />
+          </View>
+          <View style={localStyles.verticalSeparator} />
+          <View style={localStyles.listContainer}>
+            <DataTable
+              data={patients}
+              columns={columns}
+              renderHeader={renderHeader}
+              renderRow={renderRow}
+              keyExtractor={item => item.id}
+              getItemLayout={getItemLayout}
+            />
+          </View>
         </View>
-        <View style={localStyles.verticalSeparator} />
-        <View style={localStyles.listContainer}>
-          <DataTable
-            data={patients}
-            columns={columns}
-            renderHeader={renderHeader}
-            renderRow={renderRow}
-            keyExtractor={item => item.id}
-            getItemLayout={getItemLayout}
-          />
-        </View>
-      </View>
 
-      <FlexRow justifyContent="flex-end" alignItems="flex-end">
-        <PageButtonWithOnePress
-          text={buttonStrings.cancel}
-          onPress={onCancelPrescription}
-          style={{ marginRight: 7 }}
-        />
-        <PageButton
-          text={`${dispensingStrings.new} ${dispensingStrings.patient}`}
-          onPress={createPatient}
-          style={{ marginLeft: 5 }}
-        />
-      </FlexRow>
+        <FlexRow justifyContent="flex-end" alignItems="flex-end">
+          <PageButtonWithOnePress
+            text={buttonStrings.cancel}
+            onPress={onCancelPrescription}
+            style={{ marginRight: 7 }}
+          />
+          <PageButton
+            text={`${dispensingStrings.new} ${dispensingStrings.patient}`}
+            onPress={createPatient}
+            style={{ marginLeft: 5 }}
+          />
+        </FlexRow>
+      </AfterInteractions>
     </FlexView>
   );
 };
@@ -149,7 +153,9 @@ const mapDispatchToProps = dispatch => {
     });
   const createPatient = () =>
     batch(() => {
-      dispatch(NameActions.create());
+      const id = generateUUID();
+      dispatch(NameActions.create(id));
+      dispatch(NameNoteActions.createSurveyNameNote(id));
       dispatch(WizardActions.nextTab());
     });
 
