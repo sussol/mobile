@@ -7,6 +7,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
+// eslint-disable-next-line import/no-unresolved
+import CheckBox from '@react-native-community/checkbox';
 import { batch, connect } from 'react-redux';
 
 import { TABS } from '../constants';
@@ -18,7 +20,6 @@ import { VaccinePrescriptionInfo } from '../VaccinePrescriptionInfo';
 import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 import { SimpleTable } from '../SimpleTable';
 import { SimpleLabel } from '../SimpleLabel';
-import { Checkbox } from '../JSONForm/widgets/Checkbox';
 
 import { VaccinePrescriptionActions } from '../../actions/Entities/VaccinePrescriptionActions';
 import { goBack } from '../../navigation/actions';
@@ -35,6 +36,7 @@ import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 
 import { buttonStrings, dispensingStrings } from '../../localization';
 import globalStyles from '../../globalStyles';
+import { DARKER_GREY, SUSSOL_ORANGE } from '../../globalStyles/colors';
 
 /**
  * Layout component used for a tab within the vaccine prescription wizard.
@@ -89,37 +91,34 @@ const VaccineSelectComponent = ({
     <FlexView style={pageTopViewContainer}>
       <FlexRow style={{ marginBottom: 7 }} justifyContent="flex-end">
         <VaccinePrescriptionInfo />
-        <Checkbox
-          options={{
-            enumOptions: [
-              { label: 'Refuse', value: true },
-              { label: 'Accept', value: false },
-            ],
-          }}
-          onChange={onRefuse}
-          disabled={false}
-          readonly={false}
-          value={hasRefused}
-        />
+        <FlexRow flex={1} alignItems="center">
+          <SimpleLabel
+            text={dispensingStrings.refused_vaccine}
+            size="medium"
+            numberofLines={1}
+            textAlign="right"
+          />
+          <CheckBox
+            onValueChange={onRefuse}
+            value={hasRefused}
+            tintColors={{ true: SUSSOL_ORANGE, false: DARKER_GREY }}
+          />
+        </FlexRow>
       </FlexRow>
 
       <View style={localStyles.container}>
         <View style={localStyles.listContainer}>
-          {!hasRefused && (
-            <>
-              <SimpleLabel text={dispensingStrings.select_item} size="medium" numberOfLines={1} />
-              <SimpleTable
-                columns={vaccineColumns}
-                data={vaccines}
-                disabledRows={disabledVaccineRows}
-                selectedRows={selectedRows}
-                selectRow={onSelectVaccine}
-                style={{ marginTop: 3, height: '90%' }}
-              />
-            </>
-          )}
+          <SimpleLabel text={dispensingStrings.select_item} size="medium" numberOfLines={1} />
+          <SimpleTable
+            columns={vaccineColumns}
+            data={vaccines}
+            disabledRows={disabledVaccineRows}
+            selectedRows={selectedRows}
+            selectRow={onSelectVaccine}
+            style={{ marginTop: 3, height: '90%' }}
+          />
         </View>
-        {selectedVaccine && !hasRefused && (
+        {selectedVaccine && (
           <View style={localStyles.listContainer}>
             <SimpleLabel
               text={dispensingStrings.available_batches}
@@ -156,7 +155,7 @@ const VaccineSelectComponent = ({
 };
 
 const mapDispatchToProps = dispatch => {
-  const onRefuse = value => dispatch(VaccinePrescriptionActions.refuse(value));
+  const onRefuse = value => dispatch(VaccinePrescriptionActions.setRefusal(value));
   const onCancelPrescription = () => dispatch(VaccinePrescriptionActions.cancel());
   const onSelectBatch = itemBatch => dispatch(VaccinePrescriptionActions.selectBatch(itemBatch));
   const onSelectVaccine = vaccine => dispatch(VaccinePrescriptionActions.selectVaccine(vaccine));

@@ -17,7 +17,7 @@ export const VACCINE_PRESCRIPTION_ACTIONS = {
   UPDATE: 'VACCINE_PRESCRIPTION/update',
   SAVE_NEW: 'VACCINE_PRESCRIPTION/saveNew',
   SAVE_EDITING: 'VACCINE_PRESCRIPTION/saveEditing',
-  REFUSE_VACCINATION: 'VACCINE_PRESCRIPTION/refuse',
+  SET_REFUSAL: 'VACCINE_PRESCRIPTION/setRefusal',
   RESET: 'VACCINE_PRESCRIPTION/reset',
   SELECT_VACCINE: 'VACCINE_PRESCRIPTION/selectVaccine',
   SELECT_BATCH: 'VACCINE_PRESCRIPTION/selectBatch',
@@ -72,9 +72,9 @@ const updateEditing = (value, field) => (dispatch, getState) => {
   dispatch(update(newVaccinePrescriptionId, field, value));
 };
 
-const refuse = value => ({
-  type: VACCINE_PRESCRIPTION_ACTIONS.REFUSE_VACCINATION,
-  payload: { value },
+const setRefusal = hasRefused => ({
+  type: VACCINE_PRESCRIPTION_ACTIONS.SET_REFUSAL,
+  payload: { hasRefused },
 });
 
 const createPrescription = (patient, currentUser, selectedBatches) => {
@@ -100,7 +100,7 @@ const createPrescription = (patient, currentUser, selectedBatches) => {
 const createRefusalNameNote = name => {
   const [patientEvent] = UIDatabase.objects('PatientEvent').filtered('code == "RV"');
   const id = generateUUID();
-  const _data = JSON.stringify({ refused: true, date: new Date() });
+  const _data = {};
   const newNameNote = { id, name, patientEvent, _data, entryDate: new Date() };
 
   UIDatabase.write(() => UIDatabase.create('NameNote', newNameNote));
@@ -140,12 +140,12 @@ export const VaccinePrescriptionActions = {
   cancel,
   confirm,
   create,
-  refuse,
   reset,
   saveEditing,
   saveNew,
   selectBatch,
   selectVaccine,
+  setRefusal,
   update,
   updateEditing,
 };
