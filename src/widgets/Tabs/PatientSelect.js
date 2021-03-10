@@ -66,7 +66,7 @@ const PatientSelectComponent = ({
   const columns = React.useMemo(() => getColumns(MODALS.PATIENT_LOOKUP), []);
   const { pageTopViewContainer } = globalStyles;
   const keyboardIsOpen = useKeyboardIsOpen();
-  const debouncedFilter = useDebounce(onFilterData, 500);
+  const debouncedFilter = useDebounce(onFilterData, 300);
   const handleUpdate = (key, value) => {
     updateForm(key, value);
     debouncedFilter(key, value);
