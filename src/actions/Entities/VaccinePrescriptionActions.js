@@ -54,8 +54,8 @@ const getDefaultVaccine = () => {
   return item?.item ?? null;
 };
 
-const getRecommendedBatch = () => {
-  const { batches } = getDefaultVaccine();
+const getRecommendedBatch = vaccine => {
+  const { batches = [] } = vaccine ?? getDefaultVaccine();
 
   if (batches?.length) {
     const batchesByExpiry = batches.sorted('expiryDate');
@@ -83,7 +83,7 @@ const reset = () => ({
 
 const selectVaccine = vaccine => ({
   type: VACCINE_PRESCRIPTION_ACTIONS.SELECT_VACCINE,
-  payload: { vaccine, batch: getRecommendedBatch() },
+  payload: { vaccine, batch: getRecommendedBatch(vaccine) },
 });
 
 const selectBatch = itemBatch => ({
