@@ -73,7 +73,7 @@ const create = () => ({
     prescription: createDefaultVaccinePrescription(),
     vaccinator: getDefaultVaccinator(),
     selectedVaccines: [getDefaultVaccine()],
-    selectedBatches: [getRecommendedBatch(getDefaultVaccine())],
+    selectedBatches: [getRecommendedBatch()],
   },
 });
 
