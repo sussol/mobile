@@ -6,7 +6,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Picker } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
 import globalStyles, { DARKER_GREY, SUSSOL_ORANGE } from '../globalStyles';
 
