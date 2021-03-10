@@ -7,7 +7,7 @@ const initialState = () => ({
   hasRefused: false,
   selectedVaccines: [],
   selectedBatches: [],
-  vaccines: UIDatabase.objects('Vaccine'),
+  vaccines: UIDatabase.objects('Vaccine').sorted('name'),
   vaccinator: null,
 });
 
