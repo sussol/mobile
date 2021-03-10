@@ -29,6 +29,7 @@ import globalStyles, { DARK_GREY } from '../../globalStyles';
 import { JSONForm } from '../JSONForm/JSONForm';
 import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
 import { selectCreatingNameNote, selectNameNoteIsValid } from '../../selectors/Entities/nameNote';
+import { AfterInteractions } from '../AfterInteractions';
 
 /**
  * Layout component used for a tab within the vaccine prescription wizard.
@@ -65,49 +66,53 @@ const PatientEditComponent = ({
 
   return (
     <FlexView style={pageTopViewContainer}>
-      <FlexRow style={{ marginBottom: 7 }} justifyContent="flex-end">
-        <VaccinePrescriptionInfo />
-      </FlexRow>
+      <AfterInteractions placeholder={null}>
+        <FlexRow style={{ marginBottom: 7 }} justifyContent="flex-end">
+          <VaccinePrescriptionInfo />
+        </FlexRow>
 
-      <View style={localStyles.container}>
-        <View style={localStyles.formContainer}>
-          <FormControl
-            showCancelButton={false}
-            showSaveButton={false}
-            inputConfig={getFormInputConfig('patient', currentPatient)}
-            shouldAutoFocus={false}
-          />
-        </View>
-        {surveySchema && (
+        <View style={localStyles.container}>
           <View style={localStyles.formContainer}>
-            <View style={localStyles.verticalSeparator} />
-            <JSONForm
-              ref={formRef}
-              surveySchema={surveySchema}
-              formData={surveyFormData}
-              onChange={data => {
-                updateForm(data.formData, data.errors);
-              }}
-            >
-              <View />
-            </JSONForm>
+            <FormControl
+              showCancelButton={false}
+              showSaveButton={false}
+              inputConfig={getFormInputConfig('patient', currentPatient)}
+              shouldAutoFocus={false}
+            />
           </View>
-        )}
-      </View>
 
-      <FlexRow justifyContent="flex-end" alignItems="flex-end">
-        <PageButtonWithOnePress
-          text={buttonStrings.cancel}
-          onPress={onCancelPrescription}
-          style={{ marginRight: 7 }}
-        />
-        <PageButton
-          isDisabled={!canSaveForm}
-          text={buttonStrings.next}
-          onPress={savePatient}
-          style={{ marginLeft: 5 }}
-        />
-      </FlexRow>
+          <View style={localStyles.verticalSeparator} />
+          {surveySchema && surveyFormData && (
+            <View style={localStyles.formContainer}>
+              <View style={localStyles.verticalSeparator} />
+              <JSONForm
+                ref={formRef}
+                surveySchema={surveySchema}
+                formData={surveyFormData}
+                onChange={data => {
+                  updateForm(data.formData, data.errors);
+                }}
+              >
+                <View />
+              </JSONForm>
+            </View>
+          )}
+        </View>
+
+        <FlexRow justifyContent="flex-end" alignItems="flex-end">
+          <PageButtonWithOnePress
+            text={buttonStrings.cancel}
+            onPress={onCancelPrescription}
+            style={{ marginRight: 7 }}
+          />
+          <PageButton
+            isDisabled={!canSaveForm}
+            text={buttonStrings.next}
+            onPress={savePatient}
+            style={{ marginLeft: 5 }}
+          />
+        </FlexRow>
+      </AfterInteractions>
     </FlexView>
   );
 };
@@ -139,7 +144,7 @@ const mapStateToProps = state => {
     completedForm,
     currentPatient,
     surveySchema,
-    surveyFormData: nameNote?.data ?? {},
+    surveyFormData: nameNote?.data ?? null,
   };
 };
 

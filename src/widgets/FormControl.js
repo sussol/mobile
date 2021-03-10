@@ -27,6 +27,7 @@ import { FormActions } from '../actions/FormActions';
 
 import { ModalContainer } from './modals';
 import { ConfirmForm } from './modalChildren';
+import { useDebounce } from '../hooks/useDebounce';
 
 /**
  * Component which will manage and control a set of user inputs of a form.
@@ -81,8 +82,10 @@ const FormControlComponent = ({
     setRefs({ length: inputConfig.length });
   }, [isFocused]);
 
+  const debouncedUpdateForm = useDebounce(onUpdateForm, 500);
+
   const nextFocus = (index, key) => value => {
-    onUpdateForm(key, value);
+    debouncedUpdateForm(key, value);
     refs[index + 1]?.current?.focus?.();
   };
 
@@ -115,7 +118,7 @@ const FormControlComponent = ({
                 value={initialValue}
                 isRequired={isRequired}
                 onValidate={validator}
-                onChangeText={value => onUpdateForm(key, value)}
+                onChangeText={value => debouncedUpdateForm(key, value)}
                 label={label}
                 invalidMessage={invalidMessage}
                 isDisabled={!isEditable || isDisabled}
@@ -131,7 +134,7 @@ const FormControlComponent = ({
                 isRequired={isRequired}
                 label={label}
                 value={initialValue}
-                onChangeDate={value => onUpdateForm(key, value)}
+                onChangeDate={value => debouncedUpdateForm(key, value)}
                 onValidate={validator}
                 invalidMessage={invalidMessage}
                 onSubmit={nextFocus(index, key)}
@@ -275,6 +278,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     confirmOnSave && !isConfirmFormOpen ? showConfirmForm() : onSave(completedForm);
   const onCancelForm = () =>
     confirmOnSave && isConfirmFormOpen ? hideConfirmForm() : onCancel() && resetForm();
+
   return {
     ...ownProps,
     form,
