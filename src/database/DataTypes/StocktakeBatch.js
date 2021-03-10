@@ -189,7 +189,8 @@ export class StocktakeBatch extends Realm.Object {
     const { type } = this.option;
 
     const positiveAdjustmentReason = type === 'positiveInventoryAdjustment';
-    const negativeAdjustmentReason = type === 'negativeInventoryAdjustment';
+    const negativeAdjustmentReason =
+      type === 'negativeInventoryAdjustment' || type === 'openVialWastage';
 
     const correctPositiveReason = positiveAdjustmentReason && this.hasPositiveAdjustment;
     const correctNegativeReason = negativeAdjustmentReason && this.hasNegativeAdjustment;
@@ -252,7 +253,8 @@ export class StocktakeBatch extends Realm.Object {
     const { type: newOptionType } = newOption || {};
 
     const isPositiveAdjustmentReason = newOptionType === 'positiveInventoryAdjustment';
-    const isNegativeAdjustmentReason = newOptionType === 'negativeInventoryAdjustment';
+    const isNegativeAdjustmentReason =
+      newOptionType === 'negativeInventoryAdjustment' || newOptionType === 'openVialWastage';
 
     // Valid adjustments are when this batch has a difference in snapshot quantity and
     // counted quantity and if the difference is positive, the reason must be a positive
