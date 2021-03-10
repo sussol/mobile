@@ -37,6 +37,14 @@ export const selectIsDownloading = (state, macAddress) => {
   return isDownloading;
 };
 
+export const selectIsPassivelyDownloadingTemps = state => {
+  const bluetooth = selectBluetoothState(state);
+  const { download } = bluetooth || {};
+
+  const { isPassivelyDownloadingTemps = false } = download || {};
+  return isPassivelyDownloadingTemps;
+};
+
 export const selectLastDownloadStatus = (state, macAddress) => {
   const bluetooth = selectBluetoothState(state);
   const { download } = bluetooth || {};
