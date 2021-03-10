@@ -7,6 +7,7 @@ import moment from 'moment';
 import { UIDatabase } from '../database';
 
 import { formInputStrings } from '../localization';
+import { DATE_FORMAT } from './constants';
 
 /**
  * File contains constants and config objects which declaritively define
@@ -111,7 +112,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     invalidMessage: formInputStrings.must_be_a_date,
     isRequired: true,
     validator: input => {
-      let inputDate = moment(input, 'DD/MM/YYYY', null, true);
+      let inputDate = moment(input, DATE_FORMAT.DD_MM_YYYY, null, true);
       if (typeof input === 'number') {
         inputDate = moment(input);
       }
@@ -293,7 +294,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isRequired: false,
     validator: input => {
       if (!input) return true;
-      const inputDate = moment(input, 'DD/MM/YYYY', null, true);
+      const inputDate = moment(input, DATE_FORMAT.DD_MM_YYYY, null, true);
       const isValid = inputDate.isValid();
       const isDateOfBirth = inputDate.isSameOrBefore(new Date());
       return isValid && isDateOfBirth;

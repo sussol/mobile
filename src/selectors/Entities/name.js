@@ -2,6 +2,7 @@ import { createSelector } from 'reselect';
 import moment from 'moment';
 import { UIDatabase } from '../../database';
 import { selectSpecificEntityState } from './index';
+import { DATE_FORMAT } from '../../utilities/constants';
 
 export const selectEditingNameId = state => {
   const NameState = selectSpecificEntityState(state, 'name');
@@ -43,9 +44,14 @@ export const selectFilteredPatients = createSelector([selectSearchParameters], s
     return patients;
   }
 
-  const dob = moment(dateOfBirth).startOf('day').toDate();
-  const dayAfterDOB = moment(dob).endOf('day').toDate();
-  return patients.filtered('dateOfBirth >= $0 AND dateOfBirth < $1', dob, dayAfterDOB);
+  const dob = moment(dateOfBirth, DATE_FORMAT.DD_MM_YYYY, null, true);
+  if (!dob.isValid()) {
+    return patients;
+  }
+
+  const dayOfDOB = dob.startOf('day').toDate();
+  const dayAfterDOB = dob.endOf('day').toDate();
+  return patients.filtered('dateOfBirth >= $0 AND dateOfBirth < $1', dayOfDOB, dayAfterDOB);
 });
 
 export const selectSortedPatients = createSelector(

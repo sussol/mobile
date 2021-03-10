@@ -48,6 +48,7 @@ import { useDebounce } from '../hooks/useDebounce';
  * @param {bool}  isDisabled      Indicator whether this Form is disabled.
  * @param {Array} inputConfig     Configuration array of input config objects.
  *                                See { getFormInputConfig } from src/utilities/formInputConfigs.
+ * @param {func}  onUpdate        Callback invoked when a field value is changed (key,value) => null
  */
 const FormControlComponent = ({
   // Form state
@@ -271,9 +272,11 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     cancelButtonText,
     onCancel,
     canSave = true, // if not specified by calling component, set default
+    onUpdate,
   } = ownProps;
   const onInitialiseForm = () => initialiseForm(inputConfig);
-  const onUpdateForm = (key, value) => !isDisabled && updateForm(key, value);
+  const onUpdateForm = (key, value) =>
+    onUpdate && !isDisabled ? onUpdate(key, value) : updateForm(key, value);
   const onSaveForm = () =>
     confirmOnSave && !isConfirmFormOpen ? showConfirmForm() : onSave(completedForm);
   const onCancelForm = () =>
@@ -327,6 +330,7 @@ FormControlComponent.defaultProps = {
   cancelButtonText: modalStrings.cancel,
   shouldAutoFocus: true,
   canSave: true,
+  onUpdate: undefined,
 };
 
 FormControlComponent.propTypes = {
@@ -349,6 +353,9 @@ FormControlComponent.propTypes = {
   onSaveForm: PropTypes.func.isRequired,
   onCancelForm: PropTypes.func.isRequired,
   shouldAutoFocus: PropTypes.bool,
+  // Prop is used in merge props
+  // eslint-disable-next-line react/no-unused-prop-types
+  onUpdate: PropTypes.func,
 };
 
 export const FormControl = connect(

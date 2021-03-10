@@ -56,8 +56,10 @@ export const NameReducer = (state = initialState(), action) => {
     }
 
     case NAME_ACTIONS.FILTER: {
+      const { searchParameters: oldParameters } = state;
       const { payload } = action;
-      const { searchParameters } = payload;
+      const { key, value } = payload;
+      const searchParameters = { ...oldParameters, [key]: value };
 
       return { ...state, searchParameters };
     }

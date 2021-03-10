@@ -60,7 +60,7 @@ const select = name => ({
   payload: { name },
 });
 
-const filter = searchParameters => ({ type: NAME_ACTIONS.FILTER, payload: { searchParameters } });
+const filter = (key, value) => ({ type: NAME_ACTIONS.FILTER, payload: { key, value } });
 
 const sort = sortKey => ({ type: NAME_ACTIONS.SORT, payload: { sortKey } });
 

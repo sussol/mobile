@@ -8,6 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Keyboard, StyleSheet, View } from 'react-native';
 import { batch, connect } from 'react-redux';
+import { useDebounce } from '../../hooks/useDebounce';
 
 import { FormControl } from '../FormControl';
 import { PageButton } from '../PageButton';
@@ -20,6 +21,7 @@ import { selectSortedPatients } from '../../selectors/Entities/name';
 import { NameActions } from '../../actions/Entities/NameActions';
 import { WizardActions } from '../../actions/WizardActions';
 import { VaccinePrescriptionActions } from '../../actions/Entities/VaccinePrescriptionActions';
+import { FormActions } from '../../actions/FormActions';
 import { selectPatientSearchFormConfig } from '../../selectors/Entities/vaccinePrescription';
 import { getColumns } from '../../pages/dataTableUtilities';
 
@@ -59,10 +61,16 @@ const PatientSelectComponent = ({
   onFilterData,
   patients,
   selectPatient,
+  updateForm,
 }) => {
   const columns = React.useMemo(() => getColumns(MODALS.PATIENT_LOOKUP), []);
   const { pageTopViewContainer } = globalStyles;
   const keyboardIsOpen = useKeyboardIsOpen();
+  const debouncedFilter = useDebounce(onFilterData, 500);
+  const handleUpdate = (key, value) => {
+    updateForm(key, value);
+    debouncedFilter(key, value);
+  };
 
   return (
     <FlexView style={pageTopViewContainer}>
@@ -76,8 +84,9 @@ const PatientSelectComponent = ({
             <View style={localStyles.formContainer}>
               <FormControl
                 inputConfig={formConfig}
-                onSave={onFilterData}
+                onUpdate={handleUpdate}
                 showCancelButton={false}
+                showSaveButton={false}
                 saveButtonText={generalStrings.search}
               />
             </View>
@@ -105,11 +114,7 @@ const PatientSelectComponent = ({
 const mapDispatchToProps = dispatch => {
   const onSortData = sortKey => dispatch(NameActions.sort(sortKey));
   const onCancelPrescription = () => dispatch(VaccinePrescriptionActions.cancel());
-  const onFilterData = searchParameters =>
-    batch(() => {
-      Keyboard.dismiss();
-      dispatch(NameActions.filter(searchParameters));
-    });
+  const onFilterData = (key, value) => dispatch(NameActions.filter(key, value));
   const selectPatient = patient =>
     batch(() => {
       Keyboard.dismiss();
@@ -124,8 +129,16 @@ const mapDispatchToProps = dispatch => {
       dispatch(NameNoteActions.createSurveyNameNote(id));
       dispatch(WizardActions.nextTab());
     });
+  const updateForm = (key, value) => dispatch(FormActions.updateForm(key, value));
 
-  return { createPatient, onCancelPrescription, onSortData, onFilterData, selectPatient };
+  return {
+    createPatient,
+    onCancelPrescription,
+    onSortData,
+    onFilterData,
+    selectPatient,
+    updateForm,
+  };
 };
 
 const mapStateToProps = state => {
@@ -151,6 +164,7 @@ PatientSelectComponent.propTypes = {
   onFilterData: PropTypes.func.isRequired,
   createPatient: PropTypes.func.isRequired,
   onCancelPrescription: PropTypes.func.isRequired,
+  updateForm: PropTypes.func.isRequired,
 };
 
 export const PatientSelect = connect(mapStateToProps, mapDispatchToProps)(PatientSelectComponent);

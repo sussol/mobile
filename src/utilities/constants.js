@@ -15,3 +15,7 @@ export const MILLISECONDS = {
 export const SECONDS = {
   ONE_MINUTE: 60,
 };
+
+export const DATE_FORMAT = {
+  DD_MM_YYYY: 'DD/MM/YYYY',
+};
