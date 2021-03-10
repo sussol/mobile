@@ -276,7 +276,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   } = ownProps;
   const onInitialiseForm = () => initialiseForm(inputConfig);
   const onUpdateForm = (key, value) =>
-    onUpdate && !isDisabled ? onUpdate(key, value) : updateForm(key, value);
+    !isDisabled && (onUpdate ? onUpdate(key, value) : updateForm(key, value));
   const onSaveForm = () =>
     confirmOnSave && !isConfirmFormOpen ? showConfirmForm() : onSave(completedForm);
   const onCancelForm = () =>
