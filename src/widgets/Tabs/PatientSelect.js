@@ -79,7 +79,6 @@ const PatientSelectComponent = ({
                 onSave={onFilterData}
                 showCancelButton={false}
                 saveButtonText={generalStrings.search}
-                showSaveButton={false}
               />
             </View>
 
