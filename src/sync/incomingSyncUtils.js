@@ -1182,7 +1182,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
 
 /**
  * Take the data from a sync record, and integrate it into the local database as
- * the given |recordType|. If create or update and the id mathces, will update an
+ * the given |recordType|. If create or update and the id matches, will update an
  * existing record, otherwise create a new one if not. If delete, clean up/delete.
  *
  * @param   {Realm}   database    The local database.
