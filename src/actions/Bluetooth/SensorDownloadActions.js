@@ -51,7 +51,9 @@ const sensorDownloadSuccess = sensor => ({
 const downloadAll = () => async dispatch => {
   dispatch(downloadLogsStart());
   // Ensure there are some sensors which have been assigned a location before syncing.
-  const sensors = UIDatabase.objects('Sensor').filtered('location != null && isActive == true');
+  const sensors = UIDatabase.objects('Sensor').filtered(
+    'location != null && isActive == true && isPaused == false'
+  );
 
   if (!sensors.length) {
     dispatch(downloadLogsError(syncStrings.no_sensors));
