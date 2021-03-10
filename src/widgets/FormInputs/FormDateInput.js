@@ -187,7 +187,7 @@ FormDateInput.defaultProps = {
 
 FormDateInput.propTypes = {
   textInputStyle: PropTypes.object,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.number]).isRequired,
   isRequired: PropTypes.bool,
   onValidate: PropTypes.func,
   onChangeDate: PropTypes.func.isRequired,

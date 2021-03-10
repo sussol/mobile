@@ -50,7 +50,7 @@ export const selectFilteredPatients = createSelector([selectSearchParameters], s
 
 export const selectSortedPatients = createSelector(
   [selectSortKey, selectIsAscending, selectFilteredPatients],
-  (sortKey, isAscending, patients) => patients.sorted(sortKey, isAscending)
+  (sortKey, isAscending, patients) => patients.sorted(sortKey, !isAscending)
 );
 
 export const selectFullName = state => {

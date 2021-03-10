@@ -6,7 +6,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View } from 'react-native';
+import { Text, StyleSheet } from 'react-native';
 // eslint-disable-next-line import/no-unresolved
 import CheckBox from '@react-native-community/checkbox';
 import { batch, connect } from 'react-redux';
@@ -41,11 +41,20 @@ import {
   dispensingStrings,
   generalStrings,
 } from '../../localization';
-import globalStyles from '../../globalStyles';
+import globalStyles, { APP_FONT_FAMILY } from '../../globalStyles';
 import { FormDropdown } from '../FormInputs/FormDropdown';
 import { UIDatabase } from '../../database/index';
-import { DARKER_GREY, SUSSOL_ORANGE } from '../../globalStyles/colors';
+import { DARKER_GREY, SUSSOL_ORANGE, WHITE } from '../../globalStyles/colors';
 import { AfterInteractions } from '../AfterInteractions';
+import { Paper } from '../Paper';
+
+const ListEmptyComponent = () => (
+  <FlexView flex={1} justifyContent="center" alignItems="center">
+    <Text style={localStyles.emptyComponentText}>
+      {generalStrings.select_an_item_before_choosing_the_batch}
+    </Text>
+  </FlexView>
+);
 
 /**
  * Layout component used for a tab within the vaccine prescription wizard.
@@ -106,34 +115,37 @@ const VaccineSelectComponent = ({
 
   return (
     <FlexView style={pageTopViewContainer}>
-      <AfterInteractions placeholder={null}>
-        <FlexRow style={{ marginBottom: 7 }} justifyContent="flex-end">
-          <VaccinePrescriptionInfo />
-          <FormDropdown
-            options={UIDatabase.objects('MedicineAdministrator')}
-            optionKey="displayString"
-            label={vaccineStrings.vaccinator}
-            onValueChange={onSelectVaccinator}
-            value={vaccinator}
+      <FlexRow flex={1} justifyContent="flex-end">
+        <VaccinePrescriptionInfo />
+        <FormDropdown
+          options={UIDatabase.objects('MedicineAdministrator')}
+          optionKey="displayString"
+          label={vaccineStrings.vaccinator}
+          onValueChange={onSelectVaccinator}
+          value={vaccinator}
+        />
+        <FlexRow flex={1} alignItems="center">
+          <SimpleLabel
+            text={dispensingStrings.refused_vaccine}
+            size="medium"
+            numberOfLines={1}
+            textAlign="right"
           />
-          <FlexRow flex={1} alignItems="center">
-            <SimpleLabel
-              text={dispensingStrings.refused_vaccine}
-              size="medium"
-              numberofLines={1}
-              textAlign="right"
-            />
-            <CheckBox
-              onValueChange={onRefuse}
-              value={hasRefused}
-              tintColors={{ true: SUSSOL_ORANGE, false: DARKER_GREY }}
-            />
-          </FlexRow>
+          <CheckBox
+            onValueChange={onRefuse}
+            value={hasRefused}
+            tintColors={{ true: SUSSOL_ORANGE, false: DARKER_GREY }}
+          />
         </FlexRow>
+      </FlexRow>
 
-        <View style={localStyles.container}>
-          <View style={localStyles.listContainer}>
-            <SimpleLabel text={dispensingStrings.select_item} size="medium" numberOfLines={1} />
+      <FlexRow flex={12}>
+        <Paper
+          headerText={vaccineStrings.vaccine_dispense_step_three_title}
+          contentContainerStyle={{ flex: 1 }}
+          style={{ flex: 1 }}
+        >
+          <AfterInteractions placeholder={null}>
             <SimpleTable
               columns={vaccineColumns}
               data={vaccines}
@@ -142,46 +154,44 @@ const VaccineSelectComponent = ({
               selectRow={onSelectVaccine}
               style={{ marginTop: 3, height: '90%' }}
             />
-          </View>
-          {selectedVaccine && (
-            <View style={localStyles.listContainer}>
-              <SimpleLabel
-                text={dispensingStrings.available_batches}
-                size="medium"
-                numberOfLines={1}
-              />
-              <SimpleTable
-                columns={batchColumns}
-                data={selectedVaccine.batches.sorted('expiryDate')}
-                disabledRows={disabledBatchRows}
-                selectedRows={selectedBatchRows}
-                selectRow={onSelectBatch}
-                style={{ marginTop: 3, height: '90%' }}
-              />
-            </View>
-          )}
-        </View>
+          </AfterInteractions>
+        </Paper>
 
-        <FlexRow justifyContent="flex-end" alignItems="flex-end">
-          <PageButtonWithOnePress
-            text={buttonStrings.cancel}
-            onPress={onCancelPrescription}
-            style={{ marginRight: 7 }}
-          />
-          <PageButton
-            text={buttonStrings.confirm}
-            style={{ marginLeft: 5 }}
-            isDisabled={selectedBatches.length === 0 && !hasRefused}
-            onPress={confirmPrescription}
-          />
-          <PageButton
-            text={generalStrings.ok_and_next}
-            style={{ marginLeft: 5 }}
-            isDisabled={selectedBatches.length === 0 && !hasRefused}
-            onPress={confirmAndRepeatPrescription}
-          />
-        </FlexRow>
-      </AfterInteractions>
+        <Paper
+          headerText={dispensingStrings.available_batches}
+          contentContainerStyle={{ flex: 1 }}
+          style={{ flex: 1 }}
+        >
+          <AfterInteractions placeholder={null}>
+            <SimpleTable
+              contentContainerStyle={{ flexGrow: 1 }}
+              columns={batchColumns}
+              data={selectedVaccine?.batches.sorted('expiryDate') ?? []}
+              disabledRows={disabledBatchRows}
+              selectedRows={selectedBatchRows}
+              selectRow={onSelectBatch}
+              style={{ backgroundColor: WHITE, height: '100%' }}
+              ListEmptyComponent={<ListEmptyComponent />}
+            />
+          </AfterInteractions>
+        </Paper>
+      </FlexRow>
+
+      <FlexRow flex={1} alignItems="flex-end" justifyContent="flex-end">
+        <PageButtonWithOnePress text={buttonStrings.cancel} onPress={onCancelPrescription} />
+        <PageButton
+          text={buttonStrings.confirm}
+          style={{ marginLeft: 'auto' }}
+          isDisabled={selectedBatches.length === 0 && !hasRefused}
+          onPress={confirmPrescription}
+        />
+        <PageButton
+          text={generalStrings.ok_and_next}
+          style={{ marginLeft: 5 }}
+          isDisabled={selectedBatches.length === 0 && !hasRefused}
+          onPress={confirmAndRepeatPrescription}
+        />
+      </FlexRow>
     </FlexView>
   );
 };
@@ -258,17 +268,13 @@ VaccineSelectComponent.propTypes = {
 };
 
 export const VaccineSelect = connect(mapStateToProps, mapDispatchToProps)(VaccineSelectComponent);
+
 const localStyles = StyleSheet.create({
-  container: {
-    height: '75%',
-    marginBottom: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  listContainer: {
+  emptyComponentText: {
     flex: 1,
-    flexDirection: 'column',
-    marginHorizontal: 20,
-    maxWidth: '50%',
+    textAlignVertical: 'center',
+    fontSize: 12,
+    color: DARKER_GREY,
+    fontFamily: APP_FONT_FAMILY,
   },
 });

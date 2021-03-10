@@ -9,7 +9,7 @@ const initialState = () => ({
     lastName: '', // string
     dateOfBirth: undefined, // Date
   },
-  sortKey: 'name',
+  sortKey: 'firstName',
 });
 
 export const NameReducer = (state = initialState(), action) => {

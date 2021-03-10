@@ -21,7 +21,7 @@ const getTitleSize = (id, schema) => {
   if (isObject && isRootSchema) return 'large';
   if (isObject) return 'medium';
 
-  return 'small';
+  return 'normal';
 };
 
 export const Field = ({
@@ -60,28 +60,33 @@ export const Field = ({
 
   if (schemaIsRoot(id)) {
     return (
-      <ScrollView keyboardDismissMode="none" keyboardShouldPersistTaps="always">
-        {Content}
-      </ScrollView>
+      <Paper
+        style={{ flex: 1 }}
+        Header={<TitleField title={label} isRequired={required} size={getTitleSize(id, schema)} />}
+        contentContainerStyle={{ flex: 1 }}
+      >
+        <ScrollView keyboardDismissMode="none" keyboardShouldPersistTaps="always">
+          <Spacer space={20} vertical />
+          {Content}
+        </ScrollView>
+      </Paper>
     );
   }
 
   if (schemaIsObject(schema)) {
     return (
-      <Paper
-        Header={<TitleField title={label} isRequired={required} size={getTitleSize(id, schema)} />}
-      >
-        <Spacer space={20} vertical />
+      <>
+        <TitleField title={label} isRequired={required} size={getTitleSize(id, schema)} />
         {Content}
-      </Paper>
+      </>
     );
   }
 
   return (
     <>
+      <Spacer space={20} vertical />
       <TitleField title={label} isRequired={required} size={getTitleSize(id, schema)} />
       {Content}
-      <Spacer space={20} vertical />
     </>
   );
 };

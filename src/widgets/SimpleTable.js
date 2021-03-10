@@ -2,7 +2,8 @@
 /* eslint-disable react/forbid-prop-types */
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { View, FlatList, TouchableOpacity } from 'react-native';
+import * as Animatable from 'react-native-animatable';
+import { FlatList, TouchableOpacity } from 'react-native';
 import Cell from './DataTable/Cell';
 import { dataTableStyles, GREY } from '../globalStyles/index';
 import { HeaderCell, HeaderRow, TouchableNoFeedback } from './DataTable/index';
@@ -26,7 +27,10 @@ import { formatDate } from '../utilities';
  */
 export const SimpleTable = React.memo(
   React.forwardRef(
-    ({ data, columns, selectRow, selectedRows, disabledRows, isDisabled, style }, ref) => {
+    (
+      { data, columns, selectRow, selectedRows, disabledRows, isDisabled, style, ...flatListProps },
+      ref
+    ) => {
       const {
         cellText,
         cellContainer,
@@ -109,6 +113,7 @@ export const SimpleTable = React.memo(
 
       return (
         <FlatList
+          {...flatListProps}
           ref={ref}
           data={data}
           keyExtractor={recordKeyExtractor}
@@ -147,7 +152,9 @@ const SimpleRow = React.memo(({ rowData, style, rowKey, renderCells, onPress }) 
   const Container = onPress ? TouchableOpacity : TouchableNoFeedback;
   return (
     <Container onPress={onSelect} key={rowKey}>
-      <View style={style}>{renderCells(rowData)}</View>
+      <Animatable.View animation="fadeIn" duration={1000} useNativeDriver style={style}>
+        {renderCells(rowData)}
+      </Animatable.View>
     </Container>
   );
 });

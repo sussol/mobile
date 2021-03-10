@@ -10,11 +10,9 @@ import { Keyboard, StyleSheet, View } from 'react-native';
 import { batch, connect } from 'react-redux';
 
 import { FormControl } from '../FormControl';
-import { DataTable, DataTableRow, DataTableHeaderRow } from '../DataTable';
 import { PageButton } from '../PageButton';
 import { FlexRow } from '../FlexRow';
 import { FlexView } from '../FlexView';
-import { VaccinePrescriptionInfo } from '../VaccinePrescriptionInfo';
 import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 
 import { selectSpecificEntityState } from '../../selectors/Entities';
@@ -23,14 +21,22 @@ import { NameActions } from '../../actions/Entities/NameActions';
 import { WizardActions } from '../../actions/WizardActions';
 import { VaccinePrescriptionActions } from '../../actions/Entities/VaccinePrescriptionActions';
 import { selectPatientSearchFormConfig } from '../../selectors/Entities/vaccinePrescription';
-import { getItemLayout, getColumns } from '../../pages/dataTableUtilities';
+import { getColumns } from '../../pages/dataTableUtilities';
 
 import { MODALS } from '../constants';
-import { buttonStrings, dispensingStrings, generalStrings } from '../../localization';
+import {
+  buttonStrings,
+  dispensingStrings,
+  generalStrings,
+  vaccineStrings,
+} from '../../localization';
 import globalStyles, { DARK_GREY } from '../../globalStyles';
 import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
 import { AfterInteractions } from '../AfterInteractions';
 import { generateUUID } from '../../database/index';
+import { SimpleTable } from '../SimpleTable';
+import { useKeyboardIsOpen } from '../../hooks/useKeyboardIsOpen';
+import { Paper } from '../Paper';
 
 /**
  * Layout component used for a tab within the vaccine prescription wizard.
@@ -49,89 +55,49 @@ import { generateUUID } from '../../database/index';
 const PatientSelectComponent = ({
   createPatient,
   formConfig,
-  isAscending,
   onCancelPrescription,
   onFilterData,
-  onSortData,
   patients,
   selectPatient,
-  sortKey,
 }) => {
   const columns = React.useMemo(() => getColumns(MODALS.PATIENT_LOOKUP), []);
   const { pageTopViewContainer } = globalStyles;
-
-  const renderRow = React.useCallback(
-    listItem => {
-      const { item, index } = listItem;
-      const rowKey = item.id;
-      return (
-        <DataTableRow
-          rowData={patients[index]}
-          rowKey={rowKey}
-          getCallback={() => selectPatient(item)}
-          columns={columns}
-          rowIndex={index}
-          onPress={() => selectPatient(item)}
-        />
-      );
-    },
-    [patients]
-  );
-
-  const renderHeader = React.useCallback(
-    () => (
-      <DataTableHeaderRow
-        columns={columns}
-        isAscending={isAscending}
-        sortKey={sortKey}
-        onPress={onSortData}
-      />
-    ),
-    [columns, sortKey, isAscending]
-  );
+  const keyboardIsOpen = useKeyboardIsOpen();
 
   return (
     <FlexView style={pageTopViewContainer}>
-      <AfterInteractions placeholder={null}>
-        <FlexRow style={{ marginBottom: 7 }} justifyContent="flex-end">
-          <VaccinePrescriptionInfo />
-        </FlexRow>
+      <Paper
+        style={{ flex: 6 }}
+        contentContainerStyle={{ flex: 1 }}
+        headerText={vaccineStrings.vaccine_dispense_step_one_title}
+      >
+        <AfterInteractions placeholder={null}>
+          <View style={localStyles.container}>
+            <View style={localStyles.formContainer}>
+              <FormControl
+                inputConfig={formConfig}
+                onSave={onFilterData}
+                showCancelButton={false}
+                saveButtonText={generalStrings.search}
+              />
+            </View>
 
-        <View style={localStyles.container}>
-          <View style={localStyles.formContainer}>
-            <FormControl
-              inputConfig={formConfig}
-              onSave={onFilterData}
-              showCancelButton={false}
-              saveButtonText={generalStrings.search}
-            />
+            <View style={localStyles.listContainer}>
+              <SimpleTable selectRow={selectPatient} data={patients} columns={columns} />
+            </View>
           </View>
-          <View style={localStyles.verticalSeparator} />
-          <View style={localStyles.listContainer}>
-            <DataTable
-              data={patients}
-              columns={columns}
-              renderHeader={renderHeader}
-              renderRow={renderRow}
-              keyExtractor={item => item.id}
-              getItemLayout={getItemLayout}
-            />
-          </View>
-        </View>
-
-        <FlexRow justifyContent="flex-end" alignItems="flex-end">
-          <PageButtonWithOnePress
-            text={buttonStrings.cancel}
-            onPress={onCancelPrescription}
-            style={{ marginRight: 7 }}
-          />
+        </AfterInteractions>
+      </Paper>
+      {!keyboardIsOpen && (
+        <FlexRow flex={0} style={{ bottom: 0 }} justifyContent="flex-end" alignItems="flex-end">
+          <PageButtonWithOnePress text={buttonStrings.cancel} onPress={onCancelPrescription} />
           <PageButton
             text={`${dispensingStrings.new} ${dispensingStrings.patient}`}
             onPress={createPatient}
-            style={{ marginLeft: 5 }}
+            style={{ marginLeft: 'auto' }}
           />
         </FlexRow>
-      </AfterInteractions>
+      )}
     </FlexView>
   );
 };
@@ -184,17 +150,14 @@ PatientSelectComponent.propTypes = {
   patients: PropTypes.object.isRequired,
   onFilterData: PropTypes.func.isRequired,
   createPatient: PropTypes.func.isRequired,
-  onSortData: PropTypes.func.isRequired,
-  sortKey: PropTypes.string.isRequired,
-  isAscending: PropTypes.bool.isRequired,
   onCancelPrescription: PropTypes.func.isRequired,
 };
 
 export const PatientSelect = connect(mapStateToProps, mapDispatchToProps)(PatientSelectComponent);
 const localStyles = StyleSheet.create({
   container: {
-    height: '75%',
-    marginBottom: 20,
+    flex: 12,
+    height: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: 'white',
