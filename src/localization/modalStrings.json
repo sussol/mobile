@@ -65,7 +65,7 @@
     "location_service_comment": "Required to connect to bluetooth sensors",
     "bluetooth_permission": "Bluetooth",
     "bluetooth_permission_comment": "Required to connect to bluetooth sensors",
-    "permissions_intro_1": "The following permissions and services are required by various features of the cold chain functionality.",
+    "permissions_intro_1": "The following permissions and services are required for cold chain functionality.",
     "permissions_intro_2": "If disabled, you can press an item to enable it."
   },
   "fr": {
