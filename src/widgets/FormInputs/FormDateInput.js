@@ -18,6 +18,7 @@ import { CalendarIcon } from '../icons';
 import { CircleButton } from '../CircleButton';
 import { FormLabel } from './FormLabel';
 import { FormInvalidMessage } from './FormInvalidMessage';
+import { DATE_FORMAT } from '../../utilities/constants';
 
 /**
  * Form input for entering dates. Renders a TextInput as well as a button, opening a
@@ -59,12 +60,12 @@ export const FormDateInput = React.forwardRef(
     if (onValidate(value)) {
       initialValue = moment(value);
     } else if (typeof value === 'number' && onValidate(value)) {
-      initialValue = moment(new Date(), 'DD/MM/YYYY');
+      initialValue = moment(new Date(), DATE_FORMAT.DD_MM_YYYY);
     }
 
     const [inputState, setInputState] = React.useState({
       isValid: true,
-      inputValue: initialValue.isValid() ? moment(initialValue).format('DD/MM/YYYY') : '',
+      inputValue: initialValue.isValid() ? moment(initialValue).format(DATE_FORMAT.DD_MM_YYYY) : '',
       pickerSeedValue: initialValue.isValid() ? initialValue.toDate() : new Date(),
       datePickerOpen: false,
     });
@@ -72,7 +73,7 @@ export const FormDateInput = React.forwardRef(
     const { inputValue, isValid, pickerSeedValue, datePickerOpen } = inputState;
 
     const onUpdate = (newValue, validity = true, pickerVisibility = false) => {
-      const newDate = moment(newValue, 'DD/MM/YYYY');
+      const newDate = moment(newValue, DATE_FORMAT.DD_MM_YYYY);
       const newValidity = onValidate(newValue);
       const updatedIsValid = validity && newValidity;
 
@@ -106,7 +107,7 @@ export const FormDateInput = React.forwardRef(
       if (!timestamp) {
         setInputState(state => ({ ...state, datePickerOpen: false }));
       } else {
-        const newDate = moment(new Date(timestamp)).format('DD/MM/YYYY');
+        const newDate = moment(new Date(timestamp)).format(DATE_FORMAT.DD_MM_YYYY);
         onUpdate(newDate, true);
       }
     };

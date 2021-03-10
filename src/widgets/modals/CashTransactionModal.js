@@ -31,6 +31,7 @@ import { PencilIcon, ChevronDownIcon } from '../icons';
 import globalStyles, { WARM_GREY, SUSSOL_ORANGE, COMPONENT_HEIGHT } from '../../globalStyles';
 import { buttonStrings, dispensingStrings, generalStrings } from '../../localization';
 import { FlexRow } from '../FlexRow';
+import { DATE_FORMAT } from '../../utilities/constants';
 
 const CashTransactionModalComponent = ({
   name,
@@ -98,7 +99,9 @@ const CashTransactionModalComponent = ({
     if (isCustomer) {
       if (isPatient) {
         return `${dispensingStrings.patient} \n ${dispensingStrings.date_of_birth}: ${
-          dateOfBirth ? moment(dateOfBirth).format('DD/MM/YYYY') : generalStrings.not_available
+          dateOfBirth
+            ? moment(dateOfBirth).format(DATE_FORMAT.DD_MM_YYYY)
+            : generalStrings.not_available
         }`;
       }
       return dispensingStrings.customer;

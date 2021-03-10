@@ -12,6 +12,7 @@ import { Incrementor } from './Incrementor';
 import { useOptimisticUpdating, useDatePicker } from '../../hooks';
 import { generalStrings } from '../../localization';
 import { APP_FONT_FAMILY, DARKER_GREY } from '../../globalStyles';
+import { DATE_FORMAT } from '../../utilities/constants';
 
 export const DateEditor = ({
   label,
@@ -24,7 +25,7 @@ export const DateEditor = ({
   maximumDate,
 }) => {
   const adjustValue = (toUpdate, addend) => moment(toUpdate).add(addend, stepUnit).toDate();
-  const formatter = toFormat => moment(toFormat).format('DD/MM/YYYY');
+  const formatter = toFormat => moment(toFormat).format(DATE_FORMAT.DD_MM_YYYY);
   const wrappedDatePicker = timestamp => onPress(new Date(timestamp));
 
   const [datePickerIsOpen, openDatePicker, onPickDate] = useDatePicker(wrappedDatePicker);
