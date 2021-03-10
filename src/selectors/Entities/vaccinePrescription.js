@@ -50,7 +50,7 @@ export const selectSortedVaccines = createSelector([selectVaccines], vaccines =>
 });
 
 export const selectSelectedRows = createSelector([selectSelectedVaccines], vaccines =>
-  vaccines.reduce((acc, vaccine) => ({ ...acc, [vaccine.id]: true }), {})
+  vaccines.reduce((acc, vaccine) => ({ ...acc, [vaccine?.id]: true }), {})
 );
 
 export const selectSelectedBatchRows = createSelector([selectSelectedBatches], batches =>

@@ -51,7 +51,7 @@ const getDefaultVaccine = () => {
 
   const [item] = mostRecentTrans.items.filtered('item.isVaccine == true');
 
-  return item?.item;
+  return item?.item ?? null;
 };
 
 const getRecommendedBatch = () => {
