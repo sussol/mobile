@@ -38,6 +38,7 @@ const translateToCoreDatabaseType = type => {
     case 'ResponseRequisition':
       return 'Requisition';
     case 'RequisitionReason':
+    case 'OpenVialWastageReason':
     case 'NegativeAdjustmentReason':
     case 'PositiveAdjustmentReason':
       return 'Options';
@@ -236,6 +237,8 @@ class UIDatabase {
         return results.filtered('type == "request"');
       case 'ResponseRequisition':
         return results.filtered('serialNumber != "-1" AND type == "response"');
+      case 'OpenVialWastageReason':
+        return results.filtered('type == $0 && isActive == true', 'openVialWastage');
       case 'NegativeAdjustmentReason':
         return results.filtered('type == $0 && isActive == true', 'negativeInventoryAdjustment');
       case 'PositiveAdjustmentReason':
