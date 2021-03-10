@@ -54,6 +54,7 @@ import { VaccineDataAccess } from './bluetooth/VaccineDataAccess';
 import { UtilService } from './database/utilities/utilService';
 import { SensorDownloadActions } from './actions/Bluetooth/SensorDownloadActions';
 import BreachManager from './bluetooth/BreachManager';
+import { selectIsPassivelyDownloadingTemps } from './selectors/Bluetooth/sensorDownload';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const BLUETOOTH_SYNC_INTERVAL = 60 * 1000; // 1 minute in milliseconds.
@@ -102,7 +103,6 @@ class MSupplyMobileAppContainer extends React.Component {
       isInitialised,
       isLoading: false,
       appState: null,
-      isDownloadingTemperatures: false,
     };
   }
 
@@ -110,9 +110,11 @@ class MSupplyMobileAppContainer extends React.Component {
     const { dispatch, usingVaccines, syncTemperatures, requestBluetooth } = this.props;
 
     if (usingVaccines) {
-      const { isDownloadingTemperatures } = this.state;
-      if (!isDownloadingTemperatures) {
+      const { isPassivelyDownloadingTemps } = this.props;
+
+      if (!isPassivelyDownloadingTemps) {
         this.scheduler.schedule(syncTemperatures, BLUETOOTH_SYNC_INTERVAL);
+        dispatch(SensorDownloadActions.startPassiveDownloadJob());
       }
 
       BluetoothStatus.addListener(requestBluetooth);
@@ -297,10 +299,11 @@ const mapStateToProps = state => {
   const isBreachModalOpen = selectIsBreachModalOpen(state);
   const currentUser = selectCurrentUser(state);
   const isSyncing = selectIsSyncing(state);
+  const isPassivelyDownloadingTemps = selectIsPassivelyDownloadingTemps(state);
   const breachModalTitle = selectBreachModalTitle(state);
   return {
     usingVaccines,
-
+    isPassivelyDownloadingTemps,
     isSyncing,
     currentUser,
     finaliseModalOpen,
@@ -321,6 +324,7 @@ MSupplyMobileAppContainer.propTypes = {
   requestBluetooth: PropTypes.func.isRequired,
   syncTemperatures: PropTypes.func.isRequired,
   isSyncing: PropTypes.bool.isRequired,
+  isPassivelyDownloadingTemps: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
   currentUser: PropTypes.object,
   closeSupplierCreditModal: PropTypes.func.isRequired,
