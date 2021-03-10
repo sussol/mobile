@@ -65,7 +65,7 @@ const PatientSelectComponent = ({
   const keyboardIsOpen = useKeyboardIsOpen();
 
   return (
-    <FlexView style={{ ...pageTopViewContainer, paddingVertical: 0 }}>
+    <FlexView style={pageTopViewContainer}>
       <Paper
         style={{ flex: 6 }}
         contentContainerStyle={{ flex: 1 }}

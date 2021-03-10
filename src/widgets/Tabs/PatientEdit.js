@@ -65,7 +65,7 @@ const PatientEditComponent = ({
   );
 
   return (
-    <FlexView style={{ ...pageTopViewContainer, paddingVertical: 0 }}>
+    <FlexView style={pageTopViewContainer}>
       <FlexRow flex={12}>
         <Paper
           style={{ flex: 1 }}
