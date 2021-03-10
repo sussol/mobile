@@ -50,7 +50,9 @@ import { Paper } from '../Paper';
 
 const ListEmptyComponent = () => (
   <FlexView flex={1} justifyContent="center" alignItems="center">
-    <Text style={localStyles.emptyComponentText}>Select an item before choosing the batch </Text>
+    <Text style={localStyles.emptyComponentText}>
+      {generalStrings.select_an_item_before_choosing_the_batch}
+    </Text>
   </FlexView>
 );
 
