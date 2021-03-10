@@ -44,9 +44,37 @@ const getDefaultVaccinator = () => {
   return null;
 };
 
+const getDefaultVaccine = () => {
+  const [mostRecentTrans] = UIDatabase.objects('Transaction')
+    .filtered("type == 'customer_invoice' && (status == 'finalised' || status == 'confirmed')")
+    .sorted('confirmDate', true);
+
+  const [item] = mostRecentTrans.items.filtered('item.isVaccine == true');
+
+  return item?.item ?? null;
+};
+
+const getRecommendedBatch = vaccine => {
+  const { batches = [] } = vaccine ?? getDefaultVaccine();
+
+  if (batches?.length) {
+    const batchesByExpiry = batches.sorted('expiryDate');
+    const openVials = batchesByExpiry.filter(b => !Number.isInteger(b.numberOfPacks));
+
+    return openVials.length ? openVials[0] : batchesByExpiry[0];
+  }
+
+  return null;
+};
+
 const create = () => ({
   type: VACCINE_PRESCRIPTION_ACTIONS.CREATE,
-  payload: { prescription: createDefaultVaccinePrescription(), vaccinator: getDefaultVaccinator() },
+  payload: {
+    prescription: createDefaultVaccinePrescription(),
+    vaccinator: getDefaultVaccinator(),
+    selectedVaccines: [getDefaultVaccine()],
+    selectedBatches: [getRecommendedBatch()],
+  },
 });
 
 const reset = () => ({
@@ -55,7 +83,7 @@ const reset = () => ({
 
 const selectVaccine = vaccine => ({
   type: VACCINE_PRESCRIPTION_ACTIONS.SELECT_VACCINE,
-  payload: { vaccine },
+  payload: { vaccine, batch: getRecommendedBatch(vaccine) },
 });
 
 const selectBatch = itemBatch => ({
@@ -65,7 +93,11 @@ const selectBatch = itemBatch => ({
 
 const setRefusal = hasRefused => ({
   type: VACCINE_PRESCRIPTION_ACTIONS.SET_REFUSAL,
-  payload: { hasRefused },
+  payload: {
+    hasRefused,
+    selectedVaccines: [getDefaultVaccine()],
+    selectedBatches: [getRecommendedBatch()],
+  },
 });
 
 const createPrescription = (patient, currentUser, selectedBatches, vaccinator) => {
