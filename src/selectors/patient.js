@@ -6,6 +6,7 @@
 import currency from '../localization/currency';
 import { UIDatabase } from '../database';
 import { sortDataBy } from '../utilities';
+import { PREFERENCE_KEYS } from '../database/utilities/preferenceConstants';
 
 export const selectPatientHistory = ({ patient }) => {
   const { currentPatient } = patient;
@@ -54,5 +55,6 @@ export const selectPatientModalOpen = ({ patient }) => {
 export const selectCanEditPatient = ({ patient }) => {
   const { currentPatient } = patient;
   const { isEditable = true } = currentPatient ?? {};
-  return isEditable;
+
+  return UIDatabase.getPreference(PREFERENCE_KEYS.CAN_EDIT_PATIENTS_FROM_ANY_STORE) || isEditable;
 };
