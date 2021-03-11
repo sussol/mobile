@@ -53,6 +53,7 @@ export const PatientEditModalComponent = ({
             onChange={({ formData, errors }) => {
               onUpdateForm(formData, errors);
             }}
+            liveValidate={false}
           >
             <></>
           </JSONForm>
