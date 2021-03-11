@@ -83,7 +83,7 @@ const createGeneralSection = async (sensor, user, comment) => {
 const createLoggingSection = sensor => {
   const title = SECTION_TITLES.LOGGING;
 
-  const parser = getParser(SENSOR_STATS_SECTION_FIELDS);
+  const parser = getParser(LOGGING_SECTION_FIELDS);
 
   const data = {
     [LOGGING_SECTION_FIELDS.LOGGING_START]: moment(sensor.firstLog?.timestamp).format(
