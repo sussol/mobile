@@ -4,6 +4,7 @@ import { LAST_DOWNLOAD_STATUS } from '../../utilities/modules/vaccines/constants
 
 const initialState = () => ({
   isSyncingTemps: false,
+  isPassivelyDownloadingTemps: false,
   downloadingLogsFrom: '',
   lastDownloadStatus: {},
   lastDownloadTime: {},
@@ -80,6 +81,10 @@ export const SensorDownloadReducer = (state = initialState(), action) => {
         lastDownloadTime: newLastDownloadTime,
         downloadingLogsFrom: '',
       };
+    }
+
+    case DOWNLOAD_ACTIONS.PASSIVE_DOWNLOAD_START: {
+      return { ...state, isPassivelyDownloadingTemps: true };
     }
 
     case DOWNLOAD_ACTIONS.DOWNLOAD_LOGS_START: {
