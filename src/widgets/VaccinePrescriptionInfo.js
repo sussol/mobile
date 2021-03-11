@@ -53,8 +53,12 @@ const VaccinatorDropDown = ({ value, onChange }) => {
   );
 };
 
+VaccinatorDropDown.defaultProps = {
+  value: null,
+};
+
 VaccinatorDropDown.propTypes = {
-  value: PropTypes.object.isRequired,
+  value: PropTypes.object,
   onChange: PropTypes.func.isRequired,
 };
 
