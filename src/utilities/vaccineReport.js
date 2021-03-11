@@ -7,6 +7,7 @@ import temperature from './temperature';
 import { SECONDS } from './constants';
 import { UIDatabase } from '../database/index';
 import { generalStrings, reportStrings, vaccineStrings } from '../localization/index';
+import { MILLISECONDS_PER_MINUTE } from '../database/utilities/constants';
 
 const SECTION_TITLES = {
   LOGGING: reportStrings.title_logging,
@@ -115,7 +116,9 @@ const createBreachConfigSection = breachConfigs => {
 
   const data = breachConfigs.map(config => ({
     [BREACH_CONFIG_SECTION_FIELDS.TYPE]: CONFIG_TYPE_TO_NAME[config?.type],
-    [BREACH_CONFIG_SECTION_FIELDS.DURATION]: `${config.duration / 60} ${generalStrings.minutes}`,
+    [BREACH_CONFIG_SECTION_FIELDS.DURATION]: `${config.duration / MILLISECONDS_PER_MINUTE} ${
+      generalStrings.minutes
+    }`,
     [BREACH_CONFIG_SECTION_FIELDS.TEMPERATURE]: config.type.includes('HOT')
       ? `${generalStrings.above} ${temperature(config.minimumTemperature).format()}`
       : `${generalStrings.below} ${temperature(config.maximumTemperature).format()}`,
