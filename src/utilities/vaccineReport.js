@@ -18,10 +18,10 @@ const SECTION_TITLES = {
 };
 
 const CONFIG_TYPE_TO_NAME = {
-  HOT_CONSECUTIVE: vaccineStrings.hot_consecutive,
-  HOT_CUMULATIVE: vaccineStrings.hot_cumulative,
-  COLD_CONSECUTIVE: vaccineStrings.cold_consecutive,
-  COLD_CUMULATIVE: vaccineStrings.cold_cumulative,
+  HOT_CONSECUTIVE: vaccineStrings.hot_consecutive_breach,
+  HOT_CUMULATIVE: vaccineStrings.hot_cumulative_breach,
+  COLD_CONSECUTIVE: vaccineStrings.cold_consecutive_breach,
+  COLD_CUMULATIVE: vaccineStrings.cold_cumulative_breach,
 };
 
 const GENERAL_SECTION_FIELDS = {
