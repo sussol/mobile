@@ -100,22 +100,25 @@ export const StocktakeBatchModalComponent = ({
   const { isFinalised = false } = stocktake;
   const { difference = 0 } = modalValue || {};
 
-  let reasonsSelection = null;
-  if (usingReasons && !isVaccine) {
-    reasonsSelection =
-      difference > 0
-        ? UIDatabase.objects('PositiveAdjustmentReason')
-        : UIDatabase.objects('NegativeAdjustmentReason');
-  } else if (usingOpenVialWastageReasons && isVaccine) {
-    reasonsSelection =
-      difference > 0
-        ? UIDatabase.objects('PositiveAdjustmentReason')
-        : UIDatabase.objects('Options').filtered(
-            '(type == $0 || type == $1) && isActive == true',
-            'negativeInventoryAdjustment',
-            'openVialWastage'
-          );
-  }
+  const reasonsSelection = (() => {
+    if (difference > 0) {
+      return UIDatabase.objects('PositiveAdjustmentReason');
+    }
+
+    if (usingReasons && !isVaccine) {
+      return UIDatabase.objects('NegativeAdjustmentReason');
+    }
+
+    if (usingOpenVialWastageReasons && isVaccine) {
+      return UIDatabase.objects('Options').filtered(
+        '(type == $0 || type == $1) && isActive == true',
+        'negativeInventoryAdjustment',
+        'openVialWastage'
+      );
+    }
+
+    return [];
+  })();
 
   const onEditSupplier = value => dispatch(PageActions.editBatchSupplier(value, modalValue));
   const onSelectSupplier = rowKey =>
