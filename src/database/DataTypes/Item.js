@@ -243,7 +243,7 @@ export class Item extends Realm.Object {
     return UIDatabase.objects('TransactionBatch')
       .filtered("transaction.otherParty.code == 'invad'")
       .filtered("option.type == 'openVialWastage'")
-      .filtered('confirmDate >= $0', fromDate)
+      .filtered('transaction.confirmDate >= $0', fromDate)
       .sum('doses');
   }
 
