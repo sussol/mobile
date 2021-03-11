@@ -93,9 +93,29 @@ const save = () => (dispatch, getState) => {
       logDelay: new Date(sensor?.logDelay ?? 0),
       location: updatedLocation,
     });
-    configs.forEach(config =>
-      updatedConfigs.push(UIDatabase.update('TemperatureBreachConfiguration', config))
-    );
+
+    configs.forEach(config => {
+      const {
+        id,
+        minimumTemperature,
+        maximumTemperature,
+        duration,
+        description,
+        colour,
+        type,
+      } = config;
+      updatedConfigs.push(
+        UIDatabase.update('TemperatureBreachConfiguration', {
+          id,
+          minimumTemperature,
+          maximumTemperature,
+          duration,
+          description,
+          colour,
+          type,
+        })
+      );
+    });
 
     if (replacedSensor) {
       replacedSensor.location = null;
@@ -157,7 +177,8 @@ const createNew = () => (dispatch, getState) => {
     if (existingLocation) {
       newLocation = UIDatabase.update('Location', {
         id: existingLocation.id,
-        description: sensor.name,
+        description: location.name,
+        code: location.code,
       });
     } else {
       newLocation = createRecord(UIDatabase, 'Location', { ...location, description: sensor.name });
