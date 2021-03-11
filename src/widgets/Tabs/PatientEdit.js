@@ -6,8 +6,8 @@
 
 import React, { useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
-import { batch, connect } from 'react-redux';
+import { ToastAndroid, View } from 'react-native';
+import { connect } from 'react-redux';
 import * as Animatable from 'react-native-animatable';
 import { FormControl } from '../FormControl';
 import { PageButton } from '../PageButton';
@@ -23,7 +23,7 @@ import { VaccinePrescriptionActions } from '../../actions/Entities/VaccinePrescr
 import { selectCanSaveForm, selectCompletedForm } from '../../selectors/form';
 import { getFormInputConfig } from '../../utilities/formInputConfigs';
 
-import { buttonStrings, vaccineStrings } from '../../localization';
+import { buttonStrings, vaccineStrings, dispensingStrings } from '../../localization';
 import globalStyles from '../../globalStyles';
 import { JSONForm } from '../JSONForm/JSONForm';
 import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
@@ -39,7 +39,6 @@ import { Paper } from '../Paper';
  * @prop {object} currentPatient        The current patient object - the toJSON version of [Patient]
  * @prop {object} surveySchema          Object defining the survey form
  * @prop {Func}   onCancelPrescription  Callback for cancelling
- * @prop {Func}   onSubmitSurvey        Callback for saving survey data.
  * @prop {Func}   updatePatientDetails  Callback for saving patient edit form.
  *
  */
@@ -49,6 +48,7 @@ const PatientEditComponent = ({
   currentPatient,
   surveySchema,
   onCancelPrescription,
+  onCompleted,
   updatePatientDetails,
   surveyFormData,
   updateForm,
@@ -60,6 +60,12 @@ const PatientEditComponent = ({
     e => {
       updatePatientDetails(completedForm);
       formRef?.current?.submit(e);
+
+      if (canSaveForm) {
+        onCompleted();
+      } else {
+        ToastAndroid.show(dispensingStrings.validation_failed, ToastAndroid.LONG);
+      }
     },
     [completedForm]
   );
@@ -94,6 +100,7 @@ const PatientEditComponent = ({
                 onChange={data => {
                   updateForm(data.formData, data.errors);
                 }}
+                liveValidate={false}
               >
                 <View />
               </JSONForm>
@@ -105,7 +112,6 @@ const PatientEditComponent = ({
       <FlexRow flex={0} justifyContent="flex-end" alignItems="flex-end">
         <PageButtonWithOnePress text={buttonStrings.cancel} onPress={onCancelPrescription} />
         <PageButton
-          isDisabled={!canSaveForm}
           text={buttonStrings.next}
           onPress={savePatient}
           style={{ marginLeft: 'auto' }}
@@ -116,16 +122,13 @@ const PatientEditComponent = ({
 };
 
 const mapDispatchToProps = dispatch => {
-  const onSubmitSurvey = formData => dispatch(NameNoteActions.saveNewSurvey(formData));
   const onCancelPrescription = () => dispatch(VaccinePrescriptionActions.cancel());
   const updateForm = (data, errors) => dispatch(NameNoteActions.updateForm(data, errors));
   const updatePatientDetails = detailsEntered =>
-    batch(() => {
-      dispatch(NameActions.updatePatient(detailsEntered));
-      dispatch(WizardActions.nextTab());
-    });
+    dispatch(NameActions.updatePatient(detailsEntered));
+  const onCompleted = () => dispatch(WizardActions.nextTab());
 
-  return { onCancelPrescription, onSubmitSurvey, updatePatientDetails, updateForm };
+  return { onCancelPrescription, onCompleted, updatePatientDetails, updateForm };
 };
 
 const mapStateToProps = state => {
@@ -134,7 +137,6 @@ const mapStateToProps = state => {
   const canSaveForm = selectCanSaveForm(state) && selectNameNoteIsValid(state);
   const surveySchemas = selectSurveySchemas();
   const [surveySchema] = surveySchemas;
-
   const nameNote = selectCreatingNameNote(state);
 
   return {
@@ -157,6 +159,7 @@ PatientEditComponent.propTypes = {
   currentPatient: PropTypes.object,
   surveySchema: PropTypes.object,
   onCancelPrescription: PropTypes.func.isRequired,
+  onCompleted: PropTypes.func.isRequired,
   updatePatientDetails: PropTypes.func.isRequired,
   surveyFormData: PropTypes.object.isRequired,
   updateForm: PropTypes.func.isRequired,
