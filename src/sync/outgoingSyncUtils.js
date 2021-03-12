@@ -390,6 +390,7 @@ const generateSyncData = (settings, recordType, record) => {
         is_active: String(record.isActive ?? true),
         log_delay_time: getTimeString(record.logDelay),
         log_delay_date: getDateString(record.logDelay),
+        logInterval: String(record.logInterval),
         programmed_time: getTimeString(record.programmedDate),
         programmed_date: getDateString(record.programmedDate),
       };
