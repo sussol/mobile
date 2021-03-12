@@ -10,19 +10,6 @@ import { SYNC_TRANSACTION_COMPLETE } from '../sync/constants';
 
 /**
  * Simple reducer managing the stores current modules state.
- *
- * State shape:
- * {
- *     usingDashboard: [bool],
- *     usingDispensary: [bool],
- *     usingVaccines: [bool],
- *     usingCashRegister: [bool],
- *     usingPayments: [bool],
- *     usingSupplierCredits: [bool],
- *     usingModules: [bool],
- *     usingInsurance: [bool],
- *     usingHideSnapshotColumn: [bool],
- * }
  */
 
 const initialState = () => {
@@ -34,19 +21,24 @@ const initialState = () => {
   const usingDashboard = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.DASHBOARD_MODULE));
   const usingDispensary = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.DISPENSARY_MODULE));
   const usingVaccines = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.VACCINE_MODULE));
+  const usingPayments = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.PAYMENT_MODULE));
+  const usingPatientTypes = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.PATIENT_TYPES));
 
+  const usingHideSnapshotColumn = Boolean(
+    UIDatabase.getPreference(PREFERENCE_KEYS.HIDE_SNAPSHOT_COLUMN)
+  );
   const usingCashRegister = Boolean(
     UIDatabase.getPreference(PREFERENCE_KEYS.CASH_REGISTER_MODULE) && usingPaymentTypes
   );
-  const usingPayments = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.PAYMENT_MODULE));
-  const usingPatientTypes = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.PATIENT_TYPES));
-  const usingHideSnapshotColumn = Boolean(
-    UIDatabase.getPreference(PREFERENCE_KEYS.HIDE_SNAPSHOT_COLUMN)
+
+  const canEditAnyPatient = Boolean(
+    UIDatabase.getPreference(PREFERENCE_KEYS.CAN_EDIT_PATIENTS_FROM_ANY_STORE)
   );
 
   const usingModules = usingDashboard || usingDispensary || usingVaccines || usingCashRegister;
 
   return {
+    canEditAnyPatient,
     usingPayments,
     usingDashboard,
     usingDispensary,
