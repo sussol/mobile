@@ -255,6 +255,7 @@ TransactionBatch.schema = {
     vaccineVialMonitorStatus: { type: 'VaccineVialMonitorStatus', optional: true },
     sentPackSize: { type: 'double', default: 0 },
     medicineAdministrator: { type: 'MedicineAdministrator', optional: true },
+    option: { type: 'Options', optional: true },
   },
 };
 
