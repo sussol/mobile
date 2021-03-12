@@ -41,7 +41,7 @@ export const PatientEditModalComponent = ({
     <FlexRow style={{ flexDirection: 'column' }} flex={1}>
       <FlexRow flex={1}>
         <FormControl
-          canSave={nameNoteIsValid}
+          canSave={surveySchema ? nameNoteIsValid : true}
           isDisabled={isDisabled}
           onSave={surveySchema ? onSaveWithForm : onSaveForm}
           onCancel={onCancel}
