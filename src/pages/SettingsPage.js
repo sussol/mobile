@@ -113,6 +113,20 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
     []
   );
 
+  const VaccineButton = () => {
+    // eslint-disable-next-line no-undef
+    if (__DEV__) {
+      return (
+        <MenuButton
+          text="Generate vaccine data"
+          onPress={() => withLoadingIndicator(createVaccineData)}
+        />
+      );
+    }
+
+    return null;
+  };
+
   const pageInfoColumns = useMemo(
     () => [
       [
@@ -321,10 +335,7 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
         <View>
           <MenuButton text={buttonStrings.realm_explorer} onPress={toRealmExplorer} />
           <MenuButton text={buttonStrings.export_data} onPress={requestStorageWritePermission} />
-          <MenuButton
-            text="Generate vaccine data"
-            onPress={() => withLoadingIndicator(createVaccineData)}
-          />
+          <VaccineButton />
         </View>
       </View>
 
