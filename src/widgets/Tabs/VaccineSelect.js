@@ -7,19 +7,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Text, StyleSheet } from 'react-native';
-// eslint-disable-next-line import/no-unresolved
-import CheckBox from '@react-native-community/checkbox';
 import { batch, connect } from 'react-redux';
-
 import { TABS } from '../constants';
-
 import { PageButton } from '../PageButton';
 import { FlexRow } from '../FlexRow';
 import { FlexView } from '../FlexView';
-import { VaccinePrescriptionInfo } from '../VaccinePrescriptionInfo';
 import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 import { SimpleTable } from '../SimpleTable';
-import { SimpleLabel } from '../SimpleLabel';
 
 import { VaccinePrescriptionActions } from '../../actions/Entities/VaccinePrescriptionActions';
 import { goBack } from '../../navigation/actions';
@@ -34,7 +28,6 @@ import {
 } from '../../selectors/Entities/vaccinePrescription';
 import { getColumns } from '../../pages/dataTableUtilities';
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
-
 import {
   vaccineStrings,
   buttonStrings,
@@ -42,11 +35,10 @@ import {
   generalStrings,
 } from '../../localization';
 import globalStyles, { APP_FONT_FAMILY } from '../../globalStyles';
-import { FormDropdown } from '../FormInputs/FormDropdown';
-import { UIDatabase } from '../../database/index';
-import { DARKER_GREY, SUSSOL_ORANGE, WHITE } from '../../globalStyles/colors';
+import { DARKER_GREY } from '../../globalStyles/colors';
 import { AfterInteractions } from '../AfterInteractions';
 import { Paper } from '../Paper';
+import { VaccinePrescriptionInfo } from '../VaccinePrescriptionInfo';
 
 const ListEmptyComponent = () => (
   <FlexView flex={1} justifyContent="center" alignItems="center">
@@ -68,12 +60,10 @@ const ListEmptyComponent = () => (
  * @prop {object} selectedRows          Selected vaccine row objects.
  * @prop {object} selectedVaccine       Currently selected vaccine.
  * @prop {array}  vaccines              List of vaccine items.
- *
  */
 const VaccineSelectComponent = ({
   onCancelPrescription,
   onConfirm,
-  onRefuse,
   onSelectBatch,
   onSelectVaccine,
   hasRefused,
@@ -82,8 +72,6 @@ const VaccineSelectComponent = ({
   selectedRows,
   selectedVaccine,
   vaccines,
-  vaccinator,
-  onSelectVaccinator,
   okAndRepeat,
 }) => {
   const { pageTopViewContainer } = globalStyles;
@@ -115,33 +103,11 @@ const VaccineSelectComponent = ({
 
   return (
     <FlexView style={pageTopViewContainer}>
-      <FlexRow flex={1} justifyContent="flex-end">
-        <VaccinePrescriptionInfo />
-        <FormDropdown
-          options={UIDatabase.objects('MedicineAdministrator')}
-          optionKey="displayString"
-          label={vaccineStrings.vaccinator}
-          onValueChange={onSelectVaccinator}
-          value={vaccinator}
-        />
-        <FlexRow flex={1} alignItems="center">
-          <SimpleLabel
-            text={dispensingStrings.refused_vaccine}
-            size="medium"
-            numberOfLines={1}
-            textAlign="right"
-          />
-          <CheckBox
-            onValueChange={onRefuse}
-            value={hasRefused}
-            tintColors={{ true: SUSSOL_ORANGE, false: DARKER_GREY }}
-          />
-        </FlexRow>
-      </FlexRow>
+      <VaccinePrescriptionInfo />
 
-      <FlexRow flex={12}>
+      <FlexRow flex={8}>
         <Paper
-          headerText={vaccineStrings.vaccine_dispense_step_three_title}
+          headerText={vaccineStrings.vaccines}
           contentContainerStyle={{ flex: 1 }}
           style={{ flex: 1 }}
         >
@@ -152,7 +118,6 @@ const VaccineSelectComponent = ({
               disabledRows={disabledVaccineRows}
               selectedRows={selectedRows}
               selectRow={onSelectVaccine}
-              style={{ marginTop: 3, height: '90%' }}
             />
           </AfterInteractions>
         </Paper>
@@ -164,13 +129,11 @@ const VaccineSelectComponent = ({
         >
           <AfterInteractions placeholder={null}>
             <SimpleTable
-              contentContainerStyle={{ flexGrow: 1 }}
               columns={batchColumns}
               data={selectedVaccine?.batches.sorted('expiryDate') ?? []}
               disabledRows={disabledBatchRows}
               selectedRows={selectedBatchRows}
               selectRow={onSelectBatch}
-              style={{ backgroundColor: WHITE, height: '100%' }}
               ListEmptyComponent={<ListEmptyComponent />}
             />
           </AfterInteractions>
@@ -247,14 +210,12 @@ VaccineSelectComponent.defaultProps = {
   selectedRows: {},
   selectedBatches: [],
   selectedVaccine: undefined,
-  vaccinator: null,
 };
 
 VaccineSelectComponent.propTypes = {
   okAndRepeat: PropTypes.func.isRequired,
   onCancelPrescription: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
-  onRefuse: PropTypes.func.isRequired,
   onSelectBatch: PropTypes.func.isRequired,
   onSelectVaccine: PropTypes.func.isRequired,
   hasRefused: PropTypes.bool.isRequired,
@@ -263,8 +224,6 @@ VaccineSelectComponent.propTypes = {
   selectedBatches: PropTypes.array,
   selectedVaccine: PropTypes.object,
   vaccines: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
-  vaccinator: PropTypes.object,
-  onSelectVaccinator: PropTypes.func.isRequired,
 };
 
 export const VaccineSelect = connect(mapStateToProps, mapDispatchToProps)(VaccineSelectComponent);

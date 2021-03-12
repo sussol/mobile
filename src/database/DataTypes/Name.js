@@ -4,6 +4,8 @@
  */
 
 import Realm from 'realm';
+import { UIDatabase } from '../index';
+import { PREFERENCE_KEYS } from '../utilities/preferenceConstants';
 
 /**
  * A name.
@@ -101,7 +103,10 @@ export class Name extends Realm.Object {
    * @return  {boolean}
    */
   get isEditable() {
-    return this.thisStoresPatient;
+    return (
+      UIDatabase.getPreference(PREFERENCE_KEYS.CAN_EDIT_PATIENTS_FROM_ANY_STORE) ||
+      this.thisStoresPatient
+    );
   }
 
   get nameTags() {
