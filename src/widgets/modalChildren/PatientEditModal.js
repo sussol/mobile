@@ -39,7 +39,7 @@ export const PatientEditModalComponent = ({
   return (
     <FlexRow flex={1}>
       <FormControl
-        canSave={nameNoteIsValid}
+        canSave={surveySchema ? nameNoteIsValid : true}
         isDisabled={isDisabled}
         onSave={surveySchema ? onSaveWithForm : onSave}
         onCancel={onCancel}
