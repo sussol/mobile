@@ -9,14 +9,14 @@ import { FlexRow } from '../FlexRow';
 import { JSONForm } from '../JSONForm/JSONForm';
 import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
 import { selectNameNoteIsValid, selectCreatingNameNote } from '../../selectors/Entities/nameNote';
+import { selectCompletedForm } from '../../selectors/form';
 import { PatientActions } from '../../actions/PatientActions';
-import { generateUUID } from '../../database/index';
 import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
 import { generalStrings, modalStrings } from '../../localization/index';
 
 export const PatientEditModalComponent = ({
   isDisabled,
-  onSave,
+  onSaveForm,
   onCancel,
   inputConfig,
   surveySchema,
@@ -26,11 +26,9 @@ export const PatientEditModalComponent = ({
   onUpdateForm,
   nameNoteIsValid,
 }) => {
-  const onSaveWithForm = completedForm => {
-    const id = generateUUID();
-
-    onSave({ id, ...completedForm });
-    onSaveSurvey(id);
+  const onSaveWithForm = () => {
+    onSaveForm();
+    onSaveSurvey();
   };
 
   useEffect(() => {
@@ -45,7 +43,7 @@ export const PatientEditModalComponent = ({
         <FormControl
           canSave={nameNoteIsValid}
           isDisabled={isDisabled}
-          onSave={surveySchema ? onSaveWithForm : onSave}
+          onSave={surveySchema ? onSaveWithForm : onSaveForm}
           onCancel={onCancel}
           inputConfig={inputConfig}
           showCancelButton={false}
@@ -68,7 +66,7 @@ export const PatientEditModalComponent = ({
       <FlexRow flex={0} style={{ justifyContent: 'center' }}>
         <View style={styles.buttonsRow}>
           <PageButton
-            onPress={surveySchema ? onSaveWithForm : onSave}
+            onPress={surveySchema ? onSaveWithForm : onSaveForm}
             style={styles.saveButton}
             isDisabled={!nameNoteIsValid || isDisabled}
             textStyle={styles.saveButtonTextStyle}
@@ -124,7 +122,7 @@ PatientEditModalComponent.defaultProps = {
 
 PatientEditModalComponent.propTypes = {
   isDisabled: PropTypes.bool,
-  onSave: PropTypes.func.isRequired,
+  onSaveForm: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
   inputConfig: PropTypes.array.isRequired,
   surveyForm: PropTypes.object,
@@ -135,11 +133,29 @@ PatientEditModalComponent.propTypes = {
   onUpdateForm: PropTypes.func.isRequired,
 };
 
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+  const { completedForm, nameNote, nameNoteIsValid, surveyForm } = stateProps;
+  const { onOpen, onSaveSurvey, onUpdateForm, onSave } = dispatchProps;
+  const onSaveForm = () => onSave(completedForm);
+
+  return {
+    ...ownProps,
+    nameNote,
+    nameNoteIsValid,
+    onOpen,
+    onSaveSurvey,
+    onUpdateForm,
+    onSaveForm,
+    surveyForm,
+  };
+};
+
 const stateToProps = state => {
   const nameNoteIsValid = selectNameNoteIsValid(state);
   const nameNote = selectCreatingNameNote(state);
+  const completedForm = selectCompletedForm(state);
 
-  return { nameNoteIsValid, surveyForm: nameNote?.data ?? null };
+  return { completedForm, nameNoteIsValid, surveyForm: nameNote?.data ?? null };
 };
 
 const dispatchToProps = (dispatch, ownProps) => {
@@ -147,10 +163,14 @@ const dispatchToProps = (dispatch, ownProps) => {
   const { id = '' } = patient ?? {};
   return {
     onOpen: () => dispatch(NameNoteActions.createSurveyNameNote(id)),
-    onSaveSurvey: optionalNameID => dispatch(NameNoteActions.saveEditing(optionalNameID)),
+    onSaveSurvey: () => dispatch(NameNoteActions.saveEditing(id)),
     onUpdateForm: form => dispatch(NameNoteActions.updateForm(form)),
     onSave: patientDetails => dispatch(PatientActions.patientUpdate(patientDetails)),
   };
 };
 
-export const PatientEditModal = connect(stateToProps, dispatchToProps)(PatientEditModalComponent);
+export const PatientEditModal = connect(
+  stateToProps,
+  dispatchToProps,
+  mergeProps
+)(PatientEditModalComponent);
