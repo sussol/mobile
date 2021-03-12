@@ -11,7 +11,7 @@
     "field_exported_by": "Exported by",
     "field_job_description": "Job description",
     "field_logging_start": "Logging start",
-    "field_logging_interval": "Logging start",
+    "field_logging_interval": "Logging interval",
     "field_max_temperature": "Maximum temperature",
     "field_min_temperature": "Minimum temperature",
     "field_number_breaches": "Number of consecutive breaches",

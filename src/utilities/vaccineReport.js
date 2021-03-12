@@ -7,6 +7,7 @@ import temperature from './temperature';
 import { SECONDS } from './constants';
 import { UIDatabase } from '../database/index';
 import { generalStrings, reportStrings, vaccineStrings } from '../localization/index';
+import { MILLISECONDS_PER_MINUTE } from '../database/utilities/constants';
 
 const SECTION_TITLES = {
   LOGGING: reportStrings.title_logging,
@@ -17,10 +18,10 @@ const SECTION_TITLES = {
 };
 
 const CONFIG_TYPE_TO_NAME = {
-  HOT_CONSECUTIVE: vaccineStrings.hot_consecutive,
-  HOT_CUMULATIVE: vaccineStrings.hot_cumulative,
-  COLD_CONSECUTIVE: vaccineStrings.cold_consecutive,
-  COLD_CUMULATIVE: vaccineStrings.cold_cumulative,
+  HOT_CONSECUTIVE: vaccineStrings.hot_consecutive_breach,
+  HOT_CUMULATIVE: vaccineStrings.hot_cumulative_breach,
+  COLD_CONSECUTIVE: vaccineStrings.cold_consecutive_breach,
+  COLD_CUMULATIVE: vaccineStrings.cold_cumulative_breach,
 };
 
 const GENERAL_SECTION_FIELDS = {
@@ -82,7 +83,7 @@ const createGeneralSection = async (sensor, user, comment) => {
 const createLoggingSection = sensor => {
   const title = SECTION_TITLES.LOGGING;
 
-  const parser = getParser(SENSOR_STATS_SECTION_FIELDS);
+  const parser = getParser(LOGGING_SECTION_FIELDS);
 
   const data = {
     [LOGGING_SECTION_FIELDS.LOGGING_START]: moment(sensor.firstLog?.timestamp).format(
@@ -115,7 +116,9 @@ const createBreachConfigSection = breachConfigs => {
 
   const data = breachConfigs.map(config => ({
     [BREACH_CONFIG_SECTION_FIELDS.TYPE]: CONFIG_TYPE_TO_NAME[config?.type],
-    [BREACH_CONFIG_SECTION_FIELDS.DURATION]: `${config.duration / 60} ${generalStrings.minutes}`,
+    [BREACH_CONFIG_SECTION_FIELDS.DURATION]: `${config.duration / MILLISECONDS_PER_MINUTE} ${
+      generalStrings.minutes
+    }`,
     [BREACH_CONFIG_SECTION_FIELDS.TEMPERATURE]: config.type.includes('HOT')
       ? `${generalStrings.above} ${temperature(config.minimumTemperature).format()}`
       : `${generalStrings.below} ${temperature(config.maximumTemperature).format()}`,
