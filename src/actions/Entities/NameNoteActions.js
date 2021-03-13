@@ -4,12 +4,13 @@ import { createRecord, UIDatabase } from '../../database/index';
 import { selectCreatingNameNote } from '../../selectors/Entities/nameNote';
 import { selectSurveySchemas } from '../../selectors/formSchema';
 
+const ajvErrors = require('ajv-errors');
+
 const ajvOptions = {
   errorDataPath: 'property',
   allErrors: true,
   multipleOfPrecision: 8,
   schemaId: 'auto',
-  unknownFormats: 'ignore',
   jsonPointers: true,
 };
 
@@ -19,10 +20,12 @@ export const NAME_NOTE_ACTIONS = {
   UPDATE_DATA: 'NAME_NOTE/updateData',
 };
 
+const ajv = new Ajv(ajvOptions);
+ajvErrors(ajv);
+
 const validateData = (jsonSchema, data) => {
   if (!jsonSchema) return true;
 
-  const ajv = new Ajv(ajvOptions);
   const result = ajv.validate(jsonSchema, data);
 
   return result;
@@ -68,9 +71,9 @@ const select = (seed = createDefaultNameNote(), isValid) => ({
   payload: { nameNote: seed, isValid },
 });
 
-const updateForm = (data, errors) => ({
+const updateForm = (data, validator) => ({
   type: NAME_NOTE_ACTIONS.UPDATE_DATA,
-  payload: { data, errors },
+  payload: { data, isValid: validator(data) },
 });
 
 const saveEditing = optionalNameID => (dispatch, getState) => {

@@ -169,23 +169,39 @@ export const JSONFormComponent = React.forwardRef(
       <JSONFormContext.Provider value={options}>
         <Form
           liveValidate={liveValidate}
-          onChange={debouncedOnChange}
+          onChange={change => {
+            // Pass the validator function back with the change which has occurred each update
+            // so the caller can validate when a change occurs if required.
+            debouncedOnChange(change, validator);
+          }}
           formData={formData}
           validate={(newFormData, errorHandlers) => {
             // Validate the form data, if there are any errors, an `errors` object is set on
             // on the validator object.
             validator(newFormData);
-            // If there are any errors, us the errorHandlers object which is a mirrored schema
-            // of the full JSON schema passed, where the value of each property is a function:
-            // addError, which will add a custom error message against the field.
-            validator.errors?.forEach(({ message, dataPath }) => {
+
+            // For errors, only accept a single error and prefer the error with the keyword
+            // "errorMessage", which can be set on the JSON Schema as a custom user-defined
+            // error message.
+            const errorLookup = {};
+            validator.errors?.forEach(({ message, dataPath, keyword }) => {
               // Each of these errors have the shape defined here:
               // https://ajv.js.org/docs/api.html#validation-errors
               // the data path is a JSON pointer to where the validation error occurred in the
               // formData, since errorHandlers has the same shape as formData, use the
               // same pointer.
+
+              if (errorLookup[dataPath]) {
+                if (keyword === 'errorMessage') {
+                  errorLookup[dataPath] = message;
+                }
+              } else {
+                errorLookup[dataPath] = message;
+              }
+            });
+
+            Object.entries(errorLookup).forEach(([dataPath, message]) => {
               const errorHandler = pointer.get(errorHandlers, dataPath);
-              // NOTE: This addError function uses `this` internally - do not destructor.
               if (errorHandler?.addError) errorHandler.addError(message);
             });
 

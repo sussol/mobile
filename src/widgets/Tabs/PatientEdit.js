@@ -67,7 +67,7 @@ const PatientEditComponent = ({
         ToastAndroid.show(dispensingStrings.validation_failed, ToastAndroid.LONG);
       }
     },
-    [completedForm]
+    [completedForm, canSaveForm]
   );
 
   return (
@@ -97,8 +97,8 @@ const PatientEditComponent = ({
                 ref={formRef}
                 surveySchema={surveySchema}
                 formData={surveyFormData}
-                onChange={data => {
-                  updateForm(data.formData, data.errors);
+                onChange={(formProps, validator) => {
+                  updateForm(formProps.formData, validator);
                 }}
                 liveValidate={false}
               >
@@ -123,7 +123,9 @@ const PatientEditComponent = ({
 
 const mapDispatchToProps = dispatch => {
   const onCancelPrescription = () => dispatch(VaccinePrescriptionActions.cancel());
-  const updateForm = (data, errors) => dispatch(NameNoteActions.updateForm(data, errors));
+  const updateForm = (data, validator) => {
+    dispatch(NameNoteActions.updateForm(data, validator));
+  };
   const updatePatientDetails = detailsEntered =>
     dispatch(NameActions.updatePatient(detailsEntered));
   const onCompleted = () => dispatch(WizardActions.nextTab());
