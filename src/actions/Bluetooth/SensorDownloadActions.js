@@ -129,6 +129,9 @@ const downloadLogsFromSensor = sensor => async dispatch => {
             );
 
             await TemperatureLogManager().saveLogs(temperatureLogs);
+
+            await BleService().updateLogInterval(macAddress, logInterval);
+
             await dispatch(BreachActions.createConsecutiveBreaches(sensor));
           } catch (e) {
             dispatch(sensorDownloadError(sensor, DOWNLOADING_ERROR_CODES.E_CANT_CONNECT));
