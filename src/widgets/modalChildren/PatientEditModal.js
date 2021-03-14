@@ -134,19 +134,15 @@ PatientEditModalComponent.propTypes = {
 };
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
-  const { completedForm, nameNote, nameNoteIsValid, surveyForm } = stateProps;
-  const { onOpen, onSaveSurvey, onUpdateForm, onSave } = dispatchProps;
+  const { completedForm } = stateProps;
+  const { onSave, ...otherDispatchProps } = dispatchProps;
   const onSaveForm = () => onSave(completedForm);
 
   return {
     ...ownProps,
-    nameNote,
-    nameNoteIsValid,
-    onOpen,
-    onSaveSurvey,
-    onUpdateForm,
+    ...otherDispatchProps,
+    ...stateProps,
     onSaveForm,
-    surveyForm,
   };
 };
 
