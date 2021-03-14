@@ -4,7 +4,7 @@
  * Sustainable Solutions (NZ) Ltd. 2021
  */
 
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { ToastAndroid, View } from 'react-native';
 import { connect } from 'react-redux';
@@ -49,6 +49,7 @@ const PatientEditComponent = ({
   surveySchema,
   onCancelPrescription,
   onCompleted,
+  onOpen,
   updatePatientDetails,
   surveyFormData,
   updateForm,
@@ -69,6 +70,12 @@ const PatientEditComponent = ({
     },
     [completedForm]
   );
+
+  useEffect(() => {
+    if (surveySchema) {
+      onOpen(currentPatient.id);
+    }
+  }, []);
 
   return (
     <FlexView style={pageTopViewContainer}>
@@ -127,8 +134,9 @@ const mapDispatchToProps = dispatch => {
   const updatePatientDetails = detailsEntered =>
     dispatch(NameActions.updatePatient(detailsEntered));
   const onCompleted = () => dispatch(WizardActions.nextTab());
+  const onOpen = nameID => dispatch(NameNoteActions.createSurveyNameNote(nameID));
 
-  return { onCancelPrescription, onCompleted, updatePatientDetails, updateForm };
+  return { onCancelPrescription, onCompleted, onOpen, updatePatientDetails, updateForm };
 };
 
 const mapStateToProps = state => {
@@ -160,6 +168,7 @@ PatientEditComponent.propTypes = {
   surveySchema: PropTypes.object,
   onCancelPrescription: PropTypes.func.isRequired,
   onCompleted: PropTypes.func.isRequired,
+  onOpen: PropTypes.func.isRequired,
   updatePatientDetails: PropTypes.func.isRequired,
   surveyFormData: PropTypes.object.isRequired,
   updateForm: PropTypes.func.isRequired,
