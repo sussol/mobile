@@ -16,12 +16,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: APP_GENERAL_FONT_SIZE,
     fontFamily: APP_FONT_FAMILY,
+    marginTop: 7,
   },
   medium: {
     textAlignVertical: 'center',
     fontWeight: 'bold',
     fontSize: 16,
     fontFamily: APP_FONT_FAMILY,
+    marginTop: 10,
   },
   large: {
     textAlignVertical: 'center',

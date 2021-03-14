@@ -225,12 +225,13 @@ const FormControlComponent = ({
   );
 
   const Buttons = React.useCallback(
-    () => (
-      <View style={localStyles.buttonsRow}>
-        <SaveButton />
-        <CancelButton />
-      </View>
-    ),
+    () =>
+      showCancelButton || showSaveButton ? (
+        <View style={localStyles.buttonsRow}>
+          <SaveButton />
+          <CancelButton />
+        </View>
+      ) : null,
     [SaveButton, CancelButton]
   );
 

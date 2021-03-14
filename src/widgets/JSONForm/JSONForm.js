@@ -133,7 +133,16 @@ const propsAreEqual = () => true;
 
 export const JSONFormComponent = React.forwardRef(
   (
-    { formData, onChange, theme = defaultTheme, children, options, onSubmit, surveySchema },
+    {
+      formData,
+      onChange,
+      theme = defaultTheme,
+      children,
+      options,
+      onSubmit,
+      surveySchema,
+      liveValidate,
+    },
     ref
   ) => {
     if (!surveySchema) return null;
@@ -159,7 +168,7 @@ export const JSONFormComponent = React.forwardRef(
     return (
       <JSONFormContext.Provider value={options}>
         <Form
-          liveValidate
+          liveValidate={liveValidate}
           onChange={debouncedOnChange}
           formData={formData}
           validate={(newFormData, errorHandlers) => {
@@ -229,6 +238,7 @@ JSONFormComponent.defaultProps = {
   onChange: () => {},
   formData: {},
   surveySchema: undefined,
+  liveValidate: true,
 };
 
 JSONFormComponent.propTypes = {
@@ -265,4 +275,5 @@ JSONFormComponent.propTypes = {
     formContext: PropTypes.object,
     tagName: PropTypes.func,
   }),
+  liveValidate: PropTypes.bool,
 };

@@ -5,7 +5,7 @@
  */
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { batch, connect } from 'react-redux';
 import { View } from 'react-native';
 
 import { ToggleBar, DataTablePageView, SearchBar, PageButton } from '../widgets';
@@ -40,6 +40,7 @@ import globalStyles from '../globalStyles';
 import { dispensingStrings } from '../localization';
 import { PatientEditModal } from '../widgets/modalChildren/PatientEditModal';
 import { selectSurveySchemas } from '../selectors/formSchema';
+import { NameNoteActions } from '../actions/Entities/NameNoteActions';
 
 const Dispensing = ({
   data,
@@ -346,7 +347,11 @@ const mapDispatchToProps = dispatch => ({
   lookupRecord: () => dispatch(DispensaryActions.openLookupModal()),
   cancelLookupRecord: () => dispatch(DispensaryActions.closeLookupModal()),
 
-  editPatient: patient => dispatch(PatientActions.editPatient(UIDatabase.get('Name', patient))),
+  editPatient: patient =>
+    batch(() => {
+      dispatch(NameNoteActions.createSurveyNameNote(patient));
+      dispatch(PatientActions.editPatient(UIDatabase.get('Name', patient)));
+    }),
   createPatient: () => dispatch(PatientActions.createPatient()),
   cancelPatientEdit: () => dispatch(PatientActions.closeModal()),
   viewPatientHistory: rowKey =>
