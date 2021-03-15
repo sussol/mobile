@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -27,7 +28,7 @@ import {
   DollarIcon,
 } from '../widgets/icons';
 import { ROUTES } from '../navigation/constants';
-import { buttonStrings, navStrings } from '../localization';
+import { buttonStrings, vaccineStrings, navStrings } from '../localization';
 
 import { SETTINGS_KEYS } from '../settings';
 import { UIDatabase } from '../database';
@@ -51,7 +52,10 @@ import {
 import globalStyles, { SHADOW_BORDER } from '../globalStyles';
 import { UserActions } from '../actions/index';
 import { selectCurrentUserIsAdmin } from '../selectors/user';
-import { selectHasVaccines } from '../selectors/Entities/vaccinePrescription';
+import {
+  selectHasVaccines,
+  selectHaveVaccineStock,
+} from '../selectors/Entities/vaccinePrescription';
 import { SUSSOL_ORANGE } from '../globalStyles/colors';
 
 const exportData = async () => {
@@ -179,7 +183,11 @@ const Menu = ({
           {hasVaccines && usingDispensary && (
             <IconMenuButton
               label={navStrings.vaccine_dispensary}
-              onPress={toVaccineDispensingPage}
+              onPress={() => {
+                selectHaveVaccineStock()
+                  ? toVaccineDispensingPage()
+                  : ToastAndroid.show(vaccineStrings.no_vaccine_stock, ToastAndroid.SHORT);
+              }}
               Icon={<SyringeIcon />}
             />
           )}
@@ -230,7 +238,7 @@ const Menu = ({
         </View>
       </View>
     ),
-    [usingModules, usingDashboard, usingDispensary, usingCashRegister]
+    [usingModules, usingDashboard, usingDispensary, usingCashRegister, hasVaccines]
   );
 
   const OriginalLayout = useCallback(
