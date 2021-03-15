@@ -54,7 +54,7 @@ export const Field = ({
     <>
       {description}
       {children}
-      {InvalidMessage}
+      {!schemaIsObject(schema) && InvalidMessage}
     </>
   );
 
@@ -76,7 +76,7 @@ export const Field = ({
   if (schemaIsObject(schema)) {
     return (
       <>
-        <TitleField title={label} isRequired={required} size={getTitleSize(id, schema)} />
+        <TitleField title={label} size={getTitleSize(id, schema)} />
         {Content}
       </>
     );

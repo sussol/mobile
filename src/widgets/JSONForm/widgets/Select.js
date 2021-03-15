@@ -1,11 +1,11 @@
 /* eslint-disable react/forbid-prop-types */
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Picker } from '@react-native-picker/picker';
 
 import { SUSSOL_ORANGE } from '../../../globalStyles/colors';
 
-export const Select = ({ disabled, readonly, onChange, placeholder, options, value }) => {
+export const Select = ({ disabled, readonly, onChange, placeholder, options, value, schema }) => {
   let pickers = options.enumOptions.map(({ label, value: enumValue }) => (
     <Picker.Item key={label} label={label} value={enumValue} color={SUSSOL_ORANGE} />
   ));
@@ -15,6 +15,13 @@ export const Select = ({ disabled, readonly, onChange, placeholder, options, val
   );
 
   pickers = [placeholderItem, ...pickers];
+
+  useEffect(() => {
+    if (!options?.enumOptions?.find(o => o.value === value)) {
+      const { default: defaultValue } = schema;
+      onChange(defaultValue);
+    }
+  });
 
   return (
     <Picker
@@ -46,4 +53,5 @@ Select.propTypes = {
   disabled: PropTypes.bool.isRequired,
   readonly: PropTypes.bool,
   placeholder: PropTypes.string.isRequired,
+  schema: PropTypes.object.isRequired,
 };

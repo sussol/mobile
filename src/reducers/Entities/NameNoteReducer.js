@@ -34,15 +34,15 @@ export const NameNoteReducer = (state = initialState(), action) => {
 
     case NAME_NOTE_ACTIONS.UPDATE_DATA: {
       const { payload } = action;
-      const { data, errors } = payload;
+      const { data, isValid } = payload;
       const { creating } = state;
       const { data: currentData } = creating;
 
-      const isValid = !(errors?.length > 0);
+      const newIsValid = isValid;
       const newData = { ...currentData, ...data };
       const newCreating = { ...creating, data: newData };
 
-      return { ...state, creating: newCreating, isValid };
+      return { ...state, creating: newCreating, isValid: newIsValid };
     }
 
     default: {
