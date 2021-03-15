@@ -75,6 +75,6 @@ export const selectSelectedVaccinator = state => {
 };
 
 export const selectHaveVaccineStock = () =>
-  UIDatabase.objects('Item')
-    .filtered('isVaccine == true')
-    .filtered('subquery(batches, $batches, $batches.numberOfPacks > 0 ).@count > 0').length > 0;
+  UIDatabase.objects('Vaccine').filtered(
+    'subquery(batches, $batches, $batches.numberOfPacks > 0 ).@count > 0'
+  ).length > 0;
