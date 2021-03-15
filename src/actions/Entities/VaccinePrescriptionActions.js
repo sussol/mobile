@@ -49,13 +49,13 @@ const getDefaultVaccine = () => {
     .filtered("type == 'customer_invoice' && (status == 'finalised' || status == 'confirmed')")
     .sorted('confirmDate', true);
 
-  const [item] = mostRecentTrans.items.filtered('item.isVaccine == true');
+  const [item] = mostRecentTrans?.items?.filtered('item.isVaccine == true') ?? [];
 
   return item?.item ?? null;
 };
 
 const getRecommendedBatch = vaccine => {
-  const { batches = [] } = vaccine ?? getDefaultVaccine();
+  const { batches = [] } = vaccine ?? getDefaultVaccine() ?? {};
 
   if (batches?.length) {
     const batchesByExpiry = batches.sorted('expiryDate');
