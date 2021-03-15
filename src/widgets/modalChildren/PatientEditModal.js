@@ -49,8 +49,8 @@ export const PatientEditModalComponent = ({
             <JSONForm
               surveySchema={surveySchema}
               formData={surveyForm}
-              onChange={({ formData, errors }) => {
-                onUpdateForm(formData, errors);
+              onChange={({ formData }, validator) => {
+                onUpdateForm(formData, validator);
               }}
             >
               <></>
@@ -157,7 +157,7 @@ const stateToProps = state => {
 const dispatchToProps = dispatch => ({
   onOpen: nameID => dispatch(NameNoteActions.createSurveyNameNote(nameID)),
   onSaveSurvey: optionalNameID => dispatch(NameNoteActions.saveEditing(optionalNameID)),
-  onUpdateForm: form => dispatch(NameNoteActions.updateForm(form)),
+  onUpdateForm: (form, validator) => dispatch(NameNoteActions.updateForm(form, validator)),
   onSave: patientDetails => dispatch(PatientActions.patientUpdate(patientDetails)),
 });
 
