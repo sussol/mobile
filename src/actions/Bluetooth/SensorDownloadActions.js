@@ -130,6 +130,8 @@ const downloadLogsFromSensor = sensor => async dispatch => {
 
             await TemperatureLogManager().saveLogs(temperatureLogs);
 
+            await BleService().updateLogInterval(macAddress, logInterval);
+
             await BleService().clearLogs(macAddress);
 
             await dispatch(BreachActions.createConsecutiveBreaches(sensor));
