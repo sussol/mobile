@@ -252,7 +252,7 @@ class UIDatabase {
       case 'PCDEvents':
         return results.filtered('code == "PCD"');
       case 'Vaccine':
-        return results.filtered('isVaccine == true');
+        return results.filtered('isVaccine == true && isVisible == true');
       default:
         return results;
     }
