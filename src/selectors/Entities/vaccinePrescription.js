@@ -54,7 +54,7 @@ export const selectSelectedRows = createSelector([selectSelectedVaccines], vacci
 );
 
 export const selectSelectedBatchRows = createSelector([selectSelectedBatches], batches =>
-  batches.reduce((acc, itemBatch) => ({ ...acc, [itemBatch.id]: true }), {})
+  batches.reduce((acc, itemBatch) => ({ ...acc, [itemBatch?.id]: true }), {})
 );
 
 export const selectHasVaccines = () => {
@@ -73,3 +73,8 @@ export const selectSelectedVaccinator = state => {
   const { vaccinator } = VaccinePrescriptionState;
   return vaccinator;
 };
+
+export const selectHaveVaccineStock = () =>
+  UIDatabase.objects('Item')
+    .filtered('isVaccine == true')
+    .filtered('subquery(batches, $batches, $batches.numberOfPacks > 0 ).@count > 0').length > 0;
