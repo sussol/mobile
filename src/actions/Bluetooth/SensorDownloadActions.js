@@ -129,6 +129,15 @@ const downloadLogsFromSensor = sensor => async dispatch => {
             );
 
             await TemperatureLogManager().saveLogs(temperatureLogs);
+
+            await BleService().updateLogIntervalWithRetries(
+              macAddress,
+              logInterval,
+              VACCINE_CONSTANTS.MAX_BLUETOOTH_COMMAND_ATTEMPTS
+            );
+
+            await BleService().clearLogs(macAddress);
+
             await dispatch(BreachActions.createConsecutiveBreaches(sensor));
           } catch (e) {
             dispatch(sensorDownloadError(sensor, DOWNLOADING_ERROR_CODES.E_CANT_CONNECT));

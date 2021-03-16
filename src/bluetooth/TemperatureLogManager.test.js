@@ -165,15 +165,22 @@ describe('DownloadManager: createLogs', () => {
 
     const sensor = { id: 'a', logInterval: 300 };
     const maxNumberToSave = 1;
-    const mostRecentLogTime = 0;
-    const timeNow = 600;
+    const mostRecentLogTime = 1;
+    const timeNow = 1200;
 
-    const logs = [{ temperature: 10 }, { temperature: 10 }, { temperature: 10 }];
+    const logs = [
+      { temperature: 10 },
+      { temperature: 11 },
+      { temperature: 12 },
+      { temperature: 13 },
+    ];
+
     const shouldBe = [
       {
         id: '1',
-        temperature: 10,
-        timestamp: new Date(300 * MILLISECONDS.ONE_SECOND),
+        temperature: 13,
+        location: undefined,
+        timestamp: new Date(901 * MILLISECONDS.ONE_SECOND),
         sensor,
         logInterval: 300,
       },
