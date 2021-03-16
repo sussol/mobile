@@ -194,6 +194,23 @@ class BleService {
     return monitor;
   };
 
+  /** Facade for clearing logs.
+   *
+   * Connects with a sensor and clears all temperature logs.
+   *
+   * Returns a promise which resolves to string 'ok'.
+   *
+   * @param {String} macAddress
+   */
+  clearLogs = async macAddress => {
+    await this.connectAndDiscoverServices(macAddress);
+    return this.writeWithSingleResponse(
+      macAddress,
+      `${BLUETOOTH.COMMANDS.CLEAR}`,
+      stringFromBase64
+    );
+  };
+
   /**
    * Facade for downloading logs.
    *

@@ -15,6 +15,7 @@ export const BLUETOOTH = {
   },
   COMMANDS: {
     BLINK: '*blink',
+    CLEAR: '*clr',
     DOWNLOAD: '*logall',
     INFO: '*info',
     UPDATE_LOG_INTERVAL: '*lint',
