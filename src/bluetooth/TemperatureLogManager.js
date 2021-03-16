@@ -61,7 +61,15 @@ class TemperatureLogManager {
     if (mostRecentLogTime == null) {
       initial = moment.unix(timeNow).subtract((logsToSave.length - 1) * logInterval, 'seconds');
     } else {
-      initial = moment.unix(mostRecentLogTime).add(logInterval, 's');
+      const numberOfLogIntervalsUntilNow =
+        Math.floor((timeNow - mostRecentLogTime) / logInterval) + 1;
+
+      // This 'lookback' (as opposed to only counting forward) is necessary to account for
+      // potential gaps in logs (e.g. due to battery running out or sensor being paused)
+      initial = moment.unix(
+        mostRecentLogTime +
+          (numberOfLogIntervalsUntilNow * logInterval - maxNumberToSave * logInterval)
+      );
     }
 
     return logsToSave.map(({ temperature }, i) => {
