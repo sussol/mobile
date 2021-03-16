@@ -55,10 +55,10 @@ const getDefaultVaccine = () => {
 };
 
 const getRecommendedBatch = vaccine => {
-  const { batches = [] } = vaccine ?? getDefaultVaccine() ?? {};
+  const { batchesWithStock = [] } = vaccine ?? getDefaultVaccine() ?? {};
 
-  if (batches?.length) {
-    const batchesByExpiry = batches.sorted('expiryDate');
+  if (batchesWithStock?.length) {
+    const batchesByExpiry = batchesWithStock.sorted('expiryDate');
     const openVials = batchesByExpiry.filter(b => !Number.isInteger(b.numberOfPacks));
 
     return openVials.length ? openVials[0] : batchesByExpiry[0];
