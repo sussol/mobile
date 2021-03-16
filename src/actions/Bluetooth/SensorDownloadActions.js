@@ -130,7 +130,11 @@ const downloadLogsFromSensor = sensor => async dispatch => {
 
             await TemperatureLogManager().saveLogs(temperatureLogs);
 
-            await BleService().updateLogInterval(macAddress, logInterval);
+            await BleService().updateLogIntervalWithRetries(
+              macAddress,
+              logInterval,
+              VACCINE_CONSTANTS.MAX_BLUETOOTH_COMMAND_ATTEMPTS
+            );
 
             await BleService().clearLogs(macAddress);
 
