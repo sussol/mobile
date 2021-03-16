@@ -130,7 +130,7 @@ const VaccineSelectComponent = ({
           <AfterInteractions placeholder={null}>
             <SimpleTable
               columns={batchColumns}
-              data={selectedVaccine?.batches.sorted('expiryDate') ?? []}
+              data={selectedVaccine?.batchesWithStock.sorted('expiryDate') ?? []}
               disabledRows={disabledBatchRows}
               selectedRows={selectedBatchRows}
               selectRow={onSelectBatch}
