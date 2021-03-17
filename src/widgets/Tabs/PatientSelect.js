@@ -6,9 +6,10 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Keyboard, StyleSheet, View } from 'react-native';
+
+import { ActivityIndicator, Keyboard, StyleSheet, Text, View } from 'react-native';
+
 import { batch, connect } from 'react-redux';
-import { useDebounce } from '../../hooks/useDebounce';
 
 import { FormControl } from '../FormControl';
 import { PageButton } from '../PageButton';
@@ -17,8 +18,8 @@ import { FlexView } from '../FlexView';
 import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 
 import { selectSpecificEntityState } from '../../selectors/Entities';
-import { selectSortedPatients } from '../../selectors/Entities/name';
-import { NameActions } from '../../actions/Entities/NameActions';
+
+import { createDefaultName, NameActions } from '../../actions/Entities/NameActions';
 import { WizardActions } from '../../actions/WizardActions';
 import { VaccinePrescriptionActions } from '../../actions/Entities/VaccinePrescriptionActions';
 import { FormActions } from '../../actions/FormActions';
@@ -39,6 +40,12 @@ import { generateUUID } from '../../database/index';
 import { SimpleTable } from '../SimpleTable';
 import { useKeyboardIsOpen } from '../../hooks/useKeyboardIsOpen';
 import { Paper } from '../Paper';
+import { selectCompletedForm } from '../../selectors/form';
+
+import { DARKER_GREY, SUSSOL_ORANGE } from '../../globalStyles/colors';
+
+import { useLocalAndRemotePatients } from '../../hooks/useLocalAndRemotePatients';
+import { APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from '../../globalStyles/fonts';
 
 /**
  * Layout component used for a tab within the vaccine prescription wizard.
@@ -54,22 +61,78 @@ import { Paper } from '../Paper';
  * @prop {String} sortKey               Current key the list of patients is sorted by.
  *
  */
+
+const getMessage = (noResults, error) => {
+  if (noResults) return generalStrings.could_not_find_patient;
+  if (error) return generalStrings.error_communicating_with_server;
+  return generalStrings.enter_patient_details;
+};
+
+const EmptyComponent = ({ loading, error, searchedWithNoResults }) => (
+  <FlexView flex={1} justifyContent="center" alignItems="center" style={{ marginTop: 20 }}>
+    {loading ? (
+      <ActivityIndicator color={SUSSOL_ORANGE} size="small" />
+    ) : (
+      <Text style={{ fontFamily: APP_FONT_FAMILY, fontSize: APP_GENERAL_FONT_SIZE }}>
+        {getMessage(searchedWithNoResults, error)}
+      </Text>
+    )}
+  </FlexView>
+);
+
+const Header = ({ onSearchOnline, onNewPatient }) => (
+  <FlexRow justifyContent="center" alignItems="center">
+    <Text
+      style={{
+        fontFamily: APP_FONT_FAMILY,
+        color: DARKER_GREY,
+        fontSize: 14,
+      }}
+    >
+      {vaccineStrings.vaccine_dispense_step_one_title}
+    </Text>
+    <View style={{ flex: 1, marginLeft: 'auto' }} />
+    <PageButton style={{ height: 10 }} text="Search online" onPress={onSearchOnline} />
+    <PageButton
+      style={{ height: 10 }}
+      text={`${dispensingStrings.new} ${dispensingStrings.patient}`}
+      onPress={onNewPatient}
+    />
+  </FlexRow>
+);
+
+Header.propTypes = {
+  onSearchOnline: PropTypes.func.isRequired,
+  onNewPatient: PropTypes.func.isRequired,
+};
+
+EmptyComponent.propTypes = {
+  loading: PropTypes.bool.isRequired,
+  error: PropTypes.object.isRequired,
+  searchedWithNoResults: PropTypes.bool.isRequired,
+};
+
 const PatientSelectComponent = ({
   createPatient,
   formConfig,
   onCancelPrescription,
-  onFilterData,
-  patients,
   selectPatient,
   updateForm,
+  completedForm,
 }) => {
+  const [
+    { data, loading, searchedWithNoResults, error },
+    onSearchOnline,
+    filter,
+  ] = useLocalAndRemotePatients([]);
+
   const columns = React.useMemo(() => getColumns(MODALS.PATIENT_LOOKUP), []);
   const { pageTopViewContainer } = globalStyles;
   const keyboardIsOpen = useKeyboardIsOpen();
-  const debouncedFilter = useDebounce(onFilterData, 300);
+
   const handleUpdate = (key, value) => {
     updateForm(key, value);
-    debouncedFilter(key, value);
+    filter({ ...completedForm, [key]: value });
   };
 
   return (
@@ -78,6 +141,13 @@ const PatientSelectComponent = ({
         style={{ flex: 6 }}
         contentContainerStyle={{ flex: 1 }}
         headerText={vaccineStrings.vaccine_dispense_step_one_title}
+        Header={
+          // eslint-disable-next-line react/jsx-wrap-multilines
+          <Header
+            onSearchOnline={() => onSearchOnline(completedForm)}
+            onNewPatient={createPatient}
+          />
+        }
       >
         <AfterInteractions placeholder={null}>
           <View style={localStyles.container}>
@@ -92,19 +162,26 @@ const PatientSelectComponent = ({
             </View>
 
             <View style={localStyles.listContainer}>
-              <SimpleTable selectRow={selectPatient} data={patients} columns={columns} />
+              <SimpleTable
+                selectRow={selectPatient}
+                data={data}
+                columns={columns}
+                ListEmptyComponent={
+                  // eslint-disable-next-line react/jsx-wrap-multilines
+                  <EmptyComponent
+                    searchedWithNoResults={searchedWithNoResults}
+                    error={error}
+                    loading={loading}
+                  />
+                }
+              />
             </View>
           </View>
         </AfterInteractions>
       </Paper>
       {!keyboardIsOpen && (
-        <FlexRow flex={0} style={{ bottom: 0 }} justifyContent="flex-end" alignItems="flex-end">
+        <FlexRow>
           <PageButtonWithOnePress text={buttonStrings.cancel} onPress={onCancelPrescription} />
-          <PageButton
-            text={`${dispensingStrings.new} ${dispensingStrings.patient}`}
-            onPress={createPatient}
-            style={{ marginLeft: 'auto' }}
-          />
         </FlexRow>
       )}
     </FlexView>
@@ -112,21 +189,22 @@ const PatientSelectComponent = ({
 };
 
 const mapDispatchToProps = dispatch => {
+  const searchOnline = searchParams => dispatch(NameActions.fetchPatients(searchParams));
   const onSortData = sortKey => dispatch(NameActions.sort(sortKey));
   const onCancelPrescription = () => dispatch(VaccinePrescriptionActions.cancel());
-  const onFilterData = (key, value) => dispatch(NameActions.filter(key, value));
   const selectPatient = patient =>
     batch(() => {
       Keyboard.dismiss();
       dispatch(NameActions.select(patient));
-      dispatch(NameNoteActions.createSurveyNameNote(patient?.id));
+      dispatch(NameNoteActions.createSurveyNameNote(patient));
       dispatch(WizardActions.nextTab());
     });
   const createPatient = () =>
     batch(() => {
       const id = generateUUID();
-      dispatch(NameActions.create(id));
-      dispatch(NameNoteActions.createSurveyNameNote(id));
+      const patient = createDefaultName('patient', id);
+      dispatch(NameActions.create(patient));
+      dispatch(NameNoteActions.createSurveyNameNote(patient));
       dispatch(WizardActions.nextTab());
     });
   const updateForm = (key, value) => dispatch(FormActions.updateForm(key, value));
@@ -135,9 +213,9 @@ const mapDispatchToProps = dispatch => {
     createPatient,
     onCancelPrescription,
     onSortData,
-    onFilterData,
     selectPatient,
     updateForm,
+    searchOnline,
   };
 };
 
@@ -145,23 +223,22 @@ const mapStateToProps = state => {
   const patientState = selectSpecificEntityState(state, 'name');
   const { searchTerm, sortKey, isAscending } = patientState;
 
+  const completedForm = selectCompletedForm(state);
   const formConfig = selectPatientSearchFormConfig();
-  const patients = selectSortedPatients(state);
 
   return {
+    completedForm,
     formConfig,
     searchTerm,
     sortKey,
     isAscending,
-    patients,
   };
 };
 
 PatientSelectComponent.propTypes = {
+  completedForm: PropTypes.object.isRequired,
   selectPatient: PropTypes.func.isRequired,
   formConfig: PropTypes.array.isRequired,
-  patients: PropTypes.object.isRequired,
-  onFilterData: PropTypes.func.isRequired,
   createPatient: PropTypes.func.isRequired,
   onCancelPrescription: PropTypes.func.isRequired,
   updateForm: PropTypes.func.isRequired,
