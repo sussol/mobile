@@ -94,7 +94,7 @@ const Header = ({ onSearchOnline, onNewPatient }) => (
     <View style={{ flex: 1, marginLeft: 'auto' }} />
     <PageButton style={{ height: 10 }} text="Search online" onPress={onSearchOnline} />
     <PageButton
-      style={{ height: 10 }}
+      style={{ height: 10, marginLeft: 10 }}
       text={`${dispensingStrings.new} ${dispensingStrings.patient}`}
       onPress={onNewPatient}
     />
@@ -108,7 +108,7 @@ Header.propTypes = {
 
 EmptyComponent.propTypes = {
   loading: PropTypes.bool.isRequired,
-  error: PropTypes.object.isRequired,
+  error: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]).isRequired,
   searchedWithNoResults: PropTypes.bool.isRequired,
 };
 
