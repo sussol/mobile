@@ -47,21 +47,6 @@ import { DARKER_GREY, SUSSOL_ORANGE } from '../../globalStyles/colors';
 import { useLocalAndRemotePatients } from '../../hooks/useLocalAndRemotePatients';
 import { APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from '../../globalStyles/fonts';
 
-/**
- * Layout component used for a tab within the vaccine prescription wizard.
- *
- * @prop {Func}   createPatient         Callback for creating a patient.
- * @prop {object} formConfig            Configuration of the search form
- * @prop {Bool}   isAscending           Indicator if the list of patient is sorted ascending.
- * @prop {Func}   onCancelPrescription  Cancels the prescription and returns to the vaccine page
- * @prop {Func}   onFilterData          Callback for filtering patients.
- * @prop {Func}   onSortData            Callback for sorting patients by column.
- * @prop {Func}   patients              Current set of patient data.
- * @prop {Func}   selectPatient         Callback for selecting a patient.
- * @prop {String} sortKey               Current key the list of patients is sorted by.
- *
- */
-
 const getMessage = (noResults, error) => {
   if (noResults) return generalStrings.could_not_find_patient;
   if (error) return generalStrings.error_communicating_with_server;
@@ -82,15 +67,7 @@ const EmptyComponent = ({ loading, error, searchedWithNoResults }) => (
 
 const Header = ({ onSearchOnline, onNewPatient }) => (
   <FlexRow justifyContent="center" alignItems="center">
-    <Text
-      style={{
-        fontFamily: APP_FONT_FAMILY,
-        color: DARKER_GREY,
-        fontSize: 14,
-      }}
-    >
-      {vaccineStrings.vaccine_dispense_step_one_title}
-    </Text>
+    <Text style={localStyles.text}>{vaccineStrings.vaccine_dispense_step_one_title}</Text>
     <View style={{ flex: 1, marginLeft: 'auto' }} />
     <PageButton style={{ height: 10 }} text="Search online" onPress={onSearchOnline} />
     <PageButton
@@ -112,6 +89,20 @@ EmptyComponent.propTypes = {
   searchedWithNoResults: PropTypes.bool.isRequired,
 };
 
+/**
+ * Layout component used for a tab within the vaccine prescription wizard.
+ *
+ * @prop {Func}   createPatient         Callback for creating a patient.
+ * @prop {object} formConfig            Configuration of the search form
+ * @prop {Bool}   isAscending           Indicator if the list of patient is sorted ascending.
+ * @prop {Func}   onCancelPrescription  Cancels the prescription and returns to the vaccine page
+ * @prop {Func}   onFilterData          Callback for filtering patients.
+ * @prop {Func}   onSortData            Callback for sorting patients by column.
+ * @prop {Func}   patients              Current set of patient data.
+ * @prop {Func}   selectPatient         Callback for selecting a patient.
+ * @prop {String} sortKey               Current key the list of patients is sorted by.
+ *
+ */
 const PatientSelectComponent = ({
   createPatient,
   formConfig,
@@ -267,5 +258,10 @@ const localStyles = StyleSheet.create({
     flex: 3,
     flexDirection: 'row',
     backgroundColor: 'white',
+  },
+  text: {
+    fontFamily: APP_FONT_FAMILY,
+    color: DARKER_GREY,
+    fontSize: 14,
   },
 });
