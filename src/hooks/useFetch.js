@@ -30,6 +30,7 @@ export const useFetch = (baseUrl, baseInit = {}, baseOpts = {}) => {
   const isMounted = () => _isMounted.current;
   const isUnblocked = () => !_isBlocked.current;
 
+  const [hasFetched, setHasFetched] = useProtectedState(false, isMounted);
   const [isLoading, setIsLoading] = useProtectedState(false, isMounted);
   const [response, setResponse] = useProtectedState(null, isMounted);
   const [error, setError] = useProtectedState(null, isMounted);
@@ -69,6 +70,7 @@ export const useFetch = (baseUrl, baseInit = {}, baseOpts = {}) => {
     };
 
     const afterFetch = () => {
+      setHasFetched(true);
       _isBlocked.current = false;
       _controller.current = null;
       clearTimeout(_timer.current);
@@ -79,6 +81,7 @@ export const useFetch = (baseUrl, baseInit = {}, baseOpts = {}) => {
       try {
         beforeFetch();
         const res = await tryFetch();
+
         onResponse(res);
       } catch (err) {
         onError(err);
@@ -95,5 +98,5 @@ export const useFetch = (baseUrl, baseInit = {}, baseOpts = {}) => {
     setError(null);
   };
 
-  return { fetch, refresh, isLoading, response, error };
+  return { fetch, refresh, isLoading, response, error, hasFetched };
 };
