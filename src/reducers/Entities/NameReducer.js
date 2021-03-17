@@ -42,7 +42,11 @@ export const NameReducer = (state = initialState(), action) => {
       const { payload } = action;
       const { name } = payload;
 
-      return { ...state, editing: name.toJSON() };
+      // A name can be either a realm object, or a plain object if looked up through the
+      // patient API.
+      const asPlainObject = name.toJSON ? name.toJSON() : name;
+
+      return { ...state, editing: asPlainObject };
     }
 
     case NAME_ACTIONS.UPDATE: {
