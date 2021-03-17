@@ -1,6 +1,6 @@
 import Ajv from 'ajv';
 import { generateUUID } from 'react-native-database';
-import moment from '../../../node_modules/moment/moment';
+import moment from 'moment';
 import { createRecord, UIDatabase } from '../../database/index';
 import { selectCreatingNameNote } from '../../selectors/Entities/nameNote';
 import { selectSurveySchemas } from '../../selectors/formSchema';
