@@ -11,9 +11,10 @@ export const NAME_ACTIONS = {
   FILTER: 'NAME/filter',
   SORT: 'NAME/sort',
   SAVE: 'NAME/save',
+  FETCH_SUCCESS: 'NAME/fetchSuccess',
 };
 
-const createDefaultName = (type = 'patient', id) => ({
+export const createDefaultName = (type = 'patient', id) => ({
   id: id ?? generateUUID(),
   code: '',
   isCustomer: false,
@@ -25,9 +26,9 @@ const createDefaultName = (type = 'patient', id) => ({
   type,
 });
 
-const create = (type, id) => ({
+const create = name => ({
   type: NAME_ACTIONS.CREATE,
-  payload: { name: createDefaultName(type, id) },
+  payload: { name },
 });
 
 const reset = () => ({
@@ -42,13 +43,12 @@ const update = (id, field, value) => ({
 const updatePatient = detailsEntered => (dispatch, getState) => {
   const currentPatient = selectEditingName(getState());
   const { id } = currentPatient || {};
-  const currentKeys = Object.keys(currentPatient);
 
   if (!id) return;
 
   batch(() => {
     Object.entries(detailsEntered).forEach(([key, value]) => {
-      if (currentKeys.includes(key) && currentPatient[key] !== value) {
+      if (currentPatient[key] !== value) {
         dispatch(update(id, key, value));
       }
     });
