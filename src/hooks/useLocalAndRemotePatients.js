@@ -57,6 +57,13 @@ const reducer = (state, action) => {
   }
 };
 
+/**
+ * Hook to help a component to be able to find patients in the local database or through the
+ * patient lookup API.
+ *
+ * Merges the states such that there is a single state value for 'data', 'loading' etc, rather than
+ * having to track multiple.
+ */
 export const useLocalAndRemotePatients = (initialValue = []) => {
   const syncUrl = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL);
 
@@ -137,17 +144,24 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
     return dispatch({ type: 'fetch_no_results' });
   };
 
+  // Throttle the get local patients such that the method will only be called 1/2 a second
+  // after the last invocation, so when typing there is not constant queries happening each
+  // press as there are potentially 100,00's of thousands of patients.
   const throttledGetLocalPatients = useThrottled(getLocalPatients, 500, [], {
     leading: false,
     trailing: true,
   });
 
+  // getLocalPatients is throttled- ensure that the fetch_start action is still dispatched
+  // on the first invocation so the loading state is changed.
+  const getLocalPatientsWrapper = searchParameters => {
+    dispatch({ type: 'fetch_start' });
+    throttledGetLocalPatients(searchParameters);
+  };
+
   return [
     { data, loading, searchedWithNoResults, error },
     onPressSearchOnline,
-    params => {
-      dispatch({ type: 'fetch_start' });
-      throttledGetLocalPatients(params);
-    },
+    getLocalPatientsWrapper,
   ];
 };
