@@ -19,7 +19,7 @@ import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
 import { createPrescription } from '../navigation/actions';
 import { useNavigationFocus, useSyncListener, useDebounce } from '../hooks';
 
-import { UIDatabase } from '../database';
+import { UIDatabase, generateUUID } from '../database';
 import { getFormInputConfig } from '../utilities/formInputConfigs';
 
 import { PatientActions } from '../actions/PatientActions';
@@ -41,6 +41,7 @@ import { dispensingStrings } from '../localization';
 import { PatientEditModal } from '../widgets/modalChildren/PatientEditModal';
 import { selectSurveySchemas } from '../selectors/formSchema';
 import { NameNoteActions } from '../actions/Entities/NameNoteActions';
+import { createDefaultName } from '../actions/Entities/NameActions';
 
 const Dispensing = ({
   data,
@@ -349,10 +350,16 @@ const mapDispatchToProps = dispatch => ({
 
   editPatient: patient =>
     batch(() => {
-      dispatch(NameNoteActions.createSurveyNameNote(patient));
+      dispatch(NameNoteActions.createSurveyNameNote(UIDatabase.get('Name', patient)));
       dispatch(PatientActions.editPatient(UIDatabase.get('Name', patient)));
     }),
-  createPatient: () => dispatch(PatientActions.createPatient()),
+  createPatient: () =>
+    batch(() => {
+      const patient = createDefaultName('patient', generateUUID());
+      dispatch(PatientActions.createPatient(patient));
+      dispatch(NameNoteActions.createSurveyNameNote(patient));
+    }),
+
   cancelPatientEdit: () => dispatch(PatientActions.closeModal()),
   viewPatientHistory: rowKey =>
     dispatch(PatientActions.viewPatientHistory(UIDatabase.get('Name', rowKey))),
