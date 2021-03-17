@@ -348,10 +348,11 @@ const mapDispatchToProps = dispatch => ({
   lookupRecord: () => dispatch(DispensaryActions.openLookupModal()),
   cancelLookupRecord: () => dispatch(DispensaryActions.closeLookupModal()),
 
-  editPatient: patient =>
+  editPatient: patientID =>
     batch(() => {
-      dispatch(NameNoteActions.createSurveyNameNote(UIDatabase.get('Name', patient)));
-      dispatch(PatientActions.editPatient(UIDatabase.get('Name', patient)));
+      const patient = UIDatabase.get('Name', patientID);
+      dispatch(NameNoteActions.createSurveyNameNote(patient));
+      dispatch(PatientActions.editPatient(patient));
     }),
   createPatient: () =>
     batch(() => {
