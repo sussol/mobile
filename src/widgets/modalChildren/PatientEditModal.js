@@ -118,7 +118,7 @@ PatientEditModalComponent.propTypes = {
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
   const { completedForm } = stateProps;
-  const { onOpen, onSave, onSaveSurvey, ...otherDispatchProps } = dispatchProps;
+  const { onSave, onSaveSurvey, ...otherDispatchProps } = dispatchProps;
   const { surveySchema } = ownProps;
 
   const onSaveForm = () => {
@@ -143,7 +143,6 @@ const stateToProps = state => {
 };
 
 const dispatchToProps = dispatch => ({
-  onOpen: patient => dispatch(NameNoteActions.createSurveyNameNote(patient)),
   onSaveSurvey: optionalNameID => dispatch(NameNoteActions.saveEditing(optionalNameID)),
   onUpdateForm: (form, validator) => dispatch(NameNoteActions.updateForm(form, validator)),
   onSave: patientDetails => dispatch(PatientActions.patientUpdate(patientDetails)),
