@@ -1,5 +1,6 @@
 import Ajv from 'ajv';
 import { generateUUID } from 'react-native-database';
+import moment from '../../../node_modules/moment/moment';
 import { createRecord, UIDatabase } from '../../database/index';
 import { selectCreatingNameNote } from '../../selectors/Entities/nameNote';
 import { selectSurveySchemas } from '../../selectors/formSchema';
@@ -43,12 +44,29 @@ const createDefaultNameNote = (nameID = '') => {
   };
 };
 
-const createSurveyNameNote = nameID => (dispatch, getState) => {
-  const name = UIDatabase.get('Name', nameID);
+const getMostRecentPCD = patient => {
+  const [pcdEvent] = UIDatabase.objects('PCDEvents');
+  if (!pcdEvent) return null;
 
+  const { id: pcdEventID } = pcdEvent;
+  const { nameNotes = [] } = patient ?? {};
+  if (!nameNotes.length) return null;
+
+  const filtered = nameNotes.filter(({ patientEventID }) => patientEventID === pcdEventID);
+  if (!filtered.length) return null;
+
+  const sorted = filtered.sort(
+    ({ entryDate: entryDateA }, { entryDate: entryDateB }) =>
+      moment(entryDateB).valueOf() - moment(entryDateA).valueOf()
+  );
+  const [mostRecentPCD] = sorted;
+  return mostRecentPCD;
+};
+
+const createSurveyNameNote = patient => (dispatch, getState) => {
   // Create the seed PCD, which is either their most recently filled survey or
   // and empty object.
-  const seedPCD = name?.mostRecentPCD ?? createDefaultNameNote(nameID);
+  const seedPCD = getMostRecentPCD(patient) ?? createDefaultNameNote(patient.id);
 
   // Get the survey schema as we need an initial validation to determine if
   // the seed has any fields which are required to be filled.
