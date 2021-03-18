@@ -15,6 +15,10 @@ export class NameNote extends Realm.Object {
     this._data = JSON.stringify(newValue);
   }
 
+  get patientEventID() {
+    return this.patientEvent?.id;
+  }
+
   toObject() {
     return {
       id: this.id,

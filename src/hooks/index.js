@@ -24,3 +24,4 @@ export { useConditionalAnimationRef } from './useConditionalAnimationRef';
 export { useIsMounted } from './useIsMounted';
 export { useMountProtectedState } from './useMountProtectedState';
 export { useAfterInteractions } from './useAfterInteractions';
+export { useThrottled } from './useThrottled';

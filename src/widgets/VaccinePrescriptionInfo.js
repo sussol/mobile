@@ -40,14 +40,14 @@ WithLabel.propTypes = {
 };
 
 const VaccinatorDropDown = ({ value, onChange }) => {
-  const ma = UIDatabase.objects('MedicineAdministrator');
-  const values = ma.map(({ displayString }) => displayString);
+  const medicineAdmins = UIDatabase.objects('MedicineAdministrator').sorted('lastName');
+  const values = medicineAdmins.map(({ displayString }) => displayString);
 
   return (
     <DropDown
       style={styles.dropdown}
       values={values}
-      onValueChange={(_, i) => onChange(ma[i])}
+      onValueChange={(_, i) => onChange(medicineAdmins[i])}
       selectedValue={value?.displayString}
     />
   );

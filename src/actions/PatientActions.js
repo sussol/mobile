@@ -18,7 +18,7 @@ export const PATIENT_ACTIONS = {
 };
 
 const closeModal = () => ({ type: PATIENT_ACTIONS.COMPLETE });
-const createPatient = () => ({ type: PATIENT_ACTIONS.PATIENT_CREATION });
+const createPatient = patient => ({ type: PATIENT_ACTIONS.PATIENT_CREATION, payload: { patient } });
 
 const editPatient = patient => ({
   type: PATIENT_ACTIONS.PATIENT_EDIT,
