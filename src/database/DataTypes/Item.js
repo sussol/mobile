@@ -237,37 +237,14 @@ export class Item extends Realm.Object {
     return this.totalQuantity + reductions - additions;
   }
 
-  /**
-   * A vaccine item can have multiple doses per 'unit' or 'pack'. For example, you can have
-   * a single vaccine which has two doses. Once a vaccine has been opened, the doses must be
-   * given quickly. When recording outgoing stock, the doses and quantity (or number of packs)
-   * are recorded separately. The amount of open vial wastage (that is, the amount of doses
-   * which are left in a vial and wasted) is the difference between the total number of 'packs'
-   * that are outgoing, multiplied by the amount of doses in each pack and the total number of
-   * doses actually given.
-   *
-   * @param  {Date} fromDate The date to calculate the open vial wastage from.
-   * @return {Number} the number of DOSES wasted.
-   */
   openVialWastage(fromDate) {
     if (!this.isVaccine || !fromDate) return 0;
 
-    const customerInvoiceTransactionItems = this.transactionItems.filtered(
-      "transaction.confirmDate >= $0 && transaction.type == 'customer_invoice'",
-      fromDate
-    );
-
-    const totalDosesPossible = customerInvoiceTransactionItems.reduce(
-      (dosesPossible, { batches }) => dosesPossible + batches.sum('numberOfPacks') * this.doses,
-      0
-    );
-
-    const totalDosesGiven = customerInvoiceTransactionItems.reduce(
-      (dosesGiven, { batches }) => dosesGiven + batches.sum('doses'),
-      0
-    );
-
-    return totalDosesPossible - totalDosesGiven;
+    return UIDatabase.objects('TransactionBatch')
+      .filtered("transaction.otherParty.code == 'invad'")
+      .filtered("option.type == 'openVialWastage'")
+      .filtered('transaction.confirmDate >= $0', fromDate)
+      .sum('doses');
   }
 
   /**

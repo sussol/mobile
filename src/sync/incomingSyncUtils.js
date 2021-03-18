@@ -286,6 +286,34 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: ['ID', 'name_ID', 'name_tag_ID'],
       canBeBlank: [],
     },
+    Occupation: {
+      cannotBeBlank: [],
+      canBeBlank: ['name'],
+    },
+    Ethnicity: {
+      cannotBeBlank: [],
+      canBeBlank: ['name'],
+    },
+    Nationality: {
+      cannotBeBlank: [],
+      canBeBlank: ['description'],
+    },
+    NameNote: {
+      cannotBeBlank: [],
+      canBeBlank: ['entry_date', 'data', 'name'],
+    },
+    PatientEvent: {
+      cannotBeBlank: [],
+      canBeBlank: ['code', 'description', 'event_type', 'unit'],
+    },
+    FormSchema: {
+      cannotBeBlank: [],
+      canBeBlank: ['json_schema', 'ui_schema', 'type', 'version'],
+    },
+    MedicineAdministrator: {
+      cannotBeBlank: [],
+      canBeBlank: ['first_name', 'last_name', 'code'],
+    },
   };
 
   if (!requiredFields[recordType]) return false; // Unsupported record type
@@ -323,6 +351,16 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
   let internalRecord;
 
   switch (recordType) {
+    case 'FormSchema': {
+      database.update('FormSchema', {
+        id: record.ID,
+        _jsonSchema: record.json_schema,
+        _uiSchema: record.ui_schema,
+        version: Number(record.version),
+        type: record.type,
+      });
+      break;
+    }
     case 'IndicatorAttribute': {
       const indicator = database.getOrCreate('ProgramIndicator', record.indicator_ID);
       const indicatorAttribute = database.update(recordType, {
@@ -561,6 +599,9 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         firstName: record.first,
         lastName: record.last,
         dateOfBirth: parseDate(record.date_of_birth),
+        nationality: database.getOrCreate('Nationality', record.nationality_ID),
+        occupation: database.getOrCreate('Occupation', record.occupation_ID),
+        ethnicity: database.getOrCreate('Ethnicity', record.ethnicity_ID),
       };
 
       if (isPatient) internalRecord.isVisible = true;
@@ -877,6 +918,10 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
           record.vaccine_vial_monitor_status_ID
         ),
         sentPackSize: parseNumber(record.sent_pack_size) || packSize,
+        medicineAdministrator: database.getOrCreate(
+          'MedicineAdministrator',
+          record.medicine_administrator_ID
+        ),
       };
       const transactionBatch = database.update(recordType, internalRecord);
       transaction.addBatchIfUnique(database, transactionBatch);
@@ -1081,6 +1126,56 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       });
       break;
     }
+    case 'Nationality': {
+      database.update('Nationality', {
+        id: record.ID,
+        description: record.description,
+      });
+      break;
+    }
+    case 'Occupation': {
+      database.update('Occupation', {
+        id: record.ID,
+        name: record.name,
+      });
+      break;
+    }
+    case 'Ethnicity': {
+      database.update('Ethnicity', {
+        id: record.ID,
+        name: record.name,
+      });
+      break;
+    }
+    case 'NameNote': {
+      database.update('NameNote', {
+        id: record.ID,
+        patientEvent: database.getOrCreate('PatientEvent', record.patient_event_ID),
+        entryDate: parseDate(record.entry_date),
+        data: record._data,
+        name: database.getOrCreate('Name', record.name_ID),
+      });
+      break;
+    }
+    case 'PatientEvent': {
+      database.update('PatientEvent', {
+        id: record.ID,
+        code: record.code,
+        description: record.description,
+        eventType: record.event_type,
+        unit: record.unit,
+      });
+      break;
+    }
+    case 'MedicineAdministrator': {
+      database.update('MedicineAdministrator', {
+        id: record.ID,
+        firstName: record.first_name,
+        lastName: record.last_name,
+        code: record.code,
+      });
+      break;
+    }
     default:
       break; // Silently ignore record types which are not used by mobile.
   }
@@ -1088,7 +1183,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
 
 /**
  * Take the data from a sync record, and integrate it into the local database as
- * the given |recordType|. If create or update and the id mathces, will update an
+ * the given |recordType|. If create or update and the id matches, will update an
  * existing record, otherwise create a new one if not. If delete, clean up/delete.
  *
  * @param   {Realm}   database    The local database.

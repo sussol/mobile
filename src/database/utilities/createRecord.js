@@ -228,6 +228,8 @@ const createPatient = (database, patientDetails) => {
     female: patientFemale,
     supplyingStoreId: patientSupplyingStoreId,
     isActive: patientIsActive,
+    nationality,
+    ethnicity,
   } = patientDetails;
 
   const id = patientId ?? generateUUID();
@@ -285,6 +287,8 @@ const createPatient = (database, patientDetails) => {
     thisStoresPatient,
     isActive,
     isVisible,
+    nationality,
+    ethnicity,
   });
   return patient;
 };
@@ -1152,6 +1156,24 @@ const createUpgradeMessage = (database, fromVersion, toVersion) => {
   return message;
 };
 
+const createNameNote = (database, nameNote, patientEventID, nameID) => {
+  const name = UIDatabase.get('Name', nameID);
+  const patientEvent = UIDatabase.get('PatientEvent', patientEventID);
+
+  if (name && patientEvent) {
+    const toSave = {
+      id: nameNote.id,
+      patientEvent,
+      name,
+      _data: JSON.stringify(nameNote?.data),
+      entryDate: new Date(nameNote?.entryDate),
+    };
+
+    return database.create('NameNote', toSave);
+  }
+  return null;
+};
+
 /**
  * Create a record of the given type, taking care of linkages, generating IDs, serial
  * numbers, current dates, and inserting sensible defaults.
@@ -1241,6 +1263,8 @@ export const createRecord = (database, type, ...args) => {
       return createTemperatureBreach(database, ...args);
     case 'TemperatureBreachConfiguration':
       return createTemperatureBreachConfiguration(database, ...args);
+    case 'NameNote':
+      return createNameNote(database, ...args);
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }

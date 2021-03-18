@@ -46,7 +46,6 @@ export class LoginModal extends React.Component {
     this.setAppVersion();
     this.passwordInputRef = null;
     this.errorTimeoutId = null;
-    this.onLogin();
   }
 
   // eslint-disable-next-line camelcase, react/sort-comp

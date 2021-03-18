@@ -1,18 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, InteractionManager } from 'react-native';
-
+import { ActivityIndicator } from 'react-native';
 import { FlexView } from './FlexView';
 import { SUSSOL_ORANGE } from '../globalStyles/index';
+import { useAfterInteractions } from '../hooks/useAfterInteractions';
 
 export const AfterInteractions = ({ children, placeholder }) => {
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    InteractionManager.runAfterInteractions(() => {
-      setReady(true);
-    });
-  }, []);
+  const ready = useAfterInteractions();
 
   return ready ? (
     children

@@ -99,6 +99,9 @@ const generateSyncData = (settings, recordType, record) => {
         'charge code': record.code,
         currency_id: defaultCurrency?.id ?? '',
         female: String(record.female),
+        nationality_ID: record.nationality?.id ?? '',
+        occupation_ID: record.occupation?.id ?? '',
+        ethnicity_ID: record.ethnicity?.id ?? '',
       };
     }
     case 'NumberSequence': {
@@ -266,6 +269,7 @@ const generateSyncData = (settings, recordType, record) => {
         doses: String(record.doses),
         location_ID: record.location?.id,
         vaccine_vial_monitor_status_ID: record.vaccineVialMonitorStatus?.id,
+        medicine_administrator_id: record.medicineAdministrator?.id ?? '',
         sent_pack_size: String(record.sentPackSize),
       };
     }
@@ -404,6 +408,16 @@ const generateSyncData = (settings, recordType, record) => {
         store_ID: settings.get(THIS_STORE_ID),
       };
     }
+    case 'NameNote': {
+      return {
+        ID: record.id,
+        patient_event_ID: record.patientEvent?.id ?? '',
+        name_ID: record.name?.id ?? '',
+        entry_date: getDateString(record.entryDate),
+        data: record.data,
+      };
+    }
+
     default:
       throw new Error('Sync out record type not supported.');
   }

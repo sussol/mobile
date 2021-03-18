@@ -148,7 +148,6 @@ const sortSensors = (s1, s2) => {
 
 const stateToProps = state => {
   const sensors = selectActiveSensors(state).sort(sortSensors);
-
   return { sensors };
 };
 

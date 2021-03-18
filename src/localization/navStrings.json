@@ -11,7 +11,7 @@
     "customers": "Customers",
     "dashboard": "Dashboard",
     "database_contents": "Database Contents",
-    "dispensary": "Dispensary",
+    "dispensary": "Dispensing",
     "finalise": "FINALISE",
     "finalised_cannot_be_edited": "FINALISED. CANNOT BE EDITED",
     "invoice": "Invoice",
@@ -27,8 +27,9 @@
     "supplier_credit": "Supplier Credit",
     "supplier_invoices": "Supplier Invoices",
     "supplier_requisitions": "Supplier Requisitions",
-    "vaccines": "Vaccines",
-    "vaccine_admin": "Vaccines admin"
+    "vaccines": "Cold Chain",
+    "vaccine_admin": "Vaccines admin",
+    "vaccine_dispensary": "Vaccinations"
   },
   "fr": {
     "supplier_credit": "Crédit Fournisseur",

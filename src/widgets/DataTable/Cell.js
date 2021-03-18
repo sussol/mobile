@@ -18,8 +18,14 @@ import { getAdjustedStyle } from './utilities';
  */
 const Cell = React.memo(
   ({ value, textStyle, viewStyle, width, isLastCell, numberOfLines, debug }) => {
+    // eslint-disable-next-line no-console
     if (debug) console.log(`- Cell: ${value}`);
     const internalViewStyle = getAdjustedStyle(viewStyle, width, isLastCell);
+
+    // When cell values can be floats, cut them off at two DP
+    if (typeof value === 'number' && !Number.isInteger(value)) {
+      value = value?.toFixed?.(2);
+    }
 
     return (
       <View style={internalViewStyle}>

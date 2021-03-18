@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { TouchableOpacity as TouchableHighlight, StyleSheet, View, Text } from 'react-native';
+import { TouchableHighlight, StyleSheet, View, Text } from 'react-native';
 import PropTypes from 'prop-types';
 
 import globalStyles from '../globalStyles/index';
@@ -32,6 +32,7 @@ export const IconButton = ({
   labelStyle,
   right,
   hitSlop,
+  underlayColor,
 }) => {
   const internalLabelStyle = [localStyles.label, globalStyles.authWindowButtonText, labelStyle];
   const buttonContainerStyle = [localStyles.buttonContainer, containerStyle];
@@ -44,10 +45,13 @@ export const IconButton = ({
       onPress={onPress}
       hitSlop={hitSlop}
       style={buttonContainerStyle}
+      underlayColor={underlayColor}
     >
-      {!right && Icon}
-      {label && <Text style={internalLabelStyle}>{label}</Text>}
-      {right && Icon}
+      <>
+        {!right && Icon}
+        {label && <Text style={internalLabelStyle}>{label}</Text>}
+        {right && Icon}
+      </>
     </Container>
   );
 };
@@ -62,6 +66,7 @@ IconButton.defaultProps = {
   labelStyle: {},
   right: false,
   hitSlop: {},
+  underlayColor: 'none',
 };
 
 IconButton.propTypes = {
@@ -80,6 +85,7 @@ IconButton.propTypes = {
   isDisabled: PropTypes.bool,
   label: PropTypes.string,
   right: PropTypes.bool,
+  underlayColor: PropTypes.string,
 };
 
 const localStyles = StyleSheet.create({

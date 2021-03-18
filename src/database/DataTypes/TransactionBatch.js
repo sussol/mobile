@@ -124,8 +124,10 @@ export class TransactionBatch extends Realm.Object {
     this.numberOfPacks = this.packSize ? quantity / this.packSize : 0;
 
     // Do the same for the doses, which is used for items which have multiple doses per 'pack'.
+
     const dosesDifference = this.dosesPerVial * this.numberOfPacks - this.doses;
-    this.doses = this.numberOfPacks * this.dosesPerVial;
+
+    this.doses = Number((this.numberOfPacks * this.dosesPerVial).toFixed(2));
 
     // Recalculate a save the total price field of this batch
     this.total = this.totalPrice;
@@ -137,7 +139,9 @@ export class TransactionBatch extends Realm.Object {
       const inventoryDifference = this.transaction.isIncoming ? difference : -difference;
       const dosesAdjustment = this.transaction.isIncoming ? dosesDifference : -dosesDifference;
 
-      this.itemBatch.totalQuantity += inventoryDifference;
+      this.itemBatch.totalQuantity = Number(
+        (this.itemBatch.totalQuantity += inventoryDifference).toFixed(2)
+      );
       this.itemBatch.doses += dosesAdjustment;
 
       database.save('ItemBatch', this.itemBatch);
@@ -198,13 +202,6 @@ export class TransactionBatch extends Realm.Object {
     return quantity;
   }
 
-  setDoses(database, newValue) {
-    const maximumDosesPossible = this.dosesPerVial * this.totalQuantity;
-    this.doses = Math.min(newValue, maximumDosesPossible);
-
-    database.save('TransactionBatch', this);
-  }
-
   /**
    * Get string representation of transaction batch.
    *
@@ -257,6 +254,8 @@ TransactionBatch.schema = {
     doses: { type: 'double', default: 0 },
     vaccineVialMonitorStatus: { type: 'VaccineVialMonitorStatus', optional: true },
     sentPackSize: { type: 'double', default: 0 },
+    medicineAdministrator: { type: 'MedicineAdministrator', optional: true },
+    option: { type: 'Options', optional: true },
   },
 };
 

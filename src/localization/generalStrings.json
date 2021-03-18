@@ -1,5 +1,10 @@
 {
   "gb": {
+    "enter_patient_details": "Enter the patient's details to start searching for them",
+    "could_not_find_patient": "No patients found that match your search criteria",
+    "error_communicating_with_server": "There was a problem communicating with the server",
+    "select_an_item_before_choosing_the_batch ": "Select an item before choosing the batch",
+    "ok_and_next": "OK & Next",
     "remove": "Remove",
     "replace": "Replace",
     "select": "Select",

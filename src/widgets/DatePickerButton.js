@@ -32,12 +32,17 @@ export const DatePickerButton = ({
   maximumDate,
   minimumDate,
   isCircle,
+  isDisabled,
 }) => {
   const [datePickerIsOpen, openDatePicker, datePickerCallback] = useDatePicker(onDateChanged);
   const button = isCircle ? (
-    <CircleButton IconComponent={CalendarIcon} onPress={openDatePicker} />
+    <CircleButton isDisabled={isDisabled} IconComponent={CalendarIcon} onPress={openDatePicker} />
   ) : (
-    <IconButton Icon={<CalendarIcon color={DARK_GREY} />} onPress={openDatePicker} />
+    <IconButton
+      isDisabled={isDisabled}
+      Icon={<CalendarIcon color={DARK_GREY} />}
+      onPress={openDatePicker}
+    />
   );
 
   return (
@@ -61,6 +66,7 @@ DatePickerButton.defaultProps = {
   minimumDate: undefined,
   maximumDate: undefined,
   isCircle: true,
+  isDisabled: false,
 };
 
 DatePickerButton.propTypes = {
@@ -69,4 +75,5 @@ DatePickerButton.propTypes = {
   maximumDate: PropTypes.instanceOf(Date),
   minimumDate: PropTypes.instanceOf(Date),
   isCircle: PropTypes.bool,
+  isDisabled: PropTypes.bool,
 };

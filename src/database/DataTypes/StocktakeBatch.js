@@ -189,7 +189,8 @@ export class StocktakeBatch extends Realm.Object {
     const { type } = this.option;
 
     const positiveAdjustmentReason = type === 'positiveInventoryAdjustment';
-    const negativeAdjustmentReason = type === 'negativeInventoryAdjustment';
+    const negativeAdjustmentReason =
+      type === 'negativeInventoryAdjustment' || type === 'openVialWastage';
 
     const correctPositiveReason = positiveAdjustmentReason && this.hasPositiveAdjustment;
     const correctNegativeReason = negativeAdjustmentReason && this.hasNegativeAdjustment;
@@ -226,8 +227,8 @@ export class StocktakeBatch extends Realm.Object {
   }
 
   setDoses(database, newValue) {
-    const maximumDosesPossible = this.dosesPerVial * this.countedTotalQuantity;
-    this.doses = Math.min(newValue, maximumDosesPossible);
+    const newCountedTotalQuantity = Number(newValue / this.dosesPerVial).toFixed(2);
+    this.countedTotalQuantity = newCountedTotalQuantity;
     database.save('StocktakeBatch', this);
   }
 
@@ -252,7 +253,8 @@ export class StocktakeBatch extends Realm.Object {
     const { type: newOptionType } = newOption || {};
 
     const isPositiveAdjustmentReason = newOptionType === 'positiveInventoryAdjustment';
-    const isNegativeAdjustmentReason = newOptionType === 'negativeInventoryAdjustment';
+    const isNegativeAdjustmentReason =
+      newOptionType === 'negativeInventoryAdjustment' || newOptionType === 'openVialWastage';
 
     // Valid adjustments are when this batch has a difference in snapshot quantity and
     // counted quantity and if the difference is positive, the reason must be a positive
@@ -322,6 +324,7 @@ export class StocktakeBatch extends Realm.Object {
       const snapshotDifference = Math.abs(this.difference);
       transactionBatch.setTotalQuantity(database, snapshotDifference);
       transactionBatch.doses = this.doses;
+      transactionBatch.option = this.option;
       database.save('TransactionBatch', transactionBatch);
 
       if (!this.itemBatch.totalQuantity) this.itemBatch.leaveLocation(database);

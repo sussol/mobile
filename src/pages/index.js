@@ -27,3 +27,4 @@ export { VaccinePage } from './VaccinePage';
 export { FridgeDetailPage } from './FridgeDetailPage';
 export { SensorEditPage } from './SensorEditPage';
 export { NewSensorPage } from './NewSensor/NewSensorPage';
+export { VaccineDispensingPage } from './VaccineDispensingPage';

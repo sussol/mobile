@@ -38,6 +38,7 @@ const translateToCoreDatabaseType = type => {
     case 'ResponseRequisition':
       return 'Requisition';
     case 'RequisitionReason':
+    case 'OpenVialWastageReason':
     case 'NegativeAdjustmentReason':
     case 'PositiveAdjustmentReason':
       return 'Options';
@@ -48,6 +49,10 @@ const translateToCoreDatabaseType = type => {
     case 'PrescriptionCategory':
     case 'SupplierCreditCategory':
       return 'TransactionCategory';
+    case 'PCDEvents':
+      return 'PatientEvent';
+    case 'Vaccine':
+      return 'Item';
     default:
       return type;
   }
@@ -232,6 +237,8 @@ class UIDatabase {
         return results.filtered('type == "request"');
       case 'ResponseRequisition':
         return results.filtered('serialNumber != "-1" AND type == "response"');
+      case 'OpenVialWastageReason':
+        return results.filtered('type == $0 && isActive == true', 'openVialWastage');
       case 'NegativeAdjustmentReason':
         return results.filtered('type == $0 && isActive == true', 'negativeInventoryAdjustment');
       case 'PositiveAdjustmentReason':
@@ -242,6 +249,10 @@ class UIDatabase {
         return results.filtered('type == $0', 'supplier_credit');
       case 'RequisitionReason':
         return results.filtered('type == $0 && isActive == true', 'requisitionLineVariance');
+      case 'PCDEvents':
+        return results.filtered('code == "PCD"');
+      case 'Vaccine':
+        return results.filtered('isVaccine == true && isVisible == true');
       default:
         return results;
     }

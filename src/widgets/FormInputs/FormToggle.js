@@ -45,12 +45,12 @@ export const FormToggle = ({
   );
 
   return (
-    <FlexView flex={1}>
+    <FlexView flex={0} style={localStyles.container}>
       <FormLabel value={label} isRequired={isRequired} />
       <ToggleBar
         isDisabled={isDisabled}
         toggles={toggles}
-        style={localStyles.toggleMargin}
+        style={localStyles.container}
         toggleOnStyle={localStyles.toggleOnStyle}
         toggleOffStyle={localStyles.toggleOffStyle}
         toggleOnDisabledStyle={localStyles.toggleOnDisabledStyle}
@@ -60,19 +60,31 @@ export const FormToggle = ({
 };
 
 const localStyles = StyleSheet.create({
-  toggleMargin: { marginTop: 20 },
+  container: { borderWidth: 0, width: 150 },
   toggleOnStyle: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: SUSSOL_ORANGE,
+    borderRadius: 20,
+    margin: 5,
   },
-  toggleOffStyle: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  toggleOffStyle: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 20,
+    borderColor: SUSSOL_ORANGE,
+    borderWidth: 1,
+    margin: 5,
+  },
   toggleOnDisabledStyle: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: WARMER_GREY,
+    borderRadius: 20,
+    margin: 5,
   },
 });
 
