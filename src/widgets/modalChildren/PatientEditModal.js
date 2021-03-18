@@ -1,5 +1,5 @@
 /* eslint-disable react/forbid-prop-types */
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -11,7 +11,6 @@ import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
 import { selectNameNoteIsValid, selectCreatingNameNote } from '../../selectors/Entities/nameNote';
 import { selectCompletedForm } from '../../selectors/form';
 import { PatientActions } from '../../actions/PatientActions';
-import { generateUUID } from '../../database/index';
 import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
 import { generalStrings, modalStrings } from '../../localization/index';
 
@@ -22,62 +21,53 @@ export const PatientEditModalComponent = ({
   inputConfig,
   surveySchema,
   surveyForm,
-  onOpen,
   onUpdateForm,
   nameNoteIsValid,
-}) => {
-  useEffect(() => {
-    if (surveySchema) {
-      onOpen();
-    }
-  }, []);
-
-  return (
-    <FlexRow style={{ flexDirection: 'column' }} flex={1}>
-      <FlexRow flex={1}>
-        <FormControl
-          canSave={surveySchema ? nameNoteIsValid : true}
-          isDisabled={isDisabled}
-          onSave={onSaveForm}
-          onCancel={onCancel}
-          inputConfig={inputConfig}
-          showCancelButton={false}
-          showSaveButton={false}
-        />
-        {surveySchema && surveyForm && (
-          <View style={styles.formContainer}>
-            <JSONForm
-              surveySchema={surveySchema}
-              formData={surveyForm}
-              onChange={({ formData }, validator) => {
-                onUpdateForm(formData, validator);
-              }}
-            >
-              <></>
-            </JSONForm>
-          </View>
-        )}
-      </FlexRow>
-      <FlexRow flex={0} style={{ justifyContent: 'center' }}>
-        <View style={styles.buttonsRow}>
-          <PageButton
-            onPress={onSaveForm}
-            style={styles.saveButton}
-            isDisabled={!nameNoteIsValid || isDisabled}
-            textStyle={styles.saveButtonTextStyle}
-            text={generalStrings.save}
-          />
-          <PageButton
-            onPress={onCancel}
-            style={styles.cancelButton}
-            textStyle={styles.cancelButtonTextStyle}
-            text={modalStrings.cancel}
-          />
+}) => (
+  <FlexRow style={{ flexDirection: 'column' }} flex={1}>
+    <FlexRow flex={1}>
+      <FormControl
+        canSave={surveySchema ? nameNoteIsValid : true}
+        isDisabled={isDisabled}
+        onSave={onSaveForm}
+        onCancel={onCancel}
+        inputConfig={inputConfig}
+        showCancelButton={false}
+        showSaveButton={false}
+      />
+      {surveySchema && surveyForm && (
+        <View style={styles.formContainer}>
+          <JSONForm
+            surveySchema={surveySchema}
+            formData={surveyForm}
+            onChange={({ formData }, validator) => {
+              onUpdateForm(formData, validator);
+            }}
+          >
+            <></>
+          </JSONForm>
         </View>
-      </FlexRow>
+      )}
     </FlexRow>
-  );
-};
+    <FlexRow flex={0} style={{ justifyContent: 'center' }}>
+      <View style={styles.buttonsRow}>
+        <PageButton
+          onPress={onSaveForm}
+          style={styles.saveButton}
+          isDisabled={!nameNoteIsValid || isDisabled}
+          textStyle={styles.saveButtonTextStyle}
+          text={generalStrings.save}
+        />
+        <PageButton
+          onPress={onCancel}
+          style={styles.cancelButton}
+          textStyle={styles.cancelButtonTextStyle}
+          text={modalStrings.cancel}
+        />
+      </View>
+    </FlexRow>
+  </FlexRow>
+);
 
 const styles = StyleSheet.create({
   buttonsRow: { flex: 1, marginTop: 10, flexDirection: 'row-reverse' },
@@ -123,18 +113,17 @@ PatientEditModalComponent.propTypes = {
   surveyForm: PropTypes.object,
   nameNoteIsValid: PropTypes.bool,
   surveySchema: PropTypes.object,
-  onOpen: PropTypes.func.isRequired,
   onUpdateForm: PropTypes.func.isRequired,
 };
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
   const { completedForm } = stateProps;
-  const { onOpen, onSave, onSaveSurvey, ...otherDispatchProps } = dispatchProps;
-  const { patient, surveySchema } = ownProps;
-  const { id = generateUUID() } = patient ?? {};
+  const { onSave, onSaveSurvey, ...otherDispatchProps } = dispatchProps;
+  const { surveySchema } = ownProps;
+
   const onSaveForm = () => {
-    onSave({ id, ...completedForm });
-    if (surveySchema) onSaveSurvey(id);
+    onSave(completedForm);
+    if (surveySchema) onSaveSurvey();
   };
 
   return {
@@ -142,7 +131,6 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     ...otherDispatchProps,
     ...stateProps,
     onSaveForm,
-    onOpen: () => onOpen(id),
   };
 };
 
@@ -155,7 +143,6 @@ const stateToProps = state => {
 };
 
 const dispatchToProps = dispatch => ({
-  onOpen: nameID => dispatch(NameNoteActions.createSurveyNameNote(nameID)),
   onSaveSurvey: optionalNameID => dispatch(NameNoteActions.saveEditing(optionalNameID)),
   onUpdateForm: (form, validator) => dispatch(NameNoteActions.updateForm(form, validator)),
   onSave: patientDetails => dispatch(PatientActions.patientUpdate(patientDetails)),

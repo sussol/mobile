@@ -21,3 +21,4 @@ export { useLoadingIndicator } from './useLoadingIndicator';
 export { useToggle } from './useToggle';
 export { useIntervalReRender } from './useIntervalReRender';
 export { useConditionalAnimationRef } from './useConditionalAnimationRef';
+export { useThrottled } from './useThrottled';

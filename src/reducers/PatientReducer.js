@@ -35,7 +35,9 @@ export const PatientReducer = (state = patientInitialState(), action) => {
     }
 
     case PATIENT_ACTIONS.PATIENT_CREATION: {
-      return { ...state, currentPatient: null, isCreating: true };
+      const { payload } = action;
+      const { patient } = payload;
+      return { ...state, currentPatient: patient, isCreating: true };
     }
 
     case PATIENT_ACTIONS.COMPLETE: {
