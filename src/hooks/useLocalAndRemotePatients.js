@@ -73,16 +73,17 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
     initialState
   );
 
-  const { fetch, refresh, isLoading, response, hasFetched, error: fetchError } = useFetch(syncUrl);
+  const { fetch, refresh, isLoading, response, error: fetchError } = useFetch(syncUrl);
 
   // If response is empty, we are not loading, and there is no error,
   // then we have tried to fetch and had no results.
   // Has fetched guards against the initial state of not loading and a response being empty.
   useEffect(() => {
-    if (!isLoading && !response && !fetchError && hasFetched) {
+    const noResults = fetchError?.message === 'No records found';
+    if (noResults) {
       dispatch({ type: 'fetch_no_results' });
     }
-  }, [response, isLoading, hasFetched, fetchError]);
+  }, [fetchError]);
 
   // When isLoading is set as true, sync this with our merged state.
   useEffect(() => {
@@ -97,7 +98,9 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
 
   // Synchronizing this error with our merged state.
   useEffect(() => {
-    if (fetchError) dispatch({ type: 'fetch_error', payload: { error: fetchError } });
+    if (fetchError && fetchError.message !== 'No records found') {
+      dispatch({ type: 'fetch_error', payload: { error: fetchError } });
+    }
   }, [fetchError]);
 
   const onPressSearchOnline = searchParams => {
@@ -123,7 +126,7 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
     if (dateOfBirth) {
       const dob = moment(dateOfBirth, DATE_FORMAT.DD_MM_YYYY, null, true);
       if (!dob.isValid()) {
-        return patients;
+        return dispatch({ type: 'fetch_no_results' });
       }
 
       const dayOfDOB = dob.startOf('day').toDate();
