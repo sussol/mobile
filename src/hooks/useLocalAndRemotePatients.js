@@ -123,13 +123,15 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
     if (dateOfBirth) {
       const dob = moment(dateOfBirth, DATE_FORMAT.DD_MM_YYYY, null, true);
       if (!dob.isValid()) {
-        return patients;
+        return patients.sorted('lastName');
       }
 
       const dayOfDOB = dob.startOf('day').toDate();
       const dayAfterDOB = dob.endOf('day').toDate();
 
-      patients = patients.filtered('dateOfBirth >= $0 AND dateOfBirth < $1', dayOfDOB, dayAfterDOB);
+      patients = patients
+        .filtered('dateOfBirth >= $0 AND dateOfBirth < $1', dayOfDOB, dayAfterDOB)
+        .sorted('lastName');
     }
 
     if (patients.length) {
