@@ -38,3 +38,8 @@ export const selectUsingVaccines = ({ modules }) => {
 
   return usingVaccines;
 };
+
+export const selectUsingAdverseDrugReactions = ({ modules }) => {
+  const { usingAdverseDrugReactions } = modules;
+  return usingAdverseDrugReactions;
+};

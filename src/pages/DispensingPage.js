@@ -31,6 +31,7 @@ import {
   selectDataSetInUse,
   selectSortedData,
   selectLookupModalOpen,
+  selectADRModalOpen,
 } from '../selectors/dispensary';
 import { selectPrescriberModalOpen, selectCanEditPrescriber } from '../selectors/prescriber';
 import { selectInsuranceModalOpen, selectCanEditInsurancePolicy } from '../selectors/insurance';
@@ -99,6 +100,11 @@ const Dispensing = ({
   // Insurance callbacks
   cancelInsuranceEdit,
   saveInsurancePolicy,
+
+  // ADR
+  isADRModalOpen,
+  createADR,
+  cancelCreatingADR,
 }) => {
   // Custom hook to refresh data on this page when becoming the head of the stack again.
   useNavigationFocus(navigation, refreshData);
@@ -107,6 +113,8 @@ const Dispensing = ({
 
   const getCellCallbacks = colKey => {
     switch (colKey) {
+      case 'adverseDrugEffect':
+        return createADR;
       case 'dispense':
         return gotoPrescription;
       case 'patientHistory':
@@ -272,6 +280,9 @@ const Dispensing = ({
       >
         <SearchForm />
       </ModalContainer>
+      <ModalContainer title="ADR" isVisible={isADRModalOpen} onClose={cancelCreatingADR}>
+        <></>
+      </ModalContainer>
     </>
   );
 };
@@ -295,6 +306,7 @@ const mapStateToProps = state => {
   const { sortKey, isAscending, searchTerm, columns } = dispensary;
 
   const isLookupModalOpen = selectLookupModalOpen(state);
+  const isADRModalOpen = selectADRModalOpen(state);
 
   const { currentPatient } = patient;
   const { currentPrescriber } = prescriber;
@@ -311,6 +323,7 @@ const mapStateToProps = state => {
   const [usingPatientsDataSet, usingPrescribersDataSet] = selectDataSetInUse(state);
 
   return {
+    isADRModalOpen,
     usingPatientsDataSet,
     usingPrescribersDataSet,
     data,
@@ -345,6 +358,8 @@ const mapDispatchToProps = dispatch => ({
   refreshData: () => dispatch(DispensaryActions.refresh()),
   switchDataset: () => dispatch(DispensaryActions.switchDataSet()),
 
+  createADR: () => dispatch(DispensaryActions.openADRModal()),
+  cancelCreatingADR: () => dispatch(DispensaryActions.closeADRModal()),
   lookupRecord: () => dispatch(DispensaryActions.openLookupModal()),
   cancelLookupRecord: () => dispatch(DispensaryActions.closeLookupModal()),
 
@@ -423,4 +438,7 @@ Dispensing.propTypes = {
   isCreatingInsurancePolicy: PropTypes.bool.isRequired,
   saveInsurancePolicy: PropTypes.func.isRequired,
   viewPatientHistory: PropTypes.func.isRequired,
+  isADRModalOpen: PropTypes.bool.isRequired,
+  createADR: PropTypes.func.isRequired,
+  cancelCreatingADR: PropTypes.func.isRequired,
 };
