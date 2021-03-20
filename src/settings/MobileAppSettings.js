@@ -35,6 +35,7 @@ class MobileAppSettings extends Settings {
 
   setDefaults() {
     this.set(SETTINGS_KEYS.CURRENT_LANGUAGE, DEFAULT_LANGUAGE);
+    this.set(SETTINGS_KEYS.SYNC_INTERVAL);
   }
 }
 
