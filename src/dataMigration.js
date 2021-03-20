@@ -256,6 +256,8 @@ const dataMigrations = [
       });
     },
   },
+  // This adds a sync interval to settings with the default value of 10 minutes which has been
+  // the hard coded value for all versions prior to 8.0.
   {
     version: '8.0.0',
     migrate: database => {
