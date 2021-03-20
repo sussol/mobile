@@ -123,6 +123,9 @@ const createPrescription = (patient, currentUser, selectedBatches, vaccinator) =
 
 const createRefusalNameNote = name => {
   const [patientEvent] = UIDatabase.objects('PatientEvent').filtered('code == "RV"');
+
+  if (!patientEvent) return;
+
   const id = generateUUID();
   const newNameNote = { id, name, patientEvent, entryDate: new Date() };
 
