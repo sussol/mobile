@@ -38,7 +38,7 @@
     "customerInvoices": "Customer invoices",
     "stocktakes": "Stocktakes",
     "not_available": "N/A",
-    "new_details_saved": "New details have been saved",
+    "new_details_saved": "New details have been saved. Some of your new settings will only take effect next time you open the app.",
     "new_details_not_saved": "Password did not match. New details have not been saved.",
     "exported_data": "Exported data file",
     "couldnt_export_data": "Couldn't export data",
