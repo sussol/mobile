@@ -300,7 +300,7 @@ export class TransactionItem extends Realm.Object {
   }
 
   get doses() {
-    return this.batches.sum('doses');
+    return getTotal(this.batches, 'doses');
   }
 
   get hasBreached() {
