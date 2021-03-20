@@ -66,7 +66,7 @@ const sort = sortKey => ({ type: NAME_ACTIONS.SORT, payload: { sortKey } });
 
 const saveEditing = () => (dispatch, getState) => {
   const currentPatient = selectEditingName(getState());
-  const patientRecord = { ...currentPatient, dateOfBirth: Date(currentPatient.dateOfBirth) };
+  const patientRecord = { ...currentPatient, dateOfBirth: new Date(currentPatient.dateOfBirth) };
 
   UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patientRecord));
   dispatch(reset());
