@@ -36,7 +36,7 @@ import {
 import globalStyles, { DARK_GREY } from '../../globalStyles';
 import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
 import { AfterInteractions } from '../AfterInteractions';
-import { generateUUID } from '../../database/index';
+import { generateUUID, UIDatabase } from '../../database/index';
 import { SimpleTable } from '../SimpleTable';
 import { useKeyboardIsOpen } from '../../hooks/useKeyboardIsOpen';
 import { Paper } from '../Paper';
@@ -46,6 +46,7 @@ import { DARKER_GREY, SUSSOL_ORANGE } from '../../globalStyles/colors';
 
 import { useLocalAndRemotePatients } from '../../hooks/useLocalAndRemotePatients';
 import { APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from '../../globalStyles/fonts';
+import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 
 const getMessage = (noResults, error) => {
   if (noResults) return generalStrings.could_not_find_patient;
@@ -111,6 +112,8 @@ const PatientSelectComponent = ({
   updateForm,
   completedForm,
 }) => {
+  const withLoadingIndicator = useLoadingIndicator();
+
   const [
     { data, loading, searchedWithNoResults, error },
     onSearchOnline,
@@ -154,7 +157,15 @@ const PatientSelectComponent = ({
 
             <View style={localStyles.listContainer}>
               <SimpleTable
-                selectRow={selectPatient}
+                selectRow={name => {
+                  // Only show a spinner when the name doesn't exist in the database, as we need to
+                  // send a request to the server to add a name store join.
+                  if (UIDatabase.get('Name', name?.id)) {
+                    selectPatient(name);
+                  } else {
+                    withLoadingIndicator(() => selectPatient(name));
+                  }
+                }}
                 data={data}
                 columns={columns}
                 ListEmptyComponent={
@@ -184,11 +195,14 @@ const mapDispatchToProps = dispatch => {
   const onSortData = sortKey => dispatch(NameActions.sort(sortKey));
   const onCancelPrescription = () => dispatch(VaccinePrescriptionActions.cancel());
   const selectPatient = patient =>
-    batch(() => {
+    batch(async () => {
       Keyboard.dismiss();
-      dispatch(NameActions.select(patient));
-      dispatch(NameNoteActions.createSurveyNameNote(patient));
-      dispatch(WizardActions.nextTab());
+      const result = await dispatch(NameActions.select(patient));
+
+      if (result) {
+        dispatch(NameNoteActions.createSurveyNameNote(patient));
+        dispatch(WizardActions.nextTab());
+      }
     });
   const createPatient = () =>
     batch(() => {
