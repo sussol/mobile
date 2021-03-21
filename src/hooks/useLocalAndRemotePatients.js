@@ -11,17 +11,30 @@ import { DATE_FORMAT } from '../utilities/constants';
 import { useFetch } from './useFetch';
 import { useThrottled } from './useThrottled';
 
+const RNFetch = fetch;
+const BATCH_SIZE = 50;
+
 const initialState = (initialValue = []) => ({
   data: initialValue,
   loading: false,
   error: false,
   searchedWithNoResults: false,
+  gettingMore: false,
+  limit: 50,
+  offset: 0,
 });
 
 const reducer = (state, action) => {
   const { type } = action;
 
   switch (type) {
+    case 'fetch_more': {
+      const { limit, offset } = state;
+      const newOffset = offset + limit;
+
+      return { ...state, offset: newOffset };
+    }
+
     case 'fetch_success': {
       const { payload } = action;
       const { data } = payload;
@@ -45,6 +58,22 @@ const reducer = (state, action) => {
 
       return { ...state, error, loading: false, searchedWithNoResults: false };
     }
+
+    case 'getting_more_patients': {
+      return { ...state, gettingMore: true };
+    }
+
+    case 'add_more_patients': {
+      const { payload } = action;
+      const { data } = payload;
+
+      const { offset, data: oldData } = state;
+      const newData = [...oldData, ...data];
+      const newOffset = offset + BATCH_SIZE;
+
+      return { ...state, data: newData, offset: newOffset, gettingMore: false };
+    }
+
     case 'clear': {
       return initialState();
     }
@@ -62,13 +91,12 @@ const reducer = (state, action) => {
  * having to track multiple.
  */
 export const useLocalAndRemotePatients = (initialValue = []) => {
-  const [{ data, loading, searchedWithNoResults, error }, dispatch] = useReducer(
-    reducer,
-    initialValue,
-    initialState
-  );
+  const [
+    { data, loading, searchedWithNoResults, error, limit, offset, gettingMore },
+    dispatch,
+  ] = useReducer(reducer, initialValue, initialState);
 
-  const { fetch, refresh, isLoading, response, error: fetchError } = useFetch(getServerURL());
+  const { fetch, isLoading, response, error: fetchError } = useFetch(getServerURL());
 
   // If response is empty, we are not loading, and there is no error,
   // then we have tried to fetch and had no results.
@@ -99,12 +127,33 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
   }, [fetchError]);
 
   const onPressSearchOnline = searchParams => {
-    refresh();
+    const paramsWithLimits = { ...searchParams, limit, offset };
+
     fetch(
-      getPatientRequestUrl(searchParams),
+      getPatientRequestUrl(paramsWithLimits),
       { headers: { authorization: getAuthorizationHeader() } },
       { responseHandler: processPatientResponse }
     );
+    dispatch({ type: 'fetch_more' });
+  };
+
+  const getMorePatients = async searchParams => {
+    dispatch({ type: 'getting_more_patients' });
+    const paramsWithLimits = { ...searchParams, limit, offset };
+
+    const getMoreResponse = await RNFetch(
+      `${getServerURL()}${getPatientRequestUrl(paramsWithLimits)}`,
+      {
+        headers: { authorization: getAuthorizationHeader() },
+      }
+    );
+
+    dispatch({
+      type: 'add_more_patients',
+      payload: {
+        data: processPatientResponse({ ...getMoreResponse, json: await getMoreResponse.json() }),
+      },
+    });
   };
 
   const getLocalPatients = searchParameters => {
@@ -150,6 +199,11 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
     trailing: true,
   });
 
+  const throttledGetMorePatients = useThrottled(getMorePatients, 1000, [limit, offset], {
+    loading: false,
+    trailing: true,
+  });
+
   // getLocalPatients is throttled- ensure that the fetch_start action is still dispatched
   // on the first invocation so the loading state is changed.
   const getLocalPatientsWrapper = searchParameters => {
@@ -158,8 +212,9 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
   };
 
   return [
-    { data, loading, searchedWithNoResults, error },
+    { data, loading, searchedWithNoResults, error, gettingMore },
     onPressSearchOnline,
     getLocalPatientsWrapper,
+    throttledGetMorePatients,
   ];
 };
