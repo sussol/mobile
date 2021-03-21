@@ -79,6 +79,18 @@ const Header = ({ onSearchOnline, onNewPatient }) => (
   </FlexRow>
 );
 
+const GettingMore = ({ gettingMore }) =>
+  gettingMore ? (
+    <FlexRow flex={1} justifyContent="center" alignItems="space-between" style={{ minHeight: 200 }}>
+      <Text style={localStyles.text}>{generalStrings.finding_more_patients}</Text>
+      <ActivityIndicator color={SUSSOL_ORANGE} size="small" />
+    </FlexRow>
+  ) : null;
+
+GettingMore.propTypes = {
+  gettingMore: PropTypes.bool.isRequired,
+};
+
 Header.propTypes = {
   onSearchOnline: PropTypes.func.isRequired,
   onNewPatient: PropTypes.func.isRequired,
@@ -115,9 +127,10 @@ const PatientSelectComponent = ({
   const withLoadingIndicator = useLoadingIndicator();
 
   const [
-    { data, loading, searchedWithNoResults, error },
+    { data, loading, gettingMore, searchedWithNoResults, error },
     onSearchOnline,
     filter,
+    getMorePatients,
   ] = useLocalAndRemotePatients([]);
 
   const columns = React.useMemo(() => getColumns(MODALS.PATIENT_LOOKUP), []);
@@ -166,8 +179,10 @@ const PatientSelectComponent = ({
                     withLoadingIndicator(() => selectPatient(name));
                   }
                 }}
+                onEndReached={() => getMorePatients(completedForm)}
                 data={data}
                 columns={columns}
+                ListFooterComponent={<GettingMore gettingMore={gettingMore} />}
                 ListEmptyComponent={
                   // eslint-disable-next-line react/jsx-wrap-multilines
                   <EmptyComponent

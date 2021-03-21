@@ -141,6 +141,8 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
     dispatch({ type: 'getting_more_patients' });
     const paramsWithLimits = { ...searchParams, limit, offset };
 
+    // Use RNFetch as the fetch returned from `useFetch` is coupled with it's state in a specific
+    // implementation, which we want to change by appending to the result, rather than replacing.
     const getMoreResponse = await RNFetch(
       `${getServerURL()}${getPatientRequestUrl(paramsWithLimits)}`,
       {
