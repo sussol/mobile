@@ -9,10 +9,11 @@
 import moment from 'moment';
 import querystring from 'querystring';
 import Bugsnag from '@bugsnag/react-native';
-import { AUTH_ERROR_CODES } from 'sussol-utilities';
+import { getAuthHeader, AUTH_ERROR_CODES } from 'sussol-utilities';
 
 import { UIDatabase } from '../database';
 import { createRecord, parseBoolean, parseDate, parseNumber } from '../database/utilities';
+import { SETTINGS_KEYS } from '../settings/index';
 
 const ERROR_CODES = {
   ...AUTH_ERROR_CODES,
@@ -22,6 +23,7 @@ const ERROR_CODES = {
 const RESOURCES = {
   PATIENT: '/api/v4/patient',
   PRESCRIBER: '/api/v4/prescriber',
+  NAME_STORE_JOIN: '/api/v4/name_store_join',
 };
 
 const TYPES = {
@@ -46,6 +48,14 @@ class BugsnagError extends Error {
     });
   }
 }
+
+export const getServerURL = () => UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL);
+
+export const getAuthorizationHeader = () => {
+  const username = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
+  const password = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_PASSWORD_HASH);
+  return getAuthHeader(username, password);
+};
 
 export const createPatientRecord = patient => {
   patient?.policies?.forEach(createPolicyRecord);
@@ -215,3 +225,31 @@ export const processPrescriberResponse = response =>
       storeId: store_ID,
     })
   );
+
+export const createPatientVisibility = async name => {
+  const thisStoreID = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
+  const { id: nameID } = name;
+
+  const nameExists = UIDatabase.get('Name', nameID);
+
+  if (nameExists) return true;
+
+  const body = { store_ID: thisStoreID, name_ID: nameID };
+
+  try {
+    const response = await fetch(`${getServerURL()}${RESOURCES.NAME_STORE_JOIN}`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: {
+        authorization: getAuthorizationHeader(),
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
+
+    return response.status === 200;
+  } catch {
+    // If there was an error, just return false
+    return false;
+  }
+};
