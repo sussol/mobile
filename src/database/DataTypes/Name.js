@@ -145,6 +145,8 @@ export class Name extends Realm.Object {
       phoneNumber: this.phoneNumber,
       country: this.country,
       billingAddress: this.billingAddress?.toJSON(),
+      addressOne: this.addressOne,
+      addressTwo: this.addressTwo,
       emailAddress: this.emailAddress,
       type: this.type,
       masterLists: this.masterLists,
