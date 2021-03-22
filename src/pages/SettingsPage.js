@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import ValidUrl from 'valid-url';
-import { Text, View, ToastAndroid, TouchableOpacity } from 'react-native';
+import { Dimensions, Text, View, ToastAndroid, TouchableOpacity } from 'react-native';
 import { hashPassword } from 'sussol-utilities';
 import { Button } from 'react-native-ui-components';
 
@@ -26,7 +26,6 @@ import { ConfirmIcon } from '../widgets/icons';
 import { DataTablePageView, PageInfo } from '../widgets';
 import { DataTablePageModal } from '../widgets/modals';
 
-import globalStyles from '../globalStyles';
 import { generalStrings, buttonStrings } from '../localization';
 import { selectCurrentUserPasswordHash } from '../selectors/user';
 import { PermissionActions } from '../actions/PermissionActions';
@@ -34,7 +33,7 @@ import { useLoadingIndicator } from '../hooks/useLoadingIndicator';
 import { createVaccineData } from '../database/utilities/dataGenerators';
 import { Slider } from '../widgets/Slider';
 import { FlexRow } from '../widgets/FlexRow';
-import APP_FONT_FAMILY, { DARKER_GREY } from '../globalStyles/colors';
+import globalStyles, { APP_FONT_FAMILY, DARK_GREY, SUSSOL_ORANGE } from '../globalStyles';
 import { FlexView } from '../widgets/FlexView';
 import { MILLISECONDS } from '../utilities/constants';
 
@@ -184,6 +183,7 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
                 step={1}
                 value={syncInterval}
                 onEndEditing={editSyncInterval}
+                textUnderlineColour={SUSSOL_ORANGE}
               />
             </FlexView>
           </FlexRow>
@@ -225,9 +225,10 @@ const styles = {
   marginRight: { marginRight: 20 },
   topRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' },
   text: {
-    fontSize: 14,
+    fontSize: Dimensions.get('window').width / 80,
     fontFamily: APP_FONT_FAMILY,
-    color: DARKER_GREY,
+    color: DARK_GREY,
+    width: 300,
   },
 };
 

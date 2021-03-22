@@ -42,6 +42,7 @@ export const Slider = React.forwardRef(
       value,
       onEndEditing,
       isDisabled,
+      textUnderlineColour,
     },
     ref
   ) => {
@@ -121,7 +122,7 @@ export const Slider = React.forwardRef(
             ref={ref}
             enabled={!isDisabled}
             style={textInputStyle}
-            underlineColorAndroid={WARMER_GREY}
+            underlineColorAndroid={textUnderlineColour}
             value={currentStringValue}
             onChangeText={setString}
             selectTextOnFocus
@@ -163,6 +164,7 @@ Slider.defaultProps = {
   step: 0.25,
   value: 20,
   isDisabled: false,
+  textUnderlineColour: WARMER_GREY,
 };
 
 Slider.propTypes = {
@@ -176,4 +178,5 @@ Slider.propTypes = {
   value: PropTypes.number,
   onEndEditing: PropTypes.func.isRequired,
   isDisabled: PropTypes.bool,
+  textUnderlineColour: PropTypes.string,
 };

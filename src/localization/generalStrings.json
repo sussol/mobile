@@ -1,6 +1,6 @@
 {
   "gb": {
-    "sync_interval_minutes": "Sync interval (minutes)",
+    "sync_interval_minutes": "Sync interval (minutes):",
     "enter_patient_details": "Enter the patient's details to start searching for them",
     "could_not_find_patient": "No patients found that match your search criteria",
     "error_communicating_with_server": "There was a problem communicating with the server",
