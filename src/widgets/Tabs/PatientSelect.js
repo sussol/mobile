@@ -81,7 +81,7 @@ const Header = ({ onSearchOnline, onNewPatient }) => (
 
 const GettingMore = ({ gettingMore }) =>
   gettingMore ? (
-    <FlexRow flex={1} justifyContent="center" alignItems="space-between" style={{ minHeight: 200 }}>
+    <FlexRow flex={1} justifyContent="center" alignItems="space-between">
       <Text style={localStyles.text}>{generalStrings.finding_more_patients}</Text>
       <ActivityIndicator color={SUSSOL_ORANGE} size="small" />
     </FlexRow>

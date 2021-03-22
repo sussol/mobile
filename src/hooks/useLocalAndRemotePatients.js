@@ -1,5 +1,6 @@
 import { useEffect, useReducer } from 'react';
 import moment from 'moment';
+import unionBy from 'lodash.unionby';
 import { UIDatabase } from '../database/index';
 import {
   getAuthorizationHeader,
@@ -68,7 +69,7 @@ const reducer = (state, action) => {
       const { data } = payload;
 
       const { offset, data: oldData } = state;
-      const newData = [...oldData, ...data];
+      const newData = unionBy(data, oldData, 'id');
       const newOffset = offset + BATCH_SIZE;
 
       return { ...state, data: newData, offset: newOffset, gettingMore: false };
@@ -96,7 +97,7 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
     dispatch,
   ] = useReducer(reducer, initialValue, initialState);
 
-  const { fetch, isLoading, response, error: fetchError } = useFetch(getServerURL());
+  const { fetch, refresh, isLoading, response, error: fetchError } = useFetch(getServerURL());
 
   // If response is empty, we are not loading, and there is no error,
   // then we have tried to fetch and had no results.
@@ -129,6 +130,8 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
   const onPressSearchOnline = searchParams => {
     const paramsWithLimits = { ...searchParams, limit, offset };
 
+    refresh();
+
     fetch(
       getPatientRequestUrl(paramsWithLimits),
       { headers: { authorization: getAuthorizationHeader() } },
@@ -138,6 +141,8 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
   };
 
   const getMorePatients = async searchParams => {
+    if (!response) return;
+
     dispatch({ type: 'getting_more_patients' });
     const paramsWithLimits = { ...searchParams, limit, offset };
 
@@ -159,6 +164,8 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
   };
 
   const getLocalPatients = searchParameters => {
+    refresh();
+
     const { lastName, firstName, dateOfBirth } = searchParameters;
 
     if (!(lastName || firstName || dateOfBirth)) {
@@ -201,7 +208,7 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
     trailing: true,
   });
 
-  const throttledGetMorePatients = useThrottled(getMorePatients, 1000, [limit, offset], {
+  const throttledGetMorePatients = useThrottled(getMorePatients, 1000, [limit, offset, response], {
     loading: false,
     trailing: true,
   });

@@ -64,7 +64,7 @@ export const SimpleTable = React.memo(
             );
           });
         },
-        [disabledRows, isDisabled]
+        [disabledRows, isDisabled, data]
       );
 
       const renderRow = useCallback(
