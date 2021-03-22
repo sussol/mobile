@@ -417,6 +417,18 @@ const generateSyncData = (settings, recordType, record) => {
         data: record.data,
       };
     }
+    case 'AdverseDrugReaction': {
+      return {
+        ID: record.id,
+        form_schema_ID: record.formSchema?.id ?? '',
+        name_ID: record.name?.id ?? '',
+        user_ID: record.user?.id ?? '',
+        store_ID: settings.get(THIS_STORE_ID),
+        entry_date: getDateString(record.entryDate),
+        entry_time: getTimeString(record.entryDate),
+        data: record._data,
+      };
+    }
 
     default:
       throw new Error('Sync out record type not supported.');

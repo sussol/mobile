@@ -54,6 +54,7 @@ const PAGE_COLUMN_WIDTHS = {
   [TABS.BATCH]: [1, 1, 1, 1],
   editableCustomerRequisitionFormEntry: [2, 1.5, 1, 1, 1, 1.5, 1, 1, 1, 1.5],
   customerRequisitionFormEntry: [2, 2, 1, 1, 1, 1, 2, 2, 2, 2],
+  patientWithAdverseDrugReactions: [2.5, 4, 4, 2.5, 2, 2, 2, 2],
 };
 
 const PAGE_COLUMNS = {
@@ -105,6 +106,16 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.FIRST_NAME,
     COLUMN_NAMES.DATE_OF_BIRTH,
     COLUMN_NAMES.PATIENT_HISTORY,
+    COLUMN_NAMES.PATIENT_EDIT,
+    COLUMN_NAMES.DISPENSE,
+  ],
+  patientWithAdverseDrugReactions: [
+    COLUMN_NAMES.CODE,
+    COLUMN_NAMES.LAST_NAME,
+    COLUMN_NAMES.FIRST_NAME,
+    COLUMN_NAMES.DATE_OF_BIRTH,
+    COLUMN_NAMES.PATIENT_HISTORY,
+    COLUMN_NAMES.ADVERSE_DRUG_EFFECT,
     COLUMN_NAMES.PATIENT_EDIT,
     COLUMN_NAMES.DISPENSE,
   ],
@@ -1125,6 +1136,15 @@ const COLUMNS = () => ({
     alignText: 'center',
     editable: false,
     icon: 'history',
+  },
+  [COLUMN_NAMES.ADVERSE_DRUG_EFFECT]: {
+    type: COLUMN_TYPES.ICON,
+    key: COLUMN_KEYS.ADVERSE_DRUG_EFFECT,
+    title: tableStrings.adr,
+    sortable: false,
+    alignText: 'center',
+    editable: false,
+    icon: 'plus',
   },
   [COLUMN_NAMES.PATIENT_EDIT]: {
     type: COLUMN_TYPES.ICON,

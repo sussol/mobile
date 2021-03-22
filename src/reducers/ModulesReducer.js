@@ -23,6 +23,7 @@ const initialState = () => {
   const usingVaccines = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.VACCINE_MODULE));
   const usingPayments = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.PAYMENT_MODULE));
   const usingPatientTypes = Boolean(UIDatabase.getPreference(PREFERENCE_KEYS.PATIENT_TYPES));
+  const usingAdverseDrugReactions = UIDatabase.objects('ADRForm').length > 0;
 
   const usingHideSnapshotColumn = Boolean(
     UIDatabase.getPreference(PREFERENCE_KEYS.HIDE_SNAPSHOT_COLUMN)
@@ -38,6 +39,7 @@ const initialState = () => {
   const usingModules = usingDashboard || usingDispensary || usingVaccines || usingCashRegister;
 
   return {
+    usingAdverseDrugReactions,
     canEditAnyPatient,
     usingPayments,
     usingDashboard,
