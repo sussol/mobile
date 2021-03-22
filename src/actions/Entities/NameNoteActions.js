@@ -19,6 +19,7 @@ export const NAME_NOTE_ACTIONS = {
   SELECT: 'NAME_NOTE/select',
   RESET: 'NAME_NOTE/reset',
   UPDATE_DATA: 'NAME_NOTE/updateData',
+  CREATE: 'NAME_NOTE/create',
 };
 
 const ajv = new Ajv(ajvOptions);
@@ -50,6 +51,7 @@ const getMostRecentPCD = patient => {
 
   const { id: pcdEventID } = pcdEvent;
   const { nameNotes = [] } = patient ?? {};
+
   if (!nameNotes.length) return null;
 
   const filtered = nameNotes.filter(({ patientEventID }) => patientEventID === pcdEventID);
@@ -66,6 +68,7 @@ const getMostRecentPCD = patient => {
 const createSurveyNameNote = patient => (dispatch, getState) => {
   // Create the seed PCD, which is either their most recently filled survey or
   // and empty object.
+
   const seedPCD = getMostRecentPCD(patient) ?? createDefaultNameNote(patient.id);
 
   // Get the survey schema as we need an initial validation to determine if
@@ -103,11 +106,22 @@ const saveEditing = optionalNameID => (dispatch, getState) => {
   dispatch(reset());
 };
 
+const createNotes = (nameNotes = []) => {
+  UIDatabase.write(() => {
+    nameNotes.forEach(nameNote => {
+      UIDatabase.update('NameNote', nameNote);
+    });
+  });
+
+  return { type: NAME_NOTE_ACTIONS.CREATE };
+};
+
 const reset = () => ({
   type: NAME_NOTE_ACTIONS.RESET,
 });
 
 export const NameNoteActions = {
+  createNotes,
   reset,
   createSurveyNameNote,
   updateForm,
