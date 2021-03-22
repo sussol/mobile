@@ -17,6 +17,7 @@ export const COLUMN_TYPES = {
 };
 
 export const COLUMN_KEYS = {
+  ADVERSE_DRUG_EFFECT: 'adverseDrugEffect',
   EDIT: 'edit',
   BATTERY_LEVEL: 'batteryLevelString',
   MAC_ADDRESS: 'macAddress',
@@ -87,6 +88,7 @@ export const COLUMN_KEYS = {
 };
 
 export const COLUMN_NAMES = {
+  ADVERSE_DRUG_EFFECT: 'adverseDrugEffect',
   CLOSING_STOCK: 'closingStock',
   NEGATIVE_ADJUSTMENTS: 'negativeAdjustments',
   POSITIVE_ADJUSTMENTS: 'positiveAdjustments',
