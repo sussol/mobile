@@ -233,10 +233,10 @@ const createPatient = (database, patientDetails) => {
   } = patientDetails;
 
   const id = patientId ?? generateUUID();
-  const code = patientCode ?? getPatientUniqueCode(database);
+  const code = patientCode || getPatientUniqueCode(database);
   const firstName = patientFirstName ?? '';
   const lastName = patientLastName ?? '';
-  const name = patientName ?? `${patientLastName}, ${patientFirstName}`;
+  const name = patientName || `${patientLastName}, ${patientFirstName}`;
   const dateOfBirth = patientDateOfBirth ?? null;
   const emailAddress = patientEmailAddress ?? '';
   const phoneNumber = patientPhoneNumber ?? '';
@@ -254,7 +254,7 @@ const createPatient = (database, patientDetails) => {
   const female = patientFemale ?? true;
 
   const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
-  const supplyingStoreId = patientSupplyingStoreId ?? thisStoreId;
+  const supplyingStoreId = patientSupplyingStoreId || thisStoreId;
   const thisStoresPatient = supplyingStoreId === thisStoreId;
 
   const isActive = patientIsActive ?? true;
