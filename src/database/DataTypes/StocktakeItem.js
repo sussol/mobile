@@ -42,7 +42,7 @@ export class StocktakeItem extends Realm.Object {
    * @return  {number}
    */
   get countedTotalQuantity() {
-    return getTotal(this.batches, 'countedTotalQuantity');
+    return getTotal(this.batches, 'countedTotalQuantity').toFixed(2);
   }
 
   /**
