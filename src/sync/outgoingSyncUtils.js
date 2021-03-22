@@ -89,7 +89,7 @@ const generateSyncData = (settings, recordType, record) => {
         date_of_birth: moment(record.dateOfBirth).format(),
         code: record.code,
         email: record.emailAddress,
-        supplying_store_id: settings.get(THIS_STORE_ID),
+        supplying_store_id: record.supplyingStoreID || settings.get(THIS_STORE_ID),
         phone: record.phoneNumber,
         customer: String(record.isCustomer),
         country: record.country,
