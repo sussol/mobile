@@ -29,6 +29,7 @@ import {
   PencilIcon,
   HazardIcon,
   BookIcon,
+  PlusCircle,
 } from '../icons';
 
 import { COLUMN_TYPES, COLUMN_KEYS } from '../../pages/dataTableUtilities';
@@ -313,6 +314,7 @@ const DataTableRow = React.memo(
                 pencil: () => <PencilIcon color={SUSSOL_ORANGE} />,
                 breach: () => (hasBreached ? <HazardIcon color={SUSSOL_ORANGE} /> : null),
                 book: () => <BookIcon color={SUSSOL_ORANGE} />,
+                plus: () => <PlusCircle color={SUSSOL_ORANGE} size={20} />,
               };
 
               const disabledConditions = {

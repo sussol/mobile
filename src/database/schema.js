@@ -5,6 +5,7 @@
 
 import {
   Abbreviation,
+  AdverseDrugReaction,
   Address,
   Currency,
   Ethnicity,
@@ -195,6 +196,7 @@ export const schema = {
   schema: [
     Abbreviation,
     Address,
+    AdverseDrugReaction,
     Currency,
     Ethnicity,
     FormSchema,
@@ -255,7 +257,7 @@ export const schema = {
     VaccineVialMonitorStatus,
     VaccineVialMonitorStatusLog,
   ],
-  schemaVersion: 20,
+  schemaVersion: 21,
 };
 
 export default schema;

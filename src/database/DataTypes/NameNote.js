@@ -25,7 +25,7 @@ export class NameNote extends Realm.Object {
       entryDate: this.entryDate.getTime(),
       data: this.data,
       nameID: this.name.id,
-      patientEventID: this.patientEvent.id,
+      patientEventID: this.patientEvent?.id,
     };
   }
 }
