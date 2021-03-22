@@ -1,7 +1,10 @@
 import { generateUUID } from 'react-native-database';
 import { batch } from 'react-redux';
+import { ToastAndroid } from 'react-native';
 import { selectEditingName } from '../../selectors/Entities/name';
 import { createRecord, UIDatabase } from '../../database';
+import { createPatientVisibility } from '../../sync/lookupApiUtils';
+import { generalStrings } from '../../localization/index';
 
 export const NAME_ACTIONS = {
   CREATE: 'NAME/create',
@@ -55,10 +58,19 @@ const updatePatient = detailsEntered => (dispatch, getState) => {
   });
 };
 
-const select = name => ({
-  type: NAME_ACTIONS.SELECT,
-  payload: { name },
-});
+const select = name => async dispatch => {
+  const result = await createPatientVisibility(name);
+
+  if (result) {
+    dispatch({
+      type: NAME_ACTIONS.SELECT,
+      payload: { name },
+    });
+  } else {
+    ToastAndroid.show(generalStrings.problem_connecting_please_try_again, ToastAndroid.LONG);
+  }
+  return result;
+};
 
 const filter = (key, value) => ({ type: NAME_ACTIONS.FILTER, payload: { key, value } });
 

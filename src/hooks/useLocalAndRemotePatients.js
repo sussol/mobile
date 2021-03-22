@@ -1,18 +1,15 @@
 import { useEffect, useReducer } from 'react';
-import { getAuthHeader } from 'sussol-utilities';
 import moment from 'moment';
 import { UIDatabase } from '../database/index';
-import { SETTINGS_KEYS } from '../settings/index';
-import { getPatientRequestUrl, processPatientResponse } from '../sync/lookupApiUtils';
+import {
+  getAuthorizationHeader,
+  getPatientRequestUrl,
+  getServerURL,
+  processPatientResponse,
+} from '../sync/lookupApiUtils';
 import { DATE_FORMAT } from '../utilities/constants';
 import { useFetch } from './useFetch';
 import { useThrottled } from './useThrottled';
-
-const getAuthorizationHeader = () => {
-  const username = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
-  const password = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_PASSWORD_HASH);
-  return getAuthHeader(username, password);
-};
 
 const initialState = (initialValue = []) => ({
   data: initialValue,
@@ -65,15 +62,13 @@ const reducer = (state, action) => {
  * having to track multiple.
  */
 export const useLocalAndRemotePatients = (initialValue = []) => {
-  const syncUrl = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL);
-
   const [{ data, loading, searchedWithNoResults, error }, dispatch] = useReducer(
     reducer,
     initialValue,
     initialState
   );
 
-  const { fetch, refresh, isLoading, response, error: fetchError } = useFetch(syncUrl);
+  const { fetch, refresh, isLoading, response, error: fetchError } = useFetch(getServerURL());
 
   // If response is empty, we are not loading, and there is no error,
   // then we have tried to fetch and had no results.

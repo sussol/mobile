@@ -53,6 +53,8 @@ const translateToCoreDatabaseType = type => {
       return 'PatientEvent';
     case 'Vaccine':
       return 'Item';
+    case 'ADRForm':
+      return 'FormSchema';
     default:
       return type;
   }
@@ -253,6 +255,8 @@ class UIDatabase {
         return results.filtered('code == "PCD"');
       case 'Vaccine':
         return results.filtered('isVaccine == true && isVisible == true');
+      case 'ADRForm':
+        return results.filtered("type == 'adr'");
       default:
         return results;
     }
