@@ -75,6 +75,7 @@
     "json-pointer": "^0.6.1",
     "json2csv": "^5.0.5",
     "lodash.throttle": "^4.1.1",
+    "lodash.unionby": "^4.8.0",
     "moment": "^2.29.1",
     "prop-types": "^15.7.2",
     "querystring": "^0.2.0",
