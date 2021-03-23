@@ -156,7 +156,12 @@ export class Synchroniser {
     const isFresh =
       !oldSyncURL || serverURL !== oldSyncURL || !syncSiteName || syncSiteName !== oldSyncSiteName;
 
-    if (isFresh) this.database.write(() => this.database.deleteAll());
+    if (isFresh) {
+      this.database.write(() => {
+        this.database.deleteAll();
+      });
+      this.settings.setDefaults();
+    }
 
     try {
       await this.authenticator.authenticate(serverURL, syncSiteName, syncSitePassword);
