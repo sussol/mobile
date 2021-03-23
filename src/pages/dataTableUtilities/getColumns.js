@@ -52,6 +52,7 @@ const PAGE_COLUMN_WIDTHS = {
   [TABS.ITEM]: [1, 3, 1],
   [TABS.PRESCRIBER]: [3, 3, 1],
   [TABS.BATCH]: [1, 1, 1, 1],
+  [TABS.VACCINE_BATCH]: [1, 1, 1, 1],
   editableCustomerRequisitionFormEntry: [2, 1.5, 1, 1, 1, 1.5, 1, 1, 1, 1.5],
   customerRequisitionFormEntry: [2, 2, 1, 1, 1, 1, 2, 2, 2, 2],
   patientWithAdverseDrugReactions: [2.5, 4, 4, 2.5, 2, 2, 2, 2],
@@ -406,9 +407,10 @@ const PAGE_COLUMNS = {
   ],
   [TABS.ITEM]: [COLUMN_NAMES.CODE, COLUMN_NAMES.NAME, COLUMN_NAMES.TOTAL_QUANTITY],
   [TABS.PRESCRIBER]: [COLUMN_NAMES.FIRST_NAME, COLUMN_NAMES.LAST_NAME, COLUMN_NAMES.SELECT],
-  [TABS.BATCH]: [
+  [TABS.BATCH]: [COLUMN_NAMES.BATCH_NAME, COLUMN_NAMES.NUMBER_OF_PACKS, COLUMN_NAMES.EXPIRY_DATE],
+  [TABS.VACCINE_BATCH]: [
     COLUMN_NAMES.BATCH_NAME,
-    COLUMN_NAMES.NUMBER_OF_PACKS,
+    COLUMN_NAMES.NUMBER_OF_VIALS,
     COLUMN_NAMES.DOSES,
     COLUMN_NAMES.EXPIRY_DATE,
   ],
@@ -855,6 +857,15 @@ const COLUMNS = () => ({
     alignText: 'right',
     sortable: true,
     editable: false,
+  },
+
+  [COLUMN_NAMES.NUMBER_OF_VIALS]: {
+    key: COLUMN_KEYS.NUMBER_OF_PACKS,
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
+    title: tableStrings.vials,
+    alignText: 'right',
+    sortable: true,
+    editable: true,
   },
 
   [COLUMN_NAMES.NUMBER_OF_PACKS]: {

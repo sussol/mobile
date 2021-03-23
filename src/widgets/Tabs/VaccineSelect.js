@@ -76,7 +76,7 @@ const VaccineSelectComponent = ({
 }) => {
   const { pageTopViewContainer } = globalStyles;
   const vaccineColumns = React.useMemo(() => getColumns(TABS.ITEM), []);
-  const batchColumns = React.useMemo(() => getColumns(TABS.BATCH), []);
+  const batchColumns = React.useMemo(() => getColumns(TABS.VACCINE_BATCH), []);
   const disabledVaccineRows = React.useMemo(
     () =>
       vaccines

@@ -29,4 +29,5 @@ export const TABS = {
   PATIENT: 'patientSelect',
   PATIENT_EDIT: 'patientEdit',
   BATCH: 'batchSelect',
+  VACCINE_BATCH: 'vaccineBatchSelect',
 };
