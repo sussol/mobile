@@ -33,6 +33,7 @@ const {
   SYNC_SERVER_ID,
   SYNC_SITE_ID,
   SYNC_URL,
+  SYNC_INTERVAL,
 } = SETTINGS_KEYS;
 
 const MIN_SYNC_BATCH_SIZE = 10;
@@ -155,7 +156,12 @@ export class Synchroniser {
     const isFresh =
       !oldSyncURL || serverURL !== oldSyncURL || !syncSiteName || syncSiteName !== oldSyncSiteName;
 
-    if (isFresh) this.database.write(() => this.database.deleteAll());
+    if (isFresh) {
+      this.database.write(() => {
+        this.database.deleteAll();
+      });
+      this.settings.setDefaults();
+    }
 
     try {
       await this.authenticator.authenticate(serverURL, syncSiteName, syncSitePassword);
@@ -198,6 +204,11 @@ export class Synchroniser {
   isInitialised = () => {
     const syncIsInitialised = this.settings.get(SYNC_IS_INITIALISED);
     return syncIsInitialised && syncIsInitialised === 'true';
+  };
+
+  syncInterval = () => {
+    const syncInterval = this.settings.get(SYNC_INTERVAL);
+    return Number(syncInterval);
   };
 
   /**

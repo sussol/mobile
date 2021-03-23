@@ -49,9 +49,13 @@ const getDefaultVaccine = () => {
     .filtered("type == 'customer_invoice' && (status == 'finalised' || status == 'confirmed')")
     .sorted('confirmDate', true);
 
-  const [item] = mostRecentTrans?.items?.filtered('item.isVaccine == true') ?? [];
+  const anyVaccine = UIDatabase.objects('Vaccine')[0];
+  const mostRecentlyUsedVaccine = mostRecentTrans?.items?.filtered('item.isVaccine == true')[0]
+    ?.item;
 
-  return item?.item ?? null;
+  const item = mostRecentlyUsedVaccine ?? anyVaccine;
+
+  return item ?? null;
 };
 
 const getRecommendedBatch = vaccine => {
@@ -123,6 +127,9 @@ const createPrescription = (patient, currentUser, selectedBatches, vaccinator) =
 
 const createRefusalNameNote = name => {
   const [patientEvent] = UIDatabase.objects('PatientEvent').filtered('code == "RV"');
+
+  if (!patientEvent) return;
+
   const id = generateUUID();
   const newNameNote = { id, name, patientEvent, entryDate: new Date() };
 
@@ -134,21 +141,21 @@ const confirm = () => (dispatch, getState) => {
   const { currentUser } = user;
   const hasRefused = selectHasRefused(getState());
   const patientID = selectEditingNameId(getState());
-  const patient = UIDatabase.get('Name', patientID);
   const selectedBatches = selectSelectedBatches(getState());
   const vaccinator = selectSelectedVaccinator(getState());
-
-  if (hasRefused) {
-    createRefusalNameNote(patient);
-  } else {
-    createPrescription(patient, currentUser, selectedBatches, vaccinator);
-  }
 
   batch(() => {
     dispatch(NameActions.saveEditing());
     dispatch(NameNoteActions.saveEditing());
     dispatch(reset());
   });
+
+  const patient = UIDatabase.get('Name', patientID);
+  if (hasRefused) {
+    createRefusalNameNote(patient);
+  } else {
+    createPrescription(patient, currentUser, selectedBatches, vaccinator);
+  }
 };
 
 const selectVaccinator = vaccinator => ({

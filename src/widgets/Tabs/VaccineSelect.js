@@ -145,13 +145,13 @@ const VaccineSelectComponent = ({
         <PageButton
           text={buttonStrings.confirm}
           style={{ marginLeft: 'auto' }}
-          isDisabled={selectedBatches.length === 0 && !hasRefused}
+          isDisabled={!selectedBatches && !hasRefused}
           onPress={confirmPrescription}
         />
         <PageButton
           text={generalStrings.ok_and_next}
           style={{ marginLeft: 5 }}
-          isDisabled={selectedBatches.length === 0 && !hasRefused}
+          isDisabled={!selectedBatches && !hasRefused}
           onPress={confirmAndRepeatPrescription}
         />
       </FlexRow>

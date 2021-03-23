@@ -55,7 +55,6 @@ import { SensorDownloadActions } from './actions/Bluetooth/SensorDownloadActions
 import BreachManager from './bluetooth/BreachManager';
 import { selectIsPassivelyDownloadingTemps } from './selectors/Bluetooth/sensorDownload';
 
-const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const BLUETOOTH_SYNC_INTERVAL = 60 * 1000; // 1 minute in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 
@@ -86,10 +85,11 @@ class MSupplyMobileAppContainer extends React.Component {
       Settings,
       props.dispatch
     );
+
     this.postSyncProcessor = new PostSyncProcessor(UIDatabase, Settings);
     this.scheduler = new Scheduler();
     const isInitialised = this.synchroniser.isInitialised();
-    this.scheduler.schedule(this.synchronise, SYNC_INTERVAL);
+    this.scheduler.schedule(this.synchronise, this.synchroniser.syncInterval());
     this.scheduler.schedule(() => {
       const { currentUser } = this.props;
       if (currentUser !== null) {

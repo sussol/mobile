@@ -7,17 +7,22 @@ import { DISPENSARY_ACTIONS } from '../actions/DispensaryActions';
 import { getColumns } from '../pages/dataTableUtilities';
 import { UIDatabase } from '../database';
 import { ROUTES } from '../navigation';
-import { FORMS } from '../widgets/constants';
 
-const initialState = () => ({
-  searchTerm: '',
-  sortKey: 'firstName',
-  isAscending: true,
-  dataSet: 'patient',
-  columns: getColumns(FORMS.PATIENT),
-  data: UIDatabase.objects('Patient'),
-  isLookupModalOpen: false,
-});
+const initialState = () => {
+  const usingAdverseDrugReactions = UIDatabase.objects('ADRForm').length > 0;
+  const defaultDataSet = usingAdverseDrugReactions ? 'patientWithAdverseDrugReactions' : 'patient';
+
+  return {
+    searchTerm: '',
+    sortKey: 'firstName',
+    isAscending: true,
+    dataSet: defaultDataSet,
+    columns: getColumns(defaultDataSet),
+    data: UIDatabase.objects('Patient'),
+    isLookupModalOpen: false,
+    isADRModalOpen: false,
+  };
+};
 
 export const DispensaryReducer = (state = initialState(), action) => {
   const { type } = action;
@@ -48,11 +53,20 @@ export const DispensaryReducer = (state = initialState(), action) => {
     }
 
     case DISPENSARY_ACTIONS.SWITCH: {
+      const { payload } = action;
+      const { usingAdverseDrugReactions } = payload;
       const { dataSet } = state;
 
-      const newDataSet = dataSet === 'patient' ? 'prescriber' : 'patient';
+      const patientDataSet = usingAdverseDrugReactions
+        ? 'patientWithAdverseDrugReactions'
+        : 'patient';
+
+      const prescriberDataSet = 'prescriber';
+      const newDataSet = dataSet === patientDataSet ? prescriberDataSet : patientDataSet;
+
       const newColumns = getColumns(newDataSet);
-      const newData = UIDatabase.objects(newDataSet === 'patient' ? 'Patient' : 'Prescriber');
+
+      const newData = UIDatabase.objects(newDataSet === patientDataSet ? 'Patient' : 'Prescriber');
 
       return {
         ...state,
@@ -67,7 +81,9 @@ export const DispensaryReducer = (state = initialState(), action) => {
     case DISPENSARY_ACTIONS.REFRESH: {
       const { dataSet } = state;
 
-      const objectType = dataSet === 'patient' ? 'Patient' : 'Prescriber';
+      const usingPatientDataSet =
+        dataSet === 'patientWithAdverseDrugReactions' || dataSet === 'patient';
+      const objectType = usingPatientDataSet ? 'Patient' : 'Prescriber';
       const newData = UIDatabase.objects(objectType);
 
       return { ...state, data: newData };
@@ -79,6 +95,14 @@ export const DispensaryReducer = (state = initialState(), action) => {
 
     case DISPENSARY_ACTIONS.CLOSE_LOOKUP_MODAL: {
       return { ...state, isLookupModalOpen: false };
+    }
+
+    case DISPENSARY_ACTIONS.OPEN_ADR_MODAL: {
+      return { ...state, isADRModalOpen: true };
+    }
+
+    case DISPENSARY_ACTIONS.CLOSE_ADR_MODAL: {
+      return { ...state, isADRModalOpen: false };
     }
 
     default:

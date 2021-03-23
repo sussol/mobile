@@ -50,7 +50,8 @@ export const selectData = ({ dispensary }) => {
 
 export const selectDataSetInUse = ({ dispensary }) => {
   const dataSet = selectDataSet({ dispensary });
-  const usingPatientsDataSet = dataSet === 'patient';
+  const usingPatientsDataSet =
+    dataSet === 'patient' || dataSet === 'patientWithAdverseDrugReactions';
   const usingPrescribersDataSet = dataSet === 'prescriber';
 
   return [usingPatientsDataSet, usingPrescribersDataSet];
@@ -59,6 +60,11 @@ export const selectDataSetInUse = ({ dispensary }) => {
 export const selectLookupModalOpen = ({ dispensary }) => {
   const { isLookupModalOpen } = dispensary;
   return isLookupModalOpen;
+};
+
+export const selectADRModalOpen = ({ dispensary }) => {
+  const { isADRModalOpen } = dispensary;
+  return isADRModalOpen;
 };
 
 export const selectFilteredData = createSelector(

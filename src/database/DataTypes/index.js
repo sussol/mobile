@@ -20,6 +20,7 @@ export class TransactionCategory extends Realm.Object {}
 export class User extends Realm.Object {}
 
 export { Abbreviation } from './Abbreviation';
+export { AdverseDrugReaction } from './AdverseDrugReaction';
 export { Currency } from './Currency';
 export { FormSchema } from './FormSchema';
 export { IndicatorAttribute } from './IndicatorAttribute';
