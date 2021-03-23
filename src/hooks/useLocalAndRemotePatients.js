@@ -21,7 +21,8 @@ const initialState = (initialValue = []) => ({
   error: false,
   searchedWithNoResults: false,
   gettingMore: false,
-  limit: 50,
+  noMore: true,
+  limit: 5,
   offset: 0,
 });
 
@@ -47,7 +48,7 @@ const reducer = (state, action) => {
 
       if (loading) return state;
 
-      return { ...state, loading: true, data: [], searchedWithNoResults: false };
+      return { ...state, loading: true, data: [], searchedWithNoResults: false, noMore: false };
     }
     case 'fetch_no_results': {
       return { ...state, data: [], searchedWithNoResults: true, loading: false };
@@ -75,6 +76,10 @@ const reducer = (state, action) => {
       return { ...state, data: newData, offset: newOffset, gettingMore: false };
     }
 
+    case 'no_more_patients': {
+      return { ...state, gettingMore: false, noMore: true };
+    }
+
     case 'clear': {
       return initialState();
     }
@@ -97,7 +102,9 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
     dispatch,
   ] = useReducer(reducer, initialValue, initialState);
 
-  const { fetch, refresh, isLoading, response, error: fetchError } = useFetch(getServerURL());
+  const { fetch, refresh, isLoading, response, error: fetchError, noMore } = useFetch(
+    getServerURL()
+  );
 
   // If response is empty, we are not loading, and there is no error,
   // then we have tried to fetch and had no results.
@@ -141,7 +148,7 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
   };
 
   const getMorePatients = async searchParams => {
-    if (!response) return;
+    if (!response && !noMore) return;
 
     dispatch({ type: 'getting_more_patients' });
     const paramsWithLimits = { ...searchParams, limit, offset };
@@ -155,12 +162,20 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
       }
     );
 
-    dispatch({
-      type: 'add_more_patients',
-      payload: {
-        data: processPatientResponse({ ...getMoreResponse, json: await getMoreResponse.json() }),
-      },
-    });
+    try {
+      const morePatients = processPatientResponse({
+        ...getMoreResponse,
+        json: await getMoreResponse.json(),
+      });
+      dispatch({
+        type: 'add_more_patients',
+        payload: {
+          data: morePatients,
+        },
+      });
+    } catch {
+      dispatch({ type: 'no_more_patients' });
+    }
   };
 
   const getLocalPatients = searchParameters => {
@@ -208,10 +223,15 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
     trailing: true,
   });
 
-  const throttledGetMorePatients = useThrottled(getMorePatients, 1000, [limit, offset, response], {
-    loading: false,
-    trailing: true,
-  });
+  const throttledGetMorePatients = useThrottled(
+    getMorePatients,
+    1000,
+    [limit, offset, response, noMore],
+    {
+      loading: false,
+      trailing: true,
+    }
+  );
 
   // getLocalPatients is throttled- ensure that the fetch_start action is still dispatched
   // on the first invocation so the loading state is changed.
