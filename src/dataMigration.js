@@ -9,6 +9,7 @@ import { compareVersions } from './utilities';
 import { SETTINGS_KEYS } from './settings';
 import packageJson from '../package.json';
 import { createRecord } from './database/utilities';
+import { MILLISECONDS } from './utilities/constants';
 
 const APP_VERSION_KEY = 'AppVersion';
 
@@ -76,10 +77,7 @@ const dataMigrations = [
       // database.
 
       // Assume that last SyncOut record is correct.
-      const allRecords = database
-        .objects('SyncOut')
-        .sorted('changeTime')
-        .snapshot();
+      const allRecords = database.objects('SyncOut').sorted('changeTime').snapshot();
       database.write(() => {
         allRecords.forEach(record => {
           const hasDuplicates = allRecords.filtered('recordId == $0', record.id).length > 1;
@@ -256,6 +254,23 @@ const dataMigrations = [
         });
         database.delete('SyncOut', invalidSyncRecords);
       });
+    },
+  },
+  // This adds a sync interval to settings with the default value of 10 minutes which has been
+  // the hard coded value for all versions prior to 8.0.
+  {
+    version: '8.0.0',
+    migrate: database => {
+      const syncInterval = database.getSetting(SETTINGS_KEYS.SYNC_INTERVAL);
+
+      if (!syncInterval) {
+        database.write(() => {
+          database.update('Setting', {
+            key: SETTINGS_KEYS.SYNC_INTERVAL,
+            value: String(MILLISECONDS.TEN_MINUTES),
+          });
+        });
+      }
     },
   },
 ];

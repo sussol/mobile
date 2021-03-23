@@ -5,6 +5,7 @@ import { DEFAULT_LANGUAGE } from '../localization/index';
 import { setCurrentLanguage, setDateLocale } from '../localization/utilities';
 import { UIDatabase } from '../database';
 import { setCurrencyLocalisation } from '../localization/currency';
+import { MILLISECONDS } from '../utilities/constants';
 
 class MobileAppSettings extends Settings {
   constructor() {
@@ -35,6 +36,7 @@ class MobileAppSettings extends Settings {
 
   setDefaults() {
     this.set(SETTINGS_KEYS.CURRENT_LANGUAGE, DEFAULT_LANGUAGE);
+    this.set(SETTINGS_KEYS.SYNC_INTERVAL, String(MILLISECONDS.TEN_MINUTES));
   }
 }
 
