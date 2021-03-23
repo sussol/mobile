@@ -376,15 +376,15 @@ const FORM_CONFIGS = {
 
 export const getFormInputConfig = (formName, seedObject) => {
   const formInputConfigs = FORM_INPUT_CONFIGS(seedObject);
-  const formConfig = FORM_CONFIGS[formName].map(config => formInputConfigs[config]);
+  const formConfig = FORM_CONFIGS[formName]
+    .map(config => formInputConfigs[config])
+    .filter(({ shouldHideCondition }) => !shouldHideCondition?.());
 
   if (!seedObject) return formConfig;
 
-  return formConfig
-    .filter(({ shouldHideCondition }) => !shouldHideCondition?.())
-    .map(({ key, initialValue, ...restOfConfig }) => ({
-      ...restOfConfig,
-      key,
-      initialValue: seedObject[key] ?? initialValue,
-    }));
+  return formConfig.map(({ key, initialValue, ...restOfConfig }) => ({
+    ...restOfConfig,
+    key,
+    initialValue: seedObject[key] ?? initialValue,
+  }));
 };
