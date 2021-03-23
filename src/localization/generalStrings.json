@@ -1,5 +1,6 @@
 {
   "gb": {
+    "idle_log_out_interval": "Idle logout interval (minutes):",
     "sync_interval_minutes": "Sync interval (minutes):",
     "problem_connecting_please_try_again": "There was a problem connecting with the server for this patient. Please ensure you have an internet connection and try again.",
     "enter_patient_details": "Enter the patient's details to start searching for them",

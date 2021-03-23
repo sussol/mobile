@@ -4,6 +4,8 @@
  */
 
 import moment from 'moment';
+import { UIDatabase } from '../database/index';
+import { SETTINGS_KEYS } from '../settings/index';
 
 export const USER_ACTION_TYPES = {
   LOG_IN: 'USER/LOG_IN',
@@ -19,11 +21,12 @@ const setTime = () => ({ type: USER_ACTION_TYPES.SET_TIME });
 const active = () => (dispatch, getState) => {
   const { user } = getState();
   const { time } = user;
+  const idleLogoutInterval = Number(UIDatabase.getSetting(SETTINGS_KEYS.IDLE_LOGOUT_INTERVAL));
+  const timeNowWithLogoutOffset = moment(time).add(idleLogoutInterval, 'milliseconds');
 
-  const threeMinutesLater = moment(time).add(3, 'minutes');
   const timeNow = moment();
 
-  if (threeMinutesLater.isBefore(timeNow)) return dispatch(logout());
+  if (timeNowWithLogoutOffset.isBefore(timeNow)) return dispatch(logout());
   return dispatch(setTime());
 };
 
