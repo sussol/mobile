@@ -6,10 +6,9 @@
 import AsyncStorage from '@react-native-community/async-storage';
 
 import { compareVersions } from './utilities';
-import { SETTINGS_KEYS } from './settings';
+import { SETTINGS_KEYS, SETTINGS_DEFAULTS } from './settings';
 import packageJson from '../package.json';
 import { createRecord } from './database/utilities';
-import { MILLISECONDS } from './utilities/constants';
 
 const APP_VERSION_KEY = 'AppVersion';
 
@@ -267,7 +266,14 @@ const dataMigrations = [
         database.write(() => {
           database.update('Setting', {
             key: SETTINGS_KEYS.SYNC_INTERVAL,
-            value: String(MILLISECONDS.TEN_MINUTES),
+            value: SETTINGS_DEFAULTS[SETTINGS_KEYS.SYNC_INTERVAL],
+          });
+        });
+
+        database.write(() => {
+          database.update('Setting', {
+            key: SETTINGS_KEYS.IDLE_LOGOUT_INTERVAL,
+            value: SETTINGS_DEFAULTS[SETTINGS_KEYS.IDLE_LOGOUT_INTERVAL],
           });
         });
       }
