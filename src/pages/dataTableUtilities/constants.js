@@ -144,6 +144,7 @@ export const COLUMN_NAMES = {
   NAME: 'name',
   NUMBER_OF_ITEMS: 'numberOfItems',
   NUMBER_OF_PACKS: 'numberOfPacks',
+  NUMBER_OF_VIALS: 'numberOfVials',
   OTHER_PARTY_NAME: 'otherPartyName',
   OUR_STOCK_ON_HAND: 'ourStockOnHand',
   PATIENT_EDIT: 'patientEdit',

@@ -20,10 +20,12 @@ export const SETTINGS_KEYS = {
   THIS_STORE_TAGS: 'ThisStoreTags',
   THIS_STORE_CODE: 'ThisStoreCode',
   SYNC_INTERVAL: 'SyncInterval',
+  IDLE_LOGOUT_INTERVAL: 'IdleLogoutInterval',
 };
 
 export const SETTINGS_DEFAULTS = {
   [SETTINGS_KEYS.SYNC_INTERVAL]: String(MILLISECONDS.TEN_MINUTES),
+  [SETTINGS_KEYS.IDLE_LOGOUT_INTERVAL]: String(MILLISECONDS.THREE_MINUTES),
 };
 
 export const getAppVersion = async () => {

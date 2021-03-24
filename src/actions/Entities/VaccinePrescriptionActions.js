@@ -41,7 +41,7 @@ const getDefaultVaccinator = () => {
     return batches.medicineAdministrator;
   }
 
-  return null;
+  return UIDatabase.objects('MedicineAdministrator').sorted('lastName')[0] ?? null;
 };
 
 const getDefaultVaccine = () => {

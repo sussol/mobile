@@ -23,10 +23,6 @@ export class StocktakeItem extends Realm.Object {
     database.delete('StocktakeBatch', this.batches);
   }
 
-  get hasValidDoses() {
-    return this.batches.every(({ hasValidDoses }) => hasValidDoses);
-  }
-
   get isVaccine() {
     return this.item?.isVaccine ?? false;
   }
@@ -46,7 +42,7 @@ export class StocktakeItem extends Realm.Object {
    * @return  {number}
    */
   get countedTotalQuantity() {
-    return getTotal(this.batches, 'countedTotalQuantity');
+    return getTotal(this.batches, 'countedTotalQuantity').toFixed(2);
   }
 
   /**

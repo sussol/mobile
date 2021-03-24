@@ -444,7 +444,6 @@ export class Transaction extends Realm.Object {
         expiryDate,
         costPrice,
         sellPrice,
-        doses,
         location,
         vaccineVialMonitorStatus,
       } = transactionBatch;
@@ -466,11 +465,8 @@ export class Transaction extends Realm.Object {
         ? itemBatch.numberOfPacks + packedToOneQuantity
         : itemBatch.numberOfPacks - packedToOneQuantity;
 
-      const newDoses = isIncomingInvoice ? itemBatch.doses + doses : itemBatch.doses - doses;
-
       itemBatch.packSize = 1;
       itemBatch.numberOfPacks = newNumberOfPacks;
-      itemBatch.doses = newDoses;
       itemBatch.expiryDate = expiryDate;
       itemBatch.batch = this.adjustBatchName(batch);
       itemBatch.costPrice = packedToOneCostPrice;
@@ -499,10 +495,6 @@ export class Transaction extends Realm.Object {
     return batchName;
   }
 
-  get hasValidDoses() {
-    return this.items.every(({ hasValidDoses }) => hasValidDoses);
-  }
-
   get canFinaliseCustomerInvoice() {
     const finaliseStatus = { success: true, message: modalStrings.finalise_customer_invoice };
 
@@ -514,11 +506,6 @@ export class Transaction extends Realm.Object {
     if (!this.totalQuantity) {
       finaliseStatus.success = false;
       finaliseStatus.message = modalStrings.record_stock_to_issue_before_finalising;
-    }
-
-    if (!this.hasValidDoses) {
-      finaliseStatus.success = false;
-      finaliseStatus.message = modalStrings.some_item_have_invalid_doses;
     }
 
     return finaliseStatus;

@@ -75,7 +75,6 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
         'cost_price',
         'sell_price',
         'donor_id',
-        'doses',
         'location_ID',
       ],
     },
@@ -145,7 +144,6 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
         'cost_price',
         'sell_price',
         'optionID',
-        'doses',
         'vaccine_vial_monitor_status_ID',
         'location_id',
       ],
@@ -179,7 +177,6 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
         'cost_price',
         'sell_price',
         'donor_id',
-        'doses',
         'vaccine_vial_monitor_status_ID',
         'location_ID',
       ],
@@ -477,7 +474,6 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         sellPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
         supplier: database.getOrCreate('Name', record.name_ID),
         donor: database.getOrCreate('Name', record.donor_ID),
-        doses: packSize ? parseNumber(record.doses) / packSize : 0,
         location: database.getOrCreate('Location', record.location_ID),
       };
       const itemBatch = database.update(recordType, internalRecord);
@@ -805,7 +801,6 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         countedNumberOfPacks: parseNumber(record.stock_take_qty) * packSize,
         sortIndex: parseNumber(record.line_number),
         option: database.getOrCreate('Options', record.optionID),
-        doses: packSize ? parseNumber(record.doses) / packSize : 0,
         location: database.getOrCreate('Location', record.location_id),
         vaccineVialMonitorStatus: database.getOrCreate(
           'VaccineVialMonitorStatus',
@@ -911,7 +906,6 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         expiryDate: parseDate(record.expiry_date),
         batch: record.batch,
         type: record.type,
-        doses: packSize ? parseNumber(record.doses) / packSize : 0,
         location: database.getOrCreate('Location', record.location_ID),
         vaccineVialMonitorStatus: database.getOrCreate(
           'VaccineVialMonitorStatus',

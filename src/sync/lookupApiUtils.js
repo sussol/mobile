@@ -129,6 +129,23 @@ export const getPrescriberRequestUrl = params => {
   return endpoint + queryString;
 };
 
+const processNameNoteResponse = response =>
+  response.map(
+    ({
+      ID: id,
+      data,
+      patient_event_ID: patientEventID,
+      name_ID: nameID,
+      entry_date: entryDate,
+    }) => ({
+      id,
+      data,
+      patientEventID,
+      nameID,
+      entryDate: moment(entryDate).isValid() ? moment(entryDate).toDate() : moment().toDate(),
+    })
+  );
+
 const processInsuranceResponse = response =>
   response.map(
     ({
@@ -192,6 +209,7 @@ export const processPatientResponse = response => {
       last: lastName,
       date_of_birth,
       nameInsuranceJoin,
+      nameNotes,
     }) => ({
       id,
       name,
@@ -208,6 +226,7 @@ export const processPatientResponse = response => {
       lastName,
       dateOfBirth: parseDate(date_of_birth),
       policies: processInsuranceResponse(nameInsuranceJoin),
+      nameNotes: processNameNoteResponse(nameNotes),
     })
   );
 };
