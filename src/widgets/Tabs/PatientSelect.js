@@ -81,7 +81,7 @@ const Header = ({ onSearchOnline, onNewPatient }) => (
 
 const GettingMore = ({ gettingMore }) =>
   gettingMore ? (
-    <FlexRow flex={1} justifyContent="center" alignItems="space-between">
+    <FlexRow flex={1} justifyContent="center" alignItems="space-between" style={localStyles.more}>
       <Text style={localStyles.text}>{generalStrings.finding_more_patients}</Text>
       <ActivityIndicator color={SUSSOL_ORANGE} size="small" />
     </FlexRow>
@@ -292,5 +292,7 @@ const localStyles = StyleSheet.create({
     fontFamily: APP_FONT_FAMILY,
     color: DARKER_GREY,
     fontSize: 14,
+    paddingRight: 7,
   },
+  more: { paddingVertical: 10 },
 });

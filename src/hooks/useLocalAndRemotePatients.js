@@ -22,7 +22,7 @@ const initialState = (initialValue = []) => ({
   searchedWithNoResults: false,
   gettingMore: false,
   noMore: true,
-  limit: 5,
+  limit: BATCH_SIZE,
   offset: 0,
 });
 
@@ -135,8 +135,9 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
   }, [fetchError]);
 
   const onPressSearchOnline = searchParams => {
-    const paramsWithLimits = { ...searchParams, limit, offset };
+    const paramsWithLimits = { ...searchParams, limit: BATCH_SIZE, offset: 0 };
 
+    dispatch({ type: 'clear' });
     refresh();
 
     fetch(
@@ -148,7 +149,7 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
   };
 
   const getMorePatients = async searchParams => {
-    if (!response && !noMore) return;
+    if (!response || noMore) return;
 
     dispatch({ type: 'getting_more_patients' });
     const paramsWithLimits = { ...searchParams, limit, offset };
@@ -233,6 +234,8 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
     }
   );
 
+  const throttledSearchOnline = useThrottled(onPressSearchOnline, 500, []);
+
   // getLocalPatients is throttled- ensure that the fetch_start action is still dispatched
   // on the first invocation so the loading state is changed.
   const getLocalPatientsWrapper = searchParameters => {
@@ -242,7 +245,7 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
 
   return [
     { data, loading, searchedWithNoResults, error, gettingMore },
-    onPressSearchOnline,
+    throttledSearchOnline,
     getLocalPatientsWrapper,
     throttledGetMorePatients,
   ];
