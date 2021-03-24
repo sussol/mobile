@@ -412,6 +412,11 @@ const generateSyncData = (settings, recordType, record) => {
         name_ID: record.name?.id ?? '',
         entry_date: getDateString(record.entryDate),
         data: record.data,
+        // The NameNote table is in the middle of a migration away from the current impl
+        // where there are fields boolean_value, value, note etc. To avoid having to also
+        // migrate data within mobile, just send the boolean_value field when the name_note
+        // is of type 'refused vaccine' as that is the only name_note which
+        boolean_value: record?.patientEvent?.code === 'RV' ? 'True' : undefined,
       };
     }
     case 'AdverseDrugReaction': {
