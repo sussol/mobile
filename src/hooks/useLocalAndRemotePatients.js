@@ -98,13 +98,11 @@ const reducer = (state, action) => {
  */
 export const useLocalAndRemotePatients = (initialValue = []) => {
   const [
-    { data, loading, searchedWithNoResults, error, limit, offset, gettingMore },
+    { data, loading, searchedWithNoResults, error, limit, offset, gettingMore, noMore },
     dispatch,
   ] = useReducer(reducer, initialValue, initialState);
 
-  const { fetch, refresh, isLoading, response, error: fetchError, noMore } = useFetch(
-    getServerURL()
-  );
+  const { fetch, refresh, isLoading, response, error: fetchError } = useFetch(getServerURL());
 
   // If response is empty, we are not loading, and there is no error,
   // then we have tried to fetch and had no results.
