@@ -3,11 +3,10 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { ToastAndroid } from 'react-native';
 import { batch } from 'react-redux';
 
 import { createRecord, UIDatabase } from '../database';
-import { generalStrings } from '../localization/index';
+
 import { createPatientVisibility } from '../sync/lookupApiUtils';
 import { DispensaryActions } from './DispensaryActions';
 
@@ -29,6 +28,12 @@ const editPatient = patient => ({
     patient,
   },
 });
+
+const makePatientVisibility = async name => {
+  const response = await createPatientVisibility(name);
+
+  return response;
+};
 
 const patientUpdate = patientDetails => async (dispatch, getState) => {
   const { patient } = getState();
@@ -122,26 +127,13 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     nationality,
   };
 
-  try {
-    const response = await createPatientVisibility(patientRecord);
+  UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patientRecord));
 
-    if (response) {
-      UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patientRecord));
-
-      batch(() => {
-        dispatch(closeModal());
-        dispatch(DispensaryActions.closeLookupModal());
-        dispatch(DispensaryActions.refresh());
-      });
-    } else {
-      ToastAndroid.show(generalStrings.problem_connecting_please_try_again, ToastAndroid.LONG);
-    }
-
-    return response.ok;
-  } catch {
-    ToastAndroid.show(generalStrings.problem_connecting_please_try_again, ToastAndroid.LONG);
-    return false;
-  }
+  batch(() => {
+    dispatch(closeModal());
+    dispatch(DispensaryActions.closeLookupModal());
+    dispatch(DispensaryActions.refresh());
+  });
 };
 
 const sortPatientHistory = sortKey => ({
@@ -164,4 +156,5 @@ export const PatientActions = {
   sortPatientHistory,
   viewPatientHistory,
   closePatientHistory,
+  makePatientVisibility,
 };

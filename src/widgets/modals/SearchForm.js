@@ -5,7 +5,7 @@
  */
 
 import React, { useMemo, useCallback } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ToastAndroid } from 'react-native';
 import { connect, batch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { getAuthHeader } from 'sussol-utilities';
@@ -175,11 +175,17 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => ({
   close: () => dispatch(DispensaryActions.closeLookupModal()),
   selectPatient: async patient => {
-    await dispatch(PatientActions.patientUpdate(patient));
-    batch(() => {
-      patient.policies.forEach(policy => dispatch(InsuranceActions.update(policy)));
-      dispatch(NameNoteActions.createNotes(patient?.nameNotes));
-    });
+    const result = await PatientActions.makePatientVisibility(patient);
+
+    if (result) {
+      await dispatch(PatientActions.patientUpdate(patient));
+      batch(() => {
+        patient.policies.forEach(policy => dispatch(InsuranceActions.update(policy)));
+        dispatch(NameNoteActions.createNotes(patient?.nameNotes));
+      });
+    } else {
+      ToastAndroid.show(generalStrings.problem_connecting_please_try_again, ToastAndroid.LONG);
+    }
   },
   selectPrescriber: prescriber => {
     dispatch(PrescriberActions.updatePrescriber(prescriber));
