@@ -30,8 +30,9 @@ const editPatient = patient => ({
 });
 
 const makePatientVisibility = async name => {
-  const response = createPatientVisibility(name);
-  return response.ok;
+  const response = await createPatientVisibility(name);
+
+  return response;
 };
 
 const patientUpdate = patientDetails => async (dispatch, getState) => {

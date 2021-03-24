@@ -175,7 +175,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => ({
   close: () => dispatch(DispensaryActions.closeLookupModal()),
   selectPatient: async patient => {
-    const result = await dispatch(PatientActions.makePatientVisibility(patient));
+    const result = await PatientActions.makePatientVisibility(patient);
 
     if (result) {
       await dispatch(PatientActions.patientUpdate(patient));
