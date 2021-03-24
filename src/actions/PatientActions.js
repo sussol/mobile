@@ -8,6 +8,7 @@ import { batch } from 'react-redux';
 
 import { createRecord, UIDatabase } from '../database';
 import { generalStrings } from '../localization/index';
+import { selectCurrentUser } from '../selectors/user';
 import { createPatientVisibility } from '../sync/lookupApiUtils';
 import { DispensaryActions } from './DispensaryActions';
 
@@ -18,6 +19,9 @@ export const PATIENT_ACTIONS = {
   CLOSE_HISTORY: 'Patient/closeHistory',
   SORT_HISTORY: 'Patient/sortHistory',
   COMPLETE: 'Patient/complete',
+  NEW_ADR: 'Patient/newADR',
+  SAVE_ADR: 'Patient/saveADR',
+  CANCEL_ADR: 'Patient/cancelADR',
 };
 
 const closeModal = () => ({ type: PATIENT_ACTIONS.COMPLETE });
@@ -156,7 +160,27 @@ const viewPatientHistory = patient => ({
 
 const closePatientHistory = () => ({ type: PATIENT_ACTIONS.CLOSE_HISTORY });
 
+const openADRModal = patientID => {
+  const patient = UIDatabase.get('Name', patientID);
+  return { type: PATIENT_ACTIONS.NEW_ADR, payload: { patient } };
+};
+
+const closeADRModal = () => ({ type: PATIENT_ACTIONS.CANCEL_ADR });
+
+const saveADR = (patient, formData) => (dispatch, getState) => {
+  const user = selectCurrentUser(getState());
+
+  UIDatabase.write(() => {
+    createRecord(UIDatabase, 'AdverseDrugReaction', patient, formData, user);
+  });
+
+  dispatch({ type: PATIENT_ACTIONS.SAVE_ADR });
+};
+
 export const PatientActions = {
+  saveADR,
+  openADRModal,
+  closeADRModal,
   createPatient,
   patientUpdate,
   editPatient,

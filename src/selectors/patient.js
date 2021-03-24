@@ -47,9 +47,8 @@ export const selectPatientInsurancePolicies = ({ patient }) => {
   });
 };
 export const selectPatientModalOpen = ({ patient }) => {
-  const { isCreating, isEditing } = patient;
-  const { viewingHistory } = patient;
-  return [isCreating || isEditing, viewingHistory];
+  const { creatingADR, viewingHistory, isCreating, isEditing } = patient;
+  return [isCreating || isEditing, viewingHistory, creatingADR];
 };
 
 export const selectCanEditPatient = ({ patient }) => {
