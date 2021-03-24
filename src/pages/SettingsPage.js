@@ -53,11 +53,14 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
     syncPassword: '',
     syncInterval:
       Number(UIDatabase.getSetting(SETTINGS_KEYS.SYNC_INTERVAL) / MILLISECONDS.ONE_MINUTE) ?? 10,
+    idleLogoutInterval:
+      Number(UIDatabase.getSetting(SETTINGS_KEYS.IDLE_LOGOUT_INTERVAL) / MILLISECONDS.ONE_MINUTE) ??
+      3,
   });
 
   const withLoadingIndicator = useLoadingIndicator();
 
-  const { modalKey, syncURL, syncPassword, syncInterval } = state;
+  const { modalKey, syncURL, syncPassword, syncInterval, idleLogoutInterval } = state;
 
   const closeModal = () => setState({ ...state, modalKey: '' });
   const openModal = newModalKey => setState({ ...state, modalKey: newModalKey });
@@ -72,6 +75,10 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
 
   const editSyncInterval = newSyncInterval => {
     setState(oldState => ({ ...oldState, syncInterval: newSyncInterval }));
+  };
+
+  const editIdleLogoutInterval = newIdleLogoutInterval => {
+    setState(oldState => ({ ...oldState, idleLogoutInterval: newIdleLogoutInterval }));
   };
 
   const save = enteredPassword => {
@@ -95,6 +102,11 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
         UIDatabase.update('Setting', {
           key: SETTINGS_KEYS.SYNC_INTERVAL,
           value: String(syncInterval * MILLISECONDS.ONE_MINUTE),
+        });
+
+        UIDatabase.update('Setting', {
+          key: SETTINGS_KEYS.IDLE_LOGOUT_INTERVAL,
+          value: String(idleLogoutInterval * MILLISECONDS.ONE_MINUTE),
         });
       });
     }
@@ -183,6 +195,25 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
                 step={1}
                 value={syncInterval}
                 onEndEditing={editSyncInterval}
+                textUnderlineColour={SUSSOL_ORANGE}
+              />
+            </FlexView>
+          </FlexRow>
+          <FlexRow
+            flex={1}
+            justifyContent="center"
+            alignItems="center"
+            style={{ marginTop: 10, maxHeight: 50 }}
+          >
+            <Text style={styles.text}>{generalStrings.idle_log_out_interval}</Text>
+            <FlexView flex={1}>
+              <Slider
+                minimumValue={1}
+                maximumValue={10}
+                fractionDigits={0}
+                step={1}
+                value={idleLogoutInterval}
+                onEndEditing={editIdleLogoutInterval}
                 textUnderlineColour={SUSSOL_ORANGE}
               />
             </FlexView>
