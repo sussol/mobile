@@ -47,6 +47,7 @@ import {
 } from '../../selectors/dispensary';
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 import { DispensaryActions } from '../../actions/DispensaryActions';
+import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
 
 const { SYNC_URL, SYNC_SITE_NAME, SYNC_SITE_PASSWORD_HASH } = SETTINGS_KEYS;
 
@@ -175,7 +176,10 @@ const mapDispatchToProps = dispatch => ({
   close: () => dispatch(DispensaryActions.closeLookupModal()),
   selectPatient: async patient => {
     await dispatch(PatientActions.patientUpdate(patient));
-    batch(() => patient.policies.forEach(policy => dispatch(InsuranceActions.update(policy))));
+    batch(() => {
+      patient.policies.forEach(policy => dispatch(InsuranceActions.update(policy)));
+      dispatch(NameNoteActions.createNotes(patient?.nameNotes));
+    });
   },
   selectPrescriber: prescriber => {
     dispatch(PrescriberActions.updatePrescriber(prescriber));
