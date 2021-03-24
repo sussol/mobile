@@ -22,10 +22,6 @@ export class TransactionItem extends Realm.Object {
     database.delete('TransactionBatch', this.batches);
   }
 
-  get hasValidDoses() {
-    return this.batches.every(({ hasValidDoses }) => hasValidDoses);
-  }
-
   get isVaccine() {
     return !!this?.item?.isVaccine;
   }
@@ -300,7 +296,7 @@ export class TransactionItem extends Realm.Object {
   }
 
   get doses() {
-    return this.batches.sum('doses');
+    return getTotal(this.batches, 'doses');
   }
 
   get hasBreached() {

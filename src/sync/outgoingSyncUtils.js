@@ -70,7 +70,6 @@ const generateSyncData = (settings, recordType, record) => {
         total_cost: String(record.costPrice * record.numberOfPacks),
         name_ID: record.supplier?.id ?? '',
         donor_id: record.donor?.id ?? '',
-        doses: String(record.doses),
         location_ID: record.location?.id,
       };
     }
@@ -196,7 +195,6 @@ const generateSyncData = (settings, recordType, record) => {
         item_ID: record.itemId,
         optionID: record.option?.id ?? '',
         is_edited: record.hasBeenCounted,
-        doses: String(record.doses),
         location_ID: record.location?.id,
         vaccine_vial_monitor_status_ID: record.vaccineVialMonitorStatus?.id,
       };
@@ -266,7 +264,6 @@ const generateSyncData = (settings, recordType, record) => {
         donor_id: record.donor?.id ?? '',
         type: record.type,
         linked_transact_id: record.linkedTransaction?.id,
-        doses: String(record.doses),
         location_ID: record.location?.id,
         vaccine_vial_monitor_status_ID: record.vaccineVialMonitorStatus?.id,
         medicine_administrator_id: record.medicineAdministrator?.id ?? '',
