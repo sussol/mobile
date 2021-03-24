@@ -109,7 +109,21 @@ const saveEditing = optionalNameID => (dispatch, getState) => {
 const createNotes = (nameNotes = []) => {
   UIDatabase.write(() => {
     nameNotes.forEach(nameNote => {
-      UIDatabase.update('NameNote', nameNote);
+      const { patientEventID, nameID } = nameNote;
+      const name = UIDatabase.get('Name', nameID);
+      const patientEvent = UIDatabase.get('PatientEvent', patientEventID);
+
+      if (name && patientEvent) {
+        const toSave = {
+          id: nameNote.id,
+          patientEvent,
+          name,
+          _data: JSON.stringify(nameNote?.data),
+          entryDate: new Date(nameNote?.entryDate),
+        };
+
+        UIDatabase.update('NameNote', toSave);
+      }
     });
   });
 
