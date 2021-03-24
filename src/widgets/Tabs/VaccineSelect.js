@@ -164,8 +164,7 @@ const mapDispatchToProps = dispatch => {
   const onCancelPrescription = () => dispatch(VaccinePrescriptionActions.cancel());
   const onSelectBatch = itemBatch => dispatch(VaccinePrescriptionActions.selectBatch(itemBatch));
   const onSelectVaccine = vaccine => dispatch(VaccinePrescriptionActions.selectVaccine(vaccine));
-  const onSelectVaccinator = vaccinator =>
-    dispatch(VaccinePrescriptionActions.selectVaccinator(vaccinator));
+
   const onConfirm = () =>
     batch(() => {
       dispatch(VaccinePrescriptionActions.confirm());
@@ -180,7 +179,6 @@ const mapDispatchToProps = dispatch => {
     onRefuse,
     onSelectBatch,
     onSelectVaccine,
-    onSelectVaccinator,
   };
 };
 
