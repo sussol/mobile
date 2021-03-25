@@ -40,7 +40,7 @@ const defaultTheme = {
     TextWidget: JSONFormWidget.Text,
     URLWidget: () => null,
     EmailWidget: () => null,
-    TextareaWidget: () => null,
+    TextareaWidget: JSONFormWidget.Textarea,
     CheckboxWidget: JSONFormWidget.Checkbox,
     CheckboxesWidget: JSONFormWidget.Checkboxes,
     PasswordWidget: () => null,

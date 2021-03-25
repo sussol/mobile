@@ -4,6 +4,7 @@ import { Radio } from './Radio';
 import { DatePicker } from './DatePicker';
 import { Select } from './Select';
 import { Text } from './Text';
+import { Textarea } from './Textarea';
 
 export const JSONFormWidget = {
   Checkboxes,
@@ -12,4 +13,5 @@ export const JSONFormWidget = {
   DatePicker,
   Select,
   Text,
+  Textarea,
 };
