@@ -48,6 +48,7 @@ const defaultTheme = {
     SelectWidget: JSONFormWidget.Select,
     RangeWidget: () => null,
     DateWidget: JSONFormWidget.DatePicker,
+    TimeWidget: JSONFormWidget.TimePicker,
   },
 
   // Fields are like containers for a row in the form.
