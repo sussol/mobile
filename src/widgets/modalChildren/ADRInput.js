@@ -19,7 +19,7 @@ export const ADRInputComponent = ({ onCancel, onSave, patient }) => {
     <>
       <JSONForm
         onChange={(changed, validator) => {
-          setForm({ form: changed.formData, isValid: validator(changed.formData) });
+          setForm({ formData: changed.formData, isValid: validator(changed.formData) });
         }}
         surveySchema={UIDatabase.objects('ADRForm')[0]}
       >
