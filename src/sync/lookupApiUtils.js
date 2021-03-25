@@ -29,6 +29,7 @@ const RESOURCES = {
 const TYPES = {
   STRING: 'string',
   DATE: 'date',
+  NUMBER: 'number',
 };
 
 const PARAMETERS = {
@@ -37,6 +38,8 @@ const PARAMETERS = {
   dateOfBirth: { key: 'dob', type: TYPES.DATE },
   policyNumber: { key: 'policy_number', type: TYPES.STRING },
   registrationCode: { key: 'code', type: TYPES.STRING },
+  limit: { key: 'limit', type: TYPES.NUMBER },
+  offset: { key: 'offset', type: TYPES.NUMBER },
 };
 
 class BugsnagError extends Error {
@@ -74,8 +77,14 @@ const getQueryString = params => {
   const query = params.reduce((queryObject, param) => {
     const [[key, value], [, type]] = Object.entries(param);
     if (!value) return queryObject;
-    const paramValue = type !== TYPES.DATE ? `@${value}@` : moment(value).format('DDMMYYYY');
-    return { ...queryObject, [key]: paramValue };
+
+    const formatter = {
+      [TYPES.STRING]: string => `@${string}@`,
+      [TYPES.DATE]: date => moment(date).format('DDMMYYYY'),
+      [TYPES.NUMBER]: number => Number(number),
+    };
+
+    return { ...queryObject, [key]: formatter[type](value) };
   }, {});
   return `?${querystring.stringify(query)}`;
 };
@@ -94,12 +103,16 @@ const getPatientQueryString = ({
   lastName = '',
   dateOfBirth = '',
   policyNumber = '',
+  limit = null,
+  offset = null,
 } = {}) => {
   const queryParams = [
     { [PARAMETERS.firstName.key]: firstName, type: PARAMETERS.firstName.type },
     { [PARAMETERS.lastName.key]: lastName, type: PARAMETERS.lastName.type },
     { [PARAMETERS.dateOfBirth.key]: dateOfBirth, type: PARAMETERS.dateOfBirth.type },
     { [PARAMETERS.policyNumber.key]: policyNumber, type: PARAMETERS.policyNumber.type },
+    { [PARAMETERS.offset.key]: offset, type: PARAMETERS.offset.type },
+    { [PARAMETERS.limit.key]: limit, type: PARAMETERS.limit.type },
   ];
   return getQueryString(queryParams);
 };

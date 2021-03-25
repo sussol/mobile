@@ -1,5 +1,6 @@
 import { useEffect, useReducer } from 'react';
 import moment from 'moment';
+import unionBy from 'lodash.unionby';
 import { UIDatabase } from '../database/index';
 import {
   getAuthorizationHeader,
@@ -11,17 +12,31 @@ import { DATE_FORMAT } from '../utilities/constants';
 import { useFetch } from './useFetch';
 import { useThrottled } from './useThrottled';
 
+const RNFetch = fetch;
+const BATCH_SIZE = 50;
+
 const initialState = (initialValue = []) => ({
   data: initialValue,
   loading: false,
   error: false,
   searchedWithNoResults: false,
+  gettingMore: false,
+  noMore: true,
+  limit: BATCH_SIZE,
+  offset: 0,
 });
 
 const reducer = (state, action) => {
   const { type } = action;
 
   switch (type) {
+    case 'fetch_more': {
+      const { limit, offset } = state;
+      const newOffset = offset + limit;
+
+      return { ...state, offset: newOffset };
+    }
+
     case 'fetch_success': {
       const { payload } = action;
       const { data } = payload;
@@ -33,7 +48,7 @@ const reducer = (state, action) => {
 
       if (loading) return state;
 
-      return { ...state, loading: true, data: [], searchedWithNoResults: false };
+      return { ...state, loading: true, data: [], searchedWithNoResults: false, noMore: false };
     }
     case 'fetch_no_results': {
       return { ...state, data: [], searchedWithNoResults: true, loading: false };
@@ -45,6 +60,26 @@ const reducer = (state, action) => {
 
       return { ...state, error, loading: false, searchedWithNoResults: false };
     }
+
+    case 'getting_more_patients': {
+      return { ...state, gettingMore: true };
+    }
+
+    case 'add_more_patients': {
+      const { payload } = action;
+      const { data } = payload;
+
+      const { offset, data: oldData } = state;
+      const newData = unionBy(data, oldData, 'id');
+      const newOffset = offset + BATCH_SIZE;
+
+      return { ...state, data: newData, offset: newOffset, gettingMore: false };
+    }
+
+    case 'no_more_patients': {
+      return { ...state, gettingMore: false, noMore: true };
+    }
+
     case 'clear': {
       return initialState();
     }
@@ -62,11 +97,10 @@ const reducer = (state, action) => {
  * having to track multiple.
  */
 export const useLocalAndRemotePatients = (initialValue = []) => {
-  const [{ data, loading, searchedWithNoResults, error }, dispatch] = useReducer(
-    reducer,
-    initialValue,
-    initialState
-  );
+  const [
+    { data, loading, searchedWithNoResults, error, limit, offset, gettingMore, noMore },
+    dispatch,
+  ] = useReducer(reducer, initialValue, initialState);
 
   const { fetch, refresh, isLoading, response, error: fetchError } = useFetch(getServerURL());
 
@@ -99,15 +133,53 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
   }, [fetchError]);
 
   const onPressSearchOnline = searchParams => {
+    const paramsWithLimits = { ...searchParams, limit: BATCH_SIZE, offset: 0 };
+
+    dispatch({ type: 'clear' });
     refresh();
+
     fetch(
-      getPatientRequestUrl(searchParams),
+      getPatientRequestUrl(paramsWithLimits),
       { headers: { authorization: getAuthorizationHeader() } },
       { responseHandler: processPatientResponse }
     );
+    dispatch({ type: 'fetch_more' });
+  };
+
+  const getMorePatients = async searchParams => {
+    if (!response || noMore) return;
+
+    dispatch({ type: 'getting_more_patients' });
+    const paramsWithLimits = { ...searchParams, limit, offset };
+
+    // Use RNFetch as the fetch returned from `useFetch` is coupled with it's state in a specific
+    // implementation, which we want to change by appending to the result, rather than replacing.
+    const getMoreResponse = await RNFetch(
+      `${getServerURL()}${getPatientRequestUrl(paramsWithLimits)}`,
+      {
+        headers: { authorization: getAuthorizationHeader() },
+      }
+    );
+
+    try {
+      const morePatients = processPatientResponse({
+        ...getMoreResponse,
+        json: await getMoreResponse.json(),
+      });
+      dispatch({
+        type: 'add_more_patients',
+        payload: {
+          data: morePatients,
+        },
+      });
+    } catch {
+      dispatch({ type: 'no_more_patients' });
+    }
   };
 
   const getLocalPatients = searchParameters => {
+    refresh();
+
     const { lastName, firstName, dateOfBirth } = searchParameters;
 
     if (!(lastName || firstName || dateOfBirth)) {
@@ -150,6 +222,18 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
     trailing: true,
   });
 
+  const throttledGetMorePatients = useThrottled(
+    getMorePatients,
+    1000,
+    [limit, offset, response, noMore],
+    {
+      loading: false,
+      trailing: true,
+    }
+  );
+
+  const throttledSearchOnline = useThrottled(onPressSearchOnline, 500, []);
+
   // getLocalPatients is throttled- ensure that the fetch_start action is still dispatched
   // on the first invocation so the loading state is changed.
   const getLocalPatientsWrapper = searchParameters => {
@@ -158,8 +242,9 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
   };
 
   return [
-    { data, loading, searchedWithNoResults, error },
-    onPressSearchOnline,
+    { data, loading, searchedWithNoResults, error, gettingMore },
+    throttledSearchOnline,
     getLocalPatientsWrapper,
+    throttledGetMorePatients,
   ];
 };
