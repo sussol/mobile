@@ -5,6 +5,7 @@ import { DatePicker } from './DatePicker';
 import { TimePicker } from './TimePicker';
 import { Select } from './Select';
 import { Text } from './Text';
+import { Textarea } from './Textarea';
 
 export const JSONFormWidget = {
   Checkboxes,
@@ -14,4 +15,5 @@ export const JSONFormWidget = {
   TimePicker,
   Select,
   Text,
+  Textarea,
 };
