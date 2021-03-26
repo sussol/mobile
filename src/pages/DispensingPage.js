@@ -31,18 +31,19 @@ import {
   selectDataSetInUse,
   selectSortedData,
   selectLookupModalOpen,
-  selectADRModalOpen,
 } from '../selectors/dispensary';
 import { selectPrescriberModalOpen, selectCanEditPrescriber } from '../selectors/prescriber';
 import { selectInsuranceModalOpen, selectCanEditInsurancePolicy } from '../selectors/insurance';
 import { selectPatientModalOpen, selectCanEditPatient } from '../selectors/patient';
 
 import globalStyles from '../globalStyles';
-import { dispensingStrings } from '../localization';
+import { dispensingStrings, modalStrings } from '../localization';
 import { PatientEditModal } from '../widgets/modalChildren/PatientEditModal';
 import { selectSurveySchemas } from '../selectors/formSchema';
 import { NameNoteActions } from '../actions/Entities/NameNoteActions';
 import { createDefaultName } from '../actions/Entities/NameActions';
+import { SUSSOL_ORANGE } from '../globalStyles/colors';
+import { ADRInput } from '../widgets/modalChildren/ADRInput';
 
 const Dispensing = ({
   data,
@@ -280,8 +281,12 @@ const Dispensing = ({
       >
         <SearchForm />
       </ModalContainer>
-      <ModalContainer title="ADR" isVisible={isADRModalOpen} onClose={cancelCreatingADR}>
-        <></>
+      <ModalContainer
+        title={`${modalStrings.adr_form_for} ${currentPatient?.name}`}
+        isVisible={isADRModalOpen}
+        onClose={cancelCreatingADR}
+      >
+        <ADRInput />
       </ModalContainer>
     </>
   );
@@ -299,6 +304,27 @@ const localStyles = {
   button: {
     marginHorizontal: 2.5,
   },
+  saveButton: {
+    ...globalStyles.button,
+    flex: 1,
+    backgroundColor: SUSSOL_ORANGE,
+    alignSelf: 'center',
+  },
+  saveButtonTextStyle: {
+    ...globalStyles.buttonText,
+    color: 'white',
+    fontSize: 14,
+  },
+  cancelButton: {
+    ...globalStyles.button,
+    flex: 1,
+    alignSelf: 'center',
+  },
+  cancelButtonTextStyle: {
+    ...globalStyles.buttonText,
+    color: SUSSOL_ORANGE,
+    fontSize: 14,
+  },
 };
 
 const mapStateToProps = state => {
@@ -306,7 +332,6 @@ const mapStateToProps = state => {
   const { sortKey, isAscending, searchTerm, columns } = dispensary;
 
   const isLookupModalOpen = selectLookupModalOpen(state);
-  const isADRModalOpen = selectADRModalOpen(state);
 
   const { currentPatient } = patient;
   const { currentPrescriber } = prescriber;
@@ -316,7 +341,9 @@ const mapStateToProps = state => {
   const canEditPrescriber = selectCanEditPrescriber(state);
   const canEditPatient = selectCanEditPatient(state);
   const canEditInsurancePolicy = selectCanEditInsurancePolicy(state);
-  const [patientEditModalOpen, patientHistoryModalOpen] = selectPatientModalOpen(state);
+  const [patientEditModalOpen, patientHistoryModalOpen, isADRModalOpen] = selectPatientModalOpen(
+    state
+  );
   const insuranceModalOpen = selectInsuranceModalOpen(state);
   const data = selectSortedData(state);
 
@@ -358,8 +385,8 @@ const mapDispatchToProps = dispatch => ({
   refreshData: () => dispatch(DispensaryActions.refresh()),
   switchDataset: () => dispatch(DispensaryActions.switchDataSet()),
 
-  createADR: () => dispatch(DispensaryActions.openADRModal()),
-  cancelCreatingADR: () => dispatch(DispensaryActions.closeADRModal()),
+  createADR: patientID => dispatch(PatientActions.openADRModal(patientID)),
+  cancelCreatingADR: () => dispatch(PatientActions.closeADRModal()),
   lookupRecord: () => dispatch(DispensaryActions.openLookupModal()),
   cancelLookupRecord: () => dispatch(DispensaryActions.closeLookupModal()),
 

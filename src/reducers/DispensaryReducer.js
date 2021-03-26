@@ -97,14 +97,6 @@ export const DispensaryReducer = (state = initialState(), action) => {
       return { ...state, isLookupModalOpen: false };
     }
 
-    case DISPENSARY_ACTIONS.OPEN_ADR_MODAL: {
-      return { ...state, isADRModalOpen: true };
-    }
-
-    case DISPENSARY_ACTIONS.CLOSE_ADR_MODAL: {
-      return { ...state, isADRModalOpen: false };
-    }
-
     default:
       return state;
   }

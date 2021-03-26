@@ -1174,6 +1174,26 @@ const createNameNote = (database, nameNote, patientEventID, nameID) => {
   return null;
 };
 
+const createAdverseDrugReaction = (database, patient, formData, user) => {
+  const formSchema = database.objects('ADRForm')[0];
+  const entryDate = new Date();
+
+  if (!formSchema) return null;
+
+  const newADR = UIDatabase.update('AdverseDrugReaction', {
+    id: generateUUID(),
+    name: patient,
+    user,
+    formSchema,
+    entryDate,
+  });
+
+  newADR.data = formData;
+  database.save('AdverseDrugReaction', newADR);
+
+  return newADR;
+};
+
 /**
  * Create a record of the given type, taking care of linkages, generating IDs, serial
  * numbers, current dates, and inserting sensible defaults.
@@ -1265,6 +1285,8 @@ export const createRecord = (database, type, ...args) => {
       return createTemperatureBreachConfiguration(database, ...args);
     case 'NameNote':
       return createNameNote(database, ...args);
+    case 'AdverseDrugReaction':
+      return createAdverseDrugReaction(database, ...args);
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }
