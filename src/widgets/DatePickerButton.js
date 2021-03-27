@@ -8,7 +8,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import PropTypes from 'prop-types';
 
 import { CircleButton } from './CircleButton';
-import { CalendarIcon } from './icons';
+import { CalendarIcon, ClockIcon } from './icons';
 
 import { useDatePicker } from '../hooks/useDatePicker';
 import { IconButton } from './IconButton';
@@ -33,10 +33,15 @@ export const DatePickerButton = ({
   minimumDate,
   isCircle,
   isDisabled,
+  mode,
 }) => {
   const [datePickerIsOpen, openDatePicker, datePickerCallback] = useDatePicker(onDateChanged);
   const button = isCircle ? (
-    <CircleButton isDisabled={isDisabled} IconComponent={CalendarIcon} onPress={openDatePicker} />
+    <CircleButton
+      isDisabled={isDisabled}
+      IconComponent={mode === 'time' ? ClockIcon : CalendarIcon}
+      onPress={openDatePicker}
+    />
   ) : (
     <IconButton
       isDisabled={isDisabled}
@@ -53,7 +58,7 @@ export const DatePickerButton = ({
           maximumDate={maximumDate}
           minimumDate={minimumDate}
           onChange={datePickerCallback}
-          mode="date"
+          mode={mode}
           display="spinner"
           value={initialValue}
         />
@@ -67,6 +72,7 @@ DatePickerButton.defaultProps = {
   maximumDate: undefined,
   isCircle: true,
   isDisabled: false,
+  mode: 'date',
 };
 
 DatePickerButton.propTypes = {
@@ -76,4 +82,5 @@ DatePickerButton.propTypes = {
   minimumDate: PropTypes.instanceOf(Date),
   isCircle: PropTypes.bool,
   isDisabled: PropTypes.bool,
+  mode: PropTypes.string,
 };

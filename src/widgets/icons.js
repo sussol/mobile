@@ -410,3 +410,13 @@ DollarIcon.propTypes = {
   style: PropTypes.object,
   color: PropTypes.string,
 };
+
+export const ClockIcon = ({ size, style, color }) => (
+  <FAIcon size={size} style={style} color={color} name="clock-o" />
+);
+ClockIcon.defaultProps = { size: 20, style: {}, color: WHITE };
+ClockIcon.propTypes = {
+  size: PropTypes.number,
+  style: PropTypes.object,
+  color: PropTypes.string,
+};

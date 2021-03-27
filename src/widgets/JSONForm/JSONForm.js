@@ -40,7 +40,7 @@ const defaultTheme = {
     TextWidget: JSONFormWidget.Text,
     URLWidget: () => null,
     EmailWidget: () => null,
-    TextareaWidget: () => null,
+    TextareaWidget: JSONFormWidget.Textarea,
     CheckboxWidget: JSONFormWidget.Checkbox,
     CheckboxesWidget: JSONFormWidget.Checkboxes,
     PasswordWidget: () => null,
@@ -48,6 +48,7 @@ const defaultTheme = {
     SelectWidget: JSONFormWidget.Select,
     RangeWidget: () => null,
     DateWidget: JSONFormWidget.DatePicker,
+    TimeWidget: JSONFormWidget.TimePicker,
   },
 
   // Fields are like containers for a row in the form.
