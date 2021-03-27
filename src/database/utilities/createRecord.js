@@ -200,6 +200,21 @@ const getPatientUniqueCode = database => {
   return `${thisStoreCode}${String(patientSequenceNumber)}`;
 };
 
+const createNameNote = (database, { id, data, patientEventID, nameID, entryDate = new Date() }) => {
+  const patientEvent = database.get('PatientEvent', patientEventID);
+  const name = database.get('Name', nameID);
+
+  if (name && patientEvent) {
+    const newNameNote = database.update('NameNote', {
+      id: id ?? generateUUID(),
+      name,
+      patientEvent,
+      entryDate: new Date(entryDate),
+    });
+    newNameNote.data = data;
+  }
+};
+
 /**
  * Creates a new patient record. Patient details passed can be in the shape:
  *  {
@@ -230,6 +245,7 @@ const createPatient = (database, patientDetails) => {
     isActive: patientIsActive,
     nationality,
     ethnicity,
+    nameNotes,
   } = patientDetails;
 
   const id = patientId ?? generateUUID();
@@ -290,6 +306,9 @@ const createPatient = (database, patientDetails) => {
     nationality,
     ethnicity,
   });
+
+  nameNotes?.forEach(nameNote => createNameNote(database, nameNote));
+
   return patient;
 };
 
@@ -1154,24 +1173,6 @@ const createUpgradeMessage = (database, fromVersion, toVersion) => {
   database.save('Message', message);
 
   return message;
-};
-
-const createNameNote = (database, nameNote, patientEventID, nameID) => {
-  const name = UIDatabase.get('Name', nameID);
-  const patientEvent = UIDatabase.get('PatientEvent', patientEventID);
-
-  if (name && patientEvent) {
-    const toSave = {
-      id: nameNote.id,
-      patientEvent,
-      name,
-      _data: JSON.stringify(nameNote?.data),
-      entryDate: new Date(nameNote?.entryDate),
-    };
-
-    return database.create('NameNote', toSave);
-  }
-  return null;
 };
 
 /**

@@ -22,9 +22,9 @@ export class NameNote extends Realm.Object {
   toObject() {
     return {
       id: this.id,
-      entryDate: this.entryDate.getTime(),
+      entryDate: this.entryDate?.getTime(),
       data: this.data,
-      nameID: this.name.id,
+      nameID: this.name?.id,
       patientEventID: this.patientEvent?.id,
     };
   }

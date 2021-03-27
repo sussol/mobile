@@ -1,5 +1,6 @@
 import Ajv from 'ajv';
 import { generateUUID } from 'react-native-database';
+import merge from 'lodash.merge';
 import moment from 'moment';
 import { createRecord, UIDatabase } from '../../database/index';
 import { selectCreatingNameNote } from '../../selectors/Entities/nameNote';
@@ -27,9 +28,7 @@ ajvErrors(ajv);
 
 const validateData = (jsonSchema, data) => {
   if (!jsonSchema) return true;
-
   const result = ajv.validate(jsonSchema, data);
-
   return result;
 };
 
@@ -39,7 +38,6 @@ const createDefaultNameNote = (nameID = '') => {
   return {
     id: generateUUID(),
     entryDate: new Date(),
-    data: {},
     patientEventID: pcd?.id ?? '',
     nameID,
   };
@@ -47,6 +45,7 @@ const createDefaultNameNote = (nameID = '') => {
 
 const getMostRecentPCD = patient => {
   const [pcdEvent] = UIDatabase.objects('PCDEvents');
+
   if (!pcdEvent) return null;
 
   const { id: pcdEventID } = pcdEvent;
@@ -55,36 +54,39 @@ const getMostRecentPCD = patient => {
   if (!nameNotes.length) return null;
 
   const filtered = nameNotes.filter(({ patientEventID }) => patientEventID === pcdEventID);
+
   if (!filtered.length) return null;
 
   const sorted = filtered.sort(
     ({ entryDate: entryDateA }, { entryDate: entryDateB }) =>
       moment(entryDateB).valueOf() - moment(entryDateA).valueOf()
   );
+
   const [mostRecentPCD] = sorted;
   return mostRecentPCD;
 };
 
 const createSurveyNameNote = patient => (dispatch, getState) => {
-  // Create the seed PCD, which is either their most recently filled survey or
-  // and empty object.
+  // Create a new name note which is seeded with the most recent PCD name note
+  // of the patient.
+  // Either the patient being passed has been fetched from the server, is a realm
+  // instance or is a newly created patient. If it is a realm object, convert it to
+  // a plain object. If the passed patient has a past name note, merge that with a
+  // default name note which has the current time, new ID etc.
+  const mostRecentPCD = getMostRecentPCD(patient);
 
-  const seedPCD = getMostRecentPCD(patient) ?? createDefaultNameNote(patient.id);
+  const seedPCD = mostRecentPCD?.toObject ? mostRecentPCD.toObject() : mostRecentPCD;
+  const defaultNameNote = createDefaultNameNote(patient.id);
+  const newNameNote = merge(seedPCD, defaultNameNote);
+  newNameNote.data = newNameNote.data ?? {};
 
   // Get the survey schema as we need an initial validation to determine if
   // the seed has any fields which are required to be filled.
   const [surveySchema = {}] = selectSurveySchemas(getState);
   const { jsonSchema } = surveySchema;
-  const isValid = validateData(jsonSchema, seedPCD.data);
+  const isValid = validateData(jsonSchema, newNameNote.data);
 
-  if (seedPCD.toObject) {
-    // Only create name notes, never edit- ensure every new name note which is seeded has a new ID.
-    const id = generateUUID();
-    const asObject = { ...seedPCD.toObject(), id, entryDate: new Date().getTime() };
-    dispatch(select(asObject, isValid));
-  } else {
-    dispatch(select(seedPCD, isValid));
-  }
+  dispatch(select(newNameNote, isValid));
 };
 
 const select = (seed = createDefaultNameNote(), isValid) => ({
@@ -97,12 +99,9 @@ const updateForm = (data, validator) => ({
   payload: { data, isValid: validator(data) },
 });
 
-const saveEditing = optionalNameID => (dispatch, getState) => {
-  const { nameID, patientEventID, ...nameNote } = selectCreatingNameNote(getState()) ?? {};
-
-  UIDatabase.write(() =>
-    createRecord(UIDatabase, 'NameNote', nameNote, patientEventID, nameID || optionalNameID)
-  );
+const saveEditing = () => (dispatch, getState) => {
+  const nameNote = selectCreatingNameNote(getState()) ?? {};
+  UIDatabase.write(() => createRecord(UIDatabase, 'NameNote', nameNote));
   dispatch(reset());
 };
 

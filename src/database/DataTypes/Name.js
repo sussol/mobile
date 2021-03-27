@@ -164,6 +164,7 @@ export class Name extends Realm.Object {
       nationality: this.nationality?.toJSON(),
       ethnicity: this.ethnicity?.toJSON(),
       nameNotes: this.nameNotes?.map(nameNote => nameNote.toObject()),
+      isEditable: this.isEditable,
     };
   }
 }
