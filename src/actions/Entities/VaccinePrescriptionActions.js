@@ -49,7 +49,10 @@ const getDefaultVaccine = () => {
     .filtered("type == 'customer_invoice' && (status == 'finalised' || status == 'confirmed')")
     .sorted('confirmDate', true);
 
-  const anyVaccine = UIDatabase.objects('Vaccine')[0];
+  const anyVaccine = UIDatabase.objects('ItemBatch').filtered(
+    'item.isVaccine == true && numberOfPacks > 0'
+  )[0]?.item;
+
   const mostRecentlyUsedVaccine = mostRecentTrans?.items?.filtered('item.isVaccine == true')[0]
     ?.item;
 
