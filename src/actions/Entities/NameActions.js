@@ -66,7 +66,8 @@ const select = name => async dispatch => {
   // to say why. Otherwise, if there is no visibility, we won't receive
   // updates for the name record.
   let selectedName = null;
-  if (!name.toObject) {
+  const storedName = UIDatabase.get('Name', name?.id);
+  if (!storedName) {
     const result = await createPatientVisibility(name);
     if (result) {
       UIDatabase.write(() => {
@@ -76,7 +77,7 @@ const select = name => async dispatch => {
       ToastAndroid.show(generalStrings.problem_connecting_please_try_again, ToastAndroid.LONG);
     }
   } else {
-    selectedName = name;
+    selectedName = storedName;
   }
 
   if (selectedName) {
