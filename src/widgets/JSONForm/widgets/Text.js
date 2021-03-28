@@ -22,7 +22,7 @@ export const Text = ({ autofocus, disabled, placeholder, value, onChange }) => {
       returnKeyType="next"
       autoCapitalize="none"
       autoCorrect={false}
-      onChangeText={onChange}
+      onChangeText={newVal => onChange(newVal || undefined)}
       onSubmitEditing={() => focusController.next(ref)}
       editable={!disabled}
       blurOnSubmit={false}
