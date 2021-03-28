@@ -56,7 +56,7 @@ const getDefaultVaccine = () => {
   const mostRecentlyUsedVaccine = mostRecentTrans?.items?.filtered('item.isVaccine == true')[0]
     ?.item;
 
-  const item = (mostRecentlyUsedVaccine && mostRecentlyUsedVaccine?.hasStock) || anyVaccine;
+  const item = mostRecentlyUsedVaccine?.hasStock ? mostRecentlyUsedVaccine : anyVaccine;
 
   return item ?? null;
 };
