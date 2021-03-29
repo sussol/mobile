@@ -8,16 +8,15 @@ import React from 'react';
 import { Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 
-import { FlexView } from '../FlexView';
+import { FlexRow } from '../FlexRow';
 
 import { SUSSOL_ORANGE, APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from '../../globalStyles';
-import { formInputStrings } from '../../localization';
 
 export const FormLabel = ({ isRequired, value, textStyle, isRequiredStyle }) => (
-  <FlexView flex={1} justifyContent="center">
+  <FlexRow flex={1} alignItems="center">
     <Text style={textStyle}>{value}</Text>
-    {(isRequired && <Text style={isRequiredStyle}>{formInputStrings.is_required}</Text>) || null}
-  </FlexView>
+    {(isRequired && <Text style={isRequiredStyle}>*</Text>) || null}
+  </FlexRow>
 );
 
 const localStyles = StyleSheet.create({
