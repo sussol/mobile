@@ -27,6 +27,7 @@ export const createDefaultName = (type = 'patient', id) => ({
   isVisible: true,
   name: '',
   type,
+  isEditable: true,
 });
 
 const create = name => ({
@@ -59,17 +60,34 @@ const updatePatient = detailsEntered => (dispatch, getState) => {
 };
 
 const select = name => async dispatch => {
-  const result = await createPatientVisibility(name);
+  // If it's a realm object, then patient visibility needs to be created
+  // on the server. If we can't set up the patient visibility, rollback
+  // and don't save or select the patient- give a toast to the user
+  // to say why. Otherwise, if there is no visibility, we won't receive
+  // updates for the name record.
+  let selectedName = null;
+  const storedName = UIDatabase.get('Name', name?.id);
+  if (!storedName) {
+    const result = await createPatientVisibility(name);
+    if (result) {
+      UIDatabase.write(() => {
+        selectedName = createRecord(UIDatabase, 'Patient', name);
+      });
+    } else {
+      ToastAndroid.show(generalStrings.problem_connecting_please_try_again, ToastAndroid.LONG);
+    }
+  } else {
+    selectedName = storedName;
+  }
 
-  if (result) {
+  if (selectedName) {
     dispatch({
       type: NAME_ACTIONS.SELECT,
-      payload: { name },
+      payload: { name: selectedName },
     });
-  } else {
-    ToastAndroid.show(generalStrings.problem_connecting_please_try_again, ToastAndroid.LONG);
   }
-  return result;
+
+  return selectedName;
 };
 
 const filter = (key, value) => ({ type: NAME_ACTIONS.FILTER, payload: { key, value } });

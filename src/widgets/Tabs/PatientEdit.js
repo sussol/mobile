@@ -15,7 +15,7 @@ import { FlexRow } from '../FlexRow';
 import { FlexView } from '../FlexView';
 import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 
-import { selectEditingName } from '../../selectors/Entities/name';
+import { selectCanEditPatient, selectEditingName } from '../../selectors/Entities/name';
 import { selectSurveySchemas } from '../../selectors/formSchema';
 import { NameActions } from '../../actions/Entities/NameActions';
 import { WizardActions } from '../../actions/WizardActions';
@@ -52,6 +52,7 @@ const PatientEditComponent = ({
   updatePatientDetails,
   surveyFormData,
   updateForm,
+  canEditPatient,
 }) => {
   const { pageTopViewContainer } = globalStyles;
   const formRef = useRef(null);
@@ -81,6 +82,7 @@ const PatientEditComponent = ({
           <AfterInteractions placeholder={null}>
             <Animatable.View animation="fadeIn" duration={1000} useNativeDriver style={{ flex: 1 }}>
               <FormControl
+                isDisabled={!canEditPatient}
                 showCancelButton={false}
                 showSaveButton={false}
                 inputConfig={getFormInputConfig('patient', currentPatient)}
@@ -140,8 +142,10 @@ const mapStateToProps = state => {
   const surveySchemas = selectSurveySchemas();
   const [surveySchema] = surveySchemas;
   const nameNote = selectCreatingNameNote(state);
+  const canEditPatient = selectCanEditPatient(state);
 
   return {
+    canEditPatient,
     canSaveForm,
     completedForm,
     currentPatient,
@@ -165,6 +169,7 @@ PatientEditComponent.propTypes = {
   updatePatientDetails: PropTypes.func.isRequired,
   surveyFormData: PropTypes.object.isRequired,
   updateForm: PropTypes.func.isRequired,
+  canEditPatient: PropTypes.bool.isRequired,
 };
 
 export const PatientEdit = connect(mapStateToProps, mapDispatchToProps)(PatientEditComponent);

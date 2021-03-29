@@ -110,7 +110,6 @@ EmptyComponent.propTypes = {
  * @prop {Bool}   isAscending           Indicator if the list of patient is sorted ascending.
  * @prop {Func}   onCancelPrescription  Cancels the prescription and returns to the vaccine page
  * @prop {Func}   onFilterData          Callback for filtering patients.
- * @prop {Func}   onSortData            Callback for sorting patients by column.
  * @prop {Func}   patients              Current set of patient data.
  * @prop {Func}   selectPatient         Callback for selecting a patient.
  * @prop {String} sortKey               Current key the list of patients is sorted by.
@@ -206,19 +205,19 @@ const PatientSelectComponent = ({
 };
 
 const mapDispatchToProps = dispatch => {
-  const searchOnline = searchParams => dispatch(NameActions.fetchPatients(searchParams));
-  const onSortData = sortKey => dispatch(NameActions.sort(sortKey));
   const onCancelPrescription = () => dispatch(VaccinePrescriptionActions.cancel());
+
   const selectPatient = patient =>
     batch(async () => {
       Keyboard.dismiss();
-      const result = await dispatch(NameActions.select(patient));
+      const selectedPatient = await dispatch(NameActions.select(patient));
 
-      if (result) {
-        dispatch(NameNoteActions.createSurveyNameNote(patient));
+      if (selectedPatient) {
+        dispatch(NameNoteActions.createSurveyNameNote(selectedPatient));
         dispatch(WizardActions.nextTab());
       }
     });
+
   const createPatient = () =>
     batch(() => {
       const id = generateUUID();
@@ -232,10 +231,8 @@ const mapDispatchToProps = dispatch => {
   return {
     createPatient,
     onCancelPrescription,
-    onSortData,
     selectPatient,
     updateForm,
-    searchOnline,
   };
 };
 

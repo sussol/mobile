@@ -54,7 +54,7 @@ export const PatientEditModalComponent = ({
         <PageButton
           onPress={onSaveForm}
           style={styles.saveButton}
-          isDisabled={!nameNoteIsValid || isDisabled}
+          isDisabled={surveySchema && surveyForm ? !nameNoteIsValid : isDisabled}
           textStyle={styles.saveButtonTextStyle}
           text={generalStrings.save}
         />
@@ -143,7 +143,7 @@ const stateToProps = state => {
 };
 
 const dispatchToProps = dispatch => ({
-  onSaveSurvey: optionalNameID => dispatch(NameNoteActions.saveEditing(optionalNameID)),
+  onSaveSurvey: () => dispatch(NameNoteActions.saveEditing()),
   onUpdateForm: (form, validator) => dispatch(NameNoteActions.updateForm(form, validator)),
   onSave: patientDetails => dispatch(PatientActions.patientUpdate(patientDetails)),
 });

@@ -25,17 +25,10 @@ export const PATIENT_ACTIONS = {
 
 const closeModal = () => ({ type: PATIENT_ACTIONS.COMPLETE });
 const createPatient = patient => ({ type: PATIENT_ACTIONS.PATIENT_CREATION, payload: { patient } });
-
-const editPatient = patient => ({
-  type: PATIENT_ACTIONS.PATIENT_EDIT,
-  payload: {
-    patient,
-  },
-});
+const editPatient = patient => ({ type: PATIENT_ACTIONS.PATIENT_EDIT, payload: { patient } });
 
 const makePatientVisibility = async name => {
   const response = await createPatientVisibility(name);
-
   return response;
 };
 
