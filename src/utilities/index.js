@@ -21,5 +21,5 @@ export { checkIsObject } from './checkIsObject';
 export { validateReport } from './validateReport';
 export { chunk } from './chunk';
 export { parsePositiveIntegerInterfaceInput } from './parsers';
-export { formatErrorItemNames, roundNumber } from './formatters';
+export { twoDecimalsMax, formatErrorItemNames, roundNumber } from './formatters';
 export { MILLISECONDS } from './constants';

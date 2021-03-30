@@ -37,6 +37,7 @@ import { generalStrings, tableStrings } from '../../localization';
 import { formatStatus, formatDate } from '../../utilities';
 import { formatType } from '../../utilities/formatStatus';
 import { useDebounce } from '../../hooks';
+import { twoDecimalsMax } from '../../utilities/formatters';
 
 /**
  * Wrapper component for a mSupply DataTable page row.
@@ -156,8 +157,8 @@ const DataTableRow = React.memo(
               };
 
               let value = disabledText[columnKey] ? disabledText[columnKey] : rowData[columnKey];
-              if (typeof value === 'number' && !Number.isInteger(value)) {
-                value = rowData[columnKey].toFixed(2);
+              if (typeof value === 'number') {
+                value = twoDecimalsMax(rowData[columnKey]);
               }
 
               const placeholder = extraPlaceholders[columnKey] ?? '';
@@ -274,8 +275,8 @@ const DataTableRow = React.memo(
               }
 
               // When cell values can be floats, cut them off at two DP
-              if (typeof value === 'number' && !Number.isInteger(value)) {
-                value = rowData[columnKey]?.toFixed?.(2);
+              if (typeof value === 'number') {
+                value = twoDecimalsMax(rowData[columnKey]);
               }
 
               const cellErrors = getCellError?.(rowData, columnKey);

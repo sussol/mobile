@@ -28,6 +28,7 @@ import { RegimenDataModal } from './RegimenDataModal';
 import { StocktakeBatchModal } from './StocktakeBatchModal';
 
 import { generalStrings, modalStrings } from '../../localization';
+import { twoDecimalsMax } from '../../utilities/formatters';
 
 /**
  * Wrapper around ModalContainer, containing common modals used in various
@@ -59,7 +60,7 @@ const DataTablePageModalComponent = ({ isOpen, onClose, modalKey, onSelect, curr
             sortKeyString="name"
             onSelect={onSelect}
             renderLeftText={({ code, name }) => `${code} - ${name}`}
-            renderRightText={({ totalQuantity }) => `${totalQuantity}`}
+            renderRightText={({ totalQuantity }) => `${twoDecimalsMax(totalQuantity)}`}
           />
         );
       case MODAL_KEYS.CONFIRM_USER_PASSWORD:
