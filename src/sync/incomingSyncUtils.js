@@ -297,7 +297,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     },
     NameNote: {
       cannotBeBlank: [],
-      canBeBlank: ['entry_date', 'data', 'name'],
+      canBeBlank: [],
     },
     PatientEvent: {
       cannotBeBlank: [],
@@ -1146,7 +1146,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         id: record.ID,
         patientEvent: database.getOrCreate('PatientEvent', record.patient_event_ID),
         entryDate: parseDate(record.entry_date),
-        data: record._data,
+        _data: record.data,
         name: database.getOrCreate('Name', record.name_ID),
       });
       break;
