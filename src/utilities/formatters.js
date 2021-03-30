@@ -90,3 +90,5 @@ export const formatLogDelay = delay =>
 
 export const formatBatteryLevel = batteryLevel =>
   batteryLevel == null ? generalStrings.not_available : `${batteryLevel}%`;
+
+export const twoDecimalsMax = num => Math.round(num * 100) / 100;

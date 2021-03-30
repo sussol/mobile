@@ -15,6 +15,7 @@ import { PageInfo } from '../PageInfo/PageInfo';
 
 import { tableStrings, generalStrings } from '../../localization';
 import { DARKER_GREY, SUSSOL_ORANGE } from '../../globalStyles';
+import { twoDecimalsMax } from '../../utilities/formatters';
 
 export const ItemDetailsComponent = ({ item }) => {
   const headers = {
@@ -28,6 +29,7 @@ export const ItemDetailsComponent = ({ item }) => {
 
   const formatters = {
     expiryDate: expiryDate => formatExpiryDate(expiryDate),
+    numberOfPacks: packs => twoDecimalsMax(packs),
   };
 
   const getRow = (title, info) => ({ info, title });
