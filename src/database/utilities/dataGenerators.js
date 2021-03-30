@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { ToastAndroid } from 'react-native';
 import BreachManager from '../../bluetooth/BreachManager';
 import { VaccineDataAccess } from '../../bluetooth/VaccineDataAccess';
@@ -170,7 +171,11 @@ export const createVaccineData = () => {
   const promises = sensors.map(sensor => {
     const [breaches, logs] = breachManager.createBreaches(
       sensor,
-      sensor.logs.sorted('timestamp'),
+      sensor.logs.sorted('timestamp').map(({ id, temperature, timestamp }) => ({
+        id,
+        temperature,
+        timestamp: moment(timestamp).unix(),
+      })),
       configs
     );
     return breachManager.updateBreaches(breaches, logs);
