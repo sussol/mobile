@@ -155,7 +155,11 @@ const DataTableRow = React.memo(
                 [COLUMN_KEYS.DOSES]: isVaccine ? '' : generalStrings.not_available,
               };
 
-              const value = disabledText[columnKey] ? disabledText[columnKey] : rowData[columnKey];
+              let value = disabledText[columnKey] ? disabledText[columnKey] : rowData[columnKey];
+              if (typeof value === 'number' && !Number.isInteger(value)) {
+                value = rowData[columnKey].toFixed(2);
+              }
+
               const placeholder = extraPlaceholders[columnKey] ?? '';
 
               const inputIsDisabled = isDisabled || !!disabledCondition[columnKey];

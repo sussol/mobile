@@ -114,11 +114,7 @@ export class TransactionBatch extends Realm.Object {
     if (this.transaction.isConfirmed) {
       // Incoming transactions increase stock levels, while outgoing decrease.
       const inventoryDifference = this.transaction.isIncoming ? difference : -difference;
-
-      this.itemBatch.totalQuantity = Number(
-        (this.itemBatch.totalQuantity += inventoryDifference).toFixed(2)
-      );
-
+      this.itemBatch.totalQuantity += inventoryDifference;
       database.save('ItemBatch', this.itemBatch);
     }
 

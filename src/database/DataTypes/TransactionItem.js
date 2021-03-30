@@ -145,6 +145,7 @@ export class TransactionItem extends Realm.Object {
     }
 
     const difference = cappedQuantity - this.totalQuantity; // Positive if new quantity is greater.
+
     // Apply the difference to make the new quantity.
     this.allocateDifferenceToBatches(database, difference);
 
@@ -236,7 +237,7 @@ export class TransactionItem extends Realm.Object {
   // eslint-disable-next-line class-methods-use-this
   allocateDifferenceToBatch(database, difference, batch) {
     const batchAddQuantity = batch.getAmountToAllocate(difference);
-    batch.setTotalQuantity(database, Number((batch.totalQuantity + batchAddQuantity).toFixed(2)));
+    batch.setTotalQuantity(database, batch.totalQuantity + batchAddQuantity);
     database.save('TransactionBatch', batch);
     return difference - batchAddQuantity;
   }
@@ -274,20 +275,14 @@ export class TransactionItem extends Realm.Object {
   };
 
   setDoses(database, value) {
-    const newTotalQuantity = Math.min(
-      Number(value / this.dosesPerVial).toFixed(2),
-      this.availableQuantity
-    );
+    const newTotalQuantity = Math.min(Number(value / this.dosesPerVial), this.availableQuantity);
 
     this.setTotalQuantity(database, newTotalQuantity);
   }
 
   setVaccinator(database, vaccinator) {
     this.batches.forEach(batch =>
-      database.update('TransactionBatch', {
-        id: batch.id,
-        medicineAdministrator: vaccinator,
-      })
+      database.update('TransactionBatch', { id: batch.id, medicineAdministrator: vaccinator })
     );
   }
 
