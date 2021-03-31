@@ -256,7 +256,9 @@ class UIDatabase {
       case 'Vaccine':
         return results.filtered('isVaccine == true && isVisible == true');
       case 'ADRForm':
-        return results.filtered("type == 'ADR'");
+        return results.filtered("type == 'ADR'").sorted('version', true);
+      case 'PatientSurveyForm':
+        return results.filtered("type == 'PatientSurvey'").sorted('version', true);
       default:
         return results;
     }
