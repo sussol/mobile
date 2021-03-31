@@ -66,11 +66,16 @@ const EmptyComponent = ({ loading, error, searchedWithNoResults }) => (
   </FlexView>
 );
 
-const Header = ({ onSearchOnline, onNewPatient }) => (
+const Header = ({ onSearchOnline, onNewPatient, loading }) => (
   <FlexRow justifyContent="center" alignItems="center">
     <Text style={localStyles.text}>{vaccineStrings.vaccine_dispense_step_one_title}</Text>
     <View style={{ flex: 1, marginLeft: 'auto' }} />
-    <PageButton style={{ height: 10 }} text="Search online" onPress={onSearchOnline} />
+    <PageButton
+      style={{ height: 10 }}
+      text={generalStrings.search_online}
+      onPress={onSearchOnline}
+      isDisabled={loading}
+    />
     <PageButton
       style={{ height: 10, marginLeft: 10 }}
       text={`${dispensingStrings.new} ${dispensingStrings.patient}`}
@@ -94,6 +99,7 @@ GettingMore.propTypes = {
 Header.propTypes = {
   onSearchOnline: PropTypes.func.isRequired,
   onNewPatient: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired,
 };
 
 EmptyComponent.propTypes = {
@@ -150,6 +156,7 @@ const PatientSelectComponent = ({
         Header={
           // eslint-disable-next-line react/jsx-wrap-multilines
           <Header
+            loading={loading}
             onSearchOnline={() => onSearchOnline(completedForm)}
             onNewPatient={createPatient}
           />

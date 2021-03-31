@@ -137,6 +137,7 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
 
     dispatch({ type: 'clear' });
     refresh();
+    dispatch({ type: 'fetch_start' });
 
     fetch(
       getPatientRequestUrl(paramsWithLimits),

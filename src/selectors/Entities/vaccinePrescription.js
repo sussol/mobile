@@ -17,7 +17,9 @@ export const selectEditingVaccinePrescription = state => {
   return creating;
 };
 
-export const selectPatientSearchFormConfig = () => getFormInputConfig('searchVaccinePatient');
+export const selectPatientSearchFormConfig = createSelector([], () =>
+  getFormInputConfig('searchVaccinePatient')
+);
 
 export const selectVaccines = state => {
   const VaccinePrescriptionState = selectSpecificEntityState(state, 'vaccinePrescription');
