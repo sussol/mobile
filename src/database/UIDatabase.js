@@ -53,6 +53,7 @@ const translateToCoreDatabaseType = type => {
       return 'PatientEvent';
     case 'Vaccine':
       return 'Item';
+    case 'PatientSurveyForm':
     case 'ADRForm':
       return 'FormSchema';
     default:
