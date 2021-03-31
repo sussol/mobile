@@ -9,7 +9,6 @@ import PropTypes from 'prop-types';
 import { Text, StyleSheet } from 'react-native';
 import { batch, connect } from 'react-redux';
 import { TABS } from '../constants';
-import { PageButton } from '../PageButton';
 import { FlexRow } from '../FlexRow';
 import { FlexView } from '../FlexView';
 import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
@@ -142,13 +141,13 @@ const VaccineSelectComponent = ({
 
       <FlexRow flex={1} alignItems="flex-end" justifyContent="flex-end">
         <PageButtonWithOnePress text={buttonStrings.cancel} onPress={onCancelPrescription} />
-        <PageButton
+        <PageButtonWithOnePress
           text={buttonStrings.confirm}
           style={{ marginLeft: 'auto' }}
           isDisabled={!selectedBatches && !hasRefused}
           onPress={confirmPrescription}
         />
-        <PageButton
+        <PageButtonWithOnePress
           text={generalStrings.ok_and_next}
           style={{ marginLeft: 5 }}
           isDisabled={!selectedBatches && !hasRefused}
