@@ -92,14 +92,19 @@ export const selectSortedData = createSelector(
   (data, isAscending, sortKey) => data.sorted(sortKey, !isAscending)
 );
 
-export const selectLookupFormConfig = createSelector([selectDataSet], dataSource =>
-  getFormInputConfig(LOOKUP_FORM_CONFIGS[dataSource])
-);
+export const selectLookupFormConfig = createSelector([selectDataSet], dataSource => {
+  const mappedDataSource =
+    dataSource === RECORD_TYPES.PRESCRIBER ? RECORD_TYPES.PRESCRIBER : RECORD_TYPES.PATIENT;
+  return getFormInputConfig(LOOKUP_FORM_CONFIGS[mappedDataSource]);
+});
 
 export const selectLookupListConfig = createSelector(
   [selectDataSet, selectLookupFormConfig],
   (dataSource, formConfig) => {
-    const listKeys = LOOKUP_LIST_CONFIGS[dataSource];
+    const mappedDataSource =
+      dataSource === RECORD_TYPES.PRESCRIBER ? RECORD_TYPES.PRESCRIBER : RECORD_TYPES.PATIENT;
+    const listKeys = LOOKUP_LIST_CONFIGS[mappedDataSource];
+
     const listTypes = listKeys.reduce(
       (acc, key) => ({ ...acc, [key]: formConfig.find(config => config.key === key)?.type }),
       {}
