@@ -15,40 +15,22 @@
 export const deleteRecord = (database, recordType, primaryKey, primaryKeyField = 'id') => {
   // 'delete' is a reserved word, |deleteRecord| is in the upper scope.
   const obliterate = () => {
-    const deleteResults = database
-      .objects(recordType)
-      .filtered(`${primaryKeyField} == $0`, primaryKey);
-    if (deleteResults && deleteResults.length > 0) {
-      database.delete(recordType, deleteResults[0]);
+    try {
+      const deleteResults = database
+        .objects(recordType)
+        .filtered(`${primaryKeyField} == $0`, primaryKey);
+      if (deleteResults && deleteResults.length > 0) {
+        database.delete(recordType, deleteResults[0]);
+      }
+    } catch {
+      // .objects will throw if the record type is not a valid type within the schema.
+      // This could happen by receiving delete sync records from the server which are
+      // not a part of mSupply mobile. For example, system data which is not used. It is
+      // rare, but in this case silently ignore record types which should not be synced to mobile.
     }
   };
 
   switch (recordType) {
-    case 'NameTag':
-    case 'NameTagJoin':
-    case 'Item':
-    case 'ItemBatch':
-    case 'ItemCategory':
-    case 'ItemDepartment':
-    case 'ItemStoreJoin':
-    case 'MasterList':
-    case 'MasterListItem':
-    case 'Name':
-    case 'NameStoreJoin':
-    case 'NumberSequence':
-    case 'NumberToReuse':
-    case 'Prescriber':
-    case 'Requisition':
-    case 'RequisitionItem':
-    case 'Stocktake':
-    case 'StocktakeBatch':
-    case 'Transaction':
-    case 'TransactionBatch':
-    case 'TransactionCategory': {
-      obliterate();
-      break;
-    }
-
     // Local list item is mimicked with master list item..
     case 'LocalListItem':
       deleteRecord(database, 'MasterListItem', primaryKey, primaryKeyField);
@@ -66,7 +48,7 @@ export const deleteRecord = (database, recordType, primaryKey, primaryKeyField =
       break;
     }
     default:
-      break; // Silently ignore record types which should not be synced to mobile.
+      obliterate();
   }
 };
 
