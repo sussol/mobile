@@ -241,77 +241,62 @@ export const CustomerRequisition = ({
 
   const ItemIndicatorToggle = () => <ToggleBar toggles={ItemIndicatorToggles} />;
 
-  const ButtonSetSuppliedToRequested = useCallback(
-    () => (
-      <PageButton
-        style={globalStyles.topButton}
-        text={buttonStrings.use_requested_quantities}
-        onPress={onSetSuppliedToRequested}
-        isDisabled={isFinalised}
-      />
-    ),
-    [isFinalised]
+  const ButtonSetSuppliedToRequested = () => (
+    <PageButton
+      style={globalStyles.topButton}
+      text={buttonStrings.use_requested_quantities}
+      onPress={onSetSuppliedToRequested}
+      isDisabled={isFinalised}
+    />
   );
 
-  const ButtonSetSuppliedToSuggested = useCallback(
-    () => (
-      <PageButton
-        style={globalStyles.topButton}
-        text={buttonStrings.use_suggested_quantities}
-        onPress={onSetSuppliedToSuggested}
-        isDisabled={isFinalised}
-      />
-    ),
-    [isFinalised]
+  const ButtonSetSuppliedToSuggested = () => (
+    <PageButton
+      style={globalStyles.topButton}
+      text={buttonStrings.use_suggested_quantities}
+      onPress={onSetSuppliedToSuggested}
+      isDisabled={isFinalised}
+    />
   );
 
-  const IndicatorDropdown = useCallback(
-    () => (
-      <DropDown
-        values={indicatorCodes}
-        selectedValue={currentIndicatorCode}
-        onValueChange={onSelectIndicator}
-      />
-    ),
-    [indicatorCodes, currentIndicatorCode]
+  const IndicatorDropdown = () => (
+    <DropDown
+      values={indicatorCodes}
+      selectedValue={currentIndicatorCode}
+      onValueChange={onSelectIndicator}
+    />
   );
 
-  const ButtonsSetSupplied = useCallback(() => (
+  const ButtonsSetSupplied = () => (
     <>
       <ButtonSetSuppliedToSuggested />
       <ButtonSetSuppliedToRequested />
     </>
-  ));
+  );
 
-  const TopRightItems = useCallback(() => (
+  const TopRightItems = () => (
     <View style={globalStyles.horizontalContainer}>
       <ButtonsSetSupplied />
     </View>
-  ));
-
-  const TopRightToggleItems = useCallback(
-    () => (
-      <>
-        <ItemIndicatorToggle />
-        <View style={localStyles.horizontalContainerToggles}>
-          <ButtonsSetSupplied />
-        </View>
-      </>
-    ),
-    [showIndicators]
   );
 
-  const TopRightToggleIndicators = useCallback(
-    () => (
-      <>
-        <ItemIndicatorToggle />
-        <IndicatorDropdown />
-      </>
-    ),
-    [showIndicators, indicatorCodes, currentIndicatorCode]
+  const TopRightToggleItems = (
+    <>
+      <ItemIndicatorToggle />
+      <View style={localStyles.horizontalContainerToggles}>
+        <ButtonsSetSupplied />
+      </View>
+    </>
   );
 
-  const TopRightButtons = useCallback(() => {
+  const TopRightToggleIndicators = () => (
+    <>
+      <ItemIndicatorToggle />
+      <IndicatorDropdown />
+    </>
+  );
+
+  const TopRightButtons = () => {
     const { verticalContainer } = globalStyles;
 
     // eslint-disable-next-line no-nested-ternary
@@ -342,7 +327,7 @@ export const CustomerRequisition = ({
         )}
       </View>
     );
-  }, [usingIndicators, showIndicators, indicatorCodes, currentIndicatorCode, columnSet, program]);
+  };
 
   const placeholderStrings = useMemo(
     () => ({
