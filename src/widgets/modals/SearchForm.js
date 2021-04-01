@@ -5,7 +5,7 @@
  */
 
 import React, { useMemo, useCallback } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ToastAndroid } from 'react-native';
 import { connect, batch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { getAuthHeader } from 'sussol-utilities';
@@ -45,6 +45,9 @@ import {
   selectLookupFormConfig,
   selectLookupListConfig,
 } from '../../selectors/dispensary';
+import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
+import { DispensaryActions } from '../../actions/DispensaryActions';
+import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
 
 const { SYNC_URL, SYNC_SITE_NAME, SYNC_SITE_PASSWORD_HASH } = SETTINGS_KEYS;
 
@@ -54,9 +57,12 @@ export const SearchFormComponent = ({
   formConfig,
   selectPatient,
   selectPrescriber,
+  close,
 }) => {
   const syncUrl = UIDatabase.getSetting(SYNC_URL);
   const { fetch, refresh, isLoading, response, error } = useFetch(syncUrl);
+
+  const withLoadingIndicator = useLoadingIndicator();
 
   const columns = React.useMemo(
     () => (isPatient ? getColumns(MODALS.PATIENT_LOOKUP) : getColumns(MODALS.PRESCRIBER_LOOKUP)),
@@ -92,7 +98,15 @@ export const SearchFormComponent = ({
   }, [isLoading, isPatient, isPrescriber]);
 
   const selectRecord = useMemo(() => {
-    if (isPatient) return patient => selectPatient(patient);
+    if (isPatient) {
+      return patient => {
+        close();
+        withLoadingIndicator(async () => {
+          await selectPatient(patient);
+        });
+      };
+    }
+
     if (isPrescriber) return prescriber => selectPrescriber(prescriber);
     return () => null;
   }, [isPatient, isPrescriber]);
@@ -159,9 +173,19 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  selectPatient: patient => {
-    dispatch(PatientActions.patientUpdate(patient));
-    batch(() => patient.policies.forEach(policy => dispatch(InsuranceActions.update(policy))));
+  close: () => dispatch(DispensaryActions.closeLookupModal()),
+  selectPatient: async patient => {
+    const result = await PatientActions.makePatientVisibility(patient);
+
+    if (result) {
+      await dispatch(PatientActions.patientUpdate(patient));
+      batch(() => {
+        patient.policies.forEach(policy => dispatch(InsuranceActions.update(policy)));
+        dispatch(NameNoteActions.createNotes(patient?.nameNotes));
+      });
+    } else {
+      ToastAndroid.show(generalStrings.problem_connecting_please_try_again, ToastAndroid.LONG);
+    }
   },
   selectPrescriber: prescriber => {
     dispatch(PrescriberActions.updatePrescriber(prescriber));
@@ -171,6 +195,7 @@ const mapDispatchToProps = dispatch => ({
 export const SearchForm = connect(mapStateToProps, mapDispatchToProps)(SearchFormComponent);
 
 SearchFormComponent.propTypes = {
+  close: PropTypes.func.isRequired,
   isPatient: PropTypes.bool.isRequired,
   isPrescriber: PropTypes.bool.isRequired,
   formConfig: PropTypes.array.isRequired,

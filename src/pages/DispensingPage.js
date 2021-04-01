@@ -5,7 +5,7 @@
  */
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { batch, connect } from 'react-redux';
 import { View } from 'react-native';
 
 import { ToggleBar, DataTablePageView, SearchBar, PageButton } from '../widgets';
@@ -19,7 +19,7 @@ import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
 import { createPrescription } from '../navigation/actions';
 import { useNavigationFocus, useSyncListener, useDebounce } from '../hooks';
 
-import { UIDatabase } from '../database';
+import { UIDatabase, generateUUID } from '../database';
 import { getFormInputConfig } from '../utilities/formInputConfigs';
 
 import { PatientActions } from '../actions/PatientActions';
@@ -37,7 +37,13 @@ import { selectInsuranceModalOpen, selectCanEditInsurancePolicy } from '../selec
 import { selectPatientModalOpen, selectCanEditPatient } from '../selectors/patient';
 
 import globalStyles from '../globalStyles';
-import { dispensingStrings } from '../localization';
+import { dispensingStrings, modalStrings } from '../localization';
+import { PatientEditModal } from '../widgets/modalChildren/PatientEditModal';
+import { selectSurveySchemas } from '../selectors/formSchema';
+import { NameNoteActions } from '../actions/Entities/NameNoteActions';
+import { createDefaultName } from '../actions/Entities/NameActions';
+import { SUSSOL_ORANGE } from '../globalStyles/colors';
+import { ADRInput } from '../widgets/modalChildren/ADRInput';
 
 const Dispensing = ({
   data,
@@ -73,7 +79,6 @@ const Dispensing = ({
   editPatient,
   createPatient,
   cancelPatientEdit,
-  savePatient,
   viewPatientHistory,
 
   // Prescriber variables
@@ -96,6 +101,11 @@ const Dispensing = ({
   // Insurance callbacks
   cancelInsuranceEdit,
   saveInsurancePolicy,
+
+  // ADR
+  isADRModalOpen,
+  createADR,
+  cancelCreatingADR,
 }) => {
   // Custom hook to refresh data on this page when becoming the head of the stack again.
   useNavigationFocus(navigation, refreshData);
@@ -104,6 +114,8 @@ const Dispensing = ({
 
   const getCellCallbacks = colKey => {
     switch (colKey) {
+      case 'adverseDrugEffect':
+        return createADR;
       case 'dispense':
         return gotoPrescription;
       case 'patientHistory':
@@ -214,11 +226,12 @@ const Dispensing = ({
         noCancel
         isVisible={patientEditModalOpen}
       >
-        <FormControl
+        <PatientEditModal
+          patient={currentPatient}
           isDisabled={!canEditPatient}
-          onSave={savePatient}
           onCancel={cancelPatientEdit}
           inputConfig={getFormInputConfig('patient', currentPatient)}
+          surveySchema={selectSurveySchemas()[0]}
         />
       </ModalContainer>
       <ModalContainer
@@ -268,6 +281,13 @@ const Dispensing = ({
       >
         <SearchForm />
       </ModalContainer>
+      <ModalContainer
+        title={`${modalStrings.adr_form_for} ${currentPatient?.name}`}
+        isVisible={isADRModalOpen}
+        onClose={cancelCreatingADR}
+      >
+        <ADRInput />
+      </ModalContainer>
     </>
   );
 };
@@ -283,6 +303,27 @@ const localStyles = {
   },
   button: {
     marginHorizontal: 2.5,
+  },
+  saveButton: {
+    ...globalStyles.button,
+    flex: 1,
+    backgroundColor: SUSSOL_ORANGE,
+    alignSelf: 'center',
+  },
+  saveButtonTextStyle: {
+    ...globalStyles.buttonText,
+    color: 'white',
+    fontSize: 14,
+  },
+  cancelButton: {
+    ...globalStyles.button,
+    flex: 1,
+    alignSelf: 'center',
+  },
+  cancelButtonTextStyle: {
+    ...globalStyles.buttonText,
+    color: SUSSOL_ORANGE,
+    fontSize: 14,
   },
 };
 
@@ -300,13 +341,16 @@ const mapStateToProps = state => {
   const canEditPrescriber = selectCanEditPrescriber(state);
   const canEditPatient = selectCanEditPatient(state);
   const canEditInsurancePolicy = selectCanEditInsurancePolicy(state);
-  const [patientEditModalOpen, patientHistoryModalOpen] = selectPatientModalOpen(state);
+  const [patientEditModalOpen, patientHistoryModalOpen, isADRModalOpen] = selectPatientModalOpen(
+    state
+  );
   const insuranceModalOpen = selectInsuranceModalOpen(state);
   const data = selectSortedData(state);
 
   const [usingPatientsDataSet, usingPrescribersDataSet] = selectDataSetInUse(state);
 
   return {
+    isADRModalOpen,
     usingPatientsDataSet,
     usingPrescribersDataSet,
     data,
@@ -341,13 +385,25 @@ const mapDispatchToProps = dispatch => ({
   refreshData: () => dispatch(DispensaryActions.refresh()),
   switchDataset: () => dispatch(DispensaryActions.switchDataSet()),
 
+  createADR: patientID => dispatch(PatientActions.openADRModal(patientID)),
+  cancelCreatingADR: () => dispatch(PatientActions.closeADRModal()),
   lookupRecord: () => dispatch(DispensaryActions.openLookupModal()),
   cancelLookupRecord: () => dispatch(DispensaryActions.closeLookupModal()),
 
-  editPatient: patient => dispatch(PatientActions.editPatient(UIDatabase.get('Name', patient))),
-  createPatient: () => dispatch(PatientActions.createPatient()),
+  editPatient: patientID =>
+    batch(() => {
+      const patient = UIDatabase.get('Name', patientID);
+      dispatch(NameNoteActions.createSurveyNameNote(patient));
+      dispatch(PatientActions.editPatient(patient));
+    }),
+  createPatient: () =>
+    batch(() => {
+      const patient = createDefaultName('patient', generateUUID());
+      dispatch(PatientActions.createPatient(patient));
+      dispatch(NameNoteActions.createSurveyNameNote(patient));
+    }),
+
   cancelPatientEdit: () => dispatch(PatientActions.closeModal()),
-  savePatient: patientDetails => dispatch(PatientActions.patientUpdate(patientDetails)),
   viewPatientHistory: rowKey =>
     dispatch(PatientActions.viewPatientHistory(UIDatabase.get('Name', rowKey))),
 
@@ -389,7 +445,6 @@ Dispensing.propTypes = {
   editPatient: PropTypes.func.isRequired,
   patientEditModalOpen: PropTypes.bool.isRequired,
   createPatient: PropTypes.func.isRequired,
-  savePatient: PropTypes.func.isRequired,
   cancelPatientEdit: PropTypes.func.isRequired,
   currentPatient: PropTypes.object,
   canEditPatient: PropTypes.bool.isRequired,
@@ -410,4 +465,7 @@ Dispensing.propTypes = {
   isCreatingInsurancePolicy: PropTypes.bool.isRequired,
   saveInsurancePolicy: PropTypes.func.isRequired,
   viewPatientHistory: PropTypes.func.isRequired,
+  isADRModalOpen: PropTypes.bool.isRequired,
+  createADR: PropTypes.func.isRequired,
+  cancelCreatingADR: PropTypes.func.isRequired,
 };

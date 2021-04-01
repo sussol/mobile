@@ -8,28 +8,30 @@ import { CHANGE_TYPES, generateUUID } from '../database';
 const { CREATE, UPDATE, DELETE } = CHANGE_TYPES;
 
 const recordTypesSynced = [
+  'AdverseDrugReaction',
   'IndicatorValue',
+  'IndicatorValue',
+  'InsurancePolicy',
   'ItemBatch',
+  'Location',
+  'LocationMovement',
   'Message',
   'Name',
+  'NameNote',
   'NumberSequence',
   'NumberToReuse',
   'Prescriber',
   'Requisition',
   'RequisitionItem',
+  'Sensor',
   'Stocktake',
   'StocktakeBatch',
-  'Transaction',
-  'TransactionBatch',
-  'InsurancePolicy',
-  'IndicatorValue',
-  'Location',
-  'Sensor',
-  'TemperatureLog',
   'TemperatureBreach',
   'TemperatureBreachConfiguration',
+  'TemperatureLog',
+  'Transaction',
+  'TransactionBatch',
   'VaccineVialMonitorStatusLog',
-  'LocationMovement',
 ];
 
 /**

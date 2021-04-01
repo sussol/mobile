@@ -10,6 +10,7 @@ const patientInitialState = () => ({
   currentPatient: null,
   isEditing: false,
   isCreating: false,
+  creatingADR: false,
   viewingHistory: false,
   sortKey: 'itemName',
   isAscending: true,
@@ -35,7 +36,9 @@ export const PatientReducer = (state = patientInitialState(), action) => {
     }
 
     case PATIENT_ACTIONS.PATIENT_CREATION: {
-      return { ...state, currentPatient: null, isCreating: true };
+      const { payload } = action;
+      const { patient } = payload;
+      return { ...state, currentPatient: patient, isCreating: true };
     }
 
     case PATIENT_ACTIONS.COMPLETE: {
@@ -59,6 +62,18 @@ export const PatientReducer = (state = patientInitialState(), action) => {
 
     case PATIENT_ACTIONS.CLOSE_HISTORY: {
       return { ...state, currentPatient: null, viewingHistory: false };
+    }
+
+    case PATIENT_ACTIONS.NEW_ADR: {
+      const { payload } = action;
+      const { patient } = payload;
+
+      return { ...state, isADRModalOpen: true, currentPatient: patient, creatingADR: true };
+    }
+
+    case PATIENT_ACTIONS.SAVE_ADR:
+    case PATIENT_ACTIONS.CANCEL_ADR: {
+      return { ...state, currentPatient: null, creatingADR: false };
     }
 
     default: {

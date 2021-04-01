@@ -200,6 +200,21 @@ const getPatientUniqueCode = database => {
   return `${thisStoreCode}${String(patientSequenceNumber)}`;
 };
 
+const createNameNote = (database, { id, data, patientEventID, nameID, entryDate = new Date() }) => {
+  const patientEvent = database.get('PatientEvent', patientEventID);
+  const name = database.get('Name', nameID);
+
+  if (name && patientEvent) {
+    const newNameNote = database.update('NameNote', {
+      id: id ?? generateUUID(),
+      name,
+      patientEvent,
+      entryDate: new Date(entryDate),
+    });
+    newNameNote.data = data;
+  }
+};
+
 /**
  * Creates a new patient record. Patient details passed can be in the shape:
  *  {
@@ -228,13 +243,16 @@ const createPatient = (database, patientDetails) => {
     female: patientFemale,
     supplyingStoreId: patientSupplyingStoreId,
     isActive: patientIsActive,
+    nationality,
+    ethnicity,
+    nameNotes,
   } = patientDetails;
 
   const id = patientId ?? generateUUID();
-  const code = patientCode ?? getPatientUniqueCode(database);
+  const code = patientCode || getPatientUniqueCode(database);
   const firstName = patientFirstName ?? '';
   const lastName = patientLastName ?? '';
-  const name = patientName ?? `${patientLastName}, ${patientFirstName}`;
+  const name = patientName || `${patientLastName}, ${patientFirstName}`;
   const dateOfBirth = patientDateOfBirth ?? null;
   const emailAddress = patientEmailAddress ?? '';
   const phoneNumber = patientPhoneNumber ?? '';
@@ -252,7 +270,7 @@ const createPatient = (database, patientDetails) => {
   const female = patientFemale ?? true;
 
   const thisStoreId = database.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
-  const supplyingStoreId = patientSupplyingStoreId ?? thisStoreId;
+  const supplyingStoreId = patientSupplyingStoreId || thisStoreId;
   const thisStoresPatient = supplyingStoreId === thisStoreId;
 
   const isActive = patientIsActive ?? true;
@@ -285,7 +303,12 @@ const createPatient = (database, patientDetails) => {
     thisStoresPatient,
     isActive,
     isVisible,
+    nationality,
+    ethnicity,
   });
+
+  nameNotes?.forEach(nameNote => createNameNote(database, nameNote));
+
   return patient;
 };
 
@@ -1152,6 +1175,26 @@ const createUpgradeMessage = (database, fromVersion, toVersion) => {
   return message;
 };
 
+const createAdverseDrugReaction = (database, patient, formData, user) => {
+  const formSchema = database.objects('ADRForm')[0];
+  const entryDate = new Date();
+
+  if (!formSchema) return null;
+
+  const newADR = UIDatabase.update('AdverseDrugReaction', {
+    id: generateUUID(),
+    name: patient,
+    user,
+    formSchema,
+    entryDate,
+  });
+
+  newADR.data = formData;
+  database.save('AdverseDrugReaction', newADR);
+
+  return newADR;
+};
+
 /**
  * Create a record of the given type, taking care of linkages, generating IDs, serial
  * numbers, current dates, and inserting sensible defaults.
@@ -1241,6 +1284,10 @@ export const createRecord = (database, type, ...args) => {
       return createTemperatureBreach(database, ...args);
     case 'TemperatureBreachConfiguration':
       return createTemperatureBreachConfiguration(database, ...args);
+    case 'NameNote':
+      return createNameNote(database, ...args);
+    case 'AdverseDrugReaction':
+      return createAdverseDrugReaction(database, ...args);
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }

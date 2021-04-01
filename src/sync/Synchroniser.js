@@ -25,6 +25,7 @@ import { SyncQueue } from './SyncQueue';
 import { SETTINGS_KEYS } from '../settings';
 
 import { version as mobileVersion } from '../../package.json';
+import { initialiseFinished } from '../actions/SyncActions';
 
 const {
   SYNC_IS_INITIALISED,
@@ -33,6 +34,7 @@ const {
   SYNC_SERVER_ID,
   SYNC_SITE_ID,
   SYNC_URL,
+  SYNC_INTERVAL,
 } = SETTINGS_KEYS;
 
 const MIN_SYNC_BATCH_SIZE = 10;
@@ -81,6 +83,8 @@ export class Synchroniser {
   setIsSyncing = isSyncing => this.dispatch(setSyncIsSyncing(isSyncing));
 
   setCompletionTime = time => this.dispatch(setSyncCompletionTime(time));
+
+  initialiseFinished = () => this.dispatch(initialiseFinished());
 
   refreshSyncParams = () => {
     this.serverURL = this.settings.get(SYNC_URL);
@@ -155,7 +159,12 @@ export class Synchroniser {
     const isFresh =
       !oldSyncURL || serverURL !== oldSyncURL || !syncSiteName || syncSiteName !== oldSyncSiteName;
 
-    if (isFresh) this.database.write(() => this.database.deleteAll());
+    if (isFresh) {
+      this.database.write(() => {
+        this.database.deleteAll();
+      });
+      this.settings.setDefaults();
+    }
 
     try {
       await this.authenticator.authenticate(serverURL, syncSiteName, syncSitePassword);
@@ -181,6 +190,7 @@ export class Synchroniser {
       // Did not authenticate, sync error or no internet, bubble up error.
       this.setError(error.message);
       this.setIsSyncing(false);
+
       throw error;
     }
 
@@ -188,6 +198,7 @@ export class Synchroniser {
     this.syncQueue.enable(); // Begin the sync queue listening to database changes.
     this.setIsSyncing(false);
     this.setCompletionTime(new Date().getTime());
+    this.initialiseFinished();
   };
 
   /**
@@ -198,6 +209,11 @@ export class Synchroniser {
   isInitialised = () => {
     const syncIsInitialised = this.settings.get(SYNC_IS_INITIALISED);
     return syncIsInitialised && syncIsInitialised === 'true';
+  };
+
+  syncInterval = () => {
+    const syncInterval = this.settings.get(SYNC_INTERVAL);
+    return Number(syncInterval);
   };
 
   /**

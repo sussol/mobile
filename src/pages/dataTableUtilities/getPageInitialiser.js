@@ -482,6 +482,7 @@ const pageInitialisers = {
   stocktakeBatchEditModalWithVaccines: stocktakeBatchInitialiser,
   stocktakeBatchEditModalWithPrices: stocktakeBatchInitialiser,
   stocktakeBatchEditModalWithReasonsAndPrices: stocktakeBatchInitialiser,
+  stocktakeBatchEditModalWithVaccinesAndReasons: stocktakeBatchInitialiser,
   stocktakeEditor: stocktakeEditorInitialiser,
   stocktakeManager: stocktakeManagerInitialiser,
   stocktakes: stocktakesInitialiser,

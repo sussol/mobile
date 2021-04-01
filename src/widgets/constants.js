@@ -13,6 +13,7 @@ export const MODALS = {
   STOCKTAKE_BATCH_EDIT_WITH_PRICES: 'stocktakeBatchEditModalWithPrices',
   STOCKTAKE_BATCH_EDIT_WITH_REASONS_AND_PRICES: 'stocktakeBatchEditModalWithReasonsAndPrices',
   STOCKTAKE_BATCH_EDIT_WITH_VACCINES: 'stocktakeBatchEditModalWithVaccines',
+  STOCKTAKE_BATCH_EDIT_WITH_VACCINES_AND_REASONS: 'stocktakeBatchEditModalWithVaccinesAndReasons',
   SUPPLIER_CREDIT_FROM_INVOICE: 'supplierCreditFromInvoice',
   SUPPLIER_CREDIT_FROM_ITEM: 'supplierCreditFromItem',
 };
@@ -25,4 +26,8 @@ export const FORMS = {
 export const TABS = {
   ITEM: 'itemSelect',
   PRESCRIBER: 'prescriberSelect',
+  PATIENT: 'patientSelect',
+  PATIENT_EDIT: 'patientEdit',
+  BATCH: 'batchSelect',
+  VACCINE_BATCH: 'vaccineBatchSelect',
 };

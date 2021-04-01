@@ -103,6 +103,7 @@ export const FormTextInput = React.forwardRef(
               onSubmitEditing={onSubmitEditing}
               editable={!isDisabled}
               autoFocus={autoFocus}
+              blurOnSubmit={false}
             />
             <FormInvalidMessage message={invalidMessage} isValid={isValid ?? true} />
           </View>

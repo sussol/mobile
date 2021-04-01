@@ -10,7 +10,7 @@ import { PRESCRIPTION_ACTIONS } from '../actions/PrescriptionActions';
 const initialState = () => ({
   currentTab: 0,
   transaction: null,
-  items: UIDatabase.objects('Item'),
+  items: UIDatabase.objects('Item').filtered('isVaccine != true'),
   itemSearchTerm: '',
   commentModalOpen: false,
 });

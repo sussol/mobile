@@ -51,23 +51,6 @@ export class TransactionBatch extends Realm.Object {
   }
 
   /**
-   * @return {Bool} Indicator if this batch has a valid number of doses.
-   */
-  get hasValidDoses() {
-    const { item } = this.itemBatch;
-    const { doses: dosesPerVial } = item;
-
-    const maximumDosesPossible = this.snapshotTotalQuantity * dosesPerVial;
-    const minimumDosesPossible = this.snapshotTotalQuantity;
-
-    const tooManyDoses = this.doses > maximumDosesPossible;
-    const tooLittleDoses = this.doses < minimumDosesPossible;
-    const justRightDoses = !tooManyDoses && !tooLittleDoses;
-
-    return justRightDoses;
-  }
-
-  /**
    * Returns either the prescriber name who prescribed the medicine
    * to a patient, or an N/A.
    * @return {String}
@@ -123,10 +106,6 @@ export class TransactionBatch extends Realm.Object {
     const difference = quantity - this.totalQuantity;
     this.numberOfPacks = this.packSize ? quantity / this.packSize : 0;
 
-    // Do the same for the doses, which is used for items which have multiple doses per 'pack'.
-    const dosesDifference = this.dosesPerVial * this.numberOfPacks - this.doses;
-    this.doses = this.numberOfPacks * this.dosesPerVial;
-
     // Recalculate a save the total price field of this batch
     this.total = this.totalPrice;
 
@@ -135,11 +114,7 @@ export class TransactionBatch extends Realm.Object {
     if (this.transaction.isConfirmed) {
       // Incoming transactions increase stock levels, while outgoing decrease.
       const inventoryDifference = this.transaction.isIncoming ? difference : -difference;
-      const dosesAdjustment = this.transaction.isIncoming ? dosesDifference : -dosesDifference;
-
       this.itemBatch.totalQuantity += inventoryDifference;
-      this.itemBatch.doses += dosesAdjustment;
-
       database.save('ItemBatch', this.itemBatch);
     }
 
@@ -150,8 +125,12 @@ export class TransactionBatch extends Realm.Object {
     return this.itemBatch?.isVaccine ?? false;
   }
 
+  get doses() {
+    return this.totalQuantity * this.dosesPerVial;
+  }
+
   get dosesPerVial() {
-    return this.isVaccine ? this.itemBatch?.item?.doses ?? 0 : 0;
+    return this.itemBatch?.dosesPerVial;
   }
 
   /**
@@ -196,13 +175,6 @@ export class TransactionBatch extends Realm.Object {
     }
     // For supplier invoice, there is no maximum amount that can be added.
     return quantity;
-  }
-
-  setDoses(database, newValue) {
-    const maximumDosesPossible = this.dosesPerVial * this.totalQuantity;
-    this.doses = Math.min(newValue, maximumDosesPossible);
-
-    database.save('TransactionBatch', this);
   }
 
   /**
@@ -254,9 +226,10 @@ TransactionBatch.schema = {
     type: { type: 'string', optional: true },
     linkedTransaction: { type: 'Transaction', optional: true },
     location: { type: 'Location', optional: true },
-    doses: { type: 'double', default: 0 },
     vaccineVialMonitorStatus: { type: 'VaccineVialMonitorStatus', optional: true },
     sentPackSize: { type: 'double', default: 0 },
+    medicineAdministrator: { type: 'MedicineAdministrator', optional: true },
+    option: { type: 'Options', optional: true },
   },
 };
 

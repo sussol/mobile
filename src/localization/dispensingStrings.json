@@ -1,6 +1,7 @@
 {
   "gb": {
     "receipt_for_invoice": "Receipt for invoice(s)",
+    "available_batches": "Available batches",
     "available_credit": "Available credit",
     "cash_in": "Cash In",
     "cash_out": "Cash out",
@@ -36,6 +37,7 @@
     "prescribers": "Prescribers",
     "select_a_policy": "Select an insurance policy",
     "select_items": "Select items",
+    "select_item": "Select item",
     "select_the_prescriber": "Select the prescriber",
     "select_a_payment_type": "Select a payment type",
     "select_a_patient_type": "Select a patient type",
@@ -60,7 +62,11 @@
     "lookup_prescriber": "Lookup prescriber",
     "unable_to_create_withdrawl": "Unable to create a withdrawl for more than the current balance.",
     "inpatient": "Inpatient",
-    "outpatient": "Outpatient"
+    "outpatient": "Outpatient",
+    "select_the_patient": "Select the patient",
+    "edit_the_patient": "Edit patient details",
+    "refused_vaccine": "Refused vaccine",
+    "validation_failed": "Some required fields are not completed."
   },
   "fr": {
     "available_credit": "Crédit disponible",

@@ -4,6 +4,8 @@
  */
 
 import Realm from 'realm';
+import { UIDatabase } from '../index';
+import { PREFERENCE_KEYS } from '../utilities/preferenceConstants';
 
 /**
  * A name.
@@ -101,11 +103,20 @@ export class Name extends Realm.Object {
    * @return  {boolean}
    */
   get isEditable() {
-    return this.thisStoresPatient;
+    return (
+      UIDatabase.getPreference(PREFERENCE_KEYS.CAN_EDIT_PATIENTS_FROM_ANY_STORE) ||
+      this.thisStoresPatient
+    );
   }
 
   get nameTags() {
     return this.nameTagJoins.map(({ nameTag }) => nameTag.description);
+  }
+
+  get mostRecentPCD() {
+    return (
+      this.nameNotes.filtered("patientEvent.code == 'PCD'").sorted('entryDate', true)[0] ?? null
+    );
   }
 
   /**
@@ -123,6 +134,38 @@ export class Name extends Realm.Object {
    */
   toString() {
     return this.name;
+  }
+
+  toJSON() {
+    return {
+      id: this.id,
+      name: this.name,
+      code: this.code,
+      dateOfBirth: this.dateOfBirth?.getTime(),
+      phoneNumber: this.phoneNumber,
+      country: this.country,
+      billingAddress: this.billingAddress?.toJSON(),
+      addressOne: this.addressOne,
+      addressTwo: this.addressTwo,
+      emailAddress: this.emailAddress,
+      type: this.type,
+      masterLists: this.masterLists,
+      isVisible: this.isVisible,
+      supplyingStoreId: this.supplyingStoreId,
+      firstName: this.firstName,
+      lastName: this.lastName,
+      isActive: this.isActive,
+      isCustomer: this.isCustomer,
+      isSupplier: this.isSupplier,
+      isManufacturer: this.isManufacturer,
+      isPatient: this.isPatient,
+      female: this.female,
+      thisStoresPatient: this.thisStoresPatient,
+      nationality: this.nationality?.toJSON(),
+      ethnicity: this.ethnicity?.toJSON(),
+      nameNotes: this.nameNotes?.map(nameNote => nameNote.toObject()),
+      isEditable: this.isEditable,
+    };
   }
 }
 
@@ -154,6 +197,10 @@ Name.schema = {
     female: { type: 'bool', default: false },
     thisStoresPatient: { type: 'bool', default: false },
     nameTagJoins: { type: 'linkingObjects', objectType: 'NameTagJoin', property: 'name' },
+    nationality: { type: 'Nationality', optional: true },
+    occupation: { type: 'Occupation', optional: true },
+    ethnicity: { type: 'Ethnicity', optional: true },
+    nameNotes: { type: 'linkingObjects', objectType: 'NameNote', property: 'name' },
   },
 };
 

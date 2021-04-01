@@ -29,6 +29,7 @@ import {
   PencilIcon,
   HazardIcon,
   BookIcon,
+  PlusCircle,
 } from '../icons';
 
 import { COLUMN_TYPES, COLUMN_KEYS } from '../../pages/dataTableUtilities';
@@ -36,6 +37,7 @@ import { generalStrings, tableStrings } from '../../localization';
 import { formatStatus, formatDate } from '../../utilities';
 import { formatType } from '../../utilities/formatStatus';
 import { useDebounce } from '../../hooks';
+import { twoDecimalsMax } from '../../utilities/formatters';
 
 /**
  * Wrapper component for a mSupply DataTable page row.
@@ -154,7 +156,11 @@ const DataTableRow = React.memo(
                 [COLUMN_KEYS.DOSES]: isVaccine ? '' : generalStrings.not_available,
               };
 
-              const value = disabledText[columnKey] ? disabledText[columnKey] : rowData[columnKey];
+              let value = disabledText[columnKey] ? disabledText[columnKey] : rowData[columnKey];
+              if (typeof value === 'number') {
+                value = twoDecimalsMax(rowData[columnKey]);
+              }
+
               const placeholder = extraPlaceholders[columnKey] ?? '';
 
               const inputIsDisabled = isDisabled || !!disabledCondition[columnKey];
@@ -259,13 +265,19 @@ const DataTableRow = React.memo(
             }
 
             case COLUMN_TYPES.NUMERIC: {
-              // Special condition for stocktake difference cells.
-              // Use the placeholder 'Not counted' when a stocktake item or batch
-              // has not been counted yet.
-              const value =
-                columnKey === COLUMN_KEYS.DIFFERENCE && !rowData.hasBeenCounted
-                  ? generalStrings.not_available
-                  : Math.round(rowData[columnKey]);
+              // Default to simply displaying the row data column key
+              let value = rowData[columnKey];
+              if (columnKey === COLUMN_KEYS.DIFFERENCE && !rowData.hasBeenCounted) {
+                // Special condition for stocktake difference cells.
+                // Use the placeholder 'Not counted' when a stocktake item or batch
+                // has not been counted yet.
+                value = generalStrings.not_available;
+              }
+
+              // When cell values can be floats, cut them off at two DP
+              if (typeof value === 'number') {
+                value = twoDecimalsMax(rowData[columnKey]);
+              }
 
               const cellErrors = getCellError?.(rowData, columnKey);
               const alternateCellStyleLookup = {
@@ -307,6 +319,7 @@ const DataTableRow = React.memo(
                 pencil: () => <PencilIcon color={SUSSOL_ORANGE} />,
                 breach: () => (hasBreached ? <HazardIcon color={SUSSOL_ORANGE} /> : null),
                 book: () => <BookIcon color={SUSSOL_ORANGE} />,
+                plus: () => <PlusCircle color={SUSSOL_ORANGE} size={20} />,
               };
 
               const disabledConditions = {

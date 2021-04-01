@@ -4,6 +4,7 @@
  */
 
 import { batch } from 'react-redux';
+import { selectUsingAdverseDrugReactions } from '../selectors/modules';
 
 import { FORM_ACTIONS } from './FormActions';
 
@@ -20,7 +21,11 @@ const filter = searchTerm => ({ type: DISPENSARY_ACTIONS.FILTER, payload: { sear
 
 const sort = sortKey => ({ type: DISPENSARY_ACTIONS.SORT, payload: { sortKey } });
 
-const switchDataSet = () => ({ type: DISPENSARY_ACTIONS.SWITCH });
+const switchDataSet = () => (dispatch, getState) =>
+  dispatch({
+    type: DISPENSARY_ACTIONS.SWITCH,
+    payload: { usingAdverseDrugReactions: selectUsingAdverseDrugReactions(getState()) },
+  });
 
 const refresh = () => ({ type: DISPENSARY_ACTIONS.REFRESH });
 

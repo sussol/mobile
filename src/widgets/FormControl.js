@@ -2,7 +2,7 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
-
+import { useIsFocused } from '@react-navigation/native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -27,6 +27,7 @@ import { FormActions } from '../actions/FormActions';
 
 import { ModalContainer } from './modals';
 import { ConfirmForm } from './modalChildren';
+import { useDebounce } from '../hooks/useDebounce';
 
 /**
  * Component which will manage and control a set of user inputs of a form.
@@ -47,6 +48,7 @@ import { ConfirmForm } from './modalChildren';
  * @param {bool}  isDisabled      Indicator whether this Form is disabled.
  * @param {Array} inputConfig     Configuration array of input config objects.
  *                                See { getFormInputConfig } from src/utilities/formInputConfigs.
+ * @param {func}  onUpdate        Callback invoked when a field value is changed (key,value) => null
  */
 const FormControlComponent = ({
   // Form state
@@ -62,6 +64,7 @@ const FormControlComponent = ({
   confirmText,
   // Cancel button state
   showCancelButton,
+  showSaveButton,
   cancelButtonText,
   // Form callbacks
   onInitialiseForm,
@@ -70,16 +73,20 @@ const FormControlComponent = ({
   onSaveForm,
   // Cancel button callbacks
   onCancelForm,
+  shouldAutoFocus,
 }) => {
   const [refs, setRefs] = React.useState([]);
+  const isFocused = useIsFocused();
 
   React.useEffect(() => {
     onInitialiseForm();
     setRefs({ length: inputConfig.length });
-  }, []);
+  }, [isFocused]);
+
+  const debouncedUpdateForm = useDebounce(onUpdateForm, 500);
 
   const nextFocus = (index, key) => value => {
-    onUpdateForm(key, value);
+    debouncedUpdateForm(key, value);
     refs[index + 1]?.current?.focus?.();
   };
 
@@ -112,11 +119,11 @@ const FormControlComponent = ({
                 value={initialValue}
                 isRequired={isRequired}
                 onValidate={validator}
-                onChangeText={value => onUpdateForm(key, value)}
+                onChangeText={value => debouncedUpdateForm(key, value)}
                 label={label}
                 invalidMessage={invalidMessage}
                 isDisabled={!isEditable || isDisabled}
-                autoFocus={index === 0}
+                autoFocus={shouldAutoFocus && index === 0}
               />
             );
           }
@@ -128,7 +135,7 @@ const FormControlComponent = ({
                 isRequired={isRequired}
                 label={label}
                 value={initialValue}
-                onChangeDate={value => onUpdateForm(key, value)}
+                onChangeDate={value => debouncedUpdateForm(key, value)}
                 onValidate={validator}
                 invalidMessage={invalidMessage}
                 onSubmit={nextFocus(index, key)}
@@ -191,15 +198,16 @@ const FormControlComponent = ({
     );
 
   const SaveButton = React.useCallback(
-    () => (
-      <PageButton
-        onPress={onSaveForm}
-        style={localStyles.saveButton}
-        isDisabled={!canSaveForm || isDisabled}
-        textStyle={localStyles.saveButtonTextStyle}
-        text={saveButtonText}
-      />
-    ),
+    () =>
+      showSaveButton ? (
+        <PageButton
+          onPress={onSaveForm}
+          style={localStyles.saveButton}
+          isDisabled={!canSaveForm || isDisabled}
+          textStyle={localStyles.saveButtonTextStyle}
+          text={saveButtonText}
+        />
+      ) : null,
     [isDisabled, showCancelButton, canSaveForm, saveButtonText, onSaveForm]
   );
 
@@ -217,12 +225,13 @@ const FormControlComponent = ({
   );
 
   const Buttons = React.useCallback(
-    () => (
-      <View style={localStyles.buttonsRow}>
-        <SaveButton />
-        <CancelButton />
-      </View>
-    ),
+    () =>
+      showCancelButton || showSaveButton ? (
+        <View style={localStyles.buttonsRow}>
+          <SaveButton />
+          <CancelButton />
+        </View>
+      ) : null,
     [SaveButton, CancelButton]
   );
 
@@ -260,25 +269,32 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     saveButtonText,
     onSave,
     showCancelButton,
+    showSaveButton,
     cancelButtonText,
     onCancel,
+    canSave = true, // if not specified by calling component, set default
+    onUpdate,
   } = ownProps;
   const onInitialiseForm = () => initialiseForm(inputConfig);
-  const onUpdateForm = (key, value) => !isDisabled && updateForm(key, value);
+  const onUpdateForm = (key, value) =>
+    !isDisabled && (onUpdate ? onUpdate(key, value) : updateForm(key, value));
   const onSaveForm = () =>
     confirmOnSave && !isConfirmFormOpen ? showConfirmForm() : onSave(completedForm);
   const onCancelForm = () =>
     confirmOnSave && isConfirmFormOpen ? hideConfirmForm() : onCancel() && resetForm();
+
   return {
+    ...ownProps,
     form,
     completedForm,
     inputConfig,
     isDisabled,
-    canSaveForm,
+    canSaveForm: canSave && canSaveForm,
     saveButtonText,
     isConfirmFormOpen,
     confirmText,
     showCancelButton,
+    showSaveButton,
     cancelButtonText,
     onInitialiseForm,
     onUpdateForm,
@@ -311,10 +327,17 @@ FormControlComponent.defaultProps = {
   saveButtonText: generalStrings.save,
   confirmText: modalStrings.confirm,
   showCancelButton: true,
+  showSaveButton: true,
   cancelButtonText: modalStrings.cancel,
+  shouldAutoFocus: true,
+  canSave: true,
+  onUpdate: undefined,
 };
 
 FormControlComponent.propTypes = {
+  // Prop is used in merge props
+  // eslint-disable-next-line react/no-unused-prop-types
+  canSave: PropTypes.bool,
   form: PropTypes.object,
   completedForm: PropTypes.object,
   inputConfig: PropTypes.array.isRequired,
@@ -324,11 +347,16 @@ FormControlComponent.propTypes = {
   isConfirmFormOpen: PropTypes.bool.isRequired,
   confirmText: PropTypes.string,
   showCancelButton: PropTypes.bool,
+  showSaveButton: PropTypes.bool,
   cancelButtonText: PropTypes.string,
   onInitialiseForm: PropTypes.func.isRequired,
   onUpdateForm: PropTypes.func.isRequired,
   onSaveForm: PropTypes.func.isRequired,
   onCancelForm: PropTypes.func.isRequired,
+  shouldAutoFocus: PropTypes.bool,
+  // Prop is used in merge props
+  // eslint-disable-next-line react/no-unused-prop-types
+  onUpdate: PropTypes.func,
 };
 
 export const FormControl = connect(

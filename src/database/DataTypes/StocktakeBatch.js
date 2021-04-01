@@ -47,23 +47,6 @@ export class StocktakeBatch extends Realm.Object {
   }
 
   /**
-   * @return {Bool} Indicator if this batch has a valid number of doses.
-   */
-  get hasValidDoses() {
-    const { item } = this.itemBatch;
-    const { doses: dosesPerVial } = item;
-
-    const maximumDosesPossible = this.snapshotTotalQuantity * dosesPerVial;
-    const minimumDosesPossible = this.snapshotTotalQuantity;
-
-    const tooManyDoses = this.doses > maximumDosesPossible;
-    const tooLittleDoses = this.doses < minimumDosesPossible;
-    const justRightDoses = !tooManyDoses && !tooLittleDoses;
-
-    return justRightDoses;
-  }
-
-  /**
    * Get snapshot of total quantity in batch.
    *
    * @return  {number}
@@ -189,7 +172,8 @@ export class StocktakeBatch extends Realm.Object {
     const { type } = this.option;
 
     const positiveAdjustmentReason = type === 'positiveInventoryAdjustment';
-    const negativeAdjustmentReason = type === 'negativeInventoryAdjustment';
+    const negativeAdjustmentReason =
+      type === 'negativeInventoryAdjustment' || type === 'openVialWastage';
 
     const correctPositiveReason = positiveAdjustmentReason && this.hasPositiveAdjustment;
     const correctNegativeReason = negativeAdjustmentReason && this.hasNegativeAdjustment;
@@ -212,22 +196,24 @@ export class StocktakeBatch extends Realm.Object {
   set countedTotalQuantity(quantity) {
     // Handle packsize of 0.
     const countedNumberOfPacks = this.packSize ? quantity / this.packSize : 0;
-
     this.countedNumberOfPacks = countedNumberOfPacks;
-    this.doses = countedNumberOfPacks * this.dosesPerVial;
   }
 
   get isVaccine() {
     return this.itemBatch?.isVaccine ?? false;
   }
 
+  get doses() {
+    return this.countedTotalQuantity * this.dosesPerVial;
+  }
+
   get dosesPerVial() {
-    return this.isVaccine ? this.itemBatch?.item?.doses ?? 0 : 0;
+    return this.itemBatch?.dosesPerVial;
   }
 
   setDoses(database, newValue) {
-    const maximumDosesPossible = this.dosesPerVial * this.countedTotalQuantity;
-    this.doses = Math.min(newValue, maximumDosesPossible);
+    const newCountedTotalQuantity = Number(newValue / this.dosesPerVial);
+    this.countedTotalQuantity = newCountedTotalQuantity;
     database.save('StocktakeBatch', this);
   }
 
@@ -252,7 +238,8 @@ export class StocktakeBatch extends Realm.Object {
     const { type: newOptionType } = newOption || {};
 
     const isPositiveAdjustmentReason = newOptionType === 'positiveInventoryAdjustment';
-    const isNegativeAdjustmentReason = newOptionType === 'negativeInventoryAdjustment';
+    const isNegativeAdjustmentReason =
+      newOptionType === 'negativeInventoryAdjustment' || newOptionType === 'openVialWastage';
 
     // Valid adjustments are when this batch has a difference in snapshot quantity and
     // counted quantity and if the difference is positive, the reason must be a positive
@@ -321,7 +308,7 @@ export class StocktakeBatch extends Realm.Object {
       // (i.e. always treat as positive).
       const snapshotDifference = Math.abs(this.difference);
       transactionBatch.setTotalQuantity(database, snapshotDifference);
-      transactionBatch.doses = this.doses;
+      transactionBatch.option = this.option;
       database.save('TransactionBatch', transactionBatch);
 
       if (!this.itemBatch.totalQuantity) this.itemBatch.leaveLocation(database);
@@ -377,7 +364,6 @@ StocktakeBatch.schema = {
     option: { type: 'Options', optional: true },
     supplier: { type: 'Name', optional: true },
     location: { type: 'Location', optional: true },
-    doses: { type: 'double', default: 0 },
     vaccineVialMonitorStatus: { type: 'VaccineVialMonitorStatus', optional: true },
   },
 };

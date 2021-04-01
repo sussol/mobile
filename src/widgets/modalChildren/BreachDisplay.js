@@ -15,7 +15,6 @@ import { BreachChart } from '../BreachChart';
 import { PageInfo } from '../PageInfo/PageInfo';
 
 import { WHITE } from '../../globalStyles';
-import { AfterInteractions } from '../AfterInteractions';
 
 const Breach = ({ breach, getInfoColumns }) => {
   const { temperatureLogs } = breach;
@@ -25,12 +24,10 @@ const Breach = ({ breach, getInfoColumns }) => {
   });
 
   return (
-    <AfterInteractions>
-      <View style={localStyles.container}>
-        <PageInfo columns={getInfoColumns(breach)} />
-        <BreachChart breach={breach} lineData={lineData} />
-      </View>
-    </AfterInteractions>
+    <View style={localStyles.container}>
+      <PageInfo columns={getInfoColumns(breach)} />
+      <BreachChart breach={breach} lineData={lineData} />
+    </View>
   );
 };
 
@@ -54,11 +51,7 @@ const BreachDisplayComponent = ({ breaches }) => {
     [breaches]
   );
 
-  return (
-    <AfterInteractions>
-      <FlatList data={breaches} renderItem={renderItem} />
-    </AfterInteractions>
-  );
+  return <FlatList data={breaches} renderItem={renderItem} />;
 };
 
 BreachDisplayComponent.propTypes = {

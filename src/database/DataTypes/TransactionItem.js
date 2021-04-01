@@ -22,10 +22,6 @@ export class TransactionItem extends Realm.Object {
     database.delete('TransactionBatch', this.batches);
   }
 
-  get hasValidDoses() {
-    return this.batches.every(({ hasValidDoses }) => hasValidDoses);
-  }
-
   get isVaccine() {
     return !!this?.item?.isVaccine;
   }
@@ -278,21 +274,16 @@ export class TransactionItem extends Realm.Object {
     });
   };
 
-  /**
-   * Sets the doses for all underlying transaction batches. Rather than applying
-   * all doses in FEFO, apply an even distribution of doses over the transaction
-   * batches.
-   * @param {Number} value The number of doses to set for this item
-   */
   setDoses(database, value) {
-    const dosesToSet = Math.min(value, this.totalQuantity * this.dosesPerVial);
-    const dosesToAssignToEachBatch = dosesToSet / this.totalQuantity;
+    const newTotalQuantity = Math.min(Number(value / this.dosesPerVial), this.availableQuantity);
 
-    this.resetAllDoses(database);
-    this.batches.sorted('expiryDate', false).forEach(batch => {
-      const { totalQuantity: thisBatchesQuantity } = batch;
-      batch.setDoses(database, Math.floor(dosesToAssignToEachBatch * thisBatchesQuantity));
-    });
+    this.setTotalQuantity(database, newTotalQuantity);
+  }
+
+  setVaccinator(database, vaccinator) {
+    this.batches.forEach(batch =>
+      database.update('TransactionBatch', { id: batch.id, medicineAdministrator: vaccinator })
+    );
   }
 
   get dosesPerVial() {
@@ -300,7 +291,7 @@ export class TransactionItem extends Realm.Object {
   }
 
   get doses() {
-    return this.batches.sum('doses');
+    return getTotal(this.batches, 'doses');
   }
 
   get hasBreached() {

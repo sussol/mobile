@@ -1,6 +1,6 @@
 import { Settings } from 'react-native-database';
 
-import { SETTINGS_KEYS } from './index';
+import { SETTINGS_DEFAULTS, SETTINGS_KEYS } from './index';
 import { DEFAULT_LANGUAGE } from '../localization/index';
 import { setCurrentLanguage, setDateLocale } from '../localization/utilities';
 import { UIDatabase } from '../database';
@@ -35,6 +35,11 @@ class MobileAppSettings extends Settings {
 
   setDefaults() {
     this.set(SETTINGS_KEYS.CURRENT_LANGUAGE, DEFAULT_LANGUAGE);
+    this.set(SETTINGS_KEYS.SYNC_INTERVAL, SETTINGS_DEFAULTS[SETTINGS_KEYS.SYNC_INTERVAL]);
+    this.set(
+      SETTINGS_KEYS.IDLE_LOGOUT_INTERVAL,
+      SETTINGS_DEFAULTS[SETTINGS_KEYS.IDLE_LOGOUT_INTERVAL]
+    );
   }
 }
 

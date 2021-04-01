@@ -70,7 +70,6 @@ const generateSyncData = (settings, recordType, record) => {
         total_cost: String(record.costPrice * record.numberOfPacks),
         name_ID: record.supplier?.id ?? '',
         donor_id: record.donor?.id ?? '',
-        doses: String(record.doses),
         location_ID: record.location?.id,
       };
     }
@@ -89,7 +88,7 @@ const generateSyncData = (settings, recordType, record) => {
         date_of_birth: moment(record.dateOfBirth).format(),
         code: record.code,
         email: record.emailAddress,
-        supplying_store_id: settings.get(THIS_STORE_ID),
+        supplying_store_id: record.supplyingStoreId || settings.get(THIS_STORE_ID),
         phone: record.phoneNumber,
         customer: String(record.isCustomer),
         country: record.country,
@@ -99,6 +98,9 @@ const generateSyncData = (settings, recordType, record) => {
         'charge code': record.code,
         currency_id: defaultCurrency?.id ?? '',
         female: String(record.female),
+        nationality_ID: record.nationality?.id ?? '',
+        occupation_ID: record.occupation?.id ?? '',
+        ethnicity_ID: record.ethnicity?.id ?? '',
       };
     }
     case 'NumberSequence': {
@@ -193,7 +195,6 @@ const generateSyncData = (settings, recordType, record) => {
         item_ID: record.itemId,
         optionID: record.option?.id ?? '',
         is_edited: record.hasBeenCounted,
-        doses: String(record.doses),
         location_ID: record.location?.id,
         vaccine_vial_monitor_status_ID: record.vaccineVialMonitorStatus?.id,
       };
@@ -263,9 +264,9 @@ const generateSyncData = (settings, recordType, record) => {
         donor_id: record.donor?.id ?? '',
         type: record.type,
         linked_transact_id: record.linkedTransaction?.id,
-        doses: String(record.doses),
         location_ID: record.location?.id,
         vaccine_vial_monitor_status_ID: record.vaccineVialMonitorStatus?.id,
+        medicine_administrator_id: record.medicineAdministrator?.id ?? '',
         sent_pack_size: String(record.sentPackSize),
       };
     }
@@ -404,6 +405,34 @@ const generateSyncData = (settings, recordType, record) => {
         store_ID: settings.get(THIS_STORE_ID),
       };
     }
+    case 'NameNote': {
+      return {
+        ID: record.id,
+        patient_event_ID: record.patientEvent?.id ?? '',
+        name_ID: record.name?.id ?? '',
+        entry_date: getDateString(record.entryDate),
+        data: record.data,
+        store_ID: settings.get(THIS_STORE_ID),
+        // The NameNote table is in the middle of a migration away from the current impl
+        // where there are fields boolean_value, value, note etc. To avoid having to also
+        // migrate data within mobile, just send the boolean_value field when the name_note
+        // is of type 'refused vaccine' as that is the only name_note which
+        boolean_value: record?.patientEvent?.code === 'RV' ? 'True' : undefined,
+      };
+    }
+    case 'AdverseDrugReaction': {
+      return {
+        ID: record.id,
+        form_schema_ID: record.formSchema?.id ?? '',
+        name_ID: record.name?.id ?? '',
+        user_ID: record.user?.id ?? '',
+        store_ID: settings.get(THIS_STORE_ID),
+        entry_date: getDateString(record.entryDate),
+        entry_time: getTimeString(record.entryDate),
+        data: record._data,
+      };
+    }
+
     default:
       throw new Error('Sync out record type not supported.');
   }

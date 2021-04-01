@@ -6,6 +6,7 @@
 import currency from '../localization/currency';
 import { UIDatabase } from '../database';
 import { sortDataBy } from '../utilities';
+import { PREFERENCE_KEYS } from '../database/utilities/preferenceConstants';
 
 export const selectPatientHistory = ({ patient }) => {
   const { currentPatient } = patient;
@@ -46,13 +47,13 @@ export const selectPatientInsurancePolicies = ({ patient }) => {
   });
 };
 export const selectPatientModalOpen = ({ patient }) => {
-  const { isCreating, isEditing } = patient;
-  const { viewingHistory } = patient;
-  return [isCreating || isEditing, viewingHistory];
+  const { creatingADR, viewingHistory, isCreating, isEditing } = patient;
+  return [isCreating || isEditing, viewingHistory, creatingADR];
 };
 
 export const selectCanEditPatient = ({ patient }) => {
   const { currentPatient } = patient;
   const { isEditable = true } = currentPatient ?? {};
-  return isEditable;
+
+  return UIDatabase.getPreference(PREFERENCE_KEYS.CAN_EDIT_PATIENTS_FROM_ANY_STORE) || isEditable;
 };

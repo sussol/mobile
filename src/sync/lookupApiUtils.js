@@ -9,10 +9,11 @@
 import moment from 'moment';
 import querystring from 'querystring';
 import Bugsnag from '@bugsnag/react-native';
-import { AUTH_ERROR_CODES } from 'sussol-utilities';
+import { getAuthHeader, AUTH_ERROR_CODES } from 'sussol-utilities';
 
 import { UIDatabase } from '../database';
 import { createRecord, parseBoolean, parseDate, parseNumber } from '../database/utilities';
+import { SETTINGS_KEYS } from '../settings/index';
 
 const ERROR_CODES = {
   ...AUTH_ERROR_CODES,
@@ -22,11 +23,13 @@ const ERROR_CODES = {
 const RESOURCES = {
   PATIENT: '/api/v4/patient',
   PRESCRIBER: '/api/v4/prescriber',
+  NAME_STORE_JOIN: '/api/v4/name_store_join',
 };
 
 const TYPES = {
   STRING: 'string',
   DATE: 'date',
+  NUMBER: 'number',
 };
 
 const PARAMETERS = {
@@ -35,6 +38,8 @@ const PARAMETERS = {
   dateOfBirth: { key: 'dob', type: TYPES.DATE },
   policyNumber: { key: 'policy_number', type: TYPES.STRING },
   registrationCode: { key: 'code', type: TYPES.STRING },
+  limit: { key: 'limit', type: TYPES.NUMBER },
+  offset: { key: 'offset', type: TYPES.NUMBER },
 };
 
 class BugsnagError extends Error {
@@ -46,6 +51,14 @@ class BugsnagError extends Error {
     });
   }
 }
+
+export const getServerURL = () => UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL);
+
+export const getAuthorizationHeader = () => {
+  const username = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
+  const password = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_PASSWORD_HASH);
+  return getAuthHeader(username, password);
+};
 
 export const createPatientRecord = patient => {
   patient?.policies?.forEach(createPolicyRecord);
@@ -64,8 +77,14 @@ const getQueryString = params => {
   const query = params.reduce((queryObject, param) => {
     const [[key, value], [, type]] = Object.entries(param);
     if (!value) return queryObject;
-    const paramValue = type !== TYPES.DATE ? `@${value}@` : moment(value).format('DDMMYYYY');
-    return { ...queryObject, [key]: paramValue };
+
+    const formatter = {
+      [TYPES.STRING]: string => `@${string}@`,
+      [TYPES.DATE]: date => moment(date).format('DDMMYYYY'),
+      [TYPES.NUMBER]: number => Number(number),
+    };
+
+    return { ...queryObject, [key]: formatter[type](value) };
   }, {});
   return `?${querystring.stringify(query)}`;
 };
@@ -84,12 +103,16 @@ const getPatientQueryString = ({
   lastName = '',
   dateOfBirth = '',
   policyNumber = '',
+  limit = null,
+  offset = null,
 } = {}) => {
   const queryParams = [
     { [PARAMETERS.firstName.key]: firstName, type: PARAMETERS.firstName.type },
     { [PARAMETERS.lastName.key]: lastName, type: PARAMETERS.lastName.type },
     { [PARAMETERS.dateOfBirth.key]: dateOfBirth, type: PARAMETERS.dateOfBirth.type },
     { [PARAMETERS.policyNumber.key]: policyNumber, type: PARAMETERS.policyNumber.type },
+    { [PARAMETERS.offset.key]: offset, type: PARAMETERS.offset.type },
+    { [PARAMETERS.limit.key]: limit, type: PARAMETERS.limit.type },
   ];
   return getQueryString(queryParams);
 };
@@ -105,6 +128,23 @@ export const getPrescriberRequestUrl = params => {
   const queryString = getPrescriberQueryString(params);
   return endpoint + queryString;
 };
+
+const processNameNoteResponse = response =>
+  response.map(
+    ({
+      ID: id,
+      data,
+      patient_event_ID: patientEventID,
+      name_ID: nameID,
+      entry_date: entryDate,
+    }) => ({
+      id,
+      data,
+      patientEventID,
+      nameID,
+      entryDate: moment(entryDate).isValid() ? moment(entryDate).toDate() : moment().toDate(),
+    })
+  );
 
 const processInsuranceResponse = response =>
   response.map(
@@ -169,6 +209,7 @@ export const processPatientResponse = response => {
       last: lastName,
       date_of_birth,
       nameInsuranceJoin,
+      nameNotes,
     }) => ({
       id,
       name,
@@ -185,6 +226,7 @@ export const processPatientResponse = response => {
       lastName,
       dateOfBirth: parseDate(date_of_birth),
       policies: processInsuranceResponse(nameInsuranceJoin),
+      nameNotes: processNameNoteResponse(nameNotes),
     })
   );
 };
@@ -215,3 +257,31 @@ export const processPrescriberResponse = response =>
       storeId: store_ID,
     })
   );
+
+export const createPatientVisibility = async name => {
+  const thisStoreID = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_ID);
+  const { id: nameID } = name;
+
+  const nameExists = UIDatabase.get('Name', nameID);
+
+  if (nameExists) return true;
+
+  const body = { store_ID: thisStoreID, name_ID: nameID };
+
+  try {
+    const response = await fetch(`${getServerURL()}${RESOURCES.NAME_STORE_JOIN}`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: {
+        authorization: getAuthorizationHeader(),
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
+
+    return response.status === 200;
+  } catch {
+    // If there was an error, just return false
+    return false;
+  }
+};

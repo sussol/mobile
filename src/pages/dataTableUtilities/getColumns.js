@@ -20,6 +20,7 @@ const PAGE_COLUMN_WIDTHS = {
   [MODALS.STOCKTAKE_BATCH_EDIT_WITH_REASONS]: [1, 2, 1, 1, 1, 1, 1],
   [MODALS.STOCKTAKE_BATCH_EDIT_WITH_REASONS_AND_PRICES]: [1, 2, 1, 1, 1, 1.5, 1.5, 1.5, 1],
   [MODALS.STOCKTAKE_BATCH_EDIT_WITH_VACCINES]: [1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [MODALS.STOCKTAKE_BATCH_EDIT_WITH_VACCINES_AND_REASONS]: [1, 1, 0.75, 0.75, 1, 0.75, 0.75, 1, 1],
   [MODALS.STOCKTAKE_BATCH_EDIT_WITH_PRICES]: [1, 2, 1, 1, 1, 1, 1, 1],
   [MODALS.SUPPLIER_CREDIT_FROM_INVOICE]: [1, 1, 1, 1, 1, 1],
   [MODALS.SUPPLIER_CREDIT_FROM_ITEM]: [1, 1, 1, 1, 1],
@@ -50,8 +51,10 @@ const PAGE_COLUMN_WIDTHS = {
   sensors: [3, 3, 1, 1],
   [TABS.ITEM]: [1, 3, 1],
   [TABS.PRESCRIBER]: [3, 3, 1],
+  [TABS.VACCINE_BATCH]: [1, 1, 1, 1],
   editableCustomerRequisitionFormEntry: [2, 1.5, 1, 1, 1, 1.5, 1, 1, 1, 1.5],
   customerRequisitionFormEntry: [2, 2, 1, 1, 1, 1, 2, 2, 2, 2],
+  patientWithAdverseDrugReactions: [2.5, 4, 4, 2.5, 2, 2, 2, 2],
 };
 
 const PAGE_COLUMNS = {
@@ -106,6 +109,16 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.PATIENT_EDIT,
     COLUMN_NAMES.DISPENSE,
   ],
+  patientWithAdverseDrugReactions: [
+    COLUMN_NAMES.CODE,
+    COLUMN_NAMES.LAST_NAME,
+    COLUMN_NAMES.FIRST_NAME,
+    COLUMN_NAMES.DATE_OF_BIRTH,
+    COLUMN_NAMES.PATIENT_HISTORY,
+    COLUMN_NAMES.ADVERSE_DRUG_EFFECT,
+    COLUMN_NAMES.PATIENT_EDIT,
+    COLUMN_NAMES.DISPENSE,
+  ],
   [FORMS.PRESCRIBER]: [
     COLUMN_NAMES.REGISTRATION_CODE,
     COLUMN_NAMES.LAST_NAME,
@@ -152,6 +165,17 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.DOSES,
     COLUMN_NAMES.BREACH,
     COLUMN_NAMES.DIFFERENCE,
+  ],
+  [MODALS.STOCKTAKE_BATCH_EDIT_WITH_VACCINES_AND_REASONS]: [
+    COLUMN_NAMES.EDITABLE_BATCH_NAME,
+    COLUMN_NAMES.LOCATION,
+    COLUMN_NAMES.VVM_STATUS,
+    COLUMN_NAMES.EDITABLE_EXPIRY_DATE,
+    COLUMN_NAMES.SNAPSHOT_TOTAL_QUANTITY,
+    COLUMN_NAMES.DOSES,
+    COLUMN_NAMES.BREACH,
+    COLUMN_NAMES.DIFFERENCE,
+    COLUMN_NAMES.REASON,
   ],
   [MODALS.STOCKTAKE_BATCH_EDIT_WITH_REASONS]: [
     COLUMN_NAMES.EDITABLE_BATCH_NAME,
@@ -212,8 +236,6 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.ITEM_NAME,
     COLUMN_NAMES.AVAILABLE_QUANTITY,
     COLUMN_NAMES.EDITABLE_TOTAL_QUANTITY,
-    COLUMN_NAMES.DOSES,
-    COLUMN_NAMES.BREACH,
     COLUMN_NAMES.REMOVE,
   ],
   [ROUTES.CUSTOMER_INVOICE]: [
@@ -384,6 +406,12 @@ const PAGE_COLUMNS = {
   ],
   [TABS.ITEM]: [COLUMN_NAMES.CODE, COLUMN_NAMES.NAME, COLUMN_NAMES.TOTAL_QUANTITY],
   [TABS.PRESCRIBER]: [COLUMN_NAMES.FIRST_NAME, COLUMN_NAMES.LAST_NAME, COLUMN_NAMES.SELECT],
+  [TABS.VACCINE_BATCH]: [
+    COLUMN_NAMES.BATCH_NAME,
+    COLUMN_NAMES.NUMBER_OF_VIALS,
+    COLUMN_NAMES.DOSES,
+    COLUMN_NAMES.EXPIRY_DATE,
+  ],
 };
 
 const COLUMNS = () => ({
@@ -574,7 +602,7 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.BATCH,
     title: tableStrings.batch_name,
-    textAlign: 'left',
+    alignText: 'left',
     sortable: true,
     editable: false,
   },
@@ -583,7 +611,7 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.NAME,
     title: tableStrings.question,
-    textAlign: 'left',
+    alignText: 'left',
     sortable: false,
     editable: false,
   },
@@ -592,7 +620,7 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.PROGRAM,
     title: tableStrings.program,
-    textAlign: 'left',
+    alignText: 'left',
     sortable: true,
     editable: false,
   },
@@ -629,7 +657,7 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.EDITABLE_STRING,
     key: COLUMN_KEYS.COMMENT,
     title: tableStrings.comment,
-    textAlign: 'right',
+    alignText: 'right',
     sortable: false,
     editable: true,
   },
@@ -637,7 +665,7 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.EDITABLE_STRING,
     key: COLUMN_KEYS.NAME,
     title: tableStrings.name,
-    textAlign: 'left',
+    alignText: 'left',
     sortable: true,
     editable: true,
   },
@@ -645,7 +673,7 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.EDITABLE_STRING,
     key: COLUMN_KEYS.VALUE,
     title: tableStrings.value,
-    textAlign: 'right',
+    alignText: 'right',
     sortable: false,
     editable: true,
   },
@@ -827,6 +855,24 @@ const COLUMNS = () => ({
     alignText: 'right',
     sortable: true,
     editable: false,
+  },
+
+  [COLUMN_NAMES.NUMBER_OF_VIALS]: {
+    key: COLUMN_KEYS.NUMBER_OF_PACKS,
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
+    title: tableStrings.vials,
+    alignText: 'right',
+    sortable: true,
+    editable: true,
+  },
+
+  [COLUMN_NAMES.NUMBER_OF_PACKS]: {
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
+    key: COLUMN_KEYS.NUMBER_OF_PACKS,
+    title: tableStrings.packs,
+    alignText: 'right',
+    sortable: true,
+    editable: true,
   },
 
   // EDITABLE NUMERIC COLUMNS
@@ -1099,6 +1145,15 @@ const COLUMNS = () => ({
     alignText: 'center',
     editable: false,
     icon: 'history',
+  },
+  [COLUMN_NAMES.ADVERSE_DRUG_EFFECT]: {
+    type: COLUMN_TYPES.ICON,
+    key: COLUMN_KEYS.ADVERSE_DRUG_EFFECT,
+    title: tableStrings.adr,
+    sortable: false,
+    alignText: 'center',
+    editable: false,
+    icon: 'plus',
   },
   [COLUMN_NAMES.PATIENT_EDIT]: {
     type: COLUMN_TYPES.ICON,

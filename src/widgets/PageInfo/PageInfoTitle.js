@@ -13,7 +13,7 @@ export const PageInfoTitle = ({
   numberOfLines,
   textAlign,
 }) => {
-  const style = { ...localStyles.text, ...localStyles.titleText, color, textAlign };
+  const style = { ...localStyles.text, color, textAlign };
   const editable = onPress && !isEditingDisabled;
   const Container = editable ? TouchableOpacity : FlexRow;
 

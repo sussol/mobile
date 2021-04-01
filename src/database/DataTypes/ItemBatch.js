@@ -171,6 +171,14 @@ export class ItemBatch extends Realm.Object {
   applyVvmStatus(database, newVvmStatus) {
     return createRecord(database, 'VaccineVialMonitorStatusLog', this, newVvmStatus);
   }
+
+  get dosesPerVial() {
+    return this.item?.doses ?? 0;
+  }
+
+  get doses() {
+    return this.totalQuantity * this.dosesPerVial;
+  }
 }
 
 ItemBatch.schema = {
@@ -194,7 +202,6 @@ ItemBatch.schema = {
       objectType: 'LocationMovement',
       property: 'itemBatch',
     },
-    doses: { type: 'double', default: 0 },
     vaccineVialMonitorStatusLogs: {
       type: 'linkingObjects',
       objectType: 'VaccineVialMonitorStatusLog',

@@ -26,7 +26,6 @@ import { SyncAuthenticator, UserAuthenticator } from './authentication';
 
 import { LoadingIndicatorContext } from './context/LoadingIndicatorContext';
 import { selectTitle } from './selectors/supplierCredit';
-import { selectIsSyncing } from './selectors/sync';
 import { selectCurrentUser } from './selectors/user';
 import { selectUsingVaccines } from './selectors/modules';
 
@@ -56,7 +55,6 @@ import { SensorDownloadActions } from './actions/Bluetooth/SensorDownloadActions
 import BreachManager from './bluetooth/BreachManager';
 import { selectIsPassivelyDownloadingTemps } from './selectors/Bluetooth/sensorDownload';
 
-const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const BLUETOOTH_SYNC_INTERVAL = 60 * 1000; // 1 minute in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 
@@ -87,10 +85,11 @@ class MSupplyMobileAppContainer extends React.Component {
       Settings,
       props.dispatch
     );
+
     this.postSyncProcessor = new PostSyncProcessor(UIDatabase, Settings);
     this.scheduler = new Scheduler();
     const isInitialised = this.synchroniser.isInitialised();
-    this.scheduler.schedule(this.synchronise, SYNC_INTERVAL);
+    this.scheduler.schedule(this.synchronise, this.synchroniser.syncInterval());
     this.scheduler.schedule(() => {
       const { currentUser } = this.props;
       if (currentUser !== null) {
@@ -173,10 +172,10 @@ class MSupplyMobileAppContainer extends React.Component {
   };
 
   synchronise = async () => {
-    const { dispatch, isSyncing } = this.props;
+    const { dispatch } = this.props;
     const { isInitialised } = this.state;
 
-    if (!isInitialised || isSyncing) return;
+    if (!isInitialised) return;
 
     try {
       const syncUrl = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL);
@@ -298,13 +297,12 @@ const mapStateToProps = state => {
   const usingVaccines = selectUsingVaccines(state);
   const isBreachModalOpen = selectIsBreachModalOpen(state);
   const currentUser = selectCurrentUser(state);
-  const isSyncing = selectIsSyncing(state);
+
   const isPassivelyDownloadingTemps = selectIsPassivelyDownloadingTemps(state);
   const breachModalTitle = selectBreachModalTitle(state);
   return {
     usingVaccines,
     isPassivelyDownloadingTemps,
-    isSyncing,
     currentUser,
     finaliseModalOpen,
     supplierCreditModalOpen,
@@ -323,7 +321,6 @@ MSupplyMobileAppContainer.propTypes = {
   usingVaccines: PropTypes.bool.isRequired,
   requestBluetooth: PropTypes.func.isRequired,
   syncTemperatures: PropTypes.func.isRequired,
-  isSyncing: PropTypes.bool.isRequired,
   isPassivelyDownloadingTemps: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
   currentUser: PropTypes.object,

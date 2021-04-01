@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 /* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
@@ -56,9 +57,15 @@ export const StocktakeBatchModalComponent = ({
   usingVaccines,
   usingHideSnapshotColumn,
   dispatch: reduxDispatch,
+  usingOpenVialWastageReasons,
 }) => {
   const initialState = useMemo(() => {
     const pageObject = stocktakeItem;
+
+    if (usingVaccines && usingReasons && usingOpenVialWastageReasons) {
+      return { page: MODALS.STOCKTAKE_BATCH_EDIT_WITH_VACCINES_AND_REASONS, pageObject };
+    }
+
     if (usingVaccines) return { page: MODALS.STOCKTAKE_BATCH_EDIT_WITH_VACCINES, pageObject };
     if (usingReasons && usingPayments) {
       return { page: MODALS.STOCKTAKE_BATCH_EDIT_WITH_REASONS_AND_PRICES, pageObject };
@@ -66,7 +73,7 @@ export const StocktakeBatchModalComponent = ({
     if (usingReasons) return { page: MODALS.STOCKTAKE_BATCH_EDIT_WITH_REASONS, pageObject };
     if (usingPayments) return { page: MODALS.STOCKTAKE_BATCH_EDIT_WITH_PRICES, pageObject };
     return { page: MODALS.STOCKTAKE_BATCH_EDIT, pageObject };
-  }, [stocktakeItem, usingPayments, usingReasons]);
+  }, [stocktakeItem, usingPayments, usingReasons, usingVaccines]);
 
   const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
@@ -89,14 +96,29 @@ export const StocktakeBatchModalComponent = ({
     ? pageColumns.filter(({ key }) => key !== COLUMN_KEYS.SNAPSHOT_TOTAL_QUANTITY)
     : pageColumns;
 
-  const { stocktake = {} } = stocktakeItem;
+  const { stocktake = {}, isVaccine = false } = stocktakeItem;
   const { isFinalised = false } = stocktake;
   const { difference = 0 } = modalValue || {};
 
-  const reasonsSelection =
-    difference > 0
-      ? UIDatabase.objects('PositiveAdjustmentReason')
-      : UIDatabase.objects('NegativeAdjustmentReason');
+  const reasonsSelection = (() => {
+    if (difference > 0) {
+      return UIDatabase.objects('PositiveAdjustmentReason');
+    }
+
+    if (usingReasons && !isVaccine) {
+      return UIDatabase.objects('NegativeAdjustmentReason');
+    }
+
+    if (usingOpenVialWastageReasons && isVaccine) {
+      return UIDatabase.objects('Options').filtered(
+        '(type == $0 || type == $1) && isActive == true',
+        'negativeInventoryAdjustment',
+        'openVialWastage'
+      );
+    }
+
+    return [];
+  })();
 
   const onEditSupplier = value => dispatch(PageActions.editBatchSupplier(value, modalValue));
   const onSelectSupplier = rowKey =>
@@ -120,9 +142,10 @@ export const StocktakeBatchModalComponent = ({
     dispatch(PageActions.editStocktakeBatchExpiryDate(date, rowKey, columnKey));
   const onEditSellPrice = (newValue, rowKey) =>
     dispatch(PageActions.editSellPrice(newValue, rowKey));
-
-  const onEditBatchDoses = (newValue, rowKey) =>
+  const onEditBatchDoses = (newValue, rowKey) => {
     dispatch(PageActions.editBatchDoses(newValue, rowKey));
+    reduxDispatch(PageActions.refreshRow(stocktakeItem.id, ROUTES.STOCKTAKE_EDITOR));
+  };
 
   const onSelectLocation = rowKey =>
     dispatch(PageActions.openModal(MODAL_KEYS.SELECT_LOCATION, rowKey));
@@ -285,16 +308,24 @@ StocktakeBatchModalComponent.propTypes = {
   usingVaccines: PropTypes.bool.isRequired,
   usingHideSnapshotColumn: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
+  usingOpenVialWastageReasons: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state, ownProps) => {
   const usingPayments = selectUsingPayments(state);
+  const usingOpenVialWastageReasons = UIDatabase.objects('OpenVialWastageReason').length > 0;
   const usingReasons =
     UIDatabase.objects('NegativeAdjustmentReason').length > 0 &&
     UIDatabase.objects('PositiveAdjustmentReason').length > 0;
   const { isVaccine: usingVaccines = false } = ownProps?.stocktakeItem ?? {};
   const usingHideSnapshotColumn = selectUsingHideSnapshotColumn(state);
-  return { usingPayments, usingReasons, usingVaccines, usingHideSnapshotColumn };
+  return {
+    usingPayments,
+    usingReasons,
+    usingVaccines,
+    usingHideSnapshotColumn,
+    usingOpenVialWastageReasons,
+  };
 };
 
 export const StocktakeBatchModal = connect(mapStateToProps)(StocktakeBatchModalComponent);

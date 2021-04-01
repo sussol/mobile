@@ -5,8 +5,11 @@
 
 import {
   Abbreviation,
+  AdverseDrugReaction,
   Address,
   Currency,
+  Ethnicity,
+  FormSchema,
   IndicatorAttribute,
   IndicatorValue,
   InsurancePolicy,
@@ -23,19 +26,24 @@ import {
   MasterList,
   MasterListItem,
   MasterListNameJoin,
+  MedicineAdministrator,
   Message,
   Name,
+  NameNote,
   NameStoreJoin,
   NameTag,
   NameTagJoin,
+  Nationality,
   NumberSequence,
   NumberToReuse,
+  Occupation,
   Options,
+  PatientEvent,
   PaymentType,
   Period,
   PeriodSchedule,
-  Prescriber,
   Preference,
+  Prescriber,
   ProgramIndicator,
   Report,
   Requisition,
@@ -59,6 +67,33 @@ import {
   VaccineVialMonitorStatus,
   VaccineVialMonitorStatusLog,
 } from './DataTypes';
+
+Nationality.schema = {
+  name: 'Nationality',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    description: { type: 'string', optional: true },
+  },
+};
+
+Occupation.schema = {
+  name: 'Occupation',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    name: { type: 'string', optional: true },
+  },
+};
+
+Ethnicity.schema = {
+  name: 'Ethnicity',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    name: { type: 'string', optional: true },
+  },
+};
 
 Address.schema = {
   name: 'Address',
@@ -161,7 +196,10 @@ export const schema = {
   schema: [
     Abbreviation,
     Address,
+    AdverseDrugReaction,
     Currency,
+    Ethnicity,
+    FormSchema,
     IndicatorAttribute,
     IndicatorValue,
     InsurancePolicy,
@@ -178,19 +216,24 @@ export const schema = {
     MasterList,
     MasterListItem,
     MasterListNameJoin,
+    MedicineAdministrator,
     Message,
     Name,
+    NameNote,
     NameStoreJoin,
     NameTag,
     NameTagJoin,
+    Nationality,
     NumberSequence,
     NumberToReuse,
+    Occupation,
     Options,
+    PatientEvent,
     PaymentType,
     Period,
     PeriodSchedule,
-    Prescriber,
     Preference,
+    Prescriber,
     ProgramIndicator,
     Report,
     Requisition,
@@ -214,7 +257,7 @@ export const schema = {
     VaccineVialMonitorStatus,
     VaccineVialMonitorStatusLog,
   ],
-  schemaVersion: 19,
+  schemaVersion: 21,
 };
 
 export default schema;

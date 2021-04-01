@@ -17,7 +17,7 @@ import { FinaliseActions } from '../actions/FinaliseActions';
 import { PREFERENCE_KEYS } from '../database/utilities/constants';
 import { SensorActions } from '../actions/Entities/SensorActions';
 import { TemperatureBreachConfigActions } from '../actions/Entities/TemperatureBreachConfigActions';
-import { LocationActions } from '../actions/Entities/index';
+import { LocationActions, VaccinePrescriptionActions } from '../actions/Entities/index';
 
 /**
  * Navigation Action Creators.
@@ -553,3 +553,10 @@ export const gotoNewSensorPage = () => NavigationActions.navigate({ routeName: R
 
 export const gotoEditSensorPage = sensor =>
   NavigationActions.navigate({ routeName: ROUTES.SENSOR_EDIT, params: { sensor } });
+
+export const gotoVaccineDispensingPage = () => async dispatch => {
+  batch(() => {
+    dispatch(VaccinePrescriptionActions.create());
+    dispatch(NavigationActions.navigate({ routeName: ROUTES.VACCINE_PRESCRIPTION }));
+  });
+};

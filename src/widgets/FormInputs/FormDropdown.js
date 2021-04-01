@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import { DropDown } from '../DropDown';
 import { FormLabel } from './FormLabel';
 import { FlexColumn } from '../FlexColumn';
-import { generalStrings } from '../../localization';
+import { generalStrings, formInputStrings } from '../../localization';
 
 /**
  * Form input rendering a native drop down with a selection of choices
@@ -49,9 +49,10 @@ export const FormDropdown = ({
         <DropDown
           style={{ width: null, flex: 1 }}
           values={valueStrings}
-          selectedValue={value[optionKey]}
+          selectedValue={value?.[optionKey]}
           onValueChange={onValueChangeCallback}
           isDisabled={isDisabled}
+          headerValue={value ? '' : formInputStrings.select_an_option}
         />
       ) : (
         <View>
@@ -65,13 +66,14 @@ export const FormDropdown = ({
 FormDropdown.defaultProps = {
   isRequired: false,
   isDisabled: false,
+  value: null,
 };
 
 FormDropdown.propTypes = {
   onValueChange: PropTypes.func.isRequired,
   options: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   optionKey: PropTypes.string.isRequired,
-  value: PropTypes.object.isRequired,
+  value: PropTypes.object,
   label: PropTypes.string.isRequired,
   isRequired: PropTypes.bool,
   isDisabled: PropTypes.bool,
