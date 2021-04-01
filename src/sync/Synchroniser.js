@@ -25,6 +25,7 @@ import { SyncQueue } from './SyncQueue';
 import { SETTINGS_KEYS } from '../settings';
 
 import { version as mobileVersion } from '../../package.json';
+import { initialiseFinished } from '../actions/SyncActions';
 
 const {
   SYNC_IS_INITIALISED,
@@ -82,6 +83,8 @@ export class Synchroniser {
   setIsSyncing = isSyncing => this.dispatch(setSyncIsSyncing(isSyncing));
 
   setCompletionTime = time => this.dispatch(setSyncCompletionTime(time));
+
+  initialiseFinished = () => this.dispatch(initialiseFinished());
 
   refreshSyncParams = () => {
     this.serverURL = this.settings.get(SYNC_URL);
@@ -187,6 +190,7 @@ export class Synchroniser {
       // Did not authenticate, sync error or no internet, bubble up error.
       this.setError(error.message);
       this.setIsSyncing(false);
+
       throw error;
     }
 
@@ -194,6 +198,7 @@ export class Synchroniser {
     this.syncQueue.enable(); // Begin the sync queue listening to database changes.
     this.setIsSyncing(false);
     this.setCompletionTime(new Date().getTime());
+    this.initialiseFinished();
   };
 
   /**

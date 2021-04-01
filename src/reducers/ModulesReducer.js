@@ -6,7 +6,7 @@
 
 import { UIDatabase } from '../database';
 import { PREFERENCE_KEYS } from '../database/utilities/constants';
-import { SYNC_TRANSACTION_COMPLETE } from '../sync/constants';
+import { INITIALISE_FINISHED, SYNC_TRANSACTION_COMPLETE } from '../sync/constants';
 
 /**
  * Simple reducer managing the stores current modules state.
@@ -61,6 +61,7 @@ export const ModulesReducer = (state = initialState(), action) => {
 
   switch (type) {
     // After sync, refresh modules state
+    case INITIALISE_FINISHED:
     case SYNC_TRANSACTION_COMPLETE: {
       return initialState();
     }
