@@ -142,9 +142,10 @@ export const StocktakeBatchModalComponent = ({
     dispatch(PageActions.editStocktakeBatchExpiryDate(date, rowKey, columnKey));
   const onEditSellPrice = (newValue, rowKey) =>
     dispatch(PageActions.editSellPrice(newValue, rowKey));
-
-  const onEditBatchDoses = (newValue, rowKey) =>
+  const onEditBatchDoses = (newValue, rowKey) => {
     dispatch(PageActions.editBatchDoses(newValue, rowKey));
+    reduxDispatch(PageActions.refreshRow(stocktakeItem.id, ROUTES.STOCKTAKE_EDITOR));
+  };
 
   const onSelectLocation = rowKey =>
     dispatch(PageActions.openModal(MODAL_KEYS.SELECT_LOCATION, rowKey));
