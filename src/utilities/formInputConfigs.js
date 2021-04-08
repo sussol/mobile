@@ -47,6 +47,7 @@ const FORM_INPUT_KEYS = {
   EMAIL: 'emailAddress',
   ETHNICITY: 'ethnicity',
   FIRST_NAME: 'firstName',
+  GENDER: 'gender',
   IS_ACTIVE: 'isActive',
   LAST_NAME: 'lastName',
   NATIONALITY: 'nationality',
