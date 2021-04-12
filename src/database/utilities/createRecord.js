@@ -154,6 +154,7 @@ const createPrescriber = (database, prescriberDetails) => {
     emailAddress: prescriberEmailAddress,
     storeId: prescriberStoreId,
     isActive: prescriberIsActive,
+    female: prescriberIsFemale,
   } = prescriberDetails;
 
   const id = prescriberId ?? generateUUID();
@@ -173,6 +174,7 @@ const createPrescriber = (database, prescriberDetails) => {
 
   const isVisible = true;
   const isActive = prescriberIsActive ?? true;
+  const female = prescriberIsFemale ?? false;
 
   const prescriber = database.update('Prescriber', {
     id,
@@ -186,6 +188,7 @@ const createPrescriber = (database, prescriberDetails) => {
     fromThisStore,
     isVisible,
     isActive,
+    female,
   });
   return prescriber;
 };
