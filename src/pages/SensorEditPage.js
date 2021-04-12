@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, ToastAndroid, View } from 'react-native';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, batch } from 'react-redux';
 
 import {
   DataTablePageView,
@@ -44,7 +44,7 @@ import {
 } from '../selectors/Entities/temperatureBreachConfig';
 import { LocationActions, TemperatureBreachConfigActions } from '../actions/Entities/index';
 import { selectEditingLocation } from '../selectors/Entities/location';
-import { goBack } from '../navigation/actions';
+import { goBack, goToVaccines } from '../navigation/actions';
 import { SensorHeader } from '../widgets/SensorHeader/SensorHeader';
 import { MILLISECONDS } from '../utilities/index';
 import { useToggle } from '../hooks/index';
@@ -281,7 +281,13 @@ const dispatchToProps = (dispatch, ownProps) => {
 
   const remove = () => {
     dispatch(SensorActions.removeSensor(sensorID));
-    dispatch(goBack());
+
+    batch(() => {
+      dispatch(SensorActions.reset());
+      dispatch(LocationActions.reset());
+      dispatch(TemperatureBreachConfigActions.reset());
+      dispatch(goToVaccines());
+    });
   };
   const blink = macAddress => dispatch(SensorBlinkActions.startSensorBlink(macAddress));
   const updateName = name => dispatch(SensorActions.update(sensorID, 'name', name));
