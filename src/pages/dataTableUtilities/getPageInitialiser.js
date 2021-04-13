@@ -197,7 +197,7 @@ const customerRequisitionsInitialiser = () => {
  * @returns  {object}
  */
 const stockInitialiser = () => {
-  const backingData = UIDatabase.objects('Item').sorted('name');
+  const backingData = UIDatabase.objects('VisibleItem').sorted('name');
 
   return {
     backingData,
@@ -279,7 +279,7 @@ const stocktakeBatchInitialiser = stocktakeItem => {
  * @returns  {object}
  */
 const stocktakeManagerInitialiser = stocktake => {
-  const backingData = UIDatabase.objects('Item');
+  const backingData = UIDatabase.objects('VisibleItem');
 
   return {
     stocktake,

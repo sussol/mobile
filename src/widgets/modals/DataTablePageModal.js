@@ -55,7 +55,7 @@ const DataTablePageModalComponent = ({ isOpen, onClose, modalKey, onSelect, curr
       case MODAL_KEYS.SELECT_ITEM:
         return (
           <AutocompleteSelector
-            options={UIDatabase.objects('Item')}
+            options={UIDatabase.objects('VisibleItem')}
             queryString="name CONTAINS[c] $0 OR code BEGINSWITH[c] $0"
             sortKeyString="name"
             onSelect={onSelect}

@@ -51,6 +51,8 @@ const translateToCoreDatabaseType = type => {
       return 'TransactionCategory';
     case 'PCDEvents':
       return 'PatientEvent';
+    case 'VisibleItem':
+      return 'Item';
     case 'Vaccine':
       return 'Item';
     case 'PatientSurveyForm':
@@ -256,6 +258,8 @@ class UIDatabase {
         return results.filtered('code == "PCD"');
       case 'Vaccine':
         return results.filtered('isVaccine == true && isVisible == true');
+      case 'VisibleItem':
+        return results.filtered('isVisible == true');
       case 'ADRForm':
         return results.filtered("type == 'ADR'").sorted('version', true);
       case 'PatientSurveyForm':
