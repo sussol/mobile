@@ -150,12 +150,12 @@ const confirm = () => (dispatch, getState) => {
   const { user } = getState();
   const { currentUser } = user;
   const hasRefused = selectHasRefused(getState());
-  const hasBonusDoes = selectFoundBonusDose(getState());
+  const hasBonusDoses = selectFoundBonusDose(getState());
   const patientID = selectEditingNameId(getState());
   const selectedBatches = selectSelectedBatches(getState());
   const vaccinator = selectSelectedVaccinator(getState());
 
-  if (hasBonusDoes) {
+  if (hasBonusDoses) {
     UIDatabase.write(() => {
       const stocktake = createRecord(UIDatabase, 'Stocktake', currentUser, 'bonus_dose');
       const [selectedBatch] = selectedBatches;
