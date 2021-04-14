@@ -210,6 +210,7 @@ export const processPatientResponse = response => {
       date_of_birth,
       nameInsuranceJoin,
       nameNotes,
+      female,
       nationality_ID,
       ethnicity_ID,
     }) => ({
@@ -231,6 +232,7 @@ export const processPatientResponse = response => {
       dateOfBirth: parseDate(date_of_birth),
       policies: processInsuranceResponse(nameInsuranceJoin),
       nameNotes: processNameNoteResponse(nameNotes),
+      female,
     })
   );
 };
