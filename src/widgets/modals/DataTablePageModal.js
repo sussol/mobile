@@ -228,7 +228,7 @@ const DataTablePageModalComponent = ({ isOpen, onClose, modalKey, onSelect, curr
       case MODAL_KEYS.SELECT_LOCATION: {
         const { currentLocationName } = currentValue;
 
-        const locations = UIDatabase.objects('Location');
+        const locations = UIDatabase.objects('ActiveLocation');
 
         return (
           <GenericChoiceList

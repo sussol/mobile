@@ -403,6 +403,7 @@ const generateSyncData = (settings, recordType, record) => {
         code: record.code,
         type_ID: record.locationType?.id,
         store_ID: settings.get(THIS_STORE_ID),
+        hold: String(record.hold),
       };
     }
     case 'NameNote': {

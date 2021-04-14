@@ -1096,6 +1096,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         description: record.Description,
         code: record.code,
         locationType: database.getOrCreate('LocationType', record.type_ID),
+        hold: parseBoolean(record.hold),
       });
       break;
     }
