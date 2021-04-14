@@ -17,6 +17,7 @@ import { selectCurrentUser } from '../../selectors/user';
 import { useLoadingIndicator } from '../../hooks/index';
 import { BLACK, SUSSOL_ORANGE } from '../../globalStyles/index';
 import { generalStrings } from '../../localization/index';
+import { UIDatabase } from '../../database/index';
 
 const toastReportGenerationFailed = () =>
   ToastAndroid.show(generalStrings.report_generation_failed, ToastAndroid.LONG);
@@ -58,8 +59,12 @@ export const ExportTemperatureDataButtonComponent = ({
       // while generating the report - it could be large.
       .then(({ success, emailValue, commentValue }) => {
         if (success) {
+          const sensor = UIDatabase.get('Sensor', macAddress, 'macAddress');
+          if (!sensor) throw new Error('Cannot find sensor');
+          if (sensor?.logs <= 0) throw new Error('No temperature logs');
+
           withLoadingIndicator(() =>
-            emailVaccineReport(macAddress, currentUser, emailValue, commentValue)
+            emailVaccineReport(sensor, currentUser, emailValue, commentValue)
           );
         }
       })
