@@ -55,8 +55,8 @@ export const ExportTemperatureDataButtonComponent = ({
         reset();
         return cached;
       })
-      // Once permission has been ensured and the dialog is closed, block with a full screen spinner
-      // while generating the report - it could be large.
+      // Once permission has been ensured, the dialog is closed and sensor logs are found,
+      // block with a full screen spinner while generating the report - it could be large.
       .then(({ success, emailValue, commentValue }) => {
         if (success) {
           const sensor = UIDatabase.get('Sensor', macAddress, 'macAddress');
