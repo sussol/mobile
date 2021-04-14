@@ -9,6 +9,7 @@ const initialState = () => ({
   selectedBatches: [],
   vaccines: UIDatabase.objects('Vaccine').sorted('name'),
   vaccinator: null,
+  bonusDose: false,
 });
 
 export const VaccinePrescriptionReducer = (state = initialState(), action) => {
@@ -68,6 +69,13 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
       }
 
       return { ...state, hasRefused, selectedVaccines, selectedBatches };
+    }
+
+    case VACCINE_PRESCRIPTION_ACTIONS.SET_BONUS_DOSE: {
+      const { payload } = action;
+      const { toggle } = payload;
+
+      return { ...state, bonusDose: toggle };
     }
 
     default: {
