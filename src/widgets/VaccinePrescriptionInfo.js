@@ -21,6 +21,7 @@ import { UIDatabase } from '../database/index';
 import { DropDown } from './DropDown';
 import { VaccinePrescriptionActions } from '../actions/Entities/index';
 import {
+  selectFoundBonusDose,
   selectHasRefused,
   selectSelectedVaccinator,
 } from '../selectors/Entities/vaccinePrescription';
@@ -68,6 +69,8 @@ const VaccinePrescriptionInfoComponent = ({
   vaccinator,
   onRefuse,
   hasRefused,
+  onFoundBonusDose,
+  foundBonusDose,
 }) => (
   <Paper
     headerText={vaccineStrings.vaccine_dispense_step_three_title}
@@ -96,6 +99,15 @@ const VaccinePrescriptionInfoComponent = ({
           tintColors={{ true: SUSSOL_ORANGE, false: DARKER_GREY }}
         />
       </FlexRow>
+      <FlexRow flex={0} alignItems="center" justifyContent="space-between">
+        <Text style={styles.labelText}>{dispensingStrings.bonus_dose}</Text>
+
+        <CheckBox
+          onValueChange={onFoundBonusDose}
+          value={foundBonusDose}
+          tintColors={{ true: SUSSOL_ORANGE, false: DARKER_GREY }}
+        />
+      </FlexRow>
     </FlexRow>
   </Paper>
 );
@@ -104,19 +116,22 @@ const mapDispatchToProps = dispatch => {
   const onSelectVaccinator = vaccinator =>
     dispatch(VaccinePrescriptionActions.selectVaccinator(vaccinator));
   const onRefuse = value => dispatch(VaccinePrescriptionActions.setRefusal(value));
+  const onFoundBonusDose = value => dispatch(VaccinePrescriptionActions.setBonusDose(value));
 
-  return { onSelectVaccinator, onRefuse };
+  return { onSelectVaccinator, onRefuse, onFoundBonusDose };
 };
 
 const mapStateToProps = state => {
   const patientName = selectFullName(state);
   const hasRefused = selectHasRefused(state);
   const vaccinator = selectSelectedVaccinator(state);
+  const foundBonusDose = selectFoundBonusDose(state);
 
   return {
     patientName,
     vaccinator,
     hasRefused,
+    foundBonusDose,
   };
 };
 
@@ -130,6 +145,8 @@ VaccinePrescriptionInfoComponent.propTypes = {
   vaccinator: PropTypes.object,
   onRefuse: PropTypes.func.isRequired,
   hasRefused: PropTypes.bool.isRequired,
+  onFoundBonusDose: PropTypes.func.isRequired,
+  foundBonusDose: PropTypes.bool.isRequired,
 };
 
 const styles = StyleSheet.create({

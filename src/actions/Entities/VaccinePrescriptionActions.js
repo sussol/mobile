@@ -3,6 +3,7 @@ import { batch } from 'react-redux';
 
 import { UIDatabase, createRecord } from '../../database';
 import {
+  selectFoundBonusDose,
   selectHasRefused,
   selectSelectedBatches,
   selectSelectedVaccinator,
@@ -19,6 +20,7 @@ export const VACCINE_PRESCRIPTION_ACTIONS = {
   SELECT_VACCINE: 'VACCINE_PRESCRIPTION/selectVaccine',
   SELECT_BATCH: 'VACCINE_PRESCRIPTION/selectBatch',
   SELECT_VACCINATOR: 'VACCINE_PRESCRIPTION/selectVaccinator',
+  SET_BONUS_DOSE: 'VACCINE_PRESCRIPTION/setBonusDose',
 };
 
 const createDefaultVaccinePrescription = () => ({
@@ -98,6 +100,11 @@ const selectBatch = itemBatch => ({
   payload: { itemBatch },
 });
 
+const setBonusDose = toggle => ({
+  type: VACCINE_PRESCRIPTION_ACTIONS.SET_BONUS_DOSE,
+  payload: { toggle },
+});
+
 const setRefusal = hasRefused => ({
   type: VACCINE_PRESCRIPTION_ACTIONS.SET_REFUSAL,
   payload: {
@@ -143,9 +150,33 @@ const confirm = () => (dispatch, getState) => {
   const { user } = getState();
   const { currentUser } = user;
   const hasRefused = selectHasRefused(getState());
+  const hasBonusDoes = selectFoundBonusDose(getState());
   const patientID = selectEditingNameId(getState());
   const selectedBatches = selectSelectedBatches(getState());
   const vaccinator = selectSelectedVaccinator(getState());
+
+  if (hasBonusDoes) {
+    UIDatabase.write(() => {
+      const stocktake = createRecord(UIDatabase, 'Stocktake', currentUser, 'bonus_dose');
+      const [selectedBatch] = selectedBatches;
+      const stocktakeItem = createRecord(
+        UIDatabase,
+        'StocktakeItem',
+        stocktake,
+        selectedBatch?.item
+      );
+      const stocktakeBatch = createRecord(
+        UIDatabase,
+        'StocktakeBatch',
+        stocktakeItem,
+        selectedBatch
+      );
+
+      stocktakeBatch.setDoses(UIDatabase, stocktakeBatch?.itemBatch?.doses + 1);
+      stocktake.comment = 'bonus_dose';
+      stocktake.finalise(UIDatabase, currentUser);
+    });
+  }
 
   batch(() => {
     dispatch(NameActions.saveEditing());
@@ -185,4 +216,5 @@ export const VaccinePrescriptionActions = {
   setRefusal,
   selectVaccinator,
   confirmAndRepeat,
+  setBonusDose,
 };
