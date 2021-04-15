@@ -15,7 +15,7 @@ import DataTableRow from '../DataTable/DataTableRow';
 import { FlexRow } from '../FlexRow';
 
 const VaccineHistory = ({ data }) => {
-  const columns = useMemo(() => getColumns(MODALS.PATIENT_HISTORY), []);
+  const columns = useMemo(() => getColumns(MODALS.VACCINE_HISTORY), []);
 
   const renderHeader = () => (
     <DataTableHeaderRow columns={columns} onPress={() => {}} isAscending={true} sortKey="" />
