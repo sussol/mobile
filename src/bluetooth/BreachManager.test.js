@@ -347,7 +347,49 @@ describe('BreachManager: createBreaches', () => {
       logsShouldBe,
     ]);
   });
+  it('Creates a single breach when multiple breach boundaries are crossed', async () => {
+    const dummyLocation = { id: 'ABC', description: 'DEF' };
+    const sensor = { id: 'a', location: dummyLocation };
+    const logs = [
+      { id: 'a', temperature: 1, timestamp: 0 },
+      { id: 'b', temperature: 9, timestamp: 1 },
+      { id: 'c', temperature: 9, timestamp: 2 },
+      { id: 'd', temperature: 9, timestamp: 3 },
+    ];
+    const configs = [
+      { id: 'a', duration: 2000, minimumTemperature: 8, maximumTemperature: 999 },
+      { id: 'b', duration: 2000, minimumTemperature: -999, maximumTemperature: 2 },
+    ];
+    const utils = { createUuid: () => '1' };
+    const dbService = {};
 
+    const breachManager = BreachManager(dbService, utils);
+
+    const breachesShouldBe = [
+      {
+        id: '1',
+        acknowledged: false,
+        sensor,
+        thresholdMaxTemperature: 999,
+        thresholdMinTemperature: 8,
+        thresholdDuration: 2000,
+        startTimestamp: new Date(0),
+        endTimestamp: undefined,
+        location: dummyLocation,
+      },
+    ];
+
+    const logsShouldBe = [
+      { id: 'b', breach: breachesShouldBe[0] },
+      { id: 'c', breach: breachesShouldBe[0] },
+      { id: 'd', breach: breachesShouldBe[0] },
+    ];
+
+    await expect(breachManager.createBreaches(sensor, logs, configs)).toEqual([
+      breachesShouldBe,
+      logsShouldBe,
+    ]);
+  });
   it('Creates a simple single breach that is closed', async () => {
     const dummyLocation = { id: 'ABC', description: 'DEF' };
     const sensor = { id: 'a', location: dummyLocation };
