@@ -16,13 +16,16 @@ import { emailVaccineReport } from '../../utilities/vaccineReport';
 import { selectCurrentUser } from '../../selectors/user';
 import { useLoadingIndicator } from '../../hooks/index';
 import { BLACK, SUSSOL_ORANGE } from '../../globalStyles/index';
-import { generalStrings } from '../../localization/index';
+import { generalStrings, vaccineStrings } from '../../localization/index';
 import { UIDatabase } from '../../database/index';
 
 const toastReportGenerationFailed = () =>
   ToastAndroid.show(generalStrings.report_generation_failed, ToastAndroid.LONG);
 const toastNoPermission = () =>
   ToastAndroid.show(generalStrings.require_permission_to_send_data, ToastAndroid.LONG);
+const toastNoTemperatures = () => {
+  ToastAndroid.show(vaccineStrings.no_temperatures, ToastAndroid.LONG);
+};
 
 export const ExportTemperatureDataButtonComponent = ({
   macAddress,
@@ -61,7 +64,10 @@ export const ExportTemperatureDataButtonComponent = ({
         if (success) {
           const sensor = UIDatabase.get('Sensor', macAddress, 'macAddress');
           if (!sensor) throw new Error('Cannot find sensor');
-          if (sensor?.logs <= 0) throw new Error('No temperature logs');
+          if (sensor?.logs <= 0) {
+            toastNoTemperatures();
+            return;
+          }
 
           withLoadingIndicator(() =>
             emailVaccineReport(sensor, currentUser, emailValue, commentValue)

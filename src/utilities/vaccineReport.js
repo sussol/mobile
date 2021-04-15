@@ -5,7 +5,6 @@ import moment from 'moment';
 import DeviceInfo from 'react-native-device-info';
 import temperature from './temperature';
 import { SECONDS } from './constants';
-import { UIDatabase } from '../database/index';
 import { generalStrings, reportStrings, vaccineStrings } from '../localization/index';
 import { MILLISECONDS_PER_MINUTE } from '../database/utilities/constants';
 
@@ -223,12 +222,7 @@ const writeReport = async content => {
 const getSubject = sensor =>
   `${reportStrings.email_vaccine_report_subject} ${sensor.name ?? sensor.macAddress}`;
 
-export const emailVaccineReport = async (macAddress, user, email, comment) => {
-  const sensor = UIDatabase.get('Sensor', macAddress, 'macAddress');
-
-  if (!sensor) throw new Error('Cannot find sensor');
-  if (sensor?.logs <= 0) throw new Error('No temperature logs');
-
+export const emailVaccineReport = async (sensor, user, email, comment) => {
   const content = await vaccineReport(sensor, user, comment);
   const path = await writeReport(content);
   const subject = getSubject(sensor);
