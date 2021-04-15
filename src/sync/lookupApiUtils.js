@@ -210,6 +210,9 @@ export const processPatientResponse = response => {
       date_of_birth,
       nameInsuranceJoin,
       nameNotes,
+      female,
+      nationality_ID,
+      ethnicity_ID,
     }) => ({
       id,
       name,
@@ -224,9 +227,12 @@ export const processPatientResponse = response => {
       supplyingStoreId,
       firstName,
       lastName,
+      nationality: UIDatabase.get('Nationality', nationality_ID),
+      ethnicity: UIDatabase.get('Ethnicity', ethnicity_ID),
       dateOfBirth: parseDate(date_of_birth),
       policies: processInsuranceResponse(nameInsuranceJoin),
       nameNotes: processNameNoteResponse(nameNotes),
+      female,
     })
   );
 };

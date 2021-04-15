@@ -56,6 +56,8 @@ const translateToCoreDatabaseType = type => {
     case 'PatientSurveyForm':
     case 'ADRForm':
       return 'FormSchema';
+    case 'ActiveLocation':
+      return 'Location';
     default:
       return type;
   }
@@ -260,6 +262,8 @@ class UIDatabase {
         return results.filtered("type == 'ADR'").sorted('version', true);
       case 'PatientSurveyForm':
         return results.filtered("type == 'PatientSurvey'").sorted('version', true);
+      case 'ActiveLocation':
+        return results.filtered('hold == false');
       default:
         return results;
     }
