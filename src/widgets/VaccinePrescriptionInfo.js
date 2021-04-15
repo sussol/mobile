@@ -27,7 +27,7 @@ import {
   selectSelectedVaccinator,
 } from '../selectors/Entities/vaccinePrescription';
 import { Spacer } from './Spacer';
-import { BACKGROUND_COLOR } from '../globalStyles/colors';
+import { BACKGROUND_COLOR, LIGHT_GREY } from '../globalStyles/colors';
 import { HistoryIcon } from './icons';
 import { IconButton } from './IconButton';
 
@@ -120,9 +120,10 @@ const VaccinePrescriptionInfoComponent = ({
         <Text style={styles.labelText}>{dispensingStrings.bonus_dose}</Text>
 
         <CheckBox
+          disabled={hasRefused}
           onValueChange={onFoundBonusDose}
           value={foundBonusDose}
-          tintColors={{ true: SUSSOL_ORANGE, false: DARKER_GREY }}
+          tintColors={{ true: SUSSOL_ORANGE, false: hasRefused ? LIGHT_GREY : DARKER_GREY }}
         />
       </FlexRow>
     </FlexRow>

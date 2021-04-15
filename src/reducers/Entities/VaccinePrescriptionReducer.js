@@ -66,7 +66,13 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
       const { hasRefused, selectedVaccines, selectedBatches } = payload;
 
       if (hasRefused) {
-        return { ...state, hasRefused, selectedVaccines: [], selectedBatches: [] };
+        return {
+          ...state,
+          hasRefused,
+          bonusDose: false,
+          selectedVaccines: [],
+          selectedBatches: [],
+        };
       }
 
       return { ...state, hasRefused, selectedVaccines, selectedBatches };
