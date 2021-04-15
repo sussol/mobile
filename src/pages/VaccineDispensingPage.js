@@ -15,6 +15,7 @@ import { ModalContainer } from '../widgets/modals';
 import { PatientVaccineHistory } from '../widgets/modals/PatientVaccineHistory';
 import { selectHistoryIsOpen } from '../selectors/Entities/vaccinePrescription';
 import { VaccinePrescriptionActions } from '../actions/Entities/index';
+import { selectFullName } from '../selectors/Entities/name';
 
 const tabs = [
   {
@@ -26,11 +27,11 @@ const tabs = [
   { component: VaccineSelect, name: 'prescription', title: dispensingStrings.finalise },
 ];
 
-export const VaccineDispensingPageComponent = ({ historyIsOpen, closeHistory }) => (
+export const VaccineDispensingPageComponent = ({ historyIsOpen, closeHistory, patientName }) => (
   <>
     <Wizard useNewStepper captureUncaughtGestures={false} tabs={tabs} />
     <ModalContainer
-      title={`${dispensingStrings.patient} ${dispensingStrings.history}`}
+      title={`${dispensingStrings.patient} ${dispensingStrings.history}: ${patientName}`}
       onClose={closeHistory}
       isVisible={historyIsOpen}
     >
@@ -42,12 +43,14 @@ export const VaccineDispensingPageComponent = ({ historyIsOpen, closeHistory }) 
 VaccineDispensingPageComponent.propTypes = {
   historyIsOpen: PropTypes.bool.isRequired,
   closeHistory: PropTypes.func.isRequired,
+  patientName: PropTypes.string.isRequired,
 };
 
 const stateToProps = state => {
   const historyIsOpen = selectHistoryIsOpen(state);
+  const patientName = selectFullName(state);
 
-  return { historyIsOpen };
+  return { historyIsOpen, patientName };
 };
 
 const dispatchToProps = dispatch => ({

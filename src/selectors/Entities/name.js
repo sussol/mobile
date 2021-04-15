@@ -85,5 +85,5 @@ export const selectVaccinePatientHistoryHistory = state => {
     .join(' OR ');
   const baseQueryString = 'type != "cash_in" AND type != "cash_out"';
   const fullQuery = `(${inQuery}) AND ${baseQueryString} AND itemBatch.item.isVaccine == true`;
-  return inQuery ? UIDatabase.objects('TransactionBatch').filtered(fullQuery) : [];
+  return inQuery ? UIDatabase.objects('TransactionBatch').filtered(fullQuery).slice() : [];
 };

@@ -49,6 +49,7 @@ const sortKeyToType = {
   outgoingStock: 'number',
   positiveAdjustments: 'number',
   negativeAdjustments: 'number',
+  vaccinator: 'string',
 };
 
 /**
