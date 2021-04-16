@@ -175,9 +175,7 @@ class BreachManager {
           );
 
           currentBreach = newBreach;
-
           breaches.push(newBreach);
-
           const updatedLogs = potentialBreach.logs.map(l => this.addLogToBreach(newBreach, l));
           updatedLogs.forEach(ul => temperatureLogs.push(ul));
         }
