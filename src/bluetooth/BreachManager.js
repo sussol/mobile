@@ -108,32 +108,52 @@ class BreachManager {
     return !(temperature >= thresholdMinTemperature && temperature <= thresholdMaxTemperature);
   };
 
-  couldBeInBreach = (log, configs) =>
-    configs.some(
+  getConfigInBreach = (log, configs) =>
+    configs.find(
       config =>
         log.temperature >= config.minimumTemperature && log.temperature <= config.maximumTemperature
     );
 
   createBreaches = (sensor, logs, configs, mostRecentBreach) => {
-    let potentialBreach = [];
+    const potentialBreach = { configInBreach: null, logs: [] };
     let currentBreach = mostRecentBreach;
 
     const breaches = mostRecentBreach && !mostRecentBreach.endTimestamp ? [mostRecentBreach] : [];
     const temperatureLogs = [];
 
     logs.forEach(log => {
-      const couldBeInBreach = this.couldBeInBreach(log, configs);
+      const configInBreach = this.getConfigInBreach(log, configs);
       const willCloseBreach = this.willCloseBreach(currentBreach, log);
       const willContinueBreach = this.willContinueBreach(currentBreach, log);
 
       if (willCloseBreach) {
         this.closeBreach(currentBreach, log.timestamp);
         currentBreach = null;
-        potentialBreach = [];
+        potentialBreach.logs = [];
+        potentialBreach.configInBreach = null;
       }
 
-      if (couldBeInBreach) potentialBreach.push(log);
-      else potentialBreach = [];
+      if (configInBreach) {
+        // Assign a config to the stack of logs
+        if (!potentialBreach.configInBreach && !logs) {
+          potentialBreach.configInBreach = configInBreach;
+        }
+
+        // If current log is in breach of the same config as the rest of the stack,
+        // push the current log onto the stack
+        if (potentialBreach.configInBreach === configInBreach) {
+          potentialBreach.logs.push(log);
+        } else {
+          // If the log is in breach of a different config as the existing stack,
+          // clear the breach config and log stack before pushing new log and config on
+          potentialBreach.logs = [];
+          potentialBreach.configInBreach = configInBreach;
+          potentialBreach.logs.push(log);
+        }
+      } else {
+        potentialBreach.logs = [];
+        potentialBreach.configInBreach = null;
+      }
 
       if (willContinueBreach) {
         const updatedLog = this.addLogToBreach(currentBreach, log);
@@ -143,7 +163,7 @@ class BreachManager {
       if (!willContinueBreach) {
         const [willCreateBreach, config] = this.willCreateBreachFromConfigs(
           configs,
-          potentialBreach
+          potentialBreach.logs
         );
 
         if (willCreateBreach) {
@@ -151,12 +171,14 @@ class BreachManager {
             this.utils.createUuid(),
             sensor,
             config,
-            potentialBreach[0].timestamp
+            potentialBreach.logs[0].timestamp
           );
 
           currentBreach = newBreach;
+
           breaches.push(newBreach);
-          const updatedLogs = potentialBreach.map(l => this.addLogToBreach(newBreach, l));
+
+          const updatedLogs = potentialBreach.logs.map(l => this.addLogToBreach(newBreach, l));
           updatedLogs.forEach(ul => temperatureLogs.push(ul));
         }
       }
