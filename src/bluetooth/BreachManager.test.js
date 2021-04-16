@@ -259,7 +259,7 @@ describe('BreachManager: getConfigInBreach', () => {
     ];
     const log = { temperature: 4 };
 
-    expect(breachManager.getConfigInBreach(log, configs)).toEqual(undefined);
+    expect(breachManager.getConfigInBreach(log, configs)).toBeUndefined();
   });
   it('Correctly determines from a config that a log should not be in breach', () => {
     const dbService = {};
@@ -270,7 +270,7 @@ describe('BreachManager: getConfigInBreach', () => {
     const configs = [{ minimumTemperature: 8, maximumTemperature: 999 }];
     const log = { temperature: 4 };
 
-    expect(breachManager.getConfigInBreach(log, configs)).toEqual(undefined);
+    expect(breachManager.getConfigInBreach(log, configs)).toBeUndefined();
   });
 });
 
