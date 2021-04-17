@@ -7,7 +7,7 @@ import { APP_FONT_FAMILY } from '../../globalStyles/fonts';
 import { dispensingStrings } from '../../localization/index';
 import getColumns from '../../pages/dataTableUtilities/getColumns';
 import { getItemLayout, recordKeyExtractor } from '../../pages/dataTableUtilities/utilities';
-import { selectVaccinePatientHistoryHistory } from '../../selectors/Entities/name';
+import { selectVaccinePatientHistory } from '../../selectors/Entities/name';
 import { MODALS } from '../constants';
 import DataTable from '../DataTable/DataTable';
 import DataTableHeaderRow from '../DataTable/DataTableHeaderRow';
@@ -80,7 +80,7 @@ VaccineHistory.propTypes = {
 };
 
 const stateToProps = state => {
-  const data = selectVaccinePatientHistoryHistory(state);
+  const data = selectVaccinePatientHistory(state);
 
   return { isAscending: false, sortKey: 'totalQuantity', data };
 };

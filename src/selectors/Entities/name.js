@@ -76,7 +76,7 @@ export const selectCanEditPatient = state => {
   return UIDatabase.getPreference(PREFERENCE_KEYS.CAN_EDIT_PATIENTS_FROM_ANY_STORE) || isEditable;
 };
 
-export const selectVaccinePatientHistoryHistory = state => {
+export const selectVaccinePatientHistory = state => {
   const patientId = selectEditingNameId(state) ?? '';
 
   const inQuery = UIDatabase.objects('Transaction')
