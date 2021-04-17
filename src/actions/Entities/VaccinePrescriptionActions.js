@@ -21,6 +21,7 @@ export const VACCINE_PRESCRIPTION_ACTIONS = {
   SELECT_BATCH: 'VACCINE_PRESCRIPTION/selectBatch',
   SELECT_VACCINATOR: 'VACCINE_PRESCRIPTION/selectVaccinator',
   SET_BONUS_DOSE: 'VACCINE_PRESCRIPTION/setBonusDose',
+  TOGGLE_HISTORY: 'VACCINE_PRESCRIPTION/toggleHistory',
 };
 
 const createDefaultVaccinePrescription = () => ({
@@ -206,6 +207,11 @@ const confirmAndRepeat = () => dispatch =>
     dispatch(gotoVaccineDispensingPage());
   });
 
+const toggleHistory = toggle => ({
+  type: VACCINE_PRESCRIPTION_ACTIONS.TOGGLE_HISTORY,
+  payload: { toggle },
+});
+
 export const VaccinePrescriptionActions = {
   cancel,
   confirm,
@@ -217,4 +223,5 @@ export const VaccinePrescriptionActions = {
   selectVaccinator,
   confirmAndRepeat,
   setBonusDose,
+  toggleHistory,
 };
