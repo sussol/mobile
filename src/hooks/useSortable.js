@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export const useSortableTable = (initialSortKey, initialIsAscending = true) => {
+export const useSortable = (initialSortKey, initialIsAscending = true) => {
   const [{ sortKey, isAscending }, setState] = useState({
     sortKey: initialSortKey,
     isAscending: initialIsAscending,

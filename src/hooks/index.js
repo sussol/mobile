@@ -25,4 +25,4 @@ export { useIsMounted } from './useIsMounted';
 export { useMountProtectedState } from './useMountProtectedState';
 export { useAfterInteractions } from './useAfterInteractions';
 export { useThrottled } from './useThrottled';
-export { useSortableTable } from './useSortableTable';
+export { useSortable } from './useSortable';

@@ -13,11 +13,11 @@ import DataTable from '../DataTable/DataTable';
 import DataTableHeaderRow from '../DataTable/DataTableHeaderRow';
 import DataTableRow from '../DataTable/DataTableRow';
 import { FlexRow } from '../FlexRow';
-import { useSortableTable } from '../../hooks/useSortableTable';
+import { useSortable } from '../../hooks/useSortable';
 import { sortDataBy } from '../../utilities/sortDataBy';
 
 const VaccineHistory = ({ data }) => {
-  const { sortKey, isAscending, sortBy } = useSortableTable('itemCode');
+  const { sortKey, isAscending, sortBy } = useSortable('itemCode');
   const sortedData = sortDataBy(data, sortKey, isAscending);
   const columns = useMemo(() => getColumns(MODALS.VACCINE_HISTORY), []);
 
