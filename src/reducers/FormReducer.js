@@ -57,11 +57,11 @@ export const FormReducer = (state = initialState(), action) => {
           ? { value }
           : policyNumberFamilyState;
 
-        const isPolicyNumberPersonValid = policyNumberPersonState.validator(
+        const isPolicyNumberPersonValid = policyNumberPersonState.validator?.(
           policyNumberPersonValue
         );
 
-        const isPolicyNumberFamilyValid = policyNumberFamilyState.validator(
+        const isPolicyNumberFamilyValid = policyNumberFamilyState.validator?.(
           policyNumberFamilyValue
         );
 
@@ -95,6 +95,8 @@ export const FormReducer = (state = initialState(), action) => {
       }
 
       const configData = formConfig[key];
+
+      if (!configData) return state;
 
       const { validator } = configData;
 
