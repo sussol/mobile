@@ -136,7 +136,7 @@ class BreachManager {
       if (configInBreach) {
         // If current log is in breach of the same config as the rest of the stack,
         // push the current log onto the stack
-        if (potentialBreach.configInBreach === configInBreach) {
+        if (potentialBreach.configInBreach?.id === configInBreach.id) {
           potentialBreach.logs.push(log);
         } else {
           // If the log is in breach of a different config as the existing stack,
