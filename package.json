@@ -99,6 +99,7 @@
     "react-native-reanimated": "^1.7.0",
     "react-native-safe-area-context": "^0.7.3",
     "react-native-screens": "^2.2.0",
+    "react-native-simple-radio-button": "^2.7.4",
     "react-native-svg": "^11.0.1",
     "react-native-system-setting": "^1.7.6",
     "react-native-text-input-mask": "^2.0.0",
