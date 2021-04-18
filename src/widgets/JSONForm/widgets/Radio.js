@@ -11,7 +11,6 @@ export const Radio = ({ options, value, disabled, readonly, onChange }) => {
   const { enumOptions, enumDisabled } = options;
   const row = options ? options.inline : false;
 
-  // return <RadioForm ref={ref} radio_props={radioProps} initial={0} onPress={onChange} />;
   const radioButtons = enumOptions.map((option, i) => {
     const itemDisabled = enumDisabled && enumDisabled.indexOf(option.value) !== -1;
     const itemSelected = value === option.value;
