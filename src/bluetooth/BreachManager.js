@@ -134,11 +134,6 @@ class BreachManager {
       }
 
       if (configInBreach) {
-        // Assign a config to the stack of logs
-        if (!potentialBreach.configInBreach && !logs) {
-          potentialBreach.configInBreach = configInBreach;
-        }
-
         // If current log is in breach of the same config as the rest of the stack,
         // push the current log onto the stack
         if (potentialBreach.configInBreach === configInBreach) {
