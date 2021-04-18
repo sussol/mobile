@@ -6,12 +6,9 @@ import { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-si
 
 import { APP_FONT_FAMILY } from '../../../globalStyles/fonts';
 import { GREY, SUSSOL_ORANGE } from '../../../globalStyles/colors';
-import { useJSONFormOptions } from '../JSONFormContext';
 
 export const Radio = ({ options, value, disabled, readonly, onChange }) => {
   const { enumOptions, enumDisabled } = options;
-  const { focusController } = useJSONFormOptions();
-  const ref = focusController.useRegisteredRef();
   const row = options ? options.inline : false;
 
   // return <RadioForm ref={ref} radio_props={radioProps} initial={0} onPress={onChange} />;
@@ -19,7 +16,7 @@ export const Radio = ({ options, value, disabled, readonly, onChange }) => {
     const itemDisabled = enumDisabled && enumDisabled.indexOf(option.value) !== -1;
     const itemSelected = value === option.value;
     return (
-      <RadioButton labelHorizontal={true} key={option.value} ref={ref}>
+      <RadioButton labelHorizontal={true} key={option.value}>
         <RadioButtonInput
           obj={option}
           index={i}
@@ -53,7 +50,7 @@ const styles = StyleSheet.create({
 
 Radio.propTypes = {
   disabled: PropTypes.bool,
-  value: PropTypes.string,
+  value: PropTypes.oneOf([PropTypes.string, PropTypes.boolean]),
   onChange: PropTypes.func.isRequired,
   options: PropTypes.shape({
     enumOptions: PropTypes.arrayOf(PropTypes.any),
