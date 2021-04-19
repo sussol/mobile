@@ -107,7 +107,7 @@
     "react-navigation": "^4.4.4",
     "react-navigation-tabs": "^2.5.6",
     "react-redux": "^7.2.3",
-    "realm": "^10.0.1",
+    "realm": "^10.4.0",
     "redux": "^4.0.5",
     "redux-persist": "^6.0.0",
     "redux-persist-error-handler": "^0.1.1",
