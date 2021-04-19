@@ -3,6 +3,7 @@ import { batch } from 'react-redux';
 
 import { UIDatabase, createRecord } from '../../database';
 import {
+  selectFoundBonusDose,
   selectHasRefused,
   selectSelectedBatches,
   selectSelectedVaccinator,
@@ -19,6 +20,9 @@ export const VACCINE_PRESCRIPTION_ACTIONS = {
   SELECT_VACCINE: 'VACCINE_PRESCRIPTION/selectVaccine',
   SELECT_BATCH: 'VACCINE_PRESCRIPTION/selectBatch',
   SELECT_VACCINATOR: 'VACCINE_PRESCRIPTION/selectVaccinator',
+  SET_BONUS_DOSE: 'VACCINE_PRESCRIPTION/setBonusDose',
+  TOGGLE_HISTORY: 'VACCINE_PRESCRIPTION/toggleHistory',
+  SELECT_DEFAULT_VACCINE: 'VACCINE_PRESCRIPTION/selectDefaultVaccine',
 };
 
 const createDefaultVaccinePrescription = () => ({
@@ -79,13 +83,16 @@ const create = () => ({
   payload: {
     prescription: createDefaultVaccinePrescription(),
     vaccinator: getDefaultVaccinator(),
-    selectedVaccines: [getDefaultVaccine()],
-    selectedBatches: [getRecommendedBatch()],
   },
 });
 
 const reset = () => ({
   type: VACCINE_PRESCRIPTION_ACTIONS.RESET,
+});
+
+const selectDefaultVaccine = () => ({
+  type: VACCINE_PRESCRIPTION_ACTIONS.SELECT_DEFAULT_VACCINE,
+  payload: { selectedVaccines: [getDefaultVaccine()], selectedBatches: [getRecommendedBatch()] },
 });
 
 const selectVaccine = vaccine => ({
@@ -96,6 +103,11 @@ const selectVaccine = vaccine => ({
 const selectBatch = itemBatch => ({
   type: VACCINE_PRESCRIPTION_ACTIONS.SELECT_BATCH,
   payload: { itemBatch },
+});
+
+const setBonusDose = toggle => ({
+  type: VACCINE_PRESCRIPTION_ACTIONS.SET_BONUS_DOSE,
+  payload: { toggle },
 });
 
 const setRefusal = hasRefused => ({
@@ -143,9 +155,33 @@ const confirm = () => (dispatch, getState) => {
   const { user } = getState();
   const { currentUser } = user;
   const hasRefused = selectHasRefused(getState());
+  const hasBonusDoses = selectFoundBonusDose(getState());
   const patientID = selectEditingNameId(getState());
   const selectedBatches = selectSelectedBatches(getState());
   const vaccinator = selectSelectedVaccinator(getState());
+
+  if (hasBonusDoses) {
+    UIDatabase.write(() => {
+      const stocktake = createRecord(UIDatabase, 'Stocktake', currentUser, 'bonus_dose');
+      const [selectedBatch] = selectedBatches;
+      const stocktakeItem = createRecord(
+        UIDatabase,
+        'StocktakeItem',
+        stocktake,
+        selectedBatch?.item
+      );
+      const stocktakeBatch = createRecord(
+        UIDatabase,
+        'StocktakeBatch',
+        stocktakeItem,
+        selectedBatch
+      );
+
+      stocktakeBatch.setDoses(UIDatabase, stocktakeBatch?.itemBatch?.doses + 1);
+      stocktake.comment = 'bonus_dose';
+      stocktake.finalise(UIDatabase, currentUser);
+    });
+  }
 
   batch(() => {
     dispatch(NameActions.saveEditing());
@@ -175,6 +211,11 @@ const confirmAndRepeat = () => dispatch =>
     dispatch(gotoVaccineDispensingPage());
   });
 
+const toggleHistory = toggle => ({
+  type: VACCINE_PRESCRIPTION_ACTIONS.TOGGLE_HISTORY,
+  payload: { toggle },
+});
+
 export const VaccinePrescriptionActions = {
   cancel,
   confirm,
@@ -185,4 +226,7 @@ export const VaccinePrescriptionActions = {
   setRefusal,
   selectVaccinator,
   confirmAndRepeat,
+  setBonusDose,
+  toggleHistory,
+  selectDefaultVaccine,
 };

@@ -1,5 +1,6 @@
 {
   "gb": {
+    "vaccinator": "VACCINATOR",
     "adr": "ADR",
     "mac_address": "MAC ADDRESS",
     "battery_level": "BATTERY LEVEL",

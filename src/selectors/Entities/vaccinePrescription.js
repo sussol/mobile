@@ -80,3 +80,15 @@ export const selectHaveVaccineStock = () =>
   UIDatabase.objects('Vaccine').filtered(
     'subquery(batches, $batches, $batches.numberOfPacks > 0 ).@count > 0'
   ).length > 0;
+
+export const selectFoundBonusDose = state => {
+  const VaccinePrescriptionState = selectSpecificEntityState(state, 'vaccinePrescription');
+  const { bonusDose } = VaccinePrescriptionState;
+  return bonusDose;
+};
+
+export const selectHistoryIsOpen = state => {
+  const VaccinePrescriptionState = selectSpecificEntityState(state, 'vaccinePrescription');
+  const { historyIsOpen } = VaccinePrescriptionState;
+  return historyIsOpen;
+};

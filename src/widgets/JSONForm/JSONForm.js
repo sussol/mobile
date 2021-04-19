@@ -26,7 +26,6 @@ const ajv = new Ajv({
 });
 
 ajvErrors(ajv);
-
 const defaultTheme = {
   // Widgets are the lowest level input components. TextInput, Checkbox
   // etc, which are rendered depending on the JSON Schema or, if provided,
@@ -44,7 +43,7 @@ const defaultTheme = {
     CheckboxWidget: JSONFormWidget.Checkbox,
     CheckboxesWidget: JSONFormWidget.Checkboxes,
     PasswordWidget: () => null,
-    RadioWidget: () => null,
+    RadioWidget: JSONFormWidget.Radio,
     SelectWidget: JSONFormWidget.Select,
     RangeWidget: () => null,
     DateWidget: JSONFormWidget.DatePicker,

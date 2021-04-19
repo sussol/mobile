@@ -8,7 +8,7 @@ import { PREFERENCE_KEYS } from '../../database/utilities/preferenceConstants';
 export const selectEditingNameId = state => {
   const NameState = selectSpecificEntityState(state, 'name');
   const { editing } = NameState;
-  const { id } = editing;
+  const { id } = editing ?? {};
   return id;
 };
 
@@ -74,4 +74,16 @@ export const selectCanEditPatient = state => {
   const { isEditable = false } = editing ?? {};
 
   return UIDatabase.getPreference(PREFERENCE_KEYS.CAN_EDIT_PATIENTS_FROM_ANY_STORE) || isEditable;
+};
+
+export const selectVaccinePatientHistory = state => {
+  const patientId = selectEditingNameId(state) ?? '';
+
+  const inQuery = UIDatabase.objects('Transaction')
+    .filtered('otherParty.id == $0', patientId)
+    .map(({ id }) => `transaction.id == "${id}"`)
+    .join(' OR ');
+  const baseQueryString = 'type != "cash_in" AND type != "cash_out"';
+  const fullQuery = `(${inQuery}) AND ${baseQueryString} AND itemBatch.item.isVaccine == true`;
+  return inQuery ? UIDatabase.objects('TransactionBatch').filtered(fullQuery).slice() : [];
 };

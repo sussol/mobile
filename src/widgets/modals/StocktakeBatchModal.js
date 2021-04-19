@@ -243,7 +243,7 @@ export const StocktakeBatchModalComponent = ({
       case MODAL_KEYS.SELECT_LOCATION:
         return (
           <GenericChoiceList
-            data={UIDatabase.objects('Location')}
+            data={UIDatabase.objects('ActiveLocation')}
             highlightValue={currentLocationName}
             onPress={onApplyStocktakeBatchLocation}
             keyToDisplay="description"
