@@ -221,7 +221,7 @@ describe('BreachManager: willCloseBreach ', () => {
   });
 });
 
-describe('BreachManager: couldBeInBreach', () => {
+describe('BreachManager: getConfigInBreach', () => {
   it('Correctly determines from one config that a log could be in breach', () => {
     const dbService = {};
     const utils = { createUuid: () => '1' };
@@ -231,7 +231,7 @@ describe('BreachManager: couldBeInBreach', () => {
     const configs = [{ minimumTemperature: 8, maximumTemperature: 999 }];
     const log = { temperature: 10 };
 
-    expect(breachManager.couldBeInBreach(log, configs)).toEqual(true);
+    expect(breachManager.getConfigInBreach(log, configs)).toEqual(configs[0]);
   });
   it('Correctly determines from many configs that a log could be in breach', () => {
     const dbService = {};
@@ -241,11 +241,11 @@ describe('BreachManager: couldBeInBreach', () => {
 
     const configs = [
       { minimumTemperature: 8, maximumTemperature: 999 },
-      { minimumTemperature: 6, maximumTemperature: 999 },
+      { minimumTemperature: -999, maximumTemperature: 2 },
     ];
     const log = { temperature: 10 };
 
-    expect(breachManager.couldBeInBreach(log, configs)).toEqual(true);
+    expect(breachManager.getConfigInBreach(log, configs)).toEqual(configs[0]);
   });
   it('Correctly determines from many configs that a log should not be in breach', () => {
     const dbService = {};
@@ -255,11 +255,11 @@ describe('BreachManager: couldBeInBreach', () => {
 
     const configs = [
       { minimumTemperature: 8, maximumTemperature: 999 },
-      { minimumTemperature: 8, maximumTemperature: 999 },
+      { minimumTemperature: -999, maximumTemperature: 2 },
     ];
     const log = { temperature: 4 };
 
-    expect(breachManager.couldBeInBreach(log, configs)).toEqual(false);
+    expect(breachManager.getConfigInBreach(log, configs)).toBeUndefined();
   });
   it('Correctly determines from a config that a log should not be in breach', () => {
     const dbService = {};
@@ -270,7 +270,7 @@ describe('BreachManager: couldBeInBreach', () => {
     const configs = [{ minimumTemperature: 8, maximumTemperature: 999 }];
     const log = { temperature: 4 };
 
-    expect(breachManager.couldBeInBreach(log, configs)).toEqual(false);
+    expect(breachManager.getConfigInBreach(log, configs)).toBeUndefined();
   });
 });
 
@@ -347,7 +347,62 @@ describe('BreachManager: createBreaches', () => {
       logsShouldBe,
     ]);
   });
+  it('Creates a single breach when multiple breach boundaries are crossed', async () => {
+    const dummyLocation = { id: 'ABC', description: 'DEF' };
+    const sensor = { id: 'a', location: dummyLocation };
+    const logs = [
+      { id: 'a', temperature: 1, timestamp: 0 },
+      { id: 'b', temperature: 9, timestamp: 1 },
+      { id: 'c', temperature: 9, timestamp: 2 },
+      { id: 'd', temperature: 9, timestamp: 3 },
+    ];
+    const configs = [
+      {
+        id: 'a',
+        duration: 2000,
+        minimumTemperature: 8,
+        maximumTemperature: 999,
+        type: 'HOT_CONSECUTIVE',
+      },
+      {
+        id: 'b',
+        duration: 2000,
+        minimumTemperature: -999,
+        maximumTemperature: 2,
+        type: 'COLD_CONSECUTIVE',
+      },
+    ];
+    const utils = { createUuid: () => '1' };
+    const dbService = {};
 
+    const breachManager = BreachManager(dbService, utils);
+
+    const breachesShouldBe = [
+      {
+        id: '1',
+        acknowledged: false,
+        sensor,
+        thresholdMaxTemperature: 999,
+        thresholdMinTemperature: 8,
+        thresholdDuration: 2000,
+        startTimestamp: new Date(1 * MILLISECONDS.ONE_SECOND),
+        endTimestamp: undefined,
+        location: dummyLocation,
+        type: 'HOT_CONSECUTIVE',
+      },
+    ];
+
+    const logsShouldBe = [
+      { id: 'b', breach: breachesShouldBe[0] },
+      { id: 'c', breach: breachesShouldBe[0] },
+      { id: 'd', breach: breachesShouldBe[0] },
+    ];
+
+    await expect(breachManager.createBreaches(sensor, logs, configs)).toEqual([
+      breachesShouldBe,
+      logsShouldBe,
+    ]);
+  });
   it('Creates a simple single breach that is closed', async () => {
     const dummyLocation = { id: 'ABC', description: 'DEF' };
     const sensor = { id: 'a', location: dummyLocation };
