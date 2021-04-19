@@ -13,6 +13,7 @@ const PAGE_COLUMN_WIDTHS = {
   [FORMS.PATIENT]: [2.5, 4, 4, 2.5, 2, 2, 2],
   [FORMS.PRESCRIBER]: [1, 3, 3, 1],
   [MODALS.PATIENT_HISTORY]: [1, 4, 1, 1, 2],
+  [MODALS.VACCINE_HISTORY]: [1, 4, 1, 1, 2],
   [MODALS.PATIENT_LOOKUP]: [2, 2, 2],
   [MODALS.PRESCRIBER_LOOKUP]: [2, 2, 2],
   [MODALS.REGIMEN_DATA]: [4, 1, 5],
@@ -132,6 +133,13 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.PRESCRIPTION_DATE,
     COLUMN_NAMES.PRESCRIBER,
   ],
+  [MODALS.VACCINE_HISTORY]: [
+    COLUMN_NAMES.ITEM_CODE,
+    COLUMN_NAMES.ITEM_NAME,
+    COLUMN_NAMES.DOSES,
+    COLUMN_NAMES.PRESCRIPTION_DATE,
+    COLUMN_NAMES.VACCINATOR,
+  ],
   [MODALS.PATIENT_LOOKUP]: [
     COLUMN_NAMES.FIRST_NAME,
     COLUMN_NAMES.LAST_NAME,
@@ -162,7 +170,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.EDITABLE_EXPIRY_DATE,
     COLUMN_NAMES.SNAPSHOT_TOTAL_QUANTITY,
     COLUMN_NAMES.COUNTED_TOTAL_QUANTITY,
-    COLUMN_NAMES.DOSES,
+    COLUMN_NAMES.EDITABLE_DOSES,
     COLUMN_NAMES.BREACH,
     COLUMN_NAMES.DIFFERENCE,
   ],
@@ -172,7 +180,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.VVM_STATUS,
     COLUMN_NAMES.EDITABLE_EXPIRY_DATE,
     COLUMN_NAMES.SNAPSHOT_TOTAL_QUANTITY,
-    COLUMN_NAMES.DOSES,
+    COLUMN_NAMES.EDITABLE_DOSES,
     COLUMN_NAMES.BREACH,
     COLUMN_NAMES.DIFFERENCE,
     COLUMN_NAMES.REASON,
@@ -250,7 +258,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.ITEM_NAME,
     COLUMN_NAMES.AVAILABLE_QUANTITY,
     COLUMN_NAMES.EDITABLE_TOTAL_QUANTITY,
-    COLUMN_NAMES.DOSES,
+    COLUMN_NAMES.EDITABLE_DOSES,
     COLUMN_NAMES.BREACH,
     COLUMN_NAMES.REMOVE,
   ],
@@ -461,6 +469,15 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.MAC_ADDRESS,
     title: tableStrings.mac_address,
+    alignText: 'left',
+    sortable: true,
+    editable: false,
+  },
+
+  [COLUMN_NAMES.VACCINATOR]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.VACCINATOR,
+    title: tableStrings.vaccinator,
     alignText: 'left',
     sortable: true,
     editable: false,
@@ -715,6 +732,14 @@ const COLUMNS = () => ({
     sortable: true,
     editable: false,
   },
+  [COLUMN_NAMES.DOSES]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.DOSES,
+    title: tableStrings.doses,
+    alignText: 'right',
+    sortable: true,
+    editable: false,
+  },
   [COLUMN_NAMES.NUMBER_OF_ITEMS]: {
     type: COLUMN_TYPES.NUMERIC,
     key: COLUMN_KEYS.NUMBER_OF_ITEMS,
@@ -940,7 +965,7 @@ const COLUMNS = () => ({
     editable: true,
   },
 
-  [COLUMN_NAMES.DOSES]: {
+  [COLUMN_NAMES.EDITABLE_DOSES]: {
     type: COLUMN_TYPES.EDITABLE_NUMERIC,
     key: COLUMN_KEYS.DOSES,
     title: tableStrings.doses,
