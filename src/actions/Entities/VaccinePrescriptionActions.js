@@ -22,6 +22,7 @@ export const VACCINE_PRESCRIPTION_ACTIONS = {
   SELECT_VACCINATOR: 'VACCINE_PRESCRIPTION/selectVaccinator',
   SET_BONUS_DOSE: 'VACCINE_PRESCRIPTION/setBonusDose',
   TOGGLE_HISTORY: 'VACCINE_PRESCRIPTION/toggleHistory',
+  SELECT_DEFAULT_VACCINE: 'VACCINE_PRESCRIPTION/selectDefaultVaccine',
 };
 
 const createDefaultVaccinePrescription = () => ({
@@ -82,13 +83,16 @@ const create = () => ({
   payload: {
     prescription: createDefaultVaccinePrescription(),
     vaccinator: getDefaultVaccinator(),
-    selectedVaccines: [getDefaultVaccine()],
-    selectedBatches: [getRecommendedBatch()],
   },
 });
 
 const reset = () => ({
   type: VACCINE_PRESCRIPTION_ACTIONS.RESET,
+});
+
+const selectDefaultVaccine = () => ({
+  type: VACCINE_PRESCRIPTION_ACTIONS.SELECT_DEFAULT_VACCINE,
+  payload: { selectedVaccines: [getDefaultVaccine()], selectedBatches: [getRecommendedBatch()] },
 });
 
 const selectVaccine = vaccine => ({
@@ -224,4 +228,5 @@ export const VaccinePrescriptionActions = {
   confirmAndRepeat,
   setBonusDose,
   toggleHistory,
+  selectDefaultVaccine,
 };

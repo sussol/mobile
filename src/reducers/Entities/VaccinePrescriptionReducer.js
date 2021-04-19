@@ -17,6 +17,13 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
+    case VACCINE_PRESCRIPTION_ACTIONS.SELECT_DEFAULT_VACCINE: {
+      const { payload } = action;
+      const { selectedVaccines, selectedBatches } = payload;
+
+      return { ...state, selectedVaccines, selectedBatches };
+    }
+
     case WIZARD_ACTIONS.SWITCH_TAB: {
       const { payload } = action;
       const { tab } = payload;
@@ -35,9 +42,9 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
     case VACCINE_PRESCRIPTION_ACTIONS.CREATE: {
       const { payload } = action;
 
-      const { prescription, vaccinator, selectedVaccines, selectedBatches } = payload;
+      const { prescription, vaccinator } = payload;
 
-      return { ...state, creating: prescription, vaccinator, selectedVaccines, selectedBatches };
+      return { ...state, creating: prescription, vaccinator };
     }
 
     case VACCINE_PRESCRIPTION_ACTIONS.SELECT_VACCINE: {
