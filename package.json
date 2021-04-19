@@ -94,7 +94,7 @@
     "react-native-localization": "^2.1.6",
     "react-native-mail": "^6.0.0",
     "react-native-modalbox": "^2.0.0",
-    "react-native-permissions": "^3.0.0",
+    "react-native-permissions": "^3.0.1",
     "react-native-popover-view": "^3.1.1",
     "react-native-reanimated": "^1.7.0",
     "react-native-safe-area-context": "^0.7.3",
@@ -130,7 +130,7 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.21.5",
     "husky": "^4.2.3",
-    "lint-staged": "^10.0.8",
+    "lint-staged": "^10.5.4",
     "metro-react-native-babel-preset": "^0.59.0",
     "prettier": "^2.2.1"
   }
