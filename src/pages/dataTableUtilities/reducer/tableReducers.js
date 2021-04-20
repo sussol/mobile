@@ -5,8 +5,6 @@
 
 import { ROUTES } from '../../../navigation/constants';
 import { sortDataBy } from '../../../utilities';
-import { UIDatabase } from '../../../database';
-import getColumns from '../getColumns';
 
 /**
  * Sorts the current set of data by the provided
@@ -266,40 +264,6 @@ export const addRecord = state => {
   };
 };
 
-export const toggleFridges = state => {
-  const backingData = UIDatabase.objects('Location');
-  const data = backingData.slice();
-
-  return {
-    ...state,
-    backingData,
-    data,
-    dataSet: 'fridges',
-    sortKey: '',
-    isAscending: false,
-    searchTerm: '',
-    columns: getColumns('fridges'),
-    filterDataKeys: ['description', 'code'],
-  };
-};
-
-export const toggleSensors = state => {
-  const backingData = UIDatabase.objects('Sensor').filtered('isActive == true');
-  const data = backingData.slice();
-
-  return {
-    ...state,
-    backingData,
-    data,
-    dataSet: 'sensors',
-    sortKey: '',
-    isAscending: false,
-    searchTerm: '',
-    columns: getColumns('sensors'),
-    filterDataKeys: ['name'],
-  };
-};
-
 export const toggleColumnSet = state => ({
   ...state,
   columnSet: state.columnSet === 'a' ? 'b' : 'a',
@@ -320,7 +284,5 @@ export const TableReducerLookup = {
   refreshDataWithFinalisedToggle,
   filterDataWithFinalisedToggle,
   filterDataWithOverStockToggle,
-  toggleFridges,
-  toggleSensors,
   toggleColumnSet,
 };

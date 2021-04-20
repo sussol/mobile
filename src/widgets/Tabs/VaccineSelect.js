@@ -6,6 +6,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useNavigation } from '@react-navigation/native';
 import { Text, StyleSheet } from 'react-native';
 import { batch, connect } from 'react-redux';
 import { TABS } from '../constants';
@@ -38,6 +39,7 @@ import { DARKER_GREY } from '../../globalStyles/colors';
 import { AfterInteractions } from '../AfterInteractions';
 import { Paper } from '../Paper';
 import { VaccinePrescriptionInfo } from '../VaccinePrescriptionInfo';
+import { useNavigationFocus } from '../../hooks/useNavigationFocus';
 
 const ListEmptyComponent = () => (
   <FlexView flex={1} justifyContent="center" alignItems="center">
@@ -72,6 +74,7 @@ const VaccineSelectComponent = ({
   selectedVaccine,
   vaccines,
   okAndRepeat,
+  selectDefaultVaccine,
 }) => {
   const { pageTopViewContainer } = globalStyles;
   const vaccineColumns = React.useMemo(() => getColumns(TABS.ITEM), []);
@@ -99,6 +102,9 @@ const VaccineSelectComponent = ({
     () => runWithLoadingIndicator(okAndRepeat),
     [okAndRepeat]
   );
+
+  const navigation = useNavigation();
+  useNavigationFocus(navigation, selectDefaultVaccine);
 
   return (
     <FlexView style={pageTopViewContainer}>
@@ -163,6 +169,7 @@ const mapDispatchToProps = dispatch => {
   const onCancelPrescription = () => dispatch(VaccinePrescriptionActions.cancel());
   const onSelectBatch = itemBatch => dispatch(VaccinePrescriptionActions.selectBatch(itemBatch));
   const onSelectVaccine = vaccine => dispatch(VaccinePrescriptionActions.selectVaccine(vaccine));
+  const selectDefaultVaccine = () => dispatch(VaccinePrescriptionActions.selectDefaultVaccine());
 
   const onConfirm = () =>
     batch(() => {
@@ -178,6 +185,7 @@ const mapDispatchToProps = dispatch => {
     onRefuse,
     onSelectBatch,
     onSelectVaccine,
+    selectDefaultVaccine,
   };
 };
 
@@ -210,6 +218,7 @@ VaccineSelectComponent.defaultProps = {
 };
 
 VaccineSelectComponent.propTypes = {
+  selectDefaultVaccine: PropTypes.func.isRequired,
   okAndRepeat: PropTypes.func.isRequired,
   onCancelPrescription: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
