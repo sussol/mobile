@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 
 import ValidUrl from 'valid-url';
 import { Dimensions, Text, View, ToastAndroid, TouchableOpacity } from 'react-native';
+import RNRestart from 'react-native-restart';
 import { hashPassword } from 'sussol-utilities';
 import { Button } from 'react-native-ui-components';
 
@@ -65,6 +66,7 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
   const closeModal = () => setState({ ...state, modalKey: '' });
   const openModal = newModalKey => setState({ ...state, modalKey: newModalKey });
   const onSave = () => openModal(MODAL_KEYS.CONFIRM_USER_PASSWORD);
+  const onReset = () => openModal(MODAL_KEYS.CONFIRM_FACTORY_RESET);
 
   const editSyncURL = newSyncURL => {
     if (!ValidUrl.isWebUri(newSyncURL)) ToastAndroid.show('Not a valid URL', ToastAndroid.LONG);
@@ -115,6 +117,21 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
     closeModal();
   };
 
+  const reset = enteredPassword => {
+    const passwordMatch = hashPassword(enteredPassword) === currentUserPasswordHash;
+    const toastMessage = passwordMatch
+      ? generalStrings.new_details_saved
+      : generalStrings.new_details_not_saved;
+
+    if (passwordMatch) {
+      UIDatabase.write(() => UIDatabase.deleteAll());
+      RNRestart.Restart();
+    } else {
+      ToastAndroid.show(toastMessage, ToastAndroid.LONG);
+    }
+    closeModal();
+  };
+
   const getModalSelect = () => {
     switch (modalKey) {
       case MODAL_KEYS.SYNC_URL_EDIT:
@@ -123,6 +140,8 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
         return editSyncPassword;
       case MODAL_KEYS.CONFIRM_USER_PASSWORD:
         return save;
+      case MODAL_KEYS.CONFIRM_FACTORY_RESET:
+        return reset;
       default:
         return null;
     }
@@ -222,6 +241,7 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
         <View>
           <MenuButton text={buttonStrings.realm_explorer} onPress={toRealmExplorer} />
           <MenuButton text={buttonStrings.export_data} onPress={requestStorageWritePermission} />
+          <MenuButton text={buttonStrings.factory_reset} onPress={onReset} />
           <VaccineButton />
         </View>
       </View>
