@@ -3546,10 +3546,10 @@ csstype@^3.0.2:
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.0.7.tgz#2a5fb75e1015e84dd15692f71e89a1450290950b"
   integrity sha512-KxnUB0ZMlnUWCsx2Z8MUsr6qV6ja1w9ArPErJaJaF8a5SOWoHLIszeCTKGRGRgtLgYrs1E8CHkNSP1VZTTPc9g==
 
-currency.js@^1.2.2:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/currency.js/-/currency.js-1.2.2.tgz#ae84daf68798051097ad3feb2d022ad08994f526"
-  integrity sha512-trMkXtHpIFq2P+PcSml3La/jpwo8shy2Xn/b5mBXoJhx3E4m3wBbdjS8eHy/DWgYKaEUH8EXPC6yomFx+zumww==
+currency.js@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/currency.js/-/currency.js-2.0.3.tgz#3f266c241074eabfa4a6a53c3f477fac17c781a7"
+  integrity sha512-3rtzulRMwUJHmH0EPKiO/taYEGWlLSG2rpBOaHhfaY1dPGqK595mjg4t4bksy7glHEPZry7l5xSpXECs1eFrWg==
 
 currently-unhandled@^0.4.1:
   version "0.4.1"

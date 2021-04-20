@@ -334,11 +334,11 @@ export class StocktakeBatch extends Realm.Object {
   }
 
   get costPriceString() {
-    return currency(this.costPrice ?? 0, { formatWithSymbol: true }).format();
+    return currency(this.costPrice ?? 0).format();
   }
 
   get sellPriceString() {
-    return currency(this.sellPrice ?? 0, { formatWithSymbol: true }).format();
+    return currency(this.sellPrice ?? 0).format();
   }
 
   get hasVariance() {
