@@ -32,7 +32,11 @@ export const selectFilteredPrescribers = createSelector(
     const [lastName, firstName] = searchTerm.split(',').map(name => name.trim());
 
     const queryString = 'lastName BEGINSWITH[c] $0 AND firstName BEGINSWITH[c] $1';
-    const newData = UIDatabase.objects('Prescriber').filtered(queryString, lastName, firstName);
+    const newData = UIDatabase.objects('Prescriber').filtered(
+      queryString,
+      lastName ?? '',
+      firstName ?? ''
+    );
 
     return newData;
   }
