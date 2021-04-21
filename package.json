@@ -80,7 +80,7 @@
     "moment": "^2.29.1",
     "prop-types": "^15.7.2",
     "querystring": "^0.2.1",
-    "react": "16.13.1",
+    "react": "17.0.1",
     "react-devtools": "^3",
     "react-devtools-core": "^4.12.3",
     "react-native": "0.63.4",
