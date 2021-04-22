@@ -201,6 +201,16 @@ export class TransactionBatch extends Realm.Object {
   get sellPriceString() {
     return currency(this.sellPrice ?? 0).format();
   }
+
+  get vaccinator() {
+    const vaccinator = this.medicineAdministrator ?? {};
+    const { firstName = '', lastName = '' } = vaccinator;
+
+    if (!lastName) return firstName;
+    if (!firstName) return lastName;
+
+    return `${lastName}, ${firstName}`;
+  }
 }
 
 TransactionBatch.schema = {

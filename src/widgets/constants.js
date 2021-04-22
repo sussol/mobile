@@ -5,6 +5,7 @@
 
 export const MODALS = {
   PATIENT_HISTORY: 'patientHistory',
+  VACCINE_HISTORY: 'vaccineHistory',
   PATIENT_LOOKUP: 'patientLookup',
   PRESCRIBER_LOOKUP: 'prescriberLookup',
   REGIMEN_DATA: 'regimenDataModal',

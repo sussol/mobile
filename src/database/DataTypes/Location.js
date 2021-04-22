@@ -113,6 +113,7 @@ Location.schema = {
     description: { type: 'string', default: '' },
     code: { type: 'string', default: '' },
     locationType: { type: 'LocationType', optional: true },
+    hold: { type: 'bool', default: false },
     locationMovements: {
       type: 'linkingObjects',
       objectType: 'LocationMovement',
