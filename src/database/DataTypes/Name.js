@@ -165,6 +165,7 @@ export class Name extends Realm.Object {
       ethnicity: this.ethnicity?.toJSON(),
       nameNotes: this.nameNotes?.map(nameNote => nameNote.toObject()),
       isEditable: this.isEditable,
+      createdDate: this.createdDate?.getTime(),
     };
   }
 }
@@ -201,6 +202,7 @@ Name.schema = {
     occupation: { type: 'Occupation', optional: true },
     ethnicity: { type: 'Ethnicity', optional: true },
     nameNotes: { type: 'linkingObjects', objectType: 'NameNote', property: 'name' },
+    createdDate: { type: 'date', optional: true },
   },
 };
 

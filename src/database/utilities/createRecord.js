@@ -246,8 +246,8 @@ const createPatient = (database, patientDetails) => {
     nationality,
     ethnicity,
     nameNotes,
+    createdDate,
   } = patientDetails;
-
   const id = patientId ?? generateUUID();
   const code = patientCode || getPatientUniqueCode(database);
   const firstName = patientFirstName ?? '';
@@ -305,6 +305,7 @@ const createPatient = (database, patientDetails) => {
     isVisible,
     nationality,
     ethnicity,
+    createdDate,
   });
 
   nameNotes?.forEach(nameNote => createNameNote(database, nameNote));
