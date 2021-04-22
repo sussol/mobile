@@ -1,7 +1,7 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { batch, connect } from 'react-redux';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { FormControl } from '../FormControl';
 import { PageButton } from '../PageButton';
@@ -145,11 +145,7 @@ const stateToProps = state => {
 const dispatchToProps = dispatch => ({
   onSaveSurvey: () => dispatch(NameNoteActions.saveEditing()),
   onUpdateForm: (form, validator) => dispatch(NameNoteActions.updateForm(form, validator)),
-  onSave: patientDetails =>
-    batch(() => {
-      dispatch(PatientActions.patientUpdate(patientDetails));
-      dispatch(PatientActions.refresh());
-    }),
+  onSave: patientDetails => dispatch(PatientActions.patientUpdate(patientDetails)),
 });
 
 export const PatientEditModal = connect(
