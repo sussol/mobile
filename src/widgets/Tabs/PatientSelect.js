@@ -70,14 +70,9 @@ const Header = ({ onSearchOnline, onNewPatient, loading }) => (
   <FlexRow justifyContent="center" alignItems="center">
     <Text style={localStyles.text}>{vaccineStrings.vaccine_dispense_step_one_title}</Text>
     <View style={{ flex: 1, marginLeft: 'auto' }} />
+    <PageButton text={generalStrings.search_online} onPress={onSearchOnline} isDisabled={loading} />
     <PageButton
-      style={{ height: 10 }}
-      text={generalStrings.search_online}
-      onPress={onSearchOnline}
-      isDisabled={loading}
-    />
-    <PageButton
-      style={{ height: 10, marginLeft: 10 }}
+      style={{ marginLeft: 10 }}
       text={`${dispensingStrings.new} ${dispensingStrings.patient}`}
       onPress={onNewPatient}
     />
@@ -152,6 +147,7 @@ const PatientSelectComponent = ({
       <Paper
         style={{ flex: 6 }}
         contentContainerStyle={{ flex: 1 }}
+        headerContainerStyle={{ height: 60 }}
         headerText={vaccineStrings.vaccine_dispense_step_one_title}
         Header={
           // eslint-disable-next-line react/jsx-wrap-multilines

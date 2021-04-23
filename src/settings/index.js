@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MILLISECONDS } from '../utilities/constants';
 
 export const SETTINGS_KEYS = {

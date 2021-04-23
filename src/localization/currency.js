@@ -11,6 +11,7 @@ const CURRENCY_CONFIGS = {
     decimal: '.',
     separator: ',',
     increment: 0.01,
+    symbol: '$',
   },
   [LANGUAGE_CODES.FRENCH]: {
     decimal: ',',
