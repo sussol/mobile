@@ -12,6 +12,7 @@ import {
 } from '../localization';
 
 export const MODAL_KEYS = {
+  CONFIRM_FACTORY_RESET: 'confirmFactoryReset',
   CONFIRM_USER_PASSWORD: 'confirmUserPassword',
   CREATE_CASH_TRANSACTION: 'createCashTransaction',
   SYNC_URL_EDIT: 'syncUrlEdit',
@@ -90,6 +91,8 @@ export const getModalTitle = modalKey => {
       return authStrings.warning_sync_edit;
     case MODAL_KEYS.CONFIRM_USER_PASSWORD:
       return modalStrings.confirm_password;
+    case MODAL_KEYS.CONFIRM_FACTORY_RESET:
+      return modalStrings.confirm_factory_reset;
     case MODAL_KEYS.SELECT_MASTER_LISTS:
       return modalStrings.select_master_lists;
     case MODAL_KEYS.SELECT_LOCATION:

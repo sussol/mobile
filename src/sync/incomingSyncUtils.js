@@ -598,6 +598,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         nationality: database.getOrCreate('Nationality', record.nationality_ID),
         occupation: database.getOrCreate('Occupation', record.occupation_ID),
         ethnicity: database.getOrCreate('Ethnicity', record.ethnicity_ID),
+        createdDate: parseDate(record.created_date),
       };
 
       if (isPatient) internalRecord.isVisible = true;

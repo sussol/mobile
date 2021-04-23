@@ -1,6 +1,7 @@
 import { generateUUID } from 'react-native-database';
 import { batch } from 'react-redux';
 import { ToastAndroid } from 'react-native';
+import moment from 'moment';
 import { selectEditingName } from '../../selectors/Entities/name';
 import { createRecord, UIDatabase } from '../../database';
 import { createPatientVisibility } from '../../sync/lookupApiUtils';
@@ -28,6 +29,7 @@ export const createDefaultName = (type = 'patient', id) => ({
   name: '',
   type,
   isEditable: true,
+  createdDate: moment().format(),
 });
 
 const create = name => ({

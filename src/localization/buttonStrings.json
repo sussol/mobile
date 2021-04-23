@@ -32,7 +32,8 @@
     "use_suggested_quantities": "Use Suggested Quantities",
     "view_regimen_data": "View Regimen Data",
     "supply_data": "Supply Data",
-    "customer_data": "Customer Data"
+    "customer_data": "Customer Data",
+    "factory_reset": "Factory Reset"
   },
   "fr": {
     "cancel": "Annuler",

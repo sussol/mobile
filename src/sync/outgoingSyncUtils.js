@@ -79,7 +79,7 @@ const generateSyncData = (settings, recordType, record) => {
         true
       )[0];
 
-      return {
+      const nameRecord = {
         id: record.id,
         type: record.type,
         first: record.firstName,
@@ -102,6 +102,11 @@ const generateSyncData = (settings, recordType, record) => {
         occupation_ID: record.occupation?.id ?? '',
         ethnicity_ID: record.ethnicity?.id ?? '',
       };
+      if (record.createdDate) {
+        nameRecord.created_date = moment(record.createdDate).format();
+      }
+
+      return nameRecord;
     }
     case 'NumberSequence': {
       const thisStoreId = settings.get(THIS_STORE_ID);

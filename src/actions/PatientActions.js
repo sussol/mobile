@@ -21,11 +21,13 @@ export const PATIENT_ACTIONS = {
   NEW_ADR: 'Patient/newADR',
   SAVE_ADR: 'Patient/saveADR',
   CANCEL_ADR: 'Patient/cancelADR',
+  REFRESH: 'Patient/refresh',
 };
 
 const closeModal = () => ({ type: PATIENT_ACTIONS.COMPLETE });
 const createPatient = patient => ({ type: PATIENT_ACTIONS.PATIENT_CREATION, payload: { patient } });
 const editPatient = patient => ({ type: PATIENT_ACTIONS.PATIENT_EDIT, payload: { patient } });
+const refresh = () => ({ type: PATIENT_ACTIONS.REFRESH });
 
 const makePatientVisibility = async name => {
   const response = await createPatientVisibility(name);
@@ -52,6 +54,7 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     female: currentFemale,
     ethnicity: currentEthnicity,
     nationality: currentNationality,
+    createdDate,
   } = currentPatient ?? {};
 
   const {
@@ -122,6 +125,7 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     isActive,
     ethnicity,
     nationality,
+    createdDate,
   };
 
   UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patientRecord));
@@ -130,6 +134,7 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     dispatch(closeModal());
     dispatch(DispensaryActions.closeLookupModal());
     dispatch(DispensaryActions.refresh());
+    dispatch(PatientActions.refresh());
   });
 };
 
@@ -174,4 +179,5 @@ export const PatientActions = {
   viewPatientHistory,
   closePatientHistory,
   makePatientVisibility,
+  refresh,
 };
