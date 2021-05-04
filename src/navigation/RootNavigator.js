@@ -22,7 +22,6 @@ export const rootNavigatorRef = React.createRef();
 const navigate = (screenName, screenProps) => {
   const breadcrumb = `Navigating: ${screenName}`;
   Bugsnag.leaveBreadcrumb(breadcrumb);
-
   rootNavigatorRef.current?.navigate(screenName, screenProps);
 };
 

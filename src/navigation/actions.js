@@ -5,7 +5,6 @@
 
 import { BackHandler } from 'react-native';
 import { batch } from 'react-redux';
-
 import { CommonActions, StackActions } from '@react-navigation/native';
 
 import { UIDatabase } from '../database';
