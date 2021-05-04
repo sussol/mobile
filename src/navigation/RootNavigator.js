@@ -23,9 +23,6 @@ const navigate = (screenName, screenProps) => {
   const breadcrumb = `Navigating: ${screenName}`;
   Bugsnag.leaveBreadcrumb(breadcrumb);
 
-  console.log(screenName);
-  console.log(screenProps);
-
   rootNavigatorRef.current?.navigate(screenName, screenProps);
 };
 
