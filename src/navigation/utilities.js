@@ -69,17 +69,19 @@ export const backHandler = store => () => {
 export const navigationMiddleware = () => next => action => {
   const { type } = action;
 
-  if (type === 'Navigation/NAVIGATE') {
-    const { routeName, params } = action;
-    RootNavigator.navigate(routeName, params);
+  if (type === 'NAVIGATE') {
+    const { payload } = action;
+    const { name, params } = payload;
+    RootNavigator.navigate(name, params);
   }
 
-  if (type === 'Navigation/REPLACE') {
-    const { routeName, params } = action;
-    RootNavigator.replace(routeName, params);
+  if (type === 'REPLACE') {
+    const { payload } = action;
+    const { name, params } = payload;
+    RootNavigator.replace(name, params);
   }
 
-  if (type === 'Navigation/BACK') {
+  if (type === 'GO_BACK') {
     RootNavigator.goBack();
   }
 

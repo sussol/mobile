@@ -28,10 +28,11 @@ export const DispensaryReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
-    case 'Navigation/NAVIGATE': {
-      const { routeName } = action;
+    case 'NAVIGATE': {
+      const { payload } = action;
+      const { name } = payload;
 
-      if (routeName === ROUTES.DISPENSARY) return initialState();
+      if (name === ROUTES.DISPENSARY) return initialState();
       return state;
     }
 

@@ -32,10 +32,11 @@ export const TemperatureBreachConfigReducer = (state = initialState(), action) =
       return { ...state, byId: mergedById };
     }
 
-    case 'Navigation/NAVIGATE': {
-      const { params, routeName } = action;
+    case 'NAVIGATE': {
+      const { payload } = action;
+      const { params, name } = payload;
 
-      if (routeName !== ROUTES.SENSOR_EDIT) return state;
+      if (name !== ROUTES.SENSOR_EDIT) return state;
       const { sensor } = params;
       const { breachConfigIDs } = sensor;
 

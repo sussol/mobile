@@ -20,10 +20,11 @@ export const PatientReducer = (state = patientInitialState(), action) => {
   const { type } = action;
 
   switch (type) {
-    case 'Navigation/NAVIGATE': {
-      const { routeName, params } = action;
+    case 'NAVIGATE': {
+      const payload = action;
+      const { name, params } = payload;
 
-      if (routeName !== ROUTES.PRESCRIPTION) return state;
+      if (name !== ROUTES.PRESCRIPTION) return state;
       const { transaction } = params;
       const { otherParty } = transaction;
       return { ...state, currentPatient: otherParty };

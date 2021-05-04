@@ -42,11 +42,12 @@ export const FridgeDetailReducer = (state = initialState(), action) => {
       return { ...state, toDate };
     }
 
-    case 'Navigation/NAVIGATE': {
-      const { routeName, params } = action;
+    case 'NAVIGATE': {
+      const { payload } = action;
+      const { name, params } = payload;
       const { locationID } = params ?? {};
 
-      if (routeName === ROUTES.FRIDGE_DETAIL) {
+      if (name === ROUTES.FRIDGE_DETAIL) {
         const newState = initialState();
         return { ...newState, now: moment().valueOf(), locationID };
       }

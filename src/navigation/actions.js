@@ -5,7 +5,8 @@
 
 import { BackHandler } from 'react-native';
 import { batch } from 'react-redux';
-import { NavigationActions, StackActions } from '@react-navigation/core';
+
+import { CommonActions, StackActions } from '@react-navigation/native';
 
 import { UIDatabase } from '../database';
 import { createRecord } from '../database/utilities';
@@ -27,12 +28,12 @@ import { LocationActions, VaccinePrescriptionActions } from '../actions/Entities
  *
  * Actions should return either a plain object or a thunk for side effects.
  *
- * NavigationActions are consists of action creators supplied by react-navigation.
+ * CommonActions are consists of action creators supplied by react-navigation.
  *
- * NavigationActions.navigate() - accepts an object as the payload, which should
+ * CommonActions.navigate() - accepts an object as the payload, which should
  * have the fields:
  *
- * - `routeName` (See: pages/index - PAGES - keys are routeNames)
+ * - `name` (See: pages/index - PAGES - keys are names)
  * - `params` (See: Pages/pageContainer and pages/index FINALISABLE_PAGES for requirements)
  *
  */
@@ -73,12 +74,12 @@ export const goBack = () => dispatch => {
       const prescriptions = UIDatabase.objects('Prescription').filtered('status != "finalised"');
       UIDatabase.delete('Transaction', prescriptions);
 
-      const prevRouteName = RootNavigator.getPrevRouteName();
+      const prevName = RootNavigator.getPrevRouteName();
 
       const navigateBack = () =>
         dispatch({
-          ...NavigationActions.back(),
-          payload: { prevRouteName },
+          ...CommonActions.goBack(),
+          payload: { prevName },
         });
 
       const cleanUp = () => {
@@ -124,20 +125,20 @@ export const createPrescription = patientID => (dispatch, getState) => {
 };
 
 export const goToVaccines = () =>
-  NavigationActions.navigate({
-    routeName: ROUTES.VACCINES,
+  CommonActions.navigate({
+    name: ROUTES.VACCINES,
     params: { title: navStrings.vaccines },
   });
 
 export const goToCashRegister = () =>
-  NavigationActions.navigate({
-    routeName: ROUTES.CASH_REGISTER,
+  CommonActions.navigate({
+    name: ROUTES.CASH_REGISTER,
     params: { title: navStrings.cash_register },
   });
 
 export const gotoPrescription = prescription =>
-  NavigationActions.navigate({
-    routeName: ROUTES.PRESCRIPTION,
+  CommonActions.navigate({
+    name: ROUTES.PRESCRIPTION,
     params: {
       title: `${navStrings.prescription} ${prescription.serialNumber}`,
       transaction: prescription,
@@ -147,8 +148,8 @@ export const gotoPrescription = prescription =>
   });
 
 export const gotoPrescriptions = () =>
-  NavigationActions.navigate({
-    routeName: ROUTES.PRESCRIPTIONS,
+  CommonActions.navigate({
+    name: ROUTES.PRESCRIPTIONS,
     params: { title: 'Prescriptions' },
   });
 
@@ -161,8 +162,8 @@ export const gotoDispensingPage = () => dispatch => {
   });
 
   dispatch(
-    NavigationActions.navigate({
-      routeName: ROUTES.DISPENSARY,
+    CommonActions.navigate({
+      name: ROUTES.DISPENSARY,
       params: { title: navStrings.dispensary },
     })
   );
@@ -172,8 +173,8 @@ export const gotoDispensingPage = () => dispatch => {
  * Pushes the Settings page route onto the main navigation stack.
  */
 export const gotoDashboard = () =>
-  NavigationActions.navigate({
-    routeName: ROUTES.DASHBOARD,
+  CommonActions.navigate({
+    name: ROUTES.DASHBOARD,
     params: { title: navStrings.dashboard },
   });
 
@@ -181,8 +182,8 @@ export const gotoDashboard = () =>
  * Pushes the Settings page route onto the main navigation stack.
  */
 export const gotoSettings = () =>
-  NavigationActions.navigate({
-    routeName: ROUTES.SETTINGS,
+  CommonActions.navigate({
+    name: ROUTES.SETTINGS,
     params: {
       title: navStrings.settings,
     },
@@ -192,8 +193,8 @@ export const gotoSettings = () =>
  * Pushes the Realm explorer route onto the main navigation stack.
  */
 export const gotoRealmExplorer = () =>
-  NavigationActions.navigate({
-    routeName: ROUTES.REALM_EXPLORER,
+  CommonActions.navigate({
+    name: ROUTES.REALM_EXPLORER,
     params: {
       title: navStrings.database_contents,
     },
@@ -211,8 +212,8 @@ export const gotoCustomerInvoices = () => dispatch => {
   });
 
   dispatch(
-    NavigationActions.navigate({
-      routeName: ROUTES.CUSTOMER_INVOICES,
+    CommonActions.navigate({
+      name: ROUTES.CUSTOMER_INVOICES,
       params: { title: navStrings.customer_invoices },
     })
   );
@@ -222,8 +223,8 @@ export const gotoCustomerInvoices = () => dispatch => {
  * Pushes the Customer Requisitions route onto the main navigation stack.
  */
 export const gotoCustomerRequisitions = () =>
-  NavigationActions.navigate({
-    routeName: ROUTES.CUSTOMER_REQUISITIONS,
+  CommonActions.navigate({
+    name: ROUTES.CUSTOMER_REQUISITIONS,
     params: {
       title: navStrings.customer_requisitions,
     },
@@ -233,8 +234,8 @@ export const gotoCustomerRequisitions = () =>
  * Pushes the Supplier Invoices route onto the main navigation stack.
  */
 export const gotoSupplierInvoices = () =>
-  NavigationActions.navigate({
-    routeName: ROUTES.SUPPLIER_INVOICES,
+  CommonActions.navigate({
+    name: ROUTES.SUPPLIER_INVOICES,
     params: {
       title: navStrings.supplier_invoices,
     },
@@ -244,8 +245,8 @@ export const gotoSupplierInvoices = () =>
  * Pushes the Supplier Requisitions route onto the main navigation stack.
  */
 export const gotoSupplierRequisitions = () =>
-  NavigationActions.navigate({
-    routeName: ROUTES.SUPPLIER_REQUISITIONS,
+  CommonActions.navigate({
+    name: ROUTES.SUPPLIER_REQUISITIONS,
     params: {
       title: navStrings.supplier_requisitions,
     },
@@ -255,8 +256,8 @@ export const gotoSupplierRequisitions = () =>
  * Pushes the Stocktakes route onto the main navigation stack.
  */
 export const gotoStocktakes = () =>
-  NavigationActions.navigate({
-    routeName: ROUTES.STOCKTAKES,
+  CommonActions.navigate({
+    name: ROUTES.STOCKTAKES,
     params: {
       title: navStrings.stocktakes,
     },
@@ -266,26 +267,27 @@ export const gotoStocktakes = () =>
  * Pushes the Stock route onto the main navigation stack.
  */
 export const gotoStock = () =>
-  NavigationActions.navigate({
-    routeName: ROUTES.STOCK,
+  CommonActions.navigate({
+    name: ROUTES.STOCK,
     params: {
       title: navStrings.current_stock,
     },
   });
 
 /**
- * Action creator for navigating to the SupplierRequisition screen.
+ * Action creator for navigating to the Stocktake Manage screen.
  *
- * @param {Object} requisition The requisition to pass to the next screen.
+ * @param {String} stocktakeName The name of the stocktake to pass to the next screen.
+ * @param {Object} stocktake The stocktake to pass to the next screen.
  */
 export const gotoStocktakeManagePage = (stocktakeName, stocktake) => dispatch => {
-  const currentRouteName = RootNavigator.getCurrentRouteName();
+  const currentName = RootNavigator.getCurrentRouteName();
 
   const navigationActionCreator =
-    currentRouteName === ROUTES.STOCKTAKES ? NavigationActions.navigate : StackActions.replace;
+    currentName === ROUTES.STOCKTAKES ? CommonActions.navigate : StackActions.replace;
 
   const navigationParameters = {
-    routeName: ROUTES.STOCKTAKE_MANAGER,
+    name: ROUTES.STOCKTAKE_MANAGER,
     params: {
       stocktakeName,
       stocktake,
@@ -305,15 +307,15 @@ export const gotoStocktakeManagePage = (stocktakeName, stocktake) => dispatch =>
  * @param {Object} stocktake  The requisition to navigate to.
  */
 export const gotoStocktakeEditPage = stocktake => dispatch => {
-  const currentRouteName = RootNavigator.getCurrentRouteName();
+  const currentName = RootNavigator.getCurrentRouteName();
 
   // If navigating from the stocktakesPage, go straight to the StocktakeEditPage. Otherwise,
   // replace the current page as the user is coming from StocktakeManagePage.
   const navigationActionCreator =
-    currentRouteName === ROUTES.STOCKTAKES ? NavigationActions.navigate : StackActions.replace;
+    currentName === ROUTES.STOCKTAKES ? CommonActions.navigate : StackActions.replace;
 
   const navigationParameters = {
-    routeName: ROUTES.STOCKTAKE_EDITOR,
+    name: ROUTES.STOCKTAKE_EDITOR,
     params: { title: navStrings.stocktake, stocktake, pageObject: stocktake },
   };
 
@@ -344,8 +346,8 @@ export const gotoCustomerInvoice = transaction => dispatch => {
     });
   }
 
-  const navigationAction = NavigationActions.navigate({
-    routeName: ROUTES.CUSTOMER_INVOICE,
+  const navigationAction = CommonActions.navigate({
+    name: ROUTES.CUSTOMER_INVOICE,
     params: {
       title: `${isCredit ? navStrings.credit : navStrings.invoice} ${transaction.serialNumber}`,
       transaction,
@@ -383,8 +385,8 @@ export const gotoSupplierInvoice = transaction => dispatch => {
   const invoiceTitle = `${navStrings.invoice} ${transaction.serialNumber}`;
   const creditTitle = `${navStrings.supplier_credit} ${transaction.serialNumber}`;
 
-  const navigationAction = NavigationActions.navigate({
-    routeName: ROUTES.SUPPLIER_INVOICE,
+  const navigationAction = CommonActions.navigate({
+    name: ROUTES.SUPPLIER_INVOICE,
     params: {
       title: isSupplierInvoice ? invoiceTitle : creditTitle,
       transaction,
@@ -406,8 +408,8 @@ export const gotoSupplierInvoice = transaction => dispatch => {
 export const gotoSupplierRequisition = requisition => dispatch => {
   batch(() => {
     dispatch(
-      NavigationActions.navigate({
-        routeName: ROUTES.SUPPLIER_REQUISITION,
+      CommonActions.navigate({
+        name: ROUTES.SUPPLIER_REQUISITION,
         params: {
           title: `${navStrings.requisition} ${requisition.serialNumber}`,
           requisition,
@@ -427,8 +429,8 @@ export const gotoSupplierRequisition = requisition => dispatch => {
 export const gotoCustomerRequisition = requisition => dispatch => {
   batch(() => {
     dispatch(
-      NavigationActions.navigate({
-        routeName: ROUTES.CUSTOMER_REQUISITION,
+      CommonActions.navigate({
+        name: ROUTES.CUSTOMER_REQUISITION,
         params: {
           title: `${navStrings.requisition} ${requisition.serialNumber}`,
           requisition,
@@ -546,17 +548,17 @@ export const updateStocktake = (stocktake, itemIds, name = '') => dispatch => {
 };
 
 export const gotoFridgeDetailPage = locationID => async dispatch => {
-  dispatch(NavigationActions.navigate({ routeName: ROUTES.FRIDGE_DETAIL, params: { locationID } }));
+  dispatch(CommonActions.navigate({ name: ROUTES.FRIDGE_DETAIL, params: { locationID } }));
 };
 
-export const gotoNewSensorPage = () => NavigationActions.navigate({ routeName: ROUTES.SENSOR_NEW });
+export const gotoNewSensorPage = () => CommonActions.navigate({ name: ROUTES.SENSOR_NEW });
 
 export const gotoEditSensorPage = sensor =>
-  NavigationActions.navigate({ routeName: ROUTES.SENSOR_EDIT, params: { sensor } });
+  CommonActions.navigate({ name: ROUTES.SENSOR_EDIT, params: { sensor } });
 
 export const gotoVaccineDispensingPage = () => async dispatch => {
   batch(() => {
     dispatch(VaccinePrescriptionActions.create());
-    dispatch(NavigationActions.navigate({ routeName: ROUTES.VACCINE_PRESCRIPTION }));
+    dispatch(CommonActions.navigate({ name: ROUTES.VACCINE_PRESCRIPTION }));
   });
 };
