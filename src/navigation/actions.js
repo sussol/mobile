@@ -292,12 +292,12 @@ export const gotoStocktakeManagePage = (stocktakeName, stocktake) => dispatch =>
   if (currentName === ROUTES.STOCKTAKES) {
     batch(() => {
       dispatch(CommonActions.navigate({ name, params }));
-      dispatch(FinaliseActions.setFinaliseItem(stocktake));
+      dispatch(FinaliseActions.setFinaliseItem(null));
     });
   } else {
     batch(() => {
       dispatch(StackActions.replace(name, params));
-      dispatch(FinaliseActions.setFinaliseItem(stocktake));
+      dispatch(FinaliseActions.setFinaliseItem(null));
     });
   }
 };
