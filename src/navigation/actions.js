@@ -296,7 +296,7 @@ export const gotoStocktakeManagePage = (stocktakeName, stocktake) => dispatch =>
     });
   } else {
     batch(() => {
-      dispatch(StackActions.navigate(name, params));
+      dispatch(StackActions.replace(name, params));
       dispatch(FinaliseActions.setFinaliseItem(stocktake));
     });
   }
