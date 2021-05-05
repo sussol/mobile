@@ -282,22 +282,24 @@ export const gotoStock = () =>
 export const gotoStocktakeManagePage = (stocktakeName, stocktake) => dispatch => {
   const currentName = RootNavigator.getCurrentRouteName();
 
-  const navigationActionCreator =
-    currentName === ROUTES.STOCKTAKES ? CommonActions.navigate : StackActions.replace;
-
-  const navigationParameters = {
-    name: ROUTES.STOCKTAKE_MANAGER,
-    params: {
-      stocktakeName,
-      stocktake,
-      pageObject: stocktake,
-    },
+  const name = ROUTES.STOCKTAKE_MANAGER;
+  const params = {
+    stocktakeName,
+    stocktake,
+    pageObject: stocktake,
   };
 
-  batch(() => {
-    dispatch(navigationActionCreator(navigationParameters));
-    dispatch(FinaliseActions.setFinaliseItem(null));
-  });
+  if (currentName === ROUTES.STOCKTAKES) {
+    batch(() => {
+      dispatch(CommonActions.navigate({ name, params }));
+      dispatch(FinaliseActions.setFinaliseItem(stocktake));
+    });
+  } else {
+    batch(() => {
+      dispatch(StackActions.navigate(name, params));
+      dispatch(FinaliseActions.setFinaliseItem(stocktake));
+    });
+  }
 };
 
 /**
@@ -307,21 +309,22 @@ export const gotoStocktakeManagePage = (stocktakeName, stocktake) => dispatch =>
  */
 export const gotoStocktakeEditPage = stocktake => dispatch => {
   const currentName = RootNavigator.getCurrentRouteName();
+  const name = ROUTES.STOCKTAKE_EDITOR;
+  const params = { title: navStrings.stocktake, stocktake, pageObject: stocktake };
 
   // If navigating from the stocktakesPage, go straight to the StocktakeEditPage. Otherwise,
   // replace the current page as the user is coming from StocktakeManagePage.
-  const navigationActionCreator =
-    currentName === ROUTES.STOCKTAKES ? CommonActions.navigate : StackActions.replace;
-
-  const navigationParameters = {
-    name: ROUTES.STOCKTAKE_EDITOR,
-    params: { title: navStrings.stocktake, stocktake, pageObject: stocktake },
-  };
-
-  batch(() => {
-    dispatch(navigationActionCreator(navigationParameters));
-    dispatch(FinaliseActions.setFinaliseItem(stocktake));
-  });
+  if (currentName === ROUTES.STOCKTAKES) {
+    batch(() => {
+      dispatch(CommonActions.navigate({ name, params }));
+      dispatch(FinaliseActions.setFinaliseItem(stocktake));
+    });
+  } else {
+    batch(() => {
+      dispatch(StackActions.replace(name, params));
+      dispatch(FinaliseActions.setFinaliseItem(stocktake));
+    });
+  }
 };
 
 /**
