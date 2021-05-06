@@ -54,7 +54,7 @@
     ]
   },
   "dependencies": {
-    "@bugsnag/react-native": "^7.9.4",
+    "@bugsnag/react-native": "^7.9.6",
     "@react-native-async-storage/async-storage": "^1.15.4",
     "@react-native-community/checkbox": "^0.5.7",
     "@react-native-community/datetimepicker": "^3.4.7",
