@@ -115,7 +115,7 @@
     "set-manipulator": "^0.3.1",
     "sussol-utilities": "^0.5.1",
     "valid-url": "^1.0.9",
-    "victory-native": "^35.3.2"
+    "victory-native": "^35.3.3"
   },
   "devDependencies": {
     "@babel/core": "^7.14.0",
