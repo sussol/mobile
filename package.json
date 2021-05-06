@@ -130,7 +130,7 @@
     "eslint-plugin-react": "^7.23.2",
     "husky": "^4.2.3",
     "lint-staged": "^10.5.4",
-    "metro-react-native-babel-preset": "^0.64.0",
+    "metro-react-native-babel-preset": "^0.66.0",
     "prettier": "^2.2.1"
   }
 }
