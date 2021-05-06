@@ -73,12 +73,12 @@ export const goBack = () => dispatch => {
       const prescriptions = UIDatabase.objects('Prescription').filtered('status != "finalised"');
       UIDatabase.delete('Transaction', prescriptions);
 
-      const prevName = RootNavigator.getPrevRouteName();
+      const prevRouteName = RootNavigator.getPrevRouteName();
 
       const navigateBack = () =>
         dispatch({
           ...CommonActions.goBack(),
-          payload: { prevName },
+          payload: { prevRouteName },
         });
 
       const cleanUp = () => {
