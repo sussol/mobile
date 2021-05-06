@@ -55,7 +55,7 @@
   },
   "dependencies": {
     "@bugsnag/react-native": "^7.9.4",
-    "@react-native-async-storage/async-storage": "^1.15.2",
+    "@react-native-async-storage/async-storage": "^1.15.4",
     "@react-native-community/checkbox": "^0.5.7",
     "@react-native-community/datetimepicker": "^3.4.6",
     "@react-native-community/masked-view": "^0.1.7",
