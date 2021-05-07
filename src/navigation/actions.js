@@ -280,7 +280,7 @@ export const gotoStock = () =>
  * @param {Object} stocktake The stocktake to pass to the next screen.
  */
 export const gotoStocktakeManagePage = (stocktakeName, stocktake) => dispatch => {
-  const currentName = RootNavigator.getCurrentRouteName();
+  const currentRouteName = RootNavigator.getCurrentRouteName();
 
   const name = ROUTES.STOCKTAKE_MANAGER;
   const params = {
@@ -289,7 +289,7 @@ export const gotoStocktakeManagePage = (stocktakeName, stocktake) => dispatch =>
     pageObject: stocktake,
   };
 
-  if (currentName === ROUTES.STOCKTAKES) {
+  if (currentRouteName === ROUTES.STOCKTAKES) {
     batch(() => {
       dispatch(CommonActions.navigate({ name, params }));
       dispatch(FinaliseActions.setFinaliseItem(null));
