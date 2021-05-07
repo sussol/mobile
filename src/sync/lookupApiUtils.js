@@ -14,6 +14,7 @@ import { getAuthHeader, AUTH_ERROR_CODES } from 'sussol-utilities';
 import { UIDatabase } from '../database';
 import { createRecord, parseBoolean, parseDate, parseNumber } from '../database/utilities';
 import { SETTINGS_KEYS } from '../settings/index';
+import { generalStrings } from '../localization/index';
 
 const ERROR_CODES = {
   ...AUTH_ERROR_CODES,
@@ -22,6 +23,7 @@ const ERROR_CODES = {
 
 const RESOURCES = {
   PATIENT: '/api/v4/patient',
+  PATIENT_HISTORY: '/api/v4/patient_history',
   PRESCRIBER: '/api/v4/prescriber',
   NAME_STORE_JOIN: '/api/v4/name_store_join',
 };
@@ -123,6 +125,12 @@ export const getPatientRequestUrl = params => {
   return endpoint + queryString;
 };
 
+export const getPatientHistoryRequestUrl = id => {
+  const endpoint = RESOURCES.PATIENT_HISTORY;
+  const queryString = `?id=${id}`;
+  return `${endpoint}${queryString}`;
+};
+
 export const getPrescriberRequestUrl = params => {
   const endpoint = RESOURCES.PRESCRIBER;
   const queryString = getPrescriberQueryString(params);
@@ -188,6 +196,44 @@ const processResponse = response => {
     case 401:
       throw new BugsnagError(ERROR_CODES.INVALID_PASSWORD, { url, headers });
   }
+};
+
+export const processPatientHistoryResponse = response => {
+  const result = processResponse(response);
+  const patientHistory = [];
+  result.forEach(({ clinician, confirm_date, transLines }) =>
+    transLines.forEach(
+      ({
+        ID: id,
+        quantity: totalQuantity,
+        item_name: itemName,
+        itemLine,
+        medicineAdministrator,
+      }) => {
+        const { item } = itemLine;
+        const { code: itemCode, doses } = item;
+        const prescriber = clinician
+          ? `${clinician.first_name} ${clinician.last_name}`.trim()
+          : generalStrings.not_available;
+        const vaccinator = medicineAdministrator
+          ? `${medicineAdministrator.first_name} ${medicineAdministrator.last_name}`.trim()
+          : generalStrings.not_available;
+
+        patientHistory.push({
+          id,
+          confirmDate: parseDate(confirm_date),
+          doses,
+          itemCode,
+          itemName,
+          prescriber,
+          totalQuantity,
+          vaccinator,
+        });
+      }
+    )
+  );
+
+  return patientHistory;
 };
 
 export const processPatientResponse = response => {
