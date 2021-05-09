@@ -7,7 +7,6 @@
 import React from 'react';
 import { ActivityIndicator, View, Text } from 'react-native';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 
 import { PREFERENCE_KEYS } from '../../database/utilities/preferenceConstants';
 import { MODALS } from '../constants';
@@ -18,8 +17,6 @@ import { useLocalAndRemotePatientHistory } from '../../hooks/useLocalAndRemoteHi
 
 import { PageButton } from '..';
 import { FlexView } from '../FlexView';
-
-import { PatientActions } from '../../actions/PatientActions';
 
 import { WHITE, APP_FONT_FAMILY, SUSSOL_ORANGE, APP_GENERAL_FONT_SIZE } from '../../globalStyles';
 import { dispensingStrings, generalStrings } from '../../localization';
@@ -49,11 +46,11 @@ EmptyComponent.propTypes = {
   searchedWithNoResults: PropTypes.bool.isRequired,
 };
 
-const SearchOnlineButton = ({ loading, patient, search }) => {
+const SearchOnlineButton = ({ loading, search }) => {
   const canView = UIDatabase.getPreference(PREFERENCE_KEYS.CAN_VIEW_ALL_PATIENTS_HISTORY);
   if (!canView) return null;
 
-  const onPress = () => search(patient);
+  const onPress = () => search();
 
   return (
     <PageButton
@@ -64,19 +61,27 @@ const SearchOnlineButton = ({ loading, patient, search }) => {
     />
   );
 };
+
 SearchOnlineButton.propTypes = {
   loading: PropTypes.bool.isRequired,
-  patient: PropTypes.object.isRequired,
   search: PropTypes.func.isRequired,
 };
 
-const PatientHistory = ({ patient }) => {
-  const columns = React.useMemo(() => getColumns(MODALS.PATIENT_HISTORY), []);
+export const PatientHistoryModal = ({ isVaccine, patientId, patientHistory, sortKey }) => {
+  const columns = React.useMemo(
+    () => getColumns(isVaccine ? MODALS.VACCINE_HISTORY : MODALS.PATIENT_HISTORY),
+    []
+  );
+  // const { id: patientId } = patient;
   const [
     { data, loading, searchedWithNoResults, error },
     fetchOnline,
-  ] = useLocalAndRemotePatientHistory(patient, []);
-
+  ] = useLocalAndRemotePatientHistory({
+    isVaccine,
+    patientId,
+    initialValue: patientHistory,
+    sortKey,
+  });
   return (
     <View style={localStyles.mainContainer}>
       <SimpleTable
@@ -91,27 +96,23 @@ const PatientHistory = ({ patient }) => {
           />
         }
       />
-      <SearchOnlineButton loading={loading} search={fetchOnline} patient={patient} />
+      <SearchOnlineButton loading={loading} search={fetchOnline} />
     </View>
   );
 };
-
-const mapStateToProps = state => {
-  const { patient } = state;
-  return { patient };
-};
-
-const mapDispatchToProps = dispatch => ({
-  onSortColumn: sortKey => dispatch(PatientActions.sortPatientHistory(sortKey)),
-});
-
-export const PatientHistoryModal = connect(mapStateToProps, mapDispatchToProps)(PatientHistory);
 
 const localStyles = {
   mainContainer: { backgroundColor: WHITE, flex: 1 },
   placeholder: { fontFamily: APP_FONT_FAMILY, fontSize: 20 },
 };
 
-PatientHistory.propTypes = {
-  patient: PropTypes.object.isRequired,
+PatientHistoryModal.defaultProps = {
+  isVaccine: false,
+};
+
+PatientHistoryModal.propTypes = {
+  isVaccine: PropTypes.bool,
+  patientId: PropTypes.string.isRequired,
+  patientHistory: PropTypes.array.isRequired,
+  sortKey: PropTypes.string.isRequired,
 };

@@ -7,13 +7,12 @@ import {
 } from '../sync/lookupApiUtils';
 import { useFetch } from './useFetch';
 import { useThrottled } from './useThrottled';
-import { selectSortedPatientHistory } from '../selectors/patient';
 
 const initialState = (initialValue = []) => ({
   data: initialValue,
   loading: false,
   error: false,
-  searchedWithNoResults: false,
+  searchedWithNoResults: true,
 });
 
 const reducer = (state, action) => {
@@ -60,7 +59,12 @@ const reducer = (state, action) => {
  * Merges the states such that there is a single state value for 'data', 'loading' etc, rather than
  * having to track multiple.
  */
-export const useLocalAndRemotePatientHistory = (patient, initialValue = []) => {
+export const useLocalAndRemotePatientHistory = ({
+  isVaccine,
+  patientId,
+  sortKey,
+  initialValue = [],
+}) => {
   const [{ data, loading, searchedWithNoResults, error }, dispatch] = useReducer(
     reducer,
     initialValue,
@@ -97,41 +101,16 @@ export const useLocalAndRemotePatientHistory = (patient, initialValue = []) => {
     }
   }, [fetchError]);
 
-  // Fetch local history on load
-  useEffect(() => {
-    dispatch({ type: 'fetch_start' });
-    getLocalHistory(patient);
-  }, [patient]);
-
   const onPressSearchOnline = () => {
-    const { currentPatient } = patient;
-    const { id } = currentPatient;
-
-    const responseHandler = getPatientHistoryResponseProcessor(patient);
+    const responseHandler = getPatientHistoryResponseProcessor({ isVaccine, sortKey });
     dispatch({ type: 'clear' });
     refresh();
     dispatch({ type: 'fetch_start' });
     fetch(
-      getPatientHistoryRequestUrl(id),
+      getPatientHistoryRequestUrl(patientId),
       { headers: { authorization: getAuthorizationHeader() } },
       { responseHandler }
     );
-  };
-
-  const getLocalHistory = () => {
-    refresh();
-    const patientHistory = selectSortedPatientHistory({ patient });
-
-    if (patientHistory.length) {
-      return dispatch({
-        type: 'fetch_success',
-        payload: {
-          data: patientHistory,
-        },
-      });
-    }
-
-    return dispatch({ type: 'fetch_no_results' });
   };
 
   const throttledSearchOnline = useThrottled(onPressSearchOnline, 500, []);

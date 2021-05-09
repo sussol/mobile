@@ -199,7 +199,11 @@ const processResponse = response => {
   }
 };
 
-export const getPatientHistoryResponseProcessor = ({ isAscending, sortKey }) => response => {
+export const getPatientHistoryResponseProcessor = ({
+  isVaccine,
+  sortKey,
+  isAscending = true,
+}) => response => {
   const result = processResponse(response);
   const patientHistory = [];
   result.forEach(({ clinician, confirm_date, transLines }) =>
@@ -220,10 +224,14 @@ export const getPatientHistoryResponseProcessor = ({ isAscending, sortKey }) => 
           ? `${medicineAdministrator.first_name} ${medicineAdministrator.last_name}`.trim()
           : generalStrings.not_available;
 
+        if (isVaccine && !item.is_vaccine) return;
+        const confirmDate = parseDate(confirm_date);
+
         patientHistory.push({
           id,
-          confirmDate: parseDate(confirm_date),
-          doses,
+          confirmDate,
+          prescriptionDate: confirmDate,
+          doses: totalQuantity * doses,
           itemCode,
           itemName,
           prescriber,
