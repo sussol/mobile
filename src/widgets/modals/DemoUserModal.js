@@ -18,6 +18,7 @@ import { authStrings, generalStrings, demoUserModalStrings } from '../../localiz
 
 import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
 import { ModalContainer } from './ModalContainer';
+import { APP_FONT_FAMILY } from '../../globalStyles/fonts';
 
 const STATUS = {
   SUBMIT: 'submit',
@@ -179,6 +180,9 @@ export class DemoUserModal extends React.Component {
             </View>
             <View style={globalStyles.horizontalContainer}>
               <TextInput
+                ref={reference =>
+                  reference && reference.setNativeProps({ style: { fontFamily: APP_FONT_FAMILY } })
+                }
                 style={globalStyles.authFormTextInputStyle}
                 placeholder={authStrings.password}
                 placeholderTextColor={SUSSOL_ORANGE}
@@ -193,6 +197,9 @@ export class DemoUserModal extends React.Component {
             </View>
             <View style={globalStyles.horizontalContainer}>
               <TextInput
+                ref={reference =>
+                  reference && reference.setNativeProps({ style: { fontFamily: APP_FONT_FAMILY } })
+                }
                 style={globalStyles.authFormTextInputStyle}
                 placeholder={authStrings.repeat_password}
                 placeholderTextColor={SUSSOL_ORANGE}

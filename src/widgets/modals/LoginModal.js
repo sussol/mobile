@@ -23,6 +23,7 @@ import { getModalTitle, MODAL_KEYS } from '../../utilities';
 import { setCurrencyLocalisation } from '../../localization/currency';
 import { setDateLocale } from '../../localization/utilities';
 import { UIDatabase } from '../../database';
+import { APP_FONT_FAMILY } from '../../globalStyles/fonts';
 
 const AUTH_STATUSES = {
   UNAUTHENTICATED: 'unauthenticated',
@@ -194,6 +195,9 @@ export class LoginModal extends React.Component {
               <TextInput
                 ref={reference => {
                   this.passwordInputRef = reference;
+                  this.passwordInputRef =
+                    reference &&
+                    reference.setNativeProps({ style: { fontFamily: APP_FONT_FAMILY } });
                 }}
                 style={globalStyles.authFormTextInputStyle}
                 autoCompleteType="password"

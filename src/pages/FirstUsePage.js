@@ -17,6 +17,7 @@ import { getAppVersion } from '../settings';
 import { DemoUserModal } from '../widgets/modals';
 
 import globalStyles, { SUSSOL_ORANGE, WARM_GREY } from '../globalStyles';
+import { APP_FONT_FAMILY } from '../globalStyles/fonts';
 
 const STATUSES = {
   UNINITIALISED: 'uninitialised',
@@ -179,7 +180,8 @@ export class FirstUsePageComponent extends React.Component {
           <View style={globalStyles.horizontalContainer}>
             <TextInput
               ref={reference => {
-                this.passwordInputRef = reference;
+                this.passwordInputRef =
+                  reference && reference.setNativeProps({ style: { fontFamily: APP_FONT_FAMILY } });
               }}
               style={globalStyles.authFormTextInputStyle}
               autoCompleteType="password"
