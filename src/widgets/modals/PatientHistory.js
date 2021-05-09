@@ -71,7 +71,6 @@ SearchOnlineButton.propTypes = {
 };
 
 const PatientHistory = ({ patient }) => {
-  // const { isAscending, sortKey } = patient;
   const columns = React.useMemo(() => getColumns(MODALS.PATIENT_HISTORY), []);
   const [
     { data, loading, searchedWithNoResults, error },

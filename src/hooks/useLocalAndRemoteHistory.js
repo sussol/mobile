@@ -3,7 +3,7 @@ import {
   getAuthorizationHeader,
   getPatientHistoryRequestUrl,
   getServerURL,
-  processPatientHistoryResponse,
+  getPatientHistoryResponseProcessor,
 } from '../sync/lookupApiUtils';
 import { useFetch } from './useFetch';
 import { useThrottled } from './useThrottled';
@@ -106,13 +106,15 @@ export const useLocalAndRemotePatientHistory = (patient, initialValue = []) => {
   const onPressSearchOnline = () => {
     const { currentPatient } = patient;
     const { id } = currentPatient;
+
+    const responseHandler = getPatientHistoryResponseProcessor(patient);
     dispatch({ type: 'clear' });
     refresh();
     dispatch({ type: 'fetch_start' });
     fetch(
       getPatientHistoryRequestUrl(id),
       { headers: { authorization: getAuthorizationHeader() } },
-      { responseHandler: processPatientHistoryResponse }
+      { responseHandler }
     );
   };
 

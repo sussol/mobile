@@ -13,6 +13,7 @@ import { getAuthHeader, AUTH_ERROR_CODES } from 'sussol-utilities';
 
 import { UIDatabase } from '../database';
 import { createRecord, parseBoolean, parseDate, parseNumber } from '../database/utilities';
+import { sortDataBy } from '../utilities';
 import { SETTINGS_KEYS } from '../settings/index';
 import { generalStrings } from '../localization/index';
 
@@ -198,7 +199,7 @@ const processResponse = response => {
   }
 };
 
-export const processPatientHistoryResponse = response => {
+export const getPatientHistoryResponseProcessor = ({ isAscending, sortKey }) => response => {
   const result = processResponse(response);
   const patientHistory = [];
   result.forEach(({ clinician, confirm_date, transLines }) =>
@@ -233,7 +234,7 @@ export const processPatientHistoryResponse = response => {
     )
   );
 
-  return patientHistory;
+  return patientHistory ? sortDataBy(patientHistory.slice(), sortKey, isAscending) : patientHistory;
 };
 
 export const processPatientResponse = response => {
