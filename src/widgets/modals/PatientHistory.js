@@ -9,8 +9,10 @@ import { ActivityIndicator, View, Text } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import { PREFERENCE_KEYS } from '../../database/utilities/preferenceConstants';
 import { MODALS } from '../constants';
 
+import { UIDatabase } from '../../database';
 import { getColumns } from '../../pages/dataTableUtilities';
 import { useLocalAndRemotePatientHistory } from '../../hooks/useLocalAndRemoteHistory';
 
@@ -47,6 +49,27 @@ EmptyComponent.propTypes = {
   searchedWithNoResults: PropTypes.bool.isRequired,
 };
 
+const SearchOnlineButton = ({ loading, patient, search }) => {
+  const canView = UIDatabase.getPreference(PREFERENCE_KEYS.CAN_VIEW_ALL_PATIENTS_HISTORY);
+  if (!canView) return null;
+
+  const onPress = () => search(patient);
+
+  return (
+    <PageButton
+      text={generalStrings.search_online}
+      onPress={onPress}
+      style={{ margin: 10, alignSelf: 'center' }}
+      isDisabled={loading}
+    />
+  );
+};
+SearchOnlineButton.propTypes = {
+  loading: PropTypes.bool.isRequired,
+  patient: PropTypes.object.isRequired,
+  search: PropTypes.func.isRequired,
+};
+
 const PatientHistory = ({ patient }) => {
   // const { isAscending, sortKey } = patient;
   const columns = React.useMemo(() => getColumns(MODALS.PATIENT_HISTORY), []);
@@ -69,12 +92,7 @@ const PatientHistory = ({ patient }) => {
           />
         }
       />
-      <PageButton
-        text={generalStrings.search_online}
-        onPress={() => fetchOnline(patient)}
-        style={{ margin: 10, alignSelf: 'center' }}
-        isDisabled={loading}
-      />
+      <SearchOnlineButton loading={loading} search={fetchOnline} patient={patient} />
     </View>
   );
 };
