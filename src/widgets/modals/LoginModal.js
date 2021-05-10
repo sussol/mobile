@@ -194,7 +194,6 @@ export class LoginModal extends React.Component {
             <View style={globalStyles.horizontalContainer}>
               <TextInput
                 ref={reference => {
-                  this.passwordInputRef = reference;
                   this.passwordInputRef =
                     reference &&
                     reference.setNativeProps({ style: { fontFamily: APP_FONT_FAMILY } });
