@@ -1061,6 +1061,7 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.DATE,
     key: COLUMN_KEYS.PRESCRIPTION_DATE,
     title: tableStrings.prescription_date,
+    alignText: 'center',
     sortable: true,
     editable: false,
   },

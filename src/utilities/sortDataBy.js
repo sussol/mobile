@@ -50,6 +50,7 @@ const sortKeyToType = {
   positiveAdjustments: 'number',
   negativeAdjustments: 'number',
   vaccinator: 'string',
+  prescriptionDate: 'date',
 };
 
 /**

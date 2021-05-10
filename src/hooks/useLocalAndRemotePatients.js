@@ -181,8 +181,7 @@ export const useLocalAndRemotePatients = (initialValue = []) => {
   const getLocalPatients = searchParameters => {
     refresh();
 
-    const { lastName, firstName, dateOfBirth } = searchParameters;
-
+    const { lastName = '', firstName = '', dateOfBirth } = searchParameters;
     if (!(lastName || firstName || dateOfBirth)) {
       return dispatch({ type: 'clear' });
     }

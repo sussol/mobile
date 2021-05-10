@@ -5,109 +5,114 @@
  */
 
 import React from 'react';
-import { View, Text } from 'react-native';
+import { ActivityIndicator, View, Text } from 'react-native';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 
+import { PREFERENCE_KEYS } from '../../database/utilities/preferenceConstants';
 import { MODALS } from '../constants';
 
-import { getColumns, recordKeyExtractor, getItemLayout } from '../../pages/dataTableUtilities';
+import { UIDatabase } from '../../database';
+import { getColumns } from '../../pages/dataTableUtilities';
+import { useLocalAndRemotePatientHistory } from '../../hooks/useLocalAndRemoteHistory';
 
-import { DataTable, DataTableRow, DataTableHeaderRow } from '../DataTable';
-import { FlexRow } from '../FlexRow';
+import { PageButton } from '..';
+import { FlexView } from '../FlexView';
 
-import { selectSortedPatientHistory } from '../../selectors/patient';
-import { PatientActions } from '../../actions/PatientActions';
+import { WHITE, APP_FONT_FAMILY, SUSSOL_ORANGE, APP_GENERAL_FONT_SIZE } from '../../globalStyles';
+import { dispensingStrings, generalStrings } from '../../localization';
+import { SimpleTable } from '../SimpleTable';
 
-import { WHITE, APP_FONT_FAMILY } from '../../globalStyles';
-import { dispensingStrings } from '../../localization';
+const getMessage = (noResults, error) => {
+  if (noResults) return dispensingStrings.no_history_for_this_patient;
+  if (error) return generalStrings.error_communicating_with_server;
+  return '';
+};
 
-const PatientHistory = ({ sortKey, onSortColumn, isAscending, data }) => {
-  const columns = React.useMemo(() => getColumns(MODALS.PATIENT_HISTORY), []);
+const EmptyComponent = ({ loading, error, searchedWithNoResults }) => (
+  <FlexView flex={1} justifyContent="center" alignItems="center" style={{ marginTop: 20 }}>
+    {loading ? (
+      <ActivityIndicator color={SUSSOL_ORANGE} size="small" />
+    ) : (
+      <Text style={{ fontFamily: APP_FONT_FAMILY, fontSize: APP_GENERAL_FONT_SIZE }}>
+        {getMessage(searchedWithNoResults, error)}
+      </Text>
+    )}
+  </FlexView>
+);
 
-  const renderHeader = React.useCallback(
-    () => (
-      <DataTableHeaderRow
-        columns={getColumns(MODALS.PATIENT_HISTORY)}
-        onPress={onSortColumn}
-        isAscending={isAscending}
-        sortKey={sortKey}
-      />
-    ),
-    [sortKey, isAscending]
-  );
+EmptyComponent.propTypes = {
+  loading: PropTypes.bool.isRequired,
+  error: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]).isRequired,
+  searchedWithNoResults: PropTypes.bool.isRequired,
+};
 
-  const getCallback = React.useCallback(colKey => {
-    switch (colKey) {
-      case '':
-        return null;
-      default:
-        return null;
-    }
-  });
+const SearchOnlineButton = ({ loading, search }) => {
+  const canView = UIDatabase.getPreference(PREFERENCE_KEYS.CAN_VIEW_ALL_PATIENTS_HISTORY);
+  if (!canView) return null;
 
-  const renderRow = React.useCallback(
-    listItem => {
-      const { item, index } = listItem;
-
-      const rowKey = recordKeyExtractor(item);
-      return (
-        <DataTableRow
-          rowData={item}
-          rowKey={rowKey}
-          columns={columns}
-          getCallback={getCallback}
-          rowIndex={index}
-        />
-      );
-    },
-    [columns]
-  );
+  const onPress = () => search();
 
   return (
+    <PageButton
+      text={generalStrings.search_online}
+      onPress={onPress}
+      style={{ margin: 10, alignSelf: 'center' }}
+      isDisabled={loading}
+    />
+  );
+};
+
+SearchOnlineButton.propTypes = {
+  loading: PropTypes.bool.isRequired,
+  search: PropTypes.func.isRequired,
+};
+
+export const PatientHistoryModal = ({ isVaccine, patientId, patientHistory, sortKey }) => {
+  const columns = React.useMemo(
+    () => getColumns(isVaccine ? MODALS.VACCINE_HISTORY : MODALS.PATIENT_HISTORY),
+    []
+  );
+  // const { id: patientId } = patient;
+  const [
+    { data, loading, searchedWithNoResults, error },
+    fetchOnline,
+  ] = useLocalAndRemotePatientHistory({
+    isVaccine,
+    patientId,
+    initialValue: patientHistory,
+    sortKey,
+  });
+  return (
     <View style={localStyles.mainContainer}>
-      {data.length ? (
-        <DataTable
-          renderRow={renderRow}
-          data={data}
-          renderHeader={renderHeader}
-          keyExtractor={recordKeyExtractor}
-          getItemLayout={getItemLayout}
-          columns={getColumns(MODALS.PATIENT_HISTORY)}
-        />
-      ) : (
-        <FlexRow alignItems="center" justifyContent="center" flex={1}>
-          <Text style={localStyles.placeholder}>
-            {dispensingStrings.no_history_for_this_patient}
-          </Text>
-        </FlexRow>
-      )}
+      <SimpleTable
+        data={data}
+        columns={columns}
+        ListEmptyComponent={
+          // eslint-disable-next-line react/jsx-wrap-multilines
+          <EmptyComponent
+            searchedWithNoResults={searchedWithNoResults}
+            error={error}
+            loading={loading}
+          />
+        }
+      />
+      <SearchOnlineButton loading={loading} search={fetchOnline} />
     </View>
   );
 };
-
-const mapStateToProps = state => {
-  const { patient } = state;
-  const { isAscending, sortKey } = patient;
-  const data = selectSortedPatientHistory(state);
-
-  return { isAscending, sortKey, data };
-};
-
-const mapDispatchToProps = dispatch => ({
-  onSortColumn: sortKey => dispatch(PatientActions.sortPatientHistory(sortKey)),
-});
-
-export const PatientHistoryModal = connect(mapStateToProps, mapDispatchToProps)(PatientHistory);
 
 const localStyles = {
   mainContainer: { backgroundColor: WHITE, flex: 1 },
   placeholder: { fontFamily: APP_FONT_FAMILY, fontSize: 20 },
 };
 
-PatientHistory.propTypes = {
+PatientHistoryModal.defaultProps = {
+  isVaccine: false,
+};
+
+PatientHistoryModal.propTypes = {
+  isVaccine: PropTypes.bool,
+  patientId: PropTypes.string.isRequired,
+  patientHistory: PropTypes.array.isRequired,
   sortKey: PropTypes.string.isRequired,
-  onSortColumn: PropTypes.func.isRequired,
-  isAscending: PropTypes.bool.isRequired,
-  data: PropTypes.array.isRequired,
 };
