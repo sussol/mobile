@@ -19,6 +19,7 @@ import { authStrings, generalStrings, demoUserModalStrings } from '../../localiz
 import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
 import { ModalContainer } from './ModalContainer';
 import { APP_FONT_FAMILY } from '../../globalStyles/fonts';
+import { FormPasswordInput } from '../FormInputs/FormPasswordInput';
 
 const STATUS = {
   SUBMIT: 'submit',
@@ -179,38 +180,21 @@ export class DemoUserModal extends React.Component {
               />
             </View>
             <View style={globalStyles.horizontalContainer}>
-              <TextInput
-                ref={reference =>
-                  reference && reference.setNativeProps({ style: { fontFamily: APP_FONT_FAMILY } })
-                }
-                style={globalStyles.authFormTextInputStyle}
-                placeholder={authStrings.password}
-                placeholderTextColor={SUSSOL_ORANGE}
-                underlineColorAndroid={SUSSOL_ORANGE}
+              <FormPasswordInput
                 value={password}
-                secureTextEntry
                 editable={status !== STATUS.SUBMITTING}
-                returnKeyType="next"
-                selectTextOnFocus
                 onChangeText={this.handleOnChangePassword}
+                returnKeyType="next"
               />
             </View>
             <View style={globalStyles.horizontalContainer}>
-              <TextInput
-                ref={reference =>
-                  reference && reference.setNativeProps({ style: { fontFamily: APP_FONT_FAMILY } })
-                }
-                style={globalStyles.authFormTextInputStyle}
-                placeholder={authStrings.repeat_password}
-                placeholderTextColor={SUSSOL_ORANGE}
-                underlineColorAndroid={SUSSOL_ORANGE}
+              <FormPasswordInput
                 value={repeatPassword}
-                secureTextEntry
                 editable={status !== STATUS.SUBMITTING}
-                returnKeyType="next"
-                selectTextOnFocus
                 onChangeText={this.handleOnChangeRepeatPassword}
                 onSubmitEditing={this.onDemoRequestSubmit}
+                placeholder={authStrings.repeat_password}
+                returnKeyType="next"
               />
             </View>
             <View style={globalStyles.authFormButtonContainer}>
