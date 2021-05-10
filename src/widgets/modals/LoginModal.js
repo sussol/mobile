@@ -23,6 +23,7 @@ import { getModalTitle, MODAL_KEYS } from '../../utilities';
 import { setCurrencyLocalisation } from '../../localization/currency';
 import { setDateLocale } from '../../localization/utilities';
 import { UIDatabase } from '../../database';
+import { FormPasswordInput } from '../FormInputs/FormPasswordInput';
 
 const AUTH_STATUSES = {
   UNAUTHENTICATED: 'unauthenticated',
@@ -191,20 +192,10 @@ export class LoginModal extends React.Component {
               />
             </View>
             <View style={globalStyles.horizontalContainer}>
-              <TextInput
-                ref={reference => {
-                  this.passwordInputRef = reference;
-                }}
-                style={globalStyles.authFormTextInputStyle}
-                autoCompleteType="password"
-                placeholder={authStrings.password}
-                placeholderTextColor={SUSSOL_ORANGE}
-                underlineColorAndroid={SUSSOL_ORANGE}
+              <FormPasswordInput
+                ref={this.passwordInputRef}
                 value={password}
-                secureTextEntry
                 editable={authStatus !== AUTH_STATUSES.AUTHENTICATING}
-                returnKeyType="done"
-                selectTextOnFocus
                 onChangeText={text => {
                   this.setState({ password: text, authStatus: AUTH_STATUSES.UNAUTHENTICATED });
                 }}

@@ -17,6 +17,7 @@ import { getAppVersion } from '../settings';
 import { DemoUserModal } from '../widgets/modals';
 
 import globalStyles, { SUSSOL_ORANGE, WARM_GREY } from '../globalStyles';
+import { FormPasswordInput } from '../widgets/FormInputs/FormPasswordInput';
 
 const STATUSES = {
   UNINITIALISED: 'uninitialised',
@@ -177,25 +178,15 @@ export class FirstUsePageComponent extends React.Component {
             />
           </View>
           <View style={globalStyles.horizontalContainer}>
-            <TextInput
-              ref={reference => {
-                this.passwordInputRef = reference;
-              }}
-              style={globalStyles.authFormTextInputStyle}
-              autoCompleteType="password"
-              placeholder="Sync Site Password"
-              placeholderTextColor={SUSSOL_ORANGE}
-              underlineColorAndroid={SUSSOL_ORANGE}
+            <FormPasswordInput
               value={syncSitePassword}
-              secureTextEntry
               editable={status !== STATUSES.INITIALISING}
-              returnKeyType="done"
-              selectTextOnFocus
               onChangeText={this.onChangePassword}
               onSubmitEditing={() => {
                 if (this.passwordInputRef) this.passwordInputRef.blur();
                 if (this.canAttemptLogin) this.onPressConnect();
               }}
+              placeholder="Sync Site Password"
             />
           </View>
           <SyncState style={localStyles.initialisationStateIcon} showText={false} />
