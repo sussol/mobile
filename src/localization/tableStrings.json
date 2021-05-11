@@ -98,7 +98,8 @@
     "incoming_stock_validation": "Editing the incoming stock quantity has reduced the closing stock below zero. The requisition cannot be finalised until the closing stock is above zero.",
     "outgoing_stock_validation": "Editing the outgoing stock balance has reduced the closing stock below zero. The requisition cannot be finalised until the closing stock is above zero.",
     "positive_adjustments_validation": "Editing the positive adjustments quantity has reduced the closing stock below zero. The requisition cannot be finalised until the closing stock is above zero.",
-    "negative_adjustments_validation": "Editing the negative adjustments quantity has reduced the closing stock below zero. The requisition cannot be finalised until the closing stock is above zero."
+    "negative_adjustments_validation": "Editing the negative adjustments quantity has reduced the closing stock below zero. The requisition cannot be finalised until the closing stock is above zero.",
+    "remote_store": "REMOTE STORE"
   },
   "fr": {
     "supplier_credit": "Crédit fournisseur",
