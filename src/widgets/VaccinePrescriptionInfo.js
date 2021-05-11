@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     fontFamily: APP_FONT_FAMILY,
     fontSize: 12,
   },
-  dropdown: { height: 20, marginTop: 0, marginBottom: 0, marginLeft: 0 },
+  dropdown: { height: 35, marginTop: 0, marginBottom: 0, marginLeft: 0 },
   headerContainer: {
     flex: 1,
     height: 40,

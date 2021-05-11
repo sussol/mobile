@@ -22,15 +22,19 @@ const reducer = (state, action) => {
     case 'fetch_success': {
       const { payload } = action;
       const { data } = payload;
-
-      return { ...state, data: data ?? [], loading: false, searchedWithNoResults: false };
+      const { data: initialData } = state;
+      const localIds = initialData.map(history => history.id);
+      const newData = (data ?? []).map(history => ({
+        ...history,
+        isRemote: localIds.includes(history.id) ? '' : '✓',
+      }));
+      return { ...state, data: newData, loading: false, searchedWithNoResults: false };
     }
     case 'fetch_start': {
       const { loading } = state;
 
       if (loading) return state;
-
-      return { ...state, loading: true, data: [], searchedWithNoResults: false, noMore: false };
+      return { ...state, loading: true, searchedWithNoResults: false, noMore: false };
     }
     case 'fetch_no_results': {
       return { ...state, data: [], searchedWithNoResults: true, loading: false };
@@ -101,9 +105,9 @@ export const useLocalAndRemotePatientHistory = ({
     }
   }, [fetchError]);
 
-  const onPressSearchOnline = () => {
+  const searchOnline = () => {
     const responseHandler = getPatientHistoryResponseProcessor({ isVaccine, sortKey });
-    dispatch({ type: 'clear' });
+
     refresh();
     dispatch({ type: 'fetch_start' });
     fetch(
@@ -113,7 +117,7 @@ export const useLocalAndRemotePatientHistory = ({
     );
   };
 
-  const throttledSearchOnline = useThrottled(onPressSearchOnline, 500, []);
+  const throttledSearchOnline = useThrottled(searchOnline, 500, []);
 
   return [{ data, loading, searchedWithNoResults, error }, throttledSearchOnline];
 };
