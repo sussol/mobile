@@ -16,21 +16,22 @@ export const PagesReducer = (state = {}, action) => {
   const { type } = action;
 
   switch (type) {
-    case 'Navigation/BACK': {
+    case 'GO_BACK': {
       const { payload } = action;
       const { prevRouteName } = payload || {};
       return { ...state, currentRoute: prevRouteName };
     }
 
-    case 'Navigation/REPLACE':
-    case 'Navigation/NAVIGATE': {
-      const { routeName, params } = action;
+    case 'REPLACE':
+    case 'NAVIGATE': {
+      const { payload } = action;
+      const { name, params } = payload;
       const { pageObject } = params ?? {};
 
-      const pageInitialiser = getPageInitialiser(routeName);
+      const pageInitialiser = getPageInitialiser(name);
       const pageInitialState = pageInitialiser(pageObject);
 
-      return { ...state, [routeName]: pageInitialState, currentRoute: routeName };
+      return { ...state, [name]: pageInitialState, currentRoute: name };
     }
 
     default: {

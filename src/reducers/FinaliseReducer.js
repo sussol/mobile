@@ -39,7 +39,7 @@ export const FinaliseReducer = (state = initialState(), action) => {
       return { ...state, finaliseItem };
     }
 
-    case 'Navigation/BACK': {
+    case 'GO_BACK': {
       return { ...state, finaliseItem: null };
     }
 

@@ -16,7 +16,7 @@ export const NameNoteReducer = (state = initialState(), action) => {
 
   switch (type) {
     case NAME_NOTE_ACTIONS.RESET:
-    case 'Navigation/BACK': {
+    case 'GO_BACK': {
       // reset if heading back
       return initialState();
     }
