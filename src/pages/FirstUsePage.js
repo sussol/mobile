@@ -13,8 +13,8 @@ import { Button } from 'react-native-ui-components';
 import { Synchroniser } from '../sync';
 
 import { SyncState } from '../widgets';
-import { getAppVersion } from '../settings';
 import { DemoUserModal } from '../widgets/modals';
+import packageJson from '../../package.json';
 
 import globalStyles, { SUSSOL_ORANGE, WARM_GREY } from '../globalStyles';
 import { FormPasswordInput } from '../widgets/FormInputs/FormPasswordInput';
@@ -30,14 +30,13 @@ export class FirstUsePageComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      appVersion: '',
       serverURL: '',
       syncSiteName: '',
       syncSitePassword: '',
       status: STATUSES.UNINITIALISED,
       isDemoUserModalOpen: false,
     };
-    this.setAppVersion();
+    this.appVersion = packageJson.version;
     this.siteNameInputRef = null;
     this.passwordInputRef = null;
     this.onPressConnect = this.onPressConnect.bind(this);
@@ -56,11 +55,6 @@ export class FirstUsePageComponent extends React.Component {
     } catch (error) {
       this.setState({ status: STATUSES.ERROR });
     }
-  }
-
-  async setAppVersion() {
-    const appVersion = await getAppVersion();
-    this.setState({ appVersion });
   }
 
   get canAttemptLogin() {
@@ -114,14 +108,7 @@ export class FirstUsePageComponent extends React.Component {
   handleDemoModalClose = () => this.setState({ isDemoUserModalOpen: false });
 
   render() {
-    const {
-      appVersion,
-      isDemoUserModalOpen,
-      serverURL,
-      status,
-      syncSiteName,
-      syncSitePassword,
-    } = this.state;
+    const { isDemoUserModalOpen, serverURL, status, syncSiteName, syncSitePassword } = this.state;
 
     return (
       <View style={[globalStyles.verticalContainer, localStyles.verticalContainer]}>
@@ -213,7 +200,7 @@ export class FirstUsePageComponent extends React.Component {
             />
           </View>
         </View>
-        <Text style={globalStyles.authWindowButtonText}> v{appVersion}</Text>
+        <Text style={globalStyles.authWindowButtonText}> v{this.appVersion}</Text>
         <DemoUserModal isOpen={isDemoUserModalOpen} onClose={this.handleDemoModalClose} />
       </View>
     );
