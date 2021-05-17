@@ -110,7 +110,11 @@ export class ItemBatch extends Realm.Object {
       throw new Error('Cannot set a negative item batch quantity');
     }
     let newNumberOfPacks = this.packSize ? quantity / this.packSize : 0;
-    if (newNumberOfPacks < 1 / this.dosesPerVial) newNumberOfPacks = 0;
+
+    if (this.dosesPerVial && newNumberOfPacks < 1 / this.dosesPerVial) {
+      newNumberOfPacks = 0;
+    }
+
     this.numberOfPacks = newNumberOfPacks;
   }
 
