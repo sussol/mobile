@@ -41,7 +41,8 @@ class BleService {
    * on the device.
    * @param {String} macAddress
    */
-  connectToDevice = async macAddress => this.manager.connectToDevice(macAddress);
+  connectToDevice = async (macAddress, options) =>
+    this.manager.connectToDevice(macAddress, options);
 
   /**
    * Connects to a device with the provided macAddress as well as discovering
