@@ -124,7 +124,7 @@ const downloadLogsFromSensor = sensor => async dispatch => {
             const temperatureLogs = await TemperatureLogManager().createLogs(
               downloadedLogsResult,
               sensor,
-              numberOfLogsToSave,
+              Math.min(numberOfLogsToSave, downloadedLogsResult.length),
               nextTimestamp.unix()
             );
 
