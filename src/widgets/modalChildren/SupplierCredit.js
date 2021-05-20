@@ -28,7 +28,7 @@ import { DropDown } from '../DropDown';
 import { selectUsingSupplierCreditCategories } from '../../selectors/modules';
 import { UIDatabase } from '../../database/index';
 import { APP_FONT_FAMILY } from '../../globalStyles/fonts';
-import { BLACK } from '../../globalStyles/colors';
+import { DARKER_GREY } from '../../globalStyles/colors';
 
 const SupplierCreditComponent = ({
   onSortColumn,
@@ -148,7 +148,7 @@ const localStyles = {
   mainContainer: { backgroundColor: WHITE, flex: 1 },
   noBatchesFont: {
     fontFamily: APP_FONT_FAMILY,
-    color: BLACK,
+    color: DARKER_GREY,
     fontSize: 20,
   },
 };
