@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -27,6 +27,8 @@ import { modalStrings, dispensingStrings } from '../../localization';
 import { DropDown } from '../DropDown';
 import { selectUsingSupplierCreditCategories } from '../../selectors/modules';
 import { UIDatabase } from '../../database/index';
+import { APP_FONT_FAMILY } from '../../globalStyles/fonts';
+import { BLACK } from '../../globalStyles/colors';
 
 const SupplierCreditComponent = ({
   onSortColumn,
@@ -78,26 +80,45 @@ const SupplierCreditComponent = ({
     [columns]
   );
 
+  const dataTableVisible = batches.length;
+  const supplierCreditCategoryVisible = dataTableVisible && usingSupplierCreditCategories;
+
   return (
     <View style={localStyles.mainContainer}>
-      {usingSupplierCreditCategories && (
+      {supplierCreditCategoryVisible ? (
         <DropDown
           headerValue={dispensingStrings.select_a_supplier_credit_category}
           values={categoryNames}
           selectedValue={categoryName}
           onValueChange={onSelectCategory}
         />
+      ) : (
+        <></>
       )}
-      <DataTable
-        renderRow={renderRow}
-        data={batches}
-        renderHeader={renderHeader}
-        keyExtractor={recordKeyExtractor}
-        getItemLayout={getItemLayout}
-        columns={columns}
-      />
+
+      {dataTableVisible ? (
+        <DataTable
+          renderRow={renderRow}
+          data={batches}
+          renderHeader={renderHeader}
+          keyExtractor={recordKeyExtractor}
+          getItemLayout={getItemLayout}
+          columns={columns}
+        />
+      ) : (
+        <View alignItems="center" flex={1}>
+          <FlexRow alignItems="center" flex={1}>
+            <Text style={localStyles.noBatchesFont}>{modalStrings.stock_no_batches}</Text>
+          </FlexRow>
+        </View>
+      )}
       <FlexRow alignItems="flex-end" justifyContent="flex-end">
-        <PageButton text={modalStrings.confirm} onPress={onSave} style={{ margin: 7 }} />
+        <PageButton
+          text={modalStrings.confirm}
+          onPress={onSave}
+          isDisabled={!dataTableVisible}
+          style={{ margin: 7 }}
+        />
       </FlexRow>
     </View>
   );
@@ -125,6 +146,11 @@ export const SupplierCredit = connect(mapStateToProps, mapDispatchToProps)(Suppl
 
 const localStyles = {
   mainContainer: { backgroundColor: WHITE, flex: 1 },
+  noBatchesFont: {
+    fontFamily: APP_FONT_FAMILY,
+    color: BLACK,
+    fontSize: 20,
+  },
 };
 
 SupplierCreditComponent.defaultProps = {
