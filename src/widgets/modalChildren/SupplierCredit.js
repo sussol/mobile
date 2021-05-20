@@ -80,7 +80,7 @@ const SupplierCreditComponent = ({
     [columns]
   );
 
-  const dataTableVisible = batches.length;
+  const dataTableVisible = !!batches.length;
   const supplierCreditCategoryVisible = dataTableVisible && usingSupplierCreditCategories;
 
   return (
