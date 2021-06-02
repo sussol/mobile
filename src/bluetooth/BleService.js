@@ -57,7 +57,6 @@ class BleService {
     // Note: adding the option `{ autoConnect: true }` prevents the sensors from connecting sometimes :shrug:
     if (await this.manager.isDeviceConnected(macAddress)) {
       await this.manager.cancelDeviceConnection(macAddress);
-    } else {
     }
 
     const device = await this.connectToDevice(macAddress);
