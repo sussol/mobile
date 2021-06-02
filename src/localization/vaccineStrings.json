@@ -62,7 +62,7 @@
     "E_UNKNOWN": "Error: unknown error occurred",
     "log_interval_set": "Log interval updated to {0}s",
     "E_SENSOR_SAVE": "Problem saving sensor details",
-    "E_DOWNLOAD_IN_PROGRESS": "A download is in progress, please try again soon",
+    "E_DOWNLOAD_IN_PROGRESS": "Currently downloading temperature logs, please try again soon",
     "E_INVALID_MAC_FORMAT": "Error: invalid mac address format",
     "is_paused": "PAUSED",
     "pause": "Pause",
