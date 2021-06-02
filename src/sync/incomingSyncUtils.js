@@ -581,6 +581,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       internalRecord = {
         id: record.ID,
         name: record.name,
+        barcode: record.barcode,
         code: record.code,
         phoneNumber: record.phone,
         billingAddress,

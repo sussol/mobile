@@ -94,7 +94,7 @@ const generateSyncData = (settings, recordType, record) => {
         country: record.country,
         bill_address1: record.addressOne,
         bill_address2: record.addressTwo,
-        barcode: `*${record.code}*`,
+        barcode: record.barcode ?? `*${record.code}*`,
         'charge code': record.code,
         currency_id: defaultCurrency?.id ?? '',
         female: String(record.female),
