@@ -70,7 +70,13 @@ const Header = ({ onSearchOnline, onNewPatient, loading }) => (
   <FlexRow justifyContent="center" alignItems="center">
     <Text style={localStyles.text}>{vaccineStrings.vaccine_dispense_step_one_title}</Text>
     <View style={{ flex: 1, marginLeft: 'auto' }} />
-    <PageButton text={generalStrings.search_online} onPress={onSearchOnline} isDisabled={loading} />
+    <PageButton text="Scan QR Code" />
+    <PageButton
+      style={{ marginLeft: 10 }}
+      text={generalStrings.search_online}
+      onPress={onSearchOnline}
+      isDisabled={loading}
+    />
     <PageButton
       style={{ marginLeft: 10 }}
       text={`${dispensingStrings.new} ${dispensingStrings.patient}`}

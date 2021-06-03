@@ -140,6 +140,7 @@ android {
     defaultConfig {
         applicationId "com.msupplymobile"
         minSdkVersion rootProject.ext.minSdkVersion
+        missingDimensionStrategy 'react-native-camera', 'general'
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode appVersionCode
         versionName getAppVersion()
