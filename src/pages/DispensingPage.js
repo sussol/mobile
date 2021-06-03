@@ -269,6 +269,7 @@ const Dispensing = ({
         />
       </ModalContainer>
       <ModalContainer
+        // eslint-disable-next-line max-len
         title={`${dispensingStrings.patient} ${dispensingStrings.history} - ${currentPatient?.name}`}
         onClose={cancelPatientEdit}
         isVisible={patientHistoryModalOpen}
@@ -355,7 +356,10 @@ const mapStateToProps = state => {
   );
   const insuranceModalOpen = selectInsuranceModalOpen(state);
   const data = selectSortedData(state);
-  const patientHistory = patient.currentPatient ? selectSortedPatientHistory({ patient }) : [];
+  const patientHistory =
+    patient.currentPatient && patient.currentPatient.transactions
+      ? selectSortedPatientHistory({ patient })
+      : [];
 
   const [usingPatientsDataSet, usingPrescribersDataSet] = selectDataSetInUse(state);
 
