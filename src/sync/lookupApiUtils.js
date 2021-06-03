@@ -252,6 +252,7 @@ export const processPatientResponse = response => {
       ID: id,
       name,
       code,
+      barcode,
       phone: phoneNumber,
       bill_address1: billAddress1,
       bill_address2: billAddress2,
@@ -271,6 +272,7 @@ export const processPatientResponse = response => {
     }) => ({
       id,
       name,
+      barcode,
       code,
       phoneNumber,
       billAddress1,
