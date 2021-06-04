@@ -7,7 +7,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { ActivityIndicator, Keyboard, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Keyboard, StyleSheet, Text, ToastAndroid, View } from 'react-native';
 
 import { batch, connect } from 'react-redux';
 
@@ -136,6 +136,12 @@ const PatientSelectComponent = ({
   const withLoadingIndicator = useLoadingIndicator();
   const [isQrModalOpen, toggleQrModal] = useToggle();
 
+  const onQrCodeRead = ({ data }) => {
+    // TODO: Some validation might be good here but don't know format..
+    toggleQrModal();
+    ToastAndroid.show(`${data} scanned`, ToastAndroid.LONG);
+  };
+
   const [
     { data, loading, gettingMore, searchedWithNoResults, error },
     onSearchOnline,
@@ -214,7 +220,7 @@ const PatientSelectComponent = ({
           <PageButtonWithOnePress text={buttonStrings.cancel} onPress={onCancelPrescription} />
         </FlexRow>
       )}
-      <QrScannerModal isOpen={isQrModalOpen} onClose={toggleQrModal} />
+      <QrScannerModal isOpen={isQrModalOpen} onBarCodeRead={onQrCodeRead} onClose={toggleQrModal} />
     </FlexView>
   );
 };

@@ -28,6 +28,7 @@
     "give_your_stocktake_a_name": "Give your stocktake a name",
     "got_it": "Got it",
     "more": "more",
+    "qr_scanner_header": "Scan QR Code",
     "record_stock_required_before_finalising": "You need to record how much stock is required before finalising",
     "record_stock_to_issue_before_finalising": "You need to record how much stock to issue before finalising",
     "remove_these_items": "Are you sure you want to remove these items?",
