@@ -47,6 +47,8 @@ import { DARKER_GREY, SUSSOL_ORANGE } from '../../globalStyles/colors';
 import { useLocalAndRemotePatients } from '../../hooks/useLocalAndRemotePatients';
 import { APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from '../../globalStyles/fonts';
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
+import { useToggle } from '../../hooks/useToggle';
+import { QrScannerModal } from '../modals/QrScannerModal';
 
 const getMessage = (noResults, error) => {
   if (noResults) return generalStrings.could_not_find_patient;
@@ -66,11 +68,11 @@ const EmptyComponent = ({ loading, error, searchedWithNoResults }) => (
   </FlexView>
 );
 
-const Header = ({ onSearchOnline, onNewPatient, loading }) => (
+const Header = ({ onSearchOnline, onNewPatient, loading, toggleQrModal }) => (
   <FlexRow justifyContent="center" alignItems="center">
     <Text style={localStyles.text}>{vaccineStrings.vaccine_dispense_step_one_title}</Text>
     <View style={{ flex: 1, marginLeft: 'auto' }} />
-    <PageButton text="Scan QR Code" />
+    <PageButton text="Scan QR Code" onPress={toggleQrModal} />
     <PageButton
       style={{ marginLeft: 10 }}
       text={generalStrings.search_online}
@@ -101,6 +103,7 @@ Header.propTypes = {
   onSearchOnline: PropTypes.func.isRequired,
   onNewPatient: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
+  toggleQrModal: PropTypes.func.isRequired,
 };
 
 EmptyComponent.propTypes = {
@@ -131,6 +134,7 @@ const PatientSelectComponent = ({
   completedForm,
 }) => {
   const withLoadingIndicator = useLoadingIndicator();
+  const [isQrModalOpen, toggleQrModal] = useToggle();
 
   const [
     { data, loading, gettingMore, searchedWithNoResults, error },
@@ -161,6 +165,7 @@ const PatientSelectComponent = ({
             loading={loading}
             onSearchOnline={() => onSearchOnline(completedForm)}
             onNewPatient={createPatient}
+            toggleQrModal={toggleQrModal}
           />
         }
       >
@@ -209,6 +214,7 @@ const PatientSelectComponent = ({
           <PageButtonWithOnePress text={buttonStrings.cancel} onPress={onCancelPrescription} />
         </FlexRow>
       )}
+      <QrScannerModal isOpen={isQrModalOpen} onClose={toggleQrModal} />
     </FlexView>
   );
 };
