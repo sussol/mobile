@@ -31,6 +31,7 @@ import {
   buttonStrings,
   dispensingStrings,
   generalStrings,
+  modalStrings,
   vaccineStrings,
 } from '../../localization';
 import globalStyles, { DARK_GREY } from '../../globalStyles';
@@ -72,7 +73,7 @@ const Header = ({ onSearchOnline, onNewPatient, loading, toggleQrModal }) => (
   <FlexRow justifyContent="center" alignItems="center">
     <Text style={localStyles.text}>{vaccineStrings.vaccine_dispense_step_one_title}</Text>
     <View style={{ flex: 1, marginLeft: 'auto' }} />
-    <PageButton text="Scan QR Code" onPress={toggleQrModal} />
+    <PageButton text={modalStrings.qr_scanner_header} onPress={toggleQrModal} />
     <PageButton
       style={{ marginLeft: 10 }}
       text={generalStrings.search_online}
