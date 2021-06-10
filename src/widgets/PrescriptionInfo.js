@@ -53,9 +53,9 @@ const PrescriptionInfoComponent = ({
   ]);
 
   return (
-    <FlexRow>
+    <FlexRow style={{ minHeight: 40 }}>
       <FlexColumn flex={1}>
-        <FlexRow alignItems="center">
+        <FlexRow alignItems="center" flex={1}>
           <FlexView flex={3}>
             <SimpleLabel label={dispensingStrings.patient} size="small" />
             <SimpleLabel text={patientName} size="medium" numberOfLines={1} />
@@ -72,7 +72,7 @@ const PrescriptionInfoComponent = ({
       </FlexColumn>
 
       <FlexColumn alignItems="flex-start" flex={1}>
-        <FlexRow justifyContent="flex-start" alignItems="flex-end" reverse>
+        <FlexRow justifyContent="flex-start" alignItems="center" flex={1} reverse>
           <FlexView flex={3} justifyContent="flex-end" alignItems="flex-end">
             {prescriptionPrescriber && (
               <SimpleLabel label={dispensingStrings.prescriber} size="small" labelAlign="right" />
