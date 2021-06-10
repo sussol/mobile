@@ -38,7 +38,6 @@ export const VaccineLineChart = ({
   const chartMaxDomain = React.useMemo(() => ({ y: maxDomain + CHART_CONSTANTS.DOMAIN_OFFSET }), [
     maxDomain,
   ]);
-
   return (
     <FlexView onLayout={setDimensions}>
       <Svg>
@@ -130,8 +129,8 @@ const chartStyles = {
       size: CHART_CONSTANTS.STROKE_SIZE,
     },
   },
-  maxLine: { data: { stroke: SUSSOL_ORANGE } },
-  minLine: { data: { stroke: COLD_BREACH_BLUE } },
+  maxLine: { data: { stroke: SUSSOL_ORANGE, strokeWidth: CHART_CONSTANTS.STROKE_WIDTH } },
+  minLine: { data: { stroke: COLD_BREACH_BLUE, strokeWidth: CHART_CONSTANTS.STROKE_WIDTH } },
   axisX: { tickLabels: { fontSize: 10, fontFamily: APP_FONT_FAMILY, fill: GREY } },
   axisY: {
     tickLabels: { fontSize: 10, fontFamily: APP_FONT_FAMILY, fill: GREY },
