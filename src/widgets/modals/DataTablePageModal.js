@@ -246,7 +246,7 @@ const DataTablePageModalComponent = ({ isOpen, onClose, modalKey, onSelect, curr
 
         return (
           <GenericChoiceList
-            data={UIDatabase.objects('VaccineVialMonitorStatus').filtered('isActive == True')}
+            data={UIDatabase.objects('VaccineVialMonitorStatus').filtered('isActive == true')}
             highlightValue={currentVvmStatusName}
             onPress={onSelect}
             keyToDisplay="description"
