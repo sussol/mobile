@@ -240,11 +240,16 @@ export class Item extends Realm.Object {
   openVialWastage(fromDate) {
     if (!this.isVaccine || !fromDate) return 0;
 
-    return UIDatabase.objects('TransactionBatch')
+    const transactions = UIDatabase.objects('TransactionBatch')
       .filtered("transaction.otherParty.code == 'invad'")
       .filtered("option.type == 'openVialWastage'")
-      .filtered('transaction.confirmDate >= $0', fromDate)
-      .sum('doses');
+      .filtered('transaction.confirmDate >= $0', fromDate);
+
+    if (transactions.length) {
+      return transactions.sum('doses');
+    }
+
+    return 0;
   }
 
   /**
