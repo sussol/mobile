@@ -252,7 +252,7 @@ export const StocktakeBatchModalComponent = ({
       case MODAL_KEYS.SELECT_VVM_STATUS:
         return (
           <GenericChoiceList
-            data={UIDatabase.objects('VaccineVialMonitorStatus').filtered('isActive == True')}
+            data={UIDatabase.objects('VaccineVialMonitorStatus').filtered('isActive == true')}
             highlightValue={currentVvmStatusName}
             onPress={onApplyStocktakeBatchVvmStatus}
             keyToDisplay="description"
