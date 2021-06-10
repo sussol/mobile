@@ -167,6 +167,7 @@ PrescriptionConfirmationComponent.defaultProps = {
   discountAmount: null,
   discountRate: 0,
   transaction: null,
+  paymentType: null,
 };
 
 PrescriptionConfirmationComponent.propTypes = {
@@ -174,7 +175,7 @@ PrescriptionConfirmationComponent.propTypes = {
   currentUser: PropTypes.object.isRequired,
   currentPatient: PropTypes.object.isRequired,
   paymentAmount: PropTypes.object.isRequired,
-  paymentType: PropTypes.object.isRequired,
+  paymentType: PropTypes.object,
   canConfirm: PropTypes.bool.isRequired,
   usingPayments: PropTypes.bool.isRequired,
   onDelete: PropTypes.func.isRequired,
