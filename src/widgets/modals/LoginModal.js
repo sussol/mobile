@@ -188,7 +188,9 @@ export class LoginModal extends React.Component {
             </View>
             <View style={globalStyles.horizontalContainer}>
               <FormPasswordInput
-                ref={this.passwordInputRef}
+                ref={ref => {
+                  this.passwordInputRef = ref;
+                }}
                 value={password}
                 editable={authStatus !== AUTH_STATUSES.AUTHENTICATING}
                 onChangeText={text => {
