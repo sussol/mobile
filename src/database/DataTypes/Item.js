@@ -245,11 +245,7 @@ export class Item extends Realm.Object {
       .filtered("option.type == 'openVialWastage'")
       .filtered('transaction.confirmDate >= $0', fromDate);
 
-    if (transactions.length) {
-      return transactions.sum('doses');
-    }
-
-    return 0;
+    return transactions.length ? transactions.sum('doses') : 0;
   }
 
   /**
