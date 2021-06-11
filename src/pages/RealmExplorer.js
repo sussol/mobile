@@ -153,7 +153,6 @@ const updateFilteredData = (newFilterString, state) => {
       newFilterString === '' ? searchData.slice() : searchData.filtered(newFilterString).slice();
     return { ...state, filterString: newFilterString, filteredData: newFilteredData };
   } catch (err) {
-    ToastAndroid.show(`Error! ${err.message}`, ToastAndroid.LONG);
     return { ...state, filterString: newFilterString };
   }
 };
