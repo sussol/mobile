@@ -62,7 +62,7 @@ export const FridgeDetailPageComponent = ({
   onChangeToDate,
   onChangeFromDate,
 }) => {
-  const [chartType, setChartType] = useState('bar');
+  const [chartType, setChartType] = useState('line');
 
   const minDate = new Date(minimumDate);
   const maxDate = new Date(maximumDate);
@@ -129,7 +129,7 @@ export const FridgeDetailPageComponent = ({
             Header={<SensorHeader showTitle showCog sensor={sensor} />}
           >
             <AfterInteractions>
-              <FlexRow alignItems="center">
+              <FlexRow alignItems="center" style={{ height: '100%' }}>
                 {chartType === 'line' && (
                   <VaccineLineChart
                     breaches={breaches}
