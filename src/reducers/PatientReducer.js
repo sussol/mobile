@@ -21,7 +21,7 @@ export const PatientReducer = (state = patientInitialState(), action) => {
 
   switch (type) {
     case 'NAVIGATE': {
-      const payload = action;
+      const { payload } = action;
       const { name, params } = payload;
 
       if (name !== ROUTES.PRESCRIPTION) return state;
