@@ -15,6 +15,8 @@ import { SearchBar } from '../widgets';
 
 import globalStyles from '../globalStyles';
 
+const DEBOUNCE_TIMEOUT = 750;
+
 const TYPES = {
   BOOLEAN: 'boolean',
   DATE: 'date',
@@ -151,6 +153,7 @@ const updateFilteredData = (newFilterString, state) => {
       newFilterString === '' ? searchData.slice() : searchData.filtered(newFilterString).slice();
     return { ...state, filterString: newFilterString, filteredData: newFilteredData };
   } catch (err) {
+    ToastAndroid.show(`Error! ${err.message}`, ToastAndroid.LONG);
     return { ...state, filterString: newFilterString };
   }
 };
@@ -232,12 +235,15 @@ export const RealmExplorer = () => {
   const onSearchChange = useCallback(
     useDebounce(
       newObjectString => setState(prevState => updateSearchData(newObjectString, prevState)),
-      750
+      DEBOUNCE_TIMEOUT
     ),
     []
   );
   const onFilterChange = useCallback(
-    newFilterString => setState(prevState => updateFilteredData(newFilterString, prevState)),
+    useDebounce(
+      newFilterString => setState(prevState => updateFilteredData(newFilterString, prevState)),
+      DEBOUNCE_TIMEOUT
+    ),
     []
   );
 
