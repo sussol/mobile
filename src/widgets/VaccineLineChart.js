@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { ActivityIndicator } from 'react-native';
 import { Svg } from 'react-native-svg';
 import { VictoryAxis, VictoryChart, VictoryLine, VictoryScatter } from 'victory-native';
 import PropTypes from 'prop-types';
@@ -40,8 +41,15 @@ export const VaccineLineChart = ({
   ]);
 
   return (
-    <FlexView onLayout={setDimensions} style={{ width: '100%', height: '100%' }}>
-      {!width || !height ? null : (
+    <FlexView
+      onLayout={setDimensions}
+      style={{ width: '100%', height: '100%' }}
+      alignItems="center"
+      justifyContent="center"
+    >
+      {!width || !height ? (
+        <ActivityIndicator size="large" color={SUSSOL_ORANGE} />
+      ) : (
         <Svg>
           <VictoryChart
             width={width}
