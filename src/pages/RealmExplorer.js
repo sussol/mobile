@@ -61,8 +61,6 @@ const parseType = realmType => {
   return typeMapper.get(realmType) || TYPES.OBJECT;
 };
 
-const getRealmObjects = ({ schema: objectSchemas }) => objectSchemas.map(({ name }) => name);
-
 const getRealmObjectsFields = ({ schema: objectSchemas }) =>
   objectSchemas
     .map(({ schema: objectSchema }) => {
@@ -76,8 +74,8 @@ const getRealmObjectsFields = ({ schema: objectSchemas }) =>
     })
     .reduce((acc, object) => ({ ...acc, ...object }));
 
-const REALM_OBJECTS = getRealmObjects(schema);
 const REALM_OBJECTS_FIELDS = getRealmObjectsFields(schema);
+const REALM_OBJECTS = Object.keys(REALM_OBJECTS_FIELDS);
 
 const toCapitalCase = value => value.charAt(0).toUpperCase() + value.slice(1);
 
