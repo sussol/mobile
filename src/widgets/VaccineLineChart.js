@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { ActivityIndicator } from 'react-native';
 import { Svg } from 'react-native-svg';
 import { VictoryAxis, VictoryChart, VictoryLine, VictoryScatter } from 'victory-native';
 import PropTypes from 'prop-types';
@@ -40,55 +41,64 @@ export const VaccineLineChart = ({
   ]);
 
   return (
-    <FlexView onLayout={setDimensions}>
-      <Svg>
-        <VictoryChart
-          width={width}
-          height={height}
-          minDomain={chartMinDomain}
-          maxDomain={chartMaxDomain}
-          padding={{ top: 20, bottom: 50, right: 10, left: 50 }}
-        >
-          <VictoryAxis
-            offsetX={CHART_CONSTANTS.AXIS_OFFSET}
-            dependentAxis
-            style={chartStyles.axisY}
-            tickFormat={temperatureTickFormatter}
-          />
-          <VictoryAxis
-            offsetY={CHART_CONSTANTS.AXIS_OFFSET}
-            tickFormat={timestampTickFormatter}
-            style={chartStyles.axisX}
-            tickCount={CHART_CONSTANTS.MAX_TICK_COUNTS}
-          />
+    <FlexView
+      onLayout={setDimensions}
+      style={{ width: '100%', height: '100%' }}
+      alignItems="center"
+      justifyContent="center"
+    >
+      {!width || !height ? (
+        <ActivityIndicator size="large" color={SUSSOL_ORANGE} />
+      ) : (
+        <Svg>
+          <VictoryChart
+            width={width}
+            height={height}
+            minDomain={chartMinDomain}
+            maxDomain={chartMaxDomain}
+            padding={{ top: 20, bottom: 50, right: 10, left: 50 }}
+          >
+            <VictoryAxis
+              offsetX={CHART_CONSTANTS.AXIS_OFFSET}
+              dependentAxis
+              style={chartStyles.axisY}
+              tickFormat={temperatureTickFormatter}
+            />
+            <VictoryAxis
+              offsetY={CHART_CONSTANTS.AXIS_OFFSET}
+              tickFormat={timestampTickFormatter}
+              style={chartStyles.axisX}
+              tickCount={CHART_CONSTANTS.MAX_TICK_COUNTS}
+            />
 
-          <VictoryLine
-            interpolation={CHART_CONSTANTS.INTERPOLATION}
-            data={minLine}
-            y={y}
-            x={x}
-            style={chartStyles.minLine}
-          />
-          <VictoryLine
-            interpolation={CHART_CONSTANTS.INTERPOLATION}
-            data={maxLine}
-            y={y}
-            x={x}
-            style={chartStyles.maxLine}
-          />
-          <VictoryLine data={maxLine} y={maxBoundary} x={x} style={chartStyles.maxBoundaryLine} />
-          <VictoryLine data={minLine} y={minBoundary} x={x} style={chartStyles.minBoundaryLine} />
+            <VictoryLine
+              interpolation={CHART_CONSTANTS.INTERPOLATION}
+              data={minLine}
+              y={y}
+              x={x}
+              style={chartStyles.minLine}
+            />
+            <VictoryLine
+              interpolation={CHART_CONSTANTS.INTERPOLATION}
+              data={maxLine}
+              y={y}
+              x={x}
+              style={chartStyles.maxLine}
+            />
+            <VictoryLine data={maxLine} y={maxBoundary} x={x} style={chartStyles.maxBoundaryLine} />
+            <VictoryLine data={minLine} y={minBoundary} x={x} style={chartStyles.minBoundaryLine} />
 
-          <VictoryScatter data={maxLine} y={y} x={x} style={chartStyles.maxScatterPlot} />
-          <VictoryScatter data={minLine} y={y} x={x} style={chartStyles.minScatterPlot} />
-          <VictoryScatter
-            data={breaches.slice()}
-            y={y}
-            x={x}
-            dataComponent={<HazardPoint dataSet={breaches.slice()} onPress={onPressBreach} />}
-          />
-        </VictoryChart>
-      </Svg>
+            <VictoryScatter data={maxLine} y={y} x={x} style={chartStyles.maxScatterPlot} />
+            <VictoryScatter data={minLine} y={y} x={x} style={chartStyles.minScatterPlot} />
+            <VictoryScatter
+              data={breaches.slice()}
+              y={y}
+              x={x}
+              dataComponent={<HazardPoint dataSet={breaches.slice()} onPress={onPressBreach} />}
+            />
+          </VictoryChart>
+        </Svg>
+      )}
     </FlexView>
   );
 };
