@@ -4,11 +4,12 @@
  */
 
 import React, { useState, useCallback } from 'react';
-import { View, VirtualizedList, Text, StyleSheet } from 'react-native';
+import { View, VirtualizedList, Text, StyleSheet, ToastAndroid } from 'react-native';
 import PropTypes from 'prop-types';
 
 import { UIDatabase } from '../database/index';
 import { schema } from '../database/schema';
+import { useDebounce } from '../hooks/useDebounce';
 
 import { SearchBar } from '../widgets';
 
@@ -114,18 +115,25 @@ const getInitialState = () => {
 };
 
 const updateSearchData = (newSearchString, state) => {
-  const { searchString } = state;
-  const updateObjectString = newSearchString !== searchString;
-  if (!updateObjectString) return { ...state };
-  const updateObject = REALM_OBJECTS.indexOf(newSearchString) >= 0;
-  const newSearchData = updateObject ? UIDatabase.objects(newSearchString) : {};
-  const newFilteredData = updateObject ? newSearchData.slice() : [];
-  return {
-    ...state,
-    searchString: newSearchString,
-    searchData: newSearchData,
-    filteredData: newFilteredData,
-  };
+  try {
+    const { searchString } = state;
+    const updateObjectString = newSearchString !== searchString;
+    // Some single characters are returning true for 'REALM_OBJECTS.indexOf(newSearchString) >= 0;'
+    // there are no database objects with names shorter than 3 chars; so just skip those
+    if (!updateObjectString || newSearchString.length < 3) return { ...state };
+    const updateObject = REALM_OBJECTS.indexOf(newSearchString) >= 0;
+    const newSearchData = updateObject ? UIDatabase.objects(newSearchString) : {};
+    const newFilteredData = updateObject ? newSearchData.slice() : [];
+    return {
+      ...state,
+      searchString: newSearchString,
+      searchData: newSearchData,
+      filteredData: newFilteredData,
+    };
+  } catch (e) {
+    ToastAndroid.show(`Error! ${e.message}`, ToastAndroid.LONG);
+    return { ...state };
+  }
 };
 
 const getSearchBarRenderer = onSearchChange => {
@@ -222,7 +230,10 @@ export const RealmExplorer = () => {
   const [state, setState] = useState(getInitialState());
 
   const onSearchChange = useCallback(
-    newObjectString => setState(prevState => updateSearchData(newObjectString, prevState)),
+    useDebounce(
+      newObjectString => setState(prevState => updateSearchData(newObjectString, prevState)),
+      750
+    ),
     []
   );
   const onFilterChange = useCallback(
