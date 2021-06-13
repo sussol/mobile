@@ -139,9 +139,17 @@ const PatientSelectComponent = ({
   const [isQrModalOpen, toggleQrModal] = useToggle();
 
   const onQrCodeRead = ({ data }) => {
-    // TODO: Some validation might be good here but don't know format..
+    // TODO: Some validation/data sanitisation might be required here but don't know format yet...
     toggleQrModal();
-    ToastAndroid.show(`${data} scanned`, ToastAndroid.LONG);
+
+    const matchedLocalPatient = UIDatabase.objects('Name').filtered('barcode == $0', data)[0];
+
+    // Do local search
+    if (matchedLocalPatient) {
+      selectPatient(matchedLocalPatient);
+    } else {
+      ToastAndroid.show('No patient found via QR code', ToastAndroid.LONG);
+    }
   };
 
   const [
