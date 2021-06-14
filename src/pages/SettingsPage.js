@@ -242,6 +242,7 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
           <MenuButton text={buttonStrings.realm_explorer} onPress={toRealmExplorer} />
           <MenuButton text={buttonStrings.export_data} onPress={requestStorageWritePermission} />
           <MenuButton text={buttonStrings.factory_reset} onPress={onReset} />
+          <MenuButton text={buttonStrings.check_connection} onPress={onReset} />
           <VaccineButton />
         </View>
       </View>
