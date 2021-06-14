@@ -88,6 +88,7 @@
     "react-native-device-info": "^8.1.2",
     "react-native-fs": "^2.17.0",
     "react-native-gesture-handler": "^1.10.3",
+    "react-native-haptic-feedback": "^1.11.0",
     "react-native-localization": "^2.1.7",
     "react-native-mail": "^6.1.0",
     "react-native-modalbox": "^2.0.0",

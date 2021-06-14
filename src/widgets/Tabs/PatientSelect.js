@@ -9,6 +9,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { ActivityIndicator, Keyboard, StyleSheet, Text, ToastAndroid, View } from 'react-native';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 import { batch, connect } from 'react-redux';
 
@@ -138,8 +139,14 @@ const PatientSelectComponent = ({
   const withLoadingIndicator = useLoadingIndicator();
   const [isQrModalOpen, toggleQrModal] = useToggle();
 
+  const hapticFeedBackOptions = {
+    enableVibrateFallback: true,
+    ignoreAndroidSystemSettings: false,
+  };
+
   const onQrCodeRead = ({ data }) => {
     // TODO: Some validation/data sanitisation might be required here but don't know format yet...
+    ReactNativeHapticFeedback.trigger('notificationSuccess', hapticFeedBackOptions);
     toggleQrModal();
 
     const matchedLocalPatient = UIDatabase.objects('Name').filtered('barcode == $0', data)[0];
