@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { BluetoothStatus } from 'react-native-bluetooth-status';
-import { AppState, View } from 'react-native';
+import { AppState, View, Alert, BackHandler } from 'react-native';
 import { Scheduler } from 'sussol-utilities';
 
 import Settings from './settings/MobileAppSettings';
@@ -28,6 +28,9 @@ import { LoadingIndicatorContext } from './context/LoadingIndicatorContext';
 import { selectTitle } from './selectors/supplierCredit';
 import { selectCurrentUser } from './selectors/user';
 import { selectUsingVaccines } from './selectors/modules';
+import { generalStrings } from './localization';
+import { compareVersions } from './utilities';
+import { version as appVersion } from '../package.json';
 
 import { syncCompleteTransaction, setSyncError, openSyncModal } from './actions/SyncActions';
 import { FinaliseActions } from './actions/FinaliseActions';
@@ -77,6 +80,7 @@ class MSupplyMobileAppContainer extends React.Component {
     super(props, ...otherArgs);
 
     migrateDataToVersion(UIDatabase, Settings);
+    this.databaseVersion = Settings.get(SETTINGS_KEYS.APP_VERSION);
     this.userAuthenticator = new UserAuthenticator(UIDatabase, Settings);
     this.syncAuthenticator = new SyncAuthenticator(Settings);
     this.synchroniser = new Synchroniser(
@@ -213,6 +217,18 @@ class MSupplyMobileAppContainer extends React.Component {
     );
   };
 
+  renderVersionIncompatibleAlertDialog = () => {
+    Alert.alert(
+      'Alert...',
+      `This is version of ${appVersion} of mSupply mobile.` +
+        // eslint-disable-next-line max-len
+        `It appears that your imported data file has a newer version of ${this.databaseVersion}.` +
+        'It may be dangerous to continue. mSupply app will now quit.' +
+        'Contact info@msupply.org.nz.',
+      [{ text: generalStrings.ok, onPress: () => BackHandler.exitApp() }]
+    );
+  };
+
   render() {
     const {
       currentUser,
@@ -229,39 +245,50 @@ class MSupplyMobileAppContainer extends React.Component {
       return <FirstUsePage synchroniser={this.synchroniser} onInitialised={this.onInitialised} />;
     }
 
+    // If this database hasn't got any version setup then update with the current app's version.
+    if (this.databaseVersion.length === 0) {
+      Settings.set(SETTINGS_KEYS.APP_VERSION, appVersion);
+    }
+
     return (
       <LoadingIndicatorContext.Provider value={this.runWithLoadingIndicator}>
         <View style={globalStyles.appBackground}>
-          <MainStackNavigator.Navigator initialRouteName={ROUTES.MENU}>
-            {Pages}
-          </MainStackNavigator.Navigator>
+          {compareVersions(this.databaseVersion, appVersion) > 0 ? (
+            this.renderVersionIncompatibleAlertDialog()
+          ) : (
+            <>
+              <MainStackNavigator.Navigator initialRouteName={ROUTES.MENU}>
+                {Pages}
+              </MainStackNavigator.Navigator>
 
-          <FinaliseModal />
-          <SyncModal onPressManualSync={this.synchronise} />
-          <LoginModal
-            authenticator={this.userAuthenticator}
-            settings={Settings}
-            isAuthenticated={!!currentUser}
-            onAuthentication={this.onAuthentication}
-          />
-          {isLoading && this.renderLoadingIndicator()}
+              <FinaliseModal />
+              <SyncModal onPressManualSync={this.synchronise} />
+              <LoginModal
+                authenticator={this.userAuthenticator}
+                settings={Settings}
+                isAuthenticated={!!currentUser}
+                onAuthentication={this.onAuthentication}
+              />
+              {isLoading && this.renderLoadingIndicator()}
 
-          <ModalContainer
-            isVisible={supplierCreditModalOpen}
-            onClose={closeSupplierCreditModal}
-            title={creditTitle}
-          >
-            <SupplierCredit />
-          </ModalContainer>
+              <ModalContainer
+                isVisible={supplierCreditModalOpen}
+                onClose={closeSupplierCreditModal}
+                title={creditTitle}
+              >
+                <SupplierCredit />
+              </ModalContainer>
 
-          <ModalContainer
-            isVisible={isBreachModalOpen}
-            onClose={closeBreachModal}
-            title={breachModalTitle}
-          >
-            <BreachDisplay />
-          </ModalContainer>
-          <RowDetail />
+              <ModalContainer
+                isVisible={isBreachModalOpen}
+                onClose={closeBreachModal}
+                title={breachModalTitle}
+              >
+                <BreachDisplay />
+              </ModalContainer>
+              <RowDetail />
+            </>
+          )}
         </View>
       </LoadingIndicatorContext.Provider>
     );

@@ -9,7 +9,7 @@ import RNFS from 'react-native-fs';
 
 import { SETTINGS_KEYS } from '../settings';
 import { PREFERENCE_TYPE_KEYS } from './utilities/constants';
-import { formatDate, backupValidation } from '../utilities';
+import { formatDate, backupValidation, selectDocument } from '../utilities';
 
 const { THIS_STORE_NAME_ID } = SETTINGS_KEYS;
 
@@ -126,6 +126,29 @@ class UIDatabase {
     try {
       await RNFS.mkdir(exportFolder);
       await RNFS.copyFile(realmPath, `${exportFolder}/${copyFileName}.realm`);
+    } catch (error) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Imports the realm file from the location chosen in the open dialog box.
+   * May request storage permissions if required.
+   * @returns Returns `True` if data is imported successfully. Otherwise `False`
+   */
+  async importData() {
+    const { realm } = this.database;
+    const { path: realmPath } = realm;
+    const realmFilePath = await selectDocument({ fileType: 'realm' });
+
+    if (realmFilePath === '') return false;
+    if (realm.isInTransaction) return false;
+
+    // Proceed importation of the realm file to the app database location
+    try {
+      await RNFS.copyFile(realmFilePath, realmPath);
     } catch (error) {
       return false;
     }
