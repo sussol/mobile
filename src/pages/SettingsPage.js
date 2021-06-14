@@ -14,6 +14,8 @@ import { Button } from 'react-native-ui-components';
 
 import { UIDatabase } from '../database';
 import { SETTINGS_KEYS } from '../settings';
+import AppSettings from '../settings/MobileAppSettings';
+
 import { MODAL_KEYS } from '../utilities';
 
 import {
@@ -37,6 +39,7 @@ import { FlexRow } from '../widgets/FlexRow';
 import globalStyles, { APP_FONT_FAMILY, DARK_GREY, SUSSOL_ORANGE } from '../globalStyles';
 import { FlexView } from '../widgets/FlexView';
 import { MILLISECONDS } from '../utilities/constants';
+import SyncAuthenticator from '../authentication/SyncAuthenticator';
 
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
@@ -58,6 +61,21 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
       Number(UIDatabase.getSetting(SETTINGS_KEYS.IDLE_LOGOUT_INTERVAL) / MILLISECONDS.ONE_MINUTE) ??
       3,
   });
+
+  const syncUrl = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL);
+  const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
+  const syncSitePasswordHash = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_PASSWORD_HASH);
+
+  const syncAuthenticator = new SyncAuthenticator(AppSettings);
+  syncAuthenticator
+    .authenticate(syncUrl, syncSiteName, null, syncSitePasswordHash)
+    .then(() => {
+      // If this is called, it is OK
+    })
+    .catch(error => {
+      // If there is an error, then it is a fail, otherwise OK
+      console.log(error);
+    });
 
   const withLoadingIndicator = useLoadingIndicator();
 
