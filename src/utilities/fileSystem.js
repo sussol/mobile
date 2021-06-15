@@ -51,19 +51,15 @@ export async function selectDocument({ fileType = '*', pick = 'single' }) {
       copyTo: 'cachesDirectory', // Need to copy file(s) after their selection to the somewhere
       // so that 'fileCopyUri' can return a valid location. For this case, app cache directory
     });
+    const fileExtensionRegex = new RegExp(`\\.(${fileType})$`, 'g');
+    filePath = fileCopyUri;
     // Check if file(s) exist of specific file type then only return their file path
-    if (fileType !== '*') {
-      const fileExtensionRegex = new RegExp(`\\.(${fileType})$`, 'g');
-      if (fileExtensionRegex.test(name)) {
-        filePath = fileCopyUri;
-      }
-    } else {
+    if (fileType !== '*' && fileExtensionRegex.test(name)) {
       filePath = fileCopyUri;
     }
   } catch (error) {
-    // User hasn't cancelled the picker, exit any dialogs or menus and return the empty file path
-    if (!DocumentPicker.isCancel(error)) {
-      filePath = '';
+    if (DocumentPicker.isCancel(error)) {
+      // User cancelled the picker, exit any dialogs or menus and move on
     }
   }
   return filePath;
