@@ -28,7 +28,7 @@ import { LoadingIndicatorContext } from './context/LoadingIndicatorContext';
 import { selectTitle } from './selectors/supplierCredit';
 import { selectCurrentUser } from './selectors/user';
 import { selectUsingVaccines } from './selectors/modules';
-import { generalStrings } from './localization';
+import { generalStrings, modalStrings } from './localization';
 import { compareVersions } from './utilities';
 import { version as appVersion } from '../package.json';
 
@@ -220,11 +220,11 @@ class MSupplyMobileAppContainer extends React.Component {
   renderVersionIncompatibleAlertDialog = () => {
     Alert.alert(
       'Alert...',
-      `This is version of ${appVersion} of mSupply mobile.` +
-        // eslint-disable-next-line max-len
-        `It appears that your imported data file has a newer version of ${this.databaseVersion}.` +
-        'It may be dangerous to continue. mSupply app will now quit.' +
-        'Contact info@msupply.org.nz.',
+      modalStrings.formatString(
+        modalStrings.version_incompatible,
+        appVersion,
+        this.databaseVersion
+      ),
       [{ text: generalStrings.ok, onPress: () => BackHandler.exitApp() }]
     );
   };
