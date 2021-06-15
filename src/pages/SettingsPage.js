@@ -48,8 +48,7 @@ const exportData = async () => {
 };
 
 const importData = async () => {
-  const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
-  const success = await UIDatabase.importData(syncSiteName);
+  const success = await UIDatabase.importData();
   const toastMessage = success ? generalStrings.imported_data : generalStrings.couldnt_import_data;
 
   ToastAndroid.show(toastMessage, ToastAndroid.SHORT);
