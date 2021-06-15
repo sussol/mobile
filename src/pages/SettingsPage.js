@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import ValidUrl from 'valid-url';
-import { Dimensions, Text, View, ToastAndroid, TouchableOpacity, BackHandler } from 'react-native';
+import { Dimensions, Text, View, ToastAndroid, TouchableOpacity } from 'react-native';
 import RNRestart from 'react-native-restart';
 import { hashPassword } from 'sussol-utilities';
 import { Button } from 'react-native-ui-components';
@@ -56,8 +56,9 @@ const importData = async () => {
 
   if (success) {
     setTimeout(() => {
-      // Delay application exit to 2 seconds so the above toast message can be readable to the user
-      BackHandler.exitApp();
+      // Delay application restart to 2 seconds
+      // so the above toast message can be readable to the user
+      RNRestart.Restart();
     }, 2000);
   }
 };
