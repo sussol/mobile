@@ -174,6 +174,9 @@ export class FirstUsePageComponent extends React.Component {
                 if (this.canAttemptLogin) this.onPressConnect();
               }}
               placeholder="Sync Site Password"
+              ref={ref => {
+                this.passwordInputRef = ref;
+              }}
             />
           </View>
           <SyncState style={localStyles.initialisationStateIcon} showText={false} />

@@ -201,7 +201,7 @@ CashRegister.propTypes = {
   isAscending: PropTypes.bool.isRequired,
   modalKey: PropTypes.string.isRequired,
   keyExtractor: PropTypes.func.isRequired,
-  pageInfoColumns: PropTypes.object.isRequired,
+  pageInfoColumns: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
   transactionType: PropTypes.string.isRequired,
   onFilterData: PropTypes.func.isRequired,

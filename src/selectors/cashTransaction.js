@@ -87,7 +87,7 @@ const selectIsValid = createSelector(
     !!amount &&
     amount > currency(0) &&
     (type === CASH_TRANSACTION_TYPES.CASH_IN || !!reason) &&
-    paymentType
+    !!paymentType
 );
 
 export const CashTransactionSelectors = {
