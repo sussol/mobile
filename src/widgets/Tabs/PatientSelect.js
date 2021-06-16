@@ -52,6 +52,12 @@ import { APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from '../../globalStyles/fonts
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 import { useToggle } from '../../hooks/useToggle';
 import { QrScannerModal } from '../modals/QrScannerModal';
+import {
+  getAuthorizationHeader,
+  getPatientRequestUrl,
+  processPatientResponse,
+} from '../../sync/lookupApiUtils';
+import { SETTINGS_KEYS } from '../../settings/index';
 
 const getMessage = (noResults, error) => {
   if (noResults) return generalStrings.could_not_find_patient;
@@ -138,6 +144,7 @@ const PatientSelectComponent = ({
 }) => {
   const withLoadingIndicator = useLoadingIndicator();
   const [isQrModalOpen, toggleQrModal] = useToggle();
+  const syncUrl = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL);
 
   const hapticFeedBackOptions = {
     enableVibrateFallback: true,
@@ -145,8 +152,15 @@ const PatientSelectComponent = ({
   };
 
   const onQrCodeRead = ({ data }) => {
-    // TODO: Some validation/data sanitisation might be required here but don't know format yet...
     ReactNativeHapticFeedback.trigger('notificationSuccess', hapticFeedBackOptions);
+
+    // Immediately reject QR code if it is too long (length > 50 chosen somewhat arbitrarily until
+    // we get a better idea of the kinds of codes we need to handle in future)
+    if (data.length > 50) {
+      ToastAndroid.show('Invalid QR code', ToastAndroid.LONG);
+      return;
+    }
+
     toggleQrModal();
 
     const matchedLocalPatient = UIDatabase.objects('Name').filtered('barcode == $0', data)[0];
@@ -155,7 +169,19 @@ const PatientSelectComponent = ({
     if (matchedLocalPatient) {
       selectPatient(matchedLocalPatient);
     } else {
-      ToastAndroid.show('No patient found via QR code', ToastAndroid.LONG);
+      // Do a remote search
+      withLoadingIndicator(async () => {
+        try {
+          const remotePatient = await lookupRemotePatient({ barcode: data });
+          if (remotePatient.length) {
+            selectPatient(remotePatient);
+          } else {
+            throw new Error('No patient found via QR code');
+          }
+        } catch (error) {
+          ToastAndroid.show(error.message, ToastAndroid.LONG);
+        }
+      });
     }
   };
 
@@ -173,6 +199,16 @@ const PatientSelectComponent = ({
   const handleUpdate = (key, value) => {
     updateForm(key, value);
     filter({ ...completedForm, [key]: value });
+  };
+
+  const lookupRemotePatient = async params => {
+    const url = `${syncUrl}${getPatientRequestUrl(params)}`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: { authorization: getAuthorizationHeader() },
+    });
+    const responseJson = await response.json();
+    return processPatientResponse({ ...response, json: responseJson });
   };
 
   return (

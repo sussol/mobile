@@ -8,7 +8,6 @@ import React, { useMemo, useCallback } from 'react';
 import { View, StyleSheet, ToastAndroid } from 'react-native';
 import { connect, batch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { getAuthHeader } from 'sussol-utilities';
 
 import { SETTINGS_KEYS } from '../../settings';
 import { MODALS } from '../constants';
@@ -34,6 +33,7 @@ import { modalStrings, generalStrings } from '../../localization';
 import { APP_FONT_FAMILY, DARK_GREY, ROW_BLUE, WHITE, SUSSOL_ORANGE } from '../../globalStyles';
 
 import {
+  getAuthorizationHeader,
   getPatientRequestUrl,
   getPrescriberRequestUrl,
   processPatientResponse,
@@ -49,7 +49,7 @@ import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 import { DispensaryActions } from '../../actions/DispensaryActions';
 import { NameNoteActions } from '../../actions/Entities/NameNoteActions';
 
-const { SYNC_URL, SYNC_SITE_NAME, SYNC_SITE_PASSWORD_HASH } = SETTINGS_KEYS;
+const { SYNC_URL } = SETTINGS_KEYS;
 
 export const SearchFormComponent = ({
   isPatient,
@@ -68,12 +68,6 @@ export const SearchFormComponent = ({
     () => (isPatient ? getColumns(MODALS.PATIENT_LOOKUP) : getColumns(MODALS.PRESCRIBER_LOOKUP)),
     []
   );
-
-  const getAuthorizationHeader = () => {
-    const username = UIDatabase.getSetting(SYNC_SITE_NAME);
-    const password = UIDatabase.getSetting(SYNC_SITE_PASSWORD_HASH);
-    return getAuthHeader(username, password);
-  };
 
   const lookupRecords = useMemo(() => {
     if (isPatient) {
