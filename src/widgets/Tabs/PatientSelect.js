@@ -174,7 +174,7 @@ const PatientSelectComponent = ({
         try {
           const remotePatient = await lookupRemotePatient({ barcode: data });
           if (remotePatient.length) {
-            selectPatient(remotePatient);
+            selectPatient(remotePatient[0]);
           } else {
             throw new Error('No patient found via QR code');
           }
