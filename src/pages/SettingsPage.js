@@ -12,7 +12,7 @@ import RNRestart from 'react-native-restart';
 import { hashPassword } from 'sussol-utilities';
 import { Button } from 'react-native-ui-components';
 
-import { UIDatabase } from '../database';
+import { importData, UIDatabase } from '../database';
 import { SETTINGS_KEYS } from '../settings';
 import { MODAL_KEYS } from '../utilities';
 
@@ -45,21 +45,6 @@ const exportData = async () => {
   const toastMessage = success ? generalStrings.exported_data : generalStrings.couldnt_export_data;
 
   ToastAndroid.show(toastMessage, ToastAndroid.SHORT);
-};
-
-const importData = async () => {
-  const { success, error = '' } = await UIDatabase.importData();
-  const toastMessage = success ? generalStrings.imported_data : error;
-
-  ToastAndroid.show(toastMessage, ToastAndroid.LONG);
-
-  if (success) {
-    setTimeout(() => {
-      // Delay application restart to 2 seconds
-      // so the above toast message can be readable to the user
-      RNRestart.Restart();
-    }, 2000);
-  }
 };
 
 const Settings = ({
