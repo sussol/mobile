@@ -144,7 +144,6 @@ const PatientSelectComponent = ({
 }) => {
   const withLoadingIndicator = useLoadingIndicator();
   const [isQrModalOpen, toggleQrModal] = useToggle();
-  const syncUrl = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL);
 
   const hapticFeedBackOptions = {
     enableVibrateFallback: true,
@@ -202,6 +201,7 @@ const PatientSelectComponent = ({
   };
 
   const lookupRemotePatient = async params => {
+    const syncUrl = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL);
     const url = `${syncUrl}${getPatientRequestUrl(params)}`;
     const response = await fetch(url, {
       method: 'GET',
