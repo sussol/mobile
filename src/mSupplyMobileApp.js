@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { BluetoothStatus } from 'react-native-bluetooth-status';
-import { AppState, View, Alert, BackHandler } from 'react-native';
+import { AppState, View } from 'react-native';
 import { Scheduler } from 'sussol-utilities';
 
 import Settings from './settings/MobileAppSettings';
@@ -28,8 +28,6 @@ import { LoadingIndicatorContext } from './context/LoadingIndicatorContext';
 import { selectTitle } from './selectors/supplierCredit';
 import { selectCurrentUser } from './selectors/user';
 import { selectUsingVaccines } from './selectors/modules';
-import { generalStrings, modalStrings } from './localization';
-import { compareVersions } from './utilities';
 import { version as appVersion } from '../package.json';
 
 import { syncCompleteTransaction, setSyncError, openSyncModal } from './actions/SyncActions';
@@ -217,18 +215,6 @@ class MSupplyMobileAppContainer extends React.Component {
     );
   };
 
-  renderVersionIncompatibleAlertDialog = () => {
-    Alert.alert(
-      'Alert...',
-      modalStrings.formatString(
-        modalStrings.version_incompatible,
-        appVersion,
-        this.databaseVersion
-      ),
-      [{ text: generalStrings.ok, onPress: () => BackHandler.exitApp() }]
-    );
-  };
-
   render() {
     const {
       currentUser,
@@ -253,42 +239,36 @@ class MSupplyMobileAppContainer extends React.Component {
     return (
       <LoadingIndicatorContext.Provider value={this.runWithLoadingIndicator}>
         <View style={globalStyles.appBackground}>
-          {compareVersions(this.databaseVersion, appVersion) > 0 ? (
-            this.renderVersionIncompatibleAlertDialog()
-          ) : (
-            <>
-              <MainStackNavigator.Navigator initialRouteName={ROUTES.MENU}>
-                {Pages}
-              </MainStackNavigator.Navigator>
+          <MainStackNavigator.Navigator initialRouteName={ROUTES.MENU}>
+            {Pages}
+          </MainStackNavigator.Navigator>
 
-              <FinaliseModal />
-              <SyncModal onPressManualSync={this.synchronise} />
-              <LoginModal
-                authenticator={this.userAuthenticator}
-                settings={Settings}
-                isAuthenticated={!!currentUser}
-                onAuthentication={this.onAuthentication}
-              />
-              {isLoading && this.renderLoadingIndicator()}
+          <FinaliseModal />
+          <SyncModal onPressManualSync={this.synchronise} />
+          <LoginModal
+            authenticator={this.userAuthenticator}
+            settings={Settings}
+            isAuthenticated={!!currentUser}
+            onAuthentication={this.onAuthentication}
+          />
+          {isLoading && this.renderLoadingIndicator()}
 
-              <ModalContainer
-                isVisible={supplierCreditModalOpen}
-                onClose={closeSupplierCreditModal}
-                title={creditTitle}
-              >
-                <SupplierCredit />
-              </ModalContainer>
+          <ModalContainer
+            isVisible={supplierCreditModalOpen}
+            onClose={closeSupplierCreditModal}
+            title={creditTitle}
+          >
+            <SupplierCredit />
+          </ModalContainer>
 
-              <ModalContainer
-                isVisible={isBreachModalOpen}
-                onClose={closeBreachModal}
-                title={breachModalTitle}
-              >
-                <BreachDisplay />
-              </ModalContainer>
-              <RowDetail />
-            </>
-          )}
+          <ModalContainer
+            isVisible={isBreachModalOpen}
+            onClose={closeBreachModal}
+            title={breachModalTitle}
+          >
+            <BreachDisplay />
+          </ModalContainer>
+          <RowDetail />
         </View>
       </LoadingIndicatorContext.Provider>
     );

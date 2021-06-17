@@ -48,10 +48,10 @@ const exportData = async () => {
 };
 
 const importData = async () => {
-  const success = await UIDatabase.importData();
-  const toastMessage = success ? generalStrings.imported_data : generalStrings.couldnt_import_data;
+  const { success, error = '' } = await UIDatabase.importData();
+  const toastMessage = success ? generalStrings.imported_data : error;
 
-  ToastAndroid.show(toastMessage, ToastAndroid.SHORT);
+  ToastAndroid.show(toastMessage, ToastAndroid.LONG);
 
   if (success) {
     setTimeout(() => {
