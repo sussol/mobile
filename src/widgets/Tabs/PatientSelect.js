@@ -156,7 +156,7 @@ const PatientSelectComponent = ({
     // Immediately reject QR code if it is too long (length > 50 chosen somewhat arbitrarily until
     // we get a better idea of the kinds of codes we need to handle in future)
     if (data.length > 50) {
-      ToastAndroid.show('Invalid QR code', ToastAndroid.LONG);
+      ToastAndroid.show(generalStrings.invalid_qr_code, ToastAndroid.LONG);
       return;
     }
 
@@ -175,7 +175,7 @@ const PatientSelectComponent = ({
           if (remotePatient.length) {
             selectPatient(remotePatient[0]);
           } else {
-            throw new Error('No patient found via QR code');
+            throw new Error(generalStrings.could_not_find_patient_qr);
           }
         } catch (error) {
           ToastAndroid.show(error.message, ToastAndroid.LONG);
