@@ -7,20 +7,23 @@ const routeList = {
   supplierInvoices: 'SupplierInvoice',
   stocktakes: 'Stocktake',
   customerInvoices: 'CustomerInvoice',
-  vaccines: 'TemperatureBreach',
+  vaccines: 'Sensor',
 };
 
 const getBadgeData = routeName => {
   const dataType = routeName in routeList ? routeList[routeName] : '';
 
   switch (dataType) {
-    case 'TemperatureBreach':
+    case 'Sensor': {
       return [
         {
-          count: UIDatabase.objects(dataType).filtered('acknowledged == false').length,
+          count: UIDatabase.objects(dataType).filter(
+            sensor => sensor.isInHotBreach || sensor.isInColdBreach
+          ).length,
           title: `${generalStrings.unacknowledged} ${generalStrings[routeName]}`,
         },
       ];
+    }
     default:
       return [
         {
