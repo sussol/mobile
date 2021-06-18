@@ -40,6 +40,7 @@ const PARAMETERS = {
   lastName: { key: 'last_name', type: TYPES.STRING },
   dateOfBirth: { key: 'dob', type: TYPES.DATE },
   policyNumber: { key: 'policy_number', type: TYPES.STRING },
+  barcode: { key: 'barcode', type: TYPES.STRING },
   registrationCode: { key: 'code', type: TYPES.STRING },
   limit: { key: 'limit', type: TYPES.NUMBER },
   offset: { key: 'offset', type: TYPES.NUMBER },
@@ -104,6 +105,7 @@ const getPrescriberQueryString = ({ firstName = '', lastName = '', registrationC
 const getPatientQueryString = ({
   firstName = '',
   lastName = '',
+  barcode = '',
   dateOfBirth = '',
   policyNumber = '',
   limit = null,
@@ -112,6 +114,7 @@ const getPatientQueryString = ({
   const queryParams = [
     { [PARAMETERS.firstName.key]: firstName, type: PARAMETERS.firstName.type },
     { [PARAMETERS.lastName.key]: lastName, type: PARAMETERS.lastName.type },
+    { [PARAMETERS.barcode.key]: barcode, type: PARAMETERS.barcode.type },
     { [PARAMETERS.dateOfBirth.key]: dateOfBirth, type: PARAMETERS.dateOfBirth.type },
     { [PARAMETERS.policyNumber.key]: policyNumber, type: PARAMETERS.policyNumber.type },
     { [PARAMETERS.offset.key]: offset, type: PARAMETERS.offset.type },
