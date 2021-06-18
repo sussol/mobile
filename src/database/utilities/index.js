@@ -13,6 +13,7 @@ export {
 export { deleteRecord } from './deleteRecord';
 export { parseNumber, parseDate, parseBoolean, parseJsonString } from './parsers';
 export { getTotal, addBatchToParent, millisecondsToDays } from './utilities';
+export { importData } from './import';
 export {
   MILLISECONDS_PER_MINUTE,
   MILLISECONDS_PER_HOUR,

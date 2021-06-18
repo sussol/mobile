@@ -26,7 +26,6 @@ export const migrateDataToVersion = async (database, settings) => {
     fromVersion = settings.get(SETTINGS_KEYS.APP_VERSION);
     // Migrate app version from settings to local storage.
     AsyncStorage.setItem(APP_VERSION_KEY, fromVersion);
-    settings.delete(SETTINGS_KEYS.APP_VERSION);
   }
 
   // Get upgraded version.
@@ -53,6 +52,7 @@ export const migrateDataToVersion = async (database, settings) => {
   }
   // Record the new app version.
   AsyncStorage.setItem(APP_VERSION_KEY, toVersion);
+  settings.set(SETTINGS_KEYS.APP_VERSION, toVersion);
 };
 
 // All data migration functions should be kept in this array, in sequential order. Each migration
