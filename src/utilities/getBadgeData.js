@@ -17,9 +17,7 @@ const getBadgeData = routeName => {
     case 'TemperatureBreach':
       return [
         {
-          count: dataType
-            ? UIDatabase.objects(dataType).filtered('acknowledged == false').length
-            : 0,
+          count: UIDatabase.objects(dataType).filtered('acknowledged == false').length,
           title: `${generalStrings.unacknowledged} ${generalStrings[routeName]}`,
         },
       ];
