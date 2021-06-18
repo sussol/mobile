@@ -20,7 +20,7 @@ const getBadgeData = routeName => {
           count: UIDatabase.objects(dataType).filter(
             sensor => sensor.isInHotBreach || sensor.isInColdBreach
           ).length,
-          title: `${generalStrings.unacknowledged} ${generalStrings[routeName]}`,
+          title: `${generalStrings.sensors_in_breach}`,
         },
       ];
     }
