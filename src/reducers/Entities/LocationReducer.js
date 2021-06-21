@@ -21,6 +21,7 @@ export const LocationReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
+    case INITIALISE_FINISHED:
     case SYNC_TRANSACTION_COMPLETE: {
       const { byId } = state;
 
