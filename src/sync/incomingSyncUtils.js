@@ -1026,6 +1026,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         location: database.getOrCreate('Location', record.location_ID),
         breach: database.getOrCreate('TemperatureBreach', record.temperature_breach_ID),
         logInterval: parseNumber(record.log_interval),
+        sensor: database.getOrCreate('Sensor', record.sensor_ID),
       });
       break;
     }
