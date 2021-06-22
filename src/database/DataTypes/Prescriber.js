@@ -4,6 +4,20 @@ export class Prescriber extends Realm.Object {
   get isEditable() {
     return this.fromThisStore;
   }
+
+  /**
+   * Get first line of address.
+   */
+  get addressOne() {
+    return this.address?.line1 ?? '';
+  }
+
+  /**
+   * Get second line of address.
+   */
+  get addressTwo() {
+    return this.address?.line2 ?? '';
+  }
 }
 
 Prescriber.schema = {

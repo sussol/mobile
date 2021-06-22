@@ -10,7 +10,8 @@ import ValidUrl from 'valid-url';
 import { Dimensions, Text, View, ToastAndroid, TouchableOpacity } from 'react-native';
 import RNRestart from 'react-native-restart';
 import { Button } from 'react-native-ui-components';
-import { UIDatabase } from '../database';
+
+import { importData, UIDatabase } from '../database';
 import { SETTINGS_KEYS } from '../settings';
 import AppSettings from '../settings/MobileAppSettings';
 import { MODAL_KEYS } from '../utilities';
@@ -47,7 +48,12 @@ const exportData = async () => {
   ToastAndroid.show(toastMessage, ToastAndroid.SHORT);
 };
 
-const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWritePermission }) => {
+const Settings = ({
+  toRealmExplorer,
+  currentUserPasswordHash,
+  requestExportStorageWritePermission,
+  requestImportStorageWritePermission,
+}) => {
   const [state, setState] = useState({
     syncURL: UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL),
     modalKey: '',
@@ -256,7 +262,14 @@ const Settings = ({ toRealmExplorer, currentUserPasswordHash, requestStorageWrit
         </View>
         <View>
           <MenuButton text={buttonStrings.realm_explorer} onPress={toRealmExplorer} />
-          <MenuButton text={buttonStrings.export_data} onPress={requestStorageWritePermission} />
+          <MenuButton
+            text={buttonStrings.export_data}
+            onPress={requestExportStorageWritePermission}
+          />
+          <MenuButton
+            text={buttonStrings.import_data}
+            onPress={requestImportStorageWritePermission}
+          />
           <MenuButton text={buttonStrings.factory_reset} onPress={onReset} />
           <MenuButton text={buttonStrings.check_connection} onPress={onCheckConnection} />
           <VaccineButton />
@@ -279,8 +292,10 @@ const mapStateToDispatch = dispatch => ({
   toEditSensorPage: sensor => dispatch(gotoEditSensorPage(sensor)),
   toFridgeDetail: fridge => dispatch(gotoFridgeDetailPage(fridge)),
   toNewSensorPage: () => dispatch(gotoNewSensorPage()),
-  requestStorageWritePermission: () =>
+  requestExportStorageWritePermission: () =>
     dispatch(PermissionActions.requestWriteStorage()).then(exportData),
+  requestImportStorageWritePermission: () =>
+    dispatch(PermissionActions.requestWriteStorage()).then(importData),
 });
 
 const mapStateToProps = state => ({
@@ -305,5 +320,6 @@ export const SettingsPage = connect(mapStateToProps, mapStateToDispatch)(Setting
 Settings.propTypes = {
   toRealmExplorer: PropTypes.func.isRequired,
   currentUserPasswordHash: PropTypes.string.isRequired,
-  requestStorageWritePermission: PropTypes.func.isRequired,
+  requestExportStorageWritePermission: PropTypes.func.isRequired,
+  requestImportStorageWritePermission: PropTypes.func.isRequired,
 };

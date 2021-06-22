@@ -41,8 +41,9 @@ export const DateRangeSelector = ({
           initialValue={moment(initialStartDate).startOf('day').toDate()}
           onDateChanged={onChangeFromDate}
           isCircle={false}
+          label={formattedStartDate}
+          labelStyle={dateTextStyle}
         />
-        <Text style={dateTextStyle}>{formattedStartDate}</Text>
       </FlexRow>
 
       <FlexRow alignItems="center">
@@ -53,8 +54,9 @@ export const DateRangeSelector = ({
           initialValue={moment(initialEndDate).endOf('day').toDate()}
           onDateChanged={onChangeToDate}
           isCircle={false}
+          label={formattedEndDate}
+          labelStyle={dateTextStyle}
         />
-        <Text style={dateTextStyle}>{formattedEndDate}</Text>
       </FlexRow>
     </View>
   );

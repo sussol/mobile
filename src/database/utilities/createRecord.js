@@ -39,6 +39,10 @@ const createAddress = (database, { line1, line2, line3, line4, zipCode } = {}) =
  * @return  {Realm.object}            The Address object described by the params.
  */
 export const getOrCreateAddress = (database, { id, line1, line2, line3, line4, zipCode }) => {
+  // if all properties are undefined, then no filters apply and all addresses are fetched
+  // with the first address returned as the valid matching address
+  if (!id && !line1 && !line2 && !line3 && !line4 && !zipCode) return undefined;
+
   let results = database.objects('Address');
 
   if (typeof id === 'string') {

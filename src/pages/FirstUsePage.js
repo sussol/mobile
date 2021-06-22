@@ -1,4 +1,5 @@
 /* eslint-disable global-require */
+/* eslint-disable no-undef */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -15,6 +16,10 @@ import { Synchroniser } from '../sync';
 import { SyncState } from '../widgets';
 import { DemoUserModal } from '../widgets/modals';
 import packageJson from '../../package.json';
+
+import { PermissionActions } from '../actions/PermissionActions';
+import { buttonStrings } from '../localization';
+import { importData } from '../database/utilities';
 
 import globalStyles, { SUSSOL_ORANGE, WARM_GREY } from '../globalStyles';
 import { FormPasswordInput } from '../widgets/FormInputs/FormPasswordInput';
@@ -109,6 +114,7 @@ export class FirstUsePageComponent extends React.Component {
 
   render() {
     const { isDemoUserModalOpen, serverURL, status, syncSiteName, syncSitePassword } = this.state;
+    const { requestImportStorageWritePermission } = this.props;
 
     return (
       <View style={[globalStyles.verticalContainer, localStyles.verticalContainer]}>
@@ -201,6 +207,14 @@ export class FirstUsePageComponent extends React.Component {
               disabledColor={WARM_GREY}
               isDisabled={status !== STATUSES.UNINITIALISED && status !== STATUSES.ERROR}
             />
+            {__DEV__ ? (
+              <Button
+                style={[globalStyles.authFormButton, { marginLeft: 10, flex: 1 }]}
+                textStyle={globalStyles.authFormButtonText}
+                text={buttonStrings.import_data}
+                onPress={requestImportStorageWritePermission}
+              />
+            ) : null}
           </View>
         </View>
         <Text style={globalStyles.authWindowButtonText}> v{this.appVersion}</Text>
@@ -209,13 +223,17 @@ export class FirstUsePageComponent extends React.Component {
     );
   }
 }
+const mapStateToDispatch = dispatch => ({
+  requestImportStorageWritePermission: () =>
+    dispatch(PermissionActions.requestWriteStorage()).then(importData),
+});
 
 const mapStateToProps = state => {
   const { sync } = state;
   return sync;
 };
 
-export const FirstUsePage = connect(mapStateToProps)(FirstUsePageComponent);
+export const FirstUsePage = connect(mapStateToProps, mapStateToDispatch)(FirstUsePageComponent);
 
 FirstUsePageComponent.propTypes = {
   onInitialised: PropTypes.func.isRequired,
@@ -223,6 +241,7 @@ FirstUsePageComponent.propTypes = {
   progressMessage: PropTypes.string.isRequired,
   errorMessage: PropTypes.string.isRequired,
   progress: PropTypes.number.isRequired,
+  requestImportStorageWritePermission: PropTypes.func.isRequired,
   total: PropTypes.number.isRequired,
 };
 
