@@ -1,7 +1,7 @@
 import { LOCATION_ACTIONS } from '../../actions/Entities';
 import { UIDatabase } from '../../database';
 import { ROUTES } from '../../navigation/index';
-import { SYNC_TRANSACTION_COMPLETE } from '../../sync/constants';
+import { INITIALISE_FINISHED, SYNC_TRANSACTION_COMPLETE } from '../../sync/constants';
 
 const getById = () =>
   UIDatabase.objects('Location').reduce(
