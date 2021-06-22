@@ -88,7 +88,7 @@ const Settings = ({
     syncAuthenticator
       .authenticate(authURL, syncSiteName, null, currentUserPasswordHash)
       .then(() => {
-        ToastAndroid.show('Connection OK', ToastAndroid.LONG);
+        ToastAndroid.show(buttonStrings.connection_status, ToastAndroid.LONG);
       })
       .catch(error => {
         ToastAndroid.show(error.message, ToastAndroid.LONG);
