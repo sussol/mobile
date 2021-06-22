@@ -3,7 +3,7 @@ import { BREACH_ACTIONS } from '../../actions/BreachActions';
 import { SENSOR_ACTIONS } from '../../actions/Entities/SensorActions';
 import { UIDatabase } from '../../database';
 import { ROUTES } from '../../navigation/index';
-import { SYNC_TRANSACTION_COMPLETE } from '../../sync/constants';
+import { INITIALISE_FINISHED, SYNC_TRANSACTION_COMPLETE } from '../../sync/constants';
 
 const getById = () =>
   UIDatabase.objects('Sensor').reduce(
@@ -25,6 +25,7 @@ export const SensorReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
+    case INITIALISE_FINISHED:
     case SYNC_TRANSACTION_COMPLETE: {
       const { byId } = state;
 

@@ -2,7 +2,7 @@
 import { TEMPERATURE_BREACH_CONFIG_ACTIONS } from '../../actions/Entities/TemperatureBreachConfigActions';
 import { UIDatabase } from '../../database';
 import { ROUTES } from '../../navigation/index';
-import { SYNC_TRANSACTION_COMPLETE } from '../../sync/constants';
+import { INITIALISE_FINISHED, SYNC_TRANSACTION_COMPLETE } from '../../sync/constants';
 
 const getById = () =>
   UIDatabase.objects('TemperatureBreachConfiguration').reduce(
@@ -23,6 +23,7 @@ export const TemperatureBreachConfigReducer = (state = initialState(), action) =
   const { type } = action;
 
   switch (type) {
+    case INITIALISE_FINISHED:
     case SYNC_TRANSACTION_COMPLETE: {
       const { byId } = state;
 
