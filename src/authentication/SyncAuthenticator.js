@@ -25,7 +25,7 @@ const {
   THIS_STORE_NAME_ID,
 } = SETTINGS_KEYS;
 
-const AUTH_ENDPOINT = '/sync/v3/site';
+export const AUTH_ENDPOINT = '/sync/v3/site';
 
 export class SyncAuthenticator {
   constructor(settings) {
