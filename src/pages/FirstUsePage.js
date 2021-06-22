@@ -213,6 +213,8 @@ export class FirstUsePageComponent extends React.Component {
                 textStyle={globalStyles.authFormButtonText}
                 text={buttonStrings.import_data}
                 onPress={requestImportStorageWritePermission}
+                disabledColor={WARM_GREY}
+                isDisabled={status !== STATUSES.UNINITIALISED && status !== STATUSES.ERROR}
               />
             ) : null}
           </View>
