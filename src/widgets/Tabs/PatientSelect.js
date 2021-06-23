@@ -81,7 +81,7 @@ const Header = ({ onSearchOnline, onNewPatient, loading, toggleQrModal }) => (
   <FlexRow justifyContent="center" alignItems="center">
     <Text style={localStyles.text}>{vaccineStrings.vaccine_dispense_step_one_title}</Text>
     <View style={{ flex: 1, marginLeft: 'auto' }} />
-    {__DEV__ ? <PageButton text={modalStrings.qr_scanner_header} onPress={toggleQrModal} /> : null}
+    <PageButton text={modalStrings.qr_scanner_header} onPress={toggleQrModal} />
     <PageButton
       style={{ marginLeft: 10 }}
       text={generalStrings.search_online}
