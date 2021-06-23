@@ -5,15 +5,15 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
+import { hashPassword } from 'sussol-utilities';
 import ValidUrl from 'valid-url';
 import { Dimensions, Text, View, ToastAndroid, TouchableOpacity } from 'react-native';
 import RNRestart from 'react-native-restart';
-import { hashPassword } from 'sussol-utilities';
 import { Button } from 'react-native-ui-components';
 
 import { importData, UIDatabase } from '../database';
 import { SETTINGS_KEYS } from '../settings';
+import AppSettings from '../settings/MobileAppSettings';
 import { MODAL_KEYS } from '../utilities';
 
 import {
@@ -37,6 +37,7 @@ import { FlexRow } from '../widgets/FlexRow';
 import globalStyles, { APP_FONT_FAMILY, DARK_GREY, SUSSOL_ORANGE } from '../globalStyles';
 import { FlexView } from '../widgets/FlexView';
 import { MILLISECONDS } from '../utilities/constants';
+import { SyncAuthenticator, AUTH_ENDPOINT } from '../authentication/SyncAuthenticator';
 
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
@@ -76,6 +77,21 @@ const Settings = ({
   const editSyncURL = newSyncURL => {
     if (!ValidUrl.isWebUri(newSyncURL)) ToastAndroid.show('Not a valid URL', ToastAndroid.LONG);
     else setState({ ...state, modalKey: '', syncURL: newSyncURL });
+  };
+
+  const onCheckConnection = () => {
+    //  Hash the password.
+    const authURL = `${syncURL}${AUTH_ENDPOINT}`;
+    const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
+    const syncAuthenticator = new SyncAuthenticator(AppSettings);
+    syncAuthenticator
+      .authenticate(authURL, syncSiteName, null, currentUserPasswordHash)
+      .then(() => {
+        ToastAndroid.show(buttonStrings.connection_status, ToastAndroid.LONG);
+      })
+      .catch(error => {
+        ToastAndroid.show(error.message, ToastAndroid.LONG);
+      });
   };
   const editSyncPassword = newSyncPassword =>
     setState({ ...state, modalKey: '', syncPassword: newSyncPassword });
@@ -254,6 +270,7 @@ const Settings = ({
             onPress={requestImportStorageWritePermission}
           />
           <MenuButton text={buttonStrings.factory_reset} onPress={onReset} />
+          <MenuButton text={buttonStrings.check_connection} onPress={onCheckConnection} />
           <VaccineButton />
         </View>
       </View>

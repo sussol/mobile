@@ -34,7 +34,9 @@
     "view_regimen_data": "View Regimen Data",
     "supply_data": "Supply Data",
     "customer_data": "Customer Data",
-    "factory_reset": "Factory Reset"
+    "factory_reset": "Factory Reset",
+    "check_connection": "Check connection",
+    "connection_status": "Connection successful"
   },
   "fr": {
     "cancel": "Annuler",
@@ -64,7 +66,8 @@
     "use_suggested_quantities": "Utiliser les quantités suggérées",
     "view_regimen_data": "Données de régimes",
     "new_supplier_credit": "Nouveau crédit fournisseur",
-    "next": "Suivant"
+    "next": "Suivant",
+    "check_connection": "Check connection"
   },
   "gil": {
     "add_master_list_items": "Rinea am list",
@@ -178,7 +181,8 @@
     "realm_explorer": "Explorador Realm",
     "use_requested_quantities": "Usar quantidades solicitadas",
     "use_suggested_quantities": "Usar quantidades sugeridas",
-    "view_regimen_data": "Visualizar dados do regime"
+    "view_regimen_data": "Visualizar dados do regime",
+    "check_connection": "Check connection"
   },
   "es": {
     "next": "Siguiente",
@@ -206,6 +210,7 @@
     "realm_explorer": "Explorador Realm",
     "use_requested_quantities": "Usar Cantidades Solicitadas",
     "use_suggested_quantities": "Usar Cantidades Sugeridas",
-    "view_regimen_data": "Ver Datos del Régimen"
+    "view_regimen_data": "Ver Datos del Régimen",
+    "check_connection": "Check connection"
   }
 }
