@@ -257,7 +257,7 @@ export const schema = {
     VaccineVialMonitorStatus,
     VaccineVialMonitorStatusLog,
   ],
-  schemaVersion: 24,
+  schemaVersion: 25,
 };
 
 export default schema;

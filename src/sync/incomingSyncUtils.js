@@ -1171,6 +1171,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         firstName: record.first_name,
         lastName: record.last_name,
         code: record.code,
+        isActive: parseBoolean(record.is_active),
       });
       break;
     }
