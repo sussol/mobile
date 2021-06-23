@@ -13,7 +13,9 @@ import { getAuthHeader, AUTH_ERROR_CODES } from 'sussol-utilities';
 
 import { UIDatabase } from '../database';
 import { createRecord, parseBoolean, parseDate, parseNumber } from '../database/utilities';
+import { sortDataBy } from '../utilities';
 import { SETTINGS_KEYS } from '../settings/index';
+import { generalStrings } from '../localization/index';
 
 const ERROR_CODES = {
   ...AUTH_ERROR_CODES,
@@ -22,6 +24,7 @@ const ERROR_CODES = {
 
 const RESOURCES = {
   PATIENT: '/api/v4/patient',
+  PATIENT_HISTORY: '/api/v4/patient_history',
   PRESCRIBER: '/api/v4/prescriber',
   NAME_STORE_JOIN: '/api/v4/name_store_join',
 };
@@ -37,6 +40,7 @@ const PARAMETERS = {
   lastName: { key: 'last_name', type: TYPES.STRING },
   dateOfBirth: { key: 'dob', type: TYPES.DATE },
   policyNumber: { key: 'policy_number', type: TYPES.STRING },
+  barcode: { key: 'barcode', type: TYPES.STRING },
   registrationCode: { key: 'code', type: TYPES.STRING },
   limit: { key: 'limit', type: TYPES.NUMBER },
   offset: { key: 'offset', type: TYPES.NUMBER },
@@ -101,6 +105,7 @@ const getPrescriberQueryString = ({ firstName = '', lastName = '', registrationC
 const getPatientQueryString = ({
   firstName = '',
   lastName = '',
+  barcode = '',
   dateOfBirth = '',
   policyNumber = '',
   limit = null,
@@ -109,6 +114,7 @@ const getPatientQueryString = ({
   const queryParams = [
     { [PARAMETERS.firstName.key]: firstName, type: PARAMETERS.firstName.type },
     { [PARAMETERS.lastName.key]: lastName, type: PARAMETERS.lastName.type },
+    { [PARAMETERS.barcode.key]: barcode, type: PARAMETERS.barcode.type },
     { [PARAMETERS.dateOfBirth.key]: dateOfBirth, type: PARAMETERS.dateOfBirth.type },
     { [PARAMETERS.policyNumber.key]: policyNumber, type: PARAMETERS.policyNumber.type },
     { [PARAMETERS.offset.key]: offset, type: PARAMETERS.offset.type },
@@ -121,6 +127,12 @@ export const getPatientRequestUrl = params => {
   const endpoint = RESOURCES.PATIENT;
   const queryString = getPatientQueryString(params);
   return endpoint + queryString;
+};
+
+export const getPatientHistoryRequestUrl = id => {
+  const endpoint = RESOURCES.PATIENT_HISTORY;
+  const queryString = `?id=${id}`;
+  return `${endpoint}${queryString}`;
 };
 
 export const getPrescriberRequestUrl = params => {
@@ -190,6 +202,52 @@ const processResponse = response => {
   }
 };
 
+export const getPatientHistoryResponseProcessor = ({
+  isVaccine,
+  sortKey,
+  isAscending = true,
+}) => response => {
+  const result = processResponse(response);
+  const patientHistory = [];
+  result.forEach(({ clinician, confirm_date, transLines }) =>
+    transLines.forEach(
+      ({
+        ID: id,
+        quantity: totalQuantity,
+        item_name: itemName,
+        itemLine,
+        medicineAdministrator,
+      }) => {
+        const { item } = itemLine;
+        const { code: itemCode, doses } = item;
+        const prescriber = clinician
+          ? `${clinician.first_name} ${clinician.last_name}`.trim()
+          : generalStrings.not_available;
+        const vaccinator = medicineAdministrator
+          ? `${medicineAdministrator.first_name} ${medicineAdministrator.last_name}`.trim()
+          : generalStrings.not_available;
+
+        if (isVaccine && !item.is_vaccine) return;
+        const confirmDate = parseDate(confirm_date);
+
+        patientHistory.push({
+          id,
+          confirmDate,
+          prescriptionDate: confirmDate,
+          doses: totalQuantity * doses,
+          itemCode,
+          itemName,
+          prescriber,
+          totalQuantity,
+          vaccinator,
+        });
+      }
+    )
+  );
+
+  return patientHistory ? sortDataBy(patientHistory.slice(), sortKey, isAscending) : patientHistory;
+};
+
 export const processPatientResponse = response => {
   const result = processResponse(response);
   return result.map(
@@ -197,6 +255,7 @@ export const processPatientResponse = response => {
       ID: id,
       name,
       code,
+      barcode,
       phone: phoneNumber,
       bill_address1: billAddress1,
       bill_address2: billAddress2,
@@ -216,6 +275,7 @@ export const processPatientResponse = response => {
     }) => ({
       id,
       name,
+      barcode,
       code,
       phoneNumber,
       billAddress1,
@@ -255,8 +315,8 @@ export const processPrescriberResponse = response =>
       firstName: first_name,
       lastName: last_name,
       registrationCode: registration_code,
-      address1,
-      address2,
+      addressOne: address1,
+      addressTwo: address2,
       phoneNumber: phone,
       mobileNumber: mobile,
       emailAddress: email,

@@ -34,7 +34,7 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
     }
 
     case VACCINE_PRESCRIPTION_ACTIONS.RESET:
-    case 'Navigation/BACK': {
+    case 'GO_BACK': {
       // reset if heading back
       return initialState();
     }

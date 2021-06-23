@@ -141,7 +141,11 @@ const NewStepperNumber = ({ step, numberOfSteps, currentStep, isActive, isLast, 
     <Container onPress={wrappedOnPress} style={container}>
       <Circle size={30} backgroundColor={backgroundColor} borderColor={borderColor}>
         {isActive || completedStep ? (
-          <ConfirmIcon color={DARKER_GREY} size={35} style={{ backgroundColor: 'white' }} />
+          <ConfirmIcon
+            color={DARKER_GREY}
+            size={35}
+            style={{ backgroundColor: WHITE, marginTop: -3 }}
+          />
         ) : (
           <Text style={stepNumber}>{step + 1}</Text>
         )}

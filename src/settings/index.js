@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-community/async-storage';
 import { MILLISECONDS } from '../utilities/constants';
 
 export const SETTINGS_KEYS = {
@@ -26,9 +25,4 @@ export const SETTINGS_KEYS = {
 export const SETTINGS_DEFAULTS = {
   [SETTINGS_KEYS.SYNC_INTERVAL]: String(MILLISECONDS.TEN_MINUTES),
   [SETTINGS_KEYS.IDLE_LOGOUT_INTERVAL]: String(MILLISECONDS.THREE_MINUTES),
-};
-
-export const getAppVersion = async () => {
-  const appVersion = await AsyncStorage.getItem(SETTINGS_KEYS.APP_VERSION);
-  return appVersion;
 };

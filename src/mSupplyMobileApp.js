@@ -28,6 +28,7 @@ import { LoadingIndicatorContext } from './context/LoadingIndicatorContext';
 import { selectTitle } from './selectors/supplierCredit';
 import { selectCurrentUser } from './selectors/user';
 import { selectUsingVaccines } from './selectors/modules';
+import { version as appVersion } from '../package.json';
 
 import { syncCompleteTransaction, setSyncError, openSyncModal } from './actions/SyncActions';
 import { FinaliseActions } from './actions/FinaliseActions';
@@ -77,6 +78,7 @@ class MSupplyMobileAppContainer extends React.Component {
     super(props, ...otherArgs);
 
     migrateDataToVersion(UIDatabase, Settings);
+    this.databaseVersion = Settings.get(SETTINGS_KEYS.APP_VERSION);
     this.userAuthenticator = new UserAuthenticator(UIDatabase, Settings);
     this.syncAuthenticator = new SyncAuthenticator(Settings);
     this.synchroniser = new Synchroniser(
@@ -227,6 +229,11 @@ class MSupplyMobileAppContainer extends React.Component {
 
     if (!isInitialised) {
       return <FirstUsePage synchroniser={this.synchroniser} onInitialised={this.onInitialised} />;
+    }
+
+    // If this database hasn't got any version setup then update with the current app's version.
+    if (this.databaseVersion.length === 0) {
+      Settings.set(SETTINGS_KEYS.APP_VERSION, appVersion);
     }
 
     return (

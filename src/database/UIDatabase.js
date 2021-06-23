@@ -7,11 +7,15 @@
 
 import RNFS from 'react-native-fs';
 
+import { Database, Settings } from 'react-native-database';
 import { SETTINGS_KEYS } from '../settings';
 import { PREFERENCE_TYPE_KEYS } from './utilities/constants';
-import { formatDate, backupValidation } from '../utilities';
+import { formatDate, backupValidation, selectDocument, compareVersions } from '../utilities';
+import { generalStrings, modalStrings } from '../localization';
+import { schema } from './schema';
+import { version as appVersion } from '../../package.json';
 
-const { THIS_STORE_NAME_ID } = SETTINGS_KEYS;
+const { THIS_STORE_NAME_ID, APP_VERSION } = SETTINGS_KEYS;
 
 const translateToCoreDatabaseType = type => {
   switch (type) {
@@ -56,6 +60,8 @@ const translateToCoreDatabaseType = type => {
     case 'PatientSurveyForm':
     case 'ADRForm':
       return 'FormSchema';
+    case 'MedicineAdministrator':
+      return 'MedicineAdministrator';
     case 'ActiveLocation':
       return 'Location';
     default:
@@ -131,6 +137,48 @@ class UIDatabase {
     }
 
     return true;
+  }
+
+  /**
+   * Imports the realm file from the location chosen in the open dialog box
+   * if the selected datafile's version is lower than or equal to the current
+   * app's version. May request storage permissions if required.
+   * @returns Returns `True` if data is imported successfully. Otherwise `False`
+   */
+  async importData() {
+    const { realm } = this.database;
+    const { path: realmPath } = realm;
+    const realmFilePath = await selectDocument({ fileType: 'realm' });
+
+    if (realmFilePath === '') return { success: false, error: generalStrings.couldnt_import_data };
+    if (realm.isInTransaction) return { success: false, error: generalStrings.couldnt_import_data };
+
+    try {
+      schema.path = realmFilePath;
+      const externalDbInstance = new Database(schema);
+      const externalDbSettings = new Settings(externalDbInstance);
+      const externalDbVersion = externalDbSettings.get(APP_VERSION);
+
+      // Make sure the selected datafile's version is not higher than the current
+      // app's version before importing it
+      if (compareVersions(externalDbVersion, appVersion) > 0) {
+        return {
+          success: false,
+          error: modalStrings.formatString(
+            modalStrings.version_incompatible,
+            appVersion,
+            externalDbVersion
+          ),
+        };
+      }
+
+      // Proceed importation of the realm file to the app database location
+      await RNFS.copyFile(realmFilePath, realmPath);
+    } catch (error) {
+      return { success: false, error: generalStrings.imported_data };
+    }
+
+    return { success: true };
   }
 
   objects(type) {
@@ -264,6 +312,8 @@ class UIDatabase {
         return results.filtered("type == 'PatientSurvey'").sorted('version', true);
       case 'ActiveLocation':
         return results.filtered('hold == false');
+      case 'MedicineAdministrator':
+        return results.filtered('isActive == true');
       default:
         return results;
     }

@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2020
@@ -28,6 +29,8 @@ import { DARK_GREY } from '../globalStyles/index';
 
 export const DatePickerButton = ({
   initialValue,
+  label,
+  labelStyle,
   onDateChanged,
   maximumDate,
   minimumDate,
@@ -46,6 +49,8 @@ export const DatePickerButton = ({
     <IconButton
       isDisabled={isDisabled}
       Icon={<CalendarIcon color={DARK_GREY} />}
+      label={label}
+      labelStyle={labelStyle}
       onPress={openDatePicker}
     />
   );
@@ -68,6 +73,8 @@ export const DatePickerButton = ({
 };
 
 DatePickerButton.defaultProps = {
+  label: null,
+  labelStyle: {},
   minimumDate: undefined,
   maximumDate: undefined,
   isCircle: true,
@@ -82,5 +89,7 @@ DatePickerButton.propTypes = {
   minimumDate: PropTypes.instanceOf(Date),
   isCircle: PropTypes.bool,
   isDisabled: PropTypes.bool,
+  label: PropTypes.string,
+  labelStyle: PropTypes.object,
   mode: PropTypes.string,
 };

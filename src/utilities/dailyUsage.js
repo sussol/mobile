@@ -48,7 +48,7 @@ export const dailyUsage = item => {
   const useLookbackDate = amcEnforceLookback || itemAddedDate.isBefore(lookbackDate);
   const startDate = useLookbackDate ? lookbackDate : itemAddedDate;
 
-  const numberOfUsageDays = moment.duration(dateNow.diff(startDate)).asDays();
+  const numberOfUsageDays = Math.max(moment.duration(dateNow.diff(startDate)).asDays(), 1);
 
   const usage = UIDatabase.objects('TransactionBatch')
     .filtered('itemBatch.item.id == $0', itemId)
@@ -60,7 +60,7 @@ export const dailyUsage = item => {
     )
     .reduce((sum, { totalQuantity }) => sum + totalQuantity, 0);
 
-  return usage / (numberOfUsageDays || 1);
+  return usage / numberOfUsageDays;
 };
 
 /**
@@ -81,9 +81,7 @@ export const programDailyUsage = (item, period) => {
   const amcLookback = getAMCLookbackPeriod();
 
   const periodEnd = moment(periodEndDate);
-  const usageStartDate = moment(periodEndDate)
-    .add(1, 'days')
-    .subtract(amcLookback, 'months');
+  const usageStartDate = moment(periodEndDate).add(1, 'days').subtract(amcLookback, 'months');
 
   const numberOfUsageDays = NUMBER_OF_DAYS_IN_A_MONTH * amcLookback;
 

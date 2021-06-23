@@ -24,7 +24,7 @@ export const parseDate = (ISODate, ISOTime) => {
     ISODate === '0000-00-00T00:00:00' ||
     ISODate === '0000-00-00T00:00:00Z'
   ) {
-    return null;
+    return undefined;
   }
   const date = new Date(ISODate);
   if (ISOTime && ISOTime.length >= 6) {

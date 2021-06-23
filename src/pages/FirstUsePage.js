@@ -1,4 +1,5 @@
 /* eslint-disable global-require */
+/* eslint-disable no-undef */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -13,10 +14,15 @@ import { Button } from 'react-native-ui-components';
 import { Synchroniser } from '../sync';
 
 import { SyncState } from '../widgets';
-import { getAppVersion } from '../settings';
 import { DemoUserModal } from '../widgets/modals';
+import packageJson from '../../package.json';
+
+import { PermissionActions } from '../actions/PermissionActions';
+import { buttonStrings } from '../localization';
+import { importData } from '../database/utilities';
 
 import globalStyles, { SUSSOL_ORANGE, WARM_GREY } from '../globalStyles';
+import { FormPasswordInput } from '../widgets/FormInputs/FormPasswordInput';
 
 const STATUSES = {
   UNINITIALISED: 'uninitialised',
@@ -29,14 +35,13 @@ export class FirstUsePageComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      appVersion: '',
       serverURL: '',
       syncSiteName: '',
       syncSitePassword: '',
       status: STATUSES.UNINITIALISED,
       isDemoUserModalOpen: false,
     };
-    this.setAppVersion();
+    this.appVersion = packageJson.version;
     this.siteNameInputRef = null;
     this.passwordInputRef = null;
     this.onPressConnect = this.onPressConnect.bind(this);
@@ -55,11 +60,6 @@ export class FirstUsePageComponent extends React.Component {
     } catch (error) {
       this.setState({ status: STATUSES.ERROR });
     }
-  }
-
-  async setAppVersion() {
-    const appVersion = await getAppVersion();
-    this.setState({ appVersion });
   }
 
   get canAttemptLogin() {
@@ -113,14 +113,8 @@ export class FirstUsePageComponent extends React.Component {
   handleDemoModalClose = () => this.setState({ isDemoUserModalOpen: false });
 
   render() {
-    const {
-      appVersion,
-      isDemoUserModalOpen,
-      serverURL,
-      status,
-      syncSiteName,
-      syncSitePassword,
-    } = this.state;
+    const { isDemoUserModalOpen, serverURL, status, syncSiteName, syncSitePassword } = this.state;
+    const { requestImportStorageWritePermission } = this.props;
 
     return (
       <View style={[globalStyles.verticalContainer, localStyles.verticalContainer]}>
@@ -177,24 +171,17 @@ export class FirstUsePageComponent extends React.Component {
             />
           </View>
           <View style={globalStyles.horizontalContainer}>
-            <TextInput
-              ref={reference => {
-                this.passwordInputRef = reference;
-              }}
-              style={globalStyles.authFormTextInputStyle}
-              autoCompleteType="password"
-              placeholder="Sync Site Password"
-              placeholderTextColor={SUSSOL_ORANGE}
-              underlineColorAndroid={SUSSOL_ORANGE}
+            <FormPasswordInput
               value={syncSitePassword}
-              secureTextEntry
               editable={status !== STATUSES.INITIALISING}
-              returnKeyType="done"
-              selectTextOnFocus
               onChangeText={this.onChangePassword}
               onSubmitEditing={() => {
                 if (this.passwordInputRef) this.passwordInputRef.blur();
                 if (this.canAttemptLogin) this.onPressConnect();
+              }}
+              placeholder="Sync Site Password"
+              ref={ref => {
+                this.passwordInputRef = ref;
               }}
             />
           </View>
@@ -220,21 +207,35 @@ export class FirstUsePageComponent extends React.Component {
               disabledColor={WARM_GREY}
               isDisabled={status !== STATUSES.UNINITIALISED && status !== STATUSES.ERROR}
             />
+            {__DEV__ ? (
+              <Button
+                style={[globalStyles.authFormButton, { marginLeft: 10, flex: 1 }]}
+                textStyle={globalStyles.authFormButtonText}
+                text={buttonStrings.import_data}
+                onPress={requestImportStorageWritePermission}
+                disabledColor={WARM_GREY}
+                isDisabled={status !== STATUSES.UNINITIALISED && status !== STATUSES.ERROR}
+              />
+            ) : null}
           </View>
         </View>
-        <Text style={globalStyles.authWindowButtonText}> v{appVersion}</Text>
+        <Text style={globalStyles.authWindowButtonText}> v{this.appVersion}</Text>
         <DemoUserModal isOpen={isDemoUserModalOpen} onClose={this.handleDemoModalClose} />
       </View>
     );
   }
 }
+const mapStateToDispatch = dispatch => ({
+  requestImportStorageWritePermission: () =>
+    dispatch(PermissionActions.requestWriteStorage()).then(importData),
+});
 
 const mapStateToProps = state => {
   const { sync } = state;
   return sync;
 };
 
-export const FirstUsePage = connect(mapStateToProps)(FirstUsePageComponent);
+export const FirstUsePage = connect(mapStateToProps, mapStateToDispatch)(FirstUsePageComponent);
 
 FirstUsePageComponent.propTypes = {
   onInitialised: PropTypes.func.isRequired,
@@ -242,6 +243,7 @@ FirstUsePageComponent.propTypes = {
   progressMessage: PropTypes.string.isRequired,
   errorMessage: PropTypes.string.isRequired,
   progress: PropTypes.number.isRequired,
+  requestImportStorageWritePermission: PropTypes.func.isRequired,
   total: PropTypes.number.isRequired,
 };
 

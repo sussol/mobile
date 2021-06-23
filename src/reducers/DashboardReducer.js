@@ -23,10 +23,11 @@ export const DashboardReducer = (state = initialState(), action) => {
       return { ...state, currentReport: reports.filtered('id == $0', reportID)[0] };
     }
 
-    case 'Navigation/NAVIGATE': {
-      const { routeName } = action;
+    case 'NAVIGATE': {
+      const { payload } = action;
+      const { name } = payload;
       const { reports } = state;
-      if (routeName === ROUTES.DASHBOARD) return { ...state, currentReport: reports[0] || null };
+      if (name === ROUTES.DASHBOARD) return { ...state, currentReport: reports[0] || null };
       return state;
     }
 

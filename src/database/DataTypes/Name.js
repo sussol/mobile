@@ -12,6 +12,7 @@ import { PREFERENCE_KEYS } from '../utilities/preferenceConstants';
  *
  * @property  {string}              id
  * @property  {string}              name
+ * @property  {string}              barcode
  * @property  {string}              code
  * @property  {string}              phoneNumber
  * @property  {Address}             billingAddress
@@ -140,6 +141,7 @@ export class Name extends Realm.Object {
     return {
       id: this.id,
       name: this.name,
+      barcode: this.barcode,
       code: this.code,
       dateOfBirth: this.dateOfBirth?.getTime(),
       phoneNumber: this.phoneNumber,
@@ -176,6 +178,7 @@ Name.schema = {
   properties: {
     id: 'string',
     name: { type: 'string', default: 'placeholderName' },
+    barcode: { type: 'string', default: 'placeholderBarcode' },
     code: { type: 'string', default: 'placeholderCode' },
     dateOfBirth: { type: 'date', optional: true },
     phoneNumber: { type: 'string', optional: true },

@@ -17,9 +17,10 @@ export const InsuranceReducer = (state = initialState(), action) => {
   const { type } = action;
 
   switch (type) {
-    case 'Navigation/NAVIGATE': {
-      const { routeName } = action;
-      if (routeName !== ROUTES.PRESCRIPTION) return state;
+    case 'NAVIGATE': {
+      const { payload } = action;
+      const { name } = payload;
+      if (name !== ROUTES.PRESCRIPTION) return state;
 
       return initialState();
     }

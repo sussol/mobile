@@ -39,6 +39,10 @@ const createAddress = (database, { line1, line2, line3, line4, zipCode } = {}) =
  * @return  {Realm.object}            The Address object described by the params.
  */
 export const getOrCreateAddress = (database, { id, line1, line2, line3, line4, zipCode }) => {
+  // if all properties are undefined, then no filters apply and all addresses are fetched
+  // with the first address returned as the valid matching address
+  if (!id && !line1 && !line2 && !line3 && !line4 && !zipCode) return undefined;
+
   let results = database.objects('Address');
 
   if (typeof id === 'string') {
@@ -154,6 +158,7 @@ const createPrescriber = (database, prescriberDetails) => {
     emailAddress: prescriberEmailAddress,
     storeId: prescriberStoreId,
     isActive: prescriberIsActive,
+    female: prescriberIsFemale,
   } = prescriberDetails;
 
   const id = prescriberId ?? generateUUID();
@@ -173,6 +178,7 @@ const createPrescriber = (database, prescriberDetails) => {
 
   const isVisible = true;
   const isActive = prescriberIsActive ?? true;
+  const female = prescriberIsFemale ?? false;
 
   const prescriber = database.update('Prescriber', {
     id,
@@ -186,6 +192,7 @@ const createPrescriber = (database, prescriberDetails) => {
     fromThisStore,
     isVisible,
     isActive,
+    female,
   });
   return prescriber;
 };
@@ -218,7 +225,7 @@ const createNameNote = (database, { id, data, patientEventID, nameID, entryDate 
 /**
  * Creates a new patient record. Patient details passed can be in the shape:
  *  {
- *    id, code, firstName, lastName, name, dateOfBirth, emailAddress, phoneNumber,
+ *    id, barcode, code, firstName, lastName, name, dateOfBirth, emailAddress, phoneNumber,
  *    billAddress1, billAddress2, billAddress3, billAddress4, billPostalZipCode,
  *    country, female, supplyingStoreId, isActive
  *  }
@@ -226,6 +233,7 @@ const createNameNote = (database, { id, data, patientEventID, nameID, entryDate 
 const createPatient = (database, patientDetails) => {
   const {
     id: patientId,
+    barcode: patientBarcode,
     code: patientCode,
     firstName: patientFirstName,
     lastName: patientLastName,
@@ -250,6 +258,7 @@ const createPatient = (database, patientDetails) => {
   } = patientDetails;
   const id = patientId ?? generateUUID();
   const code = patientCode || getPatientUniqueCode(database);
+  const barcode = patientBarcode || `*${code}*`;
   const firstName = patientFirstName ?? '';
   const lastName = patientLastName ?? '';
   const name = patientName || `${patientLastName}, ${patientFirstName}`;
@@ -287,6 +296,7 @@ const createPatient = (database, patientDetails) => {
     firstName,
     lastName,
     name,
+    barcode,
     code,
     type,
     dateOfBirth,

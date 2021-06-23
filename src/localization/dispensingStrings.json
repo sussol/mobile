@@ -52,6 +52,7 @@
     "usage_directions": "Usage directions",
     "search_by_last_name_first_name": "Search by Last Name, First Name",
     "no_history_for_this_patient": "There is no history available for this patient.",
+    "fetching_history": "Fetching patient history from server",
     "must_order_one_to_continue": "Must choose an item and order at least one to continue",
     "available_credits_for": "Available credits for",
     "supplier_credit_for_supplier_invoice": "Supplier credit for supplier invoice",

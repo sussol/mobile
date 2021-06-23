@@ -4,110 +4,95 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React from 'react';
-import { View, Text } from 'react-native';
+import React, { useEffect } from 'react';
+import { ActivityIndicator, View, Text, ToastAndroid } from 'react-native';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+
+import { UIDatabase } from '../../database';
 
 import { MODALS } from '../constants';
+import { PREFERENCE_KEYS } from '../../database/utilities/preferenceConstants';
 
-import { getColumns, recordKeyExtractor, getItemLayout } from '../../pages/dataTableUtilities';
+import { getColumns } from '../../pages/dataTableUtilities';
+import { useLocalAndRemotePatientHistory } from '../../hooks/useLocalAndRemoteHistory';
 
-import { DataTable, DataTableRow, DataTableHeaderRow } from '../DataTable';
-import { FlexRow } from '../FlexRow';
+import { FlexView } from '../FlexView';
 
-import { selectSortedPatientHistory } from '../../selectors/patient';
-import { PatientActions } from '../../actions/PatientActions';
+import { WHITE, APP_FONT_FAMILY, SUSSOL_ORANGE, APP_GENERAL_FONT_SIZE } from '../../globalStyles';
+import { dispensingStrings, generalStrings } from '../../localization';
+import { SimpleTable } from '../SimpleTable';
 
-import { WHITE, APP_FONT_FAMILY } from '../../globalStyles';
-import { dispensingStrings } from '../../localization';
+const EmptyComponent = () => (
+  <FlexView flex={1} justifyContent="center" alignItems="center" style={{ marginTop: 20 }}>
+    <Text style={localStyles.text}>{dispensingStrings.no_history_for_this_patient}</Text>
+  </FlexView>
+);
 
-const PatientHistory = ({ sortKey, onSortColumn, isAscending, data }) => {
-  const columns = React.useMemo(() => getColumns(MODALS.PATIENT_HISTORY), []);
-
-  const renderHeader = React.useCallback(
-    () => (
-      <DataTableHeaderRow
-        columns={getColumns(MODALS.PATIENT_HISTORY)}
-        onPress={onSortColumn}
-        isAscending={isAscending}
-        sortKey={sortKey}
-      />
-    ),
-    [sortKey, isAscending]
+const LoadingIndicator = ({ loading }) =>
+  loading && (
+    <FlexView flex={1} justifyContent="center" alignItems="center" style={{ marginTop: 20 }}>
+      <Text style={localStyles.text}>{dispensingStrings.fetching_history}</Text>
+      {loading && (
+        <ActivityIndicator color={SUSSOL_ORANGE} size="small" style={{ marginTop: 10 }} />
+      )}
+    </FlexView>
   );
 
-  const getCallback = React.useCallback(colKey => {
-    switch (colKey) {
-      case '':
-        return null;
-      default:
-        return null;
-    }
+LoadingIndicator.propTypes = {
+  loading: PropTypes.bool.isRequired,
+};
+
+const getColumnKey = (isVaccine, canViewHistory) => {
+  if (canViewHistory && isVaccine) return MODALS.VACCINE_HISTORY_LOOKUP;
+  if (!canViewHistory && isVaccine) return MODALS.VACCINE_HISTORY;
+  if (canViewHistory && !isVaccine) return MODALS.PATIENT_HISTORY_LOOKUP;
+
+  return MODALS.PATIENT_HISTORY;
+};
+
+export const PatientHistoryModal = ({ isVaccine, patientId, patientHistory, sortKey }) => {
+  const canViewHistory = UIDatabase.getPreference(PREFERENCE_KEYS.CAN_VIEW_ALL_PATIENTS_HISTORY);
+  const columns = React.useMemo(() => getColumns(getColumnKey(isVaccine, canViewHistory)), []);
+  const [{ data, loading, error }, fetchOnline] = useLocalAndRemotePatientHistory({
+    isVaccine,
+    patientId,
+    initialValue: patientHistory,
+    sortKey,
   });
 
-  const renderRow = React.useCallback(
-    listItem => {
-      const { item, index } = listItem;
-
-      const rowKey = recordKeyExtractor(item);
-      return (
-        <DataTableRow
-          rowData={item}
-          rowKey={rowKey}
-          columns={columns}
-          getCallback={getCallback}
-          rowIndex={index}
-        />
-      );
-    },
-    [columns]
-  );
+  if (canViewHistory) {
+    useEffect(fetchOnline, [patientId]);
+    useEffect(
+      () =>
+        error &&
+        ToastAndroid.show(generalStrings.error_communicating_with_server, ToastAndroid.LONG),
+      [error]
+    );
+  }
 
   return (
     <View style={localStyles.mainContainer}>
-      {data.length ? (
-        <DataTable
-          renderRow={renderRow}
-          data={data}
-          renderHeader={renderHeader}
-          keyExtractor={recordKeyExtractor}
-          getItemLayout={getItemLayout}
-          columns={getColumns(MODALS.PATIENT_HISTORY)}
-        />
-      ) : (
-        <FlexRow alignItems="center" justifyContent="center" flex={1}>
-          <Text style={localStyles.placeholder}>
-            {dispensingStrings.no_history_for_this_patient}
-          </Text>
-        </FlexRow>
-      )}
+      <View style={localStyles.tableContainer}>
+        <SimpleTable data={data} columns={columns} ListEmptyComponent={<EmptyComponent />} />
+      </View>
+      <LoadingIndicator loading={loading} />
     </View>
   );
 };
 
-const mapStateToProps = state => {
-  const { patient } = state;
-  const { isAscending, sortKey } = patient;
-  const data = selectSortedPatientHistory(state);
-
-  return { isAscending, sortKey, data };
-};
-
-const mapDispatchToProps = dispatch => ({
-  onSortColumn: sortKey => dispatch(PatientActions.sortPatientHistory(sortKey)),
-});
-
-export const PatientHistoryModal = connect(mapStateToProps, mapDispatchToProps)(PatientHistory);
-
 const localStyles = {
   mainContainer: { backgroundColor: WHITE, flex: 1 },
-  placeholder: { fontFamily: APP_FONT_FAMILY, fontSize: 20 },
+  text: { fontFamily: APP_FONT_FAMILY, fontSize: APP_GENERAL_FONT_SIZE },
+  tableContainer: { backgroundColor: 'white', flexGrow: 0, flexShrink: 1 },
 };
 
-PatientHistory.propTypes = {
+PatientHistoryModal.defaultProps = {
+  isVaccine: false,
+};
+
+PatientHistoryModal.propTypes = {
+  isVaccine: PropTypes.bool,
+  patientId: PropTypes.string.isRequired,
+  patientHistory: PropTypes.array.isRequired,
   sortKey: PropTypes.string.isRequired,
-  onSortColumn: PropTypes.func.isRequired,
-  isAscending: PropTypes.bool.isRequired,
-  data: PropTypes.array.isRequired,
 };

@@ -5,7 +5,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 import { batch } from 'react-redux';
-import { NavigationActions } from '@react-navigation/core';
+import { CommonActions } from '@react-navigation/native';
 
 import { UIDatabase, createRecord } from '../database';
 
@@ -31,7 +31,7 @@ const cancelPrescription = () => (dispatch, getState) => {
   });
 
   batch(() => {
-    dispatch(NavigationActions.back());
+    dispatch(CommonActions.goBack());
     dispatch(deletePrescription());
   });
 };

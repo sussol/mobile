@@ -86,7 +86,7 @@ ConfirmForm.propTypes = {
   confirmText: PropTypes.string,
   textStyle: Text.propTypes.style,
   isOpen: PropTypes.bool.isRequired,
-  questionText: PropTypes.string.isRequired,
+  questionText: PropTypes.string,
   noCancel: PropTypes.bool,
   onCancel: PropTypes.func,
   onConfirm: PropTypes.func,
@@ -106,6 +106,7 @@ ConfirmForm.defaultProps = {
   confirmText: modalStrings.confirm,
   swipeToClose: false, // negating the default.
   backdropPressToClose: false, // negating the default.
+  questionText: '',
 };
 
 const defaultStyles = StyleSheet.create({

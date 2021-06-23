@@ -4,7 +4,7 @@
   "globals": {
     "fetch": false
   },
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "plugins": ["prettier"],
   "rules": {
     "arrow-body-style": ["error", "as-needed"],

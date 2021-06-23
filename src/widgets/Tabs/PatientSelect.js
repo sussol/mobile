@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
@@ -7,7 +8,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { ActivityIndicator, Keyboard, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Keyboard, StyleSheet, Text, ToastAndroid, View } from 'react-native';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 import { batch, connect } from 'react-redux';
 
@@ -31,6 +33,7 @@ import {
   buttonStrings,
   dispensingStrings,
   generalStrings,
+  modalStrings,
   vaccineStrings,
 } from '../../localization';
 import globalStyles, { DARK_GREY } from '../../globalStyles';
@@ -47,6 +50,14 @@ import { DARKER_GREY, SUSSOL_ORANGE } from '../../globalStyles/colors';
 import { useLocalAndRemotePatients } from '../../hooks/useLocalAndRemotePatients';
 import { APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from '../../globalStyles/fonts';
 import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
+import { useToggle } from '../../hooks/useToggle';
+import { QrScannerModal } from '../modals/QrScannerModal';
+import {
+  getAuthorizationHeader,
+  getPatientRequestUrl,
+  processPatientResponse,
+} from '../../sync/lookupApiUtils';
+import { SETTINGS_KEYS } from '../../settings/index';
 
 const getMessage = (noResults, error) => {
   if (noResults) return generalStrings.could_not_find_patient;
@@ -66,18 +77,19 @@ const EmptyComponent = ({ loading, error, searchedWithNoResults }) => (
   </FlexView>
 );
 
-const Header = ({ onSearchOnline, onNewPatient, loading }) => (
+const Header = ({ onSearchOnline, onNewPatient, loading, toggleQrModal }) => (
   <FlexRow justifyContent="center" alignItems="center">
     <Text style={localStyles.text}>{vaccineStrings.vaccine_dispense_step_one_title}</Text>
     <View style={{ flex: 1, marginLeft: 'auto' }} />
+    <PageButton text={modalStrings.qr_scanner_header} onPress={toggleQrModal} />
     <PageButton
-      style={{ height: 10 }}
+      style={{ marginLeft: 10 }}
       text={generalStrings.search_online}
       onPress={onSearchOnline}
       isDisabled={loading}
     />
     <PageButton
-      style={{ height: 10, marginLeft: 10 }}
+      style={{ marginLeft: 10 }}
       text={`${dispensingStrings.new} ${dispensingStrings.patient}`}
       onPress={onNewPatient}
     />
@@ -100,6 +112,7 @@ Header.propTypes = {
   onSearchOnline: PropTypes.func.isRequired,
   onNewPatient: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
+  toggleQrModal: PropTypes.func.isRequired,
 };
 
 EmptyComponent.propTypes = {
@@ -130,6 +143,46 @@ const PatientSelectComponent = ({
   completedForm,
 }) => {
   const withLoadingIndicator = useLoadingIndicator();
+  const [isQrModalOpen, toggleQrModal] = useToggle();
+
+  const hapticFeedBackOptions = {
+    enableVibrateFallback: true,
+    ignoreAndroidSystemSettings: false,
+  };
+
+  const onQrCodeRead = ({ data }) => {
+    ReactNativeHapticFeedback.trigger('notificationSuccess', hapticFeedBackOptions);
+
+    // Immediately reject QR code if it is too long (length > 50 chosen somewhat arbitrarily until
+    // we get a better idea of the kinds of codes we need to handle in future)
+    if (data.length > 50) {
+      ToastAndroid.show(generalStrings.invalid_qr_code, ToastAndroid.LONG);
+      return;
+    }
+
+    toggleQrModal();
+
+    const matchedLocalPatient = UIDatabase.objects('Name').filtered('barcode == $0', data)[0];
+
+    // Do local search
+    if (matchedLocalPatient) {
+      selectPatient(matchedLocalPatient);
+    } else {
+      // Do a remote search
+      withLoadingIndicator(async () => {
+        try {
+          const remotePatient = await lookupRemotePatient({ barcode: data });
+          if (remotePatient.length) {
+            selectPatient(remotePatient[0]);
+          } else {
+            throw new Error(generalStrings.could_not_find_patient_qr);
+          }
+        } catch (error) {
+          ToastAndroid.show(error.message, ToastAndroid.LONG);
+        }
+      });
+    }
+  };
 
   const [
     { data, loading, gettingMore, searchedWithNoResults, error },
@@ -147,11 +200,23 @@ const PatientSelectComponent = ({
     filter({ ...completedForm, [key]: value });
   };
 
+  const lookupRemotePatient = async params => {
+    const syncUrl = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_URL);
+    const url = `${syncUrl}${getPatientRequestUrl(params)}`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: { authorization: getAuthorizationHeader() },
+    });
+    const responseJson = await response.json();
+    return processPatientResponse({ ...response, json: responseJson });
+  };
+
   return (
     <FlexView style={pageTopViewContainer}>
       <Paper
         style={{ flex: 6 }}
         contentContainerStyle={{ flex: 1 }}
+        headerContainerStyle={{ height: 60 }}
         headerText={vaccineStrings.vaccine_dispense_step_one_title}
         Header={
           // eslint-disable-next-line react/jsx-wrap-multilines
@@ -159,6 +224,7 @@ const PatientSelectComponent = ({
             loading={loading}
             onSearchOnline={() => onSearchOnline(completedForm)}
             onNewPatient={createPatient}
+            toggleQrModal={toggleQrModal}
           />
         }
       >
@@ -207,6 +273,7 @@ const PatientSelectComponent = ({
           <PageButtonWithOnePress text={buttonStrings.cancel} onPress={onCancelPrescription} />
         </FlexRow>
       )}
+      <QrScannerModal isOpen={isQrModalOpen} onBarCodeRead={onQrCodeRead} onClose={toggleQrModal} />
     </FlexView>
   );
 };

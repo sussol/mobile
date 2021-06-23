@@ -7,7 +7,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { NavigationActions } from '@react-navigation/core';
+import { CommonActions } from '@react-navigation/native';
 
 import { PrescriptionSummary } from '../PrescriptionSummary';
 import { PrescriptionInfo } from '../PrescriptionInfo';
@@ -71,7 +71,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   const openFinaliseModal = () => dispatch(FinaliseActions.openModal());
   const onDelete = () => dispatch(PrescriptionActions.cancelPrescription());
-  const goBack = () => dispatch(NavigationActions.back());
+  const goBack = () => dispatch(CommonActions.goBack());
   return { goBack, onDelete, openFinaliseModal };
 };
 
@@ -167,6 +167,7 @@ PrescriptionConfirmationComponent.defaultProps = {
   discountAmount: null,
   discountRate: 0,
   transaction: null,
+  paymentType: null,
 };
 
 PrescriptionConfirmationComponent.propTypes = {
@@ -174,7 +175,7 @@ PrescriptionConfirmationComponent.propTypes = {
   currentUser: PropTypes.object.isRequired,
   currentPatient: PropTypes.object.isRequired,
   paymentAmount: PropTypes.object.isRequired,
-  paymentType: PropTypes.object.isRequired,
+  paymentType: PropTypes.object,
   canConfirm: PropTypes.bool.isRequired,
   usingPayments: PropTypes.bool.isRequired,
   onDelete: PropTypes.func.isRequired,

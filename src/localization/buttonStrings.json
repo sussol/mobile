@@ -14,6 +14,7 @@
     "current": "Current",
     "done": "Done",
     "export_data": "Export Data",
+    "import_data": "Import Data",
     "hide_stockouts": "Hide Stockouts",
     "manage_stocktake": "Manage Stocktake",
     "new_invoice": "New Invoice",
@@ -33,7 +34,9 @@
     "view_regimen_data": "View Regimen Data",
     "supply_data": "Supply Data",
     "customer_data": "Customer Data",
-    "factory_reset": "Factory Reset"
+    "factory_reset": "Factory Reset",
+    "check_connection": "Check connection",
+    "connection_status": "Connection successful"
   },
   "fr": {
     "cancel": "Annuler",
@@ -45,6 +48,7 @@
     "current": "Actuel",
     "done": "Terminé",
     "export_data": "Exporter les données",
+    "import_data": "Import Data",
     "hide_stockouts": "Cacher les ruptures\nde stocks",
     "manage_stocktake": "Gérer l'inventaire",
     "new_invoice": "Nouvelle facture",
@@ -62,7 +66,8 @@
     "use_suggested_quantities": "Utiliser les quantités suggérées",
     "view_regimen_data": "Données de régimes",
     "new_supplier_credit": "Nouveau crédit fournisseur",
-    "next": "Suivant"
+    "next": "Suivant",
+    "check_connection": "Check connection"
   },
   "gil": {
     "add_master_list_items": "Rinea am list",
@@ -70,6 +75,7 @@
     "create_automatic_order": "Create Automatic Order",
     "current": "Ai tibwa ngkai",
     "done": "E a tia",
+    "import_data": "Import Data",
     "hide_stockouts": "Tai kaoti ake a bane",
     "manage_stocktake": "Manage Stocktake",
     "new_invoice": "Am karao-oota\nae boou",
@@ -88,6 +94,7 @@
     "create_automatic_order": "Kria Orden Automátiku",
     "current": "Atuál",
     "done": "Hotu",
+    "import_data": "Import Data",
     "hide_stockouts": "Hili item ho Qtd ejiste",
     "manage_stocktake": "Maneja Ajustamentu",
     "new_invoice": "Invoice Foun",
@@ -107,6 +114,7 @@
     "create_automatic_order": "ຄຳ​ສັງແບບ​ອັດ​ຕະ​ໂນ​ມັດ",
     "current": "​ປັດ​ຈຸ​ບັນ",
     "done": "ສໍາເລັດແລ້ວ",
+    "import_data": "Import Data",
     "hide_stockouts": "ເຊື່ອງ ການ​ຂາດ​ສິ​ນ​ຄ້າ​ໃສ​ສາງ",
     "manage_stocktake": "ເຮັດ​ການ​ຈັດ​ການ ກວດ​ກາ​ສິນ​ຄ້າ​ໃນ​ສາງ",
     "new_invoice": "ເຮັດໃບ​ເກັບ​ເງິນ​ໃໝ່",
@@ -132,6 +140,7 @@
     "current": "လက်ရှိ",
     "done": "ပြီးမြောက်သည်",
     "export_data": "အချက်အလက်များထုတ်ယူသည်",
+    "import_data": "Import Data",
     "hide_stockouts": "လက်ကျန်မရှိသောဆေးအား ချန်လှပ်သည်",
     "manage_stocktake": "စာရင်းကောက်ယူသည်",
     "new_invoice": "ဆေးပစ္စည်းပေးပို့လွှာအသစ်ပြုလုပ်ခြင်း",
@@ -157,6 +166,7 @@
     "current": "Atual",
     "done": "Concluir",
     "export_data": "Exportar os dados",
+    "import_data": "Import Data",
     "hide_stockouts": "Esconder linhas sem estoque",
     "manage_stocktake": "Gerenciar inventários",
     "new_invoice": "Nova fatura",
@@ -171,7 +181,8 @@
     "realm_explorer": "Explorador Realm",
     "use_requested_quantities": "Usar quantidades solicitadas",
     "use_suggested_quantities": "Usar quantidades sugeridas",
-    "view_regimen_data": "Visualizar dados do regime"
+    "view_regimen_data": "Visualizar dados do regime",
+    "check_connection": "Check connection"
   },
   "es": {
     "next": "Siguiente",
@@ -184,6 +195,7 @@
     "current": "Actual",
     "done": "Hecho",
     "export_data": "Exportar datos",
+    "import_data": "Import Data",
     "hide_stockouts": "Ocultar líneas sin\nstock",
     "manage_stocktake": "Administrar inventario",
     "new_invoice": "Nueva Factura",
@@ -198,6 +210,7 @@
     "realm_explorer": "Explorador Realm",
     "use_requested_quantities": "Usar Cantidades Solicitadas",
     "use_suggested_quantities": "Usar Cantidades Sugeridas",
-    "view_regimen_data": "Ver Datos del Régimen"
+    "view_regimen_data": "Ver Datos del Régimen",
+    "check_connection": "Check connection"
   }
 }

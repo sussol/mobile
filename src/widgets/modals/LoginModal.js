@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { Image, Text, TextInput, View } from 'react-native';
 import { Button } from 'react-native-ui-components';
 
-import { SETTINGS_KEYS, getAppVersion } from '../../settings';
+import { SETTINGS_KEYS } from '../../settings';
 
 import globalStyles, { WHITE, SUSSOL_ORANGE, WARM_GREY } from '../../globalStyles';
 import { Flag, IconButton } from '..';
@@ -23,6 +23,8 @@ import { getModalTitle, MODAL_KEYS } from '../../utilities';
 import { setCurrencyLocalisation } from '../../localization/currency';
 import { setDateLocale } from '../../localization/utilities';
 import { UIDatabase } from '../../database';
+import packageJson from '../../../package.json';
+import { FormPasswordInput } from '../FormInputs/FormPasswordInput';
 
 const AUTH_STATUSES = {
   UNAUTHENTICATED: 'unauthenticated',
@@ -41,9 +43,8 @@ export class LoginModal extends React.Component {
       username: username || '',
       password: '',
       isLanguageModalOpen: false,
-      appVersion: '',
     };
-    this.setAppVersion();
+    this.appVersion = packageJson.version;
     this.passwordInputRef = null;
     this.errorTimeoutId = null;
   }
@@ -94,11 +95,6 @@ export class LoginModal extends React.Component {
     }
   };
 
-  async setAppVersion() {
-    const appVersion = await getAppVersion();
-    this.setState({ appVersion });
-  }
-
   get canAttemptLogin() {
     const { authStatus, username, password } = this.state;
 
@@ -137,7 +133,7 @@ export class LoginModal extends React.Component {
 
   render() {
     const { isAuthenticated, settings } = this.props;
-    const { authStatus, username, password, appVersion, isLanguageModalOpen } = this.state;
+    const { authStatus, username, password, isLanguageModalOpen } = this.state;
     const storeName = UIDatabase.objects('Name').filtered(
       'id == $0',
       settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID)
@@ -191,20 +187,12 @@ export class LoginModal extends React.Component {
               />
             </View>
             <View style={globalStyles.horizontalContainer}>
-              <TextInput
-                ref={reference => {
-                  this.passwordInputRef = reference;
+              <FormPasswordInput
+                ref={ref => {
+                  this.passwordInputRef = ref;
                 }}
-                style={globalStyles.authFormTextInputStyle}
-                autoCompleteType="password"
-                placeholder={authStrings.password}
-                placeholderTextColor={SUSSOL_ORANGE}
-                underlineColorAndroid={SUSSOL_ORANGE}
                 value={password}
-                secureTextEntry
                 editable={authStatus !== AUTH_STATUSES.AUTHENTICATING}
-                returnKeyType="done"
-                selectTextOnFocus
                 onChangeText={text => {
                   this.setState({ password: text, authStatus: AUTH_STATUSES.UNAUTHENTICATED });
                 }}
@@ -234,7 +222,7 @@ export class LoginModal extends React.Component {
               this.setState({ isLanguageModalOpen: true });
             }}
           />
-          <Text style={globalStyles.authWindowButtonText}>v{appVersion}</Text>
+          <Text style={globalStyles.authWindowButtonText}>v{this.appVersion}</Text>
         </View>
         <ModalContainer
           isVisible={isLanguageModalOpen}

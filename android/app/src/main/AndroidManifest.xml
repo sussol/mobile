@@ -6,6 +6,7 @@
   <uses-permission android:name="android.permission.BLUETOOTH" />
   <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
   <uses-permission android:name="android.permission.BLUETOOTH_PRIVILEGED" />
+  <uses-permission android:name="android.permission.CAMERA" />
   <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
   <supports-screens android:smallScreens="false" android:normalScreens="false" android:largeScreens="false" android:xlargeScreens="true" android:requiresSmallestWidthDp="720" />
@@ -16,7 +17,6 @@
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
-    <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
     <meta-data android:name="com.bugsnag.android.API_KEY" android:value="16a680e189b1e5f03f28665870f1401f"/>
   </application>
 </manifest>

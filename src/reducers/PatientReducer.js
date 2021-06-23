@@ -20,10 +20,11 @@ export const PatientReducer = (state = patientInitialState(), action) => {
   const { type } = action;
 
   switch (type) {
-    case 'Navigation/NAVIGATE': {
-      const { routeName, params } = action;
+    case 'NAVIGATE': {
+      const { payload } = action;
+      const { name, params } = payload;
 
-      if (routeName !== ROUTES.PRESCRIPTION) return state;
+      if (name !== ROUTES.PRESCRIPTION) return state;
       const { transaction } = params;
       const { otherParty } = transaction;
       return { ...state, currentPatient: otherParty };
@@ -32,13 +33,27 @@ export const PatientReducer = (state = patientInitialState(), action) => {
     case PATIENT_ACTIONS.PATIENT_EDIT: {
       const { payload } = action;
       const { patient } = payload;
-      return { ...state, isEditing: true, currentPatient: patient };
+      return {
+        ...state,
+        isEditing: true,
+        currentPatient: patient,
+        isCreating: false,
+        creatingADR: false,
+        viewingHistory: false,
+      };
     }
 
     case PATIENT_ACTIONS.PATIENT_CREATION: {
       const { payload } = action;
       const { patient } = payload;
-      return { ...state, currentPatient: patient, isCreating: true };
+      return {
+        ...state,
+        currentPatient: patient,
+        isCreating: true,
+        isEditing: false,
+        creatingADR: false,
+        viewingHistory: false,
+      };
     }
 
     case PATIENT_ACTIONS.COMPLETE: {
@@ -57,18 +72,34 @@ export const PatientReducer = (state = patientInitialState(), action) => {
     case PATIENT_ACTIONS.VIEW_HISTORY: {
       const { payload } = action;
       const { patient } = payload;
+
       return { ...state, currentPatient: patient, viewingHistory: true };
     }
 
     case PATIENT_ACTIONS.CLOSE_HISTORY: {
-      return { ...state, currentPatient: null, viewingHistory: false };
+      return {
+        ...state,
+        currentPatient: null,
+        viewingHistory: false,
+        isEditing: false,
+        isCreating: false,
+        creatingADR: false,
+      };
     }
 
     case PATIENT_ACTIONS.NEW_ADR: {
       const { payload } = action;
       const { patient } = payload;
 
-      return { ...state, isADRModalOpen: true, currentPatient: patient, creatingADR: true };
+      return {
+        ...state,
+        isADRModalOpen: true,
+        currentPatient: patient,
+        creatingADR: true,
+        viewingHistory: false,
+        isEditing: false,
+        isCreating: false,
+      };
     }
 
     case PATIENT_ACTIONS.SAVE_ADR:

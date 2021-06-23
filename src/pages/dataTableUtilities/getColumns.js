@@ -14,6 +14,8 @@ const PAGE_COLUMN_WIDTHS = {
   [FORMS.PRESCRIBER]: [1, 3, 3, 1],
   [MODALS.PATIENT_HISTORY]: [1, 4, 1, 1, 2],
   [MODALS.VACCINE_HISTORY]: [1, 4, 1, 1, 2],
+  [MODALS.PATIENT_HISTORY_LOOKUP]: [1, 4, 1, 1, 2, 1],
+  [MODALS.VACCINE_HISTORY_LOOKUP]: [1, 4, 1, 1, 2, 1],
   [MODALS.PATIENT_LOOKUP]: [2, 2, 2],
   [MODALS.PRESCRIBER_LOOKUP]: [2, 2, 2],
   [MODALS.REGIMEN_DATA]: [4, 1, 5],
@@ -139,6 +141,22 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.DOSES,
     COLUMN_NAMES.PRESCRIPTION_DATE,
     COLUMN_NAMES.VACCINATOR,
+  ],
+  [MODALS.PATIENT_HISTORY_LOOKUP]: [
+    COLUMN_NAMES.ITEM_CODE,
+    COLUMN_NAMES.ITEM_NAME,
+    COLUMN_NAMES.TOTAL_QUANTITY,
+    COLUMN_NAMES.PRESCRIPTION_DATE,
+    COLUMN_NAMES.PRESCRIBER,
+    COLUMN_NAMES.IS_REMOTE,
+  ],
+  [MODALS.VACCINE_HISTORY_LOOKUP]: [
+    COLUMN_NAMES.ITEM_CODE,
+    COLUMN_NAMES.ITEM_NAME,
+    COLUMN_NAMES.DOSES,
+    COLUMN_NAMES.PRESCRIPTION_DATE,
+    COLUMN_NAMES.VACCINATOR,
+    COLUMN_NAMES.IS_REMOTE,
   ],
   [MODALS.PATIENT_LOOKUP]: [
     COLUMN_NAMES.FIRST_NAME,
@@ -642,6 +660,15 @@ const COLUMNS = () => ({
     editable: false,
   },
 
+  [COLUMN_NAMES.IS_REMOTE]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.IS_REMOTE,
+    title: tableStrings.remote_store,
+    alignText: 'center',
+    sortable: false,
+    editable: false,
+  },
+
   // EDITABLE STRING COLUMNS
 
   [COLUMN_NAMES.EDITABLE_CODE]: {
@@ -1061,6 +1088,7 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.DATE,
     key: COLUMN_KEYS.PRESCRIPTION_DATE,
     title: tableStrings.prescription_date,
+    alignText: 'center',
     sortable: true,
     editable: false,
   },

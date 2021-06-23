@@ -19,10 +19,11 @@ export const PrescriberReducer = (state = prescriberInitialState(), action) => {
   const { type } = action;
 
   switch (type) {
-    case 'Navigation/NAVIGATE': {
-      const { routeName } = action;
+    case 'NAVIGATE': {
+      const { payload } = action;
+      const { name } = payload;
 
-      if (routeName !== ROUTES.PRESCRIPTION) return state;
+      if (name !== ROUTES.PRESCRIPTION) return state;
 
       return { ...state, currentPrescriber: null };
     }

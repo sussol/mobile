@@ -34,7 +34,11 @@ import {
 } from '../selectors/dispensary';
 import { selectPrescriberModalOpen, selectCanEditPrescriber } from '../selectors/prescriber';
 import { selectInsuranceModalOpen, selectCanEditInsurancePolicy } from '../selectors/insurance';
-import { selectPatientModalOpen, selectCanEditPatient } from '../selectors/patient';
+import {
+  selectPatientModalOpen,
+  selectCanEditPatient,
+  selectSortedPatientHistory,
+} from '../selectors/patient';
 
 import globalStyles from '../globalStyles';
 import { dispensingStrings, modalStrings } from '../localization';
@@ -69,11 +73,12 @@ const Dispensing = ({
   // Dispensary lookup API variables
   isLookupModalOpen,
 
-  // Patient variable
+  // Patient variables
   patientEditModalOpen,
   currentPatient,
   patientHistoryModalOpen,
   canEditPatient,
+  patientHistory,
 
   // Patient callback
   editPatient,
@@ -264,11 +269,16 @@ const Dispensing = ({
         />
       </ModalContainer>
       <ModalContainer
+        // eslint-disable-next-line max-len
         title={`${dispensingStrings.patient} ${dispensingStrings.history} - ${currentPatient?.name}`}
         onClose={cancelPatientEdit}
         isVisible={patientHistoryModalOpen}
       >
-        <PatientHistoryModal />
+        <PatientHistoryModal
+          patientHistory={patientHistory}
+          patientId={currentPatient?.id || ''}
+          sortKey="itemName"
+        />
       </ModalContainer>
       <ModalContainer
         title={
@@ -346,6 +356,10 @@ const mapStateToProps = state => {
   );
   const insuranceModalOpen = selectInsuranceModalOpen(state);
   const data = selectSortedData(state);
+  const patientHistory =
+    patient.currentPatient && patient.currentPatient.transactions
+      ? selectSortedPatientHistory({ patient })
+      : [];
 
   const [usingPatientsDataSet, usingPrescribersDataSet] = selectDataSetInUse(state);
 
@@ -374,6 +388,7 @@ const mapStateToProps = state => {
     selectedInsurancePolicy,
     canEditInsurancePolicy,
     isCreatingInsurancePolicy,
+    patientHistory,
   };
 };
 
@@ -468,4 +483,5 @@ Dispensing.propTypes = {
   isADRModalOpen: PropTypes.bool.isRequired,
   createADR: PropTypes.func.isRequired,
   cancelCreatingADR: PropTypes.func.isRequired,
+  patientHistory: PropTypes.array.isRequired,
 };

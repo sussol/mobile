@@ -174,11 +174,13 @@ const Menu = ({
 
         <View>
           {usingVaccines && (
-            <IconMenuButton
-              label={navStrings.vaccines}
-              onPress={toVaccines}
-              Icon={<SnowflakeIcon />}
-            />
+            <InfoBadge routeName={ROUTES.VACCINES}>
+              <IconMenuButton
+                label={navStrings.vaccines}
+                onPress={toVaccines}
+                Icon={<SnowflakeIcon />}
+              />
+            </InfoBadge>
           )}
           {hasVaccines && usingDispensary && (
             <IconMenuButton

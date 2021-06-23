@@ -15,7 +15,8 @@ export const selectPatientHistory = ({ patient }) => {
   // Create a query string `transaction.id == "{id} OR transaction.id == "{id}" ...`
   // finding all transaction batches for the patient.
   const inQuery = transactions.map(({ id }) => `transaction.id == "${id}"`).join(' OR ');
-  const baseQueryString = 'type != "cash_in" AND type != "cash_out"';
+  const baseQueryString =
+    'type != "cash_in" AND type != "cash_out" AND transaction.status == "finalised"';
   const fullQuery = `(${inQuery}) AND ${baseQueryString}`;
   return inQuery ? UIDatabase.objects('TransactionBatch').filtered(fullQuery) : [];
 };

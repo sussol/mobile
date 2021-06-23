@@ -19,6 +19,7 @@ MedicineAdministrator.schema = {
     firstName: { type: 'string', optional: true },
     lastName: { type: 'string', optional: true },
     code: { type: 'string', optional: true },
+    isActive: { type: 'bool', default: true },
     transactionBatches: {
       type: 'linkingObjects',
       objectType: 'TransactionBatch',

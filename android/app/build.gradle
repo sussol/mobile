@@ -132,12 +132,15 @@ def (major, minor, patch) = appVersion.tokenize('.')
 def appVersionCode = ((major.toInteger() * 10000000) + (minor.toInteger() * 100000) + (patch.toInteger() * 100) + (provisional != null ? provisional.toInteger() : 99))
 
 android {
+    ndkVersion rootProject.ext.ndkVersion
+
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     setProperty("archivesBaseName", (getAppName() + "-" + getAppVersion()).replace(".","_"))
     defaultConfig {
         applicationId "com.msupplymobile"
         minSdkVersion rootProject.ext.minSdkVersion
+        missingDimensionStrategy 'react-native-camera', 'general'
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode appVersionCode
         versionName getAppVersion()
@@ -183,17 +186,19 @@ android {
         variant.outputs.each { output ->
             // For each separate APK per architecture, set a unique version code as described here:
             // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
+            // Example: versionCode 1 will generate 1001 for armeabi-v7a, 1002 for x86, etc.
             def versionCodes = ["armeabi-v7a":1, "x86":2, "arm64-v8a":3, "x86_64":4]
             def abi = output.getFilter(OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =
-                        versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
+                    versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
             }   
         }
     }
 }
 
 dependencies {
+    compile project(':react-native-haptic-feedback')
     implementation project(':react-native-ble-plx')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"

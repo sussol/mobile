@@ -34,9 +34,9 @@ export const RowDetailReducer = (state = initialState(), action) => {
       return { ...state, rowData, detailKey: ROW_DETAIL_KEYS.SUPPLIER_REQUISITION_ITEM_DETAIL };
     }
 
-    case 'Navigation/BACK':
-    case 'Navigation/REPLACE':
-    case 'Navigation/NAVIGATE':
+    case 'GO_BACK':
+    case 'REPLACE':
+    case 'NAVIGATE':
     case ROW_DETAIL_ACTIONS.CLOSE: {
       return initialState();
     }

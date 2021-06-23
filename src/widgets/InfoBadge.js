@@ -1,5 +1,5 @@
 /* eslint-disable react/forbid-prop-types */
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { View, Text } from 'react-native';
@@ -12,6 +12,7 @@ import { usePopover } from '../hooks';
 import Badge from './Badge';
 
 import { SUSSOL_ORANGE } from '../globalStyles';
+import { useSyncListener } from '../hooks/useSyncListener';
 
 const animationConfig = { duration: 150 };
 
@@ -24,13 +25,15 @@ const InfoBadgeComponent = ({
   arrowStyle,
   popoverStyle,
   badgeTextStyle,
-
   navigation,
 }) => {
   const [ref, visible, show, close] = usePopover(navigation);
 
   // Get total of all the count variables in the info array. We want to show it on the badge
-  const info = getBadgeData(routeName);
+  const [info, setInfo] = useState(getBadgeData(routeName));
+
+  useSyncListener(() => setInfo(getBadgeData(routeName)), ['Requisition', 'Transaction']);
+
   const pendingCount = info.reduce((total, item) => total + (item.count || 0), 0);
 
   // show 99+ if the number is greater then 99 to limit the number of characters.

@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2020
  */
 import Bugsnag from '@bugsnag/react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { persistStore, persistReducer } from 'redux-persist';
 import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';

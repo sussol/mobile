@@ -88,7 +88,7 @@ export const SyncModalComponent = ({
         </View>
         <View style={localStyles.row}>
           <Button
-            style={[globalStyles.button, localStyles.button]}
+            style={[globalStyles.authFormButton, localStyles.button]}
             textStyle={[globalStyles.authFormButtonText, localStyles.buttonText]}
             text={syncStrings.manual_sync}
             onPress={onPressManualSync}
@@ -116,12 +116,17 @@ const localStyles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 18,
+    marginVertical: 0,
   },
   button: {
-    width: 200,
-    backgroundColor: SUSSOL_ORANGE,
-    borderWidth: 0,
     alignSelf: 'center',
+    backgroundColor: SUSSOL_ORANGE,
+    borderRadius: 4,
+    borderWidth: 0,
+    justifyContent: 'center',
+    margin: 5,
+    padding: 15,
+    width: 200,
   },
   progressDescription: {
     fontSize: 18,

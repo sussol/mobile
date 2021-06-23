@@ -1,7 +1,7 @@
 /* eslint-disable react/forbid-prop-types */
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Picker } from '@react-native-picker/picker';
+import { Picker } from '@react-native-community/picker';
 
 import { SUSSOL_ORANGE } from '../../../globalStyles/colors';
 
