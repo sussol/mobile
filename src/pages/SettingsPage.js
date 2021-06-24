@@ -81,11 +81,11 @@ const Settings = ({
 
   const onCheckConnection = () => {
     //  Hash the password.
-
+    const syncSitePassword = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_PASSWORD_HASH);
     const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
     const syncAuthenticator = new SyncAuthenticator(AppSettings);
     syncAuthenticator
-      .authenticate(syncURL, syncSiteName, null, currentUserPasswordHash)
+      .authenticate(syncURL, syncSiteName, null, syncSitePassword)
       .then(() => {
         ToastAndroid.show(buttonStrings.connection_status, ToastAndroid.LONG);
       })
