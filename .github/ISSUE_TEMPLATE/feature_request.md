@@ -2,7 +2,7 @@
 name: Feature request
 about: Suggest an idea for this project
 title: Concisely the feature I want
-labels: Feature
+labels: 'Feature, Priority: unconfirmed'
 assignees: ''
 ---
 
