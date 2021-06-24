@@ -37,7 +37,7 @@ import { FlexRow } from '../widgets/FlexRow';
 import globalStyles, { APP_FONT_FAMILY, DARK_GREY, SUSSOL_ORANGE } from '../globalStyles';
 import { FlexView } from '../widgets/FlexView';
 import { MILLISECONDS } from '../utilities/constants';
-import { SyncAuthenticator, AUTH_ENDPOINT } from '../authentication/SyncAuthenticator';
+import { SyncAuthenticator } from '../authentication/SyncAuthenticator';
 
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
@@ -81,11 +81,11 @@ const Settings = ({
 
   const onCheckConnection = () => {
     //  Hash the password.
-    const authURL = `${syncURL}${AUTH_ENDPOINT}`;
+
     const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
     const syncAuthenticator = new SyncAuthenticator(AppSettings);
     syncAuthenticator
-      .authenticate(authURL, syncSiteName, null, currentUserPasswordHash)
+      .authenticate(syncURL, syncSiteName, null, currentUserPasswordHash)
       .then(() => {
         ToastAndroid.show(buttonStrings.connection_status, ToastAndroid.LONG);
       })
