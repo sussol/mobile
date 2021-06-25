@@ -2,7 +2,7 @@
 name: Bug report
 about: Report a bug!
 title: A brief description of the bug
-labels: ''
+labels: 'Bug: ????'
 assignees: ''
 ---
 
@@ -12,7 +12,7 @@ A clear and concise description of what the bug is. Use screenshots!
 
 ### To reproduce
 
-Steps to reproduce the behavior:
+Steps to reproduce the behaviour:
 
 1. Go to '...'
 2. Click on '....'
