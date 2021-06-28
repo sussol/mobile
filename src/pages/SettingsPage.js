@@ -42,8 +42,10 @@ import { SyncAuthenticator } from '../authentication/SyncAuthenticator';
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
 
-  const success = await UIDatabase.exportData(syncSiteName);
-  const toastMessage = success ? generalStrings.exported_data : generalStrings.couldnt_export_data;
+  const { success, message } = await UIDatabase.exportData(syncSiteName);
+  const toastMessage = success
+    ? generalStrings.exported_data
+    : `${generalStrings.couldnt_export_data}: ${message}`;
 
   ToastAndroid.show(toastMessage, ToastAndroid.SHORT);
 };
