@@ -8,7 +8,7 @@ import { generateUUID } from 'react-native-database';
 
 import { UIDatabase } from '..';
 import { versionToInteger, formatDateAndTime } from '../../utilities';
-import { NUMBER_OF_DAYS_IN_A_MONTH, NUMBER_SEQUENCE_KEYS } from './constants';
+import { NUMBER_OF_DAYS_IN_A_MONTH, NUMBER_SEQUENCE_KEYS, PATIENT_CODE_LENGTH } from './constants';
 import { generalStrings } from '../../localization';
 import { SETTINGS_KEYS } from '../../settings';
 
@@ -198,13 +198,26 @@ const createPrescriber = (database, prescriberDetails) => {
 };
 
 /**
+ * Check a code for uniqueness
+ */
+const isPatientCodeUnique = (code, database) =>
+  database.objects('Patient').filtered(`code == '${code}'`).length === 0;
+
+/**
  * Gets a unique code for new patient record.
  */
 const getPatientUniqueCode = database => {
-  const { PATIENT_CODE } = NUMBER_SEQUENCE_KEYS;
-  const patientSequenceNumber = getNextNumber(database, PATIENT_CODE);
-  const thisStoreCode = database.getSetting(SETTINGS_KEYS.THIS_STORE_CODE);
-  return `${thisStoreCode}${String(patientSequenceNumber)}`;
+  const id = generateUUID();
+  const syncSiteId = database.getSetting(SETTINGS_KEYS.SYNC_SITE_ID);
+  const syncIdLength = `${syncSiteId}`.length;
+
+  // unlikely, but problematic if the syncId is longer than the requested patient code length
+  const code =
+    syncIdLength >= PATIENT_CODE_LENGTH
+      ? `${syncSiteId}${id.substring(0, 4)}` // increase the length to ensure uniqueness
+      : `${syncSiteId}${id.substring(0, PATIENT_CODE_LENGTH - syncIdLength)}`;
+
+  return isPatientCodeUnique(code, database) ? code : getPatientUniqueCode(id, database);
 };
 
 const createNameNote = (database, { id, data, patientEventID, nameID, entryDate = new Date() }) => {
