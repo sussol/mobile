@@ -14,9 +14,9 @@ export const selectSensors = state => {
   return Object.values(sensorsById);
 };
 
-export const selectSensorByMac = (state, mac) => {
+export const selectSensorById = (state, sensorId) => {
   const sensors = selectSensors(state);
-  const foundSensor = sensors.find(({ macAddress }) => macAddress === mac);
+  const foundSensor = sensors.find(({ id }) => id === sensorId);
   return foundSensor;
 };
 
@@ -51,38 +51,38 @@ export const selectNewSensorId = state => {
   return newId;
 };
 
-export const selectIsLowBatteryByMac = (state, mac) => {
-  const sensor = selectSensorByMac(state, mac) ?? {};
+export const selectIsLowBatteryById = (state, id) => {
+  const sensor = selectSensorById(state, id) ?? {};
   const { batteryLevel } = sensor;
   return batteryLevel && batteryLevel <= VACCINE_CONSTANTS.LOW_BATTERY_PERCENTAGE;
 };
 
-export const selectIsInHotBreachByMac = (state, mac) => {
-  const sensor = selectSensorByMac(state, mac) ?? {};
+export const selectIsInHotBreachById = (state, id) => {
+  const sensor = selectSensorById(state, id) ?? {};
   const { isInHotBreach } = sensor;
   return !!isInHotBreach;
 };
 
-export const selectIsInColdBreachByMac = (state, mac) => {
-  const sensor = selectSensorByMac(state, mac) ?? {};
+export const selectIsInColdBreachById = (state, id) => {
+  const sensor = selectSensorById(state, id) ?? {};
   const { isInColdBreach } = sensor;
   return !!isInColdBreach;
 };
 
-export const selectIsInBreachByMac = (state, mac) => {
-  const sensor = selectSensorByMac(state, mac) ?? {};
+export const selectIsInBreachById = (state, id) => {
+  const sensor = selectSensorById(state, id) ?? {};
   const { isInHotBreach, isInColdBreach } = sensor;
   return !!isInHotBreach || !!isInColdBreach;
 };
 
-export const selectIsInDangerByMac = (state, mac) => {
-  const isLowBattery = selectIsLowBatteryByMac(state, mac);
-  const isInBreach = selectIsInBreachByMac(state, mac);
+export const selectIsInDangerById = (state, id) => {
+  const isLowBattery = selectIsLowBatteryById(state, id);
+  const isInBreach = selectIsInBreachById(state, id);
   return isLowBattery || isInBreach;
 };
 
-export const selectCurrentTemperatureByMac = (state, mac) => {
-  const sensor = selectSensorByMac(state, mac);
+export const selectCurrentTemperatureById = (state, id) => {
+  const sensor = selectSensorById(state, id);
   const { currentTemperature } = sensor;
   return currentTemperature;
 };

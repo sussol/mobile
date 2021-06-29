@@ -16,7 +16,7 @@ import {
   selectLastDownloadTime,
 } from '../../selectors/Bluetooth/sensorDownload';
 import { vaccineStrings } from '../../localization';
-import { selectSensorByMac } from '../../selectors/Entities/sensor';
+import { selectSensorById } from '../../selectors/Entities/sensor';
 
 const formatErrorMessage = status => vaccineStrings[status] ?? '';
 
@@ -102,7 +102,7 @@ const stateToProps = (state, props) => {
   const lastDownloadFailed = selectLastDownloadFailed(state, macAddress);
   const isDownloading = selectIsDownloading(state, macAddress);
 
-  const sensor = selectSensorByMac(state, macAddress);
+  const sensor = selectSensorById(state, macAddress);
   const { isPaused = false, logDelay } = sensor ?? {};
 
   const lastDownloadStatus = selectLastDownloadStatus(state, macAddress);
