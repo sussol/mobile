@@ -15,10 +15,10 @@ import { Rectangle } from './Rectangle';
 import temperature from '../utilities/temperature';
 
 import {
-  selectCurrentTemperatureById,
-  selectIsInColdBreachById,
-  selectIsInHotBreachById,
-  selectIsLowBatteryById,
+  selectCurrentTemperatureByMac,
+  selectIsInColdBreachByMac,
+  selectIsInHotBreachByMac,
+  selectIsLowBatteryByMac,
 } from '../selectors/Entities/sensor';
 
 const BigText = ({ children, colour }) => (
@@ -138,12 +138,12 @@ SensorStatusComponent.propTypes = {
 };
 
 const stateToProps = (state, props) => {
-  const { id } = props;
+  const { macAddress } = props;
 
-  const isInHotBreach = selectIsInHotBreachById(state, id);
-  const isInColdBreach = selectIsInColdBreachById(state, id);
-  const isLowBattery = selectIsLowBatteryById(state, id);
-  const currentTemperature = selectCurrentTemperatureById(state, id);
+  const isInHotBreach = selectIsInHotBreachByMac(state, macAddress);
+  const isInColdBreach = selectIsInColdBreachByMac(state, macAddress);
+  const isLowBattery = selectIsLowBatteryByMac(state, macAddress);
+  const currentTemperature = selectCurrentTemperatureByMac(state, macAddress);
 
   return { isInHotBreach, isInColdBreach, isLowBattery, currentTemperature };
 };
