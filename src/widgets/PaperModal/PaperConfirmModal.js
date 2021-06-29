@@ -8,6 +8,7 @@ import { Spacer } from '../Spacer';
 import { DARKER_GREY, SUSSOL_ORANGE, WHITE } from '../../globalStyles/index';
 import { FlexRow } from '../FlexRow';
 import { PageButton } from '../PageButton';
+import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 
 export const PaperConfirmModal = ({
   Icon,
@@ -16,6 +17,7 @@ export const PaperConfirmModal = ({
   cancelText,
   onConfirm,
   onCancel,
+  withOnePress,
 }) => (
   <FlexColumn alignItems="center" justifyContent="center" flex={1} style={{ padding: 20 }}>
     <FlexView flex={1} alignItems="center" justifyContent="center">
@@ -25,12 +27,21 @@ export const PaperConfirmModal = ({
     </FlexView>
     <FlexRow justifyContent="space-evenly" alignItems="center" style={{ width: '100%' }} flex={1}>
       <PageButton onPress={onCancel} text={cancelText} textStyle={localStyles.cancelText} />
-      <PageButton
-        onPress={onConfirm}
-        text={confirmText}
-        textStyle={localStyles.confirmText}
-        style={localStyles.confirmButton}
-      />
+      {withOnePress ? (
+        <PageButtonWithOnePress
+          onPress={onConfirm}
+          text={confirmText}
+          textStyle={localStyles.confirmText}
+          style={localStyles.confirmButton}
+        />
+      ) : (
+        <PageButton
+          onPress={onConfirm}
+          text={confirmText}
+          textStyle={localStyles.confirmText}
+          style={localStyles.confirmButton}
+        />
+      )}
     </FlexRow>
   </FlexColumn>
 );
@@ -44,6 +55,7 @@ const localStyles = StyleSheet.create({
 
 PaperConfirmModal.defaultProps = {
   Icon: <HazardIcon size={50} />,
+  withOnePress: false,
 };
 
 PaperConfirmModal.propTypes = {
@@ -53,4 +65,5 @@ PaperConfirmModal.propTypes = {
   cancelText: PropTypes.string.isRequired,
   onConfirm: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
+  withOnePress: PropTypes.bool,
 };

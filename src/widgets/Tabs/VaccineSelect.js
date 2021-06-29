@@ -84,7 +84,8 @@ const VaccineSelectComponent = ({
   vaccinePatientHistory,
 }) => {
   const { pageTopViewContainer } = globalStyles;
-  const [doubleDoseModalOpen, toggleDoubleDoseModal] = useToggle();
+  const [confirmDoubleDoseModalOpen, toggleConfirmDoubleDoseModal] = useToggle();
+  const [confirmAndRepeatDoubleDoseModalOpen, toggleConfirmAndRepeatDoubleDoseModal] = useToggle();
   const vaccineColumns = React.useMemo(() => getColumns(TABS.ITEM), []);
   const batchColumns = React.useMemo(() => getColumns(TABS.VACCINE_BATCH), []);
   const disabledVaccineRows = React.useMemo(
@@ -170,7 +171,7 @@ const VaccineSelectComponent = ({
             text={buttonStrings.confirm}
             style={{ marginLeft: 'auto' }}
             isDisabled={!selectedBatches && !hasRefused}
-            onPress={toggleDoubleDoseModal}
+            onPress={toggleConfirmDoubleDoseModal}
           />
         ) : (
           <PageButtonWithOnePress
@@ -186,7 +187,7 @@ const VaccineSelectComponent = ({
             text={generalStrings.ok_and_next}
             style={{ marginLeft: 5 }}
             isDisabled={!selectedBatches && !hasRefused}
-            onPress={toggleDoubleDoseModal}
+            onPress={toggleConfirmAndRepeatDoubleDoseModal}
           />
         ) : (
           <PageButtonWithOnePress
@@ -197,13 +198,30 @@ const VaccineSelectComponent = ({
           />
         )}
       </FlexRow>
-      <PaperModalContainer isVisible={doubleDoseModalOpen} onClose={toggleDoubleDoseModal}>
+      <PaperModalContainer
+        isVisible={confirmDoubleDoseModalOpen}
+        onClose={toggleConfirmDoubleDoseModal}
+      >
         <PaperConfirmModal
           questionText={modalStrings.confirm_double_dose}
           confirmText={modalStrings.confirm}
           cancelText={modalStrings.cancel}
           onConfirm={confirmPrescription}
-          onCancel={toggleDoubleDoseModal}
+          onCancel={toggleConfirmDoubleDoseModal}
+          withOnePress={true}
+        />
+      </PaperModalContainer>
+      <PaperModalContainer
+        isVisible={confirmAndRepeatDoubleDoseModalOpen}
+        onClose={toggleConfirmAndRepeatDoubleDoseModal}
+      >
+        <PaperConfirmModal
+          questionText={modalStrings.confirm_double_dose}
+          confirmText={modalStrings.confirm}
+          cancelText={modalStrings.cancel}
+          onConfirm={confirmAndRepeatPrescription}
+          onCancel={toggleConfirmAndRepeatDoubleDoseModal}
+          withOnePress={true}
         />
       </PaperModalContainer>
     </FlexView>
