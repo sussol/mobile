@@ -106,11 +106,9 @@ const VaccineSelectComponent = ({
   const wasVaccinatedToday = () => {
     const currentDate = new Date();
 
-    return !!(
-      vaccinePatientHistory.length &&
-      vaccinePatientHistory.filter(history => history.confirmDate >= currentDate.getDate() - 1)
-        .length
-    );
+    return !!vaccinePatientHistory.filter(
+      history => history.confirmDate >= currentDate.getDate() - 1
+    ).length;
   };
 
   const confirmPrescription = React.useCallback(() => runWithLoadingIndicator(onConfirm), [
@@ -167,7 +165,7 @@ const VaccineSelectComponent = ({
       <FlexRow flex={1} alignItems="flex-end" justifyContent="flex-end">
         <PageButtonWithOnePress text={buttonStrings.cancel} onPress={onCancelPrescription} />
 
-        {wasVaccinatedToday ? (
+        {wasVaccinatedToday() ? (
           <PageButton
             text={buttonStrings.confirm}
             style={{ marginLeft: 'auto' }}
@@ -183,7 +181,7 @@ const VaccineSelectComponent = ({
           />
         )}
 
-        {wasVaccinatedToday ? (
+        {wasVaccinatedToday() ? (
           <PageButton
             text={generalStrings.ok_and_next}
             style={{ marginLeft: 5 }}
