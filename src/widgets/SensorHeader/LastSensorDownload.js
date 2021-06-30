@@ -96,15 +96,14 @@ LastSensorDownloadComponent.propTypes = {
 };
 
 const stateToProps = (state, props) => {
-  const { macAddress } = props;
+  const { id } = props;
+
+  const sensor = selectSensorById(state, id);
+  const { isPaused = false, logDelay, macAddress } = sensor;
 
   const lastDownloadTime = selectLastDownloadTime(state, macAddress);
   const lastDownloadFailed = selectLastDownloadFailed(state, macAddress);
   const isDownloading = selectIsDownloading(state, macAddress);
-
-  const sensor = selectSensorById(state, macAddress);
-  const { isPaused = false, logDelay } = sensor ?? {};
-
   const lastDownloadStatus = selectLastDownloadStatus(state, macAddress);
 
   return {
