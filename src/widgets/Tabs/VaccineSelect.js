@@ -41,7 +41,7 @@ import { AfterInteractions } from '../AfterInteractions';
 import { Paper } from '../Paper';
 import { VaccinePrescriptionInfo } from '../VaccinePrescriptionInfo';
 import { useNavigationFocus } from '../../hooks/useNavigationFocus';
-import { selectWasPatientVaccinatedToday } from '../../selectors/Entities/name';
+import { selectWasPatientVaccinatedWithinOneDay } from '../../selectors/Entities/name';
 import { PaperModalContainer } from '../PaperModal/PaperModalContainer';
 import { PaperConfirmModal } from '../PaperModal/PaperConfirmModal';
 import { useToggle } from '../../hooks/useToggle';
@@ -81,7 +81,7 @@ const VaccineSelectComponent = ({
   vaccines,
   okAndRepeat,
   selectDefaultVaccine,
-  wasPatientVaccinatedToday,
+  wasPatientVaccinatedWithinOneDay,
 }) => {
   const { pageTopViewContainer } = globalStyles;
   const [confirmDoubleDoseModalOpen, toggleConfirmDoubleDoseModal] = useToggle();
@@ -172,7 +172,9 @@ const VaccineSelectComponent = ({
           text={buttonStrings.confirm}
           style={{ marginLeft: 'auto' }}
           isDisabled={!selectedBatches && !hasRefused}
-          onPress={wasPatientVaccinatedToday ? toggleConfirmDoubleDoseModal : confirmPrescription}
+          onPress={
+            wasPatientVaccinatedWithinOneDay ? toggleConfirmDoubleDoseModal : confirmPrescription
+          }
         />
         <PageButton
           debounceTimer={1000}
@@ -180,7 +182,7 @@ const VaccineSelectComponent = ({
           style={{ marginLeft: 5 }}
           isDisabled={!selectedBatches && !hasRefused}
           onPress={
-            wasPatientVaccinatedToday
+            wasPatientVaccinatedWithinOneDay
               ? toggleConfirmAndRepeatDoubleDoseModal
               : confirmAndRepeatPrescription
           }
@@ -233,7 +235,7 @@ const mapStateToProps = state => {
   const vaccines = selectVaccines(state);
   const [selectedVaccine] = selectedVaccines;
   const vaccinator = selectSelectedVaccinator(state);
-  const wasPatientVaccinatedToday = selectWasPatientVaccinatedToday(state);
+  const wasPatientVaccinatedWithinOneDay = selectWasPatientVaccinatedWithinOneDay(state);
 
   return {
     vaccinator,
@@ -243,7 +245,7 @@ const mapStateToProps = state => {
     selectedRows,
     selectedVaccine,
     vaccines,
-    wasPatientVaccinatedToday,
+    wasPatientVaccinatedWithinOneDay,
   };
 };
 
@@ -266,7 +268,7 @@ VaccineSelectComponent.propTypes = {
   selectedRows: PropTypes.object,
   selectedBatches: PropTypes.array,
   selectedVaccine: PropTypes.object,
-  wasPatientVaccinatedToday: PropTypes.bool.isRequired,
+  wasPatientVaccinatedWithinOneDay: PropTypes.bool.isRequired,
   vaccines: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
 };
 
