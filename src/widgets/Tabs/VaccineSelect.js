@@ -208,7 +208,6 @@ const VaccineSelectComponent = ({
           cancelText={modalStrings.cancel}
           onConfirm={confirmPrescription}
           onCancel={toggleConfirmDoubleDoseModal}
-          withOnePress={true}
         />
       </PaperModalContainer>
       <PaperModalContainer
@@ -221,7 +220,6 @@ const VaccineSelectComponent = ({
           cancelText={modalStrings.cancel}
           onConfirm={confirmAndRepeatPrescription}
           onCancel={toggleConfirmAndRepeatDoubleDoseModal}
-          withOnePress={true}
         />
       </PaperModalContainer>
     </FlexView>
