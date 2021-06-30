@@ -125,7 +125,7 @@ const VaccineSelectComponent = ({
     ? toggleConfirmDoubleDoseModal
     : toggleConfirmAndRepeatDoubleDoseModal;
 
-  const modalOnConfirm = confirmDoubleDoseModalOpen
+  const onModalConfirm = confirmDoubleDoseModalOpen
     ? confirmPrescription
     : confirmAndRepeatPrescription;
 
@@ -199,7 +199,7 @@ const VaccineSelectComponent = ({
           questionText={modalStrings.confirm_double_dose}
           confirmText={modalStrings.confirm}
           cancelText={modalStrings.cancel}
-          onConfirm={modalOnConfirm}
+          onConfirm={onModalConfirm}
           onCancel={onModalClose}
         />
       </PaperModalContainer>
