@@ -41,7 +41,7 @@ export const SensorHeaderComponent = ({
       )}
     </FlexRow>
 
-    <LastSensorDownload macAddress={macAddress} />
+    <LastSensorDownload id={sensorID} />
     <TextWithIcon
       containerStyle={localStyles.headerTextWithIcon}
       size="s"
