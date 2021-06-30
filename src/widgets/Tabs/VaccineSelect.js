@@ -165,38 +165,24 @@ const VaccineSelectComponent = ({
 
       <FlexRow flex={1} alignItems="flex-end" justifyContent="flex-end">
         <PageButtonWithOnePress text={buttonStrings.cancel} onPress={onCancelPrescription} />
-
-        {wasVaccinatedToday() ? (
-          <PageButton
-            text={buttonStrings.confirm}
-            style={{ marginLeft: 'auto' }}
-            isDisabled={!selectedBatches && !hasRefused}
-            onPress={toggleConfirmDoubleDoseModal}
-          />
-        ) : (
-          <PageButtonWithOnePress
-            text={buttonStrings.confirm}
-            style={{ marginLeft: 'auto' }}
-            isDisabled={!selectedBatches && !hasRefused}
-            onPress={confirmPrescription}
-          />
-        )}
-
-        {wasVaccinatedToday() ? (
-          <PageButton
-            text={generalStrings.ok_and_next}
-            style={{ marginLeft: 5 }}
-            isDisabled={!selectedBatches && !hasRefused}
-            onPress={toggleConfirmAndRepeatDoubleDoseModal}
-          />
-        ) : (
-          <PageButtonWithOnePress
-            text={generalStrings.ok_and_next}
-            style={{ marginLeft: 5 }}
-            isDisabled={!selectedBatches && !hasRefused}
-            onPress={confirmAndRepeatPrescription}
-          />
-        )}
+        <PageButton
+          debounceTimer={1000}
+          text={buttonStrings.confirm}
+          style={{ marginLeft: 'auto' }}
+          isDisabled={!selectedBatches && !hasRefused}
+          onPress={wasVaccinatedToday() ? toggleConfirmDoubleDoseModal : confirmPrescription}
+        />
+        <PageButton
+          debounceTimer={1000}
+          text={generalStrings.ok_and_next}
+          style={{ marginLeft: 5 }}
+          isDisabled={!selectedBatches && !hasRefused}
+          onPress={
+            wasVaccinatedToday()
+              ? toggleConfirmAndRepeatDoubleDoseModal
+              : confirmAndRepeatPrescription
+          }
+        />
       </FlexRow>
       <PaperModalContainer
         isVisible={confirmDoubleDoseModalOpen}
