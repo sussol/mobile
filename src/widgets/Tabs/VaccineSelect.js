@@ -41,7 +41,7 @@ import { AfterInteractions } from '../AfterInteractions';
 import { Paper } from '../Paper';
 import { VaccinePrescriptionInfo } from '../VaccinePrescriptionInfo';
 import { useNavigationFocus } from '../../hooks/useNavigationFocus';
-import { selectVaccinePatientHistory } from '../../selectors/Entities/name';
+import { selectWasPatientVaccinatedToday } from '../../selectors/Entities/name';
 import { PaperModalContainer } from '../PaperModal/PaperModalContainer';
 import { PaperConfirmModal } from '../PaperModal/PaperConfirmModal';
 import { useToggle } from '../../hooks/useToggle';
@@ -81,7 +81,7 @@ const VaccineSelectComponent = ({
   vaccines,
   okAndRepeat,
   selectDefaultVaccine,
-  vaccinePatientHistory,
+  wasPatientVaccinatedToday,
 }) => {
   const { pageTopViewContainer } = globalStyles;
   const [confirmDoubleDoseModalOpen, toggleConfirmDoubleDoseModal] = useToggle();
@@ -103,14 +103,6 @@ const VaccineSelectComponent = ({
     [vaccines]
   );
   const runWithLoadingIndicator = useLoadingIndicator();
-
-  const wasVaccinatedToday = () => {
-    const currentDate = new Date();
-
-    return !!vaccinePatientHistory.filter(
-      history => history.confirmDate >= currentDate.getDate() - 1
-    ).length;
-  };
 
   const confirmPrescription = React.useCallback(() => runWithLoadingIndicator(onConfirm), [
     onConfirm,
@@ -180,7 +172,7 @@ const VaccineSelectComponent = ({
           text={buttonStrings.confirm}
           style={{ marginLeft: 'auto' }}
           isDisabled={!selectedBatches && !hasRefused}
-          onPress={wasVaccinatedToday() ? toggleConfirmDoubleDoseModal : confirmPrescription}
+          onPress={wasPatientVaccinatedToday ? toggleConfirmDoubleDoseModal : confirmPrescription}
         />
         <PageButton
           debounceTimer={1000}
@@ -188,7 +180,7 @@ const VaccineSelectComponent = ({
           style={{ marginLeft: 5 }}
           isDisabled={!selectedBatches && !hasRefused}
           onPress={
-            wasVaccinatedToday()
+            wasPatientVaccinatedToday
               ? toggleConfirmAndRepeatDoubleDoseModal
               : confirmAndRepeatPrescription
           }
@@ -241,7 +233,7 @@ const mapStateToProps = state => {
   const vaccines = selectVaccines(state);
   const [selectedVaccine] = selectedVaccines;
   const vaccinator = selectSelectedVaccinator(state);
-  const vaccinePatientHistory = selectVaccinePatientHistory(state);
+  const wasPatientVaccinatedToday = selectWasPatientVaccinatedToday(state);
 
   return {
     vaccinator,
@@ -251,7 +243,7 @@ const mapStateToProps = state => {
     selectedRows,
     selectedVaccine,
     vaccines,
-    vaccinePatientHistory,
+    wasPatientVaccinatedToday,
   };
 };
 
@@ -274,7 +266,7 @@ VaccineSelectComponent.propTypes = {
   selectedRows: PropTypes.object,
   selectedBatches: PropTypes.array,
   selectedVaccine: PropTypes.object,
-  vaccinePatientHistory: PropTypes.array.isRequired,
+  wasPatientVaccinatedToday: PropTypes.bool.isRequired,
   vaccines: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
 };
 

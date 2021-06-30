@@ -87,3 +87,11 @@ export const selectVaccinePatientHistory = state => {
   const fullQuery = `(${inQuery}) AND ${baseQueryString} AND itemBatch.item.isVaccine == true`;
   return inQuery ? UIDatabase.objects('TransactionBatch').filtered(fullQuery).slice() : [];
 };
+
+export const selectWasPatientVaccinatedToday = state => {
+  const history = selectVaccinePatientHistory(state);
+
+  const currentDate = new Date();
+  return !!history.filter(historyRecord => historyRecord.confirmDate >= currentDate.getDate() - 1)
+    .length;
+};
