@@ -121,6 +121,16 @@ const VaccineSelectComponent = ({
     [okAndRepeat]
   );
 
+  const onModalClose = confirmDoubleDoseModalOpen
+    ? toggleConfirmDoubleDoseModal
+    : toggleConfirmAndRepeatDoubleDoseModal;
+
+  const modalOnConfirm = confirmDoubleDoseModalOpen
+    ? confirmPrescription
+    : confirmAndRepeatPrescription;
+
+  const isModalOpen = confirmDoubleDoseModalOpen || confirmAndRepeatDoubleDoseModalOpen;
+
   const navigation = useNavigation();
   useNavigationFocus(navigation, selectDefaultVaccine);
 
@@ -184,28 +194,13 @@ const VaccineSelectComponent = ({
           }
         />
       </FlexRow>
-      <PaperModalContainer
-        isVisible={confirmDoubleDoseModalOpen}
-        onClose={toggleConfirmDoubleDoseModal}
-      >
+      <PaperModalContainer isVisible={isModalOpen} onClose={onModalClose}>
         <PaperConfirmModal
           questionText={modalStrings.confirm_double_dose}
           confirmText={modalStrings.confirm}
           cancelText={modalStrings.cancel}
-          onConfirm={confirmPrescription}
-          onCancel={toggleConfirmDoubleDoseModal}
-        />
-      </PaperModalContainer>
-      <PaperModalContainer
-        isVisible={confirmAndRepeatDoubleDoseModalOpen}
-        onClose={toggleConfirmAndRepeatDoubleDoseModal}
-      >
-        <PaperConfirmModal
-          questionText={modalStrings.confirm_double_dose}
-          confirmText={modalStrings.confirm}
-          cancelText={modalStrings.cancel}
-          onConfirm={confirmAndRepeatPrescription}
-          onCancel={toggleConfirmAndRepeatDoubleDoseModal}
+          onConfirm={modalOnConfirm}
+          onCancel={onModalClose}
         />
       </PaperModalContainer>
     </FlexView>
