@@ -93,5 +93,5 @@ export const selectWasPatientVaccinatedWithinOneDay = state => {
   const history = selectVaccinePatientHistory(state);
   const oneDayAgo = new Date().getTime() - MILLISECONDS_PER_DAY;
 
-  return !!history.filter(historyRecord => historyRecord.confirmDate.getTime() >= oneDayAgo).length;
+  return !!history.filter(historyRecord => historyRecord.confirmDate.getTime() > oneDayAgo).length;
 };
