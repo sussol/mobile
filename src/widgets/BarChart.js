@@ -21,13 +21,13 @@ import { APP_FONT_FAMILY, GREY, LIGHT_GREY, DARK_GREY, SUSSOL_ORANGE } from '../
 
 export const BarChart = ({ data, width, height }) => {
   const renderYAxis = () => (
-    <VictoryAxis label={data[0].axis_label.y} dependentAxis style={victoryStyles.axisY} />
+    <VictoryAxis label={data[0]?.axis_label?.y} dependentAxis style={victoryStyles.axisY} />
   );
   const renderXAxis = () => {
     const tickTruncate = label => (label.length > 11 ? `${label.slice(0, 11)}...` : label);
     return (
       <VictoryAxis
-        label={data[0].axis_label.x}
+        label={data[0]?.axis_label?.x}
         tickFormat={tickTruncate}
         style={victoryStyles.axisX}
       />
