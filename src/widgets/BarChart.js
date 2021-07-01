@@ -49,12 +49,13 @@ export const BarChart = ({ data, width, height }) => {
   return (
     <VictoryChart width={width} height={height} padding={padding} domainPadding={domainPadding}>
       <VictoryLabel text={data[0].label} x={width / 2} y={30} textAnchor="middle" />
-      {data.map(({ values }) => (
+      {data.map(({ values, index }) => (
         <VictoryBar
           style={style}
           data={values}
           labels={({ datum }) => datum.y}
           labelComponent={<VictoryLabel style={victoryStyles.labelStyle} />}
+          key={index}
         />
       ))}
       {renderYAxis()}
