@@ -94,7 +94,7 @@ const VaccinePrescriptionInfoComponent = ({
   <Paper
     Header={
       <Header
-        title={`Step: ${currentWizardStep + 1} ${
+        title={`${vaccineStrings.vaccine_step} ${currentWizardStep + 1} ${
           vaccineStrings.vaccine_dispense_vaccine_select_title
         }`}
         onPress={openHistory}
