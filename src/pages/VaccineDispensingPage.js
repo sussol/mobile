@@ -1,4 +1,3 @@
-/* eslint-disable react/require-default-props */
 /* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
@@ -59,6 +58,10 @@ export const VaccineDispensingPageComponent = ({
       </ModalContainer>
     </>
   );
+};
+
+VaccineDispensingPageComponent.defaultProps = {
+  siteSchema: null,
 };
 
 VaccineDispensingPageComponent.propTypes = {
