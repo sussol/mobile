@@ -26,7 +26,7 @@ import { selectSiteSchemas } from '../selectors/formSchema';
 const allTabs = [
   { component: PatientSelect, name: 'patient', title: dispensingStrings.select_the_patient },
   { component: PatientEdit, name: 'edit', title: dispensingStrings.edit_the_patient },
-  { component: VaccineSiteSelect, name: 'site', title: dispensingStrings.edit_the_patient },
+  { component: VaccineSiteSelect, name: 'site', title: dispensingStrings.edit_site_details },
   { component: VaccineSelect, name: 'prescription', title: dispensingStrings.finalise },
 ];
 
