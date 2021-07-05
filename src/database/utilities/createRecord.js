@@ -566,7 +566,7 @@ const createCustomerRefundLine = (database, customerCredit, transactionBatch) =>
  * @param   {Name}         customer  Customer associated with invoice.
  * @return  {Transaction}
  */
-const createCustomerInvoice = (database, customer, user, mode = 'store') => {
+const createCustomerInvoice = (database, customer, user, mode = 'store', customData = null) => {
   const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
   const currentDate = new Date();
   const invoice = database.create('Transaction', {
@@ -581,6 +581,7 @@ const createCustomerInvoice = (database, customer, user, mode = 'store') => {
     otherParty: customer,
     enteredBy: user,
     mode,
+    customData: JSON.stringify(customData),
   });
 
   database.save('Transaction', invoice);

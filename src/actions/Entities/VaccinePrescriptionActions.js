@@ -6,6 +6,7 @@ import {
   selectFoundBonusDose,
   selectHasRefused,
   selectSelectedBatches,
+  selectSelectedSiteData,
   selectSelectedVaccinator,
 } from '../../selectors/Entities/vaccinePrescription';
 import { selectEditingNameId } from '../../selectors/Entities/name';
@@ -125,14 +126,15 @@ const setRefusal = hasRefused => ({
   },
 });
 
-const createPrescription = (patient, currentUser, selectedBatches, vaccinator) => {
+const createPrescription = (patient, currentUser, selectedBatches, vaccinator, siteData) => {
   UIDatabase.write(() => {
     const prescription = createRecord(
       UIDatabase,
       'CustomerInvoice',
       patient,
       currentUser,
-      'dispensary'
+      'dispensary',
+      siteData
     );
 
     selectedBatches.forEach(itemBatch => {
@@ -165,6 +167,7 @@ const confirm = () => (dispatch, getState) => {
   const patientID = selectEditingNameId(getState());
   const selectedBatches = selectSelectedBatches(getState());
   const vaccinator = selectSelectedVaccinator(getState());
+  const siteData = selectSelectedSiteData(getState());
 
   if (hasBonusDoses) {
     UIDatabase.write(() => {
@@ -199,7 +202,7 @@ const confirm = () => (dispatch, getState) => {
   if (hasRefused) {
     createRefusalNameNote(patient);
   } else {
-    createPrescription(patient, currentUser, selectedBatches, vaccinator);
+    createPrescription(patient, currentUser, selectedBatches, vaccinator, siteData);
   }
 };
 
