@@ -59,23 +59,21 @@ export const Field = ({
   );
 
   if (schemaIsRoot(id)) {
-    const ScrollViewWithContent = (
-      <ScrollView keyboardDismissMode="none" keyboardShouldPersistTaps="always">
-        <Spacer space={20} vertical />
-        {Content}
-      </ScrollView>
-    );
-
     return label ? (
       <Paper
         style={{ flex: 1 }}
         Header={<TitleField title={label} isRequired={required} size={getTitleSize(id, schema)} />}
         contentContainerStyle={{ flex: 1 }}
       >
-        {ScrollViewWithContent}
+        <ScrollView keyboardDismissMode="none" keyboardShouldPersistTaps="always">
+          <Spacer space={20} vertical />
+          {Content}
+        </ScrollView>
       </Paper>
     ) : (
-      ScrollViewWithContent
+      <ScrollView keyboardDismissMode="none" keyboardShouldPersistTaps="always">
+        {Content}
+      </ScrollView>
     );
   }
 
