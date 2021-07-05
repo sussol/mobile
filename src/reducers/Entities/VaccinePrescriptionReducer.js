@@ -48,11 +48,11 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
       return { ...state, creating: prescription, vaccinator };
     }
 
-    case VACCINE_PRESCRIPTION_ACTIONS.SELECT_SITE_DATA: {
+    case VACCINE_PRESCRIPTION_ACTIONS.SELECT_SUPPLEMENTAL_DATA: {
       const { payload } = action;
-      const { siteData } = payload;
+      const { supplementalData } = payload;
 
-      return { ...state, siteData };
+      return { ...state, supplementalData };
     }
 
     case VACCINE_PRESCRIPTION_ACTIONS.SELECT_VACCINE: {

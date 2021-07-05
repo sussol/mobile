@@ -20,13 +20,17 @@ import {
   selectEditingNameId,
   selectVaccinePatientHistory,
 } from '../selectors/Entities/name';
-import { VaccineSiteSelect } from '../widgets/Tabs/VaccineSiteSelect';
-import { selectSiteSchemas } from '../selectors/formSchema';
+import { VaccineSupplementalData } from '../widgets/Tabs/VaccineSupplementalData';
+import { selectSupplementalDataSchemas } from '../selectors/formSchema';
 
 const allTabs = [
   { component: PatientSelect, name: 'patient', title: dispensingStrings.select_the_patient },
   { component: PatientEdit, name: 'edit', title: dispensingStrings.edit_the_patient },
-  { component: VaccineSiteSelect, name: 'site', title: dispensingStrings.edit_site_details },
+  {
+    component: VaccineSupplementalData,
+    name: 'supplementalData',
+    title: dispensingStrings.edit_supplemental_data,
+  },
   { component: VaccineSelect, name: 'prescription', title: dispensingStrings.finalise },
 ];
 
@@ -36,10 +40,12 @@ export const VaccineDispensingPageComponent = ({
   patientName,
   patientHistory,
   patientId,
-  siteSchema,
+  supplementalDataSchema,
 }) => {
   // Site tab is conditional on form schema presence
-  const tabs = !siteSchema ? allTabs.filter(tab => tab.name !== 'site') : allTabs;
+  const tabs = !supplementalDataSchema
+    ? allTabs.filter(tab => tab.name !== 'supplementalData')
+    : allTabs;
 
   return (
     <>
@@ -61,7 +67,7 @@ export const VaccineDispensingPageComponent = ({
 };
 
 VaccineDispensingPageComponent.defaultProps = {
-  siteSchema: null,
+  supplementalDataSchema: null,
 };
 
 VaccineDispensingPageComponent.propTypes = {
@@ -70,7 +76,7 @@ VaccineDispensingPageComponent.propTypes = {
   patientName: PropTypes.string.isRequired,
   patientId: PropTypes.string.isRequired,
   patientHistory: PropTypes.array.isRequired,
-  siteSchema: PropTypes.object,
+  supplementalDataSchema: PropTypes.object,
 };
 
 const stateToProps = state => {
@@ -78,10 +84,10 @@ const stateToProps = state => {
   const patientName = selectFullName(state);
   const patientHistory = selectVaccinePatientHistory(state);
   const patientId = selectEditingNameId(state) ?? '';
-  const siteSchemas = selectSiteSchemas();
-  const [siteSchema] = siteSchemas;
+  const supplementalDataSchemas = selectSupplementalDataSchemas();
+  const [supplementalDataSchema] = supplementalDataSchemas;
 
-  return { historyIsOpen, patientName, patientId, patientHistory, siteSchema };
+  return { historyIsOpen, patientName, patientId, patientHistory, supplementalDataSchema };
 };
 
 const dispatchToProps = dispatch => ({

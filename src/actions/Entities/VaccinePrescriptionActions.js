@@ -19,7 +19,7 @@ export const VACCINE_PRESCRIPTION_ACTIONS = {
   SET_REFUSAL: 'VACCINE_PRESCRIPTION/setRefusal',
   RESET: 'VACCINE_PRESCRIPTION/reset',
   SELECT_VACCINE: 'VACCINE_PRESCRIPTION/selectVaccine',
-  SELECT_SITE_DATA: 'VACCINE_PRESCRIPTION/selectSiteData',
+  SELECT_SUPPLEMENTAL_DATA: 'VACCINE_PRESCRIPTION/selectSupplementalData',
   SELECT_BATCH: 'VACCINE_PRESCRIPTION/selectBatch',
   SELECT_VACCINATOR: 'VACCINE_PRESCRIPTION/selectVaccinator',
   SET_BONUS_DOSE: 'VACCINE_PRESCRIPTION/setBonusDose',
@@ -97,8 +97,8 @@ const selectDefaultVaccine = () => ({
   payload: { selectedVaccines: [getDefaultVaccine()], selectedBatches: [getRecommendedBatch()] },
 });
 
-const selectSiteData = siteData => ({
-  type: VACCINE_PRESCRIPTION_ACTIONS.SELECT_SITE_DATA,
+const selectSupplementalData = siteData => ({
+  type: VACCINE_PRESCRIPTION_ACTIONS.SELECT_SUPPLEMENTAL_DATA,
   payload: { siteData },
 });
 
@@ -231,7 +231,7 @@ export const VaccinePrescriptionActions = {
   create,
   reset,
   selectBatch,
-  selectSiteData,
+  selectSupplementalData,
   selectVaccine,
   setRefusal,
   selectVaccinator,
