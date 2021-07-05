@@ -17,7 +17,7 @@ import { FlexView } from '../FlexView';
 import globalStyles from '../../globalStyles/index';
 import { buttonStrings, vaccineStrings } from '../../localization/index';
 import { JSONForm } from '../JSONForm/JSONForm';
-import { selectSiteSchemas } from '../../selectors/formSchema';
+import { selectSupplementalDataSchemas } from '../../selectors/formSchema';
 
 import { PageButton } from '../PageButton';
 import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
@@ -27,12 +27,12 @@ import { Paper } from '../Paper';
 
 const { pageTopViewContainer } = globalStyles;
 
-const VaccineSiteSelectComponent = ({ onCancel, onComplete, siteSchema }) => {
+const VaccineSupplementalDataComponent = ({ onCancel, onComplete, siteSchema }) => {
   const [{ formData, isValid }, setForm] = useState({ formData: null, isValid: false });
   return (
     <FlexView style={pageTopViewContainer}>
       <Paper
-        headerText={vaccineStrings.vaccine_dispense_site_select_title}
+        headerText={vaccineStrings.vaccine_dispense_supplemental_data_title}
         contentContainerStyle={{ flex: 1 }}
         style={{ flex: 1 }}
       >
@@ -58,7 +58,7 @@ const VaccineSiteSelectComponent = ({ onCancel, onComplete, siteSchema }) => {
   );
 };
 
-VaccineSiteSelectComponent.propTypes = {
+VaccineSupplementalDataComponent.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onComplete: PropTypes.func.isRequired,
   siteSchema: PropTypes.object,
@@ -69,7 +69,7 @@ const mapDispatchToProps = dispatch => {
 
   const onComplete = siteData => {
     batch(() => {
-      dispatch(VaccinePrescriptionActions.selectSiteData(siteData));
+      dispatch(VaccinePrescriptionActions.selectSupplementalData(siteData));
       dispatch(WizardActions.nextTab());
     });
   };
@@ -78,15 +78,15 @@ const mapDispatchToProps = dispatch => {
 };
 
 const mapStateToProps = () => {
-  const siteSchemas = selectSiteSchemas();
+  const siteSchemas = selectSupplementalDataSchemas();
   const [siteSchema] = siteSchemas;
 
   return { siteSchema };
 };
 
-VaccineSiteSelectComponent.propTypes = {};
+VaccineSupplementalDataComponent.propTypes = {};
 
-export const VaccineSiteSelect = connect(
+export const VaccineSupplementalData = connect(
   mapStateToProps,
   mapDispatchToProps
-)(VaccineSiteSelectComponent);
+)(VaccineSupplementalDataComponent);
