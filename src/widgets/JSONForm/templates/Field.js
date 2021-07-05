@@ -59,17 +59,23 @@ export const Field = ({
   );
 
   if (schemaIsRoot(id)) {
-    return (
+    const ScrollViewWithContent = (
+      <ScrollView keyboardDismissMode="none" keyboardShouldPersistTaps="always">
+        <Spacer space={20} vertical />
+        {Content}
+      </ScrollView>
+    );
+
+    return label ? (
       <Paper
         style={{ flex: 1 }}
         Header={<TitleField title={label} isRequired={required} size={getTitleSize(id, schema)} />}
         contentContainerStyle={{ flex: 1 }}
       >
-        <ScrollView keyboardDismissMode="none" keyboardShouldPersistTaps="always">
-          <Spacer space={20} vertical />
-          {Content}
-        </ScrollView>
+        {ScrollViewWithContent}
       </Paper>
+    ) : (
+      ScrollViewWithContent
     );
   }
 
@@ -102,10 +108,11 @@ const styles = StyleSheet.create({
 Field.defaultProps = {
   rawErrors: [],
   required: false,
+  label: null,
 };
 
 Field.propTypes = {
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
   fields: PropTypes.object.isRequired,
   required: PropTypes.bool,
   rawErrors: PropTypes.array,

@@ -15,7 +15,7 @@ import { FlexRow } from '../FlexRow';
 import { FlexView } from '../FlexView';
 
 import globalStyles from '../../globalStyles/index';
-import { buttonStrings } from '../../localization/index';
+import { buttonStrings, vaccineStrings } from '../../localization/index';
 import { JSONForm } from '../JSONForm/JSONForm';
 import { selectSiteSchemas } from '../../selectors/formSchema';
 
@@ -23,6 +23,7 @@ import { PageButton } from '../PageButton';
 import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 import { VaccinePrescriptionActions } from '../../actions/Entities/index';
 import { WizardActions } from '../../actions/WizardActions';
+import { Paper } from '../Paper';
 
 const { pageTopViewContainer } = globalStyles;
 
@@ -30,14 +31,20 @@ const VaccineSiteSelectComponent = ({ onCancel, onComplete, siteSchema }) => {
   const [{ formData, isValid }, setForm] = useState({ formData: null, isValid: false });
   return (
     <FlexView style={pageTopViewContainer}>
-      <JSONForm
-        onChange={(changed, validator) => {
-          setForm({ formData: changed.formData, isValid: validator(changed.formData) });
-        }}
-        surveySchema={siteSchema}
+      <Paper
+        headerText={vaccineStrings.vaccine_dispense_site_select_title}
+        contentContainerStyle={{ flex: 1 }}
+        style={{ flex: 1 }}
       >
-        <View />
-      </JSONForm>
+        <JSONForm
+          onChange={(changed, validator) => {
+            setForm({ formData: changed.formData, isValid: validator(changed.formData) });
+          }}
+          surveySchema={siteSchema}
+        >
+          <View />
+        </JSONForm>
+      </Paper>
       <FlexRow flex={0} justifyContent="flex-end" alignItems="flex-end">
         <PageButtonWithOnePress text={buttonStrings.cancel} onPress={onCancel} />
         <PageButton
