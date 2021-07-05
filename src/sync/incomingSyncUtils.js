@@ -842,7 +842,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         serialNumber: record.invoice_num,
         otherParty,
         comment: record.comment,
-        customData: record.custom_data ? parseJsonString(record.custom_data) : null,
+        customData: parseJsonString(record.custom_data),
         entryDate: parseDate(record.entry_date),
         type: TRANSACTION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
         status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
