@@ -20,14 +20,13 @@ import {
   selectEditingNameId,
   selectVaccinePatientHistory,
 } from '../selectors/Entities/name';
+import { VaccineSiteSelect } from '../widgets/Tabs/VaccineSiteSelect';
+import { selectSiteSchemas } from '../selectors/formSchema';
 
-const tabs = [
-  {
-    component: PatientSelect,
-    name: 'patient',
-    title: dispensingStrings.select_the_patient,
-  },
+const allTabs = [
+  { component: PatientSelect, name: 'patient', title: dispensingStrings.select_the_patient },
   { component: PatientEdit, name: 'edit', title: dispensingStrings.edit_the_patient },
+  { component: VaccineSiteSelect, name: 'site', title: dispensingStrings.edit_site_details },
   { component: VaccineSelect, name: 'prescription', title: dispensingStrings.finalise },
 ];
 
@@ -37,23 +36,33 @@ export const VaccineDispensingPageComponent = ({
   patientName,
   patientHistory,
   patientId,
-}) => (
-  <>
-    <Wizard useNewStepper captureUncaughtGestures={false} tabs={tabs} />
-    <ModalContainer
-      title={`${dispensingStrings.patient} ${dispensingStrings.history}: ${patientName}`}
-      onClose={closeHistory}
-      isVisible={historyIsOpen}
-    >
-      <PatientHistoryModal
-        isVaccine={true}
-        patientHistory={patientHistory}
-        patientId={patientId}
-        sortKey="prescriptionDate"
-      />
-    </ModalContainer>
-  </>
-);
+  siteSchema,
+}) => {
+  // Site tab is conditional on form schema presence
+  const tabs = !siteSchema ? allTabs.filter(tab => tab.name !== 'site') : allTabs;
+
+  return (
+    <>
+      <Wizard useNewStepper captureUncaughtGestures={false} tabs={tabs} />
+      <ModalContainer
+        title={`${dispensingStrings.patient} ${dispensingStrings.history}: ${patientName}`}
+        onClose={closeHistory}
+        isVisible={historyIsOpen}
+      >
+        <PatientHistoryModal
+          isVaccine={true}
+          patientHistory={patientHistory}
+          patientId={patientId}
+          sortKey="prescriptionDate"
+        />
+      </ModalContainer>
+    </>
+  );
+};
+
+VaccineDispensingPageComponent.defaultProps = {
+  siteSchema: null,
+};
 
 VaccineDispensingPageComponent.propTypes = {
   historyIsOpen: PropTypes.bool.isRequired,
@@ -61,6 +70,7 @@ VaccineDispensingPageComponent.propTypes = {
   patientName: PropTypes.string.isRequired,
   patientId: PropTypes.string.isRequired,
   patientHistory: PropTypes.array.isRequired,
+  siteSchema: PropTypes.object,
 };
 
 const stateToProps = state => {
@@ -68,8 +78,10 @@ const stateToProps = state => {
   const patientName = selectFullName(state);
   const patientHistory = selectVaccinePatientHistory(state);
   const patientId = selectEditingNameId(state) ?? '';
+  const siteSchemas = selectSiteSchemas();
+  const [siteSchema] = siteSchemas;
 
-  return { historyIsOpen, patientName, patientId, patientHistory };
+  return { historyIsOpen, patientName, patientId, patientHistory, siteSchema };
 };
 
 const dispatchToProps = dispatch => ({
