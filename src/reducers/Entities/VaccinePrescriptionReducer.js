@@ -7,7 +7,7 @@ const initialState = () => ({
   hasRefused: false,
   selectedVaccines: [],
   selectedBatches: [],
-  siteData: {},
+  supplementalData: {},
   vaccines: UIDatabase.objects('Vaccine').sorted('name'),
   vaccinator: null,
   bonusDose: false,
