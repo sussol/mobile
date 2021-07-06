@@ -272,6 +272,16 @@ export class Item extends Realm.Object {
 
     return totalDosesPossible;
   }
+
+  /**
+   * Updates name and linked requisition `itemName` data. Finalised requisitions are not updated.
+   */
+  updateName(name) {
+    this.name = name;
+    this.requisitionItems.filtered("requisition.status != 'finalised'").forEach(requisitionLine => {
+      requisitionLine.itemName = name;
+    });
+  }
 }
 
 Item.schema = {
