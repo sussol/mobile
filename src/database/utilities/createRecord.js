@@ -794,6 +794,7 @@ const createRequisitionItem = (database, requisition, item, dailyUsage, stockOnH
   const requisitionItem = database.create('RequisitionItem', {
     id: generateUUID(),
     item: realItem,
+    itemName: realItem.name,
     requisition,
     stockOnHand: stockOnHand ?? realItem.totalQuantity,
     dailyUsage: dailyUsage ?? realItem.dailyUsage,

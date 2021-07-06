@@ -746,6 +746,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         id: record.ID,
         requisition,
         item: database.getOrCreate('Item', record.item_ID),
+        itemName: record.itemName,
         stockOnHand: parseNumber(record.stock_on_hand),
         dailyUsage: parseNumber(record.daily_usage),
         requiredQuantity: parseNumber(record.Cust_stock_order),

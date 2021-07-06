@@ -150,6 +150,7 @@ const generateSyncData = (settings, recordType, record) => {
         ID: record.id,
         requisition_ID: record.requisitionId,
         item_ID: record.itemId,
+        itemName: String(record.itemName),
         stock_on_hand: String(record.stockOnHand),
         daily_usage: String(record.dailyUsage),
         suggested_quantity: String(record.suggestedQuantity),
