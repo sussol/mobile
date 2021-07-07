@@ -99,3 +99,19 @@ export const selectSelectedSupplementalData = state => {
 
   return supplementalData;
 };
+
+export const selectLastSupplementalData = () => {
+  const inQuery = UIDatabase.objects('Transaction')
+    .filtered('customData != $0 AND type != "cash_in" AND type != "cash_out"', null)
+    .map(({ id }) => `transaction.id == "${id}"`)
+    .join(' OR ');
+  const fullQuery = `(${inQuery}) AND itemBatch.item.isVaccine == true`;
+  const result = inQuery
+    ? UIDatabase.objects('TransactionBatch')
+        .filtered(fullQuery)
+        .sorted('transaction.entryDate', true)
+        .slice()
+    : [];
+
+  return result.length ? result[0].transaction.customData : null;
+};

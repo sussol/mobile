@@ -24,11 +24,17 @@ import { PageButtonWithOnePress } from '../PageButtonWithOnePress';
 import { VaccinePrescriptionActions } from '../../actions/Entities/index';
 import { WizardActions } from '../../actions/WizardActions';
 import { Paper } from '../Paper';
+import { selectLastSupplementalData } from '../../selectors/Entities/vaccinePrescription';
 
 const { pageTopViewContainer } = globalStyles;
 
 const VaccineSupplementalDataComponent = ({ onCancel, onComplete, siteSchema }) => {
-  const [{ formData, isValid }, setForm] = useState({ formData: null, isValid: false });
+  const lastSupplementalData = selectLastSupplementalData();
+  const [{ formData, isValid }, setForm] = useState({
+    formData: JSON.parse(lastSupplementalData),
+    isValid: lastSupplementalData ?? false,
+  });
+
   return (
     <FlexView style={pageTopViewContainer}>
       <Paper
@@ -37,6 +43,7 @@ const VaccineSupplementalDataComponent = ({ onCancel, onComplete, siteSchema }) 
         style={{ flex: 1 }}
       >
         <JSONForm
+          formData={formData}
           onChange={(changed, validator) => {
             setForm({ formData: changed.formData, isValid: validator(changed.formData) });
           }}
