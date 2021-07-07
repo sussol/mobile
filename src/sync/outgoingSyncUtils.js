@@ -215,6 +215,7 @@ const generateSyncData = (settings, recordType, record) => {
         name_ID: record.otherParty?.id ?? '',
         invoice_num: record.serialNumber,
         comment: record.comment,
+        custom_data: record.customData,
         entry_date: getDateString(record.entryDate),
         type: TRANSACTION_TYPES.translate(record.type, INTERNAL_TO_EXTERNAL),
         status: STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
@@ -524,6 +525,7 @@ export const generateSyncJson = (database, settings, syncOutRecord) => {
       Bugsnag.notify(error);
 
       // Make a nicer message for users and throw it again.
+      // eslint-disable-next-line max-len
       error.message = `There was an error syncing. Contact mSupply mobile support. ${originalMessage}`;
       throw error;
     }

@@ -616,6 +616,7 @@ Transaction.schema = {
     serialNumber: { type: 'string', default: 'placeholderSerialNumber' },
     otherParty: { type: 'Name', optional: true },
     comment: { type: 'string', optional: true },
+    customData: { type: 'string', optional: true },
     entryDate: { type: 'date', optional: true },
     type: { type: 'string', default: 'placeholderType' },
     status: { type: 'string', default: 'new' },

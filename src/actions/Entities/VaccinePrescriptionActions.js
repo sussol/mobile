@@ -6,6 +6,7 @@ import {
   selectFoundBonusDose,
   selectHasRefused,
   selectSelectedBatches,
+  selectSelectedSupplementalData,
   selectSelectedVaccinator,
 } from '../../selectors/Entities/vaccinePrescription';
 import { selectEditingNameId } from '../../selectors/Entities/name';
@@ -96,9 +97,9 @@ const selectDefaultVaccine = () => ({
   payload: { selectedVaccines: [getDefaultVaccine()], selectedBatches: [getRecommendedBatch()] },
 });
 
-const selectSupplementalData = siteData => ({
+const selectSupplementalData = supplementalData => ({
   type: VACCINE_PRESCRIPTION_ACTIONS.SELECT_SUPPLEMENTAL_DATA,
-  payload: { siteData },
+  payload: { supplementalData },
 });
 
 const selectVaccine = vaccine => ({
@@ -125,14 +126,21 @@ const setRefusal = hasRefused => ({
   },
 });
 
-const createPrescription = (patient, currentUser, selectedBatches, vaccinator) => {
+const createPrescription = (
+  patient,
+  currentUser,
+  selectedBatches,
+  vaccinator,
+  supplementalData
+) => {
   UIDatabase.write(() => {
     const prescription = createRecord(
       UIDatabase,
       'CustomerInvoice',
       patient,
       currentUser,
-      'dispensary'
+      'dispensary',
+      supplementalData
     );
 
     selectedBatches.forEach(itemBatch => {
@@ -165,6 +173,7 @@ const confirm = () => (dispatch, getState) => {
   const patientID = selectEditingNameId(getState());
   const selectedBatches = selectSelectedBatches(getState());
   const vaccinator = selectSelectedVaccinator(getState());
+  const supplementalData = selectSelectedSupplementalData(getState());
 
   if (hasBonusDoses) {
     UIDatabase.write(() => {
@@ -199,7 +208,7 @@ const confirm = () => (dispatch, getState) => {
   if (hasRefused) {
     createRefusalNameNote(patient);
   } else {
-    createPrescription(patient, currentUser, selectedBatches, vaccinator);
+    createPrescription(patient, currentUser, selectedBatches, vaccinator, supplementalData);
   }
 };
 

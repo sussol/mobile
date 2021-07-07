@@ -67,9 +67,9 @@ VaccineSupplementalDataComponent.propTypes = {
 const mapDispatchToProps = dispatch => {
   const onCancel = () => dispatch(VaccinePrescriptionActions.cancel());
 
-  const onComplete = siteData => {
+  const onComplete = supplementalData => {
     batch(() => {
-      dispatch(VaccinePrescriptionActions.selectSupplementalData(siteData));
+      dispatch(VaccinePrescriptionActions.selectSupplementalData(supplementalData));
       dispatch(WizardActions.nextTab());
     });
   };
