@@ -278,8 +278,9 @@ export class Item extends Realm.Object {
    */
   updateName(name) {
     this.name = name;
-    this.requisitionItems.filtered("requisition.status != 'finalised'").forEach(requisitionLine => {
-      requisitionLine.itemName = name;
+    this.requisitionItems.filtered("requisition.status != 'finalised'").forEach(requisitionItem => {
+      requisitionItem.itemName = name;
+      UIDatabase.save(requisitionItem);
     });
   }
 }
