@@ -93,9 +93,9 @@ export const selectHistoryIsOpen = state => {
   return historyIsOpen;
 };
 
-export const selectSelectedSiteData = state => {
+export const selectSelectedSupplementalData = state => {
   const VaccinePrescriptionState = selectSpecificEntityState(state, 'vaccinePrescription');
-  const { siteData } = VaccinePrescriptionState;
+  const { supplementalData } = VaccinePrescriptionState;
 
-  return siteData;
+  return supplementalData;
 };
