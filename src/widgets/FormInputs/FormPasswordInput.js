@@ -7,7 +7,7 @@
 
 import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
-import { TextInput } from 'react-native';
+import { TextInput, I18nManager } from 'react-native';
 
 import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
 import { authStrings } from '../../localization';
@@ -26,23 +26,27 @@ export const FormPasswordInput = forwardRef(
       value,
     },
     ref
-  ) => (
-    <TextInput
-      ref={ref}
-      autoCompleteType="password"
-      editable={isEditable}
-      onChangeText={onChangeText}
-      onSubmitEditing={onSubmitEditing}
-      placeholder={placeholder}
-      placeholderTextColor={placeholderTextColor}
-      returnKeyType={returnKeyType}
-      style={style}
-      underlineColorAndroid={underlineColorAndroid}
-      value={value}
-      secureTextEntry
-      selectTextOnFocus
-    />
-  )
+  ) => {
+    const combinedStyle = { ...style, textAlign: I18nManager.isRTL ? 'right' : 'left' };
+
+    return (
+      <TextInput
+        ref={ref}
+        autoCompleteType="password"
+        editable={isEditable}
+        onChangeText={onChangeText}
+        onSubmitEditing={onSubmitEditing}
+        placeholder={placeholder}
+        placeholderTextColor={placeholderTextColor}
+        returnKeyType={returnKeyType}
+        style={combinedStyle}
+        underlineColorAndroid={underlineColorAndroid}
+        value={value}
+        secureTextEntry
+        selectTextOnFocus
+      />
+    );
+  }
 );
 
 FormPasswordInput.defaultProps = {

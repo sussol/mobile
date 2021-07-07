@@ -184,5 +184,8 @@
     "dashboard": "Tablero",
     "cash_register": "Registro de efectivo",
     "prescription": "Prescripción"
+  },
+  "ar": {
+    "language": "لغة"
   }
 }

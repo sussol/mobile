@@ -72,5 +72,16 @@
     "invalid_username_or_password": "Nombre de usuario o contraseña inválido",
     "warning_sync_edit": "ADVERTENCIA:\nEsto afectará la sincronización de esta tienda.\n¡Asegúrese de saber lo que está haciendo!",
     "incompatible_server": "El servidor mSupply con el que intenta sincronizar no es compatible con su versión actual. Por favor contacte a su administrador."
+  },
+  "ar": {
+    "logging_in": "تسجيل الدخول...",
+    "login": "تسجيل الدخول",
+    "password": "كلمه السر",
+    "repeat_password": "الرجاء إعادة إدخال كلمة المرور",
+    "user_name": "اسم االمستخدم",
+    "email": "عنوان البريد الإلكتروني",
+    "site": "موقع",
+    "store": "محل",
+    "invalid_username_or_password": "خطأ في اسم المستخدم أو كلمة مرور"
   }
 }

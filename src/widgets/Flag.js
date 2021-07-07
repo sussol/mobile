@@ -14,9 +14,11 @@ import {
   PortugueseFlag,
   SpanishFlag,
   TetumFlag,
+  JordanianFlag,
 } from './images';
 
 const LANGUAGE_TO_FLAG = {
+  [LANGUAGE_CODES.ARABIC]: JordanianFlag,
   [LANGUAGE_CODES.ENGLISH]: EnglishFlag,
   [LANGUAGE_CODES.FRENCH]: FrenchFlag,
   [LANGUAGE_CODES.KIRIBATI]: KiribatiFlag,

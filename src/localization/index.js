@@ -37,6 +37,7 @@ export const vaccineStrings = new LocalizedStrings(vaccineStringsJSON);
 export const reportStrings = new LocalizedStrings(reportStringsJSON);
 
 export const LANGUAGE_CODES = {
+  ARABIC: 'ar',
   ENGLISH: 'gb',
   FRENCH: 'fr',
   KIRIBATI: 'gil',
@@ -48,6 +49,7 @@ export const LANGUAGE_CODES = {
 };
 
 export const LANGUAGE_NAMES = {
+  [LANGUAGE_CODES.ARABIC]: 'عربى',
   [LANGUAGE_CODES.ENGLISH]: 'English',
   [LANGUAGE_CODES.FRENCH]: 'French',
   [LANGUAGE_CODES.KIRIBATI]: 'te taetae ni Kiribati',
@@ -59,6 +61,7 @@ export const LANGUAGE_NAMES = {
 };
 
 export const LANGUAGE_CHOICE = [
+  { code: LANGUAGE_CODES.ARABIC, name: LANGUAGE_NAMES[LANGUAGE_CODES.ARABIC] },
   { code: LANGUAGE_CODES.ENGLISH, name: LANGUAGE_NAMES[LANGUAGE_CODES.ENGLISH] },
   { code: LANGUAGE_CODES.FRENCH, name: LANGUAGE_NAMES[LANGUAGE_CODES.FRENCH] },
   { code: LANGUAGE_CODES.KIRIBATI, name: LANGUAGE_NAMES[LANGUAGE_CODES.KIRIBATI] },

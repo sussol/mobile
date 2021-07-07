@@ -7,8 +7,9 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Image, Text, TextInput, View } from 'react-native';
+import { Image, Text, TextInput, View, I18nManager } from 'react-native';
 import { Button } from 'react-native-ui-components';
+import RNRestart from 'react-native-restart';
 
 import { SETTINGS_KEYS } from '../../settings';
 
@@ -18,7 +19,13 @@ import { GenericChoiceList } from '../modalChildren/GenericChoiceList';
 import { ModalContainer } from './ModalContainer';
 import { LanguageIcon } from '../icons';
 
-import { LANGUAGE_NAMES, LANGUAGE_CHOICE, authStrings, navStrings } from '../../localization';
+import {
+  LANGUAGE_NAMES,
+  LANGUAGE_CHOICE,
+  authStrings,
+  navStrings,
+  LANGUAGE_CODES,
+} from '../../localization';
 import { getModalTitle, MODAL_KEYS } from '../../utilities';
 import { setCurrencyLocalisation } from '../../localization/currency';
 import { setDateLocale } from '../../localization/utilities';
@@ -121,12 +128,21 @@ export class LoginModal extends React.Component {
     this.setState({ isLanguageModalOpen: false });
   };
 
-  onSelectLanguage = ({ item }) => {
+  onSelectLanguage = async ({ item }) => {
     const { settings } = this.props;
     settings.set(SETTINGS_KEYS.CURRENT_LANGUAGE, item.code);
     setCurrencyLocalisation(item.code);
     setDateLocale(item.code);
     this.setState({ isLanguageModalOpen: false });
+
+    if (item.code === LANGUAGE_CODES.ARABIC) {
+      if (!I18nManager.isRTL) {
+        await I18nManager.forceRTL(true);
+      }
+    } else if (I18nManager.isRTL) {
+      await I18nManager.forceRTL(false);
+    }
+    RNRestart.Restart();
   };
 
   renderFlag = ({ code }) => <Flag countryCode={code} />;
