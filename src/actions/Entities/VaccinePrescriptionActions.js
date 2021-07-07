@@ -6,6 +6,7 @@ import {
   selectFoundBonusDose,
   selectHasRefused,
   selectSelectedBatches,
+  selectSelectedSupplementalData,
   selectSelectedVaccinator,
 } from '../../selectors/Entities/vaccinePrescription';
 import { selectEditingNameId } from '../../selectors/Entities/name';
@@ -18,6 +19,7 @@ export const VACCINE_PRESCRIPTION_ACTIONS = {
   SET_REFUSAL: 'VACCINE_PRESCRIPTION/setRefusal',
   RESET: 'VACCINE_PRESCRIPTION/reset',
   SELECT_VACCINE: 'VACCINE_PRESCRIPTION/selectVaccine',
+  SELECT_SUPPLEMENTAL_DATA: 'VACCINE_PRESCRIPTION/selectSupplementalData',
   SELECT_BATCH: 'VACCINE_PRESCRIPTION/selectBatch',
   SELECT_VACCINATOR: 'VACCINE_PRESCRIPTION/selectVaccinator',
   SET_BONUS_DOSE: 'VACCINE_PRESCRIPTION/setBonusDose',
@@ -95,6 +97,11 @@ const selectDefaultVaccine = () => ({
   payload: { selectedVaccines: [getDefaultVaccine()], selectedBatches: [getRecommendedBatch()] },
 });
 
+const selectSupplementalData = supplementalData => ({
+  type: VACCINE_PRESCRIPTION_ACTIONS.SELECT_SUPPLEMENTAL_DATA,
+  payload: { supplementalData },
+});
+
 const selectVaccine = vaccine => ({
   type: VACCINE_PRESCRIPTION_ACTIONS.SELECT_VACCINE,
   payload: { vaccine, batch: getRecommendedBatch(vaccine) },
@@ -119,14 +126,21 @@ const setRefusal = hasRefused => ({
   },
 });
 
-const createPrescription = (patient, currentUser, selectedBatches, vaccinator) => {
+const createPrescription = (
+  patient,
+  currentUser,
+  selectedBatches,
+  vaccinator,
+  supplementalData
+) => {
   UIDatabase.write(() => {
     const prescription = createRecord(
       UIDatabase,
       'CustomerInvoice',
       patient,
       currentUser,
-      'dispensary'
+      'dispensary',
+      supplementalData
     );
 
     selectedBatches.forEach(itemBatch => {
@@ -159,6 +173,7 @@ const confirm = () => (dispatch, getState) => {
   const patientID = selectEditingNameId(getState());
   const selectedBatches = selectSelectedBatches(getState());
   const vaccinator = selectSelectedVaccinator(getState());
+  const supplementalData = selectSelectedSupplementalData(getState());
 
   if (hasBonusDoses) {
     UIDatabase.write(() => {
@@ -193,7 +208,7 @@ const confirm = () => (dispatch, getState) => {
   if (hasRefused) {
     createRefusalNameNote(patient);
   } else {
-    createPrescription(patient, currentUser, selectedBatches, vaccinator);
+    createPrescription(patient, currentUser, selectedBatches, vaccinator, supplementalData);
   }
 };
 
@@ -222,6 +237,7 @@ export const VaccinePrescriptionActions = {
   create,
   reset,
   selectBatch,
+  selectSupplementalData,
   selectVaccine,
   setRefusal,
   selectVaccinator,
