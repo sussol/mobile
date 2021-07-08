@@ -5,6 +5,7 @@ import { UIDatabase, createRecord } from '../../database';
 import {
   selectFoundBonusDose,
   selectHasRefused,
+  selectLastSupplementalData,
   selectSelectedBatches,
   selectSelectedSupplementalData,
   selectSelectedVaccinator,
@@ -13,6 +14,8 @@ import { selectEditingNameId } from '../../selectors/Entities/name';
 import { NameActions } from './NameActions';
 import { NameNoteActions } from './NameNoteActions';
 import { goBack, gotoVaccineDispensingPage } from '../../navigation/actions';
+import { selectSupplementalDataSchemas } from '../../selectors/formSchema';
+import { validateJsonSchemaData } from '../../utilities/ajvValidator';
 
 export const VACCINE_PRESCRIPTION_ACTIONS = {
   CREATE: 'VACCINE_PRESCRIPTION/create',
@@ -20,6 +23,7 @@ export const VACCINE_PRESCRIPTION_ACTIONS = {
   RESET: 'VACCINE_PRESCRIPTION/reset',
   SELECT_VACCINE: 'VACCINE_PRESCRIPTION/selectVaccine',
   SELECT_SUPPLEMENTAL_DATA: 'VACCINE_PRESCRIPTION/selectSupplementalData',
+  UPDATE_SUPPLEMENTAL_DATA: 'VACCINE_PRESCRIPTION/updateSupplementalData',
   SELECT_BATCH: 'VACCINE_PRESCRIPTION/selectBatch',
   SELECT_VACCINATOR: 'VACCINE_PRESCRIPTION/selectVaccinator',
   SET_BONUS_DOSE: 'VACCINE_PRESCRIPTION/setBonusDose',
@@ -97,9 +101,14 @@ const selectDefaultVaccine = () => ({
   payload: { selectedVaccines: [getDefaultVaccine()], selectedBatches: [getRecommendedBatch()] },
 });
 
-const selectSupplementalData = supplementalData => ({
+const selectSupplementalData = (supplementalData, isSupplementalDataValid) => ({
   type: VACCINE_PRESCRIPTION_ACTIONS.SELECT_SUPPLEMENTAL_DATA,
-  payload: { supplementalData },
+  payload: { supplementalData, isSupplementalDataValid },
+});
+
+const updateSupplementalData = (supplementalData, validator) => ({
+  type: VACCINE_PRESCRIPTION_ACTIONS.UPDATE_SUPPLEMENTAL_DATA,
+  payload: { supplementalData, isSupplementalDataValid: validator(supplementalData) },
 });
 
 const selectVaccine = vaccine => ({
@@ -163,6 +172,22 @@ const createRefusalNameNote = name => {
   const newNameNote = { id, name, patientEvent, entryDate: new Date() };
 
   UIDatabase.write(() => UIDatabase.create('NameNote', newNameNote));
+};
+
+const createSupplementaryData = () => (dispatch, getState) => {
+  // Create a supplementaryData object which is seeded with the data that was last
+  // entered against a prescription
+  const lastSupplementalData = selectLastSupplementalData();
+
+  // Get the schema and perform initial validation
+  const [supplementalDataSchema = {}] = selectSupplementalDataSchemas(getState());
+  const { jsonSchema } = supplementalDataSchema;
+
+  const isValid = validateJsonSchemaData(jsonSchema, lastSupplementalData);
+
+  if (isValid) {
+    dispatch(selectSupplementalData(lastSupplementalData, isValid));
+  }
 };
 
 const confirm = () => (dispatch, getState) => {
@@ -235,6 +260,7 @@ export const VaccinePrescriptionActions = {
   cancel,
   confirm,
   create,
+  createSupplementaryData,
   reset,
   selectBatch,
   selectSupplementalData,
@@ -245,4 +271,5 @@ export const VaccinePrescriptionActions = {
   setBonusDose,
   toggleHistory,
   selectDefaultVaccine,
+  updateSupplementalData,
 };
