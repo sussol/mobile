@@ -102,7 +102,7 @@ export const selectSelectedSupplementalData = state => {
 
 export const selectLastSupplementalData = () => {
   const inQuery = UIDatabase.objects('Transaction')
-    .filtered('customData != $0 AND type != "cash_in" AND type != "cash_out"', null)
+    .filtered("type == 'customer_invoice' AND customData != null")
     .map(({ id }) => `transaction.id == "${id}"`)
     .join(' OR ');
   const fullQuery = `(${inQuery}) AND itemBatch.item.isVaccine == true`;
