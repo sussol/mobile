@@ -11,6 +11,7 @@ import { ToastAndroid, View } from 'react-native';
 
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import * as Animatable from 'react-native-animatable';
 import { FlexRow } from '../FlexRow';
 import { FlexView } from '../FlexView';
 
@@ -28,6 +29,7 @@ import {
   selectSelectedSupplementalData,
   selectSupplementalDataIsValid,
 } from '../../selectors/Entities/vaccinePrescription';
+import { AfterInteractions } from '../AfterInteractions';
 
 const { pageTopViewContainer } = globalStyles;
 
@@ -45,16 +47,20 @@ const VaccineSupplementalDataComponent = ({
       contentContainerStyle={{ flex: 1 }}
       style={{ flex: 1 }}
     >
-      <JSONForm
-        formData={formData}
-        surveySchema={siteSchema}
-        onChange={(changed, validator) => {
-          onFormUpdate(changed.formData, validator);
-        }}
-        liveValidate={false}
-      >
-        <View />
-      </JSONForm>
+      <AfterInteractions placeholder={null}>
+        <Animatable.View animation="fadeIn" duration={1000} useNativeDriver style={{ flex: 1 }}>
+          <JSONForm
+            formData={formData}
+            surveySchema={siteSchema}
+            onChange={(changed, validator) => {
+              onFormUpdate(changed.formData, validator);
+            }}
+            liveValidate={false}
+          >
+            <View />
+          </JSONForm>
+        </Animatable.View>
+      </AfterInteractions>
     </Paper>
     <FlexRow flex={0} justifyContent="flex-end" alignItems="flex-end">
       <PageButtonWithOnePress text={buttonStrings.cancel} onPress={onCancel} />
