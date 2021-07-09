@@ -285,7 +285,7 @@ RequisitionItem.schema = {
     id: 'string',
     requisition: { type: 'Requisition', optional: true },
     item: { type: 'Item', optional: true },
-    itemName: { type: 'string', default: 'placeholder' },
+    itemName: { type: 'string', optional: true },
     stockOnHand: { type: 'double', default: 0 },
     dailyUsage: { type: 'double', optional: true },
     imprestQuantity: { type: 'double', optional: true },

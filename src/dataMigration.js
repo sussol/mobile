@@ -282,11 +282,12 @@ const dataMigrations = [
   {
     version: '8.0.1',
     migrate: database => {
-      const requisitionItems = database
-        .objects('RequisitionItem')
-        .filtered('item != null && itemName = $1', 'placeholder');
-
       database.write(() => {
+        const requisitionItems = database
+          .objects('RequisitionItem')
+          .filtered('item != null && itemName == null')
+          .slice();
+
         requisitionItems.forEach(requisitionItem => {
           requisitionItem.itemName = requisitionItem.item.name;
           database.update('RequisitionItem', requisitionItem);
