@@ -285,7 +285,7 @@ const dataMigrations = [
       database.write(() => {
         const requisitionItems = database
           .objects('RequisitionItem')
-          .filtered('item != null && itemName == null')
+          .filtered('item != null && itemName == $0', '')
           .slice();
 
         requisitionItems.forEach(requisitionItem => {
