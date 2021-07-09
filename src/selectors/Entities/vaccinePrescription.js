@@ -113,12 +113,14 @@ export const selectLastSupplementalData = () => {
     .map(({ id }) => `transaction.id == "${id}"`)
     .join(' OR ');
   const fullQuery = `(${inQuery}) AND itemBatch.item.isVaccine == true`;
-  const result = inQuery
-    ? UIDatabase.objects('TransactionBatch')
-        .filtered(fullQuery)
-        .sorted('transaction.entryDate', true)
-        .slice()
-    : [];
 
-  return result.length ? JSON.parse(result[0].transaction.customData) : null;
+  if (inQuery) {
+    const result = UIDatabase.objects('TransactionBatch')
+      .filtered(fullQuery)
+      .sorted('transaction.entryDate', true)
+      .slice();
+    return result.length ? JSON.parse(result[0].transaction.customData) : null;
+  }
+
+  return null;
 };
