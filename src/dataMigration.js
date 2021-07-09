@@ -280,7 +280,7 @@ const dataMigrations = [
     },
   },
   {
-    version: '8.0.1',
+    version: '8.1.1',
     migrate: database => {
       database.write(() => {
         const requisitionItems = database
