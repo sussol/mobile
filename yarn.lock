@@ -8380,6 +8380,11 @@ react-native-bluetooth-status@^1.5.1:
   dependencies:
     "@cs125/wait-until" "^0.0.3"
 
+react-native-bunyan@^1.8.12:
+  version "1.8.12"
+  resolved "https://registry.yarnpkg.com/react-native-bunyan/-/react-native-bunyan-1.8.12.tgz#87dc5382f3de8a1fe16873acffe3770ac51c0222"
+  integrity sha512-Gwt8ITf90gZjQCiEWPkAMZNT/i9nIEU3jFy4rE4T4oEu0rigdNrYP24LTAPVSw17HFPgmaOCk3gHT7kOQ0Pc4A==
+
 react-native-camera@^3.44.0:
   version "3.44.0"
   resolved "https://registry.yarnpkg.com/react-native-camera/-/react-native-camera-3.44.0.tgz#8b61972e7fd019927ab68a72e3ecea898f6bcb8b"
