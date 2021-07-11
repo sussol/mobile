@@ -1,7 +1,20 @@
 /* eslint-disable no-console */
 import moment from 'moment';
 import RNFS from 'react-native-fs';
-import { LogLevel, logDir, logFileName, logFileDate, logFileSeparator } from './index';
+
+export const LogLevel = {
+  trace: 10,
+  debug: 20,
+  info: 30,
+  warn: 40,
+  error: 50,
+  fatal: 60,
+};
+
+export const logDir = `${RNFS.ExternalStorageDirectoryPath}/Download/mSupplyMobile_data`;
+export const logFileName = 'log.txt';
+export const logFileDate = 'DD-MM-YY';
+export const logFileSeparator = '__';
 
 // interface Transport {
 //     write: (text: string) => void

@@ -1,19 +1,7 @@
 import RNFS from 'react-native-fs';
 import moment from 'moment';
-
-export const logDir = `${RNFS.ExternalStorageDirectoryPath}/Download/mSupplyMobile_data`;
-export const logFileName = 'log.txt';
-export const logFileDate = 'DD-MM-YY';
-export const logFileSeparator = '__';
-
-export const LogLevel = {
-  trace: 10,
-  debug: 20,
-  info: 30,
-  warn: 40,
-  error: 50,
-  fatal: 60,
-};
+import { LoggerService } from './Service';
+import { logDir, logFileName, logFileDate, logFileSeparator } from './Transport';
 
 const logFileFilter = file => file?.includes(`${logFileSeparator}${logFileName}`);
 
@@ -39,3 +27,5 @@ export const tidyLogFiles = async () => {
     // Going to just ignore errors for now..?
   }
 };
+
+export default new LoggerService();
