@@ -1,5 +1,9 @@
 import bunyan from 'react-native-bunyan';
 
+// Logging engine for the Logger class which implements the logic
+// of creating a log format and hands off the log to a transport
+// object.
+//
 // interface LoggingEngine {
 //     trace: (text: string) => void
 //     debug: (text: string) => void
@@ -7,7 +11,7 @@ import bunyan from 'react-native-bunyan';
 //     warn: (text: string) => void
 //     error: (text: string) => void
 //     fatal: (text: string) => void
-//     createChild: (text: string) => void
+//     setLogLevel(transportKey: string, newLevel: int) => void
 // }
 export class BunyanLoggingEngine {
   streams = [];
@@ -49,10 +53,6 @@ export class BunyanLoggingEngine {
 
   fatal(text) {
     this.bunyan.fatal(text);
-  }
-
-  createChild(submodule) {
-    this.bunyan.child({ submodule });
   }
 
   setLogLevel(transportKey, newLevel) {

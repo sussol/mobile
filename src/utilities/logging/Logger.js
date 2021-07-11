@@ -39,10 +39,6 @@ export class Logger {
     this.engine.warn(text);
   }
 
-  createChild(submodule) {
-    return this.engine.createChild(submodule);
-  }
-
   setLogLevel(transportName, newLevel) {
     this.engine.setLogLevel(transportName, newLevel);
   }

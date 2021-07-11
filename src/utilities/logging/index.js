@@ -1,10 +1,10 @@
 import RNFS from 'react-native-fs';
 import moment from 'moment';
 
-const logDir = `${RNFS.ExternalStorageDirectoryPath}/Download/mSupplyMobile_data`;
-const logFileName = 'log.txt';
-const logFileDate = 'DD-MM-YY';
-const logFileSeparator = '__';
+export const logDir = `${RNFS.ExternalStorageDirectoryPath}/Download/mSupplyMobile_data`;
+export const logFileName = 'log.txt';
+export const logFileDate = 'DD-MM-YY';
+export const logFileSeparator = '__';
 
 export const LogLevel = {
   trace: 10,
