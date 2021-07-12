@@ -237,7 +237,7 @@ export const getPatientHistoryResponseProcessor = ({
           doses: totalQuantity * doses,
           itemCode,
           itemName,
-          prescriber,
+          prescriber: !isVaccine && vaccinator ? vaccinator : prescriber,
           totalQuantity,
           vaccinator,
         });
