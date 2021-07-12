@@ -14,21 +14,17 @@ import bunyan from 'react-native-bunyan';
 //     setLogLevel(transportKey: string, newLevel: int) => void
 // }
 export class BunyanLoggingEngine {
-  streams = [];
-
   bunyan = null;
-
-  transports = {};
 
   constructor({ module, transports }) {
     this.transports = transports;
-    this.streams = Object.values(transports).map(({ level, write, name }) => ({
+    const streams = Object.values(transports).map(({ level, write, name }) => ({
       name,
       level,
       stream: { write },
     }));
 
-    this.bunyan = bunyan.createLogger({ name: module, streams: this.streams });
+    this.bunyan = bunyan.createLogger({ name: module, streams });
   }
 
   trace(text) {
