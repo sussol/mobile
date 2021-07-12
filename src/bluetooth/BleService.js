@@ -31,7 +31,7 @@ class BleService {
   constructor(manager = new BleManager()) {
     this.manager = manager;
 
-    logger.trace('BleService constructor', { manager });
+    logger.info('BleService constructor', { manager });
   }
 
   setManager = manager => {
@@ -47,7 +47,7 @@ class BleService {
    * @param {String} macAddress
    */
   connectToDevice = async macAddress => {
-    logger.trace('connectToDevice', { macAddress });
+    logger.info('connectToDevice', { macAddress });
     return this.manager.connectToDevice(macAddress);
   };
 
@@ -60,13 +60,13 @@ class BleService {
    * @param {String} macAddress
    */
   connectAndDiscoverServices = async macAddress => {
-    logger.trace('connectAndDiscoverServices', { macAddress });
+    logger.info('connectAndDiscoverServices', { macAddress });
     // without the cancel & reconnect further commands
     // were sometimes returning an error: "BleError: Device [mac address] was disconnected"
     // Note: adding the option `{ autoConnect: true }` prevents the sensors from
     // connecting sometimes :shrug:
     const deviceIsConnected = await this.manager.isDeviceConnected(macAddress);
-    logger.trace('deviceIsConnected', { deviceIsConnected });
+    logger.info('deviceIsConnected', { deviceIsConnected });
     if (deviceIsConnected) {
       await this.manager.cancelDeviceConnection(macAddress);
     }
@@ -75,7 +75,7 @@ class BleService {
 
     await this.manager.discoverAllServicesAndCharacteristicsForDevice(macAddress);
 
-    logger.trace('Discovered all services and characteristics for device', { macAddress });
+    logger.info('Discovered all services and characteristics for device', { macAddress });
     return device;
   };
 
