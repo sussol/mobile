@@ -203,7 +203,7 @@ const processResponse = response => {
 };
 
 export const getPatientHistoryResponseProcessor = ({
-  isVaccine,
+  isVaccineDispensingModal,
   sortKey,
   isAscending = true,
 }) => response => {
@@ -227,7 +227,7 @@ export const getPatientHistoryResponseProcessor = ({
           ? `${medicineAdministrator.first_name} ${medicineAdministrator.last_name}`.trim()
           : generalStrings.not_available;
 
-        if (isVaccine && !item.is_vaccine) return;
+        if (isVaccineDispensingModal && !item.is_vaccine) return;
         const confirmDate = parseDate(confirm_date);
 
         patientHistory.push({
@@ -237,7 +237,7 @@ export const getPatientHistoryResponseProcessor = ({
           doses: totalQuantity * doses,
           itemCode,
           itemName,
-          prescriber: !isVaccine && vaccinator ? vaccinator : prescriber,
+          prescriber: !isVaccineDispensingModal && vaccinator ? vaccinator : prescriber,
           totalQuantity,
           vaccinator,
         });
