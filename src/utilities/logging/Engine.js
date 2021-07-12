@@ -17,7 +17,6 @@ export class BunyanLoggingEngine {
   bunyan = null;
 
   constructor({ module, transports }) {
-    this.transports = transports;
     const streams = Object.values(transports).map(({ level, write, name }) => ({
       name,
       level,
