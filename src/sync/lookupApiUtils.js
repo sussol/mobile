@@ -237,9 +237,10 @@ export const getPatientHistoryResponseProcessor = ({
           doses: totalQuantity * doses,
           itemCode,
           itemName,
-          prescriber: !isVaccineDispensingModal && vaccinator ? vaccinator : prescriber,
+          prescriber,
           totalQuantity,
           vaccinator,
+          prescriberOrVaccinator: !isVaccineDispensingModal && vaccinator ? vaccinator : prescriber,
         });
       }
     )
