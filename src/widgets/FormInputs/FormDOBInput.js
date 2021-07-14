@@ -25,8 +25,11 @@ const Action = {
   typedAge: 'typedAge',
 };
 
+// The internal state of the component has three different values for the various
+// inputs: age, date and picker. Just storing a single value and formatting into the
+// correct type doesn't work well, as at any point the date could be in an invalid state.
 const initialState = (seedDate, isValid) => ({
-  isValid,
+  isValid, // If the date is a valid date
   datePickerOpen: false,
   pickerValue: seedDate.toDate(),
   ageValue: calculateAge(seedDate),
@@ -116,16 +119,13 @@ const useDobInput = (initialValue, onChangeDate, onValidate) => {
       const { timestamp } = nativeEvent;
       const isValid = onValidate(timestamp);
       pickDate(timestamp, isValid);
-      if (isValid) {
-        onChangeDate(moment(timestamp).toDate());
-      }
+      onChangeDate(moment(timestamp).toDate());
     }
   };
 
   const onTypeDate = newDate => {
     const isValid = onValidate(newDate);
     typedDate(newDate, isValid);
-
     onChangeDate(moment(newDate, DATE_FORMAT.DD_MM_YYYY).toDate());
   };
 
@@ -133,9 +133,7 @@ const useDobInput = (initialValue, onChangeDate, onValidate) => {
     const asNumber = Number(newAge);
     const isValid = !Number.isNaN(asNumber) && asNumber < 500;
     typedAge(newAge, isValid);
-    if (isValid) {
-      onChangeDate(moment().subtract(asNumber, 'years').toDate());
-    }
+    onChangeDate(moment().subtract(asNumber, 'years').toDate());
   };
 
   return [state, { toggleDatePicker, onPickDate, onTypeDate, onTypeAge }];
