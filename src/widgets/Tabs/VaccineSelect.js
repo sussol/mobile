@@ -141,7 +141,7 @@ const VaccineSelectComponent = ({
                 autoCorrect={false}
                 multiline={true}
                 numberOfLines={5}
-                onChange={onRefusalReason}
+                onChangeText={onRefusalReason}
                 placeholderTextColor={SUSSOL_ORANGE}
                 returnKeyType="next"
                 selectTextOnFocus

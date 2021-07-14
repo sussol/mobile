@@ -5,6 +5,7 @@ import { UIDatabase, createRecord } from '../../database';
 import {
   selectFoundBonusDose,
   selectHasRefused,
+  selectRefusalReason,
   selectLastSupplementalData,
   selectSelectedBatches,
   selectSelectedSupplementalData,
@@ -169,13 +170,12 @@ const createPrescription = (
   });
 };
 
-const createRefusalNameNote = name => {
+const createRefusalNameNote = (name, refusalReason) => {
   const [patientEvent] = UIDatabase.objects('PatientEvent').filtered('code == "RV"');
-
   if (!patientEvent) return;
 
   const id = generateUUID();
-  const newNameNote = { id, name, patientEvent, entryDate: new Date() };
+  const newNameNote = { id, name, patientEvent, entryDate: new Date(), note: refusalReason };
 
   UIDatabase.write(() => UIDatabase.create('NameNote', newNameNote));
 };
@@ -200,6 +200,7 @@ const confirm = () => (dispatch, getState) => {
   const { user } = getState();
   const { currentUser } = user;
   const hasRefused = selectHasRefused(getState());
+  const refusalReason = selectRefusalReason(getState());
   const hasBonusDoses = selectFoundBonusDose(getState());
   const patientID = selectEditingNameId(getState());
   const selectedBatches = selectSelectedBatches(getState());
@@ -237,7 +238,7 @@ const confirm = () => (dispatch, getState) => {
 
   const patient = UIDatabase.get('Name', patientID);
   if (hasRefused) {
-    createRefusalNameNote(patient);
+    createRefusalNameNote(patient, refusalReason);
   } else {
     createPrescription(patient, currentUser, selectedBatches, vaccinator, supplementalData);
   }

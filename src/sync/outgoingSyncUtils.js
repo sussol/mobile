@@ -420,6 +420,7 @@ const generateSyncData = (settings, recordType, record) => {
         entry_date: getDateString(record.entryDate),
         data: record.data,
         store_ID: settings.get(THIS_STORE_ID),
+        note: record.note,
         // The NameNote table is in the middle of a migration away from the current impl
         // where there are fields boolean_value, value, note etc. To avoid having to also
         // migrate data within mobile, just send the boolean_value field when the name_note
