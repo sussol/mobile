@@ -58,6 +58,7 @@
     "patient": "PATIENT",
     "payment_type": "PAYMENT TYPE",
     "prescriber": "PRESCRIBER",
+    "prescriber_or_vaccinator": "PRESCRIBER / VACCINATOR",
     "prescription_date": "DATE",
     "price": "PRICE",
     "program": "PROGRAM",
