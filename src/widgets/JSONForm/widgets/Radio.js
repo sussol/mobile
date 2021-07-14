@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
 
 Radio.propTypes = {
   disabled: PropTypes.bool,
-  value: PropTypes.oneOf([PropTypes.string, PropTypes.boolean]),
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   onChange: PropTypes.func.isRequired,
   options: PropTypes.shape({
     enumOptions: PropTypes.arrayOf(PropTypes.any),
