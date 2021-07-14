@@ -65,7 +65,11 @@ const styles = StyleSheet.create({
 
 Checkboxes.propTypes = {
   disabled: PropTypes.bool,
-  value: PropTypes.oneOf([PropTypes.string, PropTypes.boolean]),
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool,
+    PropTypes.arrayOf(PropTypes.string),
+  ]),
   onChange: PropTypes.func.isRequired,
   options: PropTypes.shape({
     enumOptions: PropTypes.arrayOf(PropTypes.any),
