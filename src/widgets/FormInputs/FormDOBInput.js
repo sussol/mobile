@@ -52,9 +52,9 @@ const reducer = (state, action) => {
         const asMoment = moment(date);
         const ageValue = calculateAge(asMoment);
         const textInputValue = asMoment.format(DATE_FORMAT.DD_MM_YYYY);
-        const pickerSeedValue = asMoment.toDate();
+        const pickerValue = asMoment.toDate();
 
-        return { ...state, isValid, ageValue, textInputValue, pickerSeedValue };
+        return { ...state, isValid, ageValue, textInputValue, pickerValue };
       }
 
       return state;
@@ -67,9 +67,9 @@ const reducer = (state, action) => {
         const asMoment = moment(date, DATE_FORMAT.DD_MM_YYYY);
         const ageValue = calculateAge(asMoment);
         const textInputValue = date;
-        const pickerSeedValue = asMoment.toDate();
+        const pickerValue = asMoment.toDate();
 
-        return { ...state, isValid, ageValue, textInputValue, pickerSeedValue };
+        return { ...state, isValid, ageValue, textInputValue, pickerValue };
       }
 
       return { ...state, textInputValue: date, isValid, ageValue: generalStrings.not_available };
@@ -83,9 +83,9 @@ const reducer = (state, action) => {
         const asMoment = moment().subtract(Number(age), 'years');
         const ageValue = age;
         const textInputValue = asMoment.format(DATE_FORMAT.DD_MM_YYYY);
-        const pickerSeedValue = asMoment.toDate();
+        const pickerValue = asMoment.toDate();
 
-        return { ...state, isValid, ageValue, textInputValue, pickerSeedValue };
+        return { ...state, isValid, ageValue, textInputValue, pickerValue };
       }
 
       return { ...state, textInputValue: generalStrings.not_available, isValid, ageValue: age };
