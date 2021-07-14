@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -50,6 +51,7 @@ const FORM_INPUT_KEYS = {
   GENDER: 'gender',
   IS_ACTIVE: 'isActive',
   LAST_NAME: 'lastName',
+  MIDDLE_NAME: 'middleName',
   NATIONALITY: 'nationality',
   PHONE: 'phoneNumber',
   POLICY_NUMBER_FAMILY: 'policyNumberFamily',
@@ -73,6 +75,15 @@ const FORM_INPUT_CONFIGS = seedObject => ({
     isRequired: true,
     label: formInputStrings.first_name,
     invalidMessage: formInputStrings.must_not_be_empty,
+    isEditable: true,
+  },
+
+  [FORM_INPUT_KEYS.MIDDLE_NAME]: {
+    type: FORM_INPUT_TYPES.TEXT,
+    initialValue: '',
+    key: 'middleName',
+    isRequired: false,
+    label: formInputStrings.middle_name,
     isEditable: true,
   },
 
@@ -328,6 +339,7 @@ const FORM_INPUT_CONFIGS = seedObject => ({
 const FORM_CONFIGS = {
   patient: [
     FORM_INPUT_KEYS.LAST_NAME,
+    FORM_INPUT_KEYS.MIDDLE_NAME,
     FORM_INPUT_KEYS.FIRST_NAME,
     FORM_INPUT_KEYS.DATE_OF_BIRTH,
     FORM_INPUT_KEYS.EMAIL,
