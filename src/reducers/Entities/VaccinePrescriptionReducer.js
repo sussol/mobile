@@ -53,8 +53,6 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
       const { payload } = action;
       const { supplementalData, isSupplementalDataValid } = payload;
 
-      console.log(isSupplementalDataValid);
-
       return { ...state, supplementalData, isSupplementalDataValid };
     }
 
