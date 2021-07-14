@@ -83,6 +83,7 @@ const generateSyncData = (settings, recordType, record) => {
         id: record.id,
         type: record.type,
         first: record.firstName,
+        middle: record.middleName,
         last: record.lastName,
         name: record.name,
         date_of_birth: moment(record.dateOfBirth).format(),

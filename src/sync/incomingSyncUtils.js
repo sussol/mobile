@@ -594,6 +594,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         thisStoresPatient,
         isPatient,
         firstName: record.first,
+        middleName: record.middle,
         lastName: record.last,
         dateOfBirth: parseDate(record.date_of_birth),
         nationality: database.getOrCreate('Nationality', record.nationality_ID),
