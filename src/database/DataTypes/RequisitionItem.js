@@ -54,15 +54,6 @@ export class RequisitionItem extends Realm.Object {
   }
 
   /**
-   * Get name of requisition item.
-   *
-   * @return  {string}
-   */
-  get itemName() {
-    return this.item ? this.item.name : '';
-  }
-
-  /**
    * Get id of requisition.
    *
    * @return  {string}
@@ -294,6 +285,7 @@ RequisitionItem.schema = {
     id: 'string',
     requisition: { type: 'Requisition', optional: true },
     item: { type: 'Item', optional: true },
+    itemName: { type: 'string', optional: true },
     stockOnHand: { type: 'double', default: 0 },
     dailyUsage: { type: 'double', optional: true },
     imprestQuantity: { type: 'double', optional: true },

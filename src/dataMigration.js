@@ -279,6 +279,22 @@ const dataMigrations = [
       }
     },
   },
+  {
+    version: '8.1.1',
+    migrate: database => {
+      database.write(() => {
+        const requisitionItems = database
+          .objects('RequisitionItem')
+          .filtered('item != null && itemName == $0', '')
+          .slice();
+
+        requisitionItems.forEach(requisitionItem => {
+          requisitionItem.itemName = requisitionItem.item.name;
+          database.update('RequisitionItem', requisitionItem);
+        });
+      });
+    },
+  },
 ];
 
 export default dataMigrations;

@@ -433,13 +433,15 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         defaultPackSize: 1, // Every item batch in mobile should be pack-to-one
         department: database.getOrCreate('ItemDepartment', record.department_ID),
         description: record.description,
-        name: record.item_name,
         crossReferenceItem: database.getOrCreate('Item', record.cross_ref_item_ID),
         unit: database.getOrCreate('Unit', record.unit_ID),
         doses: parseNumber(record.doses),
         isVaccine: parseBoolean(record.is_vaccine),
       };
-      database.update(recordType, internalRecord);
+
+      const item = database.update(recordType, internalRecord);
+      item.updateName(record.item_name);
+
       break;
     }
     case 'ItemCategory': {
@@ -746,6 +748,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         id: record.ID,
         requisition,
         item: database.getOrCreate('Item', record.item_ID),
+        itemName: record.itemName,
         stockOnHand: parseNumber(record.stock_on_hand),
         dailyUsage: parseNumber(record.daily_usage),
         requiredQuantity: parseNumber(record.Cust_stock_order),
