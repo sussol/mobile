@@ -139,8 +139,6 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     createdDate,
   };
 
-  console.log(patientRecord);
-
   UIDatabase.write(() => createRecord(UIDatabase, 'Patient', patientRecord));
 
   batch(() => {

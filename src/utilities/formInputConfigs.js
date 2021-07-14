@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
