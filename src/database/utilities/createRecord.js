@@ -249,6 +249,7 @@ const createPatient = (database, patientDetails) => {
     barcode: patientBarcode,
     code: patientCode,
     firstName: patientFirstName,
+    middleName: patientMiddleName,
     lastName: patientLastName,
     name: patientName,
     dateOfBirth: patientDateOfBirth,
@@ -273,6 +274,7 @@ const createPatient = (database, patientDetails) => {
   const code = patientCode || getPatientUniqueCode(database);
   const barcode = patientBarcode || `*${code}*`;
   const firstName = patientFirstName ?? '';
+  const middleName = patientMiddleName ?? '';
   const lastName = patientLastName ?? '';
   const name = patientName || `${patientLastName}, ${patientFirstName}`;
   const dateOfBirth = patientDateOfBirth ?? null;
@@ -307,6 +309,7 @@ const createPatient = (database, patientDetails) => {
   const patient = database.update('Name', {
     id,
     firstName,
+    middleName,
     lastName,
     name,
     barcode,

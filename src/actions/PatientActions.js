@@ -44,6 +44,7 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     barcode: currentBarcode,
     name: currentName,
     firstName: currentFirstName,
+    middleName: currentMiddleName,
     lastName: currentLastName,
     dateOfBirth: currentDateOfBirth,
     emailAddress: currentEmailAddress,
@@ -72,6 +73,7 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     code: patientCode,
     barcode: patientBarcode,
     firstName: patientFirstName,
+    middleName: patientMiddleName,
     lastName: patientLastName,
     dateOfBirth: patientDateOfBirth,
     emailAddress: patientEmailAddress,
@@ -92,6 +94,7 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
   const code = patientCode ?? currentCode;
   const barcode = patientBarcode ?? currentBarcode;
   const firstName = patientFirstName ?? currentFirstName;
+  const middleName = patientMiddleName ?? currentMiddleName;
   const lastName = patientLastName ?? currentLastName;
   const name = `${lastName}, ${firstName}` || currentName;
   const dateOfBirth = patientDateOfBirth ?? currentDateOfBirth;
@@ -115,6 +118,7 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     code,
     barcode,
     firstName,
+    middleName,
     lastName,
     name,
     dateOfBirth,
