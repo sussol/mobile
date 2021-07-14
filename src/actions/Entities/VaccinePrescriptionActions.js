@@ -20,6 +20,7 @@ import { validateJsonSchemaData } from '../../utilities/ajvValidator';
 export const VACCINE_PRESCRIPTION_ACTIONS = {
   CREATE: 'VACCINE_PRESCRIPTION/create',
   SET_REFUSAL: 'VACCINE_PRESCRIPTION/setRefusal',
+  SET_REFUSAL_REASON: 'VACCINE_PRESCRIPTION/setRefusalReason',
   RESET: 'VACCINE_PRESCRIPTION/reset',
   SELECT_VACCINE: 'VACCINE_PRESCRIPTION/selectVaccine',
   SELECT_SUPPLEMENTAL_DATA: 'VACCINE_PRESCRIPTION/selectSupplementalData',
@@ -133,6 +134,11 @@ const setRefusal = hasRefused => ({
     selectedVaccines: [getDefaultVaccine()],
     selectedBatches: [getRecommendedBatch()],
   },
+});
+
+const setRefusalReason = refusalReason => ({
+  type: VACCINE_PRESCRIPTION_ACTIONS.SET_REFUSAL_REASON,
+  payload: { refusalReason },
 });
 
 const createPrescription = (
@@ -266,6 +272,7 @@ export const VaccinePrescriptionActions = {
   selectSupplementalData,
   selectVaccine,
   setRefusal,
+  setRefusalReason,
   selectVaccinator,
   confirmAndRepeat,
   setBonusDose,
