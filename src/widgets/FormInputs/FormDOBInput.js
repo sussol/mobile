@@ -161,7 +161,7 @@ export const FormDOBInput = React.forwardRef(
     const [
       { datePickerOpen, isValid, pickerValue, ageValue, textInputValue },
       { toggleDatePicker, onPickDate, onTypeDate, onTypeAge },
-    ] = useDobInput(moment(value), onChangeDate, onValidate);
+    ] = useDobInput(moment(value ?? new Date()), onChangeDate, onValidate);
 
     return (
       <>
@@ -210,7 +210,6 @@ export const FormDOBInput = React.forwardRef(
               textStyle={{ textAlign: 'right', flex: 1 }}
             />
             <TextInput
-              ref={ref}
               style={{ ...textInputStyle, textAlign: 'right' }}
               value={ageValue}
               placeholderTextColor={placeholderTextColor}
