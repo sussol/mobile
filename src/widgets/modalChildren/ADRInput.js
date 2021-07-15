@@ -42,7 +42,6 @@ export const ADRInputComponent = ({ onCancel, onSave, patient, patientHistory })
   const [{ formData, isValid }, setForm] = useState({ formData: null, isValid: false });
   const patientId = patient?.id;
   const [ADRSchema, setADRSchema] = useState(undefined);
-
   const [{ data, loading, searched }, fetchOnline] = useLocalAndRemotePatientHistory({
     isVaccine: true,
     patientId,
@@ -61,14 +60,13 @@ export const ADRInputComponent = ({ onCancel, onSave, patient, patientHistory })
     }
 
     const newHistory = data.length ? mapHistory(data) : ['nothing'];
-    const { jsonSchema, uiSchema } = UIDatabase.objects('ADRForm')[0];
+    const { jsonSchema, uiSchema, type, version } = UIDatabase.objects('ADRForm')[0];
     const { properties = {} } = jsonSchema;
-
     const { causes = {} } = properties;
     const { items } = causes;
     if (items) {
       items.enum = newHistory;
-      setADRSchema({ uiSchema, jsonSchema });
+      setADRSchema({ uiSchema, jsonSchema, properties: { type, version: version + 1 } });
     }
   }, [data, patientId]);
 
