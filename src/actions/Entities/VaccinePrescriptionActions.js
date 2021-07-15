@@ -5,6 +5,7 @@ import { UIDatabase, createRecord } from '../../database';
 import {
   selectFoundBonusDose,
   selectHasRefused,
+  selectRefusalReason,
   selectLastSupplementalData,
   selectSelectedBatches,
   selectSelectedSupplementalData,
@@ -20,6 +21,7 @@ import { validateJsonSchemaData } from '../../utilities/ajvValidator';
 export const VACCINE_PRESCRIPTION_ACTIONS = {
   CREATE: 'VACCINE_PRESCRIPTION/create',
   SET_REFUSAL: 'VACCINE_PRESCRIPTION/setRefusal',
+  SET_REFUSAL_REASON: 'VACCINE_PRESCRIPTION/setRefusalReason',
   RESET: 'VACCINE_PRESCRIPTION/reset',
   SELECT_VACCINE: 'VACCINE_PRESCRIPTION/selectVaccine',
   SELECT_SUPPLEMENTAL_DATA: 'VACCINE_PRESCRIPTION/selectSupplementalData',
@@ -135,6 +137,11 @@ const setRefusal = hasRefused => ({
   },
 });
 
+const setRefusalReason = refusalReason => ({
+  type: VACCINE_PRESCRIPTION_ACTIONS.SET_REFUSAL_REASON,
+  payload: { refusalReason },
+});
+
 const createPrescription = (
   patient,
   currentUser,
@@ -163,13 +170,12 @@ const createPrescription = (
   });
 };
 
-const createRefusalNameNote = name => {
+const createRefusalNameNote = (name, refusalReason) => {
   const [patientEvent] = UIDatabase.objects('PatientEvent').filtered('code == "RV"');
-
   if (!patientEvent) return;
 
   const id = generateUUID();
-  const newNameNote = { id, name, patientEvent, entryDate: new Date() };
+  const newNameNote = { id, name, patientEvent, entryDate: new Date(), note: refusalReason };
 
   UIDatabase.write(() => UIDatabase.create('NameNote', newNameNote));
 };
@@ -194,6 +200,7 @@ const confirm = () => (dispatch, getState) => {
   const { user } = getState();
   const { currentUser } = user;
   const hasRefused = selectHasRefused(getState());
+  const refusalReason = selectRefusalReason(getState());
   const hasBonusDoses = selectFoundBonusDose(getState());
   const patientID = selectEditingNameId(getState());
   const selectedBatches = selectSelectedBatches(getState());
@@ -231,7 +238,7 @@ const confirm = () => (dispatch, getState) => {
 
   const patient = UIDatabase.get('Name', patientID);
   if (hasRefused) {
-    createRefusalNameNote(patient);
+    createRefusalNameNote(patient, refusalReason);
   } else {
     createPrescription(patient, currentUser, selectedBatches, vaccinator, supplementalData);
   }
@@ -266,6 +273,7 @@ export const VaccinePrescriptionActions = {
   selectSupplementalData,
   selectVaccine,
   setRefusal,
+  setRefusalReason,
   selectVaccinator,
   confirmAndRepeat,
   setBonusDose,
