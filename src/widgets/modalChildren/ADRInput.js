@@ -1,5 +1,5 @@
 /* eslint-disable react/forbid-prop-types */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
 import { ActivityIndicator, StyleSheet, Text } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -15,6 +15,12 @@ import { selectCurrentPatient } from '../../selectors/patient';
 import { useLocalAndRemotePatientHistory } from '../../hooks/useLocalAndRemoteHistory';
 import { dispensingStrings } from '../../localization';
 
+const getSchemaItems = jsonSchema => {
+  const { properties = {} } = jsonSchema;
+  const { causes = {} } = properties;
+  const { items } = causes;
+  return items;
+};
 const mapHistory = history =>
   history.map((h, index) => {
     const { prescriberOrVaccinator, itemName, confirmDate } = h;
@@ -41,38 +47,33 @@ LoadingIndicator.propTypes = {
 export const ADRInputComponent = ({ onCancel, onSave, patient, patientHistory }) => {
   const [{ formData, isValid }, setForm] = useState({ formData: null, isValid: false });
   const patientId = patient?.id;
-  const [ADRSchema, setADRSchema] = useState(undefined);
+  const [ADRSchema, setADRSchema] = useState(UIDatabase.objects('ADRForm')[0]);
+  const { jsonSchema, uiSchema, type, version } = UIDatabase.objects('ADRForm')[0];
+  const items = getSchemaItems(jsonSchema);
   const [{ data, loading, searched }, fetchOnline] = useLocalAndRemotePatientHistory({
     isVaccine: true,
     patientId,
     initialValue: patientHistory,
     sortKey: 'itemName',
   });
+  const showLoading = items && (loading || !searched);
 
-  useEffect(fetchOnline, [patientId]);
+  if (items) {
+    useEffect(fetchOnline, [patientId]);
+  }
 
-  useEffect(() => {
-    if (!data.length) {
-      if (searched) {
-        setADRSchema(UIDatabase.objects('ADRForm')[0]);
-      }
-      return;
-    }
+  useLayoutEffect(() => {
+    if (!data.length) return;
 
-    const newHistory = data.length ? mapHistory(data) : ['nothing'];
-    const { jsonSchema, uiSchema, type, version } = UIDatabase.objects('ADRForm')[0];
-    const { properties = {} } = jsonSchema;
-    const { causes = {} } = properties;
-    const { items } = causes;
     if (items) {
-      items.enum = newHistory;
+      items.enum = mapHistory(data);
       setADRSchema({ uiSchema, jsonSchema, properties: { type, version: version + 1 } });
     }
-  }, [data, patientId]);
+  }, [data, patientId, searched]);
 
   return (
     <>
-      {loading || !searched ? (
+      {showLoading ? (
         <LoadingIndicator loading={loading} />
       ) : (
         <JSONForm
