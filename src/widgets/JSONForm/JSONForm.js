@@ -129,7 +129,8 @@ class FocusController {
 // The underlying Form component takes a prop formData which just seeds the component
 // but does not update the form after that point.
 // So, just never re-render this component.
-const propsAreEqual = () => true;
+const propsAreEqual = (prev, next) =>
+  JSON.stringify(next.surveySchema) === JSON.stringify(prev.surveySchema);
 
 export const JSONFormComponent = React.forwardRef(
   (

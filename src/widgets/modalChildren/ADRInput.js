@@ -13,26 +13,36 @@ import globalStyles from '../../globalStyles/index';
 import { PatientActions } from '../../actions/PatientActions';
 import { selectCurrentPatient } from '../../selectors/patient';
 import { useLocalAndRemotePatientHistory } from '../../hooks/useLocalAndRemoteHistory';
-import { useLoadingIndicator } from '../../hooks/useLoadingIndicator';
 import { dispensingStrings } from '../../localization';
 
-const LoadingIndicator = ({ loading }) =>
-  loading && (
-    <FlexView flex={1} justifyContent="center" alignItems="center" style={{ marginTop: 20 }}>
-      <Text style={localStyles.text}>{dispensingStrings.fetching_history}</Text>
-      {loading && (
+const mapHistory = history =>
+  history.map((h, index) => {
+    const { prescriberOrVaccinator, itemName, confirmDate } = h;
+    const vaccinator = prescriberOrVaccinator ? `  Vaccinator: ${prescriberOrVaccinator}` : '';
+
+    return `${index + 1}. ${itemName}  Date: ${confirmDate}${vaccinator}`;
+  });
+
+const LoadingIndicator = ({ loading }) => (
+  <FlexView flex={1} justifyContent="center" alignItems="center" style={{ marginTop: 20 }}>
+    {loading && (
+      <>
+        <Text style={localStyles.text}>{dispensingStrings.fetching_history}</Text>
         <ActivityIndicator color={SUSSOL_ORANGE} size="small" style={{ marginTop: 10 }} />
-      )}
-    </FlexView>
-  );
+      </>
+    )}
+  </FlexView>
+);
+
 LoadingIndicator.propTypes = {
   loading: PropTypes.bool.isRequired,
 };
 
 export const ADRInputComponent = ({ onCancel, onSave, patient, patientHistory }) => {
-  const runWithLoadingIndicator = useLoadingIndicator();
   const [{ formData, isValid }, setForm] = useState({ formData: null, isValid: false });
   const patientId = patient?.id;
+  const [ADRSchema, setADRSchema] = useState(undefined);
+
   const [{ data, loading, searched }, fetchOnline] = useLocalAndRemotePatientHistory({
     isVaccine: true,
     patientId,
@@ -40,17 +50,27 @@ export const ADRInputComponent = ({ onCancel, onSave, patient, patientHistory })
     sortKey: 'itemName',
   });
 
-  useEffect(
-    () =>
-      runWithLoadingIndicator(() => {
-        fetchOnline();
-      }),
-    [patientId]
-  );
+  useEffect(fetchOnline, [patientId]);
 
   useEffect(() => {
-    console.info(`cool. searched: ${searched} loading: ${loading}`, data);
-  }, [data]);
+    if (!data.length) {
+      if (searched) {
+        setADRSchema(UIDatabase.objects('ADRForm')[0]);
+      }
+      return;
+    }
+
+    const newHistory = data.length ? mapHistory(data) : ['nothing'];
+    const { jsonSchema, uiSchema } = UIDatabase.objects('ADRForm')[0];
+    const { properties = {} } = jsonSchema;
+
+    const { causes = {} } = properties;
+    const { items } = causes;
+    if (items) {
+      items.enum = newHistory;
+      setADRSchema({ uiSchema, jsonSchema });
+    }
+  }, [data, patientId]);
 
   return (
     <>
@@ -61,7 +81,7 @@ export const ADRInputComponent = ({ onCancel, onSave, patient, patientHistory })
           onChange={(changed, validator) => {
             setForm({ formData: changed.formData, isValid: validator(changed.formData) });
           }}
-          surveySchema={UIDatabase.objects('ADRForm')[0]}
+          surveySchema={ADRSchema}
         >
           <></>
         </JSONForm>
