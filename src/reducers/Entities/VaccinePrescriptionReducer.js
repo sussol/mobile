@@ -52,9 +52,9 @@ export const VaccinePrescriptionReducer = (state = initialState(), action) => {
 
     case VACCINE_PRESCRIPTION_ACTIONS.SELECT_SUPPLEMENTAL_DATA: {
       const { payload } = action;
-      const { supplementalData } = payload;
+      const { supplementalData, isSupplementalDataValid } = payload;
 
-      return { ...state, supplementalData };
+      return { ...state, supplementalData, isSupplementalDataValid };
     }
 
     case VACCINE_PRESCRIPTION_ACTIONS.UPDATE_SUPPLEMENTAL_DATA: {
