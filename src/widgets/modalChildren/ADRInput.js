@@ -13,7 +13,7 @@ import globalStyles from '../../globalStyles/index';
 import { PatientActions } from '../../actions/PatientActions';
 import { selectCurrentPatient } from '../../selectors/patient';
 import { useLocalAndRemotePatientHistory } from '../../hooks/useLocalAndRemoteHistory';
-import { dispensingStrings } from '../../localization';
+import { dispensingStrings, generalStrings, vaccineStrings } from '../../localization';
 
 const getSchemaItems = jsonSchema => {
   const { properties = {} } = jsonSchema;
@@ -24,9 +24,11 @@ const getSchemaItems = jsonSchema => {
 const mapHistory = history =>
   history.map((h, index) => {
     const { prescriberOrVaccinator, itemName, confirmDate } = h;
-    const vaccinator = prescriberOrVaccinator ? `  Vaccinator: ${prescriberOrVaccinator}` : '';
+    const vaccinator = prescriberOrVaccinator
+      ? `  ${vaccineStrings.vaccinator}: ${prescriberOrVaccinator}`
+      : '';
 
-    return `${index + 1}. ${itemName}  Date: ${confirmDate}${vaccinator}`;
+    return `${index + 1}. ${itemName}  ${generalStrings.date}: ${confirmDate}${vaccinator}`;
   });
 
 const LoadingIndicator = ({ loading }) => (
