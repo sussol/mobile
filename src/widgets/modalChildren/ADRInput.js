@@ -3,6 +3,7 @@ import React, { useEffect, useState, useLayoutEffect } from 'react';
 import { ActivityIndicator, StyleSheet, Text } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import { JSONForm } from '../JSONForm/JSONForm';
 import { UIDatabase } from '../../database/index';
 import { FlexRow } from '../FlexRow';
@@ -24,11 +25,12 @@ const getSchemaItems = jsonSchema => {
 const mapHistory = history =>
   history.map((h, index) => {
     const { prescriberOrVaccinator, itemName, confirmDate } = h;
+    const date = moment(confirmDate).format('DD/MM/YY');
     const vaccinator = prescriberOrVaccinator
       ? `  ${vaccineStrings.vaccinator}: ${prescriberOrVaccinator}`
       : '';
 
-    return `${index + 1}. ${itemName}  ${generalStrings.date}: ${confirmDate}${vaccinator}`;
+    return `${index + 1}. ${itemName}  ${generalStrings.date}: ${date}${vaccinator}`;
   });
 
 const LoadingIndicator = ({ loading }) => (
