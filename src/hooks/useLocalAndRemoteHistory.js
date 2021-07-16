@@ -64,7 +64,7 @@ const reducer = (state, action) => {
  * having to track multiple.
  */
 export const useLocalAndRemotePatientHistory = ({
-  isVaccine,
+  isVaccineDispensingModal,
   patientId,
   sortKey,
   initialValue = [],
@@ -106,7 +106,10 @@ export const useLocalAndRemotePatientHistory = ({
   }, [fetchError]);
 
   const searchOnline = () => {
-    const responseHandler = getPatientHistoryResponseProcessor({ isVaccine, sortKey });
+    const responseHandler = getPatientHistoryResponseProcessor({
+      isVaccineDispensingModal,
+      sortKey,
+    });
     refresh();
     dispatch({ type: 'fetch_start' });
     fetch(

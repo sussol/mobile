@@ -53,7 +53,7 @@ export const ADRInputComponent = ({ onCancel, onSave, patient, patientHistory })
   const { jsonSchema, uiSchema, type, version } = UIDatabase.objects('ADRForm')[0];
   const items = getSchemaItems(jsonSchema);
   const [{ data, loading, searched }, fetchOnline] = useLocalAndRemotePatientHistory({
-    isVaccine: true,
+    isVaccineDispensingModal: true,
     patientId,
     initialValue: patientHistory,
     sortKey: 'itemName',
