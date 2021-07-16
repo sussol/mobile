@@ -1154,6 +1154,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         entryDate: parseDate(record.entry_date),
         _data: record.data,
         name: database.getOrCreate('Name', record.name_ID),
+        note: record.note,
       });
       break;
     }
