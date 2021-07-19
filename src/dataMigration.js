@@ -336,7 +336,7 @@ const getMigrations = (database, settings) => [
       const batchSize = 500;
       let taskCount = Math.ceil(requisitionItems.length / batchSize);
 
-      for (let i = 0; i < taskCount; i++) {
+      for (let i = 1; i <= taskCount; i++) {
         tasks.push({
           description: `Migrating RequisitionItem.itemName (${i}/${taskCount})`,
           execute: () => {
