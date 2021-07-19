@@ -42,7 +42,7 @@ export const PatientEditModalComponent = ({
           showCancelButton={false}
           showSaveButton={false}
         />
-        {surveySchema && surveyForm && (
+        {!!surveySchema && !!surveyForm && (
           <View style={styles.formContainer}>
             <JSONForm
               surveySchema={surveySchema}

@@ -29,12 +29,10 @@ const EmptyComponent = () => (
 );
 
 const LoadingIndicator = ({ loading }) =>
-  loading && (
+  !!loading && (
     <FlexView flex={1} justifyContent="center" alignItems="center" style={{ marginTop: 20 }}>
       <Text style={localStyles.text}>{dispensingStrings.fetching_history}</Text>
-      {loading && (
-        <ActivityIndicator color={SUSSOL_ORANGE} size="small" style={{ marginTop: 10 }} />
-      )}
+      <ActivityIndicator color={SUSSOL_ORANGE} size="small" style={{ marginTop: 10 }} />
     </FlexView>
   );
 

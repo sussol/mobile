@@ -192,7 +192,7 @@ export const FormDOBInput = React.forwardRef(
               />
             </FlexRow>
 
-            {datePickerOpen && (
+            {!!datePickerOpen && (
               <DateTimePicker
                 onChange={onPickDate}
                 mode="date"

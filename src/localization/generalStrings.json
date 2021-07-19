@@ -1,6 +1,8 @@
 {
   "gb": {
     "age": "Age",
+    "remove_item": "REMOVE ITEM",
+    "add_item": "ADD ITEM",
     "search_online": "Search Online",
     "finding_more_patients": "Finding more patients that match your search criteria...",
     "idle_log_out_interval": "Idle logout interval (minutes):",
