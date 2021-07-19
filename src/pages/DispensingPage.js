@@ -302,7 +302,7 @@ const Dispensing = ({
         isVisible={isADRModalOpen}
         onClose={cancelCreatingADR}
       >
-        <ADRInput />
+        <ADRInput patientHistory={patientHistory} />
       </ModalContainer>
     </>
   );
