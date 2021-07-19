@@ -54,10 +54,11 @@ export const ADRInputComponent = ({ onCancel, onSave, patient, patientHistory })
   const [ADRSchema, setADRSchema] = useState(UIDatabase.objects('ADRForm')[0]);
   const { jsonSchema, uiSchema, type, version } = UIDatabase.objects('ADRForm')[0];
   const items = getSchemaItems(jsonSchema);
+  const vaccineHistory = patientHistory.filter(h => h.itemBatch?.item?.isVaccine);
   const [{ data, loading, searched }, fetchOnline] = useLocalAndRemotePatientHistory({
     isVaccineDispensingModal: true,
     patientId,
-    initialValue: patientHistory,
+    initialValue: vaccineHistory,
     sortKey: 'itemName',
   });
   const showLoading = items && (loading || !searched);
