@@ -92,7 +92,7 @@ const PatientEditComponent = ({
           </AfterInteractions>
         </Paper>
 
-        {surveySchema && surveyFormData && (
+        {!!surveySchema && !!surveyFormData && (
           <AfterInteractions placeholder={null}>
             <Animatable.View animation="fadeIn" duration={1000} useNativeDriver style={{ flex: 1 }}>
               <JSONForm
