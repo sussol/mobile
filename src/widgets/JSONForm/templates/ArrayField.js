@@ -31,10 +31,14 @@ const Divider = () => <View style={styles.divider} />;
 
 const ArrayFieldTemplateItem = ({ index, onDropIndexClick, children }) => (
   <FlexColumn>
-    <CloseButton onPress={onDropIndexClick(index)} />
+    <FlexColumn alignItems="flex-end">
+      <CloseButton onPress={onDropIndexClick(index)} />
+    </FlexColumn>
     {children}
   </FlexColumn>
 );
+
+const isLastItem = (index, items) => items.length - 1 === index;
 
 export const ArrayField = ({ items, onAddClick }) => (
   <FlexColumn flex={1} style={styles.template}>
@@ -42,7 +46,7 @@ export const ArrayField = ({ items, onAddClick }) => (
       // eslint-disable-next-line react/no-array-index-key
       <React.Fragment key={`array_field_template_item${index}`}>
         <ArrayFieldTemplateItem {...item} />
-        <Divider />
+        {!isLastItem(index, items) && <Divider />}
       </React.Fragment>
     ))}
     <FlexColumn alignItems="flex-end" style={{ marginTop: 20 }}>
@@ -60,5 +64,5 @@ const styles = StyleSheet.create({
     borderColor: SHADOW_BORDER,
   },
   divider: { width: '100%', height: 1, marginTop: 20, backgroundColor: DARKER_GREY },
-  text: { fontFamily: APP_FONT_FAMILY, fontSize: 12 },
+  text: { fontFamily: APP_FONT_FAMILY, fontSize: 12, paddingRight: 5 },
 });
