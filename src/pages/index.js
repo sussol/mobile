@@ -28,3 +28,4 @@ export { FridgeDetailPage } from './FridgeDetailPage';
 export { SensorEditPage } from './SensorEditPage';
 export { NewSensorPage } from './NewSensor/NewSensorPage';
 export { VaccineDispensingPage } from './VaccineDispensingPage';
+export { MigrationPage } from './MigrationPage';

@@ -21,7 +21,6 @@ import { SETTINGS_KEYS } from './settings';
 import { MainStackNavigator, Pages } from './navigation/Navigator';
 import { ROUTES } from './navigation';
 import { Synchroniser, PostSyncProcessor, SyncModal } from './sync';
-import { migrateDataToVersion } from './dataMigration';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 
 import { LoadingIndicatorContext } from './context/LoadingIndicatorContext';
@@ -37,7 +36,7 @@ import { SupplierCreditActions } from './actions/SupplierCreditActions';
 
 import { Spinner } from './widgets';
 import { ModalContainer, FinaliseModal, LoginModal } from './widgets/modals';
-import { FirstUsePage } from './pages';
+import { FirstUsePage, MigrationPage } from './pages';
 import { SupplierCredit } from './widgets/modalChildren/SupplierCredit';
 
 import globalStyles, { SUSSOL_ORANGE } from './globalStyles';
@@ -66,6 +65,7 @@ BreachManager(new VaccineDataAccess(UIDatabase), new UtilService());
 (async () => {
   const isEmulator = await DeviceInfo.isEmulator();
   if (isEmulator) {
+    /* eslint-disable-next-line no-console */
     console.log('Emulator detected - Init Dev BleManager');
     BleService(new DevBleManager());
   } else {
@@ -77,7 +77,6 @@ class MSupplyMobileAppContainer extends React.Component {
   constructor(props, ...otherArgs) {
     super(props, ...otherArgs);
 
-    migrateDataToVersion(UIDatabase, Settings);
     this.databaseVersion = Settings.get(SETTINGS_KEYS.APP_VERSION);
     this.userAuthenticator = new UserAuthenticator(UIDatabase, Settings);
     this.syncAuthenticator = new SyncAuthenticator(Settings);
@@ -102,6 +101,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
     this.state = {
       isInitialised,
+      isMigrated: false,
       isLoading: false,
       appState: null,
     };
@@ -225,10 +225,18 @@ class MSupplyMobileAppContainer extends React.Component {
       closeBreachModal,
       breachModalTitle,
     } = this.props;
-    const { isInitialised, isLoading } = this.state;
+    const { isInitialised, isLoading, isMigrated } = this.state;
 
     if (!isInitialised) {
       return <FirstUsePage synchroniser={this.synchroniser} onInitialised={this.onInitialised} />;
+    }
+
+    if (!isMigrated) {
+      return (
+        <MigrationPage
+          onMigrated={() => this.setState(prevState => ({ ...prevState, isMigrated: true }))}
+        />
+      );
     }
 
     // If this database hasn't got any version setup then update with the current app's version.
@@ -245,6 +253,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
           <FinaliseModal />
           <SyncModal onPressManualSync={this.synchronise} />
+
           <LoginModal
             authenticator={this.userAuthenticator}
             settings={Settings}
