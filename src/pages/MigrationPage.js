@@ -25,8 +25,12 @@ export const MigrationPage = ({ onMigrated }) => {
   React.useEffect(() => {
     (async () => {
       const migrationTasks = await getMigrationTasks(Database, Settings);
-      setTasks(migrationTasks);
-      setExecuteCurrentTask(true);
+      if (migrationTasks && migrationTasks.length > 0) {
+        setTasks(migrationTasks);
+        setExecuteCurrentTask(true);
+      } else {
+        onMigrated();
+      }
     })();
   }, []);
 
