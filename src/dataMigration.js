@@ -24,6 +24,10 @@ export const getVersion = async settings => {
   // If app version not correctly retrieved from local storage, check settings.
   if (!fromVersion || fromVersion.length === 0) {
     fromVersion = settings.get(SETTINGS_KEYS.APP_VERSION);
+    
+    // If app version not in settings or storage, assume new installation.
+    fromVersion = packageJson.version;
+  
     // Migrate app version from settings to local storage.
     await AsyncStorage.setItem(APP_VERSION_KEY, fromVersion);
   }
@@ -35,6 +39,8 @@ export const getVersion = async settings => {
 export const getMigrationTasks = async (database, settings) => {
   const fromVersion = await getVersion(settings);
   const toVersion = packageJson.version;
+
+  if (fromVersion === toVersion) return [];
 
   // Get collection of migration objects for current version.
   const migrations =
