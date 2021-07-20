@@ -63,8 +63,6 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     id: currentBillAddressId,
     line1: currentLine1,
     line2: currentLine2,
-    line3: currentLine3,
-    line4: currentLine4,
     zipCode: currentZipCode,
   } = currentBillingAddress ?? {};
 
@@ -78,10 +76,8 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     dateOfBirth: patientDateOfBirth,
     emailAddress: patientEmailAddress,
     phoneNumber: patientPhoneNumber,
-    billAddress1: patientLine1,
-    billAddress2: patientLine2,
-    billAddress3: patientLine3,
-    billAddress4: patientLine4,
+    addressOne: patientLine1,
+    addressTwo: patientLine2,
     billPostalZipCode: patientPostalZipCode,
     country: patientCountry,
     supplyingStoreId: patientSupplyingStoreId,
@@ -103,8 +99,6 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
   const billAddressId = currentBillAddressId;
   const billAddress1 = patientLine1 ?? currentLine1;
   const billAddress2 = patientLine2 ?? currentLine2;
-  const billAddress3 = patientLine3 ?? currentLine3;
-  const billAddress4 = patientLine4 ?? currentLine4;
   const billPostalZipCode = patientPostalZipCode ?? currentZipCode;
   const country = patientCountry ?? currentCountry;
   const female = patientFemale ?? currentFemale;
@@ -127,8 +121,6 @@ const patientUpdate = patientDetails => async (dispatch, getState) => {
     billAddressId,
     billAddress1,
     billAddress2,
-    billAddress3,
-    billAddress4,
     billPostalZipCode,
     country,
     female,
