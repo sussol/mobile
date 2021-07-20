@@ -16,7 +16,7 @@ import { FormLabel } from './FormLabel';
 import { FormInvalidMessage } from './FormInvalidMessage';
 import { DATE_FORMAT } from '../../utilities/constants';
 
-const calculateAge = dob => moment().diff(dob, 'years', true).toFixed(2);
+const calculateAge = dob => moment().diff(dob, 'years', true).toFixed(0);
 
 const Action = {
   toggleDatePicker: 'toggleDatePicker',
