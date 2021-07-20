@@ -239,7 +239,7 @@ const createNameNote = (database, { id, data, patientEventID, nameID, entryDate 
  * Creates a new patient record. Patient details passed can be in the shape:
  *  {
  *    id, barcode, code, firstName, lastName, name, dateOfBirth, emailAddress, phoneNumber,
- *    billAddress1, billAddress2, billAddress3, billAddress4, billPostalZipCode,
+ *    addressOne, addressTwo, addressThree, addressFour, billPostalZipCode,
  *    country, female, supplyingStoreId, isActive
  *  }
  */
@@ -256,10 +256,10 @@ const createPatient = (database, patientDetails) => {
     emailAddress: patientEmailAddress,
     phoneNumber: patientPhoneNumber,
     billAddressId: addressId,
-    billAddress1: line1,
-    billAddress2: line2,
-    billAddress3: line3,
-    billAddress4: line4,
+    addressOne: line1,
+    addressTwo: line2,
+    addressThree: line3,
+    addressFour: line4,
     billPostalZipCode: zipCode,
     country: patientCountry,
     female: patientFemale,
