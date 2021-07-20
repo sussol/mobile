@@ -69,7 +69,7 @@ export const PatientHistoryModal = ({
     []
   );
   const [{ data, loading, error }, fetchOnline] = useLocalAndRemotePatientHistory({
-    isVaccine,
+    isVaccineDispensingModal: isVaccine,
     patientId,
     initialValue: patientHistory,
     sortKey,
