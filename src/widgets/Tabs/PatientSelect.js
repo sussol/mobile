@@ -288,7 +288,6 @@ const mapDispatchToProps = dispatch => {
 
       if (selectedPatient) {
         dispatch(NameNoteActions.createSurveyNameNote(selectedPatient));
-        dispatch(VaccinePrescriptionActions.createSupplementaryData());
         dispatch(WizardActions.nextTab());
       }
     });
