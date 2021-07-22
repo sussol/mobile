@@ -215,7 +215,7 @@ export const getPatientHistoryResponseProcessor = ({
         ID: id,
         quantity: totalQuantity,
         item_name: itemName,
-        itemLine = null,
+        itemLine,
         medicineAdministrator,
       }) => {
         const receivedItemLine = itemLine || { item: { doses: 0, code: 'N/A' } };
