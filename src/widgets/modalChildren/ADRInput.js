@@ -29,8 +29,9 @@ const mapHistory = history =>
     const vaccinator = prescriberOrVaccinator
       ? `  ${vaccineStrings.vaccinator}: ${prescriberOrVaccinator}`
       : '';
+    const name = `${index + 1}. ${itemName}  ${generalStrings.date}: ${date}${vaccinator}`;
 
-    return `${index + 1}. ${itemName}  ${generalStrings.date}: ${date}${vaccinator}`;
+    return { name, value: h.id };
   });
 
 const LoadingIndicator = ({ loading }) => (
@@ -71,7 +72,10 @@ export const ADRInputComponent = ({ onCancel, onSave, patient, patientHistory })
     if (!data.length) return;
 
     if (items) {
-      items.enum = mapHistory(data);
+      const mappedHistory = mapHistory(data);
+      items.enum = mappedHistory.map(h => h.value);
+      items.enumNames = mappedHistory.map(h => h.name);
+
       setADRSchema({ uiSchema, jsonSchema, properties: { type, version: version + 1 } });
     }
   }, [data, patientId, searched]);
