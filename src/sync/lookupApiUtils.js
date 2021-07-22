@@ -218,7 +218,8 @@ export const getPatientHistoryResponseProcessor = ({
         itemLine,
         medicineAdministrator,
       }) => {
-        const { item } = itemLine;
+        const receivedItemLine = itemLine || { item: { doses: 0, code: 'N/A' } };
+        const { item } = receivedItemLine;
         const { code: itemCode, doses } = item;
         const prescriber = clinician
           ? `${clinician.first_name} ${clinician.last_name}`.trim()
@@ -227,7 +228,7 @@ export const getPatientHistoryResponseProcessor = ({
           ? `${medicineAdministrator.first_name} ${medicineAdministrator.last_name}`.trim()
           : generalStrings.not_available;
 
-        if (isVaccineDispensingModal && !item.is_vaccine) return;
+        if (isVaccineDispensingModal && !item?.is_vaccine) return;
         const confirmDate = parseDate(confirm_date);
 
         patientHistory.push({
