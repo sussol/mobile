@@ -339,7 +339,7 @@ const getMigrations = (database, settings) => [
         .objects('RequisitionItem')
         .filtered('item != null && itemName == $0 || itemName == $1', '', undefined);
 
-      const batchSize = 500;
+      const batchSize = 10000;
       let taskCount = Math.ceil(requisitionItems.length / batchSize);
 
       for (let i = 1; i <= taskCount; i++) {
@@ -349,7 +349,7 @@ const getMigrations = (database, settings) => [
             const requisitionItemBatch = database
               .objects('RequisitionItem')
               .filtered('item != null && itemName == $0 || itemName == $1', '', undefined)
-              .slice(batchSize);
+              .slice(0, batchSize);
 
             database.write(() => {
               requisitionItemBatch.forEach(requisitionItem => {
