@@ -354,7 +354,7 @@ const getMigrations = (database, settings) => [
             database.write(() => {
               requisitionItemBatch.forEach(requisitionItem => {
                 requisitionItem.itemName = requisitionItem.item.name ?? '';
-                database.update('RequisitionItem', requisitionItem);
+                database.save('RequisitionItem', requisitionItem);
               });
             });
           },
