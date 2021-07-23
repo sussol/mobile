@@ -157,7 +157,7 @@ SyncOut.schema = {
     changeTime: 'int', // UNIX epoch format.
     changeType: 'string', // 'create', 'update', or 'delete'.
     recordType: 'string', // table name.
-    recordId: 'string',
+    recordId: { type: 'string', indexed: true },
   },
 };
 
@@ -257,7 +257,7 @@ export const schema = {
     VaccineVialMonitorStatus,
     VaccineVialMonitorStatusLog,
   ],
-  schemaVersion: 27,
+  schemaVersion: 28,
 };
 
 export default schema;
